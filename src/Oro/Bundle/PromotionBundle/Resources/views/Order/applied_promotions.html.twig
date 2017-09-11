@@ -1,2 +1,1 @@
-{% set collection = oro_promotion_prepare_applied_promotions_info(collection) %}
-{% include '@OroPromotion/AppliedPromotion/applied_promotions_table.html.twig' with {collection: collection, editable: true} %}
+{{ form_widget(form.appliedPromotions) }}

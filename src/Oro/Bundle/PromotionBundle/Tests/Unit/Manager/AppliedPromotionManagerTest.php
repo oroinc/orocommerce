@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
@@ -19,7 +17,6 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
@@ -64,46 +61,6 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             $this->doctrineHelper,
             $this->promotionMapper
         );
-    }
-
-    public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
-    {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
-        $metadata = $this->createMock(ClassMetadata::class);
-
-        $order = new Order();
-        $appliedCoupon = new AppliedCoupon();
-        $appliedPromotion = new AppliedPromotion();
-        $appliedPromotion->setAppliedCoupon($appliedCoupon);
-        $appliedPromotions = new PersistentCollection($em, $metadata, new ArrayCollection([$appliedPromotion]));
-        $appliedPromotions->takeSnapshot();
-        $order->setAppliedPromotions($appliedPromotions);
-
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
-            ->method('execute')
-            ->with($order)
-            ->willReturn(new DiscountContext());
-
-        $repository = $this->createMock(AppliedPromotionRepository::class);
-        $repository->expects($this->once())
-            ->method('removeAppliedPromotionsByOrder')
-            ->with($order);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(AppliedPromotion::class)
-            ->willReturn($repository);
-        $this->doctrineHelper->expects($this->exactly(2))
-            ->method('getEntityManagerForClass')
-            ->withConsecutive([AppliedPromotion::class], [AppliedCoupon::class])
-            ->willReturnOnConsecutiveCalls(null, $em);
-        $em->expects($this->once())
-            ->method('remove')
-            ->with($appliedCoupon);
-
-        $this->manager->createAppliedPromotions($order, true);
     }
 
     public function testCreateAppliedPromotions()
@@ -163,6 +120,10 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             ->with(AppliedPromotion::class)
             ->willReturn($entityManager);
 
+        $entityManager
+            ->expects($this->never())
+            ->method('remove');
+
         $this->manager->createAppliedPromotions($order);
         $shippingDiscount = new AppliedDiscount();
         $shippingDiscount->setAmount(555);
@@ -190,6 +151,111 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             $subtotalAppliedPromotion
         ];
         $this->assertEquals($expectedAppliedPromotions, $order->getAppliedPromotions()->toArray());
+    }
+
+    public function testCreateAppliedPromotionsWithUnusedCoupon()
+    {
+        $unusedCoupon = new AppliedCoupon();
+        $order = new Order();
+        $order->addAppliedCoupon($unusedCoupon);
+        $discountContext = new DiscountContext();
+
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $this->manager->createAppliedPromotions($order);
+
+        $this->assertEmpty($order->getAppliedCoupons());
+    }
+
+    public function testCreateAppliedPromotionsWithUsedCoupon()
+    {
+        $usedCoupon = new AppliedCoupon();
+        $order = (new Order())->setCurrency('USD');
+        $order->addAppliedCoupon($usedCoupon);
+
+        /** @var Promotion $subtotalPromotion */
+        $subtotalPromotion = $this->getEntity(Promotion::class, ['id' => 1]);
+
+        $discountContext = new DiscountContext();
+        $discountContext->addSubtotalDiscountInformation(new DiscountInformation(
+            $this->createDiscount($subtotalPromotion),
+            7
+        ));
+
+        $this->promotionMapper
+            ->expects($this->once())
+            ->method('mapPromotionDataToAppliedPromotion')
+            ->willReturnCallback(function (AppliedPromotion $appliedPromotion) use ($usedCoupon) {
+                $appliedPromotion->setAppliedCoupon($usedCoupon);
+            });
+
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
+            ->method('persist');
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManagerForClass')
+            ->willReturnMap([
+                [AppliedPromotion::class, true, $entityManager]
+            ]);
+
+        $this->manager->createAppliedPromotions($order);
+
+        $this->assertEquals([$usedCoupon], $order->getAppliedCoupons()->toArray());
+    }
+
+    public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
+    {
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+
+        $order = new Order();
+
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn(new DiscountContext());
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManagerForClass')
+            ->willReturnMap([
+                [AppliedPromotion::class, true, $entityManager]
+            ]);
+
+        $firstAppliedPromotion = new AppliedPromotion();
+        $secondAppliedPromotion = new AppliedPromotion();
+
+        $entityRepository = $this->createMock(EntityRepository::class);
+        $entityRepository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['order' => null])
+            ->willReturn([$firstAppliedPromotion, $secondAppliedPromotion]);
+
+        $entityManager
+            ->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [AppliedPromotion::class, $entityRepository]
+            ]);
+
+        $entityManager
+            ->expects($this->exactly(2))
+            ->method('remove')
+            ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
+
+        $this->manager->createAppliedPromotions($order, true);
     }
 
     /**

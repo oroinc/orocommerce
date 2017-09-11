@@ -47,9 +47,9 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
                 $event->getOrder()
             );
 
-            $view = $this->engine->render(
-                'OroPromotionBundle:Order:applied_promotions.html.twig',
-                ['collection' => $form->get('appliedPromotions')->getData()]
+            $view = $this->renderForm(
+                $form->createView(),
+                'OroPromotionBundle:Order:applied_promotions.html.twig'
             );
             $event->getData()->offsetSet('appliedPromotions', $view);
         }

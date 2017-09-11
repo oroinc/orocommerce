@@ -224,7 +224,7 @@ class ModifyTableStructure implements
             $schema->getTable('oro_promotion_applied'),
             ['applied_promotion_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

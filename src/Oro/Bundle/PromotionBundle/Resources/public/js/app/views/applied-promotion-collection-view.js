@@ -51,7 +51,7 @@ define(function(require) {
         initialize: function() {
             var handlers = {};
             handlers['entry-point:order:load:before'] = this.showLoadingMask;
-            handlers['entry-point:order:load'] = this.refreshCollectionTable;
+            handlers['entry-point:order:load'] = this.refreshCollectionBlock;
             handlers['entry-point:order:load:after'] = this.hideLoadingMask;
 
             this.listenTo(mediator, handlers);
@@ -99,10 +99,10 @@ define(function(require) {
         /**
          * @param {Object} response
          */
-        refreshCollectionTable: function(response) {
+        refreshCollectionBlock: function(response) {
             if (!_.isUndefined(response.appliedPromotions)) {
                 var $content = $(response.appliedPromotions);
-                this.$el.find('table').html($content.html());
+                this.$el.html($content.html());
                 this.$el.trigger('content:changed');
                 this._removeLoadingMask();
             }

@@ -50,7 +50,7 @@ class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterfa
      * @var AppliedPromotion|null
      *
      * @ORM\OneToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedPromotion", inversedBy="appliedCoupon")
-     * @ORM\JoinColumn(name="applied_promotion_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+     * @ORM\JoinColumn(name="applied_promotion_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $appliedPromotion;
 
