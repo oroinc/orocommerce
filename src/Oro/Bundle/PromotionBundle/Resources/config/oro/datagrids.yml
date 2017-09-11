@@ -147,8 +147,6 @@ datagrids:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
                 label:         oro.promotion.coupon.uses_per_person.label
-            totalUses:
-                label:         oro.promotion.coupon.total_uses.label
             validUntil:
                 label:         oro.promotion.coupon.valid_until.label
                 frontend_type: datetime

@@ -79,7 +79,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
                 'isStopProcessing' => false,
             ]);
 
-        $this->scopeNormalizer->expects($this->exactly(2))
+        $this->scopeNormalizer->expects($this->exactly(count($expected['scopes'])))
             ->method('normalize')
             ->withConsecutive(...array_chunk($promotion->getScopes()->toArray(), 1))
             ->willReturnOnConsecutiveCalls(...$expected['scopes']);
@@ -169,6 +169,17 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
+        $appliedPromotionWithoutScopes = $this->getEntity(
+            AppliedPromotionData::class,
+            [
+                'id' => 42,
+                'useCoupons' => true,
+                'rule' => $rule,
+                'discountConfiguration' => $discountConfiguration,
+                'productsSegment' => $segment
+            ]
+        );
+
         return [
             'Promotion' => [
                 'promotion' => $promotion,
@@ -177,6 +188,23 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
             'Applied Promotion' => [
                 'promotion' => $appliedPromotion,
                 'expected' => $expected
+            ],
+            'AppliedPromotion with empty scopes' => [
+                'promotion' => $appliedPromotionWithoutScopes,
+                'expected' => [
+                    'id' => 42,
+                    'useCoupons' => true,
+                    'rule' => [
+                        'name' => 'Promo',
+                        'expression' => 'currency = "USD"',
+                        'sortOrder' => 10,
+                        'isStopProcessing' => false,
+                    ],
+                    'scopes' => [],
+                    'productsSegment' => [
+                        'definition' => '{"filters":[],"columns":[{"name":"sku","label":"sku","sorting":null}]}'
+                    ]
+                ]
             ]
         ];
     }
@@ -202,7 +230,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
             ->with($promotionData['rule'])
             ->willReturn($rule);
 
-        $this->scopeNormalizer->expects($this->exactly(2))
+        $this->scopeNormalizer->expects($this->exactly(count($promotionData['scopes'])))
             ->method('denormalize')
             ->withConsecutive(...array_chunk($promotionData['scopes'], 1))
             ->willReturnOnConsecutiveCalls(...$scopes);
@@ -240,7 +268,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
             ->setStopProcessing(false);
 
         return [
-            [
+            'denormalize with full data' => [
                 'promotionData' => [
                     'id' => 42,
                     'useCoupons' => true,
@@ -267,6 +295,29 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
                     ->addScope($secondScope)
                     ->setRule($rule)
                     ->setProductsSegment($segment)
+            ],
+            'denormalize with empty scopes' => [
+                'promotionData' => [
+                    'id' => 42,
+                    'useCoupons' => true,
+                    'rule' => [
+                        'name' => 'Promo',
+                        'expression' => 'currency = "USD"',
+                        'sortOrder' => 10,
+                        'isStopProcessing' => false,
+                    ],
+                    'scopes' => [],
+                    'productsSegment' => [
+                        'definition' => '{"filters":[],"columns":[{"name":"sku","label":"sku","sorting":null}]}'
+                    ]
+                ],
+                'rule' => $rule,
+                'scopes' => [],
+                'segment' => $segment,
+                'expected' => (new AppliedPromotionData())->setId(42)
+                    ->setUseCoupons(true)
+                    ->setRule($rule)
+                    ->setProductsSegment($segment)
             ]
         ];
     }
@@ -277,7 +328,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage(
-            'The required options "id", "rule", "scopes", "useCoupons" are missing.'
+            'The required options "id", "rule", "useCoupons" are missing.'
         );
 
         $this->normalizer->denormalize($ruleData);

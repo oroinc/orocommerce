@@ -17,7 +17,6 @@ class AppliedPromotionNormalizer implements NormalizerInterface
     const REQUIRED_OPTIONS = [
         'id',
         'rule',
-        'scopes',
         'useCoupons'
     ];
 
@@ -74,6 +73,7 @@ class AppliedPromotionNormalizer implements NormalizerInterface
             $promotionData['productsSegment'] = $this->segmentNormalizer->normalize($promotion->getProductsSegment());
         }
 
+        $promotionData['scopes'] = [];
         foreach ($promotion->getScopes() as $scope) {
             $promotionData['scopes'][] = $this->scopeNormalizer->normalize($scope);
         }
@@ -105,12 +105,14 @@ class AppliedPromotionNormalizer implements NormalizerInterface
             $appliedPromotionData->setProductsSegment($productsSegment);
         }
 
-        foreach ($promotionData['scopes'] as $scopeData) {
-            /** @var Scope $scope */
-            $scope = $this->scopeNormalizer->denormalize($scopeData);
+        if (!empty($promotionData['scopes'])) {
+            foreach ($promotionData['scopes'] as $scopeData) {
+                /** @var Scope $scope */
+                $scope = $this->scopeNormalizer->denormalize($scopeData);
 
-            if ($scope) {
-                $appliedPromotionData->addScope($scope);
+                if ($scope) {
+                    $appliedPromotionData->addScope($scope);
+                }
             }
         }
 
@@ -124,7 +126,8 @@ class AppliedPromotionNormalizer implements NormalizerInterface
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(self::REQUIRED_OPTIONS);
-        $resolver->setDefined('productsSegment');
+        $resolver->setDefined(['productsSegment', 'scopes']);
+        $resolver->setDefault('scopes', []);
 
         $resolver->setAllowedTypes([
             'id' => ['integer'],
