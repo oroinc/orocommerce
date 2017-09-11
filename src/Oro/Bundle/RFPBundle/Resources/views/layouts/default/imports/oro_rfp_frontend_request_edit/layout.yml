@@ -5,6 +5,8 @@ layout:
 
         - '@addTree':
             items:
+                __rfp_form_container:
+                    blockType: container
                 __rfp_form_start:
                     blockType: form_start
                     options:
@@ -46,16 +48,17 @@ layout:
                         style: auto
             tree:
                 __root:
-                    __rfp_form_start: ~
-                    __rfp_form_edit_container:
-                        __rfp_form_fields: ~
-                        __rfp_form_field_assigned_to: ~
-                    __rfp_form_lineitems_container:
-                        __rfp_form_lineitems: ~
-                    __rfp_form_actions:
-                        __rfp_form_actions_create: ~
-                        __rfp_form_actions_back: ~
-                    __rfp_form_end: ~
+                    __rfp_form_container:
+                        __rfp_form_start: ~
+                        __rfp_form_edit_container:
+                            __rfp_form_fields: ~
+                            __rfp_form_field_assigned_to: ~
+                        __rfp_form_lineitems_container:
+                            __rfp_form_lineitems: ~
+                        __rfp_form_actions:
+                            __rfp_form_actions_create: ~
+                            __rfp_form_actions_back: ~
+                        __rfp_form_end: ~
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
