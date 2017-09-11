@@ -446,7 +446,8 @@ SQL;
                   ON ap.order_id = ad.order_id AND ad.promotion_id IS NULL AND line_item_id IS NOT NULL 
                   AND applied_promotion_id IS NULL
                   WHERE ap.source_promotion_id = 0
-                  GROUP BY ad.order_id, ad.line_item_id, ad.promotion_name, ad.type, ' . $this->jsonParameterToText('ad.config_options') . '
+                  GROUP BY ad.order_id, ad.line_item_id, ad.promotion_name, ad.type, '
+                . $this->jsonParameterToText('ad.config_options') . '
               ) t
             )';
 

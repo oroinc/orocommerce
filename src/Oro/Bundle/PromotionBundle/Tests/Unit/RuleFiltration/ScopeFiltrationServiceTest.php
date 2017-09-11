@@ -128,7 +128,7 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->method('getFilteredRuleOwners')
             ->with($expected, $context)
             ->willReturnCallback(function ($ruleOwners) {
-               return $ruleOwners;
+                return $ruleOwners;
             });
 
         $this->assertEquals($expected, $this->scopeFiltrationService->getFilteredRuleOwners([$promotion], $context));
