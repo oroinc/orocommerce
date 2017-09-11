@@ -125,7 +125,6 @@ datagrids:
                     - rule.name as promotionName
                     - coupon.createdAt
                     - coupon.updatedAt
-                    - coupon.totalUses
                     - coupon.usesPerCoupon
                     - coupon.usesPerPerson
                     - coupon.validUntil
@@ -162,8 +161,6 @@ datagrids:
                     data_name: coupon.code
                 promotionName:
                     data_name: rule.name
-                totalUses:
-                    data_name: coupon.totalUses
                 usesPerCoupon:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
@@ -190,9 +187,6 @@ datagrids:
                 usesPerPerson:
                     type:      number
                     data_name: coupon.usesPerPerson
-                totalUses:
-                    type:      number
-                    data_name: coupon.totalUses
                 validUntil:
                     type:      datetime
                     data_name: coupon.validUntil
