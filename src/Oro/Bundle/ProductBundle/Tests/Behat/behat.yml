@@ -242,6 +242,11 @@ oro_behat_extension:
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select2Entity
 
+    Quick Order Form > QTY1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
@@ -581,6 +586,17 @@ oro_behat_extension:
     RequestAQuoteProductLineUnit:
       selector: '.request-form-product__item--quantity .request-form-quantity__units'
 
+    ProductQuantityField:
+      selector: '.product-item__qty__current-grid input'
+
+    ProductLineItemForm:
+      selector: '[name="oro_product_frontend_line_item"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
     New Arrivals Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
@@ -700,6 +716,5 @@ oro_behat_extension:
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext
-        - OroWarehouseBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

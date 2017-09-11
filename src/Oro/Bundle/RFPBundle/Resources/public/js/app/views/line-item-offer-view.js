@@ -21,11 +21,11 @@ define(function(require) {
             if (this.model) {
                 this.model.set({
                     id: this.lineItemModel.get('productId'),
-                    product_units: this.lineItemModel.get('productUnits')
+                    product_units: this.lineItemModel.get('product_units')
                 });
             } else {
                 this.modelAttr.id = this.lineItemModel.get('productId');
-                this.modelAttr.product_units = this.lineItemModel.get('productUnits');
+                this.modelAttr.product_units = this.lineItemModel.get('product_units');
             }
         }
     });

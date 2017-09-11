@@ -329,10 +329,9 @@ define(function(require) {
             }
 
             if (this.editLineItem && (lineItemId || setFirstLineItem)) {
-                this.model.set({
-                    quantity: this.editLineItem.quantity,
-                    unit: this.editLineItem.unit
-                });
+                //quantity precision depend on unit, set unit first
+                this.model.set('unit', this.editLineItem.unit);
+                this.model.set('quantity', this.editLineItem.quantity);
             }
         },
 

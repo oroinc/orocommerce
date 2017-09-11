@@ -289,7 +289,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'all_text' => false
             ],
             'product_units'                     => [
-                'value'    => 'item|set',
+                'value'    => serialize(['item', 'set']),
                 'all_text' => false
             ]
         ];

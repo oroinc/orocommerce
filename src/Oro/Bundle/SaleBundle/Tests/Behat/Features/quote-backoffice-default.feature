@@ -8,15 +8,15 @@ Feature: Quote Backoffice Default Workflow
   I want to have ability to change Quote internal status by Workflow transitions
 
   Scenario: Workflow is on exclusive Active group with Quote Backoffice workflow
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     And go to System/Workflows
     And I click "Activate" on row "Quote Management Flow" in grid
     And I press "Activate"
     Then I should see "Workflow activated" flash message
 
   Scenario: Draft -> Edit, Quote #11. Internal status: Draft, customer status: N/A
-    Given I login as administrator
-    When go to Sales/Quotes
+    Given go to Sales/Quotes
     And click view PO11 in grid
     And I click "Start Quote Management Flow"
     Then I should see Quote with:
@@ -35,12 +35,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO11" in grid
 
   Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO11 in grid
     Then I should see Quote with:
@@ -56,12 +56,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO31" in grid
 
   Scenario: Draft -> Delete, Quote #12. Internal status: Deleted, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO12 in grid
     And I click "Start Quote Management Flow"
@@ -78,12 +78,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Deleted |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO12" in grid
 
   Scenario: Delete -> Undelete, Quote #12. Internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO12 in grid
     Then I should see Quote with:
@@ -99,12 +99,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO12" in grid
 
   Scenario: Draft -> Send to Customer, Quote #13. Internal status: Sent to Customer, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO13 in grid
     And I click "Start Quote Management Flow"
@@ -122,14 +122,14 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Sent to Customer |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     And click View PO13 in grid
     Then I should see Quote Frontend Page with data:
       | PO Number | PO13 |
 
   Scenario: Sent to Customer > Cancel, Quote #14. Internal status: Cancelled, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO14 in grid
     And I click "Start Quote Management Flow"
@@ -148,14 +148,14 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Cancelled |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     And click View PO14 in grid
     Then I should see Quote Frontend Page with data:
       | PO Number | PO14 |
 
   Scenario: Sent to Customer > Expire, Quote #15. Internal status: Expired, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO15 in grid
     And I click "Start Quote Management Flow"
@@ -175,14 +175,14 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Expired |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     And click View PO15 in grid
     Then I should see Quote Frontend Page with data:
       | PO Number | PO15 |
 
   Scenario: Sent to Customer > Delete, Quote #16. Internal status: Deleted, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO16 in grid
     And I click "Start Quote Management Flow"
@@ -201,12 +201,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Deleted |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And I click "Quotes"
     Then there is no "PO16" in grid
 
   Scenario: Sent to Customer > Create new Quote + Do Not Expire, Quote #17. Redirect to new Quote, internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO17 in grid
     And I click "Start Quote Management Flow"
@@ -240,7 +240,7 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Sent to customer |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO32" in grid
     When I click View PO17 in grid
@@ -250,7 +250,7 @@ Feature: Quote Backoffice Default Workflow
     And should see "Seller Notes: Seller Notes17"
 
   Scenario: Sent to Customer > Create new Quote + Expire Immediately, Quote #18. Redirect to new Quote, internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO18 in grid
     And I click "Start Quote Management Flow"
@@ -288,7 +288,7 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Expired |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO33" in grid
     When I click View PO18 in grid
@@ -299,7 +299,7 @@ Feature: Quote Backoffice Default Workflow
     And should not see "Seller Notes: Seller Notes17"
 
   Scenario: Sent to Customer > Declined by Customer, Quote #19. Internal status: Declined, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO19 in grid
     And I click "Start Quote Management Flow"
@@ -318,14 +318,14 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Declined |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     And click View PO19 in grid
     Then I should see Quote Frontend Page with data:
       | PO Number | PO19 |
 
   Scenario: Expired > Reopen, Quote #15. Redirect to new Quote, internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view PO15 in grid
     Then I should see Quote with:
@@ -345,12 +345,12 @@ Feature: Quote Backoffice Default Workflow
       | PO Number | PO34 |
     And click "Submit"
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     When I click "Quotes"
     Then there is no "PO34" in grid
 
   Scenario: Cancelled > Reopen, Quote #14. Redirect to new Quote, internal status: Draft, customer status: N/A
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And I click view PO14 in grid
     Then I should see Quote with:
@@ -370,16 +370,16 @@ Feature: Quote Backoffice Default Workflow
       | PO Number | PO35 |
     And click "Submit"
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     When I click "Quotes"
     Then there is no "PO35" in grid
 
   Scenario: Create a Quote #36 from RFQ. Internal status: Draft, customer status: N/A, invisible for customer
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PO36 |
 
-    Given I login as administrator
+    Given I operate as the Admin
     And create a quote from RFQ with PO Number "PO36"
     Then I should see Quote with:
       | Quote # | 36 |
@@ -387,12 +387,12 @@ Feature: Quote Backoffice Default Workflow
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Quotes"
     Then there is no "PO36" in grid
 
   Scenario: See Quote without Customer User by frontend administrator.
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Quotes
     And click view POWithoutCustomerUser in grid
     And I click "Start Quote Management Flow"

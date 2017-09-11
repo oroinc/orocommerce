@@ -4,6 +4,7 @@ define(function(require) {
     var ProductShoppingListsWidget;
     var DialogWidget = require('oro/dialog-widget');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
@@ -148,7 +149,7 @@ define(function(require) {
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
                 shoppingListsCollection: this.shoppingListCollection,
-                productUnits: this.model.get('product_units'),
+                productUnits: UnitsUtil.getUnitsLabel(this.model),
                 unit: this.model.get('unit'),
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,

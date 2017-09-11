@@ -173,13 +173,6 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             'all_text_LOCALIZATION_ID' => [
                 [
                     'value' => new PlaceholderValue(
-                        $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                    'all_text' => true,
-                ],
-                [
-                    'value' => new PlaceholderValue(
                         $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
                     ),
@@ -192,6 +185,15 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
                     ),
                     'all_text' => true,
                 ],
+            ],
+            'category_title_LOCALIZATION_ID' => [
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ]
             ],
         ];
 

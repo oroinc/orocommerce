@@ -1,0 +1,30 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueRootNode:
+        string: 'Root Node'
+
+    localMetaTitle:
+        string: 'CollectionMetaTitle'
+
+    localMetaKeyword:
+        text: 'CollectionMetaKeyword'
+
+    localMetaDescription:
+        text: 'CollectionMetaDescription'
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    webCatalog:
+        name: 'Default Web Catalog'
+        description: 'Default Web Catalog description'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeRoot:
+        addTitle: ['@localValueRootNode']
+        addContentVariant: ['@systemPageVariant']
+        webCatalog: '@webCatalog'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    systemPageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
