@@ -1194,3 +1194,11 @@ services:
            - '@oro_featuretoggle.voter.config_voter'
            - '@security.token_storage'
         abstract: true
+
+    oro_product.entity_alias_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductEntityAliasProvider
+        arguments:
+            - '@oro_entity_config.config.attributes_config_helper'
+        public: false
+        tags:
+            - { name: oro_entity.alias_provider }
