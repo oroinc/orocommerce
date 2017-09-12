@@ -94,7 +94,7 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <% if (_.isString(list.url)) { %>
+                    <% if (_.isString(list.href)) { %>
                         <a class="shopping-lists-popup__link" href="<%- list.href %>">
                             <%= _.escape(list.label) %>
                         </a>
