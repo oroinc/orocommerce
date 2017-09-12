@@ -38,6 +38,28 @@
                             isDefault: true
                     parentScopeUsed: true
                     children:
+                        Medical:
+                            defaultTitle: Medical
+                            defaultSlugPrototype: Medical
+                            contentVariants:
+                                -
+                                    type: cms_page
+                                    params:
+                                        title: "Haec quo modo conveniant"
+                                    isDefault: true
+                            parentScopeUsed: true
+                            children:
+                                "Medical Apparel":
+                                    defaultTitle: "Medical Apparel"
+                                    defaultSlugPrototype: "medical-apparel"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Medical Apparel"
+                                            isDefault: true
+                                    children: ~
                         Industrial:
                             defaultTitle: Industrial
                             defaultSlugPrototype: industrial
@@ -71,28 +93,17 @@
                                                 title: "Architectural Floodlighting"
                                             isDefault: true
                                     children: ~
-                        Medical:
-                            defaultTitle: Medical
-                            defaultSlugPrototype: Medical
+                        "All products":
+                            defaultTitle: "All Products"
+                            defaultSlugPrototype: "all-products"
+                            parentScopeUsed: true
                             contentVariants:
                                 -
-                                    type: cms_page
+                                    type: system_page
                                     params:
-                                        title: "Haec quo modo conveniant"
+                                        route: "oro_catalog_frontend_product_allproducts"
                                     isDefault: true
-                            parentScopeUsed: true
-                            children:
-                                "Medical Apparel":
-                                    defaultTitle: "Medical Apparel"
-                                    defaultSlugPrototype: "medical-apparel"
-                                    parentScopeUsed: true
-                                    contentVariants:
-                                        -
-                                            type: category_page
-                                            params:
-                                                title: "Medical Apparel"
-                                            isDefault: true
-                                    children: ~
+                            children: ~
                 "By Brand":
                     defaultTitle: "By Brand"
                     defaultSlugPrototype: "by-brand"

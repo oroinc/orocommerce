@@ -38,3 +38,17 @@
         {{ form_row(form.estimatedShippingCostAmount) }}
     </div>
 {% endmacro %}
+
+{% macro hiddenCollection(form) %}
+    <div data-role="hidden-collection"
+         data-last-index="{{ form.children|length}}"
+         data-prototype-name="{{ form.vars.prototype.vars.name }}"
+         data-prototype="{{ form_widget(form.vars.prototype)|escape }}"
+    >
+        {% if form.children|length %}
+            {% for child in form.children %}
+                {{ form_widget(child) }}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}

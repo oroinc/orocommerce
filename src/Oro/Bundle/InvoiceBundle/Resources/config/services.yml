@@ -18,12 +18,10 @@ services:
     oro_invoice.form.type.invoice_line_item:
         class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
         arguments:
-            - "@doctrine"
-            - "@oro_product.formatter.product_unit_label"
             - "@oro_pricing.rounding.price_rounding_service"
+            - '@oro_product.provider.product_units_provider'
         calls:
             - [setDataClass, ['%oro_invoice.entity.invoice_line_item.class%']]
-            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
         tags:
             - { name: form.type, alias: "oro_invoice_line_item" }
 

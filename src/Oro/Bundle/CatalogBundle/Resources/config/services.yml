@@ -190,7 +190,7 @@ services:
             - '@oro_entity.doctrine.field_updates_checker'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'

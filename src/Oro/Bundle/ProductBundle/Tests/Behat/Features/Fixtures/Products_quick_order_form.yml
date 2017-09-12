@@ -82,7 +82,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product4:
-        sku: 'PSKU4'
+        sku: 'PSKUwithlowercase'
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
@@ -92,7 +92,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product5:
-        sku: 'PSKU5'
+        sku: 'pskulowercaseonly'
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'

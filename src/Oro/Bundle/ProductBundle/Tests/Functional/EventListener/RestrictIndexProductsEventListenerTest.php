@@ -58,7 +58,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
             AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
         ];
 
-        $expectedCount = 6;
+        $expectedCount = 7;
 
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $indexer->resetIndex(Product::class, $context);

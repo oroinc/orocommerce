@@ -41,8 +41,11 @@ system_configuration:
         quick_order:
             title: oro.product.system_configuration.groups.quick_order.title
             icon: 'fa-shopping-cart'
+            page_reload: true
         quick_order_form:
             title: oro.product.system_configuration.groups.quick_order_form.title
+        guest_quick_order_form:
+            title: oro.product.system_configuration.groups.guest_quick_order_form.title
         product_collections:
             title: oro.product.system_configuration.groups.product_collections.title
             icon: 'fa-list'
@@ -297,6 +300,13 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.enable_quick_order_form.title
 
+        oro_product.guest_quick_order_form:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.product.system_configuration.fields.guest_quick_order_form.title
+                tooltip: oro.product.system_configuration.fields.guest_quick_order_form.tooltip
+
         oro_product.product_direct_url_prefix:
             data_type: string
             type: oro_redirect_sluggable_prefix
@@ -521,6 +531,9 @@ system_configuration:
                                     quick_order_form:
                                         children:
                                             - oro_product.enable_quick_order_form
+                                    guest_quick_order_form:
+                                        children:
+                                            - oro_product.guest_quick_order_form
 
         organization_configuration:
             commerce:

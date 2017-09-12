@@ -4,7 +4,8 @@
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action
   Scenario: Create new PayPal PayFlow Gateway Integration
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "PayPal Payflow Gateway" from "Type"
@@ -38,7 +39,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
 
   Scenario: Successful order payment and error on capture with PayPal PayFlow Gateway
     Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I operate as the Buyer
     When I open page with shopping list List 1
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -52,7 +53,8 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And I login as administrator
+
+    Then I operate as the Admin
     And I go to System/Integrations/Manage Integrations
     And I click Edit PayPalFlow in grid
     And I fill PayPal integration fields with next data:
@@ -68,7 +70,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
 
   Scenario: Unsuccessful order payment, capture button is not shown in backoffice
     Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I continue as the Buyer
     When I open page with shopping list List 2
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -82,7 +84,8 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I click "Continue"
     And I press "Submit Order"
     Then I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
-    And I login as administrator
+
+    Then I operate as the Admin
     And I go to Sales/Orders
     And I click View Payment declined in grid
     And I wait for action

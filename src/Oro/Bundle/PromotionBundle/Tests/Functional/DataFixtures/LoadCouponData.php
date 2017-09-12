@@ -2,32 +2,54 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-
-class LoadCouponData extends AbstractFixture
+class LoadCouponData extends AbstractLoadCouponData
 {
+    const COUPON_WITHOUT_PROMO_AND_VALID_UNTIL = 'coupon_without_promo_and_valid_until';
+    const COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL = 'coupon_with_promo_and_without_valid_until';
+    const COUPON_WITH_PROMO_AND_EXPIRED = 'coupon_with_promo_and_expired';
+    const COUPON_WITH_PROMO_AND_VALID_UNTIL = 'coupon_with_promo_and_valid_until';
+
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies()
     {
-        $coupon = new Coupon();
-        $coupon
-            ->setCode('test123')
-            ->setUsesPerCoupon(1)
-            ->setUsesPerPerson(1);
-        $manager->persist($coupon);
+        return [
+            LoadPromotionData::class,
+        ];
+    }
 
-        $coupon2 = new Coupon();
-        $coupon2
-            ->setCode('test456')
-            ->setUsesPerCoupon(2)
-            ->setUsesPerPerson(2);
-
-        $manager->persist($coupon2);
-
-        $manager->flush();
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCoupons()
+    {
+        return [
+            self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL => [
+                'code' => self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL,
+                'usesPerCoupon' => 1,
+                'usesPerPerson' => 1,
+            ],
+            self::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL => [
+                'code' => self::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL,
+                'usesPerCoupon' => 2,
+                'usesPerPerson' => 2,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
+            ],
+            self::COUPON_WITH_PROMO_AND_EXPIRED => [
+                'code' => self::COUPON_WITH_PROMO_AND_EXPIRED,
+                'usesPerCoupon' => 3,
+                'usesPerPerson' => 3,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
+                'validUntil' => '-1 day',
+            ],
+            self::COUPON_WITH_PROMO_AND_VALID_UNTIL => [
+                'code' => self::COUPON_WITH_PROMO_AND_VALID_UNTIL,
+                'usesPerCoupon' => 4,
+                'usesPerPerson' => 4,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
+                'validUntil' => '+1 day',
+            ],
+        ];
     }
 }

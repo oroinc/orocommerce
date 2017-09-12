@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface as UnitCodeAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
@@ -50,7 +50,7 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
         }
 
         $filteredOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use ($lineItems) {
-            if (!$ruleOwner instanceof Promotion) {
+            if (!$ruleOwner instanceof PromotionDataInterface) {
                 return false;
             }
 

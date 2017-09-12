@@ -111,6 +111,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue3']
         status: 'enabled'
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:

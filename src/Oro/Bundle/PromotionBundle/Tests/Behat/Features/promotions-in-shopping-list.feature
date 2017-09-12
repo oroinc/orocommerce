@@ -8,14 +8,9 @@ Feature: Promotions in Shopping List
   As a site user
   I need to have ability to see applied discounts at shopping list on front-end
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
-
   Scenario: Check line item and subtotal discount in Shopping List with simple products
-    Given I operate as the Buyer
-    And I signed in as AmandaRCole@example.org on the store frontend
+    Given I login as administrator and use in "first_session" as "Admin"
+    And I login as AmandaRCole@example.org the "Buyer" at "second_session" session
     When I open page with shopping list List 1
     Then I see next line item discounts for shopping list "List 1":
       | SKU              | Discount |
@@ -27,7 +22,6 @@ Feature: Promotions in Shopping List
 
   Scenario: Prepare configurable product
     Given I proceed as the Admin
-    And I login as administrator
     And I go to Products / Product Attributes
     And I click "Create Attribute"
     And I fill form with:

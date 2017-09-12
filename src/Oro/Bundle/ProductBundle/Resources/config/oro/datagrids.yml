@@ -829,4 +829,4 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: brandName
+                    data_name: name

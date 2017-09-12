@@ -134,6 +134,7 @@
     {% if isShippingAddressGranted %}
         {% set shippingAddress %}
             <div
+                data-layout="separate"
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
                     view: 'orosale/js/app/views/address-view',
@@ -173,8 +174,10 @@
                 view: 'oroorder/js/app/views/shipping-cost-view'
             } %}
 
-            <div data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ options|json_encode }}">
+            <div
+                data-layout="separate"
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ options|json_encode }}">
                 {{ form_row(form.overriddenShippingCostAmount) }}
             </div>
 

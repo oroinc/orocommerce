@@ -116,14 +116,11 @@ class WebsiteSearchProductIndexerListener
             }
 
             if (array_key_exists($product->getId(), $productUnits)) {
-                $units = [];
-                foreach ($productUnits[$product->getId()] as $unitCode) {
-                    $units[] = $unitCode;
-                }
+                $units = serialize($productUnits[$product->getId()]);
                 $event->addField(
                     $product->getId(),
                     'product_units',
-                    implode('|', $units)
+                    $units
                 );
             }
 
