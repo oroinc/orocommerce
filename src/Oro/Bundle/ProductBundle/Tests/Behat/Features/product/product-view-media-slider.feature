@@ -44,7 +44,7 @@ Feature: Gallery as slider
     Then I should see an "Popup Gallery Widget" element
 
   Scenario: Check gallery as slider is present on front store
-    Given I login as administrator
+    Given I am on dashboard
     And go to System / Configuration
     And I follow "Commerce/Product/Product Images" on configuration sidebar
     And fill "Product Images Form" with:

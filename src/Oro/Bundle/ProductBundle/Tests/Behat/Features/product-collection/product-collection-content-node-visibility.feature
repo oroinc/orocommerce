@@ -4,13 +4,7 @@ Feature:
   As a Buyer
   I have to see newly created Content Node with Product Collection variant in main menu on homepage
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
-
   Scenario: Add Product Collection variant to newly create Content Node
-    Given I proceed as the Admin
     And I login as administrator
     And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
@@ -41,6 +35,5 @@ Feature:
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Newly created Product Collection Content Node is visible in menu on homepage
-    Given I proceed as the Buyer
-    When I am on the homepage
+    Given I am on the homepage
     Then I should see "Product Collection Node"

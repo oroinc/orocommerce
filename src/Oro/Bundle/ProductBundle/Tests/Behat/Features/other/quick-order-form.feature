@@ -25,7 +25,6 @@ Feature: Quick order form
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
 
   Scenario: Check if the price depends on quantity
-    Given I login as AmandaRCole@example.org buyer
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | psku1 |
@@ -115,7 +114,7 @@ Feature: Quick order form
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 1 | item | 
+      | Product4 | 1 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

@@ -9,6 +9,10 @@ Feature: Manage up-sell products
   I want to manage which products should be considered "Up-sell Items" to the one I am managing
 
   Scenario: Check if datagrid of a product doesn't contain this product
+    Given sessions active:
+      | Admin   | first_session  |
+      | Manager | second_session |
+    And I proceed as the Admin
     Given I login as administrator
     When go to Products/ Products
     And I click Edit "PSKU1" in grid
@@ -108,6 +112,7 @@ Feature: Manage up-sell products
       | Create | Product | Global |
       | Delete | Product | Global |
       | Edit   | Product | Global |
+    Then I proceed as the Manager
     And I login as "CatalogManager1" user
     When I go to Products/ Products
     And I click View "PSKU1" in grid
@@ -144,7 +149,7 @@ Feature: Manage up-sell products
     And I should see "UpsellProductsEditGrid" grid
 
   Scenario: Disable up-sell products functionality
-    Given I login as administrator
+    Given I proceed as the Admin
     When go to System/ Configuration
     And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:

@@ -27,6 +27,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'category_direct_url_prefix' => [
                     'value' => '',
                     'scope' => 'app'
+                ],
+                'all_products_page_enabled' => [
+                    'value' => false,
+                    'scope' => 'app',
                 ]
             ]
         ];

@@ -7,18 +7,10 @@ Feature: Promotions at Checkout
   As an site user
   I need to have ability to see applied discounts at checkout stage on front-end
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
-    And I switch to the "Admin" session
-    And I login as administrator
-    And I disable inventory management
-    And I switch to the "Buyer" session
-    And I signed in as AmandaRCole@example.org on the store frontend
-
   Scenario: Check line item and order discount at Billing Information Checkout's step
-    Given I proceed as the Buyer
+    Given I login as administrator
+    And I disable inventory management
+    Then I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
       And I press "Create Order"
     Then I see next line item discounts for checkout:

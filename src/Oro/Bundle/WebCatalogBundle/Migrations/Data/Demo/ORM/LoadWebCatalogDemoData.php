@@ -165,7 +165,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $this->resolveScopes($node);
             $this->generateSlugs($node);
 
-            if ($contentNode['children']) {
+            if (isset($contentNode['children'])) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
             }
         }

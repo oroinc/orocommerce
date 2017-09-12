@@ -48,7 +48,7 @@ Feature: FrontStore language switcher
 
   Scenario: Enable Localizations at System Configuration
     Given I go to System/Configuration
-    And I follow "System configuration/General setup/Localization" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill "System Config Form" with:
       | Enabled Localizations | [English,  Dutch, Japanese] |
     And I save form
