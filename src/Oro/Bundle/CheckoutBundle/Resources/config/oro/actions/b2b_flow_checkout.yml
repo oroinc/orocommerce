@@ -176,6 +176,13 @@ action_groups:
                 method: fillSubtotals
                 method_parameters:
                     - $.order
+            - '@tree':
+                conditions:
+                    '@not_empty': $.checkout.registeredCustomerUser
+                actions:
+                    - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
+
             - '@flush_entity': $.order
 
     b2b_flow_checkout_purchase:
@@ -473,9 +480,9 @@ action_groups:
     handle_late_registration:
         parameters:
             checkout:
-                type: object
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
             order:
-                type: object
+                type: Oro\Bundle\OrderBundle\Entity\Order
             late_registration_data:
                 type: array
         actions:
@@ -509,6 +516,9 @@ action_groups:
                           - $.checkout.registeredCustomerUser
 
                     - '@assign_value': [$.result.confirmationRequired, true]
+                    - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
+                    - '@flush_entity': $.order
 
             - '@tree':
                 conditions:
