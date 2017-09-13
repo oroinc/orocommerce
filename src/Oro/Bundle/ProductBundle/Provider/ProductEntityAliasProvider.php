@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductEntityAliasProvider implements EntityAliasProviderInterface
 {
-
     /** @var AttributeConfigHelper */
     private $attributeConfigHelper;
 
@@ -123,7 +122,6 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
 
         return $possibleFieldNames;
     }
-
 
     /**
      * @param $fieldName
