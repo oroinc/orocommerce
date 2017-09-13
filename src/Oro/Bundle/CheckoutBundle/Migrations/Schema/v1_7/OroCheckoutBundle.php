@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroCheckoutBundle implements Migration
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -19,6 +19,11 @@ class OroCheckoutBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOroCheckoutLineItemForeignKeys($schema);
+
+        /** Create CheckoutLineItems for existing Checkouts **/
+        $queries->addPostQuery(
+            new ConvertCheckoutLineItemsDataQuery()
+        );
     }
 
     /**

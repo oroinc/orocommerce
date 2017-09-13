@@ -43,7 +43,8 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
                 ->setProductUnitCode($quoteProductOffer->getProductUnitCode())
                 ->setQuantity($quoteProductOffer->getQuantity())
                 ->setPrice($quoteProductOffer->getPrice())
-                ->setPriceType($quoteProductOffer->getPriceType());
+                ->setPriceType($quoteProductOffer->getPriceType())
+                ->setComment($quoteProductOffer->getQuoteProduct()->getComment());
             $checkoutLineItems->add($checkoutLineItem);
         }
 

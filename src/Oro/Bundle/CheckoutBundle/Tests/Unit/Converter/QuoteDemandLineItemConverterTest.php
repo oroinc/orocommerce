@@ -72,9 +72,12 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getLineItems')
             ->willReturn(new ArrayCollection([$quoteProductDemand]));
 
-        $quoteProduct->expects($this->atLeastOnce())
+        $quoteProduct->expects($this->once())
             ->method('getFreeFormProduct')
             ->willReturn('TEST');
+        $quoteProduct->expects($this->once())
+            ->method('getComment')
+            ->willReturn('Test Comment');
 
         $product = $this->createMock(Product::class);
         $parentProduct = $this->createMock(Product::class);
@@ -124,6 +127,7 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($price->getCurrency(), $item->getCurrency());
             $this->assertSame((float)$price->getValue(), $item->getValue());
             $this->assertSame('TEST', $item->getFreeFormProduct());
+            $this->assertSame('Test Comment', $item->getComment());
             $this->assertTrue($item->isPriceFixed());
             $this->assertTrue($item->isFromExternalSource());
         }
