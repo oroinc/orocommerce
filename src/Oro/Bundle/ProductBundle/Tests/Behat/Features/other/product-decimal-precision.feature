@@ -26,7 +26,8 @@ Feature: Сomma support for quantity on backend
     And uncheck "Use default" for "Locale" field
     And I fill in "Locale" with "Ukrainian"
     And I save form
-    Then I should see "Configuration saved" flash message
+    And I reload the page
+    Then Locale field should has Ukraininan value
     Given I proceed as the User
     And I click "NewCategory"
     And I type "3," in "ProductQuantityField"
