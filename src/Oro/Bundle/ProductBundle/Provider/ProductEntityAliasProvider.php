@@ -45,7 +45,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
 
         // Product attributes are dictionary classes, we have to remove the hash from the class name in API
         // See #BB-10758
-        $fieldName = $this->getFieldNameFromEntityClass($entityClass);
+        $fieldName = $this->getAliasFromEntityClass($entityClass);
         if ($this->attributeConfigHelper->isFieldAttribute(Product::class, $fieldName)) {
             list($alias, $plural) = $this->getEntityAliasAndPlural($fieldName);
 
@@ -59,7 +59,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * @param $entityClass ex:Extend\Entity\EV_Product_New_Attribute_8fde6396
      * @return string
      */
-    private function getFieldNameFromEntityClass($entityClass)
+    private function getAliasFromEntityClass($entityClass)
     {
         // starting with a FQN like Extend\Entity\EV_Product_New_Attribute_8fde6396 we get a clean entity class name
         // ex: New_Attribute_8fde6396
@@ -70,7 +70,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
         $lastPos = strrpos($cleanEntityClass, '_');
         $fieldName = substr($cleanEntityClass, 0, $lastPos);
 
-        return $this->getActualFieldName($fieldName);
+        return $this->getAliasByActualFieldName($fieldName);
     }
 
     /**
@@ -80,47 +80,29 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * @param $fieldName
      * @return string
      */
-    private function getActualFieldName($fieldName)
+    private function getAliasByActualFieldName($fieldName)
     {
         $productMetadata = $this->configManager->getEntityMetadata(Product::class);
 
-        // start by lowering everything to have a case standard
+        // start by lowering everything and removing underscores for easier comparisons
         $lowerProductFieldNames = [];
         foreach ($productMetadata->propertyMetadata as $property => $fieldMetadata) {
-            $lowerProductFieldNames[strtolower($property)] = $property;
+            $lowerProductFieldNames[$this->normalizeFieldName($property)] = $property;
         }
 
-        // then check if one matches
-        foreach ($this->getFieldPossibleNames($fieldName) as $possibleName) {
-            if (array_key_exists($possibleName, $lowerProductFieldNames)) {
-                return $lowerProductFieldNames[$possibleName];
-            }
+        // normalize fieldName as well
+        $normalizedFieldName = $this->normalizeFieldName($fieldName);
+
+        if (array_key_exists($normalizedFieldName, $lowerProductFieldNames)) {
+            return $lowerProductFieldNames[$normalizedFieldName];
         }
 
         return $fieldName;
     }
 
-    /**
-     * @param $fieldName
-     * @return array
-     */
-    private function getFieldPossibleNames($fieldName)
+    private function normalizeFieldName($fieldName)
     {
-        $possibleFieldNames = [];
-
-        // case 1. actual field name is simple, for example "attribute"
-        // generated class name: Extend\Entity\EV_Product_Attribute_E7f71b95
-        $possibleFieldNames[$fieldName] = ($fieldName = strtolower($fieldName));
-
-        // case 2. actual field contains underscores, for example "my_test_attribute"
-        // generated class name: Extend\Entity\EV_Product_My__Test__Attribute_B9ddb488
-        $possibleFieldNames[$fieldName] = ($fieldName = str_replace('__', '_', $fieldName));
-
-        // case 3. actual field name is camelCase, for example "testAttribute"
-        // generated class name: Extend\Entity\EV_Product_Test_Attribute_D913a397
-        $possibleFieldNames[$fieldName] = ($fieldName = str_replace('_', '', $fieldName));
-
-        return $possibleFieldNames;
+        return str_replace('_', '', strtolower($fieldName));
     }
 
     /**
@@ -129,9 +111,10 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      */
     private function getEntityAliasAndPlural($fieldName)
     {
+        $alias = 'product' . $this->normalizeFieldName($fieldName);
         return [
-            strtolower($fieldName),
-            strtolower(Inflector::pluralize($fieldName))
+            $alias,
+            Inflector::pluralize($alias),
         ];
     }
 }
