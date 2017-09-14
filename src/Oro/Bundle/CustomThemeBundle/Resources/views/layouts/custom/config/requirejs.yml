@@ -1,0 +1,11 @@
+config:
+    map:
+        '*':
+            'orofilter/js/plugins/filters-toggle-plugin': 'orocustomtheme/FrontendBundle/js/datagrid/plugins/frontend-filters-plugin'
+
+        'orocustomtheme/FrontendBundle/js/datagrid/plugins/frontend-filters-plugin':
+            'orofilter/js/plugins/filters-toggle-plugin': 'orofilter/js/plugins/filters-toggle-plugin'
+
+    paths:
+        'orocustomtheme/FrontendBundle/js/datagrid/plugins/frontend-filters-plugin': 'orocustomtheme/FrontendBundle/js/datagrid/plugins/frontend-filters-plugin.js'
+        'orocustomtheme/FrontendBundle/js/datagrid/frontend-collection-filters-manager': 'orocustomtheme/FrontendBundle/js/datagrid/frontend-collection-filters-manager.js'
