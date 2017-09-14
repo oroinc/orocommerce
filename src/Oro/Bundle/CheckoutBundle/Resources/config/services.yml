@@ -540,3 +540,12 @@ services:
         public: false
         tags:
             - { name: oro.checkout.line_item.converter, alias: quote_demand }
+
+    oro_checkout.data_provider.checkout_line_items:
+        class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
+        public: false
+        arguments:
+             - '@oro_shopping_list.data_provider.frontend_product_prices'
+             - '@doctrine'
+        tags:
+             - { name: checkout.data_provider.line_item }

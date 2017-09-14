@@ -127,6 +127,15 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                     (new OrderLineItem())->setComment('Comment'),
                 ]),
             ],
+            'data with null property' => [
+                'data' => [[
+                    'shipBy' => $now,
+                    'comment' => null,
+                ]],
+                'expected' => new ArrayCollection([
+                    (new OrderLineItem())->setShipBy($now),
+                ]),
+            ],
         ];
     }
 }

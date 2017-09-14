@@ -3,13 +3,12 @@
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
-
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 class FrontendProductPricesDataProvider
 {
@@ -44,7 +43,7 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param LineItem[] $lineItems
+     * @param ProductLineItemInterface[] $lineItems
      * @return array|null
      */
     public function getProductsMatchedPrice(array $lineItems)
@@ -67,14 +66,14 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param LineItem[] $lineItems
-     * @return array|null
+     * @param array|ProductHolderInterface[] $lineItems
+     * @return array
      */
     public function getProductsAllPrices(array $lineItems)
     {
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
             $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-            array_map(function (LineItem $lineItem) {
+            array_map(function (ProductHolderInterface $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),
             $this->userCurrencyManager->getUserCurrency()
@@ -92,7 +91,7 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param Collection|LineItem[] $lineItems
+     * @param Collection|ProductLineItemInterface[] $lineItems
      * @return array
      */
     protected function getProductsPricesCriteria(array $lineItems)

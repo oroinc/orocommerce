@@ -69,7 +69,7 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
-        $entity = $checkout->getSourceEntity();
+        $entity = $checkout;
         $currency = $this->userCurrencyManager->getUserCurrency();
         $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {

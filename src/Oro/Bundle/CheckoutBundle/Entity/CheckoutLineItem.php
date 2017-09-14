@@ -140,11 +140,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     protected $priceFixed = false;
 
     /**
-     * @var bool
-     */
-    protected $requirePriceRecalculation = false;
-
-    /**
      * @return string
      */
     public function __toString()
@@ -191,10 +186,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      */
     public function setProduct(Product $product = null)
     {
-        if ($product && (!$this->product || $product->getId() !== $this->product->getId())) {
-            $this->requirePriceRecalculation = true;
-        }
-
         $this->product = $product;
 
         return $this;
@@ -279,10 +270,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      */
     public function setQuantity($quantity)
     {
-        if ($quantity !== $this->quantity) {
-            $this->requirePriceRecalculation = true;
-        }
-
         $this->quantity = $quantity;
 
         return $this;
@@ -305,10 +292,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      */
     public function setProductUnit(ProductUnit $productUnit = null)
     {
-        if ($productUnit && (!$this->productUnit || $productUnit->getCode() !== $this->productUnit->getCode())) {
-            $this->requirePriceRecalculation = true;
-        }
-
         $this->productUnit = $productUnit;
 
         return $this;
@@ -497,14 +480,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
         $this->priceFixed = $isPriceFixed;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRequirePriceRecalculation()
-    {
-        return $this->requirePriceRecalculation;
     }
 
     /**
