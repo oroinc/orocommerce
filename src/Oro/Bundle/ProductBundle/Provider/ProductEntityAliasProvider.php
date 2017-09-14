@@ -59,7 +59,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * @param $entityClass ex:Extend\Entity\EV_Product_New_Attribute_8fde6396
      * @return string
      */
-    private function getAliasFromEntityClass($entityClass)
+    protected function getAliasFromEntityClass($entityClass)
     {
         // starting with a FQN like Extend\Entity\EV_Product_New_Attribute_8fde6396 we get a clean entity class name
         // ex: New_Attribute_8fde6396
@@ -80,7 +80,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * @param $fieldName
      * @return string
      */
-    private function getAliasByActualFieldName($fieldName)
+    protected function getAliasByActualFieldName($fieldName)
     {
         $productMetadata = $this->configManager->getEntityMetadata(Product::class);
 
@@ -109,7 +109,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * @param $fieldName
      * @return array
      */
-    private function getEntityAliasAndPlural($fieldName)
+    protected function getEntityAliasAndPlural($fieldName)
     {
         $alias = 'product' . $this->normalizeFieldName($fieldName);
         return [
