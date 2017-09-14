@@ -29,7 +29,10 @@ class ProductEntityAliasProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entityAliasProvider = new ProductEntityAliasProvider($this->attributeConfigHelper, $this->configManager);
+        $this->entityAliasProvider = new ProductEntityAliasProvider(
+            $this->attributeConfigHelper,
+            $this->configManager
+        );
     }
 
     /**
