@@ -8,14 +8,12 @@ define(function(require) {
     FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
         /**
          * @inheritDoc
-         * @private
          */
         _updateRenderMode: function() {
             switch (viewportManager.getViewport().type) {
                 case 'tablet':
                 case 'tablet-small':
                     this.renderMode = 'collapse-mode';
-                    this.renderMode = '';
                     break;
                 case 'mobile-landscape':
                 case 'mobile':
