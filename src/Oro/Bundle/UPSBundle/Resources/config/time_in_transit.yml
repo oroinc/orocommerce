@@ -28,3 +28,20 @@ services:
             - '@oro_ups.client.factory_basic'
             - '@oro_ups.time_in_transit.result.factory'
             - '@logger'
+
+    oro_ups.cache.time_in_transit:
+        public: false
+        parent: oro.cache.abstract
+
+    oro_ups.time_in_transit.cache_provider.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory'
+        arguments:
+            - '@oro_ups.cache.time_in_transit'
+        lazy: true
+
+    oro_ups.cacheable_time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransit'
+        decorates: oro_ups.time_in_transit
+        arguments:
+            - '@oro_ups.cacheable_time_in_transit.inner'
+            - '@oro_ups.time_in_transit.cache_provider.factory'
