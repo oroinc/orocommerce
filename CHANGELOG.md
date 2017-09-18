@@ -80,19 +80,63 @@
 ### Fixed
 
 ## 1.3.4 (2017-09-04)
+
+### Changed
+OroPlatform and OroCRM have been upgraded to 2.3.4 version
+
 ### Fixed
+Fixed 500 error when apply filter 'Brand' on Product creation page.
 
 ## 1.3.3 (2017-08-30)
-### Fixed
+
+### Changed
+OroPlatform and OroCRM have been upgraded to 2.3.3 version
 
 ## 1.3.2 (2017-08-22)
+
+### Changed
+OroPlatform and OroCRM have been upgraded to 2.3.2 version
+
 ### Fixed
+Fixed Filter criteria disappears from UI upon setting
 
 ## 1.3.1 (2017-08-15)
+
+### Changed
+* OroPlatform and OroCRM have been upgraded to 2.3.1 version
+
 ### Fixed
+* Fixed unable to save product after Product Prices manipulations
+* Fixed the product name is cached and displayed instead of the other product names in popup
+* Fixed DE translations are not available via web install of application
+* Fixed check out and cancel with Apruve integration periodically fails
+* Fixed Sales Representative Info demo data changes
 
 ## 1.3.0 LTS (2017-07-28)
 [Show detailed list of changes](#file-incompatibilities-1-3-0.md)
+
+The class `Oro\Bundle\SecurityBundle\SecurityFacade`, services `oro_security.security_facade` and `oro_security.security_facade.link`, and TWIG function `resource_granted` were marked as deprecated.
+Use services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` and TWIG function `is_granted` instead.
+In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
+The usage of deprecated service `security.context` (interface `Symfony\Component\Security\Core\SecurityContextInterface`) was removed as well.
+All existing classes were updated to use new services instead of the `SecurityFacade` and `SecurityContext`:
+
+* service `security.authorization_checker`
+    * implements `Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`
+    * the property name in classes that use this service is `authorizationChecker`
+* service `security.token_storage`
+    * implements `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
+    * the property name in classes that use this service is `tokenStorage`
+* service `oro_security.token_accessor`
+    * implements `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface`
+    * the property name in classes that use this service is `tokenAccessor`
+* service `oro_security.class_authorization_checker`
+    * implements `Oro\Bundle\SecurityBundle\Authorization\ClassAuthorizationChecker`
+    * the property name in classes that use this service is `classAuthorizationChecker`
+* service `oro_security.request_authorization_checker`
+    * implements `Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker`
+    * the property name in classes that use this service is `requestAuthorizationChecker`
+
 ### Added
 ### Changed
 * **AuthorizeNetBundle**: AuthorizeNetBundle extracted to individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
@@ -108,6 +152,7 @@
 
 ## 1.1.0 (2017-03-31)
 [Show detailed list of changes](#file-incompatibilities-1-1-0.md)
+
 
 ## 1.0.14 (2017-08-22)
 
