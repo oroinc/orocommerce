@@ -373,6 +373,20 @@ class ShoppingListManager
     }
 
     /**
+     * @return bool
+     */
+    public function isCurrentShoppingListEmpty()
+    {
+        $shoppingLists = $this->getShoppingListsWithCurrentFirst();
+
+        if (count($shoppingLists) != 1) {
+            return false;
+        }
+
+        return $shoppingLists[0]->getLineItems()->count() == 0;
+    }
+
+    /**
      * @param array $sortCriteria
      * @return array
      */
@@ -386,7 +400,7 @@ class ShoppingListManager
 
     /**
      * @param array $sortCriteria
-     * @return array
+     * @return ShoppingList[]
      */
     public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
     {
