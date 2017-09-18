@@ -4,6 +4,10 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
       selector: 'div.layout-content'
 
+    CollectionTableRow:
+      selector: 'tbody tr'
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTableRow
+
     Order Billing Address Select:
       selector: '[name="oro_order_type[billingAddress][customerAddress]"]'
 
@@ -77,25 +81,8 @@ oro_behat_extension:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
 
-    Order Discount Form:
-      selector:
-        locator: '//div[@class="discount-popup"]/ancestor::form'
-        type: xpath
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Description:
-            locator: '[data-role=description]'
-            type: 'css'
-          Value:
-            locator: '[data-role=value]'
-            type: 'css'
-          Type:
-            locator: '[data-role=type]'
-            type: 'css'
-
     Discounts:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
       selector: 'div.oro-discount-collection > table'
 
     Overridden Shipping Cost Amount:
@@ -108,6 +95,9 @@ oro_behat_extension:
 
     DiscountAmount:
       selector: 'input[name="oro_action_operation[orderDiscount][value]"]'
+
+    DiscountDescription:
+      selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
   pages:
     OrderFrontendView:

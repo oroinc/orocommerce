@@ -83,6 +83,7 @@
                                     entityClass: oro_class_name(form.vars.order),
                                     entityId: {id: form.vars.order.id}
                                 }),
+                                'title': 'oro.order.order_discount.actions.edit'|trans,
                                 'iCss': 'fa-edit hide-text',
                                 'dataAttributes': {
                                     'role': 'edit'
@@ -100,12 +101,8 @@
                             }|merge_recursive(addAndEditLinkSettings)) }}
                         </td>
                         <td class="action">
-                            <a data-role="remove" href="javascript:void(0);">
-                                <i
-                                    data-element-index="{{ loop.index0 }}"
-                                    class="fa-trash hide-text"
-                                    title="{{ 'oro.order.order_discount.actions.remove'|trans }}"
-                                >
+                            <a data-role="remove" href="javascript:void(0);" title="{{ 'oro.order.order_discount.actions.remove'|trans }}">
+                                <i data-element-index="{{ loop.index0 }}" class="fa-trash hide-text">
                                     {{ 'oro.order.order_discount.actions.remove'|trans }}
                                 </i>
                             </a>
