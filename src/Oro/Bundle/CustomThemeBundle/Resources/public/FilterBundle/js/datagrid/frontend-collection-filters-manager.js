@@ -45,6 +45,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        _refreshSelectWidget: function() {
+            if (this.enableMultiselectWidget) {
+                FrontendCollectionFiltersManager.__super__._refreshSelectWidget.apply(this, arguments);
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
         _onChangeFilterSelect: function() {
             if (this.enableMultiselectWidget) {
                 FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.apply(this, arguments);
