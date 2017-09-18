@@ -100,6 +100,10 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
         return $fieldName;
     }
 
+    /**
+     * @param $fieldName
+     * @return string
+     */
     private function normalizeFieldName($fieldName)
     {
         return str_replace('_', '', strtolower($fieldName));
