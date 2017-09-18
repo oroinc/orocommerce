@@ -1,7 +1,5 @@
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
-@skip
-#todo: Unskip after resolve OPI-139
 Feature: Inline Editing in Products Grids
   In order to quickly edit product information
   As an Administrator
@@ -30,7 +28,11 @@ Feature: Inline Editing in Products Grids
 #    tax code - TaxCode1
 
   Scenario: Inline editing of Name field in grid
-    Given I login as administrator
+    Given sessions active:
+      | Admin | first_session  |
+      | User  | second_session |
+    And I proceed as the Admin
+    And I login as administrator
     And I go to Products / Products
     When I edit "Product1" Name as "Product2" without saving
     And I press "Save changes"
@@ -125,15 +127,15 @@ Feature: Inline Editing in Products Grids
     And I press "Save changes"
     Then I should see "This value should not be blank."
     Then I press "Cancel"
-    And I click Logout in user menu
 
   Scenario: Check that slug redirect is created with dialog
+    Given I proceed as the User
     When I am on "/product2"
     Then I should see "Product2"
     When I am on "/product3"
     Then I should see "404 Not Found"
 
-    Given I login as administrator
+    Then I proceed as the Admin
     And I go to Products / Products
     When I edit "Product2" Name as "Product3" without saving
     And I press "Save changes"
@@ -143,13 +145,14 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product3 |
 
+    Then I proceed as the User
     When I am on "/product2"
     Then I should see "Product3"
     When I am on "/product3"
     Then I should see "Product3"
 
   Scenario: Check that slug redirect isn't created with dialog
-    Given I login as administrator
+    Given I proceed as the Admin
     And I go to Products / Products
     When I edit "Product3" Name as "Product4" without saving
     And I press "Save changes"
@@ -160,16 +163,16 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product4 |
 
+    Then I proceed as the User
     When I am on "/product3"
     Then I should see "404 Not Found"
     When I am on "/product4"
     Then I should see "Product4"
 
   Scenario: Check that slug redirect is created with system option Always
-    Given I login as administrator
+    Given I proceed as the Admin
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And check "Use default" for "URL" field
     And check "Use default" for "Secure URL" field
     And uncheck "Use default" for "Create Redirects" field
@@ -185,16 +188,16 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product5 |
 
+    Then I proceed as the User
     When I am on "/product4"
     Then I should see "Product5"
     When I am on "/product5"
     Then I should see "Product5"
 
   Scenario: Check that slug redirect isn't created with system option Never
-    Given I login as administrator
+    Given I proceed as the Admin
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     Then I fill in "Create Redirects" with "Never"
     And I save form
     Then I should see "Configuration saved" flash message
@@ -207,15 +210,15 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product6 |
 
+    Then I proceed as the User
     When I am on "/product5"
     Then I should see "404 Not Found"
     When I am on "/product6"
     Then I should see "Product6"
 
-    Given I login as administrator
+    Then I proceed as the Admin
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     Then I fill in "Create Redirects" with "Ask"
     And I save form
     Then I should see "Configuration saved" flash message
@@ -237,6 +240,7 @@ Feature: Inline Editing in Products Grids
     Then I should see following records in grid:
       | Product10 |
 
+    Then I proceed as the User
     When I am on "/product10"
     Then I should see "CONTROL1"
     When I am on "/product10-1"

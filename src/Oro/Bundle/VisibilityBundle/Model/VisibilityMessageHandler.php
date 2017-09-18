@@ -15,14 +15,14 @@ class VisibilityMessageHandler
      * @var MessageProducerInterface
      */
     protected $messageProducer;
-    
+
     /**
      * @var array
      */
     protected $scheduledMessages = [];
 
     /**
-     * @param MessageFactoryInterface $messageFactory
+     * @param MessageFactoryInterface  $messageFactory
      * @param MessageProducerInterface $messageProducer
      */
     public function __construct(
@@ -39,18 +39,17 @@ class VisibilityMessageHandler
      */
     public function addMessageToSchedule($topic, $entity)
     {
-        $message = $this->messageFactory->createMessage($entity);
-
-        if (!$this->isScheduledMessage($topic, $message)) {
-            $this->scheduleMessage($topic, $message);
+        if (!$this->isScheduledMessage($topic, $entity)) {
+            $this->scheduleMessage($topic, $entity);
         }
     }
 
     public function sendScheduledMessages()
     {
-        foreach ($this->scheduledMessages as $topic => $messages) {
-            if (count($messages) > 0) {
-                foreach ($messages as $message) {
+        foreach ($this->scheduledMessages as $topic => $entities) {
+            if (count($entities) > 0) {
+                foreach ($entities as $entity) {
+                    $message = $this->messageFactory->createMessage($entity);
                     $this->messageProducer->send($topic, $message);
                 }
             }
@@ -61,31 +60,35 @@ class VisibilityMessageHandler
 
     /**
      * @param string $topic
-     * @param array $message
+     * @param object $entity
+     *
      * @return bool
      */
-    protected function isScheduledMessage($topic, array $message)
+    protected function isScheduledMessage($topic, $entity)
     {
-        $messages = empty($this->scheduledMessages[$topic]) ? [] : $this->scheduledMessages[$topic];
+        if (empty($this->scheduledMessages[$topic][$this->getMessageKey($entity)])) {
+            return false;
+        }
 
-        return array_key_exists($this->getMessageKey($message), $messages);
+        return true;
     }
 
     /**
      * @param string $topic
-     * @param array $message
+     * @param object $entity
      */
-    protected function scheduleMessage($topic, array $message)
+    protected function scheduleMessage($topic, $entity)
     {
-        $this->scheduledMessages[$topic][$this->getMessageKey($message)] = $message;
+        $this->scheduledMessages[$topic][$this->getMessageKey($entity)] = $entity;
     }
 
     /**
-     * @param $message
+     * @param object $entity
+     *
      * @return string
      */
-    protected function getMessageKey($message)
+    protected function getMessageKey($entity)
     {
-        return $message[VisibilityMessageFactory::ENTITY_CLASS_NAME] . ':' . $message[VisibilityMessageFactory::ID];
+        return spl_object_hash($entity);
     }
 }

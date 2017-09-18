@@ -53,6 +53,7 @@ oro:
         subtotal_value.label: 'Subtotal'
         base_subtotal_value.label: 'Subtotal In Base Currency'
         contact_information.label: 'Contact Information'
+        internal_status.label: 'Internal Status'
 
         subtotal:
             label: Subtotal
@@ -81,7 +82,6 @@ oro:
         discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
-        discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
         frontend_index_title: Order History - My Account - Home page
@@ -98,14 +98,22 @@ oro:
                 save_success: shipping tracking numbers have been updated
 
         orderdiscount:
+            flash.save_success: Order Discount successfully added
+            add_discount.label: Add Special Discount
             entity_label: Order Discount
             entity_plural_label: Order Discounts
             id.label: ID
             amount.label: Amount
+            value.label: Discount
             description.label: Description
             percent.label: Percent
             order.label: Order
             type.label: Order Discount Type
+            action:
+                cancel: Cancel
+                save: Save
+                apply: Apply
+                edit: Edit
 
         orderaddress:
             entity_label: Order Address
@@ -166,10 +174,16 @@ oro:
             column:
                 product: 'Product'
 
-        orderdiscountitem:
+        order_discount:
+            add_label: Add Special Discount
+            all_label: All Special Discounts
+            no_entities: No records found
             columns:
                 title: Discount
                 description: Description
+            actions:
+                remove: Remove
+                edit: Edit
             types:
                 percent: %
 
@@ -189,6 +203,11 @@ oro:
             best_selling_list.description: List of best selling products
             static_reports_tab.label: Reports
         widgets:
+            order_discount_form: Special Discount Form
+            order_discount_edit_form: Edit Speical Discount Form
+            order_discount_add_form: Add Special Discount Form
+            add_order_discount: Add Special Discount
+            edit_order_discount: Edit Special Discount
             order_information: Order Information
             shipping_tracking: Shipping Tracking
 
@@ -203,7 +222,7 @@ oro:
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
-            discounts: Discounts
+            discounts: Special Discounts
 
         security:
             permission:
@@ -241,9 +260,19 @@ oro:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
+                order_automation_enable_cancellation.title: 'Enable Automatic Order Cancellation'
+                order_automation_enable_cancellation.tooltip: 'All orders with selected internal statuses will be automatically cancelled past their "Do Not Ship Later Than" date.'
+                order_automation_applicable_statuses.title: 'Applicable Statuses'
+                order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
+                order_automation_target_status.title: 'Target Status'
+                order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
+                order_creation_new_internal_order_status.title: 'New Internal Order Status'
+                order_creation_new_internal_order_status.tooltip: 'The selected status will be assigned to new orders upon creation.'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
+                order_automation.title: 'Order Automation'
+                order_creation.title: 'Order Creation'
 
         privilege:
             category.orders.label: 'Orders'
@@ -261,6 +290,24 @@ oro:
                 message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
                 button.okText: 'Yes, Charge'
                 result.success: 'The payment of %amount% has been captured successfully.'
+
+        action:
+            order:
+                cancel: 'Cancel'
+                close: 'Close'
+                archive : 'Archive'
+                mark_as_shipped: 'Mark as Shipped'
+            message:
+                order:
+                    cancel.success: 'Order #%id% has been cancelled.'
+                    close.success: 'Order #%id% has been closed.'
+                    archive.success: 'Order #%id% has been archived.'
+                    mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
+
+        datagrid:
+            view:
+                open_orders: 'Open Orders'
+
     frontend:
         order:
             entity_plural_label: Orders

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Test\Unit\Layout\DataProvider\DTO;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\Layout\DataProvider\DTO;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;

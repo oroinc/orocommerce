@@ -90,6 +90,99 @@ a Product entity, in the **"data"** section. Example:
 
 You can see the existing categories using its API [here](#get--admin-api-categories)
 
+##### 5. Using product images
+
+Add images definition in the **"data"** section. Example:
+
+    "images": {
+      "data": [
+        {
+          "type": "productimages",
+          "id": "product-image-1"
+        }
+      ]
+    }
+
+In the **"included"** section. Example:
+
+    {
+      "type": "files",
+      "id": "file-1",
+      "attributes": {
+        "mimeType": "image/jpeg",
+        "originalFilename": "onedot.jpg",
+        "fileSize": 631,
+        "content":"/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+      }
+    },
+    {
+      "type": "productimagetypes",
+      "id": "product-image-type-1",
+      "attributes": {
+        "productImageTypeType": "main"
+      },
+      "relationships": {
+        "productImage": {
+          "data": {
+            "type": "productimages",
+            "id": "product-image-1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productimagetypes",
+      "id": "product-image-type-2",
+      "attributes": {
+        "productImageTypeType": "listing"
+      },
+      "relationships": {
+        "productImage": {
+          "data": {
+            "type": "productimages",
+            "id": "product-image-1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productimages",
+      "id": "product-image-1",
+      "relationships": {
+        "image": {
+          "data": {
+            "type": "files",
+            "id": "file-1"
+          }
+        },
+        "types": {
+          "data": [
+            {
+              "type": "productimagetypes",
+              "id": "product-image-type-1"
+            },
+            {
+              "type": "productimagetypes",
+              "id": "product-image-type-2"
+            }
+          ]
+        },
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "product-id"
+          }
+        }
+      }
+    }
+
+The example above also creates product image mandatory subresources : files and types.
+The subresources can be managed also within there specific: files [here](#get--admin-api-files) ,
+and types [here](#get--admin-api-productimagetypes). Collection of product images can be accessed
+using the dedicated API [here](#get--admin-api-productimages).
+The type attribute of the product image type model ("productImageTypeType") should be a valid type
+ of image defined in themes  and it is not directly handled by the API.
+
 {@request:json_api}
 
 Example:
@@ -728,23 +821,15 @@ Example:
 
 ### sku
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
 **Required field**
 
-### skuUppercase
-
-Product SKU in uppercase
-
-#### create, get, get_list, update
-
-{@inheritdoc}
-
 ### names
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -752,7 +837,7 @@ Product SKU in uppercase
 
 ### decrementQuantity
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -760,7 +845,7 @@ Product SKU in uppercase
 
 ### inventoryThreshold
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -768,7 +853,7 @@ Product SKU in uppercase
 
 ### inventory_status
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -776,7 +861,7 @@ Product SKU in uppercase
 
 ### manageInventory
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -786,7 +871,7 @@ Product SKU in uppercase
 
 Backorder.
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
@@ -794,7 +879,7 @@ Backorder.
 
 ### status
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -802,7 +887,7 @@ Backorder.
 
 ### featured
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -810,7 +895,7 @@ Backorder.
 
 ### newArrival
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -818,7 +903,7 @@ Backorder.
 
 ### productType
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -826,7 +911,7 @@ Backorder.
 
 ### attributeFamily
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -834,31 +919,29 @@ Backorder.
 
 ### category
 
-#### create, get, get_list
-
-{@inheritdoc}
-
 Specify the category of the product
 
 ### taxCode
 
 Specify a tax code
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
 ### test_variant_field
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
 ### pageTemplate
 
-### create, update, get, get_list
-
 Specify the page template for the product
+
+### images
+
+Specify the images for the product
 
 ## SUBRESOURCES
 
@@ -1261,3 +1344,25 @@ Retrieve the ID of the pageTemplate for a specific product
 #### update_relationship
 
 Replace the pageTemplate for a specific product
+
+### images
+
+#### get_subresource
+
+Get the related productImages entity for a specific product
+
+#### get_relationship
+
+Retrieve the ID of productImages for a specific product
+
+#### add_relationship
+
+Set the productImages of a specific product record
+
+#### update_relationship
+
+Replace the productImages for a specific product
+
+#### delete_relationship
+
+Remove the productImages of a specific product record.

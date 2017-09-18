@@ -49,6 +49,150 @@ data:
                      id: '<toString(@simple_order->customer->id)>'
     -
         type: orders
+        id: '<toString(@simple_order2->id)>'
+        attributes:
+            identifier: '@simple_order2->identifier'
+            poNumber: '@simple_order2->poNumber'
+            customerNotes: null
+            shipUntil: '@simple_order2->shipUntil->format("Y-m-d")'
+            currency: '@simple_order2->currency'
+            subtotalValue: '<toString(@simple_order2->subtotal)>'
+            totalValue: '<toString(@simple_order2->total)>'
+            shippingMethod: null
+            shippingMethodType: null
+            estimatedShippingCostAmount: null
+            overriddenShippingCostAmount: null
+            sourceEntityClass: null
+            sourceEntityId: null
+            sourceEntityIdentifier: null
+            totalDiscountsAmount: null
+            createdAt: '@simple_order2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@simple_order2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data: []
+            discounts:
+                data: []
+            shippingTrackings:
+                data: []
+            owner:
+                data:
+                    type: users
+                    id: '<toString(@simple_order2->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order2->organization->id)>'
+            customerUser:
+                data:
+                     type: customer_users
+                     id: '<toString(@simple_order2->customerUser->id)>'
+            customer:
+                data:
+                     type: customers
+                     id: '<toString(@simple_order2->customer->id)>'
+    -
+        type: orders
+        id: '<toString(@simple_order3->id)>'
+        attributes:
+            identifier: '@simple_order3->identifier'
+            poNumber: '@simple_order3->poNumber'
+            customerNotes: null
+            shipUntil: '@simple_order3->shipUntil->format("Y-m-d")'
+            currency: '@simple_order3->currency'
+            subtotalValue: '<toString(@simple_order3->subtotal)>'
+            totalValue: '<toString(@simple_order3->total)>'
+            shippingMethod: null
+            shippingMethodType: null
+            estimatedShippingCostAmount: null
+            overriddenShippingCostAmount: null
+            sourceEntityClass: null
+            sourceEntityId: null
+            sourceEntityIdentifier: null
+            totalDiscountsAmount: null
+            createdAt: '@simple_order3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@simple_order3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data: []
+            discounts:
+                data: []
+            shippingTrackings:
+                data: []
+            owner:
+                data:
+                    type: users
+                    id: '<toString(@simple_order3->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order3->organization->id)>'
+            customerUser:
+                data:
+                     type: customer_users
+                     id: '<toString(@simple_order3->customerUser->id)>'
+            customer:
+                data:
+                     type: customers
+                     id: '<toString(@simple_order3->customer->id)>'
+    -
+        type: orders
+        id: '<toString(@simple_order4->id)>'
+        attributes:
+            identifier: '@simple_order4->identifier'
+            poNumber: '@simple_order4->poNumber'
+            customerNotes: null
+            shipUntil: '@simple_order4->shipUntil->format("Y-m-d")'
+            currency: '@simple_order4->currency'
+            subtotalValue: '<toString(@simple_order4->subtotal)>'
+            totalValue: '<toString(@simple_order4->total)>'
+            shippingMethod: null
+            shippingMethodType: null
+            estimatedShippingCostAmount: null
+            overriddenShippingCostAmount: null
+            sourceEntityClass: null
+            sourceEntityId: null
+            sourceEntityIdentifier: null
+            totalDiscountsAmount: null
+            createdAt: '@simple_order4->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@simple_order4->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data: []
+            discounts:
+                data: []
+            shippingTrackings:
+                data: []
+            owner:
+                data:
+                    type: users
+                    id: '<toString(@simple_order4->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order4->organization->id)>'
+            customerUser:
+                data:
+                     type: customer_users
+                     id: '<toString(@simple_order4->customerUser->id)>'
+            customer:
+                data:
+                     type: customers
+                     id: '<toString(@simple_order4->customer->id)>'
+    -
+        type: orders
         id: '<toString(@my_order->id)>'
         attributes:
             identifier: '@my_order->identifier'

@@ -3,7 +3,9 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
@@ -82,7 +84,6 @@ class RequestControllerNotificationTest extends WebTestCase
 
     public function testCreateRequestEmailNotifySalesRepsOfCustomer()
     {
-        $this->markTestIncomplete('Random failing test. TODO: BB-11348');
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
@@ -191,11 +192,13 @@ class RequestControllerNotificationTest extends WebTestCase
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
         $emailMessages = $emailLogger->getMessages();
-        $i = 0;
+        $actualUsersSentTo = [];
+        foreach ($emailMessages as $message) {
+            $actualUsersSentTo = array_merge($actualUsersSentTo, array_keys($message->getTo()));
+        }
+
         foreach ($usersToSendTo as $userToSendTo) {
-            $toEmails = array_keys($emailMessages[$i]->getTo());
-            $this->assertEquals($userToSendTo->getEmail(), reset($toEmails));
-            $i++;
+            $this->assertTrue(in_array($userToSendTo->getEmail(), $actualUsersSentTo));
         }
         $this->assertCount($numberOfMessagesExpected, $emailMessages);
     }

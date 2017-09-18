@@ -1,0 +1,54 @@
+processes:
+    definitions:
+        expire_orders:
+            label: 'Cancel old Orders'
+            enabled: true
+            entity: Oro\Bundle\OrderBundle\Entity\Order
+            preconditions:
+                '@is_system_config_equal': ['oro_order.order_automation_enable_cancellation', true]
+            actions_configuration:
+                - '@call_service_method':
+                    attribute: $.applicableStatuses
+                    service: oro_order.provider.configuration
+                    method: getApplicableInternalStatuses
+                - '@call_service_method':
+                    attribute: $.targetStatusId
+                    service: oro_order.provider.configuration
+                    method: getTargetInternalStatus
+                - '@tree':
+                    conditions:
+                        '@and':
+                            - '@not_empty': $.targetStatusId
+                            - '@not_empty': $.applicableStatuses
+                    actions:
+                        - '@request_enum_entity':
+                            enum_code: 'order_internal_status'
+                            attribute: $.targetStatus
+                            identifier: $.targetStatusId
+                        - '@create_datetime':
+                            attribute: $.date
+                            #should be start of the day, to avoid cancellation of orders with today's DNSL
+                            time: '00:00:00'
+                        - '@find_entities':
+                            class: Oro\Bundle\OrderBundle\Entity\Order
+                            attribute: $.orders
+                            where:
+                                and:
+                                    - e.shipUntil IS NOT NULL
+                                    - e.shipUntil < :date
+                                    - NOT IDENTITY(e.internal_status) = :targetStatus
+                                    - IDENTITY(e.internal_status) IN (:statuses)
+                            query_parameters:
+                                date: $.date
+                                targetStatus: $.targetStatusId
+                                statuses: $.applicableStatuses
+                        - '@foreach':
+                            array: $.orders
+                            value: $.order
+                            actions:
+                                - '@assign_value': [$.order.internalStatus, $.targetStatus]
+
+    triggers:
+        expire_orders:
+            -
+                cron: '10 * * * *'

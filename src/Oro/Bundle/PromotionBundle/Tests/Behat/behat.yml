@@ -12,10 +12,10 @@ oro_behat_extension:
         - OroCustomerBundle::FrontendGridContext
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext
-        - OroSalesBundle::FeatureContext
+        - OroShippingBundle::FeatureContext
         - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
+          - '@oro_entity.entity_alias_resolver'
+          - '@oro_importexport.processor.registry'
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 
@@ -98,3 +98,11 @@ oro_behat_extension:
     OrderPromotionsGrid:
       selector: 'div[data-page-component-name="promotion-order-applied-discount-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    CouponCodePreview:
+      selector: 'div#coupon-code-preview'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Promotions Grid Button:
+      selector: '.entity-select-btn'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

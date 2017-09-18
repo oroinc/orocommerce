@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -23,10 +22,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([
-            ProductFixture::class,
-            LoadProductImageData::class,
-        ]);
+        $this->loadFixtures([ProductFixture::class]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('oro_product.entity.product.class')
@@ -82,6 +78,7 @@ class ProductRepositoryTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ],
             ],
             'product, 1, 1' => [
@@ -133,6 +130,7 @@ class ProductRepositoryTest extends WebTestCase
             ProductFixture::PRODUCT_6,
             ProductFixture::PRODUCT_7,
             ProductFixture::PRODUCT_8,
+            ProductFixture::PRODUCT_9,
         ];
 
         return [

@@ -13,7 +13,7 @@
                 blockId : block.vars.id,
                 reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
             }|json_encode }}"
-            data-layout="separate">
+       >
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -306,7 +306,7 @@
             {% if isProductUnitSelectionVisible %}
                 <select class="select select--full" name="product_unit" data-name="field__unit" required>
                     {% if parent.productsUnits[lineItem.product.id] is defined %}
-                        {% for unit in parent.productsUnits[lineItem.product.id] %}
+                        {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
                         {% endfor %}
                         {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id] %}

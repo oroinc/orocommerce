@@ -18,64 +18,69 @@
     }) %}
 
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="request-form-grid">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_fields_widget %}
-    <div class="request-form-grid">
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.firstName) }}
-            </div>
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.lastName) }}
+    {{ form_row(form._token) }}
+
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.firstName) }}
+        </div>
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.lastName) }}
+        </div>
+    </div>
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.email)  }}
+        </div>
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.phone) }}
+        </div>
+    </div>
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.company) }}
+        </div>
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.role) }}
+        </div>
+    </div>
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--12">
+            {{ form_row(form.note, { 'attr': {'rows': 5} }) }}
+        </div>
+    </div>
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--6">
+            {{ form_row(form.poNumber) }}
+        </div>
+        <div class="request-form-grid__column grid__column--6">
+            <div class="datepicker-box datepicker-box--form-mode">
+                <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                {{ form_row(form.shipUntil, {
+                    'attr': {
+                        'class': 'datepicker-input input'
+                    },
+                    'parentClass': '',
+                    'datePickerOptions': {
+                        'minDate': 0
+                    }
+                }) }}
             </div>
         </div>
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.email)  }}
-            </div>
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.phone) }}
-            </div>
-        </div>
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.company) }}
-            </div>
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.role) }}
-            </div>
-        </div>
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--12">
-                {{ form_row(form.note, { 'attr': {'rows': 5} }) }}
-            </div>
-        </div>
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.poNumber) }}
-            </div>
-            <div class="request-form-grid__column grid__column--6">
-                <div class="datepicker-box datepicker-box--form-mode">
-                    <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
-                    {{ form_row(form.shipUntil, {
-                        'attr': {
-                            'class': 'datepicker-box__input input'
-                        },
-                        'parentClass': '',
-                        'datePickerOptions': {
-                            'minDate': 0
-                        }
-                    }) }}
-                </div>
-            </div>
-        </div>
-        <div class="request-form-grid__row">
-            <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.assignedCustomerUsers) }}
-            </div>
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_edit__rfp_form_field_assigned_to_widget %}
+    <div class="request-form-grid__row">
+        <div class="request-form-grid__column grid__column--6">
+            {{ block_widget(block) }}
         </div>
     </div>
 {% endblock %}

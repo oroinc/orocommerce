@@ -121,7 +121,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_commerce_entity.extra_insert_entity_storage'
+            - '@oro_entity.doctrine_helper'
 
     oro_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener'
@@ -173,6 +173,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_storage_cache'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
 
@@ -189,7 +190,7 @@ services:
             - '@oro_entity.doctrine.field_updates_checker'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'

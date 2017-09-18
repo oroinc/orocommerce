@@ -37,8 +37,13 @@ Feature: Brands
     Given I proceed as the Admin
     And go to Products/ Products
     And click edit "PSKU1" in grid
-    When fill form with:
-    |Brand|ACME|
+    When click "Brand humburger button"
+    And filter Brand as Contains "ACME"
+    Then I should see following grid:
+      |Brand|
+      |ACME |
+    And should not see "Second Brand"
+    And click on ACME in grid
     And save and close form
     Then I should see "Product has been saved" flash message
 

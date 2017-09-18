@@ -12,3 +12,10 @@ oro_catalog_ajax:
     resource:     "@OroCatalogBundle/Controller/AjaxCatalogController.php"
     type:         annotation
     prefix:       /catalog/ajax
+
+oro_catalog_frontend_product:
+    resource: "@OroCatalogBundle/Controller/Frontend/ProductController.php"
+    type: annotation
+    prefix: /catalog
+    options:
+        frontend: true

@@ -10,6 +10,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class Configuration implements ConfigurationInterface
 {
+    const DEFAULT_GUEST_RFP_OWNER = 'default_guest_rfp_owner';
+
     /**
      * {@inheritDoc}
      */
@@ -38,7 +40,12 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_IN_STOCK,
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
-                ]
+                ],
+                'guest_rfp' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                self::DEFAULT_GUEST_RFP_OWNER => ['type' => 'string', 'value' => null],
             ]
         );
 

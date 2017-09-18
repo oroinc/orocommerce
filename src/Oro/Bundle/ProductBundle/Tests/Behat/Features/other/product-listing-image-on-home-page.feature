@@ -1,7 +1,5 @@
 @fixture-OroProductBundle:product_listing_images.yml
 @regression
-@skip
-# todo: BB-11440
 Feature: Display product listing image instead of main image on the home page
 
   Scenario: Check that main image is displayed if there's no listing image
@@ -22,7 +20,7 @@ Feature: Display product listing image instead of main image on the home page
     Then I should see remembered "main" image in "Featured Products" section
 
   Scenario: Check that listing image is displayed if it is present
-    Given I login as administrator
+    Given I am on dashboard
     And I go to Products / Products
     And I click Edit PSKU1 in grid
     And I set Images with:

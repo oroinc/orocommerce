@@ -2,7 +2,8 @@
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization amount" option
   Scenario: Create new PayPal PayFlow Gateway Integration
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "PayPal Payflow Gateway" from "Type"
@@ -37,7 +38,7 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
 
   Scenario: Successful first order payment with PayPal PayFlow Gateway and enabled "zero authorization amount" option
     Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I operate as the Buyer
     When I open page with shopping list List 1
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -51,7 +52,8 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And I login as administrator
+
+    Then I operate as the Admin
     And I go to Sales/Orders
     And I click View Pending payment in grid
     And I click "Capture"
@@ -61,7 +63,7 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
 
   Scenario: Successful second order payment  and amount capture with PayPal PayFlow Gateway and already saved credit card data
     Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I operate as the Buyer
     When I open page with shopping list List 2
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -70,7 +72,8 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And I login as administrator
+
+    Then I operate as the Admin
     And I go to Sales/Orders
     And I click View Pending payment in grid
     And I click "Capture"

@@ -9,6 +9,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -46,17 +48,20 @@ class ShoppingListLineItemHandler
      * @param ShoppingListManager $shoppingListManager
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface $tokenAccessor
+     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenAccessorInterface $tokenAccessor
+        TokenAccessorInterface $tokenAccessor,
+        FeatureChecker $featureChecker
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -192,7 +197,7 @@ class ShoppingListLineItemHandler
      */
     public function isAllowed(ShoppingList $shoppingList = null)
     {
-        if (!$this->tokenAccessor->hasUser()) {
+        if (!$this->tokenAccessor->hasUser() && !$this->isAllowedForGuest()) {
             return false;
         }
 
@@ -236,5 +241,19 @@ class ShoppingListLineItemHandler
     public function setProductUnitClass($productUnitClass)
     {
         $this->productUnitClass = $productUnitClass;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowedForGuest()
+    {
+        $isAllowed = false;
+
+        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
+            $isAllowed = $this->featureChecker->isFeatureEnabled('guest_shopping_list');
+        }
+
+        return $isAllowed;
     }
 }

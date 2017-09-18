@@ -108,8 +108,7 @@ define(function(require) {
 
             var buttons = this._collectAllButtons();
 
-            var $container = this.dropdownWidget.element.find('.btn-group:first');
-            $container.html(buttons);
+            this._getContainer().html(buttons);
         },
 
         _onCollectionChange: function() {
@@ -120,10 +119,17 @@ define(function(require) {
 
             var buttons = this._collectAllButtons();
 
-            var $container = this.dropdownWidget.element.find('.btn-group:first');
-            $container.empty();
-            $container.html(buttons);
+            this._clearButtons();
+            this._getContainer().prepend(buttons);
             this.dropdownWidget._renderButtons();
+        },
+
+        _clearButtons: function() {
+            this._getContainer().find(this.options.buttonsSelector).remove();
+        },
+
+        _getContainer: function() {
+            return this.dropdownWidget.element.find('.btn-group:first');
         },
 
         _collectAllButtons: function() {
@@ -323,10 +329,9 @@ define(function(require) {
             }
 
             if (this.editLineItem && (lineItemId || setFirstLineItem)) {
-                this.model.set({
-                    quantity: this.editLineItem.quantity,
-                    unit: this.editLineItem.unit
-                });
+                //quantity precision depend on unit, set unit first
+                this.model.set('unit', this.editLineItem.unit);
+                this.model.set('quantity', this.editLineItem.quantity);
             }
         },
 

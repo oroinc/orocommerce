@@ -1,5 +1,5 @@
 .featured-category {
-    display: inline-block;
+    display: block;
 
     vertical-align: top;
 
@@ -52,6 +52,10 @@
 
         &__name {
             font-size: $base-font-size--m;
+        }
+
+        &__image {
+            display: inline-block;
         }
     }
 }

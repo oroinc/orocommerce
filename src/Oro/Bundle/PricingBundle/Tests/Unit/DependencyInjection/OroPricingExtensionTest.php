@@ -33,7 +33,22 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.update_lexemes_on_price_rule_delete_list_processor',
             'oro_pricing.api.on_schedule_delete_processor',
             'oro_pricing.api.on_schedule_delete_list_processor',
-            'oro_pricing.api_form_subscriber.add_schdules_to_price_list'
+            'oro_pricing.api_form_subscriber.add_schedules_to_price_list',
+            'oro_pricing.api.set_price_by_value_and_currency',
+            'oro_pricing.api.normalize_product_price_id',
+            'oro_pricing.api.price_list_id_in_context_storage',
+            'oro_pricing.api.product_price_id_by_price_list_id_normalizer',
+            'oro_pricing.api.normalize_product_price',
+            'oro_pricing.api.set_price_list_in_context_by_product_price_processor',
+            'oro_pricing.update.load_normalized_entity',
+            'oro_pricing.api.set_price_list_in_context_by_filter',
+            'oro_pricing.api.enabled_price_sharding_on_query',
+            'oro_pricing.api.enable_price_sharding_on_config',
+            'oro_pricing.api.save_product_price',
+            'oro_pricing.api.price_manager_delete_handler',
+            'oro_pricing.api.reset_price_rule_field_on_update',
+            'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group',
+            'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

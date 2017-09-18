@@ -5,6 +5,11 @@ layout:
             root: page_content
     actions:
         - '@setOption':
+            id: breadcrumbs
+            optionName: visible
+            optionValue: '=context["is_logged_in"]'
+
+        - '@setOption':
             id: page_title
             optionName: defaultValue
             optionValue: oro.frontend.rfp.request.create_title.label

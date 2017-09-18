@@ -79,6 +79,8 @@ oro:
                     label: 'Billing address'
                 shipping_address:
                     label: 'Shipping address'
+                visitor:
+                    label: 'Visitor'
                 visitor_email:
                     label: 'Email'
             transition:
@@ -246,6 +248,8 @@ oro:
                     label: 'Internal checkout state token'
                 order:
                     label: 'Instance of Order entity'
+                visitor:
+                    label: 'Visitor'
                 visitor_email:
                     label: 'Email'
             transition:

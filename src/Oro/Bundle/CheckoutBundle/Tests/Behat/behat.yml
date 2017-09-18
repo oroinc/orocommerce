@@ -9,15 +9,14 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroApplicationBundle::CommerceMainContext
         - OroShippingBundle::SingleCurrencyContext
+        - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
-        - OroWarehouseBundle::FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -126,7 +125,7 @@ oro_behat_extension:
         selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
-      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Flat Rate: $2.00")'
+      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Flat Rate 2: $2.00")'
 
     PaymentMethodPaymentTerm30:
       selector: 'div[data-content="payment_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Payment Term 30")'

@@ -48,6 +48,125 @@ operations:
                 route_parameters:
                     id: $.promotion_copy_id
 
+    oro_promotion_coupon_generation:
+        label: oro.promotion.coupon.generation.label
+        routes:
+            - oro_promotion_coupon_index
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        button_options:
+            icon: fa-list-alt
+        frontend_options:
+            template: OroPromotionBundle:Coupon:generate.html.twig
+            title: oro.promotion.coupon.generation.label
+            options:
+                width: 550
+                modal: true
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+        attributes:
+            couponGenerationOptions:
+                label: ' '
+                type: object
+                options:
+                    class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions'
+        form_options:
+            attribute_fields:
+                couponGenerationOptions:
+                    form_type: 'Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType'
+                    options:
+                        validation_groups: ['generation', 'Default']
+            attribute_default_values:
+                couponGenerationOptions: $.couponGenerationOptions
+        form_init:
+            - '@create_object':
+                class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions'
+                attribute: $.couponGenerationOptions
+        actions:
+            - '@call_service_method':
+                service: oro_promotion.coupon_generation.handler
+                method: process
+                method_parameters: [$.couponGenerationOptions]
+            - '@flash_message':
+                message: oro.promotion.coupon.generation.message.save_success
+                type: 'success'
+            - '@refresh_grid': promotion-coupons-grid
+
+    oro_promotion_add_coupon_form:
+        label: oro.promotion.ui.add_coupon_code.label
+        frontend_options:
+            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+            options:
+                okText: oro.promotion.ui.apply_button.label
+        attributes:
+            addedCoupons:
+                label: ' '
+                type: array
+        form_options:
+            attribute_fields:
+                addedCoupons:
+                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+                    options:
+                        entity: $.data
+
+    oro_promotion_add_coupon:
+        label: oro.promotion.ui.add_coupon_code.label
+        extends: oro_promotion_add_coupon_form
+        button_options:
+            icon: fa-ticket
+        frontend_options:
+            title: oro.promotion.ui.add_coupon_codes.title
+            options:
+                okText: oro.promotion.ui.apply_button.label
+                width: 600
+                autoResize: true
+                modal: true
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+        routes:
+            - oro_order_view
+        acl_resource: oro_order_update
+        order: 20
+        actions:
+            - '@count':
+                attribute: $.addedCouponsCount
+                value: $.addedCoupons
+            - '@tree':
+                conditions:
+                    '@gt': [$.addedCouponsCount, 0]
+                actions:
+                    - '@foreach':
+                        array: $.addedCoupons
+                        value: $.coupon
+                        actions:
+                            - '@call_service_method':
+                                service: oro_promotion.provider.entity_coupons_provider
+                                method: createAppliedCouponByCoupon
+                                attribute: $.appliedCoupon
+                                method_parameters: [$.coupon]
+                            - '@call_method':
+                                object: $.data
+                                method: addAppliedCoupon
+                                method_parameters:
+                                    - $.appliedCoupon
+                    - '@call_service_method':
+                        service: oro_promotion.applied_promotion_manager
+                        method: createAppliedPromotions
+                        method_parameters: [$.data]
+                    - '@flush_entity': $.data
+                    - '@flash_message':
+                        message: oro.promotion.ui.order_add_coupon.added.message
+                        type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@eq': [$.addedCouponsCount, 0]
+                message: oro.promotion.ui.order_add_coupon.not_added.message
+                type: 'success'
+
 action_groups:
     oro_promotion_duplicate:
         parameters:
@@ -84,6 +203,7 @@ action_groups:
                 target: $.promotion
                 attribute: $.promotionCopy
                 settings:
+                    - [[emptyCollection], [propertyName, [coupons]]]
                     - [[keep], [propertyName, [organization]]]
                     - [[keep], [propertyName, [owner]]]
                     - [[setNull], [propertyName, [id]]]

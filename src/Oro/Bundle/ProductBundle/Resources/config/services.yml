@@ -187,8 +187,17 @@ services:
     oro_product.validator.product_image:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
+        arguments:
+            - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_validator }
+
+    oro_product.validator.product_image_type:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator'
+        arguments:
+            - "@oro_layout.provider.image_type"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_image_type_validator }
 
     oro_product.validator.product_image_collection:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
@@ -259,8 +268,7 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
         arguments:
             - '@translator'
-            - '@oro_product.related_item.related_product.config_provider'
-            - '@oro_product.related_item.upsell_product.config_provider'
+            - '@oro_product.related_item.helper.config_helper'
             - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -444,7 +452,7 @@ services:
             - '@oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener'
             - "@?oro_web_catalog.provider.web_catalog_usage_provider"
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
@@ -613,6 +621,8 @@ services:
         arguments:
             - '@oro_website.provider.website_localization'
             - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_attachment.manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
@@ -693,7 +703,7 @@ services:
         arguments:
             - '@oro_product.repository.product_image'
             - '@oro_layout.loader.image_filter'
-            - '@oro_layout.provider.image_type'
+            - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.image_resizer'
             - '@oro_attachment.media_cache_manager'
             - '@oro_attachment.manager'
@@ -1055,6 +1065,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_storage_cache'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
 
@@ -1156,3 +1167,30 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_attachment.manager'
+
+    oro_product.provider.product_images_dimensions:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'
+        arguments:
+            - '@oro_layout.provider.image_type'
+
+
+    oro_product.voter.guest_quick_order:
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_quick_order_form'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.voter.customer_user_guest_quick_order:
+        parent: oro_customer.voter.customer_user
+        calls:
+            - [ setFeatureName, ['guest_quick_order_form'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.voter.guest_quick_order_form:
+        class: 'Oro\Bundle\ProductBundle\Voter\GuestQuickOrderFormVoter'
+        arguments:
+           - '@oro_featuretoggle.voter.config_voter'
+           - '@security.token_storage'
+        abstract: true

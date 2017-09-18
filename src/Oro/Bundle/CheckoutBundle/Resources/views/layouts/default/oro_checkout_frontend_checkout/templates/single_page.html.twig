@@ -36,6 +36,13 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
+{% block _sticky_element_notification_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' single-page-checkout-view__notification-container'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _single_page_checkout_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
         id: 'single-page-checkout-sticky'
@@ -47,8 +54,37 @@
 
 {% block _single_page_checkout_sticky_titles_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        id: 'single-page-checkout-sticky-titles',
         '~class': ' single-page-checkout-view__sticky-titles'
+    }) %}
+    {% spaceless %}
+    <div {{ block('block_attributes') }}>
+        <div class="single-page-checkout-view__sticky-titles-inner">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block _single_page_checkout_sticky_billing_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'single-page-checkout-sticky-billing',
+        '~class': ' single-page-checkout-view__sticky-column'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_shipping_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'single-page-checkout-sticky-shipping',
+        '~class': ' single-page-checkout-view__sticky-column'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'single-page-checkout-sticky-summary',
+        '~class': ' single-page-checkout-view__sticky-column'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
@@ -70,8 +106,9 @@
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
+                affixed: true,
                 autoWidth: true,
-                placeholderId: 'single-page-checkout-sticky-titles',
+                placeholderId: 'single-page-checkout-sticky-billing',
                 viewport: {
                     minScreenType: 'desktop'
                 }
@@ -107,8 +144,9 @@
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
+                affixed: true,
                 autoWidth: true,
-                placeholderId: 'single-page-checkout-sticky-titles',
+                placeholderId: 'single-page-checkout-sticky-shipping',
                 viewport: {
                     minScreenType: 'desktop'
                 }
@@ -128,8 +166,9 @@
         'data-sticky-target': 'top-sticky-panel',
         'data-sticky': {
             isSticky: true,
+            affixed: true,
             autoWidth: true,
-            placeholderId: 'single-page-checkout-sticky-titles',
+            placeholderId: 'single-page-checkout-sticky-summary',
             viewport: {
                 minScreenType: 'desktop'
             }
@@ -274,7 +313,7 @@
             <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
             {{ form_widget(form.ship_until, {
                 'attr': {
-                    'class': 'datepicker-box__input input',
+                    'class': 'datepicker-input input',
                     'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
                 },
                 'datePickerOptions': {
@@ -310,7 +349,12 @@
                 <div class="grid__column grid__column--12 grid__column--offset-y">
                     <label class=" label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
-                    {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+                    {{ form_widget(form.customer_notes, {
+                        'attr': {
+                            'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                            'data-page-component-elastic-area': ''
+                        }
+                    }) }}
                     </div>
                 </div>
             </fieldset>
@@ -336,8 +380,8 @@
         'data-sticky-target': 'top-sticky-panel',
         'data-sticky': {
             isSticky: true,
+            affixed: true,
             autoWidth: true,
-            ignoreWhenBelowViewport: true,
             placeholderId: 'single-page-checkout-sticky-totals',
             viewport: {
                 minScreenType: 'desktop'

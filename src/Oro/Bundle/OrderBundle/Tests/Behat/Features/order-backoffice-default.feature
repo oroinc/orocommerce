@@ -2,7 +2,8 @@
 Feature: Order Backoffice Default
 
   Scenario: See Order without Customer User by frontend administrator.
-    Given I login as administrator
+    Given I login as NancyJSallee@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     And go to Sales/Orders
     And click view OrderWithoutCustomerUser in grid
     Then I should see Order with:
@@ -10,7 +11,7 @@ Feature: Order Backoffice Default
       | Customer | first customer |
       | Customer User | N/A |
 
-    When I signed in as NancyJSallee@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Orders"
     Then I should see following records in grid:
       | OrderWithoutCustomerUser |
@@ -18,7 +19,7 @@ Feature: Order Backoffice Default
     Then I should see "Order #OrderWithoutCustomerUser"
 
   Scenario: See Order with child Customer by frontend administrator.
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Orders
     And click view OrderWithChildCustomerAndWithCustomerUser in grid
     Then I should see Order with:
@@ -32,7 +33,7 @@ Feature: Order Backoffice Default
       | Customer | child of first customer |
       | Customer User | N/A |
 
-    When I signed in as NancyJSallee@example.org on the store frontend
+    Then I operate as the Buyer
     And click "Orders"
     Then I should see following records in grid:
       | OrderWithChildCustomerAndWithCustomerUser |
@@ -44,7 +45,7 @@ Feature: Order Backoffice Default
     Then I should see "Order #OrderWithChildCustomerAndWithoutCustomerUser"
 
   Scenario: Don't see Order with Customer by frontend administrator of child customer.
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Orders
     And click view OrderWithoutCustomerUser in grid
     Then I should see Order with:
@@ -52,7 +53,8 @@ Feature: Order Backoffice Default
       | Customer | first customer |
       | Customer User | N/A |
 
-    When I signed in as RuthWMaxwell@example.org on the store frontend
+    Then I operate as the Buyer
+    And I signed in as RuthWMaxwell@example.org on the store frontend
     And click "Orders"
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:
@@ -60,7 +62,7 @@ Feature: Order Backoffice Default
       | OrderWithChildCustomerAndWithoutCustomerUser |
 
   Scenario: Don't see Orders by frontend administrator of another customer.
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Orders
     And I should see following records in grid:
       | OrderWithoutCustomerUser |
@@ -68,12 +70,13 @@ Feature: Order Backoffice Default
       | OrderWithChildCustomerAndWithoutCustomerUser |
       | OrderWithCustomerAndCustomerUser |
 
-    When I signed in as JuanaPBrzezinski@example.net on the store frontend
+    Then I operate as the Buyer
+    And I signed in as JuanaPBrzezinski@example.net on the store frontend
     And click "Orders"
     Then I should see "No records found"
 
   Scenario: See Orders with Customer by creator (buyer).
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Orders
     And click view OrderWithCustomerAndCustomerUser in grid
     Then I should see Order with:
@@ -81,7 +84,8 @@ Feature: Order Backoffice Default
       | Customer | first customer |
       | Customer User | Amanda Cole |
 
-    When I signed in as AmandaRCole@example.org on the store frontend
+    Then I operate as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     And click "Orders"
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:

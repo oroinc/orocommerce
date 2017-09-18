@@ -5,6 +5,8 @@ define(function(require) {
 
     var ProductUnitComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var BaseModel = require('oroui/js/app/models/base/model');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var _ = require('underscore');
@@ -52,6 +54,10 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+
+            if (!this.model) {
+                this.model = new BaseModel();
+            }
 
             this.initializeLoadingMask(options);
 
@@ -148,39 +154,8 @@ define(function(require) {
          * @param {Object} units
          */
         handleUnitsState: function(units) {
-            var self = this;
-            var disabled = _.isEmpty(units);
-            var value = self.unitSelector.val();
-
-            this.unitSelector
-                .prop('disabled', disabled)
-                .val(null)
-                .find('option')
-                .filter(function() {
-                    return this.value || $.trim(this.value).length;
-                })
-                .remove();
-
-            if (units) {
-                $.each(units, function(code, label) {
-                    if (!self.unitSelector.find('option[value=' + code + ']').length) {
-                        self.unitSelector.append($('<option/>').val(code).text(label));
-                    }
-                });
-                self.unitSelector.find('option[value=""]').hide();
-                self.unitSelector.val(value);
-                if (self.unitSelector.val() === null) {
-                    self.unitSelector.val(_.keys(units)[0]);
-                }
-            } else {
-                self.unitSelector.find('option[value=""]').show();
-                self.unitSelector.val('');
-            }
-
-            var $unitSelectorContainer = this.unitSelector.inputWidget('container');
-            if ($unitSelectorContainer) {
-                $unitSelectorContainer.toggleClass('disabled', disabled);
-            }
+            this.model.set('product_units', units);
+            UnitsUtil.updateSelect(this.model, this.unitSelector);
 
             this.unitSelector
                 .trigger('value:changed')

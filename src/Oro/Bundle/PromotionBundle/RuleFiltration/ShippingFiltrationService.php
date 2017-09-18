@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
@@ -38,7 +38,7 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
             array_filter(
                 $ruleOwners,
                 function ($ruleOwner) use ($shippingMethod, $shippingMethodType) {
-                    if (!$ruleOwner instanceof Promotion) {
+                    if (!$ruleOwner instanceof PromotionDataInterface) {
                         return false;
                     }
 
@@ -55,13 +55,13 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
     }
 
     /**
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @param string $shippingMethod|null
      * @param string $shippingMethodType|null
      *
      * @return bool
      */
-    private function isShippingOptionsMatched(Promotion $promotion, $shippingMethod, $shippingMethodType)
+    private function isShippingOptionsMatched(PromotionDataInterface $promotion, $shippingMethod, $shippingMethodType)
     {
         $discountOptions = $promotion->getDiscountConfiguration()->getOptions();
 

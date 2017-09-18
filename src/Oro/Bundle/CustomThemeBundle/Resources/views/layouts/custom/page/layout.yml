@@ -4,3 +4,8 @@ layout:
             id: header
             optionName: attr.class
             optionValue: 'header--custom'
+
+        - '@setOption':
+            id: page_main
+            optionName: attr.class
+            optionValue: 'offset-none'

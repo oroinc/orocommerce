@@ -216,7 +216,8 @@ class ProductSearchGridTest extends FrontendWebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_7
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
             'sku not like inside' => [
@@ -229,6 +230,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
                     LoadProductData::PRODUCT_6_DEFAULT_NAME,
                     LoadProductData::PRODUCT_7_DEFAULT_NAME,
                     LoadProductData::PRODUCT_8_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_9_DEFAULT_NAME,
                 ],
             ],
         ];

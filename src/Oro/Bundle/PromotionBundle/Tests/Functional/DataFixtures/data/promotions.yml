@@ -43,9 +43,9 @@ promo_order_10_EUR:
             discount_currency: 'EUR'
     scopeCriterias: [{website: null, customerGroup: null, customer: null}]
 
-promo_order_12.777_USD:
+promo_order_12.77_USD:
     rule:
-        name: 'promo_order_12.777_USD_rule'
+        name: 'promo_order_12.77_USD_rule'
         sortOrder: 400
         enabled: false
         stopFurtherRuleProcessing: false
@@ -54,7 +54,7 @@ promo_order_12.777_USD:
         type: 'order'
         options:
             discount_type: 'amount'
-            discount_value: 12.777
+            discount_value: 12.77
             discount_currency: 'USD'
     scopeCriterias: [{website: null, customerGroup: null, customer: null}]
 

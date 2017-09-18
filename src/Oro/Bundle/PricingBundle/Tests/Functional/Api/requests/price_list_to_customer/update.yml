@@ -1,0 +1,6 @@
+data:
+    type: 'pricelisttocustomers'
+    id: '<toString(@price_list_to_customer_US_1->id)>'
+    attributes:
+        sortOrder: '999'
+        mergeAllowed: false

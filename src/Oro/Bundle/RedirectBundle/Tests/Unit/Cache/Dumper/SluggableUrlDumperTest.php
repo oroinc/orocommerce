@@ -49,13 +49,15 @@ class SluggableUrlDumperTest extends \PHPUnit_Framework_TestCase
                 'routeName' => 'route1',
                 'routeParameters' => ['routeParameter1' => 1],
                 'url' => '/test/url1',
-                'slugPrototype' => 'url1'
+                'slugPrototype' => 'url1',
+                'localization_id' => 1
             ],
             [
                 'routeName' => 'route2',
                 'routeParameters' => ['routeParameter2' => 2],
                 'url' => '/test/url2',
-                'slugPrototype' => 'url2'
+                'slugPrototype' => 'url2',
+                'localization_id' => null
             ]
         ];
 
@@ -67,8 +69,8 @@ class SluggableUrlDumperTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->exactly(2))
             ->method('setUrl')
             ->withConsecutive(
-                [$routeName, ['routeParameter1' => 1], '/test/url1', 'url1'],
-                [$routeName, ['routeParameter2' => 2], '/test/url2', 'url2']
+                [$routeName, ['routeParameter1' => 1], '/test/url1', 'url1', 1],
+                [$routeName, ['routeParameter2' => 2], '/test/url2', 'url2', null]
             );
         $this->cache->expects($this->once())
             ->method('flush');

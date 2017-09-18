@@ -84,3 +84,8 @@ oro_behat_extension:
     Deactivate Integration Confirm Button:
       selector: '.modal-footer .btn-primary'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Shipping Method Flat Rate Radio Button:
+      selector:
+        type: 'xpath'
+        locator: "//input[@name='possibleShippingMethodType']"

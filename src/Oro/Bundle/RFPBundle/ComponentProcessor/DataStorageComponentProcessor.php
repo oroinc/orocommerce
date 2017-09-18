@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\RFPBundle\ComponentProcessor;
 
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,6 +20,9 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
     /** @var RequestDataStorageExtension */
     protected $requestDataStorageExtension;
 
+    /** @var FeatureChecker */
+    protected $featureChecker;
+
     /**
      * Processor constructor.
      * @param UrlGeneratorInterface $router
@@ -26,6 +32,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      * @param Session $session
      * @param TranslatorInterface $translator
      * @param RequestDataStorageExtension $requestDataStorageExtension
+     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         UrlGeneratorInterface $router,
@@ -34,9 +41,11 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         TokenAccessorInterface $tokenAccessor,
         Session $session,
         TranslatorInterface $translator,
-        RequestDataStorageExtension $requestDataStorageExtension
+        RequestDataStorageExtension $requestDataStorageExtension,
+        FeatureChecker $featureChecker
     ) {
         $this->requestDataStorageExtension = $requestDataStorageExtension;
+        $this->featureChecker = $featureChecker;
 
         parent::__construct($router, $storage, $authorizationChecker, $tokenAccessor, $session, $translator);
     }
@@ -60,5 +69,27 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         }
 
         return parent::process($data, $request);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAllowed()
+    {
+        return parent::isAllowed() || $this->isAllowedForGuest();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowedForGuest()
+    {
+        $isAllowed = false;
+
+        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
+            $isAllowed = $this->featureChecker->isFeatureEnabled('guest_rfp');
+        }
+
+        return $isAllowed;
     }
 }

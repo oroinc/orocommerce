@@ -1,0 +1,11 @@
+ADMINISTRATOR:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
+
+BUYER:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
+
+ANONYMOUS:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
