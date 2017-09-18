@@ -4,7 +4,6 @@ Feature: Discounts for Order
   As an administrator
   I need to have ability to manage Order discounts
 
-  #TODO remove after fix of orders' demo data
   Scenario: Calculate order totals
     Given I login as administrator
     And go to Sales/Orders
@@ -15,9 +14,8 @@ Feature: Discounts for Order
     Given I go to Sales/Orders
     And click view SimpleOrder in grid
     And click "Add Special Discount"
-    When I fill "Order Discount Form" with:
-      | Description | Amount |
-    And I fill in Discount Amount field with "2"
+    And I type "2" in "DiscountAmount"
+    And I type "Amount" in "DiscountDescription"
     Then I should see "$2.00 (4.00%)"
     When I click "Apply"
     Then I should see next rows in "Discounts" table
@@ -34,10 +32,9 @@ Feature: Discounts for Order
     And click edit SimpleOrder in grid
     And click "Promotions and Discounts"
     And click "Add Special Discount"
-    When I fill "Order Discount Form" with:
-      | Type        | %       |
-      | Description | Percent |
-    And I fill in Discount Amount field with "1"
+    And I fill in "DiscountType" with "%"
+    And I type "1" in "DiscountAmount"
+    And I type "Percent" in "DiscountDescription"
     Then I should see "$0.50 (1%)"
     And I click "Apply" in modal window
     Then I should see next rows in "Discounts" table
@@ -53,7 +50,8 @@ Feature: Discounts for Order
 
   Scenario: Edit special discount
     When I click on Edit action for "Percent" row in "Discounts" table
-    And I fill in Discount Amount field with "2"
+    And I type "2" in "DiscountAmount"
+    And I type "Percent" in "DiscountDescription"
     Then I should see "$1.00 (2%)"
     And I click "Apply" in modal window
     When I save form
@@ -91,9 +89,8 @@ Feature: Discounts for Order
 
   Scenario: Check that discount's amount is less than subtotal
     When I click "Add Special Discount"
-    And I fill "Order Discount Form" with:
-      | Description | Amount is greater than remaining subtotal |
-    And I fill in Discount Amount field with "51"
+    And I type "51" in "DiscountAmount"
+    And I type "Amount is greater than remaining subtotal" in "DiscountDescription"
     Then I should see "This value should be 50 or less."
     When I click "Cancel"
     Then I should see next rows in "Discounts" table
@@ -107,9 +104,8 @@ Feature: Discounts for Order
 
   Scenario: Check discounts' total sum is less than subtotal
     When I click "Add Special Discount"
-    And I fill "Order Discount Form" with:
-      | Description | Exceeding amount |
-    And I fill in Discount Amount field with "50"
+    And I type "50" in "DiscountAmount"
+    And I type "Exceeding amount" in "DiscountDescription"
     When I click "Apply"
     Then I should see "The sum of all discounts cannot exceed the order grand total amount."
     And I click "Promotions and Discounts"

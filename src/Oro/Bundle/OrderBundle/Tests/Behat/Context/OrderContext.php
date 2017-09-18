@@ -2,14 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 
-use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
+use Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -17,6 +13,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class OrderContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -79,47 +77,10 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
         return $registry->getManagerForClass($className)->getRepository($className)->findOneBy(['name' => $statusName]);
     }
 
-    /**
-     * @Then /^I should see next rows in "(?P<elementName>[\w\s]+)" table$/
-     * @param TableNode $expectedTableNode
-     * @param string $elementName
-     */
-    public function iShouldSeeNextRowsInTable(TableNode $expectedTableNode, $elementName)
-    {
-        $element = $this->createElement($elementName);
-        $rows = array_map(function (NodeElement $element) {
-            return $this->elementFactory->wrapElement(Table::TABLE_ROW_ELEMENT, $element);
-        }, $element->findAll('css', 'tbody tr'));
-
-        $expectedRows = $expectedTableNode->getRows();
-        $headers = array_shift($expectedRows);
-        $expectedCount = count($expectedRows);
-        self::assertCount(
-            $expectedCount,
-            $rows,
-            sprintf('Expects %s rows in table, but got %s', $expectedCount, count($rows))
-        );
-
-        foreach ($expectedRows as $rowKey => $expectedRow) {
-            /** @var array $headers */
-            foreach ($headers as $headerKey => $header) {
-                $value = $rows[$rowKey]->getCellValue($header);
-                self::assertEquals(
-                    $expectedRow[$headerKey],
-                    $value,
-                    sprintf(
-                        'Expect that row #%s contains "%s", but got "%s"',
-                        $rowKey+1,
-                        $expectedRow[$headerKey],
-                        $value
-                    )
-                );
-            }
-        }
-    }
-
     //@codingStandardsIgnoreStart
     /**
+     * Example: I click on Edit action for "Percent" row in "Discounts" table
+     *
      * @Then /^I click on (?P<actionName>[\w\s]+) action for "(?P<rowValue>[\w\s]+)" row in "(?P<elementName>[\w\s]+)" table/
      * @param string $actionName
      * @param string $rowValue
@@ -128,37 +89,15 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
     // @codingStandardsIgnoreEnd
     public function iClickOnActionForRowInTable($actionName, $rowValue, $elementName)
     {
-        $element = $this->createElement($elementName);
+        /** @var CollectionTable $table */
+        $table = $this->createElement($elementName);
 
-        // TODO: change this logic without 'getParent()' method for getting needed row
-        $rowElement = $element->find('named', ['content', $rowValue]);
-        if (!$rowElement) {
-            throw new \InvalidArgumentException(sprintf(
-                'Could not find row with "%s" content',
-                $rowValue
-            ));
-        }
-        $rowElement = $rowElement->getParent();
+        static::assertInstanceOf(
+            CollectionTable::class,
+            $table,
+            sprintf('Element should be of type %s', CollectionTable::class)
+        );
 
-        $action = $rowElement->find('css', sprintf('td.action > a[data-role="%s"]', strtolower($actionName)));
-        if (!$action) {
-            throw new \InvalidArgumentException(sprintf(
-                'Could not find "%s" action',
-                $actionName
-            ));
-        }
-        $action->click();
-    }
-
-    /**
-     * @When /^(?:|I )fill in Discount Amount field with "(?P<value>(?:[^"]|\\")*)"$/
-     * @param string $value
-     */
-    public function fillInDiscountAmountFieldWith($value)
-    {
-        $discountAmountField = $this->createElement('DiscountAmount');
-        $discountAmountField->focus();
-        $discountAmountField->setValue($value);
-        $discountAmountField->blur();
+        $table->clickActionLink($rowValue, $actionName);
     }
 }
