@@ -1,0 +1,30 @@
+services:
+    oro_ups.time_in_transit.request.builder_factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuilderFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+
+    oro_ups.time_in_transit.request.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\BasicTimeInTransitRequestFactory'
+        public: false
+        arguments:
+            - '@oro_ups.time_in_transit.request.builder_factory'
+
+    oro_ups.time_in_transit.result.factory.estimated_arrival:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\EstimatedArrivalFactory'
+        public: false
+
+    oro_ups.time_in_transit.result.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactory'
+        public: false
+        arguments:
+            - '@oro_ups.time_in_transit.result.factory.estimated_arrival'
+
+    oro_ups.time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransit'
+        arguments:
+            - '@oro_ups.time_in_transit.request.factory'
+            - '@oro_ups.client.factory_basic'
+            - '@oro_ups.time_in_transit.result.factory'
+            - '@logger'
