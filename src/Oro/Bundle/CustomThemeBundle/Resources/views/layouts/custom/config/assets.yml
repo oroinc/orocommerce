@@ -19,6 +19,7 @@ styles:
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/breadcrumbs-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/styles.scss'
 
+        - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-collapse-mode-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-box-collapse-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/styles.scss'
