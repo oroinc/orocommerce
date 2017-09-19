@@ -58,6 +58,13 @@ define(function(require) {
             if (this.enableMultiselectWidget) {
                 FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.apply(this, arguments);
             }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        initFiltersStateElement: function(options) {
+            return 'filtersStateElement' in options &&  this.renderMode !== 'collapse-mode';
         }
     });
 
