@@ -747,3 +747,6 @@ datagrids:
                         - payment_transaction.entityIdentifier = :order_id
             bind_parameters:
                 - order_id
+
+    order-products-previously-purchased-grid:
+        extends: frontend-product-search-grid

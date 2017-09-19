@@ -398,3 +398,17 @@ services:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
         arguments:
             - '@oro_config.manager'
+
+    oro_order.provider.latest_ordered_products_info:
+        class: 'Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+
+    oro_order.event_listener.product_website_search_index:
+        class: 'Oro\Bundle\OrderBundle\EventListener\WebsiteSearchProductIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_order.provider.latest_ordered_products_info'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }

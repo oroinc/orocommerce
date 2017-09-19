@@ -22,8 +22,7 @@ class ProductsController extends AbstractOrderController
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
             'grid_config' => [
-                /** @TODO will be change in  BB-11695 */
-                'frontend-product-search-grid'
+                'order-products-previously-purchased-grid'
             ],
         ];
     }
