@@ -1,11 +1,10 @@
-FROM 1.3 to 1.4
-===============
+## FROM 1.3.0 to 1.4.0
  
 Format of sluggable urls cache was changed, added support of localized slugs. Cache regeneration is required after update. 
  
-FROM 1.2 to 1.3
-===============
+## FROM 1.2.0 to 1.3.0
 
+## FROM 1.1.0 to 1.2.0
 
 ## FROM 1.0.0 to 1.1.0
 
