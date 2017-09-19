@@ -4,15 +4,15 @@
 [Show detailed list of changes](#file-incompatibilities-1-4-0.md)
 
 ### Added
-* **PaymentBundle**: Interface `Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface`
+* **PaymentBundle:** Interface `Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface`
     * added `setWebsite()` method
-* **PaymentBundle**: Interface `Oro\Bundle\PaymentBundle\Context\PaymentContextInterface`
+* **PaymentBundle:** Interface `Oro\Bundle\PaymentBundle\Context\PaymentContextInterface`
     * added `getWebsite()` method
-* **ProductBundle**: Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
-* **ProductBundle**: Product images and unit information for the grid are now part of the search index. In order to see image changes, for example, immediate reindexation is required. 
-* **PricingBundle**: Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:
+* **ProductBundle:** Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
+* **ProductBundle:** Product images and unit information for the grid are now part of the search index. In order to see image changes, for example, immediate reindexation is required. 
+* **PricingBundle:** Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:
     * `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers witch contains price for given product
-* **PricingBundle**: Api for `Oro\Bundle\PricingBundle\Entity\ProductPrice` entity was added. In sharding mode product prices can't be managed without `priceList` field, that's why in `get_list` action `priceList` filter is required and in all actions ID of entities has format `ProductPriceID-PriceListID`.
+* **PricingBundle:** Api for `Oro\Bundle\PricingBundle\Entity\ProductPrice` entity was added. In sharding mode product prices can't be managed without `priceList` field, that's why in `get_list` action `priceList` filter is required and in all actions ID of entities has format `ProductPriceID-PriceListID`.
     * Class `Oro\Bundle\PricingBundle\Api\ProductPrice\Delete\PriceManagerDeleteHandler` was added to correctly remove prices in sharding mode
     * Interface `Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface` was added to abstract the way of storing price list id in an api context
     * Class `Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDInContextStorage` was added as a storage of price list id
@@ -27,51 +27,51 @@
     * Interface `Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface` was added to abstract the way of normalizing product price ids
     * Class `Oro\Component\ChainProcessor\ContextInterface\ProductPriceIDByPriceListIDNormalizer` was added to transform product price id to `ProductPriceID-PriceListID` format
     * Class `Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdateProcessor` was added to reset product price rule when one of the fields: `value`, `quantity`, `unit`, `currency` changes
-* **ShippingBundle**: Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`
+* **ShippingBundle:** Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`
     * added `setWebsite()` method
-* **ShippingBundle**: Interface `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface`
+* **ShippingBundle:** Interface `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface`
     * added `getWebsite()` method
 
 ### Changed
-* **RedirectBundle**: Format of sluggable urls cache was changed, added support of localized slugs.
-* **RedirectBundle**: Class `Oro\Bundle\RedirectBundle\Cache\UrlDataStorage`
+* **RedirectBundle:** Format of sluggable urls cache was changed, added support of localized slugs.
+* **RedirectBundle:** Class `Oro\Bundle\RedirectBundle\Cache\UrlDataStorage`
     * changed signature of `setUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `removeUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getSlug` method. Optional integer parameter `$localizationId` added.
-* **RedirectBundle**: Class `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
+* **RedirectBundle:** Class `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
     * changed signature of `__construct` method. Type of first argument changed from abstract class `FileCache` to interface `Cache`  
     * changed signature of `setUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `removeUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getSlug` method. Optional integer parameter `$localizationId` added.
-* **PricingBundle**: Some inline underscore templates were moved to separate .html file for each template.
-* **PricingBundle**: Required option for layout block type 'product_prices' renamed from 'productUnitSelectionVisible' to 'isPriceUnitsVisible'
-* **OrderBundle**:  Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was changed for use in popup.
-* **PromotionBundle**: Interface `Oro\Bundle\PromotionBundle\Discount\DiscountInterface` now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
+* **PricingBundle:** Some inline underscore templates were moved to separate .html file for each template.
+* **PricingBundle:** Required option for layout block type 'product_prices' renamed from 'productUnitSelectionVisible' to 'isPriceUnitsVisible'
+* **OrderBundle:**  Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was changed for use in popup.
+* **PromotionBundle:** Interface `Oro\Bundle\PromotionBundle\Discount\DiscountInterface` now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
     * `getPromotion()` method return value type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
     * `setPromotion()` method parameter's type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
-* **PromotionBundle**: Class `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`
+* **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`
     * changed signature of `process` method. Changed type hinting to `DiscountContextInterface`.
-* **PromotionBundle**: Class `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface`
+* **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface`
     * changed signature of `apply` method. Changed type hinting to `DiscountContextInterface`.
-* **PromotionBundle**: Class `Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager`
+* **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager`
     * renamed to `AppliedPromotionManager`
     * service of this manager renamed to `oro_promotion.applied_promotion_manager`
     * renamed public method from `saveAppliedDiscounts` to `createAppliedPromotions`
     * removed public methods `removeAppliedDiscountByOrderLineItem` and `removeAppliedDiscountByOrder`
-* **PaymentBundle**: Event `oro_payment.require_payment_redirect.PAYMENT_METHOD_IDENTIFIER` is no more specifically dispatched for each payment method. Use generic `oro_payment.require_payment_redirect` event instead.
-* **RedirectBundle**: Class `Oro\Bundle\RedirectBundle\Routing\Router`
+* **PaymentBundle:** Event `oro_payment.require_payment_redirect.PAYMENT_METHOD_IDENTIFIER` is no more specifically dispatched for each payment method. Use generic `oro_payment.require_payment_redirect` event instead.
+* **RedirectBundle:** Class `Oro\Bundle\RedirectBundle\Routing\Router`
     * removed method `setFrontendHelper`, `setMatchedUrlDecisionMaker` added instead. `MatchedUrlDecisionMaker` should be used instead of FrontendHelper to check that current URL should be processed by Slugable Url matcher or generator
-* **SaleBundle**: Class `Oro\Bundle\SaleBundle\Entity\Quote` now implements `Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface` (corresponding methods have been implemented before, thus it's just a formal change)
-* **ProductBundle**: Some inline underscore templates were moved to separate .html file for each template.
+* **SaleBundle:** Class `Oro\Bundle\SaleBundle\Entity\Quote` now implements `Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface` (corresponding methods have been implemented before, thus it's just a formal change)
+* **ProductBundle:** Some inline underscore templates were moved to separate .html file for each template.
 
 ### Deprecated
-* **ProductBundle**: Class `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener`
+* **ProductBundle:** Class `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener`
     * dependency on `RegistryInterface` will soon be removed. `getProductRepository` and `getProductUnitRepository` flagged as deprecated.
 
 ### Removed
-* **OrderBundle**: Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` and related `oroorder/js/app/views/discount-items-view` JS view were removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` and `oroorder/js/app/views/discount-collection-view` are introduced.
+* **OrderBundle:** Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` and related `oroorder/js/app/views/discount-items-view` JS view were removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` and `oroorder/js/app/views/discount-collection-view` are introduced.
 
 ## 1.3.6 (2017-09-11)
 ### Fixed
@@ -115,34 +115,167 @@ Fixed Filter criteria disappears from UI upon setting
 ## 1.3.0 LTS (2017-07-28)
 [Show detailed list of changes](#file-incompatibilities-1-3-0.md)
 
-The class `Oro\Bundle\SecurityBundle\SecurityFacade`, services `oro_security.security_facade` and `oro_security.security_facade.link`, and TWIG function `resource_granted` were marked as deprecated.
-Use services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` and TWIG function `is_granted` instead.
-In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
-The usage of deprecated service `security.context` (interface `Symfony\Component\Security\Core\SecurityContextInterface`) was removed as well.
-All existing classes were updated to use new services instead of the `SecurityFacade` and `SecurityContext`:
-
-* service `security.authorization_checker`
-    * implements `Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`
-    * the property name in classes that use this service is `authorizationChecker`
-* service `security.token_storage`
-    * implements `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
-    * the property name in classes that use this service is `tokenStorage`
-* service `oro_security.token_accessor`
-    * implements `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface`
-    * the property name in classes that use this service is `tokenAccessor`
-* service `oro_security.class_authorization_checker`
-    * implements `Oro\Bundle\SecurityBundle\Authorization\ClassAuthorizationChecker`
-    * the property name in classes that use this service is `classAuthorizationChecker`
-* service `oro_security.request_authorization_checker`
-    * implements `Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker`
-    * the property name in classes that use this service is `requestAuthorizationChecker`
-
 ### Added
+* **CheckoutBundle:** added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
+* **CronBundle:** new collection form type for schedule intervals was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType`
+* **CronBundle:** new form type for schedule interval was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType`
+* **CronBundle:** new constraint was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection`
+* **CronBundle:** new validator was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator`
+* **PricingBundle:** added API for entities:
+    - `Oro\Bundle\PricingBundle\Entity\PriceList`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceRule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomer`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback`
+* **PricingBundle:** added API processors:
+    - `Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor` to handle price list status changes
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor` to update price rule lexemes while saving price list
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteListProcessor` to rebuild combined price list while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteProcessor` to rebuild combined price list while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleSaveProcessor` to rebuild combined price list while saving price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor` to change price list contains schedule field while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteProcessor` to change price list contains schedule field while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteListProcessor` to update price rule lexemes while deleting list of price rules
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor` to rebuild price lists when customer aware relational entities are modified
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor` to rebuild price lists when customer group aware relational entities are modified
+* **PricingBundle:** added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
+* **ProductBundle:** new class `Oro\Bundle\ProductBundle\Provider\VariantFieldProvider` was added it introduces logic to fetch variant field for certain family calling `getVariantFields(AttributeFamily $attributeFamily)` method
+* **ProductBundle:** new class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
+* **ProductBundle:** adding Brand functionality to ProductBundle
+    - New class `Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController` was added
+    - New class `Oro\Bundle\ProductBundle\Controller\BrandController` was added
+    - New entity `Oro\Bundle\ProductBundle\Entity\Brand` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
+    - New service `oro_product.brand.manager.api` registered
+* **ProductBundle:** adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+* **SaleBundle:** added Voter `Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter`, Checks if given Quote contains internal status, triggered only for Commerce Application.
+* **SaleBundle:** added Datagrid Listener `Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener`, appends frontend datagrid query with proper frontend internal statuses.
+* **SaleBundle:** added Subscriber `Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber`, discards price modifications and free form inputs, if there are no permissions for those operations
+* **SaleBundle:** added new permission to `Quote` category
+    - oro_quote_prices_override
+    - oro_quote_review_and_approve
+    - oro_quote_add_free_form_items
+* **SaleBundle:** added new workflow `b2b_quote_backoffice_approvals`
+* **SEOBundle:** metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added.
+MetaTitle is displayed as default view page title.
+* **ShippingBundle:** added interface `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface` and class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider` which implement this interface.
+* **ValidationBundle:** added `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf` constraint and `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator` validator for validating that one of some fields in a group should be blank
+* **WebsiteBundle:** added `Oro\Bundle\WebsiteBundle\Form\EventSubscriber\DefaultWebsiteSubscriber` to set Default website when not provided on form.
 ### Changed
-* **AuthorizeNetBundle**: AuthorizeNetBundle extracted to individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+* **AuthorizeNetBundle:** AuthorizeNetBundle extracted to individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+* **CheckoutBundle:** class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
+    - method `getSecurityFacade` was replaced with `getAuthorizationChecker`
+* **InventoryBundle:** inventory API has changed. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/InventoryBundle/doc/api/inventory-level.md) for more information.
+* **OrderBundle:** return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection`
+* **PayPalBundle:** class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
+    - property `$allowedIPs` changed from `private` to `protected`
+* **PaymentBundle:** subtotal and currency of payment context and its line items are optional now:
+    - Interface `Oro\Bundle\PaymentBundle\Context\PaymentContextInterface` was changed:
+        - `getSubTotal` method can return either `Price` or `null`
+        - `getCurrency` method can return either `string` or `null`
+    - Interface `Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface` was changed:
+        - `getPrice` method can return either `Price` or `null`
+* **PricingBundle:** service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
+    - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
+* **ProductBundle:** class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
+    - method `setSecurityFacade` was replaced with `setTokenAccessor`
+* **ProductBundle:** class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+* **ProductBundle:** `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
+* **SaleBundle:** updated entity `Oro\Bundle\SaleBundle\Entity\Quote`
+    - Added constant `FRONTEND_INTERNAL_STATUSES` that holds all available internal statuses for Commerce Application
+    - Added new property `pricesChanged`, that indicates if prices were changed.
+* **SaleBundle:** following ACL permissions moved to `Quote` category
+    - oro_quote_address_shipping_customer_use_any
+    - oro_quote_address_shipping_customer_use_any_backend
+    - oro_quote_address_shipping_customer_user_use_default
+    - oro_quote_address_shipping_customer_user_use_default_backend
+    - oro_quote_address_shipping_customer_user_use_any
+    - oro_quote_address_shipping_customer_user_use_any_backend
+    - oro_quote_address_shipping_allow_manual
+    - oro_quote_address_shipping_allow_manual_backend
+    - oro_quote_payment_term_customer_can_override
+* **SecurityBundle:** all existing classes were updated to use new services instead of the `SecurityFacade` and `SecurityContext`:
+    - service `security.authorization_checker`
+        * implements `Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`
+        * the property name in classes that use this service is `authorizationChecker`
+    - service `security.token_storage`
+        * implements `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
+        * the property name in classes that use this service is `tokenStorage`
+    - service `oro_security.token_accessor`
+        * implements `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface`
+        * the property name in classes that use this service is `tokenAccessor`
+    - service `oro_security.class_authorization_checker`
+        * implements `Oro\Bundle\SecurityBundle\Authorization\ClassAuthorizationChecker`
+        * the property name in classes that use this service is `classAuthorizationChecker`
+    - service `oro_security.request_authorization_checker`
+        * implements `Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker`
+        * the property name in classes that use this service is `requestAuthorizationChecker`
+* **SEOBundle:** service `oro_seo.event_listener.product_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+* **SEOBundle:** service `oro_seo.event_listener.category_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+* **SEOBundle:** service ` oro_seo.event_listener.page_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+ * **SEOBundle:** service `oro_seo.event_listener.content_node_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+* **ShippingBundle:** redesign of Shipping Rule edit/create pages - changed Shipping Method Configurations block templates and functionality
+    - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType` - added `methods_icons` variable
+    - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
+    - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
+* **ShippingBundle:** subtotal and currency of shipping context and its line items are optional now:
+    - Interface `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface` was changed:
+        - `getSubTotal` method can return either `Price` or `null`
+        - `getCurrency` method can return either `string` or `null`
+    - Interface `Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface` was changed:
+        - `getPrice` method can return either `Price` or `null`
+* **ShippingBundle:** class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
+    - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
+* **ShippingBundle:** service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
+* **WebsiteSearchBundle:** class `Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener` was replaced with `Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener`
+* **WebsiteSearchBundle:** service `oro_website_search.event_listener.reindex_demo_data` was replaced with `oro_website_search.migration.demo_data_fixtures_listener.reindex`
 
 ### Deprecated
+* **CheckoutBundle:** layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
+* **SecurityBundle:** the class `Oro\Bundle\SecurityBundle\SecurityFacade`, services `oro_security.security_facade` and `oro_security.security_facade.link`, and TWIG function `resource_granted` were marked as deprecated.
+Use services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` and TWIG function `is_granted` instead.
+In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
+
 ### Removed
+* **FlatRateShippingBundle:** class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+* **FlatRateShippingBundle:** previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
+* **OrderBundle:** removed protected method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+* **PaymentBundle:** previously deprecated class `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+* **PaymentBundle:** previously deprecated method `Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` is removed. Use `getPaymentStatus` instead.
+* **PayPalBundle:** class `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway`
+    - constants `PRODUCTION_HOST_ADDRESS`, `PILOT_HOST_ADDRESS`, `PRODUCTION_FORM_ACTION`, `PILOT_FORM_ACTION` removed.
+* **PayPalBundle:** previously deprecated `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is removed. Use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+* **PayPalBundle:** previously deprecated interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is removed. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
+* **PaymentBundle:** unused trait `Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait` was removed.
+* **PricingBundle:** form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead
+* **PricingBundle:** constraint `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection` instead
+* **PricingBundle:** validator `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator` instead
+* **PricingBundle:** js `oropricing/js/app/views/price-list-schedule-view` view was removed, use `orocron/js/app/views/schedule-intervals-view` instead
+* **SaleBundle:** removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+* **SecurityBundle:** the usage of deprecated service `security.context` (interface `Symfony\Component\Security\Core\SecurityContextInterface`) was removed.
+* **ShippingBundle:** previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
+* **ShippingBundle:** previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
+* **ShippingBundle:** previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
+* **ShippingBundle:** `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+* **UPSBundle:** class `Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+
 ### Fixed
 
 ## 1.2.4 (2017-08-22)
