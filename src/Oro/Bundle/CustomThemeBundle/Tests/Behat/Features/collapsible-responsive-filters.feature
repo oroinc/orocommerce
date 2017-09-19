@@ -38,7 +38,7 @@ Feature: Collapsible responsive filters
 
   Scenario: Check "Collapse" filters mode (tablet)
     Given I proceed as the User
-    And I set window size to 768x1024
+    And I set window size to 992x1024
     When I am on homepage
     And I click "NewCategory"
     Then I should see an "Filter Collapse Mode" element
