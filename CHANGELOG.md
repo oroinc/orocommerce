@@ -4,10 +4,6 @@
 [Show detailed list of changes](#file-incompatibilities-1-4-0.md)
 
 ### Added
-* **PaymentBundle:** Interface `Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface`
-    * added `setWebsite()` method
-* **PaymentBundle:** Interface `Oro\Bundle\PaymentBundle\Context\PaymentContextInterface`
-    * added `getWebsite()` method
 * **ProductBundle:** Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
 * **ProductBundle:** Product images and unit information for the grid are now part of the search index. In order to see image changes, for example, immediate reindexation is required. 
 * **PricingBundle:** Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:
@@ -27,10 +23,6 @@
     * Interface `Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface` was added to abstract the way of normalizing product price ids
     * Class `Oro\Component\ChainProcessor\ContextInterface\ProductPriceIDByPriceListIDNormalizer` was added to transform product price id to `ProductPriceID-PriceListID` format
     * Class `Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdateProcessor` was added to reset product price rule when one of the fields: `value`, `quantity`, `unit`, `currency` changes
-* **ShippingBundle:** Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`
-    * added `setWebsite()` method
-* **ShippingBundle:** Interface `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface`
-    * added `getWebsite()` method
 
 ### Changed
 * **RedirectBundle:** Format of sluggable urls cache was changed, added support of localized slugs.
@@ -40,7 +32,6 @@
     * changed signature of `getUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getSlug` method. Optional integer parameter `$localizationId` added.
 * **RedirectBundle:** Class `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
-    * changed signature of `__construct` method. Type of first argument changed from abstract class `FileCache` to interface `Cache`  
     * changed signature of `setUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `removeUrl` method. Optional integer parameter `$localizationId` added.
     * changed signature of `getUrl` method. Optional integer parameter `$localizationId` added.
@@ -51,10 +42,6 @@
 * **PromotionBundle:** Interface `Oro\Bundle\PromotionBundle\Discount\DiscountInterface` now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
     * `getPromotion()` method return value type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
     * `setPromotion()` method parameter's type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
-* **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`
-    * changed signature of `process` method. Changed type hinting to `DiscountContextInterface`.
-* **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface`
-    * changed signature of `apply` method. Changed type hinting to `DiscountContextInterface`.
 * **PromotionBundle:** Class `Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager`
     * renamed to `AppliedPromotionManager`
     * service of this manager renamed to `oro_promotion.applied_promotion_manager`
