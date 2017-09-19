@@ -27,6 +27,7 @@ define(function(require) {
         enable: function() {
             if (this.changeBehavior()) {
                 switch (viewportManager.getViewport().type) {
+                    case 'desktop':
                     case 'tablet':
                     case 'tablet-small':
                         this.disable();
