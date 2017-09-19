@@ -136,7 +136,7 @@ Feature: Guest Shopping Lists
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List
-    Given I click "Shopping list"
+    Given I click "Shopping List"
     Then  I should see "Control Product"
     And  I should see "Product1"
     And I should not see following buttons:

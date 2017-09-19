@@ -50,7 +50,7 @@ Feature: Guest Checkout
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping list"
     And I should see "Product has been added to" flash message
-    When I click "Shopping list"
+    When I click "Shopping List"
     And I should see "400-Watt Bulb Work Light"
     Then I should not see following buttons:
       | Create Order |
@@ -70,12 +70,16 @@ Feature: Guest Checkout
     When I save form
     Then I should see "Charlie Sheen"
 
-  Scenario: Create order from guest shopping list
+  Scenario: Create order from guest shopping list without guest registration
     Given I proceed as the User
     And I reload the page
     And I should see following buttons:
       | Create Order |
     And I press "Create Order"
+    Then I should see "Sign In and Continue" button
+    And I should see "Continue as a Guest" button
+    And I should not see "Create An Account"
+    And I click "Continue as a Guest"
     And I fill form with:
       | First Name      | Tester          |
       | Last Name       | Testerson       |
@@ -98,18 +102,20 @@ Feature: Guest Checkout
     And press "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I uncheck "Save my data and create an account" on the checkout page
     When I press "Submit Order"
     Then I should see "Thank You For Your Purchase!"
 
-  Scenario: Checkout with shipping to billing adress
+  Scenario: Checkout with shipping to billing address without guest registration
     Given I proceed as the User
     And I am on homepage
     And type "SKU123" in "search"
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping list"
-    And I click "Shopping list"
+    And I click "Shopping List"
     And I press "Create Order"
+    And I click "Continue as a Guest"
     And I fill form with:
       | First Name           | Tester          |
       | Last Name            | Testerson       |
@@ -123,10 +129,11 @@ Feature: Guest Checkout
     And I press "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I uncheck "Save my data and create an account" on the checkout page
     When I press "Submit Order"
     Then I should see "Thank You For Your Purchase!"
-#
-  Scenario: Check guest orders on backend
+
+  Scenario: Check guest orders on management console
     Given I proceed as the Admin
     When I go to Sales/ Orders
     And I should see "Tester Testerson" in grid with following data:

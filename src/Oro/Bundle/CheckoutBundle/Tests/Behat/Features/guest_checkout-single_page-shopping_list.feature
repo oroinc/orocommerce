@@ -56,15 +56,16 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Activate"
     Then I should see "Workflow activated" flash message
 
-  Scenario: Create Shopping List as unauthorized user from product view page
+  Scenario: Create order from Shopping list as unauthorized user without guest registration
     Given I proceed as the User
     And I am on homepage
     And type "SKU123" in "search"
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping list"
-    And I click "Shopping list"
+    And I click "Shopping List"
     And I press "Create Order"
+    And I uncheck "Save my data and create an account" on the checkout page
     And I fill "Billing Information Form" with:
       | First Name      | Tester          |
       | Last Name       | Testerson       |
@@ -87,10 +88,55 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Check guest orders on backend
+   Scenario: Create order from shopping List as unauthorized user from product view page with guest registration
+     Given I proceed as the User
+     And I am on homepage
+     And type "SKU123" in "search"
+     And I click "Search Button"
+     And I click "400-Watt Bulb Work Light"
+     And I click "Add to Shopping list"
+     And I click "Shopping List"
+     And I press "Create Order"
+     And I type "rob1@test.com" in "Email Address"
+     And I type "Rob1@test.com" in "Password"
+     And I type "Rob1@test.com" in "Confirm Password"
+     And I fill "Billing Information Form" with:
+       | First Name      | July            |
+       | Last Name       | Robertson       |
+       | Email           | july@test.com   |
+       | Street          | Fifth avenue    |
+       | City            | Berlin          |
+       | Country         | Germany         |
+       | State           | Berlin          |
+       | Zip/Postal Code | 10115           |
+     And I fill "Shipping Information Form" with:
+       | First Name      | July            |
+       | Last Name       | Robertson       |
+       | Street          | Fifth avenue    |
+       | City            | Berlin          |
+       | Country         | Germany         |
+       | State           | Berlin          |
+       | Zip/Postal Code | 10115           |
+     And I check "Flat Rate" on the checkout page
+     And I check "Payment Terms" on the checkout page
+     And I click "Submit Order"
+     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+     And I should see "Please check your email to complete registration" flash message
+
+  Scenario: Check guest orders on management console
     Given I proceed as the Admin
     When I go to Sales/ Orders
-    And I should see "Tester Testerson" in grid with following data:
-      | Customer      | Tester Testerson |
-      | Customer User | Tester Testerson |
-      | Owner         | Charlie Sheen    |
+    Then I should see following grid:
+      |Order Number|Customer         |Customer User    |Owner        |
+      |1           |Tester Testerson |Tester Testerson |Charlie Sheen|
+      |2           |July Robertson   |July Robertson   |Charlie Sheen|
+
+  Scenario: Check guest customers on management console
+    Given I proceed as the Admin
+    When go to Customers/ Customer Users
+    Then I should see following grid:
+      |Customer         |First Name|Last Name  |Email Address           |
+      |Company A        |Amanda    |Cole       |AmandaRCole@example.org |
+      |Tester Testerson |Tester    |Testerson  |tester@test.com         |
+      |July Robertson   |July      |Robertson  |july@test.com           |
+      |July Robertson   |July      |Robertson  |rob1@test.com           |
