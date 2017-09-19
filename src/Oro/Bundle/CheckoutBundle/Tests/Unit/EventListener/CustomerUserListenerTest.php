@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Manager\LoginManager;
+use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -17,6 +17,8 @@ use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 
 class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const FIREWALL_NAME= 'test_firewall';
+
     /**
      * @var CustomerUserListener
      */
@@ -38,6 +40,11 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
     private $checkoutManager;
 
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -53,9 +60,10 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->listener = new CustomerUserListener(
             $requestStack,
-            $this->loginManager,
             $this->checkoutManager,
-            $this->configManager
+            $this->configManager,
+            $this->loginManager,
+            self::FIREWALL_NAME
         );
     }
 
@@ -75,7 +83,7 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->loginManager->expects($this->once())
             ->method('logInUser')
-            ->with('frontend_secure', $customerUser);
+            ->with(self::FIREWALL_NAME, $customerUser);
         $this->listener->afterFlush($event);
     }
 

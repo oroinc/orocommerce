@@ -525,10 +525,10 @@ action_groups:
                   '@equal': [$.checkout.registeredCustomerUser.confirmed, true]
                 actions:
                     - '@call_service_method':
-                        service: 'oro_customer.manager.login_manager'
+                        service: 'oro_customer.security.login_manager'
                         method: logInUser
                         method_parameters:
-                          - 'frontend_secure'
+                          - 'frontend'
                           - $.checkout.registeredCustomerUser
 
                     - '@flash_message':

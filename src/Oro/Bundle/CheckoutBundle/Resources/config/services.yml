@@ -532,9 +532,10 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
         arguments:
             - '@request_stack'
-            - '@oro_customer.manager.login_manager'
             - '@oro_checkout.manager'
             - '@oro_config.manager'
+            - '@oro_customer.security.login_manager'
+            - '%oro_customer.firewall_name%'
         lazy: true
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_customer_frontend_customer_user_register, method: afterFlush }

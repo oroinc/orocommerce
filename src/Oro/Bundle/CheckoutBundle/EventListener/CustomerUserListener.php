@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\CustomerBundle\Manager\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
@@ -20,11 +19,6 @@ class CustomerUserListener
     private $requestStack;
 
     /**
-     * @var LoginManager
-     */
-    private $loginManager;
-
-    /**
      * @var CheckoutManager
      */
     private $checkoutManager;
@@ -35,27 +29,34 @@ class CustomerUserListener
     private $configManager;
 
     /**
-     * @var Request
+     * @var LoginManager
      */
-    private $request;
+    private $loginManager;
+
+    /**
+     * @var string
+     */
+    private $firewallName;
 
     /**
      * @param RequestStack $requestStack
-     * @param LoginManager $loginManager
      * @param CheckoutManager $checkoutManager
      * @param ConfigManager $configManager
-
+     * @param LoginManager $loginManager
+     * @param string $firewallName
      */
     public function __construct(
         RequestStack $requestStack,
-        LoginManager $loginManager,
         CheckoutManager $checkoutManager,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        LoginManager $loginManager,
+        $firewallName
     ) {
         $this->requestStack = $requestStack;
-        $this->loginManager = $loginManager;
         $this->checkoutManager = $checkoutManager;
         $this->configManager = $configManager;
+        $this->loginManager = $loginManager;
+        $this->firewallName = $firewallName;
     }
 
     /**
@@ -67,7 +68,7 @@ class CustomerUserListener
 
         if ($this->getFromRequest('_checkout_registration')) {
             if ($customerUser->isConfirmed()) {
-                $this->loginManager->logInUser('frontend_secure', $customerUser);
+                $this->loginManager->logInUser($this->firewallName, $customerUser);
 
                 return;
             }
@@ -85,11 +86,9 @@ class CustomerUserListener
      */
     private function getFromRequest($name)
     {
-        if (!$this->request) {
-            $this->request = $this->requestStack->getMasterRequest();
-        }
+        $request = $this->requestStack->getMasterRequest();
 
-        return $this->request->request->get($name);
+        return $request->request->get($name);
     }
 
     /**
