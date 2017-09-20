@@ -29,16 +29,16 @@
 
     .filter-item {
         flex-basis: auto;
-        width: 25%;
-        margin: 0;
-        padding: 0 3px 5px;
+        width: $filter-collapse-mode-filter-item-width;
+        margin: $filter-collapse-mode-filter-item-offset;
+        padding: $filter-collapse-mode-filter-item-inner-offset;
     }
 }
 
 @include breakpoint('tablet-small') {
     .collapse-mode {
         .filter-item {
-            flex-basis: 50%;
+            width: $filter-collapse-mode-filter-item-tablet-small-width;
         }
     }
 }
