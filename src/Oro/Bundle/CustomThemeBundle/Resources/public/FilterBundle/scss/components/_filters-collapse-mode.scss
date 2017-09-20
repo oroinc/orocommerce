@@ -26,4 +26,19 @@
         bottom: $filter-collapse-mode-reset-filter-button-top-pos;
         transform: $filter-collapse-mode-reset-filter-transform;
     }
+
+    .filter-item {
+        flex-basis: auto;
+        width: 25%;
+        margin: 0;
+        padding: 0 3px 5px;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .collapse-mode {
+        .filter-item {
+            flex-basis: 50%;
+        }
+    }
 }

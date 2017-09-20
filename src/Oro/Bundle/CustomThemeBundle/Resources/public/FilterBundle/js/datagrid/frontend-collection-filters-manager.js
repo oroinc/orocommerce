@@ -63,8 +63,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initFiltersStateElement: function(options) {
-            return 'filtersStateElement' in options && this.renderMode !== 'collapse-mode';
+        isFiltersStateViewNeeded: function(options) {
+            return false;
         }
     });
 
