@@ -15,8 +15,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
-        organization: '@organization'
-        owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
         addName: ['@locvalue1']
