@@ -409,4 +409,14 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+          Allow Registration Default: 'checkout[oro_checkout___registration_allowed][use_parent_scope_value]'
+          Allow Checkout Without Email Confirmation Default: 'checkout[oro_checkout___allow_checkout_without_email_confirmation][use_parent_scope_value]'
+
+    Customer Users Registration Form:
+      selector: 'form[name="customer_users"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Registration Allowed Default: 'customer_users[oro_customer___registration_allowed][use_parent_scope_value]'
+          Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
 
