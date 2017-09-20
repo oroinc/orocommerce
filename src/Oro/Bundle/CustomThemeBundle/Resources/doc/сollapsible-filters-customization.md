@@ -2,7 +2,7 @@
 
 A collapsible/expandable block of filters was created in the `custom theme` of the product listing pages for **tablet devices**.
 
-The following logic remains for **desktop** where the filters are always shown, and for **mobile** devices where the filter opens on a full screen popup.
+The old logic remains for **desktop** where filters are always shown, and for **mobile** devices where filters open on a full screen popup.
 
 All changes are provided in this bundle.
 
