@@ -153,26 +153,102 @@ td.order-discount-item-remove {
   }
 }
 
-.order-discount-items {
-  .discounts-sum-error {
-    .validation-failed {
-      margin-top: 10px;
-    }
+.oro-collection-table-heading {
+  margin-bottom: 20px;
+
+  h5 {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: capitalize;
+    display: inline;
+    position: relative;
+    top: 3px;
+  }
+  a {
+    float: right;
+  }
+}
+
+.oro-collection-table.grid-container {
+  td.action {
+    padding: 5px 10px 5px 0;
+    width: 20px;
+  }
+  span.not-available {
+    color: rgb(203, 203, 203);
   }
 }
 
 .oro-discount-collection {
-  .table {
-    width: auto;
+  max-width: 1000px;
+}
+
+.oro-discount-collection.grid-container {
+  th.order-discount-item-description {
+    width: 50%;
   }
-  td.discount-item-value-calculated {
-    padding-top: 12px;
+  th.discount, td.discount {
+    text-align: right;
+  }
+}
+
+.oro-discount-collection {
+  max-width: 1000px;
+}
+
+.oro-discount-collection.grid-container {
+  th.order-discount-item-description {
+    width: 50%;
   }
 }
 
 .discount-item-value-type {
   select {
     width: 80px;
+  }
+}
+
+.discount-popup  {
+  .discount-amount-value {
+    font-size: 0;
+
+    select {
+      width: 60px;
+    }
+
+    div.selector {
+      width: 60px;
+      span {
+        padding: 0;
+        padding-left: 5px;
+        width: 50px;
+      }
+    }
+
+    input {
+      display: inline-block;
+      width: 215px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .discount-amount-type {
+      width: 65px;
+      display: inline-block;
+    }
+
+    .input-widget-select {
+      display: inline-block;
+      font-size: 13px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  .discount-item-value-calculated {
+    padding-top: 3px;
+    color: rgb(119, 119, 119);
   }
 }
 

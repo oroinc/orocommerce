@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
-use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-
-class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface, ShippingAwareInterface
+/**
+ * Implements DiscountContextInterface providing ability for discounts to add information into it.
+ */
+class DiscountContext implements DiscountContextInterface
 {
     /**
      * @var DiscountLineItem[]
@@ -44,7 +43,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     protected $shippingCost = 0.0;
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getSubtotal(): float
     {
@@ -52,8 +51,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param float $subtotal
-     * @return $this
+     * {@inheritdoc}
      */
     public function setSubtotal($subtotal)
     {
@@ -63,8 +61,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountInterface $discount
-     * @return $this
+     * {@inheritdoc}
      */
     public function addShippingDiscount(DiscountInterface $discount)
     {
@@ -74,8 +71,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountInterface $discount
-     * @return $this
+     * {@inheritdoc}
      */
     public function addSubtotalDiscount(DiscountInterface $discount)
     {
@@ -85,7 +81,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return DiscountLineItem[]
+     * {@inheritdoc}
      */
     public function getLineItems(): array
     {
@@ -93,8 +89,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountLineItem[] $lineItems
-     * @return $this
+     * {@inheritdoc}
      */
     public function setLineItems($lineItems)
     {
@@ -104,8 +99,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountLineItem $lineItem
-     * @return $this
+     * {@inheritdoc}
      */
     public function addLineItem(DiscountLineItem $lineItem)
     {
@@ -115,7 +109,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return array|DiscountInterface[]
+     * {@inheritdoc}
      */
     public function getShippingDiscounts(): array
     {
@@ -123,7 +117,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return array|DiscountInterface[]
+     * {@inheritdoc}
      */
     public function getSubtotalDiscounts(): array
     {
@@ -131,7 +125,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return array|DiscountInterface[]
+     * {@inheritdoc}
      */
     public function getLineItemDiscounts()
     {
@@ -146,7 +140,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getShippingCost(): float
     {
@@ -154,8 +148,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param float $shippingCost
-     * @return $this
+     * {@inheritdoc}
      */
     public function setShippingCost($shippingCost)
     {
@@ -165,8 +158,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountInformation $discountInformation
-     * @return $this
+     * {@inheritdoc}
      */
     public function addSubtotalDiscountInformation(DiscountInformation $discountInformation)
     {
@@ -176,7 +168,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return array|DiscountInformation[]
+     * {@inheritdoc}
      */
     public function getSubtotalDiscountsInformation(): array
     {
@@ -184,8 +176,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param DiscountInformation $discountInformation
-     * @return $this
+     * {@inheritdoc}
      */
     public function addShippingDiscountInformation(DiscountInformation $discountInformation)
     {
@@ -195,7 +186,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return array|DiscountInformation[]
+     * {@inheritdoc}
      */
     public function getShippingDiscountsInformation(): array
     {
@@ -203,7 +194,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getShippingDiscountTotal(): float
     {
@@ -216,7 +207,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getSubtotalDiscountTotal(): float
     {
@@ -229,7 +220,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getTotalLineItemsDiscount(): float
     {
@@ -242,8 +233,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @param object $lineItem
-     * @return float
+     * {@inheritdoc}
      */
     public function getDiscountByLineItem($lineItem): float
     {
@@ -258,7 +248,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getTotalDiscountAmount(): float
     {

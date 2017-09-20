@@ -439,6 +439,7 @@ action_groups:
                 conditions:
                     '@empty': $.checkout.customerUser
                 actions:
+                    - '@get_active_visitor': $visitor
                     - '@call_service_method':
                         attribute: $.checkout.customerUser
                         service: 'oro_customer.manager.guest_customer_user'
@@ -447,7 +448,8 @@ action_groups:
                             - $.email
                             - $.billing_address
                     - '@flush_entity': $.checkout.customerUser
-                    - '@assign_value': [$visitor.customerUser, $checkout.customerUser]
+                    - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
+                    - '@flush_entity': $visitor
 
 
     b2b_flow_checkout_update_guest_customer_user:

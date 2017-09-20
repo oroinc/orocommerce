@@ -246,6 +246,18 @@ action_groups:
                             - $.sourceCriteria
                             - $.currentWorkflow.name
 
+            - '@tree':
+                conditions:
+                    '@empty': $.currentUser
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout
+                        service: 'oro_checkout.repository.checkout'
+                        method: findCheckoutBySourceCriteria
+                        method_parameters:
+                            - $.sourceCriteria
+                            - $.currentWorkflow.name
+
             - '@call_service_method':
                 attribute: $.currentWebsite
                 service: oro_website.manager

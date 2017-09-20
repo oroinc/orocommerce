@@ -2,6 +2,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
 @fixture-OroPromotionBundle:shopping_list.yml
+@skip
 Feature: Promotions in Order page
   In order to find out applied discounts in order
   As administrator
@@ -9,17 +10,9 @@ Feature: Promotions in Order page
   As a site user
   I need to have ability to see applied discounts on order view page
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
-    And I switch to the "Admin" session
-    And I login as administrator
-    And I switch to the "Buyer" session
-    And I signed in as AmandaRCole@example.org on the store frontend
-
   Scenario: Check that applied discounts are shown on order edit page in promotion section
-    Given I operate as the Admin
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     And I disable inventory management
     And I proceed as the Buyer
     And I do the order through completion, and should be on order view page
@@ -30,7 +23,6 @@ Feature: Promotions in Order page
       | order Discount Promotion     |
     When I go to Sales / Orders
     And I click "edit" on first row in grid
-    Then I should see "Promotion discounts will be recalculated after saving the order"
     And I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |
     And I should see "order Discount Promotion" in "Order Promotions Grid" with following data:
@@ -48,7 +40,6 @@ Feature: Promotions in Order page
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
       | Total            | $9.50   |
-
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer

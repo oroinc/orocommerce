@@ -29,8 +29,7 @@ Feature: Product prices management
     Then I should see "Product has been saved" flash message
 
   Scenario: Validation error appears for not unique prices (have same values for PriceList, quantity, unit and currency)
-    Given I login as administrator
-    And I go to Products/ Products
+    Given I go to Products/ Products
     And click edit "PSKU1" in grid
     When I click "Product Prices"
     And set Product Price with:

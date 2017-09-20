@@ -23,8 +23,7 @@ Feature: User should have the possibility to change Primary Unit
       | Unit | item |
 
   Scenario: Validate product price Attribute If I change the Primary Unit of Quantity
-    Given I login as administrator
-    And I go to Products/ Price Attributes
+    Given I go to Products/ Price Attributes
     And I click "Create Price Attribute"
     And I fill form with:
       | Name       | MSRP |

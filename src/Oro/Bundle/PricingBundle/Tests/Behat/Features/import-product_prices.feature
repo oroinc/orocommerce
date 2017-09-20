@@ -3,10 +3,10 @@ Feature: Check CPL after Prices Import
 
   Scenario: Create two session
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    And I login as administrator and use in "second_session" as "Manager"
+    And I login as administrator and use in "second_session" as "Admin"
 
   Scenario: Import new prices
-    Given I operate as the Manager
+    Given I operate as the Admin
     When I go to Customers/Customers
     And click Edit first customer in grid
     And I choose Price List "Default Price List" in 1 row

@@ -22,11 +22,14 @@ Feature: Сomma support for quantity on backend
     Given I proceed as the Admin
     And I login as administrator
     And I go to System/Configuration
-    And I follow "System configuration/General setup/Localization" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And uncheck "Use default" for "Locale" field
     And I fill in "Locale" with "Ukrainian"
     And I save form
-    Then I should see "Configuration saved" flash message
+    # TODO: should be replaced with checking for success flash message after BAP-15443 is done
+    And I reload the page
+    Then Locale field should has Ukraininan value
+    # TODO end
     Given I proceed as the User
     And I click "NewCategory"
     And I type "3," in "ProductQuantityField"

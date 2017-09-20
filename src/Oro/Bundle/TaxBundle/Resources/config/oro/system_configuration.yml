@@ -23,7 +23,7 @@ system_configuration:
         eu_vat_tax:
             title: oro.tax.system_configuration.groups.eu_vat_tax.title
             icon: fa-eur
-        shipping:
+        tax_shipping:
             title: oro.tax.system_configuration.groups.shipping.title
             icon: fa-truck
         shipping_tax:
@@ -202,7 +202,7 @@ system_configuration:
                                         children:
                                             - oro_tax.digital_products_eu
 
-                            shipping:
+                            tax_shipping:
                                 priority: 90
                                 children:
                                     shipping_tax:

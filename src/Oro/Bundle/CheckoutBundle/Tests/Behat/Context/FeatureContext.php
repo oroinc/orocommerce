@@ -35,6 +35,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             'oro_workflow_transition[late_registration][is_late_registration_enabled]'
     ];
 
+    /** @var string */
+    protected $currentPath;
+
     /**
      * @When /^I select "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
      *
@@ -248,5 +251,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return true;
+    }
+
+    /**
+     * This step used for compare urls after some actions
+     *
+     * @Given /^(?:|I )keep in mind current path$/
+     */
+    public function iKeepInMindCurrentPath()
+    {
+        $parsedUrl = parse_url($this->getSession()->getCurrentUrl());
+        $this->currentPath = $parsedUrl['path'];
+    }
+
+    /**
+     * @Then path remained the same
+     */
+    public function urlRemainedTheSame()
+    {
+        $parsedUrl = parse_url($this->getSession()->getCurrentUrl());
+        self::assertEquals(
+            $this->currentPath,
+            $parsedUrl['path']
+        );
     }
 }
