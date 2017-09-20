@@ -24,6 +24,15 @@ oro_behat_extension:
     Filter Collapse Mode:
       selector: '.filter-box.collapse-mode'
 
-    Frontend Products Search Grid:
+    FrontendProductsSearchGrid:
       selector: 'div[data-page-component-name="frontend-product-search-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    FrontendProductsSearchGridFilters:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    NewCategoryLink:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class, "main-menu__link") and contains(., "NewCategory")]'

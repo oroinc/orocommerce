@@ -1,4 +1,3 @@
-@ticket-BB-9578
 @fixture-OroCustomThemeBundle:collapsible-responsive-filters.yml
 
 Feature: Collapsible responsive filters
@@ -16,8 +15,8 @@ Feature: Collapsible responsive filters
 
   Scenario: Create different window session
     Given sessions active:
-      | Admin          |first_session |
-      | User           |second_session|
+      | Admin          | first_session  |
+      | User           | second_session |
 
   Scenario: Change theme to Custom
     Given I proceed as the Admin
@@ -27,28 +26,33 @@ Feature: Collapsible responsive filters
     And fill "Theme Form" with:
       | ThemeUseDefault | false        |
       | Theme           | Custom theme |
-    And submit form
+    Then submit form
 
   Scenario: Check "Dropdown" filters mode (desktop)
     Given I proceed as the User
     When I am on homepage
     And I click "NewCategory"
-    Then I should see an "Filter Dropdown Mode" element
-    And I should not see an "Filter Collapse Mode" element
+    And I should see an "Filter Dropdown Mode" element
+    Then I should not see an "Filter Collapse Mode" element
 
   Scenario: Check "Collapse" filters mode (tablet)
     Given I proceed as the User
     And I set window size to 992x1024
     When I am on homepage
-    And I click "NewCategory"
-    Then I should see an "Filter Collapse Mode" element
-    And I filter SKU as contains "PSKU1" in "Frontend Products Search Grid"
-    Then I should see following "Frontend Products Search Grid" grid:
-      | SKU   | NAME     |
-      | PSKU1 | Product1 |
+    And I click "Main Menu Button"
+    And I click "NewCategoryLink"
+    And I should see an "Filter Collapse Mode" element
+    And I click "Filter Collapse Mode"
+    And I filter SKU as contains "PSKU1" in "FrontendProductsSearchGrid"
+    Then I should see "PSKU1"
 
   Scenario: Check filters in fullscreen popup (mobile)
     Given I proceed as the User
     And I set window size to 414x736
     When I am on homepage
-    And I click "NewCategory"
+    And I click "Main Menu Button"
+    And I click "NewCategoryLink"
+    Then I should see an "FrontendGridActionFilterButton" element
+    # Uncomment when behat can be run on mobileEmulation capability
+    # And I click "FrontendGridActionFilterButton"
+    # And I should see an "Fullscreen Popup" element
