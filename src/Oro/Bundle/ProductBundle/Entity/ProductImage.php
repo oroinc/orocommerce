@@ -38,11 +38,7 @@ class ProductImage extends ExtendProductImage
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
+     *      defaultValues={}
      * )
      */
     protected $product;
@@ -61,9 +57,9 @@ class ProductImage extends ExtendProductImage
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "full"=true
      *          }
-     *      }
+     *     }
      * )
      */
     protected $types;

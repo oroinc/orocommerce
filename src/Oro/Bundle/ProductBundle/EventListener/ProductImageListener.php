@@ -7,8 +7,10 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ProductImageListener
 {
@@ -29,6 +31,7 @@ class ProductImageListener
     {
         $this->eventDispatcher = $eventDispatcher;
     }
+
     /**
      * @param ProductImage $productImage
      * @param LifecycleEventArgs $args
@@ -71,6 +74,13 @@ class ProductImageListener
     {
         if ($productImage->getTypes()->isEmpty()) {
             return;
+        }
+
+        if ($product = $productImage->getProduct()) {
+            $this->eventDispatcher->dispatch(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent([Product::class], [], [$product->getId()])
+            );
         }
 
         $this->eventDispatcher->dispatch(

@@ -396,7 +396,9 @@ class OroProductBundleInstaller implements
             self::PRODUCT_IMAGE_TABLE_NAME,
             'image',
             [
-                'importexport' => ['excluded' => true]
+                'importexport' => [
+                    'excluded' => false,
+                    ]
             ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
         );

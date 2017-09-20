@@ -96,6 +96,7 @@ class ProductController extends Controller
 
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'product_image_entity_class' => $this->container->getParameter('oro_product.entity.product_image.class'),
             'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }
