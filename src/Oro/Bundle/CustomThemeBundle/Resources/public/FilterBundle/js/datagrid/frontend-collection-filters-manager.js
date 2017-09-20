@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var FrontendCollectionFiltersManager;
+    var _ = require('underscore');
     var CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
     var viewportManager = require('oroui/js/viewport-manager');
     var config = require('module').config();
