@@ -81,7 +81,7 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
     /**
      * Example: I click on Edit action for "Percent" row in "Discounts" table
      *
-     * @Then /^I click on (?P<actionName>[\w\s]+) action for "(?P<rowValue>[\w\s]+)" row in "(?P<elementName>[\w\s]+)" table/
+     * @Then /^(?:|I )click on (?P<actionName>[\w\s]+) action for "(?P<rowValue>[\w\s]+)" row in "(?P<elementName>[\w\s]+)" table/
      * @param string $actionName
      * @param string $rowValue
      * @param string $elementName
