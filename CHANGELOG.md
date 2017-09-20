@@ -1,7 +1,7 @@
 ## 1.5.0 (Unreleased)
 
 ## 1.4.0 (2017-09-21)
-[Show detailed list of changes](file-incompatibilities-1.4.0.md)
+[Show detailed list of changes](file-incompatibilities-1-4-0.md)
 
 ### Added
 * **ProductBundle:** Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
@@ -100,7 +100,7 @@ Fixed Filter criteria disappears from UI upon setting
 * Fixed Sales Representative Info demo data changes
 
 ## 1.3.0 LTS (2017-07-28)
-[Show detailed list of changes](file-incompatibilities-1.3.0.md)
+[Show detailed list of changes](file-incompatibilities-1-3-0.md)
 
 ### Added
 * **CheckoutBundle:** added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
@@ -268,7 +268,7 @@ In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Contr
 ## 1.2.4 (2017-08-22)
 
 ## 1.2.0 (2017-06-01)
-[Show detailed list of changes](file-incompatibilities-1.2.0.md)
+[Show detailed list of changes](file-incompatibilities-1-2-0.md)
 
 ### Added
 * **CMSBundle:** content Blocks functionality was added. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/CMSBundle/README.md) for more information.
@@ -315,7 +315,7 @@ In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Contr
     - `oropaypal/js/adapter/credit-card-validator-adapter`
 
 ## 1.1.0 (2017-03-31)
-[Show detailed list of changes](file-incompatibilities-1.1.0.md)
+[Show detailed list of changes](file-incompatibilities-1-1-0.md)
 
 ### Added
  * **CacheBundle:** added resource [`invalidateCache.html.twig`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Resources/views/Action/invalidateCache.html.twig "Oro\Bundle\UPSBundle\Resources\views\Action\invalidateCache.html.twig") from UPSBundle
