@@ -2,7 +2,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
 @fixture-OroPromotionBundle:shopping_list.yml
-Feature: Promotions in Order page
+Feature: Promotions on Order page
   In order to find out applied discounts in order
   As administrator
   I need to have ability to see applied discounts on order view frontend page
@@ -24,9 +24,9 @@ Feature: Promotions in Order page
     And I click "edit" on first row in grid
     Then I should see next rows in "Promotions" table
       | Promotion                    | Discount |
-      | order Discount Promotion     | -$7.50  |
-      | shipping Discount Promotion  | -$1.00  |
       | line Item Discount Promotion | -$5.00  |
+      | shipping Discount Promotion  | -$1.00  |
+      | order Discount Promotion     | -$7.50  |
     When I click "Line Items"
     Then I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
@@ -72,9 +72,9 @@ Feature: Promotions in Order page
       | SKU2 | $3.00              | $3.00              | $3.00    |
     And I should see next rows in "Promotions" table
       | Promotion                    | Discount |
-      | order Discount Promotion     | -$6.50   |
-      | shipping Discount Promotion  | -$1.00   |
       | line Item Discount Promotion | -$3.00   |
+      | shipping Discount Promotion  | -$1.00   |
+      | order Discount Promotion     | -$6.50   |
     And I click "Order Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount |
@@ -88,9 +88,9 @@ Feature: Promotions in Order page
     Then I should see "Order has been saved" flash message
     Then I should see next rows in "Promotions" table
       | Promotion                    | Discount |
-      | order Discount Promotion     | -$6.50   |
-      | shipping Discount Promotion  | -$1.00   |
       | line Item Discount Promotion | -$3.00   |
+      | shipping Discount Promotion  | -$1.00   |
+      | order Discount Promotion     | -$6.50   |
     And I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | SKU1 | $10.00             | $10.00             | $0.00    |
@@ -109,9 +109,9 @@ Feature: Promotions in Order page
       And click on Deactivate action for "order Discount Promotion" row in "Promotions" table
       Then I should see next rows in "Promotions" table
         | Promotion                    | Status   |
-        | order Discount Promotion     | Inactive |
-        | shipping Discount Promotion  | Active   |
         | line Item Discount Promotion | Active   |
+        | shipping Discount Promotion  | Active   |
+        | order Discount Promotion     | Inactive |
       And see next subtotals for "Backend Order":
         | Subtotal          | Amount |
         | Subtotal          | $16.00 |
@@ -124,9 +124,9 @@ Feature: Promotions in Order page
       Then I should see "Order has been saved" flash message
       And should see next rows in "Promotions" table
         | Promotion                    | Status   |
-        | order Discount Promotion     | Inactive |
-        | shipping Discount Promotion  | Active   |
         | line Item Discount Promotion | Active   |
+        | shipping Discount Promotion  | Active   |
+        | order Discount Promotion     | Inactive |
       And see next subtotals for "Backend Order":
         | Subtotal          | Amount |
         | Subtotal          | $16.00 |
@@ -140,8 +140,8 @@ Feature: Promotions in Order page
     And click on Remove action for "order Discount Promotion" row in "Promotions" table
     Then I should see next rows in "Promotions" table
       | Promotion                    | Status |
-      | shipping Discount Promotion  | Active |
       | line Item Discount Promotion | Active |
+      | shipping Discount Promotion  | Active |
       | order Discount Promotion     | Active |
     And see next subtotals for "Backend Order":
       | Subtotal          | Amount |
@@ -155,9 +155,9 @@ Feature: Promotions in Order page
     Then I should see "Order has been saved" flash message
     And should see next rows in "Promotions" table
       | Promotion                    | Status |
-      | order Discount Promotion     | Active |
-      | shipping Discount Promotion  | Active |
       | line Item Discount Promotion | Active |
+      | shipping Discount Promotion  | Active |
+      | order Discount Promotion     | Active |
     And see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
