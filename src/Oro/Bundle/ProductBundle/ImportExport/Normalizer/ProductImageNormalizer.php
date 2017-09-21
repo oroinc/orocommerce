@@ -30,13 +30,16 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      */
     protected $rootDir;
 
+    /**
+     * @param ImageTypeProvider $imageTypeProvider
+     */
     public function setImageTypeProvider(ImageTypeProvider $imageTypeProvider)
     {
         $this->imageTypeProvider = $imageTypeProvider;
     }
 
     /**
-     * @param $productImageClass
+     * @param string $productImageClass
      */
     public function setProductImageClass($productImageClass)
     {
@@ -44,7 +47,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
-     * @param FileLocator
+     * @param FileLocator $fileLocator
      */
     public function setFileLocator($fileLocator)
     {
@@ -52,14 +55,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
-     * @param $rootDir
+     * @param string $rootDir
      */
     public function setRootDir($rootDir)
     {
         $this->rootDir = $rootDir;
     }
-
-
+    
     /**
      * @param Product $product
      *
