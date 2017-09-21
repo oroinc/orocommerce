@@ -1,5 +1,5 @@
-@fixture-OroPromotionBundle:coupons-promotions-in-order-validation.yml
-Feature: Coupons Promotions in Order page validation
+@fixture-OroPromotionBundle:coupons-promotions-on-order-page-validation.yml
+Feature: Coupons Promotions on Order page validation
   In order to find out why coupon not valid during applying it to the order
   As administrator
   I need to have ability to see validation errors for all not valid cases

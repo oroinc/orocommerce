@@ -13,4 +13,10 @@ class BackendOrderLineItem extends TableRow
     {
         return $this->getCellValue('SKU');
     }
+
+    public function delete()
+    {
+        $deleteButton = $this->find('css', '.removeLineItem');
+        $deleteButton->click();
+    }
 }

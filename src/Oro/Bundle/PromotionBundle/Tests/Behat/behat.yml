@@ -128,3 +128,11 @@ oro_behat_extension:
     Highlighted Suggestion:
       selector: '.select2-highlighted'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Product:
+      selector: '.order-line-item-type-product .select2-offscreen'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    Quantity:
+      selector: '[data-name="field__quantity"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
