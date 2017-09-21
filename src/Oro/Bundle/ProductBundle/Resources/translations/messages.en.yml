@@ -187,6 +187,7 @@ oro:
                 main.label: Main
                 additional.label: Additional
                 listing.label: Listing
+            import.label: 'Import images'
 
         related_products:
             label: Related Products
