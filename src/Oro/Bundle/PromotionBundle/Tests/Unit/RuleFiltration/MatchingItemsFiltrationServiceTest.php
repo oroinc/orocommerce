@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
@@ -200,7 +200,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Segment $segment
      * @param string|null $productUnitCode
-     * @return Promotion
+     * @return PromotionDataInterface
      */
     private function createPromotion(Segment $segment, $productUnitCode = null)
     {
@@ -210,11 +210,14 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         }
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['options' => $options]);
 
-        /** @var Promotion|\PHPUnit_Framework_MockObject_MockObject $promotion */
-        $promotion = $this->getEntity(Promotion::class, [
-            'productsSegment' => $segment,
-            'discountConfiguration' => $discountConfiguration
-        ]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getProductsSegment')
+            ->willReturn($segment);
+        $promotion->expects($this->any())
+            ->method('getDiscountConfiguration')
+            ->willReturn($discountConfiguration);
 
         return $promotion;
     }

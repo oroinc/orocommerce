@@ -26,6 +26,8 @@ use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\PreloadedExtension;
 
@@ -91,7 +93,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
             'currency' => 'USD',
             'rule' => [
                 'name' => 'rule2',
-                'enabled' => 'true',
+                'sortOrder' => '1',
             ],
         ]);
 
@@ -99,7 +101,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
         $this->assertEquals(
             (new PaymentMethodsConfigsRule())
                 ->setCurrency('USD')
-                ->setRule((new Rule())->setName('rule2'))
+                ->setRule((new Rule())->setSortOrder(1)->setName('rule2')->setEnabled(false))
                 ->addDestination((new PaymentMethodsConfigsRuleDestination())->setCountry(new Country('US')))
                 ->addMethodConfig((new PaymentMethodConfig())->setType(self::PAYMENT_TYPE)),
             $form->getData()
@@ -164,6 +166,18 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
                 ['form' => [new AdditionalAttrExtension()]]
             ),
             $this->getValidatorExtension(true)
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators()
+    {
+        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
+
+        return [
+            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 

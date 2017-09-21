@@ -149,7 +149,7 @@
                             </p>
                         </header>
                         <div>
-                            <p>{{ requestAdditionalNote.text|raw|nl2br }}</p>
+                            <p>{{ requestAdditionalNote.text|e|nl2br }}</p>
                         </div>
                     </article>
                 {% endfor %}

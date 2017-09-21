@@ -2,67 +2,34 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Templating\EngineInterface;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
-class OrderAddressEventListener
+/**
+ * This class adds to the events blocks, details about address blocks taking into account submission.
+ */
+class OrderAddressEventListener extends AbstractFormEventListener
 {
-    /** @var EngineInterface */
-    protected $engine;
-
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
     /**
-     * @param EngineInterface $engine
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(EngineInterface $engine, FormFactoryInterface $formFactory)
-    {
-        $this->engine = $engine;
-        $this->formFactory = $formFactory;
-    }
-
-    /**
-     * @param OrderEvent $event
+     * {@inheritdoc}
      */
     public function onOrderEvent(OrderEvent $event)
     {
+        if (null === $event->getSubmittedData()) {
+            return;
+        }
+
         $orderForm = $event->getForm();
         foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
             $fieldName = sprintf('%sAddress', $type);
             if ($orderForm->has($fieldName)) {
-                $orderFormName = $orderForm->getName();
-                $field = $orderForm->get($fieldName);
-
-                $form = $this->formFactory
-                    ->createNamedBuilder($orderFormName)
-                    ->add(
-                        $fieldName,
-                        $field->getConfig()->getType()->getName(),
-                        $field->getConfig()->getOptions()
-                    )
-                    ->getForm();
-
-                $form->submit($event->getSubmittedData());
-
-                $view = $this->renderForm($form->get($fieldName)->createView());
+                $form = $this->createFieldWithSubmission($orderForm, $fieldName, $event->getSubmittedData());
+                $view = $this->renderForm(
+                    $form->get($fieldName)->createView(),
+                    'OroOrderBundle:Form:customerAddressSelector.html.twig'
+                );
                 $event->getData()->offsetSet($fieldName, $view);
             }
         }
-    }
-
-    /**
-     * @param FormView $formView
-     *
-     * @return string
-     */
-    protected function renderForm(FormView $formView)
-    {
-        return $this->engine->render('OroOrderBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
     }
 }

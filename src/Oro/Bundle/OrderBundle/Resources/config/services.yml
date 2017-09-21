@@ -153,11 +153,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
-    oro_order.event_listener.order.address:
-        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
+    oro_order.event_listener.order.form.abstract:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\AbstractFormEventListener'
+        abstract: true
         arguments:
             - '@templating'
             - '@form.factory'
+
+    oro_order.event_listener.order.address:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
+        parent: oro_order.event_listener.order.form.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.event_listener.order.discount:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderDiscountEventListener'
+        parent: oro_order.event_listener.order.form.abstract
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 

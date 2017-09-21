@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 
 class ApplyAllStrategy extends AbstractStrategy
 {
@@ -17,7 +17,7 @@ class ApplyAllStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function process(DiscountContext $discountContext, array $discounts): DiscountContext
+    public function process(DiscountContextInterface $discountContext, array $discounts): DiscountContextInterface
     {
         foreach ($discounts as $discount) {
             $discount->apply($discountContext);
@@ -33,9 +33,9 @@ class ApplyAllStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    private function updateContextSubtotal(DiscountContext $discountContext)
+    private function updateContextSubtotal(DiscountContextInterface $discountContext)
     {
         $lineItemsTotalDiscount = 0.0;
         foreach ($discountContext->getLineItems() as $lineItem) {
