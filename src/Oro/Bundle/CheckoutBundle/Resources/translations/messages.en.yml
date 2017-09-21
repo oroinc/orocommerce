@@ -6,6 +6,7 @@ oro:
         owner.label: Owner
         customer.label: Customer
         customer_user.label: Customer User
+        registered_customer_user.label: Registered Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes

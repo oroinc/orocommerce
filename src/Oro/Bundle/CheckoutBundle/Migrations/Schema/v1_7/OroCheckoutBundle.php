@@ -24,6 +24,7 @@ class OroCheckoutBundle implements Migration
     {
         $table = $schema->getTable('oro_checkout');
         $table->addColumn('registered_customer_user_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),
             ['registered_customer_user_id'],

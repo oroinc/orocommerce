@@ -42,7 +42,7 @@ define(function(require) {
                 $(this.$fieldsContainer).hide();
                 validationDisabled = true;
             }
-            _.each(inputs, function (input) {
+            _.each(inputs, function(input) {
                 $(input).prop('disabled', validationDisabled).inputWidget('refresh');
             })
         }

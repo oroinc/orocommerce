@@ -91,6 +91,7 @@ class OroCheckoutBundleInstaller implements Installation
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
+        $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
         $table->setPrimaryKey(['id']);
     }
 
