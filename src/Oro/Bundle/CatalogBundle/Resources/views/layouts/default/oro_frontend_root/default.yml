@@ -10,7 +10,7 @@ layout:
             items:
                 featured_categories:
                     blockType: embedded_list
-                    siblingId: hero_promo_container
+                    siblingId: featured_menu_container
                     options:
                         item_key: 'category'
                         items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10])'
