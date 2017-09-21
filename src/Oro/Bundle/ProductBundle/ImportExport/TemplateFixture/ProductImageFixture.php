@@ -15,7 +15,7 @@ class ProductImageFixture  implements TemplateFixtureInterface
      */
     public function getEntityClass()
     {
-        return 'Oro\Bundle\ProductBundle\Entity\ProductImage';
+        return ProductImage::class;
     }
 
     /**

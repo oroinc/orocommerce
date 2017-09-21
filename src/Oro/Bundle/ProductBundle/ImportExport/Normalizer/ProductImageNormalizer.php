@@ -11,17 +11,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class ProductImageNormalizer extends ConfigurableEntityNormalizer
 {
     /**
-     * @var string
+     * @var string $productImageClass
      */
     protected $productImageClass;
 
     /**
-     * @var  ImageTypeProvider
+     * @var  ImageTypeProvider $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var  FileLocator
+     * @var  FileLocator $fileLocator
      */
     protected $fileLocator;
 
@@ -61,13 +61,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
 
 
     /**
-     * @param Product $object
+     * @param Product $product
      *
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($product, $format = null, array $context = [])
     {
-        $data = parent::normalize($object, $format, $context);
+        $data = parent::normalize($product, $format, $context);
 
         $imageTypesKeys = array_keys($this->imageTypeProvider->getImageTypes());
         $availableTypesArray = array_fill_keys($imageTypesKeys, false);
@@ -79,7 +79,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         }
 
         $data['types'] = $availableTypesArray;
-        $data['image']['name'] = $object->getImage()->getOriginalFileName();
+        $data['image']['name'] = $product->getImage()->getOriginalFileName();
 
         return $data;
     }
@@ -87,30 +87,26 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($productData, $class, $format = null, array $context = [])
     {
         try {
-            $imagePath = $this->fileLocator->locate(sprintf('%s/import_export/product_images/%s', $this->rootDir, $data['image']['name']));
+            $imagePath = $this->fileLocator->locate(sprintf('%s/import_export/product_images/%s', $this->rootDir, $productData['image']['name']));
         } catch (\Exception $e) {
             $imagePath = null;
         }
 
-        if (is_array($imagePath)) {
-            $imagePath = current($imagePath);
-        }
-
-        $data['image'] = $imagePath;
+        $productData['image'] = is_array($imagePath) ? current($imagePath) : $imagePath;
         $imageTypes = $this->imageTypeProvider->getImageTypes();
 
-        foreach ($data['types'] as $type => $value) {
+        foreach ($productData['types'] as $type => $value) {
             if (!array_key_exists($type, $imageTypes) || !boolval($value)) {
                 unset($imageTypes[$type]);
             }
         }
 
-        $data['types'] = array_keys($imageTypes);
+        $productData['types'] = array_keys($imageTypes);
 
-        return parent::denormalize($data, $class, $format, $context);
+        return parent::denormalize($productData, $class, $format, $context);
     }
 
     /**

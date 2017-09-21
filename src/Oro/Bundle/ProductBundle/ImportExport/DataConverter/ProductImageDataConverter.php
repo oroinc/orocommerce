@@ -10,7 +10,6 @@ class ProductImageDataConverter extends AbstractTableDataConverter
     /** @var  ImageTypeProvider */
     protected $imageTypeProvider;
 
-
     public function setImageTypeProvider(ImageTypeProvider $imageTypeProvider)
     {
         $this->imageTypeProvider = $imageTypeProvider;
@@ -21,8 +20,8 @@ class ProductImageDataConverter extends AbstractTableDataConverter
      */
     protected function getHeaderConversionRules()
     {
-        foreach (array_keys($this->imageTypeProvider->getImageTypes()) as $key => $imageType) {
-            $typesHeader[ucfirst($imageType)] = sprintf('types:%s', $imageType);
+        foreach ($this->imageTypeProvider->getImageTypes() as $imageTypeName => $imageType) {
+            $typesHeader[ucfirst($imageTypeName)] = sprintf('types:%s', $imageTypeName);
         }
 
         return array_merge(
