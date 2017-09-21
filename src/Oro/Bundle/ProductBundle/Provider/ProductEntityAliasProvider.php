@@ -56,7 +56,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
     }
 
     /**
-     * @param $entityClass ex:Extend\Entity\EV_Product_New_Attribute_8fde6396
+     * @param string $entityClass ex:Extend\Entity\EV_Product_New_Attribute_8fde6396
      * @return string
      */
     protected function getAliasFromEntityClass($entityClass)
@@ -77,7 +77,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      * Method will check Product attributes and see if we can get a match knowing the rules on which the
      * entity class name is generated from the attribute name.
      *
-     * @param $fieldName
+     * @param string $fieldName
      * @return string
      */
     protected function getAliasByActualFieldName($fieldName)
@@ -101,16 +101,16 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
     }
 
     /**
-     * @param $fieldName
+     * @param string $fieldName
      * @return string
      */
-    private function normalizeFieldName($fieldName)
+    protected function normalizeFieldName($fieldName)
     {
         return str_replace('_', '', strtolower($fieldName));
     }
 
     /**
-     * @param $fieldName
+     * @param string $fieldName
      * @return array
      */
     protected function getEntityAliasAndPlural($fieldName)

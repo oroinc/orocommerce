@@ -37,6 +37,11 @@ class ProductEntityAliasProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getPossibleClassNames
+     * @param string $className
+     * @param boolean $isAttribute
+     * @param array $attributesList
+     * @param string $expectedAlias
+     * @param string $expectedPlural
      */
     public function testGetEntityAlias($className, $isAttribute, $attributesList, $expectedAlias, $expectedPlural)
     {
@@ -57,9 +62,9 @@ class ProductEntityAliasProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $attributesList
+     * @param array $attributesList
      */
-    private function setConfigManager($attributesList)
+    protected function setConfigManager($attributesList)
     {
         $entityMetadata = new EntityMetadata(Product::class);
         $entityMetadata->propertyMetadata = array_flip($attributesList);
@@ -70,9 +75,9 @@ class ProductEntityAliasProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $isAttribute
+     * @param boolean $isAttribute
      */
-    private function setAttributeConfigHelper($isAttribute)
+    protected function setAttributeConfigHelper($isAttribute)
     {
         $this->attributeConfigHelper->expects($this->any())
             ->method('isFieldAttribute')
