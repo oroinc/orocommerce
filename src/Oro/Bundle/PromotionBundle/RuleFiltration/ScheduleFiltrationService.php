@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\CronBundle\Checker\ScheduleIntervalChecker;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
@@ -47,14 +48,18 @@ class ScheduleFiltrationService implements RuleFiltrationServiceInterface
      */
     private function isScheduleEnabled(RuleOwnerInterface $ruleOwner): bool
     {
-        return $ruleOwner instanceof Promotion && $this->isPromotionApplicable($ruleOwner);
+        if ($ruleOwner instanceof AppliedPromotionData) {
+            return true;
+        }
+
+        return $ruleOwner instanceof PromotionDataInterface && $this->isPromotionApplicable($ruleOwner);
     }
 
     /**
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @return bool
      */
-    private function isPromotionApplicable(Promotion $promotion): bool
+    private function isPromotionApplicable(PromotionDataInterface $promotion): bool
     {
         return $promotion->getSchedules()->isEmpty()
             || $this->scheduleIntervalChecker->hasActiveSchedule($promotion->getSchedules());

@@ -3,6 +3,11 @@ parameters:
     oro_promotion.entity.coupon.class: Oro\Bundle\PromotionBundle\Entity\Coupon
 
 services:
+    oro_promotion.entity_generator_extension.order:
+        class: Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension
+        tags:
+            - { name: oro_entity_extend.entity_generator_extension }
+
     oro_promotion.security.acl.voter.promotion_matched_product_segment:
         class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
         public: false
@@ -24,6 +29,14 @@ services:
         decoration_priority: 0
         arguments:
             - '@oro_promotion.rule_filtration.enabled_decorator.inner'
+
+    oro_promotion.rule_filtration.duplicate_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 20
+        arguments:
+            - '@oro_promotion.rule_filtration.duplicate_decorator.inner'
 
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
@@ -68,6 +81,7 @@ services:
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+            - '@doctrine'
 
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
@@ -101,6 +115,7 @@ services:
             - '@doctrine'
             - '@oro_promotion.rule_filtration.service'
             - '@oro_promotion.promotion.context_data_converter_registry'
+            - '@oro_promotion.mapper.applied_promotion'
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
@@ -179,6 +194,8 @@ services:
             - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_promotion.validation_service.coupon_validation'
+            - '@oro_promotion.provider.entity_coupons_provider'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
@@ -308,11 +325,9 @@ services:
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:
-            - '@oro_promotion.promotion_provider'
             - '@oro_promotion.discount.context_converter.registry'
-            - '@oro_promotion.discount_factory'
             - '@oro_promotion.discount.strategy_provider'
-            - '@oro_promotion.provider.matching_products_provider'
+            - '@oro_promotion.provider.promotion_discounts_provider'
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
@@ -323,16 +338,19 @@ services:
     oro_promotion.provider.applied_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
         public: false
-        arguments:
-            - '@oro.cache.memory_cache_chain'
-            - '@oro_entity.doctrine_helper'
 
-    oro_promotion.provider.discounts_provider:
-        class: Oro\Bundle\PromotionBundle\Provider\DiscountsProvider
-        public: false
+    oro_promotion.mapper.applied_promotion:
+        class: Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper
+        public: true
         arguments:
-            - '@oro_promotion.provider.applied_discounts_provider'
-            - '@oro_promotion.promotion_executor'
+            - '@doctrine'
+            - '@oro_promotion.applied_promotion_normalizer'
+
+    oro_promotion.provider.entity_coupons_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider
+        public: true
+        arguments:
+            - '@oro_entity.doctrine_helper'
 
     oro_promotion.provider.subtotal_provider:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
@@ -343,7 +361,6 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
-            - '@oro_promotion.provider.discount_recalculation_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
@@ -394,31 +411,36 @@ services:
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
 
-    oro_promotion.placeholder.order_additional_placeholder_filter:
-        class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
-
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
         arguments:
-             - '@oro_promotion.applied_discount_manager'
+             - '@oro_promotion.applied_promotion_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
 
-    oro_promotion.event_listener.order_line_item:
-        class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemEntityListener
-        public: false
+    oro_promotion.event_listener.order_form_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderFormListener
         arguments:
-             - '@oro_promotion.applied_discount_manager'
+             - '@oro_promotion.applied_promotion_manager'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preRemove }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeFlush }
 
-    oro_promotion.applied_discount_manager:
-        class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
+    oro_promotion.promotion_executor.link:
+        tags:
+            - { name: oro_service_link,  service: oro_promotion.promotion_executor }
+
+    oro_promotion.applied_promotion_manager:
+        class: Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager
         arguments:
-            - '@service_container'
+            - '@oro_promotion.promotion_executor.link'
             - '@oro_entity.doctrine_helper'
+            - '@oro_promotion.mapper.applied_promotion'
+
+    oro_promotion.coupon_usage_manager:
+        class: Oro\Bundle\PromotionBundle\Manager\CouponUsageManager
+        arguments:
+            - '@doctrine'
 
     oro_promotion.event_listener.order_view_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderViewListener
@@ -448,36 +470,26 @@ services:
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.manager.tax_manager'
-            - '@oro_promotion.provider.discounts_provider'
+            - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_order.form.section.provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType' }
 
     oro_promotion.form.extension.order:
-        class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
-        arguments:
-            - '@oro_promotion.provider.discount_recalculation_provider'
-            - '@oro_promotion.applied_discount_manager'
-            - '@oro_promotion.provider.discounts_provider'
+        class: Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
 
-    oro_promotion.event_listener.order.discounts:
+    oro_promotion.event_listener.order_line_item_applied_discounts_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener
         arguments:
             - '@oro_tax.manager.tax_manager'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@oro_promotion.provider.discounts_provider'
+            - '@oro_promotion.provider.applied_discounts_provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
-
-    oro_promotion.provider.discount_recalculation_provider:
-        class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
-        public: false
-        arguments:
-            - '@request_stack'
 
     oro_promotion.mass_action.coupon_edit_mass_action_handler:
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponEditMassActionHandler
@@ -525,3 +537,128 @@ services:
             - "@service_container"
         tags:
             - { name: twig.extension }
+
+    oro_promotion.twig.extension.applied_promotions:
+        class: 'Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension'
+        public: false
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: twig.extension }
+
+    oro_promotion.model.coupon_applicability_query_builder_modifier:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Model\CouponApplicabilityQueryBuilderModifier
+
+    oro_promotion.autocomplete.coupon_search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: Oro\Bundle\PromotionBundle\Autocomplete\CouponSearchHandler
+        arguments:
+            - '%oro_promotion.entity.coupon.class%'
+            - ['code', 'promotion.rule.name']
+        calls:
+            - [setCouponApplicabilityQueryBuilderModifier, ['@oro_promotion.model.coupon_applicability_query_builder_modifier']]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_coupon', acl_resource: 'oro_promotion_coupon_view' }
+
+    oro_promotion.event_listener.select_coupon_grid_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\SelectCouponGridListener
+        arguments:
+            - '@oro_promotion.model.coupon_applicability_query_builder_modifier'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.promotion-coupons-select-grid, method: onBuildAfter }
+
+    oro_promotion.validation_service.coupon_validation:
+        class: Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService
+        arguments:
+            - '@oro_promotion.coupon_usage_manager'
+
+    oro_promotion.form.type.coupon_autocomplete_type:
+        class: Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_autocomplete }
+
+    oro_promotion.form.type.coupon_add_type:
+        class: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_add }
+
+    oro_promotion.validation_service.coupon_applicability_validation:
+        class: Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService
+        arguments:
+            - '@oro_promotion.validation_service.coupon_validation'
+            - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.provider.entity_coupons_provider'
+
+    oro_promotion.rule_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\RuleNormalizer
+
+    oro_promotion.scope_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\ScopeNormalizer
+        arguments:
+            - '@doctrine'
+
+    oro_promotion.segment_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\SegmentNormalizer
+
+    oro_promotion.applied_promotion_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\AppliedPromotionNormalizer
+        arguments:
+            - '@oro_promotion.rule_normalizer'
+            - '@oro_promotion.scope_normalizer'
+            - '@oro_promotion.segment_normalizer'
+
+    oro_promotion.handler.coupon_validation_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+        arguments:
+            - '@oro_promotion.validation_service.coupon_applicability_validation'
+            - '@oro_entity.routing_helper'
+            - '@doctrine'
+            - '@event_dispatcher'
+
+    oro_promotion.event_listener.actualize_coupons_state_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
+        arguments:
+            - '@doctrine'
+            - '@oro_promotion.provider.entity_coupons_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+
+    oro_promotion.provider.promotion_discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider
+        public: false
+        arguments:
+            - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.discount_factory'
+            - '@oro_promotion.provider.matching_products_provider'
+
+    oro_promotion.provider.disabled_promotion_discounts_provider_decorator:
+        class: Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorator
+        public: false
+        decorates: oro_promotion.provider.promotion_discounts_provider
+        arguments:
+            - '@oro_promotion.provider.disabled_promotion_discounts_provider_decorator.inner'
+
+    oro_promotion.event_listener.order_applied_promotion_event_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
+        arguments:
+            - '@templating'
+            - '@form.factory'
+            - '@oro_promotion.applied_promotion_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_promotion.event_listener.applied_coupon:
+        class: Oro\Bundle\PromotionBundle\EventListener\AppliedCouponEntityListener
+        public: false
+        arguments:
+            - '@oro_promotion.coupon_usage_manager'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PromotionBundle\Entity\AppliedCoupon', event: postPersist }

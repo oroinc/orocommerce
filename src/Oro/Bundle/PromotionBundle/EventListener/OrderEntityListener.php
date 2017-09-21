@@ -2,40 +2,29 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
+use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 
 class OrderEntityListener
 {
     /**
-     * @var AppliedDiscountManager
+     * @var AppliedPromotionManager
      */
-    protected $appliedDiscountManager;
+    protected $appliedPromotionManager;
 
     /**
-     * @param AppliedDiscountManager $appliedDiscountManager
+     * @param AppliedPromotionManager $appliedPromotionManager
      */
-    public function __construct(AppliedDiscountManager $appliedDiscountManager)
+    public function __construct(AppliedPromotionManager $appliedPromotionManager)
     {
-        $this->appliedDiscountManager = $appliedDiscountManager;
-    }
-
-    /**
-     * @param Order $order
-     * @param LifecycleEventArgs $args
-     */
-    public function prePersist(Order $order, LifecycleEventArgs $args)
-    {
-        $this->appliedDiscountManager->saveAppliedDiscounts($order);
+        $this->appliedPromotionManager = $appliedPromotionManager;
     }
 
     /**
      * @param Order $order
      */
-    public function preRemove(Order $order)
+    public function prePersist(Order $order)
     {
-        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
+        $this->appliedPromotionManager->createAppliedPromotions($order);
     }
 }

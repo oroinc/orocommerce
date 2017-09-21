@@ -46,9 +46,101 @@
     </div>
 {% endblock %}
 
+{% block oro_promotion_coupon_add_row %}
+    {% set addButtonId = form.coupon.vars.id ~ '-add-button' %}
+    {% set addedCouponsContainerId = form.addedCoupons.vars.id ~ '-added-coupons-container' %}
+    <fieldset class="form-horizontal"
+            data-page-component-view="oropromotion/js/app/views/coupon-add-view"
+            data-page-component-options="{{ {
+                entityClass: entityClass,
+                entityId: entityId,
+                selectors: {
+                    couponAutocompleteSelector: '#' ~ form.coupon.vars.id,
+                    couponAddButtonSelector: '#' ~ addButtonId,
+                    addedIdsSelector: '#' ~ form.addedCoupons.vars.id,
+                    addedCouponsContainerSelector: '#' ~ addedCouponsContainerId,
+                    selectCouponValidationContainerSelector: '.select-coupon-validation-container',
+                    formSelector: 'form[name="oro_order_type"]'
+                }
+            }|json_encode }}"
+    >
+        <div class="select-coupon-container">
+            {{ form_row(form.coupon, {attr: {class: 'coupon-select'}}) }}
+            <button id="{{ addButtonId }}" class="btn btn-primary">{{ 'oro.promotion.coupon.form.add_type.add_button.label'|trans }}</button>
+        </div>
+        <div class="select-coupon-validation-container control-group"></div>
+        <div class="added-coupons-container">
+            {{ form_row(form.addedCoupons, {attr: {'data-role': 'added-coupons-field'}}) }}
+            <div id="{{ addedCouponsContainerId }}"></div>
+        </div>
+    </fieldset>
+{% endblock %}
+
 {% block oro_promotion_coupon_dashes_sequence_widget %}
     {% spaceless %}
         <label class="dashes-sequence-suffix-label">{{ 'oro.promotion.coupon.generation.dashesSequence.suffix.label'|trans }}</label>
         {{ form_widget(form) }}
     {% endspaceless %}
+{% endblock %}
+
+{% block oro_promotion_applied_promotion_widget %}
+    {% if form.vars.value %}
+        <div data-role="applied-promotion-element" data-source-promotion-id="{{ form.vars.value.sourcePromotionId }}">
+            {{ form_widget(form.active, {attr: {'data-role': 'applied-promotion-active'}}) }}
+            {{ form_widget(form.sourcePromotionId) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block oro_promotion_applied_coupon_collection_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="oro-collection-table-heading">
+        <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
+        {{ UI.clientLink({
+            'dataUrl': path('oro_frontend_action_widget_form', {
+                operationName: 'oro_promotion_add_coupon_form',
+                entityClass: oro_class_name(form.vars.entity),
+                entityId: {id: form.vars.entity.id}
+            }),
+            'aCss': 'btn',
+            'dataAttributes': {
+                'role': 'add'
+            },
+            'label': 'oro.promotion.ui.add_coupon_code.label'|trans,
+            'widget': {
+                'type': 'dialog',
+                'multiple': false,
+                'options': {
+                    'alias': dialogWidgetAlias,
+                    'dialogOptions': {
+                        'okText': 'oro.promotion.ui.apply_button.label'|trans,
+                        'width': 600,
+                        'autoResize': true,
+                        'title': 'oro.promotion.ui.add_coupon_codes.title'|trans,
+                        'allowMaximize': true,
+                        'allowMinimize': false,
+                        'dblclick': false,
+                        'modal': true,
+                        'maximizedHeightDecreaseBy': 'minimize-bar'
+                    }
+                }
+            }
+        }) }}
+    </div>
+
+    {% import 'OroOrderBundle:Order:macros.html.twig' as order_macros %}
+    <div {{ block('widget_container_attributes') }}>
+        {{ order_macros.hiddenCollection(form) }}
+    </div>
+{% endblock %}
+
+{% block oro_promotion_applied_coupon_widget %}
+    <div
+        data-role="applied-coupon-element"
+        data-source-coupon-id="{{ form.vars.value ? form.vars.value.sourceCouponId : null }}"
+    >
+        {{ form_widget(form.couponCode, {attr: {'data-role': 'applied-coupon-code'}}) }}
+        {{ form_widget(form.sourcePromotionId, {attr: {'data-role': 'applied-coupon-source-promotion-id'}}) }}
+        {{ form_widget(form.sourceCouponId, {attr: {'data-role': 'applied-coupon-source-coupon-id'}}) }}
+    </div>
 {% endblock %}

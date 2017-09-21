@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
@@ -70,7 +70,6 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context)
     {
-        $promotion = new Promotion();
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('shipping');
         $discountConfiguration->setOptions([
@@ -79,7 +78,11 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
                 ShippingDiscount::SHIPPING_METHOD_TYPE => 'not matched shipping method type',
             ]
         ]);
-        $promotion->setDiscountConfiguration($discountConfiguration);
+
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getDiscountConfiguration')
+            ->willReturn($discountConfiguration);
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
@@ -94,7 +97,6 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testAllowShippingPromotionsWithMatchedShippingOptions()
     {
-        $promotion = new Promotion();
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('shipping');
         $discountConfiguration->setOptions([
@@ -103,7 +105,12 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
                 ShippingDiscount::SHIPPING_METHOD_TYPE => 'shipping method type',
             ]
         ]);
-        $promotion->setDiscountConfiguration($discountConfiguration);
+
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getDiscountConfiguration')
+            ->willReturn($discountConfiguration);
+
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
@@ -122,10 +129,14 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testAllowNotShippingPromotions()
     {
-        $promotion = new Promotion();
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('order');
-        $promotion->setDiscountConfiguration($discountConfiguration);
+
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getDiscountConfiguration')
+            ->willReturn($discountConfiguration);
+
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',

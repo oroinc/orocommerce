@@ -6,6 +6,18 @@ services:
         class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'
         public: false
 
+    oro_rule.basic_expression_language_validator:
+        class: 'Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator'
+        arguments:
+            - '@oro_rule.expression_language'
+
+    oro_rule.validator_constraints.expression_language_syntax_validator:
+        class: 'Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator'
+        arguments:
+            - '@oro_rule.basic_expression_language_validator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_rule.validator_constraints.expression_language_syntax_validator }
+
     oro_rule.expression_language.function_count:
         class: Oro\Bundle\RuleBundle\ExpressionLanguage\CountExpressionLanguageFunction
         tags:

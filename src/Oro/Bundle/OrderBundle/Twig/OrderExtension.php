@@ -64,7 +64,12 @@ class OrderExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this, 'formatShippingTrackingLink']
-            )
+            ),
+            new \Twig_SimpleFunction(
+                'oro_order_get_template_content',
+                [$this, 'getTemplateContent'],
+                ['needs_environment' => true, 'is_safe' => ['html']]
+            ),
         ];
     }
 
@@ -74,6 +79,19 @@ class OrderExtension extends \Twig_Extension
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * @param \Twig_Environment $environment
+     * @param string $templateName
+     * @param array $context
+     * @return string
+     */
+    public function getTemplateContent(\Twig_Environment $environment, $templateName, array $context)
+    {
+        $template = $environment->resolveTemplate($templateName);
+
+        return $template->render($context);
     }
 
     /**

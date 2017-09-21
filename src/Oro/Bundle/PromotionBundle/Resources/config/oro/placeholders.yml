@@ -10,9 +10,6 @@ placeholders:
             items:
                 order_edit_section_applied_discounts_after_item_with_taxes: ~
                 order_edit_section_applied_discounts_after_item_without_taxes: ~
-        order_update_additional_nav_buttons:
-            items:
-                save_without_discounts_recalculation_button: ~
 
     items:
         order_discount_information:
@@ -27,9 +24,6 @@ placeholders:
         shipping_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, shipping)"
             template: OroPromotionBundle:Promotion:discountPlaceholders/shipping.html.twig
-        save_without_discounts_recalculation_button:
-            applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
-            template: OroPromotionBundle:Promotion:orderPlaceholders/saveWithoutDiscountsRecalculationButton.html.twig
         order_edit_section_applied_discounts_after_item_with_taxes:
             applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
             template: OroPromotionBundle:Order:Form/applied_discounts_with_taxes.html.twig

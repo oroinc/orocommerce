@@ -2,6 +2,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
 @fixture-OroPromotionBundle:shopping_list.yml
+@skip
 Feature: Promotions in Order page
   In order to find out applied discounts in order
   As administrator
@@ -22,7 +23,6 @@ Feature: Promotions in Order page
       | order Discount Promotion     |
     When I go to Sales / Orders
     And I click "edit" on first row in grid
-    Then I should see "Promotion discounts will be recalculated after saving the order"
     And I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |
     And I should see "order Discount Promotion" in "Order Promotions Grid" with following data:
@@ -40,7 +40,6 @@ Feature: Promotions in Order page
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
       | Total            | $9.50   |
-
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer

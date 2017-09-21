@@ -9,7 +9,7 @@ class OrderDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function apply(DiscountContext $discountContext)
+    public function apply(DiscountContextInterface $discountContext)
     {
         $discountContext->addSubtotalDiscount($this);
     }
