@@ -234,10 +234,10 @@ define(function(require) {
 
             var items = _.filter(this.items);
             if (_.isEmpty(items)) {
-                items = this.noDataTemplate();
+                this.$totals.html(this.noDataTemplate());
+            } else {
+                this.$totals.html(items.join(''));
             }
-
-            this.$totals.html(items.join(''));
 
             this.items = [];
         },

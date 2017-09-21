@@ -114,29 +114,37 @@ define(function(require) {
         updateAmountsAndValidators: function(subtotals) {
             var valueDataValidation = this.$valueInputElement.data('validation');
             var amountDataValidation = this.$amountInputElement.data('validation');
-            var total = 0;
-            var index = this.$el.index();
-            var currentIndex = -1;
-            var discountAmount = null;
+            var total = 0.0;
+            var discountAmount = 0.0;
+            var percent = 0.0;
 
-            var self = this;
+            var totalType = this.options.totalType;
             _.each(subtotals.subtotals, function(subtotal) {
-                if (subtotal.type === self.options.totalType) {
+                if (subtotal.type === totalType) {
                     total = subtotal.amount;
-                }
-
-                if (subtotal.type === self.options.discountType) {
-                    currentIndex++;
-                }
-
-                if (currentIndex === index && discountAmount === null) {
-                    discountAmount = subtotal.amount;
                 }
             });
 
-            var percent = total > 0 ? (discountAmount / total * 100).toFixed(2) : 0;
-            var formatedDiscountAmount = NumberFormatter.formatCurrency(discountAmount, this.options.currency);
-            this.$el.find(this.options.valueCalculatedSelector).html(formatedDiscountAmount + ' (' + percent + '%)');
+            if (this.$typeInputElement.val() === this.options.percentTypeValue) {
+                percent = this.$percentInputElement.val() ? parseFloat(this.$percentInputElement.val()) : 0;
+                discountAmount =  (percent * total / 100);
+            } else {
+                discountAmount = this.$amountInputElement.val() ? parseFloat(this.$amountInputElement.val()) : 0;
+                percent = total > 0 ? (discountAmount / total * 100) : 0;
+            }
+
+            var formattedDiscountAmount = NumberFormatter.formatCurrency(
+                discountAmount.toFixed(2),
+                this.options.currency
+            );
+            var formattedPercent = NumberFormatter.formatDecimal(percent.toFixed(2));
+            if (!isNaN(percent) && discountAmount > 0.0 && discountAmount <= total) {
+                this.$el
+                    .find(this.options.valueCalculatedSelector)
+                    .html(formattedDiscountAmount + ' (' + formattedPercent + '%)');
+            } else {
+                this.$el.find(this.options.valueCalculatedSelector).html('');
+            }
 
             this.$amountInputElement.val(discountAmount);
             this.$percentInputElement.val(percent);

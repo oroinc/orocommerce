@@ -76,6 +76,15 @@ oro_behat_extension:
           Discount Type (first):
             locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__type"]'
             type: 'css'
+          Discount Description (first):
+            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__description"]'
+            type: 'css'
+
+    Discount Row (first):
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        selector:
+            locator: '.oro-discount-collection .order-discount-item:first-child .discount-item-value-calculated'
+            type: 'css'
 
     Overridden Shipping Cost Amount:
       selector:
