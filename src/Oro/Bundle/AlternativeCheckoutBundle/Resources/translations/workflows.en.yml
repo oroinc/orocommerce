@@ -204,12 +204,6 @@ oro:
                     label: 'Submit Order'
                     warning_message: ''
                     attribute:
-                        customer_notes:
-                            label: ''
-                        po_number:
-                            label: ''
-                        ship_until:
-                            label: ''
                         state_token:
                             label: ''
                         remove_source:
