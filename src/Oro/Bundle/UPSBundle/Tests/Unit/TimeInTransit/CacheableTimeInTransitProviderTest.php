@@ -4,14 +4,14 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransit;
+use Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
-use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransit;
-use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitInterface;
+use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderProvider;
+use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderInterface;
 
-class CacheableTimeInTransitTest extends \PHPUnit_Framework_TestCase
+class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @internal
@@ -44,12 +44,12 @@ class CacheableTimeInTransitTest extends \PHPUnit_Framework_TestCase
     private $timeInTransitCacheProviderFactory;
 
     /**
-     * @var TimeInTransitInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $timeInTransit;
 
     /**
-     * @var CacheableTimeInTransit
+     * @var CacheableTimeInTransitProvider
      */
     private $cacheableTimeInTransit;
 
@@ -73,10 +73,10 @@ class CacheableTimeInTransitTest extends \PHPUnit_Framework_TestCase
         $this->upsTransport = $this->createMock(UPSTransport::class);
         $this->timeInTransitCacheProviderFactory = $this->createMock(TimeInTransitCacheProviderFactoryInterface::class);
         $this->timeInTransitCacheProvider = $this->createMock(TimeInTransitCacheProviderInterface::class);
-        $this->timeInTransit = $this->createMock(TimeInTransit::class);
+        $this->timeInTransit = $this->createMock(TimeInTransitProviderProvider::class);
         $this->timeInTransitResult = $this->createMock(TimeInTransitResultInterface::class);
         $this->cacheableTimeInTransit =
-            new CacheableTimeInTransit($this->timeInTransit, $this->timeInTransitCacheProviderFactory);
+            new CacheableTimeInTransitProvider($this->timeInTransit, $this->timeInTransitCacheProviderFactory);
     }
 
     public function testGetTimeInTransitResult()

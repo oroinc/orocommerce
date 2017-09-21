@@ -6,14 +6,15 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
+use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 
-class CacheableTimeInTransit implements TimeInTransitInterface
+class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
 {
     const CACHE_LIFETIME = 86400;
     const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdHi';
 
     /**
-     * @var TimeInTransit
+     * @var TimeInTransitProviderProvider
      */
     protected $timeInTransit;
 
@@ -23,11 +24,11 @@ class CacheableTimeInTransit implements TimeInTransitInterface
     protected $timeInTransitCacheProviderFactory;
 
     /**
-     * @param TimeInTransit                              $timeInTransit
+     * @param TimeInTransitProviderProvider              $timeInTransit
      * @param TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
      */
     public function __construct(
-        TimeInTransit $timeInTransit,
+        TimeInTransitProviderProvider $timeInTransit,
         TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
     ) {
         $this->timeInTransit = $timeInTransit;
@@ -42,7 +43,7 @@ class CacheableTimeInTransit implements TimeInTransitInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) {
+    ): TimeInTransitResultInterface {
         $timeInTransitCacheProvider = $this->createCacheProvider($transport);
 
         if (!$timeInTransitCacheProvider->contains($shipFromAddress, $shipToAddress, $pickupDate)) {

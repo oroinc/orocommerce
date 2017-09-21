@@ -8,9 +8,10 @@ use Oro\Bundle\UPSBundle\Client\Factory\UpsClientFactoryInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactoryInterface;
+use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 use Psr\Log\LoggerInterface;
 
-class TimeInTransit implements TimeInTransitInterface
+class TimeInTransitProviderProvider implements TimeInTransitProviderInterface
 {
     /**
      * @var TimeInTransitRequestFactoryInterface
@@ -58,7 +59,7 @@ class TimeInTransit implements TimeInTransitInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) {
+    ): TimeInTransitResultInterface {
         $request = $this->requestFactory->createRequest($transport, $shipFromAddress, $shipToAddress, $pickupDate);
         $client = $this->clientFactory->createUpsClient($transport->isUpsTestMode());
 

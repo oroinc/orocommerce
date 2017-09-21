@@ -21,8 +21,8 @@ services:
         arguments:
             - '@oro_ups.time_in_transit.result.factory.estimated_arrival'
 
-    oro_ups.time_in_transit:
-        class: 'Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransit'
+    oro_ups.provider.time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider'
         arguments:
             - '@oro_ups.time_in_transit.request.factory'
             - '@oro_ups.client.factory_basic'
@@ -39,9 +39,9 @@ services:
             - '@oro_ups.cache.time_in_transit'
         lazy: true
 
-    oro_ups.cacheable_time_in_transit:
-        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransit'
-        decorates: oro_ups.time_in_transit
+    oro_ups.provider.cacheable_time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider'
+        decorates: oro_ups.provider.time_in_transit
         arguments:
-            - '@oro_ups.cacheable_time_in_transit.inner'
+            - '@oro_ups.provider.cacheable_time_in_transit.inner'
             - '@oro_ups.time_in_transit.cache_provider.factory'

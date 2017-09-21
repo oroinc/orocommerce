@@ -1,6 +1,6 @@
 # UPS time in transit.
 
-Service `oro_ups.cacheable_time_in_transit` can get estimated time in transit and cached for 1 day, based on:
+Service `oro_ups.provider.cacheable_time_in_transit` can get estimated time in transit and cached for 1 day, based on:
  * from zip code
  * to zip code
  * pickup date
@@ -11,7 +11,7 @@ For example:
 $transport = $upsChannel->getTransport();
 $pickupDate = new \DateTime('+3 days');
 
-$timeInTransit = $this->get('oro_ups.cacheable_time_in_transit');
+$timeInTransit = $this->get('oro_ups.provider.cacheable_time_in_transit');
 
 /** @var TimeInTransitResult $result */
 $result = $timeInTransit->getTimeInTransitResult(
