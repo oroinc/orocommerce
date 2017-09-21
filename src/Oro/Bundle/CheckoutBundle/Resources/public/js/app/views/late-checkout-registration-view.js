@@ -44,7 +44,7 @@ define(function(require) {
             }
             _.each(inputs, function(input) {
                 $(input).prop('disabled', validationDisabled).inputWidget('refresh');
-            })
+            });
         }
     });
 
