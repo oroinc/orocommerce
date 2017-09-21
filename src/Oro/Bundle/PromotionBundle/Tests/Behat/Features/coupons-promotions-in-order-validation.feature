@@ -82,16 +82,15 @@ Feature: Coupons Promotions in Order page validation
     # try to use test-1 third time by one user, limit for it - two times per user
     When I go to Sales / Orders
     And click edit ThirdOrder in grid
-    # TODO Uncomment after fix of BB-12073
-#    And click "Promotions and Discounts"
-#    And click "Add Coupon Code"
-#    And type "test-1" in "Coupon Code"
-#    And should see a "Highlighted Suggestion" element
-#    And click on "Highlighted Suggestion"
-#    And click "Add" in modal window
-#    And click "Apply" in modal window
-#    Then I should see "Customer user coupon usage limit is exceeded"
-#    And click "Cancel" in modal window
+    And click "Promotions and Discounts"
+    And click "Add Coupon Code"
+    And type "test-1" in "Coupon Code"
+    And should see a "Highlighted Suggestion" element
+    And click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    And click "Apply" in modal window
+    Then I should see "Customer user coupon usage limit is exceeded"
+    And click "Cancel" in modal window
     And click "Cancel"
 
   Scenario: Coupon usage limit is exceeded
