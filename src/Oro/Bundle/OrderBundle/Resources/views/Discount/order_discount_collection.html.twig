@@ -21,7 +21,7 @@
 
     {% if editable is defined and editable %}
         {{ UI.clientLink({
-            'dataUrl': path('oro_frontend_action_widget_form', {
+            'dataUrl': path('oro_action_widget_form', {
                 operationName: 'oro_order_discount_add_form',
                 entityClass: oro_class_name(form.vars.order),
                 entityId: {id: form.vars.order.id}
@@ -78,7 +78,7 @@
                     {% if editable is defined and editable %}
                         <td class="action">
                             {{ UI.clientLink({
-                                'dataUrl': path('oro_frontend_action_widget_form', {
+                                'dataUrl': path('oro_action_widget_form', {
                                     operationName: 'oro_order_discount_edit_form',
                                     entityClass: oro_class_name(form.vars.order),
                                     entityId: {id: form.vars.order.id}

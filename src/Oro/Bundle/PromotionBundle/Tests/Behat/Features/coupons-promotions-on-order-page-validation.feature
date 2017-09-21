@@ -5,7 +5,9 @@ Feature: Coupons Promotions on Order page validation
   I need to have ability to see validation errors for all not valid cases
 
   Scenario: Apply already applied coupon
-    Given I login as administrator
+    # first login on front store to check widgets with same browser session
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I login as administrator
     And go to Sales / Orders
     And click edit FirstOrder in grid
     And click "Promotions and Discounts"
