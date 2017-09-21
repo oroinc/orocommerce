@@ -11,7 +11,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactory
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 use Psr\Log\LoggerInterface;
 
-class TimeInTransitProviderProvider implements TimeInTransitProviderInterface
+class TimeInTransitProvider implements TimeInTransitProviderInterface
 {
     /**
      * @var TimeInTransitRequestFactoryInterface

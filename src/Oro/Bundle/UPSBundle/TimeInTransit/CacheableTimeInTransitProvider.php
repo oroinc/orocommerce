@@ -14,7 +14,7 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
     const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdHi';
 
     /**
-     * @var TimeInTransitProviderProvider
+     * @var TimeInTransitProvider
      */
     protected $timeInTransit;
 
@@ -24,11 +24,11 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
     protected $timeInTransitCacheProviderFactory;
 
     /**
-     * @param TimeInTransitProviderProvider              $timeInTransit
+     * @param TimeInTransitProvider                      $timeInTransit
      * @param TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
      */
     public function __construct(
-        TimeInTransitProviderProvider $timeInTransit,
+        TimeInTransitProvider $timeInTransit,
         TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
     ) {
         $this->timeInTransit = $timeInTransit;

@@ -13,7 +13,7 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
-use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderProvider;
+use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider;
 use Psr\Log\LoggerInterface;
 
 class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
@@ -49,7 +49,7 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     private $address;
 
     /**
-     * @var TimeInTransitProviderProvider
+     * @var TimeInTransitProvider
      */
     private $timeInTransit;
 
@@ -62,7 +62,7 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
         $this->resultFactory = $this->createMock(TimeInTransitResultFactoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->timeInTransit = new TimeInTransitProviderProvider(
+        $this->timeInTransit = new TimeInTransitProvider(
             $this->requestFactory,
             $this->clientFactory,
             $this->resultFactory,

@@ -8,7 +8,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
-use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderProvider;
+use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderInterface;
 
 class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
@@ -73,7 +73,7 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
         $this->upsTransport = $this->createMock(UPSTransport::class);
         $this->timeInTransitCacheProviderFactory = $this->createMock(TimeInTransitCacheProviderFactoryInterface::class);
         $this->timeInTransitCacheProvider = $this->createMock(TimeInTransitCacheProviderInterface::class);
-        $this->timeInTransit = $this->createMock(TimeInTransitProviderProvider::class);
+        $this->timeInTransit = $this->createMock(TimeInTransitProvider::class);
         $this->timeInTransitResult = $this->createMock(TimeInTransitResultInterface::class);
         $this->cacheableTimeInTransit =
             new CacheableTimeInTransitProvider($this->timeInTransit, $this->timeInTransitCacheProviderFactory);
