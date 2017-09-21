@@ -11,10 +11,13 @@ For example:
 $transport = $upsChannel->getTransport();
 $pickupDate = new \DateTime('+3 days');
 
-$timeInTransit = $this->get('oro_ups.provider.cacheable_time_in_transit');
+$countryRepository = $doctrineHelper->getEntityRepositoryForClass(Country::class);
+$country = $countryRepository->findOneBy(['iso2Code' => 'US']);
+
+$timeInTransitProvider = $this->get('oro_ups.provider.cacheable_time_in_transit');
 
 /** @var TimeInTransitResult $result */
-$result = $timeInTransit->getTimeInTransitResult(
+$result = $timeInTransitProvider->getTimeInTransitResult(
     $transport,
     (new Address())->setPostalCode('90046')->setCountry($country),
     (new Address())->setPostalCode('66062')->setCountry($country),
