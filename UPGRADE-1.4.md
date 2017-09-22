@@ -15,6 +15,26 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider`
     - changed signature of `__construct` method. Dependency on `UserLocalizationManager` added. 
  
+OrderBundle
+-------------
+- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` and related `oroorder/js/app/views/discount-items-view` JS view were removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` and `oroorder/js/app/views/discount-collection-view` are introduced.
+- Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was changed for use in popup.
+
+PromotionBundle
+-------------
+- Class `Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider` was removed
+- Class `Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter` was removed
+- Class `Oro\Bundle\PromotionBundle\Provider\SubtotalProvider`
+    - changed signature of `__construct` method. Sixth argument `Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider $discountRecalculationProvider` was removed
+- Interface `Oro\Bundle\PromotionBundle\Discount\DiscountInterface` 
+    - now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
+    - `getPromotion()` method return value type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
+    - `setPromotion()` method parameter's type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
+- Class `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor`
+    - changed signature of `__construct` method. Removed dependencies are first `Oro\Bundle\PromotionBundle\Provider\PromotionProvider $promotionProvider`,
+     third `Oro\Bundle\PromotionBundle\DiscountDiscountFactory $discountFactory`,
+     fifth `Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider $matchingProductsProvider`. Added dependency on newly added interface `Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface $promotionDiscountsProvider`.
+
 PaymentBundle
 -------------
 - Event `oro_payment.require_payment_redirect.PAYMENT_METHOD_IDENTIFIER` is no more specifically dispatched for each
@@ -98,3 +118,33 @@ In order to see image changes, for example, immediate reindexation is required.
     - signature of `__construct` changed. Added dependencies: `RegistryInterface`, `AttachmentManager`    
 - Class `Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider`
     - changed signature of `__construct` method. Dependency on `UserLocalizationManager` added.
+
+PromotionBundle
+------------
+- Class `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`
+    - changed signature of `apply` method. Changed type hinting to `DiscountContextInterface`.
+- Class `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface`
+    - changed signature of `process` method. Changed type hinting to `DiscountContextInterface`.
+- Class `Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager`
+    - renamed to `AppliedPromotionManager`
+    - service of this manager renamed to `oro_promotion.applied_promotion_manager`
+    - changed signature of `__construct` method
+        - changed dependency from `ContainerInterface` to `ServiceLink`
+        - added third argument of `AppliedPromotionMapper`.
+    - renamed public method from `saveAppliedDiscounts` to `createAppliedPromotions`
+    - removed public methods `removeAppliedDiscountByOrderLineItem` and `removeAppliedDiscountByOrder`
+- Class `Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener`
+    - changed signature of `__construct` method
+        - changed dependency from `DiscountsProvider` to `AppliedDiscountsProvider`.
+- Class `Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension`
+    - changed signature of `__construct` method
+        - changed dependency from `DiscountsProvider` to `AppliedDiscountsProvider`.
+- Class `Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension`
+    - changed signature of `__construct` method
+        - removed all dependencies
+    - removed public method `onSubmit`.
+- Class `Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider`
+    - changed signature of `__construct` method
+        - removed all dependencies
+- Class `Oro\Bundle\PromotionBundle\Provider\DiscountsProvider`
+    - removed with service definition.

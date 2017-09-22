@@ -23,8 +23,8 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
-use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
-use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -329,6 +329,7 @@ class OrderTypeTest extends TypeTestCase
         $entityType = $this->prepareProductEntityType();
         $priceType = $this->preparePriceType();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
@@ -346,7 +347,6 @@ class OrderTypeTest extends TypeTestCase
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
 
-
         return [
             new PreloadedExtension(
                 [
@@ -362,9 +362,9 @@ class OrderTypeTest extends TypeTestCase
                     $customerUserSelectType->getName() => $customerUserSelectType,
                     $priceListSelectType->getName() => $priceListSelectType,
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
-                    OrderDiscountItemsCollectionType::NAME => new OrderDiscountItemsCollectionType(),
+                    OrderDiscountCollectionTableType::NAME => new OrderDiscountCollectionTableType(),
                     OrderLineItemType::NAME => $orderLineItemType,
-                    OrderDiscountItemType::NAME => new OrderDiscountItemType(),
+                    OrderDiscountCollectionRowType::NAME => new OrderDiscountCollectionRowType(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []

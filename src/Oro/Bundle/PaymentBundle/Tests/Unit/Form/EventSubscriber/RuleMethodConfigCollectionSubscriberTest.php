@@ -20,6 +20,8 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -142,6 +144,18 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                 ['form' => [new AdditionalAttrExtension()]]
             ),
             $this->getValidatorExtension(true)
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators()
+    {
+        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
+
+        return [
+            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 }

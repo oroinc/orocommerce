@@ -78,6 +78,16 @@
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 
+    {% set dataBlocks = dataBlocks|merge({
+        'discounts': {
+            'title': 'oro.order.sections.discounts'|trans,
+            'priority': -75,
+            'subblocks': [{'data' : [
+                oro_order_get_template_content('OroOrderBundle:Discount:order_discount_view_collection.html.twig', {entity: entity})
+            ]}]
+        }
+    }) %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.order_totals'|trans,
         'priority': -50,

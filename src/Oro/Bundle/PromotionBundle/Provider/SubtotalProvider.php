@@ -42,32 +42,24 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     private $translator;
 
     /**
-     * @var DiscountRecalculationProvider
-     */
-    private $discountRecalculationProvider;
-
-    /**
      * @param UserCurrencyManager $currencyManager
      * @param PromotionExecutor $promotionExecutor
      * @param AppliedDiscountsProvider $appliedDiscountsProvider
      * @param RoundingServiceInterface $roundingService
      * @param TranslatorInterface $translator
-     * @param DiscountRecalculationProvider $discountRecalculationProvider
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
         PromotionExecutor $promotionExecutor,
         AppliedDiscountsProvider $appliedDiscountsProvider,
         RoundingServiceInterface $roundingService,
-        TranslatorInterface $translator,
-        DiscountRecalculationProvider $discountRecalculationProvider
+        TranslatorInterface $translator
     ) {
         parent::__construct($currencyManager);
         $this->promotionExecutor = $promotionExecutor;
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->rounding = $roundingService;
         $this->translator = $translator;
-        $this->discountRecalculationProvider = $discountRecalculationProvider;
     }
 
     /**
@@ -83,10 +75,6 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function getSubtotal($entity)
     {
-        if (!$this->discountRecalculationProvider->isRecalculationRequired()) {
-            return $this->getCachedSubtotal($entity);
-        }
-
         $discountContext = $this->promotionExecutor->execute($entity);
 
         return $this->createOrderAndShippingSubtotals(

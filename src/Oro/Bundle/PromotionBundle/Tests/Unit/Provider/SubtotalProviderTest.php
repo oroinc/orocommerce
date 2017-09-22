@@ -12,7 +12,6 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
-use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
 
 class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,11 +43,6 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
     private $translator;
 
     /**
-     * @var DiscountRecalculationProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $discountRecalculationProvider;
-
-    /**
      * @var SubtotalProvider
      */
     private $provider;
@@ -60,15 +54,13 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->appliedDiscountsProvider = $this->createMock(AppliedDiscountsProvider::class);
         $this->rounding = $this->createMock(RoundingServiceInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->discountRecalculationProvider = $this->createMock(DiscountRecalculationProvider::class);
 
         $this->provider = new SubtotalProvider(
             $this->currencyManager,
             $this->promotionExecutor,
             $this->appliedDiscountsProvider,
             $this->rounding,
-            $this->translator,
-            $this->discountRecalculationProvider
+            $this->translator
         );
     }
 
@@ -126,10 +118,6 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->currencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn('EUR');
-
-        $this->discountRecalculationProvider->expects($this->any())
-            ->method('isRecalculationRequired')
-            ->willReturn(true);
 
         $expected = [
             SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>

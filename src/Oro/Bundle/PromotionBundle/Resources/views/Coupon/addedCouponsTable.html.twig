@@ -1,0 +1,33 @@
+{% if coupons|length > 0 %}
+    <div class="grid-container">
+        <table class="grid table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>{{ 'oro.promotion.coupon.code.label'|trans }}</th>
+                    <th>{{ 'oro.promotion.entity_label'|trans }}</th>
+                    <th>{{ 'oro.promotion.discountconfiguration.type.label'|trans }}</th>
+                    <th>{{ 'oro.promotion.discountconfiguration.options.discount_value.label'|trans }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coupon in coupons %}
+                    <tr>
+                        <td>{{ coupon.code }}</td>
+                        <td>{{ coupon.promotion.rule.name }}</td>
+                        <td>{{ ('oro.discount.type.choices.' ~ coupon.promotion.discountConfiguration.type)|trans }}</td>
+                        <td>
+                            {% set options = coupon.promotion.discountConfiguration.options %}
+                            {% if options['discount_type'] == constant('Oro\\Bundle\\PromotionBundle\\Discount\\DiscountInterface::TYPE_AMOUNT') %}
+                                {{ options['discount_value']|oro_format_currency({currency: options['discount_currency']}) }}
+                            {% else %}
+                                {{ options['discount_value']|oro_format_percent }}
+                            {% endif %}
+                        </td>
+                        <td><i data-remove-coupon-id="{{ coupon.id }}" class="fa-remove hide-text"></i></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

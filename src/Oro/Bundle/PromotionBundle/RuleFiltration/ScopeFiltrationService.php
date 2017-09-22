@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -57,8 +57,12 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
      */
     private function hasMatchingScope(RuleOwnerInterface $ruleOwner, $criteria): bool
     {
-        if (!$ruleOwner instanceof Promotion || !$criteria instanceof ScopeCriteria) {
+        if (!$ruleOwner instanceof PromotionDataInterface || !$criteria instanceof ScopeCriteria) {
             return false;
+        }
+
+        if ($ruleOwner->getScopes()->isEmpty()) {
+            return true;
         }
 
         foreach ($ruleOwner->getScopes() as $scope) {

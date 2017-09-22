@@ -18,14 +18,12 @@ Feature: Backoffice Quote Flow with Approvals
     And I click Configuration Backoffice Quote Flow with Approvals in grid
     Then the "Price override requires approval" checkbox should be checked
 
-  Scenario: Add workflow permissions for user
+  Scenario: Check workflow permissions for user
     Given I go to System/ User Management/ Roles
-    And I filter Label as is equal to "Sales Rep"
-    When I click edit Sales Rep in grid
-    And I select following permissions:
+    When I filter Label as is equal to "Sales Rep"
+    And I click view Sales Rep in grid
+    Then the role has following active workflow permissions:
       | Backoffice Quote Flow with Approvals | View Workflow:Global | Perform transitions:Global |
-    And I save and close form
-    Then I should see "Role saved" flash message
 
   Scenario: Draft -> Edit: Quote prices not changed
     Given I proceed as the Manager
