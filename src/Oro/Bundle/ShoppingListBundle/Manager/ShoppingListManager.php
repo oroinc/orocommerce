@@ -12,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -75,6 +76,11 @@ class ShoppingListManager
     protected $aclHelper;
 
     /**
+     * @var ProductVariantAvailabilityProvider
+     */
+    protected $productVariantProvider;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
@@ -84,6 +90,7 @@ class ShoppingListManager
      * @param ShoppingListTotalManager $totalManager
      * @param AclHelper $aclHelper
      * @param Cache $cache
+     * @param ProductVariantAvailabilityProvider $productVariantProvider
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -94,7 +101,8 @@ class ShoppingListManager
         WebsiteManager $websiteManager,
         ShoppingListTotalManager $totalManager,
         AclHelper $aclHelper,
-        Cache $cache
+        Cache $cache,
+        ProductVariantAvailabilityProvider $productVariantProvider
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
@@ -105,6 +113,7 @@ class ShoppingListManager
         $this->totalManager = $totalManager;
         $this->aclHelper = $aclHelper;
         $this->cache = $cache;
+        $this->productVariantProvider = $productVariantProvider;
     }
 
     /**
@@ -226,7 +235,15 @@ class ShoppingListManager
         /** @var LineItemRepository $repository */
         $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
-        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, [$product]);
+        if ($product->isConfigurable()) {
+            $simpleProducts = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
+            if (!$simpleProducts) {
+                return 0;
+            }
+        } else {
+            $simpleProducts = [$product];
+        }
+        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, $simpleProducts);
 
         foreach ($lineItems as $lineItem) {
             $shoppingList->removeLineItem($lineItem);
