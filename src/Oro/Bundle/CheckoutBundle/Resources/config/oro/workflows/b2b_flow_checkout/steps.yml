@@ -6,6 +6,7 @@ workflows:
                 allowed_transitions:
                     - back_to_billing_address
                     - continue_checkout_as_guest
+                    - start_checkout_as_guest_system
             enter_billing_address:
                 order: 10
                 allowed_transitions:
