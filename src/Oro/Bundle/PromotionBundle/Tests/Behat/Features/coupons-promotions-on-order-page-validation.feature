@@ -4,7 +4,7 @@ Feature: Coupons Promotions on Order page validation
   As administrator
   I need to have ability to see validation errors for all not valid cases
 
-  Scenario: Apply already applied coupon
+  Scenario: Already applied coupon is forbidden to apply again
     # first login on front store to check widgets with same browser session
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I login as administrator
@@ -34,7 +34,7 @@ Feature: Coupons Promotions on Order page validation
     And should see "Review Shipping Cost"
     And click "Save" in modal window
 
-  Scenario: Apply coupon for already applied promotion
+  Scenario: Already applied promotion is forbidden to apply again
     Given I click "Promotions and Discounts"
     And click "Add Coupon Code"
     And type "test-2" in "Coupon Code"
@@ -45,7 +45,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Try to add already expired coupon
+  Scenario: Not possible to apply expired coupon
     Given I go to Marketing / Promotions / Coupons
     # test-3 coupon present but have expired date
     And I should see following grid:
@@ -67,7 +67,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Coupon usage limit is exceeded for current customer user
+  Scenario: Forbidden to apply coupon for that usage limit is exceeded for current customer user
     Given I go to Sales / Orders
     # use test-1 coupon second time
     And click edit SecondOrder in grid
@@ -95,7 +95,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Coupon usage limit is exceeded
+  Scenario: Forbidden to apply coupon for that general usage limit is exceeded
     Given I go to Sales / Orders
     # use test-4 coupon first time
     And click edit FirstOrder in grid
@@ -123,7 +123,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Try to apply coupon that promotion is not applicable for order
+  Scenario: Forbidden applying coupon that promotion is not applicable for order
     Given I go to Sales / Orders
     And click edit FirstOrder in grid
     And click "Promotions and Discounts"
@@ -137,7 +137,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Try to apply coupon that have no promotion
+  Scenario: Not possible to apply coupon that have no promotion
     Given I go to Marketing / Promotions / Coupons
     # test-6 coupon present but have no promotion
     And I should see following grid:
