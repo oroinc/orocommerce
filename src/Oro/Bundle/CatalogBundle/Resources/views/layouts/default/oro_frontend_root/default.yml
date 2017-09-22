@@ -12,6 +12,7 @@ layout:
                     blockType: embedded_list
                     siblingId: featured_menu_container
                     options:
+                        label: 'oro.catalog.featured_categories.label'
                         item_key: 'category'
                         items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10])'
                         items_data:

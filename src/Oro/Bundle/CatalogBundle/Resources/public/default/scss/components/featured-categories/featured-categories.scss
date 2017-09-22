@@ -4,12 +4,28 @@
     .embedded-list {
         margin: 0 -#{$offset-x-m};
 
+        &__label {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
         &__item {
             width: 25%;
             padding: 0 $offset-x-m;
-            margin-bottom: 35px;
+            margin: 15px 0 10px;
 
             text-align: center;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .featured-categories {
+        .embedded-list {
+            &__label {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
         }
     }
 }
