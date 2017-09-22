@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -52,6 +53,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['completed', true],
             ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
             ['lineItems', new ArrayCollection([new CheckoutLineItem()]), false],
+            ['subtotals', new ArrayCollection([$this->createMock(CheckoutSubtotal::class)]), false],
         ];
 
         $entity = new Checkout();

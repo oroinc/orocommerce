@@ -208,6 +208,20 @@ class CheckoutRepository extends EntityRepository
     }
 
     /**
+     * @return array|Checkout[]
+     */
+    public function findWithInvalidSubtotals()
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('c, cs')
+            ->join('c.subtotals', 'cs')
+            ->where('cs.valid = :valid')
+            ->setParameter('valid', false, Type::BOOLEAN);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName
      *

@@ -307,6 +307,12 @@ action_groups:
                 method: create
                 method_parameters: [$.checkout.source.entity]
 
+            # calculate subtotal
+            - '@call_service_method':
+                service: oro_checkout.model.checkout_subtotal_updater
+                method: recalculateCheckoutSubtotals
+                method_parameters: [$.checkout]
+
             - '@flush_entity': $.checkout
 
     update_workflow_item:

@@ -20,7 +20,6 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -62,7 +61,6 @@ class Checkout implements
     CustomerVisitorOwnerAwareInterface,
     DatesAwareInterface,
     ShippingAwareInterface,
-    LineItemsNotPricedAwareInterface,
     PaymentMethodAwareInterface,
     WebsiteAwareInterface
 {
@@ -198,10 +196,23 @@ class Checkout implements
      **/
     protected $lineItems;
 
+    /**
+     * @var Collection|CheckoutSubtotal[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal",
+     *      mappedBy="checkout",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $subtotals;
+
     public function __construct()
     {
         $this->completedData = new CompletedCheckoutData();
         $this->lineItems = new ArrayCollection();
+        $this->subtotals = new ArrayCollection();
     }
 
     /**
@@ -535,6 +546,14 @@ class Checkout implements
         $this->lineItems = $lineItems;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|CheckoutSubtotal[]
+     */
+    public function getSubtotals()
+    {
+        return $this->subtotals;
     }
 
     /**

@@ -16,9 +16,11 @@ class OroCheckoutBundle implements Migration
     {
         /** Tables generation **/
         $this->createOroCheckoutLineItemTable($schema);
+        $this->createOroCheckoutSubtotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCheckoutLineItemForeignKeys($schema);
+        $this->addOroCheckoutSubtotalForeignKeys($schema);
 
         /** Create CheckoutLineItems for existing Checkouts **/
         $queries->addPostQuery(
@@ -53,11 +55,28 @@ class OroCheckoutBundle implements Migration
         $table->addColumn('from_external_source', 'boolean', []);
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->addColumn('is_price_fixed', 'boolean', []);
-        $table->addIndex(['checkout_id']);
-        $table->addIndex(['parent_product_id']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['product_id']);
-        $table->addIndex(['product_unit_id']);
+    }
+
+    /**
+     * Create oro_checkout_subtotal table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCheckoutSubtotalTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_checkout_subtotal');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('checkout_id', 'integer', []);
+        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn(
+            'value',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('is_valid', 'boolean', []);
+        $table->addUniqueIndex(['checkout_id', 'currency'], 'unique_checkout_currency');
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -91,6 +110,22 @@ class OroCheckoutBundle implements Migration
             ['product_unit_id'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * Add oro_checkout_subtotal foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCheckoutSubtotalForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_checkout_subtotal');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_checkout'),
+            ['checkout_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

@@ -33,6 +33,7 @@ oro:
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
         line_items.label: Line Items
+        subtotals.label: Subtotals
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
@@ -63,6 +64,14 @@ oro:
             free_form_product.label: 'Product (free-form)'
             from_external_source.label: 'Created from External Source'
             price_type.label: 'Price Type'
+
+        checkoutsubtotal:
+            entity_label: 'Checkout Subtotal'
+            entity_plural_label: 'Checkout Subtotals'
+            id.label: 'ID'
+            checkout.label: 'Checkout'
+            subtotal.label: 'Subtotal'
+            valid.label: 'Is valid'
 
         basecheckout:
             entity_label: Base Checkout
