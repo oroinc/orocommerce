@@ -49,6 +49,14 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         usesPerPerson: 5
         usesPerCoupon: 5
         validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon7:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-7'
+        promotion: '@orderDiscountPromotion2'
+        usesPerPerson: 1
+        usesPerCoupon: 1
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
 
 Oro\Bundle\SegmentBundle\Entity\Segment:
     orderDiscountPromotionSegment:

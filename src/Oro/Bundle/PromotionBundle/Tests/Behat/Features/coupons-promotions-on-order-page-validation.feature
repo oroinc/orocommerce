@@ -90,7 +90,6 @@ Feature: Coupons Promotions on Order page validation
     And should see a "Highlighted Suggestion" element
     And click on "Highlighted Suggestion"
     And click "Add" in modal window
-    And click "Apply" in modal window
     Then I should see "Customer user coupon usage limit is exceeded"
     And click "Cancel" in modal window
     And click "Cancel"
@@ -118,8 +117,35 @@ Feature: Coupons Promotions on Order page validation
     And should see a "Highlighted Suggestion" element
     And click on "Highlighted Suggestion"
     And click "Add" in modal window
-    And click "Apply" in modal window
     Then I should see "Coupon usage limit is exceeded"
+    And click "Cancel" in modal window
+    And click "Cancel"
+
+  Scenario: Two validation messages at once displayed correctly
+    Given I go to Sales / Orders
+    # use test-7 coupon first time
+    And click edit ThirdOrder in grid
+    And click "Promotions and Discounts"
+    And click "Add Coupon Code"
+    And type "test-7" in "Coupon Code"
+    And should see a "Highlighted Suggestion" element
+    And click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    And click "Apply" in modal window
+    And save and close form
+    And should see "Review Shipping Cost"
+    And click "Save" in modal window
+    # try to use test-7 second time , limit for it - one usage per coupon and one usage per person
+    When I go to Sales / Orders
+    And click edit SecondOrder in grid
+    And click "Promotions and Discounts"
+    And click "Add Coupon Code"
+    And type "test-7" in "Coupon Code"
+    And should see a "Highlighted Suggestion" element
+    And click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    Then I should see that "Coupon Validation Error" contains "Coupon usage limit is exceeded"
+    And I should see that "Coupon Validation Error" contains "Customer user coupon usage limit is exceeded"
     And click "Cancel" in modal window
     And click "Cancel"
 
