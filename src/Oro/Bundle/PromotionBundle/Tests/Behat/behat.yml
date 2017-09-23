@@ -136,3 +136,7 @@ oro_behat_extension:
     Quantity:
       selector: '[data-name="field__quantity"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Coupon Validation Error:
+        selector: '.select-coupon-validation-container'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
