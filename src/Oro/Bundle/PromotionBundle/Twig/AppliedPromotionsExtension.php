@@ -75,14 +75,19 @@ class AppliedPromotionsExtension extends \Twig_Extension
         }
 
         usort($items, function (array $a, array $b) {
-            if (empty($a['id'])) {
-                return true;
-            }
-            if (empty($b['id'])) {
-                return false;
+            if (empty($a['id']) && empty($b['id'])) {
+                return 0;
             }
 
-            return $a['id'] > $b['id'];
+            if (empty($a['id'])) {
+                return 1;
+            }
+
+            if (empty($b['id'])) {
+                return -1;
+            }
+
+            return (int)$a['id'] - (int)$b['id'];
         });
 
         return $items;

@@ -6,7 +6,7 @@ Feature: Promotions with coupons on Order page
 
   Scenario: Coupon applying on order edit page
     Given I login as administrator
-    And go to Sales / Orders
+    When go to Sales / Orders
     And click edit SimpleOrder in grid
     And click "Promotions and Discounts"
     When I click "Add Coupon Code"
