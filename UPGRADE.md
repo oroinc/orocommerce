@@ -1,32 +1,6 @@
-## GENERAL UPGRADE NOTES
-
-  * Pull changes from repository
-```bash
-git pull
-git checkout <VERSION TO UPGRADE>
-```
-  * Upgrade composer dependency
-```bash
-php composer.phar install --prefer-dist
-```
-  * Remove old caches and assets
-```bash
-rm -rf app/cache/*
-rm -rf web/js/*
-rm -rf web/css/*
-```
-  * Upgrade platform
-```bash
-php app/console oro:platform:update --env=prod --force
-```
-
 ## FROM 1.3.0 to 1.4.0
  
 Format of sluggable urls cache was changed, added support of localized slugs. Cache regeneration is required after update. 
- 
-## FROM 1.2.0 to 1.3.0
-
-## FROM 1.1.0 to 1.2.0
 
 ## FROM 1.0.0 to 1.1.0
 
