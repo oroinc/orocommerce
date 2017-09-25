@@ -142,7 +142,7 @@ Fixed Filter criteria disappears from UI upon setting
 #### OrderBundle
 * return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `TypedOrderAddressCollection`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/OrderBundle/Manager/TypedOrderAddressCollection.php "Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection")</sup>
 #### PayPalBundle
-* class `PayflowIPCheckListen`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowIPCheckListen.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen")</sup>
+* class `PayflowIPCheckListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowIPCheckListener.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener")</sup>
     - property `$allowedIPs` changed from `private` to `protected`
 #### PaymentBundle
 * subtotal and currency of payment context and its line items are optional now:
@@ -185,23 +185,6 @@ Fixed Filter criteria disappears from UI upon setting
     - oro_quote_address_shipping_allow_manual
     - oro_quote_address_shipping_allow_manual_backend
     - oro_quote_payment_term_customer_can_override
-#### SecurityBundle
-* all existing classes were updated to use new services instead of the `SecurityFacade` and `SecurityContext`:
-    - service `security.authorization_checker`
-        * implements `Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`
-        * the property name in classes that use this service is `authorizationChecker`
-    - service `security.token_storage`
-        * implements `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
-        * the property name in classes that use this service is `tokenStorage`
-    - service `oro_security.token_accessor`
-        * implements `TokenAccessorInterface`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/SecurityBundle/Authentication/TokenAccessorInterface.php "Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface")</sup>
-        * the property name in classes that use this service is `tokenAccessor`
-    - service `oro_security.class_authorization_checker`
-        * implements `ClassAuthorizationChecker`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/SecurityBundle/Authorization/ClassAuthorizationChecker.php "Oro\Bundle\SecurityBundle\Authorization\ClassAuthorizationChecker")</sup>
-        * the property name in classes that use this service is `classAuthorizationChecker`
-    - service `oro_security.request_authorization_checker`
-        * implements `RequestAuthorizationChecker`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/SecurityBundle/Authorization/RequestAuthorizationChecker.php "Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker")</sup>
-        * the property name in classes that use this service is `requestAuthorizationChecker`
 #### ShippingBundle
 * redesign of Shipping Rule edit/create pages - changed Shipping Method Configurations block templates and functionality
     - `ShippingMethodConfigType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodConfigType.php "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType")</sup> - added `methods_icons` variable
@@ -216,8 +199,6 @@ Fixed Filter criteria disappears from UI upon setting
 ### Deprecated
 #### CheckoutBundle
 * layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
-#### SecurityBundle
-* the class `SecurityFacade`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/SecurityBundle/SecurityFacade.php "Oro\Bundle\SecurityBundle\SecurityFacade")</sup>, services `oro_security.security_facade` and `oro_security.security_facade.link`, and TWIG function `resource_granted` were marked as deprecated. Use services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` and TWIG function `is_granted` instead. In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
 ### Removed
 #### CheckoutBundle
 * class `CheckoutVoter`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/CheckoutBundle/Acl/Voter/CheckoutVoter.php "Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter")</sup>
@@ -246,8 +227,6 @@ Fixed Filter criteria disappears from UI upon setting
     - method `setSecurityFacade` was removed, `setTokenAccessor` method was added instead
 #### SaleBundle
 * removed protected method `QuoteAddressType::getDefaultAddressKey`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/SaleBundle/Form/Type/QuoteAddressType.php#L235 "Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey")</sup>. Please, use method `TypedOrderAddressCollection::getDefaultAddressKey`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/OrderBundle/Manager/TypedOrderAddressCollection.php#L0 "Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey")</sup> instead
-#### SecurityBundle
-* the usage of deprecated service `security.context` (interface `Symfony\Component\Security\Core\SecurityContextInterface`) was removed.
 #### ShippingBundle
 * service `oro_shipping.shipping_method.registry` was removed, new `oro_shipping.shipping_method_provider` service is used instead
 * class `ShippingMethodRegistry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/ShippingBundle/Method/ShippingMethodRegistry.php "Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry")</sup> was removed, logic was moved to `CompositeShippingMethodProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/ShippingBundle/Method/CompositeShippingMethodProvider.php "Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider")</sup>
@@ -328,8 +307,8 @@ Fixed Filter criteria disappears from UI upon setting
 #### CatalogBundle
 * the [`CategoryBreadcrumbProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Layout/DataProvider/CategoryBreadcrumbProvider.php "Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider") was added as a data provider for breadcrumbs.
 #### CustomerBundle
-* `commerce` configurable permission was added for View and Edit pages of the Customer Role in backend area (aka management console) (see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
-* `commerce_frontend` configurable permission was added for View and Edit pages of the Customer Role in frontend area (aka front store)(see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
+* `commerce` configurable permission was added for View and Edit pages of the Customer Role in backend area (aka management console) (see [configurable-permissions.md](https://github.com/oroinc/platform/tree/2.1.0/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
+* `commerce_frontend` configurable permission was added for View and Edit pages of the Customer Role in frontend area (aka front store)(see [configurable-permissions.md](https://github.com/oroinc/platform/tree/2.1.0/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
 #### MoneyOrderBundle
 * added implementation of payment through integration.
 * based on the changes in `PaymentBundle`, the following classes were added:
