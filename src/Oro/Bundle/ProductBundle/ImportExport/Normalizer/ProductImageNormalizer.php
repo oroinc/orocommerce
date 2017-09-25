@@ -6,7 +6,7 @@ use Symfony\Component\Config\FileLocator;
 
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageNormalizer extends ConfigurableEntityNormalizer
 {
@@ -49,7 +49,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * @param FileLocator $fileLocator
      */
-    public function setFileLocator($fileLocator)
+    public function setFileLocator(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;
     }
@@ -61,15 +61,23 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     {
         $this->rootDir = $rootDir;
     }
-    
+
     /**
-     * @param Product $product
+     * @param ProductImage $productImage
      *
      * {@inheritdoc}
      */
-    public function normalize($product, $format = null, array $context = [])
+    public function normalize($productImage, $format = null, array $context = [])
     {
-        $data = parent::normalize($product, $format, $context);
+        $data = parent::normalize($productImage, $format, $context);
+
+        if (array_key_exists('image', $data)) {
+            $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
+        }
+
+        if (!array_key_exists('types', $data)){
+            return $data;
+        }
 
         $imageTypesKeys = array_keys($this->imageTypeProvider->getImageTypes());
         $availableTypesArray = array_fill_keys($imageTypesKeys, false);
@@ -81,7 +89,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         }
 
         $data['types'] = $availableTypesArray;
-        $data['image']['name'] = $product->getImage()->getOriginalFileName();
+        $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
 
         return $data;
     }
@@ -89,26 +97,26 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($productData, $class, $format = null, array $context = [])
+    public function denormalize($productImageData, $class, $format = null, array $context = [])
     {
         try {
-            $imagePath = $this->fileLocator->locate(sprintf('%s/import_export/product_images/%s', $this->rootDir, $productData['image']['name']));
+            $imagePath = $this->fileLocator->locate(sprintf('%s/import_export/product_images/%s', $this->rootDir, $productImageData['image']['name']));
         } catch (\Exception $e) {
             $imagePath = null;
         }
 
-        $productData['image'] = is_array($imagePath) ? current($imagePath) : $imagePath;
+        $productImageData['image'] = is_array($imagePath) ? current($imagePath) : $imagePath;
         $imageTypes = $this->imageTypeProvider->getImageTypes();
 
-        foreach ($productData['types'] as $type => $value) {
+        foreach ($productImageData['types'] as $type => $value) {
             if (!array_key_exists($type, $imageTypes) || !boolval($value)) {
                 unset($imageTypes[$type]);
             }
         }
 
-        $productData['types'] = array_keys($imageTypes);
+        $productImageData['types'] = array_keys($imageTypes);
 
-        return parent::denormalize($productData, $class, $format, $context);
+        return parent::denormalize($productImageData, $class, $format, $context);
     }
 
     /**
