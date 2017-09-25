@@ -686,4 +686,53 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->removeLineItems($shoppingList);
         $this->assertEquals(0, $shoppingList->getLineItems()->count());
     }
+
+    public function testUpdateLineItem()
+    {
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setQuantity(10);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 1,
+            'lineItems' => [$lineItem]
+        ]);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(5);
+        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
+
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getLineItems()->first();
+        $this->assertEquals(5, $resultingItem->getQuantity());
+    }
+
+    public function testUpdateAndRemoveLineItem()
+    {
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setQuantity(10);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 1,
+            'lineItems' => [$lineItem]
+        ]);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(0);
+        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
+
+        $this->assertEmpty($shoppingList->getLineItems());
+    }
 }

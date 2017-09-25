@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 
@@ -28,23 +29,25 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param Product $product
+     * @param Product           $product
+     * @param ShoppingList|null $shoppingList
      * @return FormInterface
      */
-    public function getMatrixOrderForm(Product $product)
+    public function getMatrixOrderForm(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixOrderManager->getMatrixCollection($product);
+        $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
         return $this->getForm(MatrixCollectionType::class, $collection);
     }
 
     /**
-     * @param Product $product
+     * @param Product           $product
+     * @param ShoppingList|null $shoppingList
      * @return FormView
      */
-    public function getMatrixOrderFormView(Product $product)
+    public function getMatrixOrderFormView(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixOrderManager->getMatrixCollection($product);
+        $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
         return $this->getFormView(MatrixCollectionType::class, $collection);
     }

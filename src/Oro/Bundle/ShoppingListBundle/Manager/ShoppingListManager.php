@@ -169,38 +169,47 @@ class ShoppingListManager
     }
 
     /**
-     * @param LineItem          $lineItem
+     * @param LineItem $lineItem
      * @param ShoppingList $shoppingList
-     * @param bool|true         $flush
-     * @param bool|false        $concatNotes
+     * @param bool $flush
+     * @param bool $concatNotes
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
-        $this->ensureProductTypeAllowed($lineItem);
-        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
-        $lineItem->setShoppingList($shoppingList);
-        if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
-            $lineItem->setCustomerUser($shoppingList->getCustomerUser());
-        }
-        if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
-            $lineItem->setOrganization($shoppingList->getOrganization());
-        }
-        /** @var LineItemRepository $repository */
-        $repository = $em->getRepository('OroShoppingListBundle:LineItem');
-        $duplicate = $repository->findDuplicate($lineItem);
-        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList, $concatNotes) {
             $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
-            $em->remove($lineItem);
-        } else {
-            $shoppingList->addLineItem($lineItem);
-            $em->persist($lineItem);
-        }
+        };
 
-        $this->totalManager->recalculateTotals($shoppingList, false);
+        $this
+            ->prepareLineItem($lineItem, $shoppingList)
+            ->handleLineItem($lineItem, $shoppingList, $func);
 
         if ($flush) {
+            $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
             $em->flush();
         }
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param ShoppingList $shoppingList
+     */
+    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
+    {
+        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList) {
+            if ($lineItem->getQuantity() > 0) {
+                $this->updateLineItemQuantity($lineItem, $duplicate);
+            } else {
+                $this->removeLineItem($duplicate);
+            }
+        };
+
+        $this
+            ->prepareLineItem($lineItem, $shoppingList)
+            ->handleLineItem($lineItem, $shoppingList, $func);
+
+        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
+        $em->flush();
     }
 
     /**
@@ -221,6 +230,22 @@ class ShoppingListManager
             $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
             $duplicate->setNotes($notes);
         }
+    }
+
+    /**
+     * Set new quantity for $duplicate line item based on quantity value from $lineItem
+     *
+     * @param LineItem $lineItem
+     * @param LineItem $duplicate
+     */
+    protected function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate)
+    {
+        $quantity = $this->rounding->roundQuantity(
+            $lineItem->getQuantity(),
+            $duplicate->getUnit(),
+            $duplicate->getProduct()
+        );
+        $duplicate->setQuantity($quantity);
     }
 
     /**
@@ -497,5 +522,56 @@ class ShoppingListManager
         }
         $this->totalManager->recalculateTotals($shoppingList, false);
         $lineItemManager->flush();
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param ShoppingList $shoppingList
+     *
+     * @return ShoppingListManager
+     */
+    private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList)
+    {
+        $this->ensureProductTypeAllowed($lineItem);
+
+        $lineItem->setShoppingList($shoppingList);
+
+        if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
+            $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+        }
+
+        if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
+            $lineItem->setOrganization($shoppingList->getOrganization());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param ShoppingList $shoppingList
+     * @param \Closure $func
+     *
+     * @return ShoppingListManager
+     */
+    private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func)
+    {
+        /** @var EntityManager $em */
+        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
+
+        /** @var LineItemRepository $repository */
+        $repository = $em->getRepository('OroShoppingListBundle:LineItem');
+        $duplicate = $repository->findDuplicate($lineItem);
+        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+            $func($duplicate);
+            $em->remove($lineItem);
+        } elseif ($lineItem->getQuantity() > 0) {
+            $shoppingList->addLineItem($lineItem);
+            $em->persist($lineItem);
+        }
+
+        $this->totalManager->recalculateTotals($shoppingList, false);
+
+        return $this;
     }
 }
