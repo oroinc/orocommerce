@@ -1,43 +1,26 @@
+// @theme: default;
+
 .featured-categories {
-    margin: 35px 0 5px 0;
+    margin: $featured-categories-offset;
 
     .embedded-list {
-        margin: 0 -#{$offset-x-m};
-
-        &__label {
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-
         &__item {
-            width: 25%;
-            padding: 0 $offset-x-m;
-            margin: 15px 0 10px;
+            width: $featured-categories-embedded-list-item-width;
+            margin: $featured-categories-embedded-list-item-offset;
 
-            text-align: center;
-        }
-    }
-}
-
-@include breakpoint('tablet') {
-    .featured-categories {
-        .embedded-list {
-            &__label {
-                margin-left: 10px;
-                margin-right: 10px;
-            }
+            text-align: $featured-categories-embedded-list-item-text-align;
         }
     }
 }
 
 @include breakpoint('tablet-small') {
     .featured-categories {
-        margin-top: 25px;
+        margin: $featured-categories-offset-tablet-small;
 
         .embedded-list {
             &__item {
-                width: 33.33%;
-                margin-bottom: 25px;
+                width: $featured-categories-embedded-list-item-width-tablet-small;
+                margin-bottom: $featured-categories-embedded-list-item-offset-bottom-tablet-small;
 
                 &:nth-last-child(2),
                 &:last-child {
@@ -50,14 +33,10 @@
 
 @include breakpoint('mobile-landscape') {
     .featured-categories {
-        &__image {
-            margin: 0 auto;
-        }
-
         .embedded-list {
             &__item {
-                width: 50%;
-                margin-bottom: 20px;
+                width: $featured-categories-embedded-list-item-width-mobile-landscape;
+                margin-bottom: $featured-categories-embedded-list-item-offset-bottom-mobile-landscape;
 
                 &:nth-last-child(2),
                 &:last-child {
@@ -70,31 +49,10 @@
 
 @include breakpoint('mobile') {
     .featured-categories {
-        &__image {
-            margin: 0 auto;
-        }
-
         .embedded-list {
-            margin: 0;
-
             &__item {
-                width: 100%;
-                padding: 0 4px;
-                margin-bottom: 15px;
-
-                text-align: center;
-            }
-        }
-    }
-}
-
-@media (min-width: $site-width) {
-    .featured-categories {
-        .embedded-list {
-            margin: 0 -20px;
-
-            &__item {
-                padding: 0 20px;
+                width: $featured-categories-embedded-list-item-width-mobile;
+                margin-bottom: $featured-categories-embedded-list-item-offset-bottom-mobile;
             }
         }
     }
