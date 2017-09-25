@@ -167,6 +167,39 @@ operations:
                 message: oro.promotion.ui.order_add_coupon.not_added.message
                 type: 'success'
 
+    oro_promotion_coupon_unassign:
+        label: oro.promotion.ui.unassign_coupon.label
+        page_reload: false
+        button_options:
+            icon: fa-times
+        acl_resource: [EDIT, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        frontend_options:
+            confirmation: oro.promotion.ui.unassign_coupon.confirmation.message
+        datagrids:
+            - 'promotion-coupons-assigned-to-promotion-grid'
+        order: 50
+        actions:
+            - '@assign_value': [$.data.promotion, null]
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.promotion.ui.unassign_coupon.success.message
+                type: 'success'
+            - '@refresh_grid': promotion-coupons-assigned-to-promotion-grid
+
+    oro_promotion_coupon_edit_popup:
+        label: oro.ui.edit
+        page_reload: false
+        label: oro.action.edit
+        frontend_options:
+            title: oro.action.edit_entity
+        button_options:
+            icon: fa-pencil-square-o
+        acl_resource: [EDIT, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        datagrids:
+            - 'promotion-coupons-assigned-to-promotion-grid'
+        order: 60
+        form_type: oro_promotion_coupon_type
+
 action_groups:
     oro_promotion_duplicate:
         parameters:

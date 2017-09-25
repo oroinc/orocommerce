@@ -91,6 +91,10 @@ oro:
             order_add_coupon.added.message: Coupons were added to order
             order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
+            unassign_coupon:
+                label: Remove a Coupon from the current Promotion
+                confirmation.message: Are you sure you want to Remove a Coupon from the current Promotion?
+                success.message: Coupon was Removed from the current Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
                 label: Duplicate
@@ -172,6 +176,7 @@ oro:
                     discount_options.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
+            assigned_coupons.label: Assigned Coupons
             promotion_and_discounts.label: Promotions and Discounts
 
         applieddiscount:
