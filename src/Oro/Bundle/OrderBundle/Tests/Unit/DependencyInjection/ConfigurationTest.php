@@ -72,6 +72,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => Order::INTERNAL_STATUS_OPEN,
                             'scope' => 'app'
                         ],
+                        'order_previously_purchased_period' => [
+                            'value' => 90,
+                            'scope' => 'app'
+                        ],
                     ]
                 ]
             ]

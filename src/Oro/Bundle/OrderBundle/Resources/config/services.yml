@@ -412,3 +412,10 @@ services:
             - '@oro_order.provider.latest_ordered_products_info'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
+    oro_order.previously_purchased.configuration:
+        class: 'Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedConfigProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.settings'
+            - '@oro_search.formatter.datetime_formatter'

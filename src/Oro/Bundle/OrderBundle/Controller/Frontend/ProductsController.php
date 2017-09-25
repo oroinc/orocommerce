@@ -11,9 +11,9 @@ use Oro\Bundle\OrderBundle\Controller\AbstractOrderController;
 class ProductsController extends AbstractOrderController
 {
     /**
-     * @Route("/previouslyPurchased", name="oro_order_products_frontend_previously_purchased")
+     * @Route("/previously-purchased", name="oro_order_products_frontend_previously_purchased")
      * @AclAncestor("oro_order_frontend_view")
-     * @Layout(vars={"entity_class", "grid_config"})
+     * @Layout(vars={"entity_class", "grid_name"})
      *
      * @return array
      */
@@ -21,9 +21,7 @@ class ProductsController extends AbstractOrderController
     {
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
-            'grid_config' => [
-                'order-products-previously-purchased-grid'
-            ],
+            'grid_name' => 'order-products-previously-purchased-grid'
         ];
     }
 }

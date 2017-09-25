@@ -1,4 +1,3 @@
-# @TODO will be change in  BB-11698
 layout:
     imports:
         - oro_product_grid
@@ -16,7 +15,7 @@ layout:
         - '@setOption':
             id: product_datagrid
             optionName: grid_name
-            optionValue: order-products-previously-purchased-grid
+            optionValue: '=context["grid_name"]'
 
         - '@addTree':
             items:
