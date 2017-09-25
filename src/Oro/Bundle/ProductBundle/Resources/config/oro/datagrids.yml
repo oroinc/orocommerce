@@ -471,9 +471,8 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatusId:
                 label:         oro.product.inventory_status.label
-                context:
-                    enum_code: prod_inventory_status
-                frontend_type: enum
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                frontend_type: select
             status:
                 label:         oro.product.status.label
                 frontend_type: select
