@@ -682,9 +682,9 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
-                    - integer.new_arrival as newArrival
-                    - text.name_LOCALIZATION_ID as name
-                    - text.short_description_LOCALIZATION_ID as shortDescription
+                    - integer.newArrival as newArrival
+                    - text.names_LOCALIZATION_ID as name
+                    - text.shortDescriptions_LOCALIZATION_ID as shortDescription
                     - text.type as type
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
@@ -705,17 +705,6 @@ datagrids:
                     data_name: all_text_LOCALIZATION_ID
                     label:     oro.product.anything.label
                     max_length: 255
-                sku:
-                    type:      string
-                    data_name: sku
-                    force_like: true
-                    max_length: 255
-                name:
-                    type:      string
-                    data_name: name_LOCALIZATION_ID
-                    force_like: true
-                    min_length: 3
-                    max_length: 255
         properties:
             id: ~
             type: ~
@@ -727,13 +716,6 @@ datagrids:
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
-            columns:
-                sku:
-                    data_name: sku
-                    type: string
-                name:
-                    data_name: name_LOCALIZATION_ID
-                    type: string
         actions:
             view:
                 type:          navigate

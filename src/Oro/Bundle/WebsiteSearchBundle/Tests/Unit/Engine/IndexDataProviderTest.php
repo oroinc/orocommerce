@@ -13,6 +13,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 
@@ -35,25 +36,31 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $tagHelper;
 
+    /** @var PlaceholderHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $placeholderHelper;
+
     protected function setUp()
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $this->aliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->aliasResolver = $this->createMock(EntityAliasResolver::class);
         $this->placeholder = $this->createMock(PlaceholderInterface::class);
+        $this->tagHelper = $this->createMock(HtmlTagHelper::class);
 
-        $this->tagHelper = $this->getMockBuilder(HtmlTagHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->placeholderHelper = $this->createMock(PlaceholderHelper::class);
+        $this->placeholderHelper->expects($this->any())
+            ->method('isNameMatch')
+            ->willReturnCallback(
+                function ($name, $nameValue) {
+                    return $name === 'custom_PLACEHOLDER_ID' && $nameValue === 'custom_42';
+                }
+            );
 
         $this->indexDataProvider = new IndexDataProvider(
             $this->eventDispatcher,
             $this->aliasResolver,
             $this->placeholder,
-            $this->tagHelper
+            $this->tagHelper,
+            $this->placeholderHelper
         );
     }
 
@@ -183,6 +190,11 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text' => 'SKU-01']]],
             ],
+            'simple field with integer' => [
+                'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
+                'indexData' => [[1, 'qty', 0, true]],
+                'expected' => [1 => ['integer' => ['qty' => 0]]],
+            ],
             'placeholder field' => [
                 'entityConfig' => [
                     'fields' => [
@@ -190,10 +202,15 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'name' => 'title_WEBSITE_ID',
                             'type' => Query::TYPE_TEXT,
                         ],
+                        [
+                            'name' => 'custom_PLACEHOLDER_ID',
+                            'type' => Query::TYPE_INTEGER,
+                        ],
                     ],
                 ],
                 'indexData' => [
                     [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'custom_42', 42, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [
@@ -202,6 +219,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'all_text' => 'SKU-01',
                             'all_text_5' => 'SKU-01',
                         ],
+                        'integer' => [
+                            'custom_42' => 42,
+                        ]
                     ],
                 ],
             ],

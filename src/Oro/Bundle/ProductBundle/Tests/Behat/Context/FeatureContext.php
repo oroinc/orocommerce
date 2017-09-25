@@ -13,14 +13,17 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -32,6 +35,7 @@ use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -743,12 +747,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given /^I should see "([^"]*)" in search results$/
+     * @When /^grid sorter should have "(?P<field>.*)" options$/
+     */
+    public function sorterShouldHave($field)
+    {
+        $sorter = $this->createElement('Frontend Product Grid Sorter');
+        $options = $sorter->find('xpath', sprintf('//option[contains(., "%s")]', $field));
+
+        self::assertNotEmpty($options, sprintf('No sorter options found for field "%s"', $field));
+    }
+
+    /**
+     * @Given /^I should see "([^"]*)" product$/
      */
     public function iShouldSeeInSearchResults($productSku)
     {
         $this->oroMainContext
             ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
+    }
+
+    /**
+     * @Then /^I should not see "([^"]*)" product$/
+     *
+     * @param string $productSku
+     */
+    public function iShouldNotSeeInSearchResults($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldNotSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
     }
 
     /**
@@ -951,6 +977,43 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 throw $e;
             }
         }
+    }
+
+    /**
+     * Check checkboxes in multiple select filter
+     * Example: When I check "Task, Email" in Activity Type filter in frontend product grid
+     *
+     * @When /^(?:|I )check "(?P<filterItems>.+)" in (?P<filterName>[\w\s]+) filter in frontend product grid$/
+     *
+     * @param string $filterName
+     * @param string $filterItems
+     */
+    public function iCheckCheckboxesInFilter($filterName, $filterItems)
+    {
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem('Frontend Product Grid MultipleChoice', $filterName);
+        $filterItem->checkItemsInFilter($filterItems);
+    }
+
+    /**
+     * @return GridFilters|Element
+     */
+    private function getGridFilters()
+    {
+        $filters = $this->elementFactory->createElement('GridFilters');
+        if (!$filters->isVisible()) {
+            $gridToolbarActions = $this->elementFactory->createElement('GridToolbarActions');
+            if ($gridToolbarActions->isVisible()) {
+                $gridToolbarActions->getActionByTitle('Filters')->click();
+            }
+
+            $filterState = $this->elementFactory->createElement('GridFiltersState');
+            if ($filterState->isValid()) {
+                $filterState->click();
+            }
+        }
+
+        return $filters;
     }
 
     /**
