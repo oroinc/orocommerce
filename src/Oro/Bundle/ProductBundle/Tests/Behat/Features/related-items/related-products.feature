@@ -3,14 +3,17 @@
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
 
-@skip
 Feature: Editing related products
   In order to propose my customer some other products
   As admin
   I need to be able to set related products to product
 
   Scenario: Check if datagrid of a product doesn't contain this product
-    Given I login as administrator
+    Given sessions active:
+      | Admin   | first_session  |
+      | Manager | second_session |
+    And I proceed as the Admin
+    And I login as administrator
     When go to Products/ Products
     And I click Edit "PSKU1" in grid
     And I click "Select related products"
@@ -107,6 +110,7 @@ Feature: Editing related products
       | Create | Product | Global |
       | Delete | Product | Global |
       | Edit   | Product | Global |
+    Given I proceed as the Manager
     And I login as "CatalogManager1" user
     When I go to Products/ Products
     And I click View "PSKU1" in grid
@@ -143,7 +147,7 @@ Feature: Editing related products
     And I should see "RelatedProductsEditGrid" grid
 
   Scenario: Disable related products functionality
-    Given I login as administrator
+    Given I proceed as the Admin
     When go to System/ Configuration
     And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
@@ -267,8 +271,9 @@ Feature: Editing related products
       | View   | Product | Global |
     And user has following entity permissions enabled
       | [Related Products] Edit Related Products |
-    And I login as "CatalogManager1" user
-    When I go to Products/ Products
+    Then I proceed as the Manager
+    And I am on dashboard
+    And go to Products/ Products
     And I click View "PSKU1" in grid
     Then I should see "Related Items"
     And I should not see an "ProductViewRelatedItemQuickEdit" element

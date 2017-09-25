@@ -17,6 +17,7 @@ interface ContextDataConverterInterface
     const SHIPPING_METHOD = 'shippingMethod';
     const SHIPPING_METHOD_TYPE = 'shippingMethodType';
     const CRITERIA = 'criteria';
+    const APPLIED_COUPONS = 'appliedCoupons';
 
     /**
      * @param object $entity

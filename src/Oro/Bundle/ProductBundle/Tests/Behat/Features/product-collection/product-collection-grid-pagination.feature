@@ -22,8 +22,7 @@ Feature:
       |Excluded      |
 
   Scenario: All Added Grid pagination follow after product collection save
-    Given I login as administrator
-    And I am on Content Node page and added Product Collection variant
+    Given I am on Content Node page and added Product Collection variant
     And I click on "Advanced Filter"
     And I should see "DRAG TO SELECT"
     And I drag and drop "Field Condition" on "Drop condition here"

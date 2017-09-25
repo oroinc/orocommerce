@@ -109,7 +109,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
-        $query->select('name_LOCALIZATION_ID');
+        $query->select('names_LOCALIZATION_ID');
         $query->getCriteria()->orderBy(['sku' => Query::ORDER_ASC]);
 
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
@@ -129,7 +129,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
 
-        $expectedCount = 8;
+        $expectedCount = 9;
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
@@ -141,6 +141,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('product-6', $values[5]);
         $this->assertSearchItems('product-7', $values[6]);
         $this->assertSearchItems('product-8', $values[7]);
+        $this->assertSearchItems('product-9', $values[8]);
     }
 
     public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreHidden()
@@ -176,7 +177,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::HIDDEN);
 
-        $expectedCount = 8;
+        $expectedCount = 9;
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
@@ -188,6 +189,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('product-6', $values[5]);
         $this->assertSearchItems('product-7', $values[6]);
         $this->assertSearchItems('product-8', $values[7]);
+        $this->assertSearchItems('product-9', $values[8]);
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible()
@@ -221,7 +223,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     protected function assertSearchItems($expectedValue, Item $value)
     {
         $selectedData = $value->getSelectedData();
-        $field = 'name_' . $this->getDefaultLocalizationId();
+        $field = 'names_' . $this->getDefaultLocalizationId();
 
         if (!array_key_exists($field, $selectedData)) {
             throw new \RuntimeException(

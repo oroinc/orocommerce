@@ -27,7 +27,7 @@ class CouponGeneratorTest extends WebTestCase
     public function testGenerateAndSave()
     {
         /** @var Promotion $promotion */
-        $promotion = $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION);
+        $promotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
         /** @var BusinessUnit $businessUnit */
         $businessUnit = $this->getDoctrineHelper()
             ->getEntityRepository(BusinessUnit::class)

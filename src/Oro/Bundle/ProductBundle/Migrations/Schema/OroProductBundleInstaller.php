@@ -89,7 +89,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**
@@ -173,7 +173,9 @@ class OroProductBundleInstaller implements
         $table->addIndex(['updated_at', 'id', 'organization_id'], 'idx_oro_product_updated_at_id_organization');
         $table->addIndex(['sku', 'id', 'organization_id'], 'idx_oro_product_sku_id_organization');
         $table->addIndex(['status', 'id', 'organization_id'], 'idx_oro_product_status_id_organization');
-        $table->addIndex(['is_featured'], 'idx_oro_product_is_featured');
+        $table->addIndex(['is_featured'], 'idx_oro_product_featured', [], ['where' => '(is_featured = true)']);
+        $table->addIndex(['id', 'updated_at'], 'idx_oro_product_id_updated_at');
+        $table->addIndex(['is_new_arrival'], 'idx_oro_product_new_arrival', [], ['where' => '(is_new_arrival = true)']);
         $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_oro_product_primary_unit_precision_id');
     }
 

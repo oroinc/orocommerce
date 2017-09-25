@@ -517,7 +517,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $form['oro_shipping_methods_configs_rule[rule][sortOrder]'] = $rule->getSortOrder() + 1;
         $form['oro_shipping_methods_configs_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
         $form['oro_shipping_methods_configs_rule[rule][stopProcessing]'] = !$rule->isStopProcessing();
-        $form['oro_shipping_methods_configs_rule[rule][expression]'] = $rule->getExpression() . ' new data';
+        $form['oro_shipping_methods_configs_rule[rule][expression]'] = $rule->getExpression() . ' && true';
         $form['oro_shipping_methods_configs_rule[destinations][0][postalCodes]'] = '11111';
         $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
         $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;

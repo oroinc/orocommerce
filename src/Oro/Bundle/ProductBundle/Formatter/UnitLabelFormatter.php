@@ -2,16 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Formatter;
 
-use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-
 class UnitLabelFormatter extends AbstractUnitFormatter implements UnitLabelFormatterInterface
 {
     /**
-     * @param string $code
-     * @param bool $isShort
-     * @param bool $isPlural
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function format($code, $isShort = false, $isPlural = false)
     {
@@ -31,11 +25,7 @@ class UnitLabelFormatter extends AbstractUnitFormatter implements UnitLabelForma
     }
 
     /**
-     * @param array|MeasureUnitInterface[] $units
-     * @param bool $isShort
-     * @param bool $isPlural
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function formatChoices(array $units, $isShort = false, $isPlural = false)
     {

@@ -1,0 +1,8 @@
+<div class="oro-promotions-collection grid-container oro-collection-table">
+    <div class="oro-collection-table-heading">
+        <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
+    </div>
+
+    {% set collection = oro_promotion_get_applied_promotions_info(entity) %}
+    {% include 'OroPromotionBundle:AppliedPromotion:applied_promotions_table.html.twig' with {collection: collection, editable: false} %}
+</div>

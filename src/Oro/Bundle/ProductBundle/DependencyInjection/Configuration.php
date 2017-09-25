@@ -39,6 +39,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
     const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
+    const GUEST_QUICK_ORDER_FORM = 'guest_quick_order_form';
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
     const BRAND_DIRECT_URL_PREFIX = 'brand_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
@@ -120,6 +121,7 @@ class Configuration implements ConfigurationInterface
                 static::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
                 static::IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED => ['type' => 'boolean', 'value' => true],
                 static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
+                static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
             ]
         );
 

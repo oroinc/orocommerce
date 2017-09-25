@@ -39,3 +39,6 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'input[name="oro_cms_content_block[contentVariants][1][scopes][0][customer]"]'
                         element: Select2Entity
+
+        Content Field Data:
+            selector: 'div.control-group:contains("Content") .controls>.control-label'

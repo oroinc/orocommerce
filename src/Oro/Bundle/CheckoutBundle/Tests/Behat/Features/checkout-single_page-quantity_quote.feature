@@ -19,8 +19,7 @@ Feature: Single Page Checkout From Quote Quantity Errors
     Then I should see "Workflow activated" flash message
 
   Scenario: Set internal status "Sent to Customer" for Quote with PO number "PO1"
-    Given I login as administrator
-    And go to Sales/Quotes
+    Given go to Sales/Quotes
     And click view PO1 in grid
     When I click "Send to Customer"
     And click "Send"

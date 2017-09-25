@@ -120,7 +120,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
-        $this->getMink()->setDefaultSessionName('second_session');
+        self::assertFalse($this->getMink()->isSessionStarted('system_session'));
+        $this->getMink()->setDefaultSessionName('system_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
@@ -141,7 +142,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->saveAndClose();
         $this->waitForAjax();
 
-        $this->getSession('second_session')->stop();
+        $this->getSession('system_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
     }
 
@@ -158,7 +159,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
-        $this->getMink()->setDefaultSessionName('second_session');
+        self::assertFalse($this->getMink()->isSessionStarted('system_session'));
+        $this->getMink()->setDefaultSessionName('system_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
@@ -187,7 +189,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->saveAndClose();
 
         $this->waitForAjax();
-        $this->getSession('second_session')->stop();
+        $this->getSession('system_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
     }
 
@@ -289,5 +291,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             'div[data-name="field__method-configs"]',
             'Disabled'
         );
+    }
+
+    /**
+     * Press agree in pop-up
+     *
+     * @Given /^(?:|I )agree that shipping cost may have changed$/
+     */
+    public function iAgreeThatShippingCostMayHaveChanged()
+    {
+        $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
+        self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
+        $saveLink->click();
     }
 }

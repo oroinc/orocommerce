@@ -73,7 +73,6 @@ product3:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
-
 product4:
     productCode: product-4
     inventoryStatus: discontinued
@@ -97,6 +96,7 @@ product4:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    attributeFamily: attribute_family_2
 product5:
     productCode: product-5
     inventoryStatus: in_stock
@@ -119,6 +119,7 @@ product5:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    attributeFamily: attribute_family_1
 product6:
     productCode: product-6
     inventoryStatus: in_stock
@@ -185,3 +186,26 @@ product8:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+product9:
+    productCode: product-9
+    inventoryStatus: in_stock
+    status: enabled
+    type: configurable
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-9.names.default, string: product-9.names.default }
+    slugPrototypes:
+        - { reference: product-9.slugPrototypes.default, string: product-9.slugPrototypes.default }
+    descriptions:
+        - { reference: product-9.descriptions.default, text: product-9.descriptions.default }
+    shortDescriptions:
+        - { reference: product-9.shortDescriptions.default, text: product-9.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: product-9.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1

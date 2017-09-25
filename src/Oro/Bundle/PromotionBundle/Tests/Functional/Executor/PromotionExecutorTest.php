@@ -5,10 +5,15 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Executor;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCheckoutData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadOrderData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionDiscountData;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,12 +31,13 @@ class PromotionExecutorTest extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            static::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->client->useHashNavigation(true);
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = static::getContainer()->get('oro_config.manager');
         $this->loadFixtures([
+            LoadOrderData::class,
             LoadCheckoutData::class,
             LoadCombinedProductPrices::class,
             LoadPromotionDiscountData::class
@@ -39,7 +45,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::EMAIL);
         // Request needed for emulation front store request
-        $this->getContainer()->get('request_stack')->push(new Request());
+        static::getContainer()->get('request_stack')->push(new Request());
     }
 
     /**
@@ -58,24 +64,24 @@ class PromotionExecutorTest extends FrontendWebTestCase
             $promotion->getRule()->setEnabled(true);
         }
 
-        $this->getContainer()->get('doctrine')->getManagerForClass(Promotion::class)->flush();
+        static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class)->flush();
 
         // Change calculation strategy
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = static::getContainer()->get('oro_config.manager');
         $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
         $this->configManager->flush();
 
         // Execute calculation
-        $executor = $this->getContainer()->get('oro_promotion.promotion_executor');
+        $executor = static::getContainer()->get('oro_promotion.promotion_executor');
         $checkout = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
 
         $actualDiscountContext = $executor->execute($checkout);
 
         // Check totals
-        $this->assertSame($expected['totalLineItemsDiscount'], $actualDiscountContext->getTotalLineItemsDiscount());
-        $this->assertSame($expected['subtotalDiscountTotal'], $actualDiscountContext->getSubtotalDiscountTotal());
-        $this->assertSame($expected['discountAmount'], $actualDiscountContext->getTotalDiscountAmount());
-        $this->assertSame($expected['shippingDiscountTotal'], $actualDiscountContext->getShippingDiscountTotal());
+        static::assertSame($expected['totalLineItemsDiscount'], $actualDiscountContext->getTotalLineItemsDiscount());
+        static::assertSame($expected['subtotalDiscountTotal'], $actualDiscountContext->getSubtotalDiscountTotal());
+        static::assertSame($expected['discountAmount'], $actualDiscountContext->getTotalDiscountAmount());
+        static::assertSame($expected['shippingDiscountTotal'], $actualDiscountContext->getShippingDiscountTotal());
     }
 
     /**
@@ -90,14 +96,14 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                 ],
                 'strategy' => 'apply_all',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 22.777,
+                    'subtotalDiscountTotal' => 22.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 22.777,
+                    'discountAmount' => 22.77,
                 ]
             ],
             [
@@ -105,7 +111,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                     'promo_buy_x_get_y_2_USD_apply_to_each_y',
                     'promo_buy_x_get_y_2_USD_apply_to_xy_total_with_limit1',
                     'promo_buy_x_get_y_10%_apply_to_xy_total_with_limit1'
@@ -113,9 +119,9 @@ class PromotionExecutorTest extends FrontendWebTestCase
                 'strategy' => 'apply_all',
                 'expected' => [
                     'totalLineItemsDiscount' => 7.76,
-                    'subtotalDiscountTotal' => 22.777,
+                    'subtotalDiscountTotal' => 22.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 30.537,
+                    'discountAmount' => 30.53,
                 ]
             ],
             [
@@ -123,7 +129,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                     'promo_buy_x_get_y_2_USD_apply_to_each_y',
                     'promo_buy_x_get_y_2_USD_apply_to_xy_total_with_limit1',
                     'promo_buy_x_get_y_10%_apply_to_xy_total_with_limit1'
@@ -131,9 +137,9 @@ class PromotionExecutorTest extends FrontendWebTestCase
                 'strategy' => 'profitable',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 12.777,
+                    'subtotalDiscountTotal' => 12.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 12.777,
+                    'discountAmount' => 12.77,
 
                 ]
             ],
@@ -142,14 +148,14 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                 ],
                 'strategy' => 'profitable',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 12.777,
+                    'subtotalDiscountTotal' => 12.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 12.777,
+                    'discountAmount' => 12.77,
                 ]
             ],
             [
@@ -157,16 +163,16 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                     'promo_line_item_each_1_USD',
                     'promo_line_item_each_20%'
                 ],
                 'strategy' => 'apply_all',
                 'expected' => [
                     'totalLineItemsDiscount' => 11.6,
-                    'subtotalDiscountTotal' => 22.777,
+                    'subtotalDiscountTotal' => 22.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 34.377,
+                    'discountAmount' => 34.37,
                 ]
             ],
             [
@@ -174,16 +180,16 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_order_0_USD',
                     'promo_order_10_USD',
                     'promo_order_10_EUR',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                     'promo_line_item_each_1_USD',
                     'promo_line_item_each_20%'
                 ],
                 'strategy' => 'profitable',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 12.777,
+                    'subtotalDiscountTotal' => 12.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 12.777,
+                    'discountAmount' => 12.77,
                 ]
             ],
             [
@@ -194,16 +200,16 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'promo_buy_x_get_y_2_USD_apply_to_each_y',
                     'promo_buy_x_get_y_2_USD_apply_to_xy_total_with_limit1',
                     'promo_buy_x_get_y_10%_apply_to_xy_total_with_limit1',
-                    'promo_order_12.777_USD',
+                    'promo_order_12.77_USD',
                     'promo_line_item_each_1_USD',
                     'promo_line_item_each_20%'
                 ],
                 'strategy' => 'apply_all',
                 'expected' => [
                     'totalLineItemsDiscount' => 17.808,
-                    'subtotalDiscountTotal' => 22.777,
+                    'subtotalDiscountTotal' => 22.77,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 40.585,
+                    'discountAmount' => 40.578,
                 ]
             ],
             [
@@ -237,7 +243,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
             [
                 'enabledPromotions' => [
                     'promo_order_0%',
-                    'promo_order_50%_without_scope',
                     'promo_order_10_USD_stop_processing',
                     'promo_order_15%'
                 ],
@@ -252,16 +257,31 @@ class PromotionExecutorTest extends FrontendWebTestCase
             [
                 'enabledPromotions' => [
                     'promo_order_0%',
-                    'promo_order_50%_without_scope',
+                    'promo_order_50%_without_scope', // if promotion has no scope it's applied
+                    'promo_order_10_USD_stop_processing',
+                    'promo_order_15%'
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 35.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 35.0,
+                ]
+            ],
+            [
+                'enabledPromotions' => [
+                    'promo_order_0%',
+                    'promo_order_50%_without_scope', // if promotion has no scope it's applied
                     'promo_order_10_USD_stop_processing',
                     'promo_order_15%'
                 ],
                 'strategy' => 'profitable',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 10.0,
+                    'subtotalDiscountTotal' => 25.0,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 10.0,
+                    'discountAmount' => 25.0,
                 ]
             ],
             [
@@ -555,6 +575,294 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'discountAmount' => 30.0
                 ]
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider executeAppliedPromotionsDataProvider
+     * @param array $enabledPromotions
+     * @param array $appliedPromotions
+     * @param string $strategy
+     * @param array $expected
+     */
+    public function testExecuteWithAppliedPromotions(
+        array $enabledPromotions,
+        array $appliedPromotions,
+        $strategy,
+        array $expected
+    ) {
+        // Enable only necessary promotions
+        foreach ($enabledPromotions as $promotion) {
+            /** @var Promotion $promotion */
+            $promotion = $this->getReference($promotion);
+
+            $promotion->getRule()->setEnabled(true);
+        }
+
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
+
+        /** @var AppliedPromotionMapper $appliedPromotionMapper */
+        $appliedPromotionMapper = static::getContainer()->get('oro_promotion.mapper.applied_promotion');
+        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+
+        // Create applied discounts data for order based on applied promotions
+        foreach ($appliedPromotions as $appliedPromotionData) {
+            /** @var Promotion $basePromotion */
+            $basePromotion = $this->getReference($appliedPromotionData['basePromotion']);
+
+            $appliedPromotion = new AppliedPromotion();
+            $appliedPromotionMapper->mapPromotionDataToAppliedPromotion($appliedPromotion, $basePromotion, $order);
+
+            $configOptions = array_merge(
+                $basePromotion->getDiscountConfiguration()->getOptions(),
+                $appliedPromotionData['configOptions']
+            );
+            $appliedPromotion->setConfigOptions($configOptions);
+
+            $appliedPromotion->setActive($appliedPromotionData['enabled']);
+
+            $appliedDiscount = new AppliedDiscount();
+            $appliedDiscount
+                ->setAppliedPromotion($appliedPromotion)
+                ->setCurrency('USD')
+                ->setAmount(1234); //Some irrelevant data
+
+            $appliedPromotion->addAppliedDiscount($appliedDiscount);
+
+            $entityManager->persist($appliedPromotion);
+            $entityManager->persist($appliedDiscount);
+        }
+
+        $entityManager->persist($order);
+
+        $entityManager->flush();
+
+        // Change calculation strategy
+        $this->configManager = static::getContainer()->get('oro_config.manager');
+        $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
+        $this->configManager->flush();
+
+        // Execute calculation
+        $executor = static::getContainer()->get('oro_promotion.promotion_executor');
+
+        $actualDiscountContext = $executor->execute($order);
+
+        // Check totals
+        static::assertSame($expected['totalLineItemsDiscount'], $actualDiscountContext->getTotalLineItemsDiscount());
+        static::assertSame($expected['subtotalDiscountTotal'], $actualDiscountContext->getSubtotalDiscountTotal());
+        static::assertSame($expected['discountAmount'], $actualDiscountContext->getTotalDiscountAmount());
+        static::assertSame($expected['shippingDiscountTotal'], $actualDiscountContext->getShippingDiscountTotal());
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array
+     */
+    public function executeAppliedPromotionsDataProvider()
+    {
+        return [
+            'test that applied order discount with previous configuration is used' => [
+                'enabledPromotions' => [
+                    'promo_order_12.77_USD',
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => true
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55,
+                ]
+            ],
+            'test that applied shipping discount with previous configuration is used' => [
+                'enabledPromotions' => [
+                    'promo_shipping_20_USD_flat_rate_method',
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_shipping_20_USD_flat_rate_method',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.00
+                        ],
+                        'enabled' => true
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 10.0,
+                    'discountAmount' => 10.0
+                ]
+            ],
+            'test that applied line item discount with previous configuration is used' => [
+                'enabledPromotions' => [
+                    'promo_line_item_each_1_USD',
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_line_item_each_1_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 3.00
+                        ],
+                        'enabled' => true
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 6.0, // 3 * 2 (max quantity to which promo applies)
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 6.0
+                ]
+            ],
+            'test disabled applied order discount' => [
+                'enabledPromotions' => [],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => false
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.0
+                ]
+            ],
+            'test disabled applied shipping discount' => [
+                'enabledPromotions' => [],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_shipping_20_USD_flat_rate_method',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.00
+                        ],
+                        'enabled' => false
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.0
+                ]
+            ],
+            'test disabled applied line item discount' => [
+                'enabledPromotions' => [],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_line_item_each_1_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 3.00
+                        ],
+                        'enabled' => false
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.0
+                ]
+            ],
+            'test that duplicated applied order discounts do not affect discount amount' => [
+                'enabledPromotions' => [],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => true
+                    ],
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => true
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55
+                ]
+            ],
+            //TODO: Test recalculation of applied discount when order changed?
+            //TODO: Test that promotion data is used for conditions (e.g. expression or rule?)
+            'test that disabled order applied discount gives zero discount amount' => [
+                'enabledPromotions' => [],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => false
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.00,
+                ]
+            ],
+            'test that disabled order discount gives zero discount amount' => [
+                'enabledPromotions' => [
+                    'promo_order_0_USD',
+                    'promo_order_10_USD',
+                    'promo_order_10_EUR',
+                    'promo_order_12.77_USD',
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'isPromotionDelete' => false,
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'enabled' => false
+                    ]
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.00,
+                ]
+            ]
         ];
     }
 }

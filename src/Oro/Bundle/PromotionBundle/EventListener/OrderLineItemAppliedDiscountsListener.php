@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\EventListener;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
+use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
@@ -27,26 +27,26 @@ class OrderLineItemAppliedDiscountsListener
     protected $lineItemSubtotalProvider;
 
     /**
-     * @var DiscountsProvider
+     * @var AppliedDiscountsProvider
      */
-    protected $discountsProvider;
+    protected $appliedDiscountsProvider;
 
     /**
      * @param TaxManager $taxManager
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param DiscountsProvider $discountsProvider
+     * @param AppliedDiscountsProvider $appliedDiscountsProvider
      */
     public function __construct(
         TaxManager $taxManager,
         TaxationSettingsProvider $taxationSettingsProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
-        DiscountsProvider $discountsProvider
+        AppliedDiscountsProvider $appliedDiscountsProvider
     ) {
         $this->taxManager = $taxManager;
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
-        $this->discountsProvider = $discountsProvider;
+        $this->appliedDiscountsProvider = $appliedDiscountsProvider;
     }
 
     /**
@@ -59,7 +59,7 @@ class OrderLineItemAppliedDiscountsListener
 
         $discounts = [];
         foreach ($order->getLineItems() as $lineItem) {
-            $discountAmount = $this->discountsProvider->getDiscountsAmountByLineItem($lineItem);
+            $discountAmount = $this->appliedDiscountsProvider->getDiscountsAmountByLineItem($lineItem);
             if ($isTaxationEnabled) {
                 $discounts[] = $this->getDiscountWithTaxes($discountAmount, $lineItem);
             } else {

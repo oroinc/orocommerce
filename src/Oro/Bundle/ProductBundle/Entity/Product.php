@@ -46,8 +46,18 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              columns={"status", "id", "organization_id"}
  *          ),
  *          @ORM\Index(
- *              name="idx_oro_product_is_featured",
- *              columns={"is_featured"}
+ *              name="idx_oro_product_featured",
+ *              columns={"is_featured"},
+ *              options={"where": "(is_featured = true)"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_id_updated_at",
+ *              columns={"id", "updated_at"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_new_arrival",
+ *              columns={"is_new_arrival"},
+ *              options={"where": "(is_new_arrival = true)"}
  *          )
  *      }
  * )
@@ -915,6 +925,20 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @return array
+     */
+    public function getAvailableUnitsPrecision()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+        }
+
+        return $result;
+    }
+
+    /**
      * @param array|LocalizedFallbackValue[] $names
      *
      * @return $this
@@ -1231,7 +1255,7 @@ class Product extends ExtendProduct implements
     {
         return [
             'id' => $this->getId(),
-            'product_units' => $this->getAvailableUnitCodes(),
+            'product_units' => $this->getAvailableUnitsPrecision(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }
