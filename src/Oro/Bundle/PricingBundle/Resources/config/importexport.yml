@@ -105,6 +105,11 @@ services:
         tags:
             - { name: oro_importexport.configuration, alias: oro_product_index }
 
+    oro_pricing.importexport.configuration_provider.product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Configuration\ProductPriceImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_price }
+
     oro_pricing.importexport.data_converter.price_attribute_product_price:
         class: 'Oro\Bundle\PricingBundle\ImportExport\DataConverter\PriceAttributeProductPriceDataConverter'
         public: false
