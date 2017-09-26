@@ -15,30 +15,37 @@
         </thead>
     {% endif %}
     <tbody class="matrix-order-widget__grid-body">
-        {% for row in form.rows %}
-            <tr>
-                <td>{{ row.vars.label }}</td>
-                {% for column in row.columns %}
-                    <td>
-                        {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
-                        {{ form_widget(column,{
-                            'attr': {
-                                'data-product-id': column.vars.productId,
-                                'data-row-index': loop.index
-                                },
-                            })
-                        }}
-                    </td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
+    {% for row in form.rows %}
+        {% set rowIndex = loop.index %}
+        <tr>
+            <td>{{ row.vars.label }}
+                <div data-row-quantity="{{ loop.index }}">0</div>
+                <div data-row-subtotal="{{ loop.index }}">0</div>
+            </td>
+            {% for column in row.columns %}
+                <td>
+                    {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
+                    {{ form_widget(column,{
+                        'attr': {
+                            'data-product-id': column.vars.productId,
+                            'data-index': {
+                                'row': rowIndex,
+                                'column': loop.index
+                            }|json_encode
+                        },
+                    })
+                    }}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
     </tbody>
     <tfoot class="matrix-order-widget__grid-footer">
         <tr>
             <td>Qty</td>
             {% for column in form.rows[0].columns %}
                 <td>
-                    <div class="matrix-order-widget__grid-footer-total" data-footer-row-index="{{ loop.index }}">0</div>
+                    <div class="matrix-order-widget__grid-footer-total" data-column-quantity="{{ loop.index }}">0</div>
                 </td>
             {% endfor %}
         </tr>

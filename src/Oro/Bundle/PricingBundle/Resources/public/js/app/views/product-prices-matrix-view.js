@@ -16,7 +16,6 @@ define(function(require) {
             fields: '[data-name="field__quantity"]:enabled',
             fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
-            totalRowQty: '[data-footer-row-index]',
             totalPrice: '[data-role="total-price"]',
             submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
@@ -27,9 +26,17 @@ define(function(require) {
 
         total: {
             price: 0,
-            commonQuantity: 0,
-            rowQuantity: 0,
-            rowQuantityIndex: 0
+            quantity: 0,
+            row: {
+                index: null,
+                quantity: 0,
+                subtotal: 0
+            },
+            column: {
+                index: null,
+                quantity: 0,
+                subtotal: 0
+            }
         },
 
         prices: null,
@@ -79,34 +86,48 @@ define(function(require) {
          * @param event
          */
         updateTotals: _.debounce(function(event) {
-            var self = this;
-            var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
+            var currentIndex = $(event.currentTarget).closest('[data-index]').data('index');
 
             this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                var $this = $(field);
-                var $parent = $this.closest('[data-row-index]');
-                var productId = $parent.data('product-id');
-                var validValue = self.getValidValue(field.value);
-
-                if ($parent.data('row-index') === currentRowId) {
-                    total.rowQuantity += validValue;
-                }
-
                 if (_.isEmpty(field.value)) {
                     return total;
                 }
 
+                var $this = $(field);
+                var $parent = $this.closest('[data-index]');
+                var productId = $parent.data('product-id');
+                var productPrice = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
+                var validValue = this.getValidValue(field.value);
+
+                if ($parent.data('index').row === currentIndex.row) {
+                    total.row.quantity += validValue;
+                    total.row.subtotal += productPrice;
+                }
+
+                if ($parent.data('index').column === currentIndex.column) {
+                    total.column.quantity += validValue;
+                    total.column.subtotal += productPrice;
+                }
+
                 $this.val(validValue);
 
-                total.commonQuantity += validValue;
-                total.price += PricesHelper.calcTotalPrice(self.prices[productId], self.unit, field.value);
+                total.quantity += validValue;
+                total.price += productPrice;
 
                 return total;
             }, {
                 price: 0,
-                commonQuantity: 0,
-                rowQuantity: 0,
-                rowQuantityIndex: currentRowId
+                quantity: 0,
+                row: {
+                    index: currentIndex.row,
+                    quantity: 0,
+                    subtotal: 0
+                },
+                column: {
+                    index: currentIndex.column,
+                    quantity: 0,
+                    subtotal: 0
+                }
             }, this);
 
             this.render();
@@ -127,18 +148,35 @@ define(function(require) {
          */
         render: function() {
             this.getElement('submitButtons')
-                .toggleClass('disabled', this.total.commonQuantity === 0)
-                .data('disabled', this.total.commonQuantity === 0);
+                .toggleClass('disabled', this.total.quantity === 0)
+                .data('disabled', this.total.quantity === 0);
 
-            this.getElement('totalQty').text(this.total.commonQuantity);
+            this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
 
-            this.getElement('totalRowQty')
-                .filter('[data-footer-row-index=' + this.total.rowQuantityIndex + ']')
-                .toggleClass('valid', this.total.rowQuantity > 0)
-                .html(this.total.rowQuantity);
+            _.each(
+                _.pick(this.total, 'row', 'column'), // Select need entities
+                _.bind(this.renderDataEntity, this, {
+                    'subtotal': NumberFormatter.formatCurrency // Define formatted properties
+                }),
+            this);
+        },
+
+        /**
+         * Render property matrix grid
+         *
+         * @param {Object} formatters
+         * @param {Object} value
+         * @param {String} key
+         */
+        renderDataEntity: function(formatters, value, key) {
+            _.each(_.omit(value, 'index'), function(entity, type) {
+                this.$el.find('[data-' + key + '-' + type + '="' + value.index + '"]')
+                    .toggleClass('valid', entity > 0)
+                    .html(_.has(formatters, type) ? formatters[type].call(this, entity) : entity);
+            }, this);
         }
     }));
     return ProductPricesMatrixView;
