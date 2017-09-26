@@ -320,6 +320,13 @@ datagrids:
                         modal: false
                         allowMaximize: false
                         allowMinimize: false
+            unassign:
+                type:            ajax
+                handler:         oro_promotion.mass_action.assigned_coupon_unassign_mass_action_handler
+                acl_resource:    oro_promotion_coupon_edit
+                label:           oro.promotion.ui.unassign_coupon.label
+                icon:            times
+                data_identifier: coupon.id
 
     promotion-coupons-select-grid:
         extended_entity_name: '%oro_promotion.entity.coupon.class%'
