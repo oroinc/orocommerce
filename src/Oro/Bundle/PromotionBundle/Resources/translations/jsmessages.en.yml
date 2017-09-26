@@ -9,3 +9,5 @@ oro:
                 coupon_already_added: This coupon has been already added
                 coupon_promotion_already_applied: This coupon's discount has been already applied
                 coupon_promotion_not_applicable: This coupon's discount is not applicable
+        ui:
+            unassign_coupon.confirmation.message: Are you sure you want to Remove a Coupon from the current Promotion?

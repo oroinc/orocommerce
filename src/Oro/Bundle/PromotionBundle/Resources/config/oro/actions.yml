@@ -186,20 +186,6 @@ operations:
                 type: 'success'
             - '@refresh_grid': promotion-coupons-assigned-to-promotion-grid
 
-    oro_promotion_coupon_edit_popup:
-        label: oro.ui.edit
-        page_reload: false
-        label: oro.action.edit
-        frontend_options:
-            title: oro.action.edit_entity
-        button_options:
-            icon: fa-pencil-square-o
-        acl_resource: [EDIT, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
-        datagrids:
-            - 'promotion-coupons-assigned-to-promotion-grid'
-        order: 60
-        form_type: oro_promotion_coupon_type
-
 action_groups:
     oro_promotion_duplicate:
         parameters:

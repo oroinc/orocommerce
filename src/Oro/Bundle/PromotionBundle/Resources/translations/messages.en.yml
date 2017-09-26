@@ -93,7 +93,6 @@ oro:
             segment_edit_button.label: Edit within Promotion
             unassign_coupon:
                 label: Remove a Coupon from the current Promotion
-                confirmation.message: Are you sure you want to Remove a Coupon from the current Promotion?
                 success.message: Coupon was Removed from the current Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
