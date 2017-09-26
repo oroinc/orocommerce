@@ -30,21 +30,17 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
     public function testGet()
     {
         $this->translator
-            ->expects(static::exactly(5))
+            ->expects(static::exactly(3))
             ->method('trans')
             ->withConsecutive(
-                ['oro.pricing.priceattributeproductprice.import.button.label'],
                 ['oro.pricing.priceattributeproductprice.import_validation.button.label'],
                 ['oro.pricing.priceattributeproductprice.export_template.button.label'],
-                ['oro.pricing.priceattributeproductprice.export.button.label'],
-                ['oro.pricing.priceattributeproductprice.import.popup.title']
+                ['oro.pricing.priceattributeproductprice.export.button.label']
             )
             ->willReturnOnConsecutiveCalls(
                 '1',
                 '2',
-                '3',
-                '4',
-                '5'
+                '3'
             );
 
         $expected = new ImportExportConfiguration([
@@ -55,11 +51,9 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
             ImportExportConfiguration::FIELD_IMPORT_JOB_NAME => 'price_attribute_product_price_import_from_csv',
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS =>
                 'oro_pricing_product_price_attribute_price.add_or_replace',
-            ImportExportConfiguration::FIELD_IMPORT_BUTTON_LABEL => '1',
-            ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL => '2',
-            ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL => '3',
-            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '4',
-            ImportExportConfiguration::FIELD_IMPORT_POPUP_TITLE => '5',
+            ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL => '1',
+            ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL => '2',
+            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '3',
         ]);
 
         static::assertEquals($expected, $this->provider->get());

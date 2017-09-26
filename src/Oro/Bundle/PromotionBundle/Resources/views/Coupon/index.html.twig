@@ -5,12 +5,8 @@
 
 {% block navButtons %}
 
-    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
-        entity_class: entity_class,
-        exportProcessor: 'oro_promotion_coupon_export',
-        importProcessor: 'oro_promotion_coupon_import',
-        exportTemplateProcessor: 'oro_promotion_coupon_export_template',
-        dataGridName: gridName
+    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+        'alias': 'oro_coupon'
     } %}
 
     {% if resource_granted('oro_promotion_coupon_create') %}

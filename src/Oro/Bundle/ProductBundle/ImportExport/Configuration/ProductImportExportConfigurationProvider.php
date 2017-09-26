@@ -35,17 +35,12 @@ class ProductImportExportConfigurationProvider implements ImportExportConfigurat
             ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_product_product',
             ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_PROCESSOR_ALIAS => 'oro_product_product_export_template',
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS => 'oro_product_product.add_or_replace',
-            ImportExportConfiguration::FIELD_DATA_GRID_NAME => 'products-grid',
-            ImportExportConfiguration::FIELD_IMPORT_BUTTON_LABEL =>
-                $this->translator->trans('oro.product.import.button.label'),
             ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.import_validation.button.label'),
             ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.export_template.button.label'),
             ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.export.button.label'),
-            ImportExportConfiguration::FIELD_IMPORT_POPUP_TITLE =>
-                $this->translator->trans('oro.product.import.popup.title'),
         ]);
     }
 }
