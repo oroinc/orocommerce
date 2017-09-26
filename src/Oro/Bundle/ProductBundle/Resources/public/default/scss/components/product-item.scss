@@ -433,6 +433,12 @@
             padding: 0 0 0 104px;
         }
     }
+
+    &__status {
+        &_in-cart {
+            display: none;
+        }
+    }
 }
 
 @include breakpoint('tablet-small') {
@@ -470,6 +476,12 @@
 
         &__quick-view-btn {
             display: none !important;
+        }
+
+        &__status {
+            &_in-cart {
+                display: block;
+            }
         }
     }
 }

@@ -2,6 +2,10 @@
   margin: 23px 0 23px -15px;
 
   @include clearfix();
+
+  &--items-mobile {
+    display: none;
+  }
 }
 
 .customer-oq__item {
@@ -178,5 +182,17 @@
 .oro-long-text-expanded {
   .fa-play {
     transform: rotate(90deg);
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .customer-oq-container {
+    &--items {
+      display: none;
+    }
+
+    &--items-mobile {
+      display: block;
+    }
   }
 }
