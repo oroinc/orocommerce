@@ -45,6 +45,9 @@ define(function(require) {
             ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
+            _.each(this.getElement('fields'), function(element) {
+                this.update(element);
+            }, this);
         },
 
         /**
@@ -73,14 +76,23 @@ define(function(require) {
         },
 
         /**
-         * Listen input event, calculate total values of quantity and price
-         * Prevent enter string
+         * Listen input event
 
          * @param event
          */
         updateTotals: _.debounce(function(event) {
+            this.update(event.currentTarget);
+        }, 150),
+
+        /**
+         * Calculate total values of quantity and price
+         * Prevent enter string
+
+         * @param element
+         */
+        update: function(element) {
             var self = this;
-            var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
+            var currentRowId = $(element).closest('[data-row-index]').data('row-index');
 
             this.total = _.reduce(this.getElement('fields'), function(total, field) {
                 var $this = $(field);
@@ -110,7 +122,7 @@ define(function(require) {
             }, this);
 
             this.render();
-        }, 150),
+        },
 
         getValidValue: function(value) {
             var val = parseInt(value, 10) || 0;

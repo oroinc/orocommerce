@@ -691,6 +691,13 @@ oro_behat_extension:
     Frontend Product Grid Sorter:
       selector: 'div.datagrid-tool div.sorting select'
 
+    Shirt_101 Matrix Grid Order Form:
+      selector: 'form[name="matrix_collection"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
