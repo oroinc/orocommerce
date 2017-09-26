@@ -234,9 +234,6 @@ datagrids:
                 acl_resource:  oro_promotion_coupon_update
                 widgetOptions:
                     reload-grid-name: promotion-coupons-assigned-to-promotion-grid
-                    options:
-                        dialogOptions:
-                            width: 650
         source:
             type: orm
             query:

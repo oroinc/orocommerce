@@ -172,7 +172,7 @@ operations:
         page_reload: false
         button_options:
             icon: fa-times
-        acl_resource: [EDIT, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        acl_resource: [EDIT, $.data]
         frontend_options:
             confirmation: oro.promotion.ui.unassign_coupon.confirmation.message
         datagrids:
@@ -184,7 +184,33 @@ operations:
             - '@flash_message':
                 message: oro.promotion.ui.unassign_coupon.success.message
                 type: 'success'
-            - '@refresh_grid': promotion-coupons-assigned-to-promotion-grid
+            - '@refresh_grid': $.gridName
+
+    oro_promotion_assigned_coupon_delete:
+        extends: DELETE
+        replace:
+            - exclude_entities
+            - exclude_datagrids
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+            - datagrid_options
+            - preconditions
+        page_reload: false
+        preconditions:
+            '@not_blank': $.data
+        actions:
+            - '@refresh_grid': $.gridName
+        datagrids:
+            - promotion-coupons-assigned-to-promotion-grid
+        datagrid_options:
+            mass_action:
+                entity_name: Oro\Bundle\PromotionBundle\Entity\Coupon
+                data_identifier: coupon.id
+                type: delete
+                label: oro.grid.action.delete
+                link: delete_link
+                icon: trash-o
 
 action_groups:
     oro_promotion_duplicate:
