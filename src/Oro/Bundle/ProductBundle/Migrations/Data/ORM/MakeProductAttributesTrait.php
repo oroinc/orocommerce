@@ -46,6 +46,25 @@ trait MakeProductAttributesTrait
     }
 
     /**
+     * @param array $fields
+     */
+    private function updateProductAttributes(array $fields)
+    {
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configHelper = $this->container->get('oro_entity_config.config.config_helper');
+        $entityManager = $configManager->getEntityManager();
+
+        foreach ($fields as $field => $attributeOptions) {
+            $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $field);
+
+            $configHelper->updateFieldConfigs($fieldConfigModel, ['attribute' => $attributeOptions]);
+            $entityManager->persist($fieldConfigModel);
+        }
+
+        $entityManager->flush();
+    }
+
+    /**
      * Iterates over passed groups array assigning corresponding attributes
      * Assigns groups to passed family
      *

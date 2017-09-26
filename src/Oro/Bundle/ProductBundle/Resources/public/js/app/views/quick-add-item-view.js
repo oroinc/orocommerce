@@ -36,6 +36,10 @@ define(function(require) {
             unit: 'unit'
         },
 
+        elementsEvents: {
+            'quantity': ['keyup', 'onQuantityChange']
+        },
+
         modelAttr: {
             sku: '',
             skuHiddenField: '',
@@ -55,7 +59,6 @@ define(function(require) {
         listen: {
             'autocomplete:productFound mediator': 'updateModel',
             'autocomplete:productNotFound mediator': 'updateModelNotFound',
-            'quick-add-item-additional-fields:model-change mediator': 'updateModel',
             'quick-add-form:rows-ready mediator': 'updateModelFromData',
             'quick-add-form:clear mediator': 'clearSku'
         },
@@ -101,6 +104,14 @@ define(function(require) {
             delete this.validator;
             QuickAddItemView.__super__.dispose.apply(this, arguments);
         },
+
+        onQuantityChange: _.debounce(function(e) {
+            this.model.set({
+                'quantity': $(e.currentTarget).val(),
+                'quantity_changed_manually': true
+            });
+            this.publishModelChanges();
+        }, 500),
 
         onSkuChange: function() {
             if (this.model.get('sku') === '' && this.model.get('sku_changed_manually')) {

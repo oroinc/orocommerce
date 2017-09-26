@@ -3,26 +3,34 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
+use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
+use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
 {
-    /**
-     * @var ConfigurationLoaderInterface
-     */
+    /** @var ConfigurationLoaderInterface */
     private $mappingConfigurationLoader;
 
-    /**
-     * @var array
-     */
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /** @var array */
     private $configuration;
 
     /**
      * @param ConfigurationLoaderInterface $mappingConfigurationLoader
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ConfigurationLoaderInterface $mappingConfigurationLoader)
-    {
+    public function __construct(
+        ConfigurationLoaderInterface $mappingConfigurationLoader,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->mappingConfigurationLoader = $mappingConfigurationLoader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -31,9 +39,30 @@ class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
     public function getMappingConfig()
     {
         if (!$this->configuration) {
-            $this->configuration = $this->mappingConfigurationLoader->getConfiguration();
+            $event = new WebsiteSearchMappingEvent();
+            $event->setConfiguration($this->mappingConfigurationLoader->getConfiguration());
+
+            $this->eventDispatcher->dispatch(WebsiteSearchMappingEvent::NAME, $event);
+
+            $this->configuration = $this->processConfiguration(
+                new MappingConfiguration(),
+                [$event->getConfiguration()]
+            );
         }
 
         return $this->configuration;
+    }
+
+    /**
+     * @param ConfigurationInterface $configuration
+     * @param array $configs
+     *
+     * @return array
+     */
+    private function processConfiguration(ConfigurationInterface $configuration, array $configs)
+    {
+        $processor = new Processor();
+
+        return $processor->processConfiguration($configuration, $configs);
     }
 }
