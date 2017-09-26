@@ -60,7 +60,7 @@
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
-        'aCss': 'add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'btn add-to-shopping-list-button ' ~ options.aCss,
         'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
@@ -78,7 +78,9 @@
         }) %}
     {% endif %}
 
-    {{ UI.clientButton(buttonOptions) }}
+    <div class="pull-left btn-group icons-holder btn-group--loading">
+        {{ UI.clientLink(buttonOptions) }}
+    </div>
 {% endmacro %}
 
 {% macro getButtonsHtml(options) %}
