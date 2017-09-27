@@ -56,10 +56,11 @@ class OrderRepository extends EntityRepository
     /**
      * @param array $productIds
      * @param int   $websiteId
+     * @param array $orderStatuses
      *
      * @return QueryBuilder
      */
-    public function getLatestOrderedProductsInfo(array $productIds, $websiteId)
+    public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses = ['closed', 'archived'])
     {
         $qb = $this->createQueryBuilder('orders');
         $qb->select('IDENTITY(orders.customerUser) as customer_id')
@@ -70,11 +71,13 @@ class OrderRepository extends EntityRepository
             ->innerJoin('orders.lineItems', 'lineItems')
             ->andWhere($qb->expr()->in('lineItems.product', ':productIdList'))
             ->andWhere($qb->expr()->eq('orders.website', ':websiteId'))
+            ->andWhere($qb->expr()->in('orders.internal_status', ':orderStatuses'))
             ->groupBy('orders.customerUser, lineItems.product')
             ->orderBy('lineItems.product');
 
         $qb->setParameter(':productIdList', $productIds)
-           ->setParameter(':websiteId', $websiteId);
+            ->setParameter(':orderStatuses', $orderStatuses)
+            ->setParameter(':websiteId', $websiteId);
 
         return $qb;
     }
