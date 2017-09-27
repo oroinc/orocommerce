@@ -82,8 +82,15 @@ oro:
             choice:
                 'true': Yes
                 'false': No
+        manage_low_inventory:
+            label: Managed Low Inventory
+            choice:
+                'true': Yes
+                'false': No
         inventory_threshold:
             label: Inventory Threshold
+        low_inventory_threshold:
+            label: Low Inventory Threshold
         decrement_inventory:
             product:
                 not_allowed: 'There is not enough quantity for this product'
@@ -104,8 +111,12 @@ oro:
     product:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not
+        manage_low_inventory:
+            description:  Option which defines if low inventory for products is managed or not
         inventory_threshold:
             description: The value that defines the limit of the inventory after which this product can not be ordered
+        low_inventory_threshold:
+            description: The value that defines the limit of the low inventory after which warrning message is shown to inform about it
         decrement_quantity:
             description: Option that defines the strategy used for decrementing inventory for ordered products
         backOrder:

@@ -78,8 +78,14 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $this->addManageInventoryFieldToProduct($schema);
         $this->addManageInventoryFieldToCategory($schema);
 
+        $this->addManageLowInventoryFieldToProduct($schema);
+        $this->addManageLowInventoryFieldToCategory($schema);
+
         $this->addInventoryThresholdFieldToProduct($schema);
         $this->addInventoryThresholdFieldToCategory($schema);
+
+        $this->addLowInventoryThresholdFieldToProduct($schema);
+        $this->addLowInventoryThresholdFieldToCategory($schema);
 
         $this->addQuantityToOrderFieldsToProduct($schema);
         $this->addQuantityToOrderFieldsToCategory($schema);
@@ -352,6 +358,28 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     /**
      * @param Schema $schema
      */
+    protected function addManageLowInventoryFieldToProduct(Schema $schema)
+    {
+        if ($schema->getTable('oro_product')->hasColumn('managelowinventory_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_product',
+            'manageLowInventory',
+            'oro.inventory.manage_low_inventory.label',
+            [
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageLowInventory'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_low_inventory'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('manageinventory_id')) {
@@ -367,6 +395,28 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             [
                 ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addManageLowInventoryFieldToCategory(Schema $schema)
+    {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('managelowinventory_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_catalog_category',
+            'manageLowInventory',
+            'oro.inventory.manage_low_inventory.label',
+            [
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageLowInventory'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_low_inventory'],
             ]
         );
     }
@@ -398,6 +448,30 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     /**
      * @param Schema $schema
      */
+    protected function addLowInventoryThresholdFieldToProduct(Schema $schema)
+    {
+        if ($schema->getTable('oro_product')->hasColumn('lowInventoryThreshold_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_product',
+            'lowInventoryThreshold',
+            'oro.inventory.low_inventory_threshold.label',
+            [
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'lowInventoryThreshold'],
+                SystemConfigFallbackProvider::FALLBACK_ID => [
+                    'configName' => 'oro_inventory.low_inventory_threshold'
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('inventoryThreshold_id')) {
@@ -414,6 +488,30 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'inventoryThreshold'],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.inventory_threshold'
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addLowInventoryThresholdFieldToCategory(Schema $schema)
+    {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('lowInventoryThreshold_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_catalog_category',
+            'lowInventoryThreshold',
+            'oro.inventory.low_inventory_threshold.label',
+            [
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'lowInventoryThreshold'],
+                SystemConfigFallbackProvider::FALLBACK_ID => [
+                    'configName' => 'oro_inventory.low_inventory_threshold'
                 ],
             ]
         );
@@ -581,6 +679,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 }

@@ -961,6 +961,8 @@ Example:
 
 ### inventoryThreshold
 
+### lowInventoryThreshold
+
 #### create
 
 {@inheritdoc}
@@ -976,6 +978,8 @@ Example:
 **Required field**
 
 ### manageInventory
+
+### manageLowInventory
 
 #### create
 
