@@ -1,5 +1,5 @@
 ## 1.4.0 (2017-09-21)
-[Show detailed list of changes](incompatibilities-1-4-0.md)
+[Show detailed list of changes](incompatibilities-1-4.md)
 
 ### Added
 #### PricingBundle
@@ -87,7 +87,7 @@ Fixed Filter criteria disappears from UI upon setting
 * Fixed Sales Representative Info demo data changes
 
 ## 1.3.0 LTS (2017-07-28)
-[Show detailed list of changes](incompatibilities-1-3-0.md)
+[Show detailed list of changes](incompatibilities-1-3.md)
 
 ### Added
 #### CronBundle
@@ -240,7 +240,7 @@ Fixed Filter criteria disappears from UI upon setting
 #### WebsiteSearchBundle
 * class `ReindexDemoDataListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/ReindexDemoDataListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener")</sup> was removed, `ReindexDemoDataFixturesListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/ReindexDemoDataFixturesListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener")</sup> class is used instead
 ## 1.2.0 (2017-06-01)
-[Show detailed list of changes](incompatibilities-1-2-0.md)
+[Show detailed list of changes](incompatibilities-1-2.md)
 
 ### Added
 #### CMSBundle
@@ -301,7 +301,7 @@ Fixed Filter criteria disappears from UI upon setting
    - `$country`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L92 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$country")</sup> is removed, us `$upsCountry` instead
    - `$invalidateCacheAt`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L138 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$invalidateCacheAt")</sup> is removed, use `$upsInvalidateCacheAt` instead
 ## 1.1.0 (2017-03-31)
-[Show detailed list of changes](incompatibilities-1-1-0.md)
+[Show detailed list of changes](incompatibilities-1-1.md)
 
 ### Added
 #### CatalogBundle
