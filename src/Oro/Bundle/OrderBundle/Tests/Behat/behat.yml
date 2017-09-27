@@ -101,15 +101,15 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Description:
-            locator: '[data-role=description]'
-            type: 'css'
-          Value:
-            locator: '[data-role=value]'
-            type: 'css'
           Type:
             locator: '[data-role=type]'
             type: 'css'
+
+    DiscountValue:
+      selector: 'input[name="oro_action_operation[orderDiscount][value]"]'
+
+    DiscountDescription:
+      selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
   pages:
     OrderFrontendView:

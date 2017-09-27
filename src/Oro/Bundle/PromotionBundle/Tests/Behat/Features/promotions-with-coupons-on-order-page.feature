@@ -34,6 +34,13 @@ Feature: Promotions with coupons on Order page
       | Discount | -$10.00 |
       | Total    | $40.00  |
 
+  Scenario: Possible to view details about added promotion in popup
+    When I click "Promotions and Discounts"
+    And I click "View" on row "Line Item Discount Promotion" in "Promotions"
+    Then I should see "General Information"
+    And I should see "Conditions"
+    Then I click "Close Line Item Discount Promotion Details"
+
   Scenario: Delete added coupon from grid
     When I click "Promotions and Discounts"
     And I click "Remove" on row "Line Item Discount Promotion" in "Promotions"
