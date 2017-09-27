@@ -183,6 +183,8 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@oro_promotion.validation_service.coupon_validation'
+            - '@oro_promotion.provider.entity_coupons_provider'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
