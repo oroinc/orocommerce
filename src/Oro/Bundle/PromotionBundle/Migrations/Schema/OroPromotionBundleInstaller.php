@@ -514,7 +514,7 @@ class OroPromotionBundleInstaller implements
             'oro_promotion_applied_coupon',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,
@@ -559,7 +559,7 @@ class OroPromotionBundleInstaller implements
             'oro_promotion_applied',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,
