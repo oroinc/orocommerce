@@ -73,6 +73,11 @@ layout:
             optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
 
         - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.multiSelectRowEnabled
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
+
+        - '@setOption':
             id: product_datagrid_row_product_sticker_new
             optionName: visible
             optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()!="no-image-view"'
@@ -80,7 +85,7 @@ layout:
         - '@setOption':
             id: product_datagrid_row_product_sticker_new_text
             optionName: visible
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()=="no-image-view"'
+            optionValue: false
 
         - '@move':
             id: product_datagrid_cell_sku
@@ -108,3 +113,13 @@ layout:
             blockType: product_datagrid_options
             options:
                 current_row_view: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
+
+        - '@add':
+            id: product_item_select_row
+            parentId: product_datagrid_row_product_image_holder
+            blockType: block
+
+        - '@setOption':
+            id: product_item_select_row
+            optionName: visible
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'

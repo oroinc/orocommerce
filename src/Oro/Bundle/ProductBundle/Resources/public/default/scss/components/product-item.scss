@@ -118,7 +118,7 @@
             float: left;
             display: block;
             width: 23%;
-            overflow: hidden;
+            margin-bottom: $offset-y * 2;
             border: 1px solid get-color('additional', 'light');
         }
 
@@ -369,7 +369,6 @@
     }
 
     &__qty {
-
         &--gallery-view,
         &--list-view,
         &--no-image-view {
@@ -431,6 +430,15 @@
 
         &_in-cart {
             padding: 0 0 0 104px;
+        }
+    }
+
+    &__select-row {
+        padding-top: $offset-x-s;
+
+        &--list-view {
+            position: absolute;
+            top: 100%;
         }
     }
 }

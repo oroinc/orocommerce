@@ -6,6 +6,8 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
+    var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
+    var SelectState = require('orodatagrid/js/datagrid/select-state-model');
 
     BackendGrid = Grid.extend({
         /** @property */
@@ -23,6 +25,7 @@ define(function(require) {
             this.header = null;
             this.footer = null;
             this.body = null;
+            this.multiSelectRowEnabled = options.multiSelectRowEnabled;
 
             mediator.on('grid-content-loaded', function(params) {
                 this.updateGridContent(params);
@@ -50,7 +53,22 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        backgridInitialize: function() {},
+        backgridInitialize: function() {
+            if (this.selectState === null) {
+                this.selectState = new SelectState();
+            }
+
+            this.listenTo(this.collection, {
+                'remove': this.onCollectionModelRemove,
+                'updateState': this.onCollectionUpdateState,
+                'backgrid:selected': this.onSelectRow,
+                'backgrid:selectAll': this.selectAll,
+                'backgrid:selectAllVisible': this.selectAllVisible,
+                'backgrid:selectNone': this.selectNone,
+                'backgrid:isSelected': this.isSelected,
+                'backgrid:getSelected': this.getSelected
+            });
+        },
 
         /**
          * @inheritDoc
@@ -61,6 +79,9 @@ define(function(require) {
             this.renderToolbar();
             this.renderNoDataBlock();
             this.renderLoadingMask();
+            if (this.multiSelectRowEnabled) {
+                this.renderSelectAll();
+            }
 
             this.listenTo(this.collection, 'reset', this.renderNoDataBlock);
 
@@ -105,6 +126,13 @@ define(function(require) {
             mediator.off('grid-content-loaded');
 
             BackendGrid.__super__.undelegateEvents.apply(this, arguments);
+        },
+
+        renderSelectAll: function() {
+            return new BackendSelectAllHeaderCell({
+                collection: this.collection,
+                selectState: this.selectState
+            });
         }
     });
 
