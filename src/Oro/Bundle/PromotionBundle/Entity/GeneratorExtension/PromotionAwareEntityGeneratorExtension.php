@@ -7,7 +7,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGenera
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Add AppliedDiscountsAwareInterface and AppliedCouponsAwareInterface interfaces to Entities that has relation to
@@ -20,7 +20,7 @@ class PromotionAwareEntityGeneratorExtension extends AbstractEntityGeneratorExte
      */
     public function supports(array $schema)
     {
-        return in_array($schema['class'], [Order::class, ShoppingList::class]) ;
+        return in_array($schema['class'], [Order::class, ShoppingList::class], true) ;
     }
 
     /**

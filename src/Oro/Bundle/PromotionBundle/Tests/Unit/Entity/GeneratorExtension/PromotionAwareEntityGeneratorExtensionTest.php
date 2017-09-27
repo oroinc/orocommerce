@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_TestCase
 {
