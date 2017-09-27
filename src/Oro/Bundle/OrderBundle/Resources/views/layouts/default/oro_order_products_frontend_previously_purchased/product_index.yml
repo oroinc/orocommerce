@@ -8,3 +8,6 @@ layout:
             id: product_datagrid
             optionName: grid_name
             optionValue: '=context["grid_name"]'
+
+        - '@remove':
+            id: product_datagrid_cell_recency
