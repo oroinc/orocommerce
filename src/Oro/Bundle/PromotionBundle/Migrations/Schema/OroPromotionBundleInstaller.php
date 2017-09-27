@@ -560,7 +560,7 @@ class OroPromotionBundleInstaller implements
             'oro_promotion_applied_coupon',
             'shoppingList',
             'oro_shopping_list',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,
