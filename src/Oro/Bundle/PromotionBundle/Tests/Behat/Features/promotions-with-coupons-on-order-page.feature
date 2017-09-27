@@ -109,7 +109,7 @@ Feature: Promotions with coupons on Order page
       | Total    | $40.00  |
 
   Scenario: If Line item was deleted from order, applied Line Item promotion should be deleted from order as well
-    When I click "Remove" on row "AA1" in "Backend Order Line Items Table"
+    When I click "Remove" on row "AA1" in "Backend Order Line Items"
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |

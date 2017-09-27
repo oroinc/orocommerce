@@ -24,7 +24,7 @@ Feature: Discounts for Order
     When I click "Add Special Discount"
     And I fill "Order Discount Form" with:
       | Description | <script>alert(1)</script> |
-    And I fill in Discount Amount field with "3"
+      | Value       | 3                         |
     Then I should see "$3.00 (6.00%)"
     And I click "Apply"
 
