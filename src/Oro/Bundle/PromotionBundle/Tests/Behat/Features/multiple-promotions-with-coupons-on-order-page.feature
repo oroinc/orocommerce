@@ -56,7 +56,7 @@ Feature: Multiple promotions with coupons on Order page
       When go to Sales / Orders
       And click edit SimpleOrder in grid
       And click "Promotions and Discounts"
-      And I click on Remove action for "Promotion 5" row in "Promotions" table
+      And I click "Remove" on row "Promotion 5" in "Promotions"
       Then I should see next rows in "Promotions" table
         | Code   | Promotion     | Type  | Status | Discount |
         | test-2 | Promotion -10 | Order | Active | -$1.00   |

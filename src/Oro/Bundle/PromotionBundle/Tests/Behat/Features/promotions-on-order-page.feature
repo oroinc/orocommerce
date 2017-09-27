@@ -106,7 +106,7 @@ Feature: Promotions on Order page
 
     Scenario: Deactivate automatic promotion
       Given I click "Promotions and Discounts"
-      And click on Deactivate action for "order Discount Promotion" row in "Promotions" table
+      And I click "Deactivate" on row "order Discount Promotion" in "Promotions"
       Then I should see next rows in "Promotions" table
         | Promotion                    | Status   |
         | line Item Discount Promotion | Active   |
@@ -137,7 +137,7 @@ Feature: Promotions on Order page
 
   Scenario: Delete automatic promotion
     Given I click "Promotions and Discounts"
-    And click on Remove action for "order Discount Promotion" row in "Promotions" table
+    And I click "Remove" on row "order Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Promotion                    | Status |
       | line Item Discount Promotion | Active |

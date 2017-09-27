@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Element;
 
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
+use Behat\Mink\Element\NodeElement;
+use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridRow;
 
-class BackendOrderLineItem extends TableRow
+class BackendOrderLineItem extends GridRow
 {
     /**
      * {@inheritdoc}
@@ -14,9 +15,19 @@ class BackendOrderLineItem extends TableRow
         return $this->getCellValue('SKU');
     }
 
-    public function delete()
+    /**
+     * @param string $action text of button - Create, Edit, Delete etc.
+     * @return NodeElement|null
+     */
+    public function findActionLink($action)
     {
-        $deleteButton = $this->find('css', '.removeLineItem');
-        $deleteButton->click();
+        $link = $this->find('xpath', sprintf('//button[contains(@class,"%s")]', strtolower($action)));
+
+        static::assertNotNull(
+            $link,
+            sprintf('BackendOrderLineItem "%s" has no "%s" action', $this->getText(), $action)
+        );
+
+        return $link;
     }
 }

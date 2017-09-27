@@ -19,7 +19,7 @@ oro_behat_extension:
       selector: 'tr'
 
     BackendOrderLineItemsTable:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
       selector: 'table.order-line-items-table'
 
     BackendOrderSubtotals:

@@ -36,7 +36,7 @@ Feature: Promotions with coupons on Order page
 
   Scenario: Delete added coupon from grid
     When I click "Promotions and Discounts"
-    And I click on Remove action for "Line Item Discount Promotion" row in "Promotions" table
+    And I click "Remove" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see no records in "Promotions" table
     And see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -88,7 +88,7 @@ Feature: Promotions with coupons on Order page
     When go to Sales / Orders
     And click edit SimpleOrder in grid
     And click "Promotions and Discounts"
-    And I click on Deactivate action for "Line Item Discount Promotion" row in "Promotions" table
+    And I click "Deactivate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type      | Status   | Discount |
       | test-1 | Line Item Discount Promotion | Line Item | Inactive | $0.00    |
@@ -98,7 +98,7 @@ Feature: Promotions with coupons on Order page
       | Total    | $50.00 |
 
   Scenario: Activate button in Promotions grid
-    When I click on Activate action for "Line Item Discount Promotion" row in "Promotions" table
+    When I click "Activate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type      | Status | Discount |
       | test-1 | Line Item Discount Promotion | Line Item | Active | -$10.00  |
@@ -109,7 +109,7 @@ Feature: Promotions with coupons on Order page
       | Total    | $40.00  |
 
   Scenario: If Line item was deleted from order, applied Line Item promotion should be deleted from order as well
-    When I click delete backend order line item "AA1"
+    When I click "Remove" on row "AA1" in "Backend Order Line Items Table"
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -126,9 +126,8 @@ Feature: Promotions with coupons on Order page
       | Subtotal | $50.00  |
       | Discount | -$10.00 |
       | Total    | $40.00  |
-    And I set "XX1" Product for first backend order line item
-    Then I should see a "Highlighted Suggestion" element
-    When I click on "Highlighted Suggestion"
+    When I fill "Order Form" with:
+      | Product | XX1 |
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -141,7 +140,8 @@ Feature: Promotions with coupons on Order page
     And I confirm deletion
     And go to Sales / Orders
     And click edit SimpleOrder in grid
-    And I set "2" Quantity for first backend order line item
+    And fill "Order Form" with:
+      | Quantity | 2 |
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type      | Status | Discount |
       | test-1 | Line Item Discount Promotion | Line Item | Active | -$2.00   |

@@ -49,7 +49,7 @@ Feature: Discounts for Order
       | Total              | $47.50 |
 
   Scenario: Edit special discount
-    When I click on Edit action for "Percent" row in "Discounts" table
+    When I click "Edit" on row "Percent" in "Discounts"
     And I type "2" in "DiscountAmount"
     And I type "Percent" in "DiscountDescription"
     Then I should see "$1.00 (2%)"
@@ -70,7 +70,7 @@ Feature: Discounts for Order
       | Total                   | $47.00 |
 
   Scenario: Remove special discount
-    When I click on Remove action for "Percent" row in "Discounts" table
+    When I click "Remove" on row "Percent" in "Discounts"
     And I should see next rows in "Discounts" table
       | Description | Discount |
       | Amount      | -$2.00   |
