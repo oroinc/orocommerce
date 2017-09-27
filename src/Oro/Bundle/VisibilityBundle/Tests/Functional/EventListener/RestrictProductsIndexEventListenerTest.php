@@ -109,7 +109,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
-        $query->select('name_LOCALIZATION_ID');
+        $query->select('names_LOCALIZATION_ID');
         $query->getCriteria()->orderBy(['sku' => Query::ORDER_ASC]);
 
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
@@ -223,7 +223,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     protected function assertSearchItems($expectedValue, Item $value)
     {
         $selectedData = $value->getSelectedData();
-        $field = 'name_' . $this->getDefaultLocalizationId();
+        $field = 'names_' . $this->getDefaultLocalizationId();
 
         if (!array_key_exists($field, $selectedData)) {
             throw new \RuntimeException(

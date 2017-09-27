@@ -168,8 +168,12 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
-            'category_id' => ['value' => 555, 'all_text' => false],
-            'category_path' => ['value' => '1_555', 'all_text' => false],
+            'category_id' => [
+                ['value' => 555, 'all_text' => false],
+             ],
+            'category_path' => [
+                ['value' => '1_555', 'all_text' => false],
+             ],
             'all_text_LOCALIZATION_ID' => [
                 [
                     'value' => new PlaceholderValue(

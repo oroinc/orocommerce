@@ -7,22 +7,24 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -64,8 +66,9 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
+            LoadLocalizationData::class,
+            LoadProductUnits::class,
+            LoadAttributeFamilyData::class,
         ];
     }
 
@@ -113,6 +116,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setPrimaryUnitPrecision($unitPrecision)
                 ->setType($item['type'])
                 ->setFeatured($item['featured']);
+
+            if (isset($item['attributeFamily'])) {
+                $product->setAttributeFamily($this->getReference($item['attributeFamily']));
+            }
 
             $this->addAdvancedValue($item, $product);
             $this->addEntityFieldFallbackValue($item, $product);
