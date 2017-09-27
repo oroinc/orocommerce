@@ -1,7 +1,3 @@
-## FROM 1.3.0 to 1.4.0
- 
-Format of sluggable urls cache was changed, added support of localized slugs. Cache regeneration is required after update. 
-
 ## FROM 1.0.0 to 1.1.0
 
 * Minimum required `php` version has changed from **5.7** to **7.0**.
