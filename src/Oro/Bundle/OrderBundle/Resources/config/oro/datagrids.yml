@@ -752,6 +752,21 @@ datagrids:
         extends: frontend-product-search-grid
         source:
             query:
+                select:
+                    - datetime.ordered_at_by_CUSTOMER_ID as recency
                 where:
                     and:
                         - datetime.ordered_at_by_CUSTOMER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+        columns:
+            recency:
+                label: oro.order.recency.label
+                frontend_type: datetime
+        sorters:
+            toolbar_sorting: true
+            disable_default_sorting: false
+            columns:
+                recency:
+                    type: datetime
+                    data_name: ordered_at_by_CUSTOMER_ID
+            default:
+                recency: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
