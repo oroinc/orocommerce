@@ -75,6 +75,40 @@
             padding: $matrix-order-widget-dialog-content-offset-inner;
         }
     }
+
+    &--dialog-fullscreen {
+        position: static;
+
+        .ui-dialog-titlebar {
+            display: none;
+        }
+    }
+
+    //Mobile view
+    &__item {
+        border-top: 1px solid #ccc;
+        padding: 10px 0;
+
+        &-info {
+            display: inline-flex;
+            width: 100%;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        &-content {
+            display: inline-flex;
+            margin: 5px;
+
+        }
+
+        &-content-wrapper {
+            display: inline-flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
 }
 
 @include breakpoint('desktop') {

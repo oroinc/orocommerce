@@ -1,0 +1,40 @@
+{% block _matrix_collection_widget %}
+<table class="matrix-order-widget__grid">
+    <div class="matrix-order-widget__grid-body">
+        {% for row in form.rows %}
+            <div class="matrix-order-widget__item"
+                 data-page-component-collapse="{{ {
+                     openClass: 'expanded'
+                 }|json_encode() }}"
+            >
+                <div class="matrix-order-widget__item-info" data-collapse-trigger>
+                    {{ row.vars.label }}
+                    <div>
+                        Total <span data-column-quantity="{{ loop.index }}">0</span>
+                    </div>
+                    <span>|</span>
+                    <div>
+                        Subtotal <span data-column-subtotal="{{ loop.index }}">0</span>
+                    </div>
+                    <span class="fa-plus fa--large"></span>
+                </div>
+                <div class="matrix-order-widget__item-content-wrapper" data-collapse-container>
+                    {% for column in row.columns %}
+                        <div class="matrix-order-widget__item-content">
+                            {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
+                            {{ column.vars.label }}
+                            {{ form_widget(column,{
+                                'attr': {
+                                    'data-product-id': column.vars.productId,
+                                    'data-row-index': loop.index
+                                },
+                            })
+                            }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</table>
+{% endblock %}

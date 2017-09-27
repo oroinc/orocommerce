@@ -3,11 +3,11 @@ define(function(require) {
 
     var MatrixGridOrderWidget;
     var routing = require('routing');
-    var DialogWidget = require('oro/dialog-widget');
+    var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
-    MatrixGridOrderWidget = DialogWidget.extend({
+    MatrixGridOrderWidget = FrontendDialogWidget.extend({
         initialize: function(options) {
             var urlOptions = {
                 productId: options.productId
@@ -17,6 +17,11 @@ define(function(require) {
             this.options.url = options.url;
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
+            if (_.isMobile()) {
+                this.options.fullscreenViewport = {
+                    maxScreenType: 'any'
+                };
+            }
 
             options.dialogOptions = {
                 'modal': true,

@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'order_mobile.html.twig'
+        - '@setFormTheme':
+            themes: 'order_mobile_form.html.twig'
+        - '@remove':
+            id: line_item_buttons
+        - '@remove':
+            id: form_summary
+        - '@add':
+            id: matrix_order_actions
+            parentId: form_actions
+            blockType: container
+    conditions: 'context["is_mobile"]'
