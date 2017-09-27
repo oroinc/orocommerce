@@ -7,6 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
 
 class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +29,8 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     public function classDataProvider(): array
     {
         return [
-            'supported' => [Order::class, true],
+            'supported Order' => [Order::class, true],
+            'supported ShoppingList' => [ShoppingList::class, true],
             'unsupported' => [\stdClass::class, false],
         ];
     }
@@ -52,6 +54,26 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
                 [AppliedPromotionsAwareInterface::class],
                 [AppliedCouponsAwareInterface::class]
             );
+        $extension->generate($schema, $class);
+    }
+
+    public function testGenerateOnlyAppliedCouponsPropertyExists()
+    {
+        $extension = new PromotionAwareEntityGeneratorExtension();
+        $schema = [];
+        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        $class = $this->createMock(PhpClass::class);
+        $class->expects($this->any())
+            ->method('hasProperty')
+            ->willReturnMap([
+                ['appliedPromotions', false],
+                ['appliedCoupons', true]
+            ]);
+
+        $class->expects($this->once())
+            ->method('addInterfaceName')
+            ->with(AppliedCouponsAwareInterface::class);
+
         $extension->generate($schema, $class);
     }
 
