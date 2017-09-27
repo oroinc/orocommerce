@@ -14,8 +14,9 @@ Feature: Discounts for Order
     Given I go to Sales/Orders
     And click view SimpleOrder in grid
     And click "Add Special Discount"
-    And I type "2" in "DiscountAmount"
-    And I type "Amount" in "DiscountDescription"
+    And I fill "Order Discount Form" with:
+      | Value       |      2 |
+      | Description | Amount |
     Then I should see "$2.00 (4.00%)"
     When I click "Apply"
     Then I should see next rows in "Discounts" table
@@ -32,9 +33,10 @@ Feature: Discounts for Order
     And click edit SimpleOrder in grid
     And click "Promotions and Discounts"
     And click "Add Special Discount"
-    And I fill in "DiscountType" with "%"
-    And I type "1" in "DiscountAmount"
-    And I type "Percent" in "DiscountDescription"
+    And I fill "Order Discount Form" with:
+      | Type        | %       |
+      | Value       | 1       |
+      | Description | Percent |
     Then I should see "$0.50 (1%)"
     And I click "Apply" in modal window
     Then I should see next rows in "Discounts" table
@@ -50,8 +52,9 @@ Feature: Discounts for Order
 
   Scenario: Edit special discount
     When I click "Edit" on row "Percent" in "Discounts"
-    And I type "2" in "DiscountAmount"
-    And I type "Percent" in "DiscountDescription"
+    And I fill "Order Discount Form" with:
+      | Value       | 2       |
+      | Description | Percent |
     Then I should see "$1.00 (2%)"
     And I click "Apply" in modal window
     When I save form
@@ -89,8 +92,9 @@ Feature: Discounts for Order
 
   Scenario: Check that discount's amount is less than subtotal
     When I click "Add Special Discount"
-    And I type "51" in "DiscountAmount"
-    And I type "Amount is greater than remaining subtotal" in "DiscountDescription"
+    And I fill "Order Discount Form" with:
+      | Value       | 51 |
+      | Description | Amount is greater than remaining subtotal |
     Then I should see "This value should be 50 or less."
     When I click "Cancel"
     Then I should see next rows in "Discounts" table
@@ -104,8 +108,9 @@ Feature: Discounts for Order
 
   Scenario: Check discounts' total sum is less than subtotal
     When I click "Add Special Discount"
-    And I type "50" in "DiscountAmount"
-    And I type "Exceeding amount" in "DiscountDescription"
+    And I fill "Order Discount Form" with:
+      | Value       | 50               |
+      | Description | Exceeding amount |
     When I click "Apply"
     Then I should see "The sum of all discounts cannot exceed the order grand total amount."
     And I click "Promotions and Discounts"
@@ -122,16 +127,20 @@ Feature: Discounts for Order
 
   Scenario: Check discount not blank validation for amount type
     When I click "Add Special Discount"
-    And I fill in "DiscountAmount" with ""
+    And I fill "Order Discount Form" with:
+      | Value | |
     And I click "Apply" in modal window
     Then I should see "This value should not be blank"
-    When I fill in "DiscountAmount" with "1"
+    When I fill "Order Discount Form" with:
+      | Value | 1 |
     Then I should not see "This value should not be blank"
 
   Scenario: Check discount not blank validation for percent type
-    When I fill in "DiscountAmount" with ""
-    And I fill in "DiscountType" with "%"
+    When I fill "Order Discount Form" with:
+      | Value |   |
+      | Type  | % |
     And I click "Apply" in modal window
     Then I should see "This value should not be blank"
-    When I fill in "DiscountAmount" with "50"
+    When I fill "Order Discount Form" with:
+      | Value | 50 |
     Then I should not see "This value should not be blank"
