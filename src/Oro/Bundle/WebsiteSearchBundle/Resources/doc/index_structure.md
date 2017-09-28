@@ -151,7 +151,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku
             type: text
         -
-            name: name
+            name: names
             type: text
         -
             name: price
@@ -169,13 +169,13 @@ As you can see, no placeholders are used and the search index contains the follo
 {
     1: {
         sku: "PR1",
-        name: "First product",
+        names: "First product",
         price: 12.00,
         all_text: "PR1 First product"
     },
     2: {
         sku: "PR2",
-        name: "Second product",
+        names: "Second product",
         price: 25.00,
         all_text: "PR2 Second product"
     }
@@ -187,7 +187,7 @@ Query for this index is quite simple:
 ```
 SELECT
     text.sku,
-    text.name,
+    text.names,
     decimal.price
 FROM
     oro_product
@@ -213,7 +213,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku
             type: text
         -
-            name: name_LOCALIZATION_ID
+            name: names_LOCALIZATION_ID
             type: text
         -
             name: price_CURRENCY
@@ -234,8 +234,8 @@ Based on this configuration, the data may the following:
 {
     1: {
         sku: "PR1",
-        name_1: "First product",
-        name_2: "Первый продукт",
+        names_1: "First product",
+        names_2: "Первый продукт",
         price_EUR: 12.00,
         price_GBP: 9.00,
         all_text_1: "PR1 First product",
@@ -244,8 +244,8 @@ Based on this configuration, the data may the following:
     },
     2: {
         sku: "PR2",
-        name_1: "Second product",
-        name_2: "Второй продукт",
+        names_1: "Second product",
+        names_2: "Второй продукт",
         price_EUR: 25.00,
         price_GBP: 20.00,
         all_text_1: "PR2 Second product",
@@ -261,14 +261,14 @@ Based on this configuration, the data may the following:
 {
     1: {
         sku: "PR1",
-        name_2: "Первый продукт",
+        names_2: "Первый продукт",
         price_RUR: 100.00,
         all_text_2: "PR1 Первый продукт",
         all_text: "PR1 Первый продукт"
     },
     2: {
         sku: "PR2",
-        name_2: "Второй продукт",
+        names_2: "Второй продукт",
         price_RUR: 200.00,
         all_text_2: "PR2 Второй продукт",
         all_text: "PR2 Второй продукт"
@@ -281,7 +281,7 @@ The following query is automatically modified to substitute placeholders with th
 ```
 SELECT
     text.sku,
-    text.name_LOCALIZATION_ID AS name,
+    text.names_LOCALIZATION_ID AS name,
     decimal.price_CURRENCY AS price
 FROM
     oro_product_WEBSITE_ID

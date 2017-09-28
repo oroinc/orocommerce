@@ -1,0 +1,4 @@
+ROLE_SALES_REP:
+    bap_role: ROLE_USER
+    permissions:
+        workflow|b2b_quote_backoffice_approvals: [VIEW_WORKFLOW_SYSTEM, PERFORM_TRANSITIONS_SYSTEM]

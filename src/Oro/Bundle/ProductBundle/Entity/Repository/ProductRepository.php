@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -403,5 +404,52 @@ class ProductRepository extends EntityRepository
                 $fieldName => $fieldValue
             ]);
         }
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param FieldConfigModel $attribute
+     * @return array
+     */
+    public function getProductIdsByAttribute(FieldConfigModel $attribute)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->resetDQLPart('select')
+            ->select('p.id')
+            ->innerJoin('p.attributeFamily', 'f')
+            ->innerJoin('f.attributeGroups', 'g')
+            ->innerJoin('g.attributeRelations', 'r')
+            ->where('r.entityConfigFieldId = :id')
+            ->setParameter('id', $attribute->getId())
+            ->orderBy('p.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'id');
+    }
+
+    /**
+     * Returns array of product ids that have required attribute families
+     *
+     * @param array $attributeFamilies
+     * @return array
+     */
+    public function getProductIdsByAttributeFamilies(array $attributeFamilies)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->resetDQLPart('select')
+            ->select('p.id')
+            ->where('IDENTITY(p.attributeFamily) IN (:families)')
+            ->setParameter('families', $attributeFamilies)
+            ->orderBy('p.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'id');
     }
 }

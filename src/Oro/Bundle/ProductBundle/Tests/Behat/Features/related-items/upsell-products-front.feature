@@ -21,7 +21,7 @@ Feature: Showing upsell products
     Given I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should not see "Up-sell Products"
 
@@ -48,7 +48,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should not see "Up-sell Products"
 
@@ -65,7 +65,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
@@ -85,7 +85,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
@@ -115,7 +115,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU3" in "search"
     And click "Search Button"
-    And I should see "PSKU3" in search results
+    And I should see "PSKU3" product
     And I click "Product 3"
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
@@ -126,7 +126,7 @@ Feature: Showing upsell products
       Given I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"
-      And I should see "PSKU1" in search results
+      And I should see "PSKU1" product
       And I click "Product 1"
       And I should see "Up-sell Products"
       And I should see "Add to Shopping List" in upsell products
@@ -140,7 +140,7 @@ Feature: Showing upsell products
       And I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"
-      And I should see "PSKU1" in search results
+      And I should see "PSKU1" product
       And I click "Product 1"
       And I should see "Up-sell Products"
       Then I should not see "Add to Shopping List" in upsell products
@@ -150,7 +150,7 @@ Feature: Showing upsell products
 #    Given I proceed as the Buyer
 #    And type "PSKU1" in "search"
 #    And click "Search Button"
-#    And I should see "PSKU1" in search results
+#    And I should see "PSKU1" product
 #    And I click "Product 1"
 #    And I should see "Up-sell Products"
 #    And I should see an "Up-sell Products Slider" element
@@ -168,7 +168,7 @@ Feature: Showing upsell products
 #    And I proceed as the Buyer
 #    And type "PSKU1" in "search"
 #    And click "Search Button"
-#    And I should see "PSKU1" in search results
+#    And I should see "PSKU1" product
 #    And I click "Product 1"
 #    And I should see "Up-sell Products"
 #    And I should see an "Up-sell Products Slider" element
@@ -187,7 +187,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should see "Up-sell Products"
 
@@ -202,7 +202,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should see "Up-sell Products"
 
@@ -217,7 +217,7 @@ Feature: Showing upsell products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     Then I should see "Up-sell Products"
 
@@ -235,7 +235,7 @@ Feature: Showing upsell products
     And I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "Product 1"
     And I should see "Up-sell Products"
     And I should not see "Related Products"

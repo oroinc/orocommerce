@@ -16,6 +16,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
@@ -42,13 +43,15 @@ class AjaxQuoteController extends Controller
         $quote->setCustomerUser($customerUser);
 
         $customerPaymentTerm = null;
-        if ($customer) {
-            $customerPaymentTerm = $this->getPaymentTermProvider()->getCustomerPaymentTerm($customer);
-        }
         $customerGroupPaymentTerm = null;
-        if ($customer->getGroup()) {
-            $customerGroupPaymentTerm = $this->getPaymentTermProvider()
-                ->getCustomerGroupPaymentTerm($customer->getGroup());
+
+        if ($customer instanceof Customer) {
+            $customerPaymentTerm = $this->getPaymentTermProvider()->getCustomerPaymentTerm($customer);
+
+            if ($customer->getGroup() instanceof CustomerGroup) {
+                $customerGroupPaymentTerm = $this->getPaymentTermProvider()
+                                                 ->getCustomerGroupPaymentTerm($customer->getGroup());
+            }
         }
 
         $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);

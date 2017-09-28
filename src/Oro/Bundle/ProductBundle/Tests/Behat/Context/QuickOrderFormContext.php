@@ -91,6 +91,57 @@ class QuickOrderFormContext extends OroFeatureContext implements KernelAwareCont
     }
 
     /**
+     * @Given /^I wait for "(?P<sku>.*)" price recalculation$/
+     */
+    public function iWaitForPriceRecalculation($sku)
+    {
+        $priceField = $this->getPriceField($sku);
+        $initialValue = $priceField->getValue();
+
+        $this->spin(function () use ($initialValue, $priceField) {
+            return $initialValue != $priceField->getValue();
+        }, 3);
+    }
+
+    /**
+     * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
+     */
+    public function productShouldHasValueInPriceField($sku, $price)
+    {
+        $priceField = $this->getPriceField($sku);
+
+        static::assertEquals($price, trim($priceField->getValue()));
+    }
+
+    /**
+     * @param string $sku
+     *
+     * @return NodeElement|null
+     */
+    private function findProductRow($sku)
+    {
+        /** @var NodeElement[] $productRows */
+        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
+
+        foreach ($productRows as $skuField) {
+            if ($skuField->getValue() === $sku) {
+                return $skuField->getParent()->getParent();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $sku
+     * @return Element|null
+     */
+    private function getPriceField($sku)
+    {
+        return $this->createElement('Quick Add Price Field', $this->findProductRow($sku));
+    }
+
+    /**
      * @When /^I import unsupported file for quick order$/
      */
     public function iImportUnsupportedFileForQuickOrder()
