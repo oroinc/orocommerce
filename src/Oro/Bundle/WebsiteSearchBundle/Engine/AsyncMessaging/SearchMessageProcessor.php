@@ -4,13 +4,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerException;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
 
 class SearchMessageProcessor implements MessageProcessorInterface
 {
@@ -20,18 +18,11 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $indexer;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param IndexerInterface $indexer
-     * @param LoggerInterface  $logger
      */
-    public function __construct(IndexerInterface $indexer, LoggerInterface $logger)
+    public function __construct(IndexerInterface $indexer)
     {
         $this->indexer = $indexer;
-        $this->logger = $logger;
     }
 
     /**
@@ -42,15 +33,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
         $topic = $message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME);
         $data = JSON::decode($message->getBody());
 
-        try {
-            $result = $this->executeIndexActionByTopic($topic, $data);
-        } catch (IndexerException $e) {
-            $result = static::REQUEUE;
-
-            $this->logger->error($e->getMessage());
-        }
-
-        return $result;
+        return $this->executeIndexActionByTopic($topic, $data);
     }
 
     /**

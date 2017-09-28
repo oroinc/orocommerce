@@ -216,8 +216,6 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $context
      * @return int
-     *
-     * @throws IndexerException
      */
     protected function reindexEntityClass($entityClass, array $context)
     {
@@ -240,7 +238,7 @@ abstract class AbstractIndexer implements IndexerInterface
             }
 
             if (false === $this->delete($entities, $context)) {
-                throw new IndexerException('Delete has not been successful, cannot proceed with reindex');
+                throw new \RuntimeException('Delete has not been successful, cannot proceed with reindex');
             }
 
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
