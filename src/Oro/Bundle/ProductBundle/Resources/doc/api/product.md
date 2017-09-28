@@ -405,6 +405,18 @@ Example:
           "id": "2abcd"
         }
       },
+      "manageLowInventory": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "low1abcd"
+        }
+      },
+      "inventoryThreshold": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "low2abcd"
+        }
+      },
       "minimumQuantityToOrder": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -462,6 +474,24 @@ Example:
       "attributes": {
         "fallback": null,
         "scalarValue": "31",
+        "arrayValue": null
+      }
+    },
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "low1abcd",
+      "attributes": {
+        "fallback": "systemConfig",
+        "scalarValue": null,
+        "arrayValue": null
+      }
+    },
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "low2abcd",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "41",
         "arrayValue": null
       }
     },
@@ -1135,6 +1165,20 @@ Retrieve an ID of the inventoryThreshold for a specific product
 
 Replace the inventoryThreshold entity fallback value for a specific product record.
 
+### lowInventoryThreshold
+
+#### get_subresource
+
+TBD
+
+#### get_relationship
+
+TBD
+
+#### update_relationship
+
+TBD
+
 ### inventory_status
 
 #### get_subresource
@@ -1162,6 +1206,20 @@ Retrieve an ID of the manageInventory flag for a specific product
 #### update_relationship
 
 Replace the manageInventory entity fallback value for a specific product record.
+
+### manageLowInventory
+
+#### get_subresource
+
+TBD
+
+#### get_relationship
+
+TBD
+
+#### update_relationship
+
+TBD
 
 ### maximumQuantityToOrder
 
