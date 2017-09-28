@@ -7,8 +7,12 @@
 Create a new Product image record.
 The created record is returned in the response.
 
-Example: 
+{@request:json_api}
+Example:
 
+</api/productimages>
+
+```JSON
     {
       "data": {
         "type": "productimages",
@@ -64,6 +68,8 @@ Example:
         }
       ]
     }
+```
+{@/request}
 
 The example above also creates product image mandatory subresources : files and types.
 The subresources can be managed also within there specific: files [here](#get--admin-api-files) ,
@@ -109,9 +115,12 @@ Example:
           }
         }
 
-
+{@request:json_api}
 Complete request example:
 
+</api/productimages/1>
+
+```JSON
     {
       "data": {
         "type": "productimages",
@@ -166,6 +175,8 @@ Complete request example:
         }
       ]
     }
+```
+{@/request}
 
 ### delete
 
@@ -205,14 +216,20 @@ Retrieve the ID of the product for a specific productImage.
 
 Replace the product for a specific productImage.
 
+{@request:json_api}
 Example:
 
+</api/productimages/2/relationships/product>
+
+```JSON
     {
       "data": {
         "type": "products",
         "id": "2"
       }
     }
+```
+{@/request}
 
 ### types
 
@@ -228,8 +245,12 @@ Retrieve a list of IDs for the types of a specific productImage record.
 
 Replace the types for a specific productImage.
 
+{@request:json_api}
 Example:
 
+</api/productimages/2/relationships/types>
+
+```JSON
     {
       "data": [
         {
@@ -238,13 +259,20 @@ Example:
         }
       ]
     }
+```
+{@/request}
+
 
 #### add_relationship
 
 Set the types of a specific productImage record.
 
+{@request:json_api}
 Example:
 
+</api/productimages/2/relationships/types>
+
+```JSON
     {
       "data": [
         {
@@ -253,6 +281,8 @@ Example:
         }
       ]
     }
+```
+{@/request}
 
 #### delete_relationship
 
@@ -272,11 +302,17 @@ Retrieve the ID of the image file for a specific productImage.
 
 Replace the image file for a specific productImage.
 
+{@request:json_api}
 Example:
 
+</api/productimages/2/relationships/image>
+
+```JSON
     {
       "data": {
         "type": "files",
         "id": "1"
       }
     }
+```
+{@/request}
