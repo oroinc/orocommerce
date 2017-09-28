@@ -90,7 +90,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             }
         }
 
-        $sources = $repository->getSourcePerCheckout($ids);
+        $sources = $repository->getCheckoutsByIds($ids);
 
         $found = 0;
 

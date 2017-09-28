@@ -16,9 +16,7 @@ class CheckoutRepository extends EntityRepository
     use WorkflowQueryTrait;
 
     /**
-     * This method is returning the count of all line items,
-     * whether originated from a quote, or a shopping list,
-     * per Checkout.
+     * This method is returning the count of line items per Checkout.
      *
      * @param array $checkoutIds
      *
@@ -28,12 +26,8 @@ class CheckoutRepository extends EntityRepository
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
-            ->addSelect('COALESCE(count(l.id) + count(qp.id), 0) as itemsCount')
-            ->leftJoin('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->leftJoin('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
-            ->leftJoin('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 'l', 'WITH', 'l.shoppingList = sl')
-            ->leftJoin('Oro\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
-            ->leftJoin('Oro\Bundle\SaleBundle\Entity\QuoteProduct', 'qp', 'WITH', 'qp.quote = qd.quote')
+            ->addSelect('count(cli.id) as itemsCount')
+            ->leftJoin('c.lineItems', 'cli')
             ->groupBy('c.id')
             ->where('c.id in (:ids)')
             ->setParameter('ids', $checkoutIds)
@@ -44,31 +38,23 @@ class CheckoutRepository extends EntityRepository
     }
 
     /**
-     * Returning the source information of the checkouts.
+     * Returning checkouts by ids.
      *
      * @param array $checkoutIds
      *
-     * @return array ['<id>' => '<CheckoutSourceEntityInterface>', ...]
+     * @return array|Checkout[] ['<id>' => '<Checkout>', ...]
      */
-    public function getSourcePerCheckout(array $checkoutIds)
+    public function getCheckoutsByIds(array $checkoutIds)
     {
         /* @var $checkouts Checkout[] */
-        $checkouts = $this->createQueryBuilder('c')
-            ->select('c, s, sl, qd')
-            ->innerJoin('c.source', 's')
-            ->leftJoin('s.shoppingList', 'sl')
-            ->leftJoin('s.quoteDemand', 'qd')
-            ->where('c.id in (:ids)')
-            ->setParameter('ids', $checkoutIds)
-            ->getQuery()
-            ->getResult();
+        $checkouts = $this->findBy(['id' => $checkoutIds]);
 
         $sources = [];
         foreach ($checkouts as $checkout) {
-            $sources[$checkout->getId()] = $checkout->getSource()->getEntity();
+            $sources[$checkout->getId()] = $checkout;
         }
 
-        return array_filter($sources);
+        return $sources;
     }
 
     /**

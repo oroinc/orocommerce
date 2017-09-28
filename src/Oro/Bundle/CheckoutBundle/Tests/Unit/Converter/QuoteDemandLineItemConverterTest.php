@@ -68,6 +68,10 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getQuoteProductOffer')
             ->willReturn($quoteProductOffer);
 
+        $quoteProductDemand->expects($this->any())
+            ->method('getQuantity')
+            ->willReturn(10);
+
         $quoteDemand->expects($this->once())
             ->method('getLineItems')
             ->willReturn(new ArrayCollection([$quoteProductDemand]));
@@ -103,9 +107,7 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
         $quoteProductOffer->expects($this->once())
             ->method('getProductUnitCode')
             ->willReturn('UNIT_CODE');
-        $quoteProductOffer->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn(1);
+        $quoteProductOffer->expects($this->never())->method('getQuantity');
         $quoteProductOffer->expects($this->once())
             ->method('getPrice')
             ->willReturn($price);
@@ -122,7 +124,7 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
             $this->assertSame('SKU', $item->getProductSku());
             $this->assertSame($productUnit, $item->getProductUnit());
             $this->assertSame('UNIT_CODE', $item->getProductUnitCode());
-            $this->assertSame(1, $item->getQuantity());
+            $this->assertSame(10, $item->getQuantity());
             $this->assertSame($price, $item->getPrice());
             $this->assertSame($price->getCurrency(), $item->getCurrency());
             $this->assertSame((float)$price->getValue(), $item->getValue());
