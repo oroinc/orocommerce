@@ -68,3 +68,9 @@ services:
             - oro_product_manage_inventory_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity, priority: -100 }
+
+    oro_inventory.manager.low_inventory_quantity_manager:
+        class: 'Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager'
+        arguments:
+            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+            - '@oro_entity.doctrine_helper'
