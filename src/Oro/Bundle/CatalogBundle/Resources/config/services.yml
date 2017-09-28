@@ -215,3 +215,20 @@ services:
             - '%oro_catalog.entity.category.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_catalog.datagrid.extension.category_counts:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Extension\CategoryCountsExtension'
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_datagrid.datagrid.request_parameters_factory'
+            - '@oro_catalog.website_search.repository.product'
+        calls:
+            - [addApplicableGrid, ['frontend-product-search-grid']]
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_catalog.website_search.repository.product:
+        class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
+        parent: oro_website_search.repository.abstract
+        calls:
+            - [setWebsiteSearchEngine, ['@oro_website_search.engine']]
