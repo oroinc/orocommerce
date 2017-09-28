@@ -15,6 +15,8 @@ layout:
                         visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple() && context["is_logged_in"]'
                 line_item_form:
                     blockType: container
+                    options:
+                        visible: '=data["oro_product_form_availability"].isSimpleAvailable(data["product"]) or data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"])'
                 line_item_form_start:
                     blockType: form_start
                     options:
@@ -22,6 +24,7 @@ layout:
                 line_item_form_fields:
                     blockType: form_fields
                     options:
+                        visible: '=data["oro_product_form_availability"].isSimpleAvailable(data["product"])'
                         vars:
                             form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                             isProductUnitSelectionVisible: '=data.offsetExists("product")?data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
@@ -30,6 +33,7 @@ layout:
                 line_item_form_end:
                     blockType: form_end
                     options:
+                        render_rest: false
                         form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 product_line_item_form_buttons:
                     blockType: container

@@ -99,35 +99,6 @@
     }
   }
 
-  &__btn {
-    display: block;
-
-    width: 100%;
-    margin-top: 10px;
-    padding: 11px 0;
-
-    background: get-color('additional', 'base');
-    border: 1px solid get-color('additional', 'light');
-    border-radius: 5px;
-
-    text-align: center;
-
-    @include fa-icon($fa-var-angle-right, after);
-
-    &:after {
-      display: inline-block;
-
-      margin-left: 4px;
-
-      font-size: 12px;
-      text-decoration: none;
-    }
-
-    .fa-list-ul {
-      margin: -2px 6px 0 0;
-    }
-  }
-
   &__summary-wrapper {
     padding-right: 26px;
 

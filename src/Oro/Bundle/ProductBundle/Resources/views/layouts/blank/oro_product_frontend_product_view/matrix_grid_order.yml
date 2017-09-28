@@ -1,0 +1,7 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order
+            root: product_view_content_container
+            namespace: matrix_grid_order
+    actions: []

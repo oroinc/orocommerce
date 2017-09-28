@@ -8,6 +8,7 @@ layout:
                     blockType: product_shopping_lists
                     options:
                         productShoppingLists: []
+                        visible: '=data["oro_product_form_availability"].isSimpleAvailable(data["product"])'
                 __shopping_lists_template:
                     blockType: container
                 __shopping_lists_template_preview:

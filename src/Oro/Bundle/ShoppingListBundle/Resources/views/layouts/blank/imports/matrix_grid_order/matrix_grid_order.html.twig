@@ -1,4 +1,4 @@
-{% block _matrix_order_wrapper_widget %}
+{% block __matrix_grid_order__wrapper_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " matrix-order-widget"
     }) %}
@@ -48,7 +48,7 @@
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
-{% block _form_actions_widget %}
+{% block __matrix_grid_order__form_actions_widget %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
