@@ -171,7 +171,6 @@ services:
           class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider'
           arguments:
               - '@oro_shopping_list.provider.matrix_grid_order_manager'
-              - '@oro_product.provider.product_variant_availability_provider'
               - '@oro_pricing.subtotal_processor.total_processor_provider'
               - '@oro_currency.formatter.number'
           tags:

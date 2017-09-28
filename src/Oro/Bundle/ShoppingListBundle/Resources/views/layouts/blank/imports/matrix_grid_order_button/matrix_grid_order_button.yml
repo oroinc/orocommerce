@@ -8,4 +8,4 @@ layout:
             parentId: __root
             options:
                 product: '=data["product"]'
-                visible: '=data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
+                visible: '=data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'

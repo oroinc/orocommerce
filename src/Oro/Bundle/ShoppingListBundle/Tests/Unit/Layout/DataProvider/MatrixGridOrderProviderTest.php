@@ -7,8 +7,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
@@ -28,11 +26,6 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
     private $matrixGridManager;
 
     /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productVariantAvailability;
-
-    /**
      * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $totalProvider;
@@ -48,104 +41,14 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->matrixGridManager = $this->createMock(MatrixGridOrderManager::class);
-        $this->productVariantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->provider = new MatrixGridOrderProvider(
             $this->matrixGridManager,
-            $this->productVariantAvailability,
             $this->totalProvider,
             $this->numberFormatter
         );
-    }
-
-    public function testIsAvailable()
-    {
-        $unit = $this->getEntity(ProductUnit::class);
-        $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['primaryUnitPrecision' => $unitPrecision]);
-        $simpleProduct = $this->getEntity(Product::class, ['primaryUnitPrecision' => $unitPrecision]);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn([1, 2]);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
-            ->with($product)
-            ->willReturn([$simpleProduct]);
-
-        $this->assertEquals(true, $this->provider->isAvailable($product));
-    }
-
-    public function testIsAvailableReturnsFalseOnSimpleProduct()
-    {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willThrowException(new \InvalidArgumentException());
-
-        $this->assertEquals(false, $this->provider->isAvailable($product));
-    }
-
-    public function testIsAvailableReturnsFalseOnMoreThanTwoVariantFields()
-    {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn([[], [], []]);
-
-        $this->assertEquals(false, $this->provider->isAvailable($product));
-    }
-
-    public function testIsAvailableReturnsFalseOnMoreThanFiveFirstFieldVariants()
-    {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn([[1, 2, 3, 4, 5, 6, 7]]);
-
-        $this->assertEquals(false, $this->provider->isAvailable($product));
-    }
-
-    public function testIsAvailableReturnsFalseOnUnitNotSupportedBySimpleProduct()
-    {
-        $unit = $this->getEntity(ProductUnit::class);
-        $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['primaryUnitPrecision' => $unitPrecision]);
-
-        $simpleProductUnit = $this->getEntity(ProductUnit::class);
-        $simpleProductUnitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $simpleProductUnit]);
-
-        /** @var Product $product */
-        $simpleProduct = $this->getEntity(Product::class, ['primaryUnitPrecision' => $simpleProductUnitPrecision]);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn([[1, 2]]);
-
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
-            ->with($product)
-            ->willReturn([$simpleProduct]);
-
-        $this->assertEquals(false, $this->provider->isAvailable($product));
     }
 
     public function testCalculateTotalQuantity()

@@ -60,6 +60,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.new_arrivals.title
         image_gallery:
             title: oro.product.system_configuration.groups.image_gallery.title
+        configurable_products:
+            title: oro.product.system_configuration.groups.configurable_products.title
+            icon: 'fa-cog'
+        configurable_products_matrix_form:
+            title: oro.product.system_configuration.groups.configurable_products_matrix_form.title
 
     fields:
         oro_product.related_products_enabled:
@@ -424,6 +429,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
                 tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
 
+        oro_product.inline_matrix_form_on_product_view:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.inline_matrix_form_on_product_view.label
+                tooltip: oro.product.system_configuration.fields.inline_matrix_form_on_product_view.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -507,6 +520,12 @@ system_configuration:
                                             - oro_product.new_arrivals_max_items
                                             - oro_product.new_arrivals_min_items
                                             - oro_product.new_arrivals_use_slider_on_mobile
+                            configurable_products:
+                                priority: 50
+                                children:
+                                    configurable_products_matrix_form:
+                                        children:
+                                            - oro_product.inline_matrix_form_on_product_view
                             product_collections:
                                 priority: 0
                                 children:
@@ -559,3 +578,23 @@ system_configuration:
                                             - oro_product.upsell_products_min_items
                                             - oro_product.upsell_products_show_add_button
                                             - oro_product.upsell_products_use_slider_on_mobile
+                    product:
+                        children:
+                            configurable_products:
+                                priority: 50
+                                children:
+                                    configurable_products_matrix_form:
+                                        children:
+                                            - oro_product.inline_matrix_form_on_product_view
+
+        user_configuration:
+            commerce:
+                children:
+                    product:
+                        children:
+                            configurable_products:
+                                priority: 50
+                                children:
+                                    configurable_products_matrix_form:
+                                        children:
+                                            - oro_product.inline_matrix_form_on_product_view
