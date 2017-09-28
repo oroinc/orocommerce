@@ -1,0 +1,7 @@
+layout:
+    imports:
+        -
+            id: oro_promotion_coupon_form
+            namespace: coupon_form
+            root: shopping_list_checkout_container
+    actions: []

@@ -275,12 +275,20 @@ oro:
             source_promotion_id.label: Source Promotion ID
             source_coupon_id.label: Source Coupon ID
             order.label: Order
+            shopping_list.label: Shopping List
 
     applied_discount:
         name: Name
         amount: Amount
 
     frontend:
+        coupon:
+            expand_link.label: 'I have a Coupon Code'
+            widget:
+                header.label: 'Coupon'
+                coupon_input.placeholder: 'Enter Coupon Code here'
+                apply_button.label: 'Apply'
+                applied_coupons_header.label: 'Applied Coupons'
         shoppinglist:
             view:
                 discount.label: 'Row Discount:'
@@ -312,3 +320,6 @@ oro:
                     row_total_after_discount.label: After Disc.
                     includingTax.label: After Disc. Incl. Tax
                     excludingTax.label:  After Disc. Excl. Tax
+
+    shoppinglist:
+        applied_coupons.label: Applied Coupons

@@ -1,0 +1,56 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_promotion_coupon_form.html.twig'
+        - '@addTree':
+            items:
+                __container:
+                    blockType: container
+                __expand_link:
+                    blockType: block
+                __expandable_container:
+                    blockType: container
+                __widget_container:
+                    blockType: container
+                __widget_header:
+                    blockType: block
+                __form_container:
+                    blockType: container
+                __coupon_input:
+                    blockType: block
+                __apply_button:
+                    blockType: block
+                __applied_coupons_list_container:
+                    blockType: container
+                __applied_coupons_list_header:
+                    blockType: block
+                __applied_coupons_list_rows_container:
+                    blockType: container
+                __applied_coupons_list_row_container:
+                    blockType: container
+                __applied_coupons_list_row_text_container:
+                    blockType: container
+                __applied_coupons_list_row_coupon_code:
+                    blockType: block
+                __applied_coupons_list_row_promotion_name:
+                    blockType: block
+                __applied_coupons_list_row_delete_button:
+                    blockType: block
+            tree:
+                __root:
+                    __container:
+                        __widget_container:
+                            __expand_link: ~
+                            __expandable_container:
+                                __widget_header: ~
+                                __form_container:
+                                    __coupon_input: ~
+                                    __apply_button: ~
+                                __applied_coupons_list_container:
+                                    __applied_coupons_list_header: ~
+                                    __applied_coupons_list_rows_container:
+                                        __applied_coupons_list_row_container:
+                                            __applied_coupons_list_row_text_container:
+                                                __applied_coupons_list_row_coupon_code: ~
+                                                __applied_coupons_list_row_promotion_name: ~
+                                            __applied_coupons_list_row_delete_button: ~

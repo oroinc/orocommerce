@@ -1,0 +1,82 @@
+{% block __oro_promotion_coupon_form__container_widget %}
+    <div class="pull-left">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+
+{% block __oro_promotion_coupon_form__widget_container_widget %}
+    <div class="collapse-view" data-page-component-collapse="{{ { open: false }|json_encode() }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__expand_link_widget %}
+    <div data-collapse-trigger>
+        <a href="javascript:void(0)" class="collapse-view__trigger_show"><i class="fa fa-ticket"></i> {{ 'oro.frontend.coupon.expand_link.label'|trans }}</a>
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__expandable_container_widget %}
+    <div data-collapse-container style="display: none">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__widget_header_widget %}
+    <h1><span>{{ 'oro.frontend.coupon.widget.header.label'|trans }}</span></h1>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__form_container_widget %}
+    <div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__coupon_input_widget %}
+    <input type="text" placeholder="{{ 'oro.frontend.coupon.widget.coupon_input.placeholder'|trans }}" class="input input--full">
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__apply_button_widget %}
+    <button type="button" class="btn btn--action">{{ 'oro.frontend.coupon.widget.apply_button.label'|trans }}</button>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_container_widget %}
+    <div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_header_widget %}
+    <h1><span>{{ 'oro.frontend.coupon.widget.applied_coupons_header.label'|trans }}</span></h1>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_rows_container_widget %}
+    <ul>
+        {{ block_widget(block) }}
+    </ul>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_container_widget %}
+    <li>
+        {{ block_widget(block) }}
+    </li>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_text_container_widget %}
+    <a href="#">
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_coupon_code_widget %}
+    <span>COUPON-CODE</span>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_promotion_name_widget %}
+    <span>Promotion Name</span>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
+    <a href="javascript:void(0)"><i class="fa fa-trash"></i></a>
+{% endblock %}
