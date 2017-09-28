@@ -7,6 +7,7 @@ define(function(require) {
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
+    var BackendSelectHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
     var SelectState = require('orodatagrid/js/datagrid/select-state-model');
 
     BackendGrid = Grid.extend({
@@ -129,9 +130,14 @@ define(function(require) {
         },
 
         renderSelectAll: function() {
-            return new BackendSelectAllHeaderCell({
+            new BackendSelectAllHeaderCell({
                 collection: this.collection,
                 selectState: this.selectState
+            });
+
+            new BackendSelectHeaderCell({
+                collection: this.collection,
+                column: this.columns.findWhere('massActions')
             });
         }
     });
