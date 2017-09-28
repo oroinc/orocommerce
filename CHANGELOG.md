@@ -1,36 +1,3 @@
-## 1.3.4 (2017-09-04)
-
-### Changed
-OroPlatform and OroCRM have been upgraded to 2.3.4 version
-
-### Fixed
-Fixed 500 error when apply filter 'Brand' on Product creation page.
-
-## 1.3.3 (2017-08-30)
-
-### Changed
-OroPlatform and OroCRM have been upgraded to 2.3.3 version
-
-## 1.3.2 (2017-08-22)
-
-### Changed
-OroPlatform and OroCRM have been upgraded to 2.3.2 version
-
-### Fixed
-Fixed Filter criteria disappears from UI upon setting
-
-## 1.3.1 (2017-08-15)
-
-### Changed
-* OroPlatform and OroCRM have been upgraded to 2.3.1 version
-
-### Fixed
-* Fixed unable to save product after Product Prices manipulations
-* Fixed the product name is cached and displayed instead of the other product names in popup
-* Fixed DE translations are not available via web install of application
-* Fixed check out and cancel with Apruve integration periodically fails
-* Fixed Sales Representative Info demo data changes
-
 ## 1.3.0 LTS (2017-07-28)
 [Show detailed list of changes](incompatibilities-1-3.md)
 
