@@ -26,6 +26,10 @@ api:
                     exclude: true
                 parentVariantLinks:
                     exclude: true
+                denormalizedDefaultName:
+                    exclude: true
+                denormalizedDefaultNameUppercase:
+                    exclude: true
             actions:
                 create:
                     fields:
