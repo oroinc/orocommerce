@@ -19,7 +19,7 @@ data:
         attributeFamily:
             data:
                 type: attributefamilies
-                id: '<toString(@attribute_family_1->getId())>'
+                id: '<toString(@default_family->getId())>'
         inventory_status:
             data:
                 type: prodinventorystatuses

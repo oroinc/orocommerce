@@ -4,7 +4,6 @@ define(function(require) {
     var QuickAddItemView;
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
-    var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
@@ -99,10 +98,6 @@ define(function(require) {
 
         onUnitChange: function() {
             this.setFoundPrice(true);
-            mediator.trigger(
-                'quick-add-item-additional-fields:model-change',
-                {item: this.model.attributes, $el: this.$el}
-            );
         },
 
         checkEl: function($el) {
