@@ -16,6 +16,11 @@ class OroInventoryExtensionTest extends ExtensionTestCase
 
         $expectedExtensionConfigs = ['oro_inventory'];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+
+        $expectedDefinitions = [
+            'oro_inventory.importexport.configuration_provider.inventory_level',
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 
     public function testGetAlias()
