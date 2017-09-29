@@ -32,11 +32,15 @@ class ProductRepository extends WebsiteSearchRepository
         }
 
         # reset query parts to make it as fast as possible
+        $query->getQuery()->select([]);
+        $query->getQuery()->getCriteria()->orderBy([]);
         $query->setFirstResult(0);
         $query->setMaxResults(1);
-        $query->addGroupBy('categoryCounts', 'text.category_path', Query::GROUP_FUNCTION_COUNT);
 
+        # calculate category counts
+        $query->addGroupBy('categoryCounts', 'text.category_path', Query::GROUP_FUNCTION_COUNT);
         $groupedData = $query->getResult()->getGroupedData();
+
         if (array_key_exists('categoryCounts', $groupedData)) {
             return $groupedData['categoryCounts'];
         }
