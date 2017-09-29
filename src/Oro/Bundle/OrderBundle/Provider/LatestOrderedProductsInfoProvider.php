@@ -16,11 +16,21 @@ class LatestOrderedProductsInfoProvider
     protected $registry;
 
     /**
-     ** @param RegistryInterface $registry
+     * @var OrderStatusesProviderInterface
      */
-    public function __construct(RegistryInterface $registry)
-    {
+    protected $statusesProvider;
+
+    /**
+     * LatestOrderedProductsInfoProvider constructor.
+     * @param RegistryInterface $registry
+     * @param OrderStatusesProviderInterface $availableOrderStatusesProvider
+     */
+    public function __construct(
+        RegistryInterface $registry,
+        OrderStatusesProviderInterface $availableOrderStatusesProvider
+    ) {
         $this->registry = $registry;
+        $this->statusesProvider = $availableOrderStatusesProvider;
     }
 
     /**
@@ -41,7 +51,8 @@ class LatestOrderedProductsInfoProvider
     public function getLatestOrderedProductsInfo(array $productIds, $websiteId)
     {
         $orderRepository = $this->getOrderRepository();
-        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId);
+        $orderStatuses = $this->statusesProvider->getAvailableStatuses();
+        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId, $orderStatuses);
 
         return $this->getResultFromQB($qb);
     }

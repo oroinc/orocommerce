@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Processor;
+
+use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,19 +62,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'order_automation_applicable_statuses' => [
-                            'value' => [Order::INTERNAL_STATUS_OPEN],
+                            'value' => [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
                             'scope' => 'app'
                         ],
                         'order_automation_target_status' => [
-                            'value' => Order::INTERNAL_STATUS_CANCELLED,
+                            'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
                             'scope' => 'app'
                         ],
                         'order_creation_new_internal_order_status' => [
-                            'value' => Order::INTERNAL_STATUS_OPEN,
+                            'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
                             'scope' => 'app'
                         ],
                         'order_previously_purchased_period' => [
                             'value' => 90,
+                            'scope' => 'app'
+                        ],
+                        'enable_purchase_history' => [
+                            'value' => false,
                             'scope' => 'app'
                         ],
                     ]

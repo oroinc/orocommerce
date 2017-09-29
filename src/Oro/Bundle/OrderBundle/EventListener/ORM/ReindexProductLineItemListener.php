@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -20,23 +21,35 @@ class ReindexProductLineItemListener
     protected $reindexManager;
 
     /**
-     * @param ProductReindexManager $reindexManager
+     * @var OrderStatusesProviderInterface
      */
-    public function __construct(ProductReindexManager $reindexManager)
-    {
+    protected $statusesProvider;
+
+    /**
+     * @param ProductReindexManager $reindexManager
+     * @param OrderStatusesProviderInterface $statusesProvider
+     */
+    public function __construct(
+        ProductReindexManager $reindexManager,
+        OrderStatusesProviderInterface $statusesProvider
+    ) {
         $this->reindexManager = $reindexManager;
+        $this->statusesProvider = $statusesProvider;
     }
+
     /**
      * @param OrderLineItem $lineItem
      * @param LifecycleEventArgs $args
      */
     public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem, LifecycleEventArgs $args)
     {
-        $website = $lineItem->getOrder()->getWebsite();
+        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
+        $orderStatus = $lineItem->getOrder()->getInternalStatus();
 
-        if ($this->isReindexAllowed($lineItem)) {
+        if ($orderStatus && in_array($orderStatus->getId(), $availableStatuses)
+            && $this->isReindexAllowed($lineItem)) {
             $product = $lineItem->getProduct();
-            $websiteId = $website->getId();
+            $websiteId = $lineItem->getOrder()->getWebsite()->getId();
             $this->reindexManager->reindexProduct($product, $websiteId);
         }
     }
@@ -47,9 +60,13 @@ class ReindexProductLineItemListener
      */
     public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
     {
-        if ($event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD) && $this->isReindexAllowed($lineItem)) {
-            $website = $lineItem->getOrder()->getWebsite();
-            $websiteId = $website->getId();
+        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
+        $orderStatus = $lineItem->getOrder()->getInternalStatus();
+
+        if ($orderStatus && in_array($orderStatus->getId(), $availableStatuses)
+            && $event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD)
+            && $this->isReindexAllowed($lineItem)) {
+            $websiteId = $lineItem->getOrder()->getWebsite()->getId();
             $this->reindexManager->reindexProduct(
                 $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD),
                 $websiteId

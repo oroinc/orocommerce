@@ -15,6 +15,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -119,7 +120,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
         $this->assertEquals(
-            $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_CANCELLED)->getId(),
+            $this->getOrderInternalStatusById(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED)->getId(),
             $order->getInternalStatus()->getId()
         );
     }
@@ -140,7 +141,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testExecuteWithOverriddenTargetStatus()
     {
-        $this->configureMockManager(true, [Order::INTERNAL_STATUS_OPEN], 'closed');
+        $this->configureMockManager(true, [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN], 'closed');
 
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
         $this->executeProcess($this->processDefinition);
@@ -160,12 +161,12 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         $this->executeProcess($this->processDefinition);
         $order1 = $this->reloadOrder($order1);
         $this->assertEquals(
-            $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_OPEN)->getId(),
+            $this->getOrderInternalStatusById(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)->getId(),
             $order1->getInternalStatus()->getId()
         );
         $order2 = $this->reloadOrder($order2);
         $this->assertEquals(
-            $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_CANCELLED)->getId(),
+            $this->getOrderInternalStatusById(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED)->getId(),
             $order2->getInternalStatus()->getId()
         );
     }
@@ -177,8 +178,8 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
      */
     protected function configureMockManager(
         $enabled = true,
-        array $statuses = [Order::INTERNAL_STATUS_OPEN],
-        $target = Order::INTERNAL_STATUS_CANCELLED
+        array $statuses = [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
+        $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
     ) {
         $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
         $this->configManager->set('oro_order.order_automation_applicable_statuses', $statuses);
@@ -201,7 +202,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
      */
     protected function prepareOrderObject(
         \DateTime $doNotShipLater = null,
-        $internalStatus = Order::INTERNAL_STATUS_OPEN
+        $internalStatus = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
     ) {
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);
@@ -242,9 +243,9 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
      * @return object|AbstractEnumValue
      * @throws \InvalidArgumentException
      */
-    protected function getOrderInternalStatusById($id = Order::INTERNAL_STATUS_OPEN)
+    protected function getOrderInternalStatusById($id = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
     {
-        $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
+        $className = ExtendHelper::buildEnumValueClassName(OrderStatusesProviderInterface::INTERNAL_STATUS_CODE);
 
         return $this->managerRegistry->getManagerForClass($className)->getRepository($className)->find($id);
     }
