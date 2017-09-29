@@ -126,8 +126,10 @@
 
     {% set image = product.image is defined ? product.image : Image.url(null, 'product_large') %}
 
+    {% set path = oro_config_value('oro_ui.application_url') %}
+
     <picture {{ block('block_attributes') }}>
-        <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+        <img src="{{ path ~ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
     </picture>
 {% endblock %}
 
