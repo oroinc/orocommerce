@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Entity\CouponUsage;
 use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 
 /**
@@ -49,10 +48,6 @@ class AppliedCouponEntityListener
         if ($appliedCoupon->getOrder()) {
             $this->couponUsageManager
                 ->createCouponUsage($coupon, $appliedCoupon->getOrder()->getCustomerUser(), true);
-        } else {
-            throw new \LogicException(
-                sprintf('AppliedCoupon object should have order for %s creation.', CouponUsage::class)
-            );
         }
     }
 }

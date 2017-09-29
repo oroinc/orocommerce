@@ -6,6 +6,9 @@ layout:
             items:
                 __container:
                     blockType: container
+                    options:
+                        vars:
+                            entity: '=data["entity"]'
                 __expand_link:
                     blockType: block
                 __expandable_container:
