@@ -120,4 +120,10 @@ class DriverDecorator implements DriverInterface
     {
         return $this->getDriver()->getRecordsCount($query);
     }
+
+    /** {@inheritdoc} */
+    public function getGroupedData(Query $query)
+    {
+        return $this->getDriver()->getGroupedData($query);
+    }
 }

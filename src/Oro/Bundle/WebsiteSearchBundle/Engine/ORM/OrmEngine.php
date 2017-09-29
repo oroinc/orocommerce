@@ -60,6 +60,11 @@ class OrmEngine extends AbstractEngine
             );
         }
 
-        return new Result($query, $results, $this->driver->getRecordsCount($query));
+        return new Result(
+            $query,
+            $results,
+            $this->driver->getRecordsCount($query),
+            $this->driver->getGroupedData($query)
+        );
     }
 }

@@ -230,5 +230,3 @@ services:
     oro_catalog.website_search.repository.product:
         class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
         parent: oro_website_search.repository.abstract
-        calls:
-            - [setWebsiteSearchEngine, ['@oro_website_search.engine']]

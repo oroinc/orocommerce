@@ -85,10 +85,10 @@ class CategoryCountsExtension extends AbstractExtension
 
         // calculate counts of products per category
         $categoryCounts = $this->productSearchRepository->getCategoryCounts($searchQuery);
-        if (null !== $categoryCounts) {
-            $filterCounts = $result->offsetGetByPath('filterCounts', []);
-            $filterCounts[$categoryFilterName] = $categoryCounts;
-            $result->offsetSetByPath('filterCounts', $filterCounts);
-        }
+
+        // add data to result
+        $filterCounts = $result->offsetGetByPath('filterCounts', []);
+        $filterCounts[$categoryFilterName] = $categoryCounts;
+        $result->offsetSetByPath('filterCounts', $filterCounts);
     }
 }
