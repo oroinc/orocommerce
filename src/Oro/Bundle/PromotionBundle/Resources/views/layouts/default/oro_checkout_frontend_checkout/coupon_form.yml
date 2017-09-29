@@ -3,30 +3,30 @@ layout:
         -
             id: oro_promotion_coupon_form
             namespace: coupon_form
-            root: shopping_list_checkout_container
+            root: checkout_order_summary_totals_container
     actions:
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCoupons
-            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["entity"])'
+            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"].getSourceEntity())'
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCouponsPromotions
-            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["entity"])'
+            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["checkout"].getSourceEntity())'
         - '@setOption':
             id: coupon_form_applied_coupons_list_container
             optionName: visible
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"])'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
         - '@setOption':
             id: coupon_form_expand_link
             optionName: visible
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"]) != true'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity()) != true'
         - '@setOption':
             id: coupon_form_widget_container
             optionName: opened
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"])'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
         - '@setOption':
             id: coupon_form_container
             optionName: entity
-            optionValue: '=data["entity"]'
+            optionValue: '=data["checkout"].getSourceEntity()'
     conditions: 'context["isAppliedCouponsAware"] == true'

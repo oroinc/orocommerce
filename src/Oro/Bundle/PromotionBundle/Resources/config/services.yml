@@ -331,6 +331,11 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_promotion_applied_coupons }
 
+    oro_promotion.layout.extension.applied_coupons_aware_context_configurator:
+        class: Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator
+        tags:
+            - { name: layout.context_configurator }
+
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:

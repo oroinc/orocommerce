@@ -5,10 +5,7 @@ layout:
         - '@addTree':
             items:
                 __container:
-                    blockType: container
-                    options:
-                        vars:
-                            entity: '=data["entity"]'
+                    blockType: promotion_applied_coupons_container
                 __expand_link:
                     blockType: block
                 __expandable_container:
