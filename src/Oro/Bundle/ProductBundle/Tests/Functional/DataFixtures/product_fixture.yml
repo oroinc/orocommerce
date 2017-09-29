@@ -73,7 +73,6 @@ product3:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
-
 product4:
     productCode: product-4
     inventoryStatus: discontinued
@@ -97,6 +96,7 @@ product4:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    attributeFamily: attribute_family_2
 product5:
     productCode: product-5
     inventoryStatus: in_stock
@@ -119,6 +119,7 @@ product5:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    attributeFamily: attribute_family_1
 product6:
     productCode: product-6
     inventoryStatus: in_stock
@@ -207,3 +208,4 @@ product9:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+    attributeFamily: attribute_family_1

@@ -1,0 +1,38 @@
+oro_behat_extension:
+  suites:
+    OroCustomThemeBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroApplicationBundle::CommerceMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - OroDataGridBundle::GridContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroCustomerBundle::ACLContext
+        - OroCustomerBundle::FrontendGridContext
+        - OroSecurityBundle::PermissionContext
+        - OroCustomerBundle::RegistrationInstructionFeatureContext
+        - OroCustomerBundle::CustomerVisitorContext
+      paths:
+        - '@OroCustomThemeBundle/Tests/Behat/Features'
+  elements:
+    Filter Dropdown Mode:
+      selector: '.filter-box.dropdown-mode'
+
+    Filter Collapse Mode:
+      selector: '.filter-box.collapse-mode'
+
+    FrontendProductsSearchGrid:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    FrontendProductsSearchGridFilters:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    NewCategoryLink:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class, "main-menu__link") and contains(., "NewCategory")]'

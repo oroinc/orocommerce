@@ -35,8 +35,7 @@ Feature: Check configurable product has attributes in the shopping list
       | Type       | Boolean |
     And I click "Continue"
     And I fill form with:
-      | Label      | Size Attribute  |
-      | Filterable | Yes  |
+      | Label | Size Attribute |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 

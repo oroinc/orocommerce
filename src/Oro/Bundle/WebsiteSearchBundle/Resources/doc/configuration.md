@@ -47,16 +47,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku
             type: text
         -
-            name: name_LOCALIZATION_ID
+            name: names_LOCALIZATION_ID
             type: text
 ```
 
 This example shows configuration for the `Oro\Bundle\ProductBundle\Entity\Product` entity that uses `oro_product_WEBSITE_ID` alias. This alias contains `WEBSITE_ID` placeholder that generates a separate scope in the storage for each website. The real alias that is stored looks like `oro_product_1` (for a website with ID=1).
 
-In the field configuration, we've defined `sku` and `name_LOCALIZATION_ID` fields.
+In the field configuration, we've defined `sku` and `names_LOCALIZATION_ID` fields.
 The `sku` is a plain text field that is stored for every entity.
-The `name_LOCALIZATION_ID` is also a text value, but this value is localized
-(i.e. differs for every language) and uses `LOCALIZATION_ID` placeholder to map the localized values in storage (e.g. `name_1` for localization[1],  and `name_2` for localization[2]).
+The `names_LOCALIZATION_ID` is also a text value, but this value is localized
+(i.e. differs for every language) and uses `LOCALIZATION_ID` placeholder to map the localized values in storage (e.g. `names_1` for localization[1],  and `names_2` for localization[2]).
 
 
 ### Engine configuration
