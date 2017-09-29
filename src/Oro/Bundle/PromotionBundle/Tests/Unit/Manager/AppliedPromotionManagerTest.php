@@ -65,6 +65,9 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCreateAppliedPromotions()
     {
         $order = (new Order())->setCurrency(self::CURRENCY);
@@ -115,8 +118,18 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
         $shippingAppliedPromotion->setActive(false);
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects($this->exactly(3))
-            ->method('persist');
+        $entityManager->expects($this->exactly(7))
+            ->method('persist')
+            ->withConsecutive(
+                [$this->isInstanceOf(AppliedPromotion::class)],
+                [$this->isInstanceOf(AppliedDiscount::class)],
+                [$this->isInstanceOf(AppliedPromotion::class)],
+                [$this->isInstanceOf(AppliedDiscount::class)],
+                [$this->isInstanceOf(AppliedPromotion::class)],
+                [$this->isInstanceOf(AppliedDiscount::class)],
+                [$this->isInstanceOf(AppliedDiscount::class)]
+            );
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
             ->with(AppliedPromotion::class)
@@ -152,6 +165,7 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             $shippingAppliedPromotion,
             $subtotalAppliedPromotion
         ];
+
         $this->assertEquals($expectedAppliedPromotions, $order->getAppliedPromotions()->toArray());
     }
 
@@ -202,8 +216,12 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($discountContext);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects($this->once())
-            ->method('persist');
+        $entityManager->expects($this->exactly(2))
+            ->method('persist')
+            ->withConsecutive(
+                [$this->isInstanceOf(AppliedPromotion::class)],
+                [$this->isInstanceOf(AppliedDiscount::class)]
+            );
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')

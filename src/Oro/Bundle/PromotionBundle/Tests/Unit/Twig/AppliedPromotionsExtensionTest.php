@@ -152,6 +152,87 @@ class AppliedPromotionsExtensionTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
+    public function testPrepareAppliedPromotionsOrdering()
+    {
+        $firstAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
+            'currency' => self::CURRENCY_CODE,
+            'amount' => 17.0,
+        ]);
+
+        $firstAppliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => self::FIRST_NAME,
+            'id' => 5,
+            'source_promotion_id' => 5,
+            'appliedDiscounts' => [$firstAppliedDiscount],
+            'type' => self::DISCOUNT_TYPE,
+        ]);
+
+        $secondAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
+            'currency' => self::CURRENCY_CODE,
+            'amount' => 35.0,
+        ]);
+
+        $secondAppliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => self::SECOND_NAME,
+            'id' => 3,
+            'source_promotion_id' => 6,
+            'appliedDiscounts' => [$secondAppliedDiscount],
+            'type' => self::DISCOUNT_TYPE
+        ]);
+
+        $newAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
+            'currency' => self::CURRENCY_CODE,
+            'amount' => 111.0,
+        ]);
+
+        $newAppliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => 'Newly created applied promotion',
+            'source_promotion_id' => 10,
+            'appliedDiscounts' => [$newAppliedDiscount],
+            'type' => self::DISCOUNT_TYPE
+        ]);
+
+        $expectedItems = [
+            [
+                'id' => 3,
+                'couponCode' => null,
+                'promotionName' => self::SECOND_NAME,
+                'active' => true,
+                'amount' => 35.0,
+                'currency' => self::CURRENCY_CODE,
+                'type' => self::DISCOUNT_TYPE,
+                'sourcePromotionId' => 6,
+                'sourceCouponId' => null
+            ],
+            [
+                'id' => 5,
+                'couponCode' => null,
+                'promotionName' => self::FIRST_NAME,
+                'active' => true,
+                'amount' => 17.0,
+                'currency' => self::CURRENCY_CODE,
+                'type' => self::DISCOUNT_TYPE,
+                'sourcePromotionId' => 5,
+                'sourceCouponId' => null,
+            ],
+            [
+                'id' => null,
+                'couponCode' => null,
+                'promotionName' => 'Newly created applied promotion',
+                'active' => true,
+                'amount' => 111.0,
+                'currency' => self::CURRENCY_CODE,
+                'type' => self::DISCOUNT_TYPE,
+                'sourcePromotionId' => 10,
+                'sourceCouponId' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedItems, $this->appliedDiscountsExtension->prepareAppliedPromotionsInfo(
+            new ArrayCollection([$newAppliedPromotion, $firstAppliedPromotion, $secondAppliedPromotion])
+        ));
+    }
+
     public function testGetAppliedPromotionsInfo()
     {
         $order = new Order();

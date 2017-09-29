@@ -264,6 +264,7 @@ oro:
                 deactivate: Deactivate
                 activate: Activate
                 remove: Remove
+                view: View
             no_entities: No records found
 
         appliedcoupon:
