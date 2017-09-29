@@ -1,0 +1,56 @@
+<?php
+
+namespace Oro\Bundle\PromotionBundle\Mapper;
+
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+
+class OrderMapperDecorator implements MapperInterface
+{
+    /**
+     * @var MapperInterface
+     */
+    private $orderMapper;
+
+    /**
+     * @param MapperInterface $orderMapper
+     */
+    public function __construct(MapperInterface $orderMapper)
+    {
+        $this->orderMapper = $orderMapper;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function map(Checkout $checkout, array $data = [])
+    {
+        /** @var AppliedCouponsAwareInterface $order */
+        $order = $this->orderMapper->map($checkout, $data);
+
+        $sourceEntity = $checkout->getSourceEntity();
+
+        if ($sourceEntity instanceof AppliedCouponsAwareInterface) {
+            foreach ($sourceEntity->getAppliedCoupons() as $appliedCoupon) {
+                $order->addAppliedCoupon($this->getAppliedCouponCopy($appliedCoupon));
+            }
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param AppliedCoupon $appliedCoupon
+     * @return AppliedCoupon
+     */
+    private function getAppliedCouponCopy(AppliedCoupon $appliedCoupon): AppliedCoupon
+    {
+        return (new AppliedCoupon())
+            ->setAppliedPromotion($appliedCoupon->getAppliedPromotion())
+            ->setSourceCouponId($appliedCoupon->getSourceCouponId())
+            ->setSourcePromotionId($appliedCoupon->getSourcePromotionId())
+            ->setCouponCode($appliedCoupon->getCouponCode());
+    }
+}
