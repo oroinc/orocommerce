@@ -42,7 +42,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
      *
      * @return string
      */
-    protected function executeIndexActionByTopic(string $topic, $data)
+    protected function executeIndexActionByTopic($topic, $data)
     {
         switch ($topic) {
             case AsyncIndexer::TOPIC_SAVE:
