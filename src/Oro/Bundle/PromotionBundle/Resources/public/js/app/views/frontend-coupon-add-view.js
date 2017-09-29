@@ -76,7 +76,7 @@ define(function(require) {
                 success: function(response) {
                     if (response.success) {
                         mediator.execute('showFlashMessage', 'success', __('oro.promotion.coupon.messages.success'));
-                        mediator.execute('redirectTo', {url: window.location.href});
+                        mediator.trigger('frontend:coupons:changed');
                     } else {
                         self._hideLoadingMask();
                         mediator.execute('showFlashMessage', 'error', response.message);

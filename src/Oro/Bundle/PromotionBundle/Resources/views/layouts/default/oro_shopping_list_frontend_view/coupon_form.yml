@@ -29,4 +29,8 @@ layout:
             id: coupon_form_container
             optionName: entity
             optionValue: '=data["entity"]'
+        - '@appendOption':
+            id: shopping_list_view_container_content
+            optionName: attr.data-page-component-options.reloadEvents
+            optionValue: ['frontend:coupons:changed']
     conditions: 'context["isAppliedCouponsAware"] == true'
