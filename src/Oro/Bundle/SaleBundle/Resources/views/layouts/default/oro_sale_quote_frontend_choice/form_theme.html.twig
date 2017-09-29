@@ -24,7 +24,7 @@
         class="quote-line-items grid-row"
         data-page-component-module="orosale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
-        <td class="grid-cell primary-cell">
+        <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell">
             <h3 class="oro-grid-table__title">
                 {{ quoteProduct.productName }}
             </h3>
@@ -39,17 +39,14 @@
                 </span>
             </div>
         </td>
-        <td class="grid-cell">
+        <td class="grid-cell grid-cell--offset-l-none-mobile">
             {{ form_widget(form.quoteProductOffer) }}
             {{ form_errors(form.quoteProductOffer) }}
         </td>
-        <td class="grid-cell">
+        <td class="grid-cell qty-cell">
             <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
-                <div class="product__qty-input__count-option">
-                    {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
-                </div>
-            </div>
-            <div class="product__select inline va-m_md">
+                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
+
                 {{ form_widget(form.unit) }}
                 <span data-role="unit-view">
                     {% if oro_is_unit_code_visible(defaultUnitCode) %}
@@ -60,8 +57,8 @@
             {{ form_errors(form.quantity) }}
             {{ form_errors(form.unit) }}
         </td>
-        <td class="grid-cell">
-            <span class="hide-on-desktop hide-on-strict-tablet">
+        <td class="grid-cell grid-cell--offset-l-none-mobile">
+            <span class="hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
                 {{ 'oro.frontend.sale.quoteproductoffer.unit_price.label'|trans }}:
             </span>
             <span data-role="price-view">{{ defaultPriceValue }}</span>
@@ -69,7 +66,7 @@
     </tr>
     {% if (quoteProduct.commentCustomer is not empty) %}
         <tr class="grid-row">
-            <td class="grid-cell notes-cell" colspan="4">
+            <td class="grid-cell notes-cell grid-cell--offset-l-none-mobile" colspan="4">
                 <div class="customer-line-items__notes">
                     {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                 </div>
@@ -122,7 +119,7 @@
                 {% set choice = choices[child.vars.value] %}
                 {% set offer = choice.data %}
                 <tr {% if loop.first %}class="t_paddingless"{% endif %}>
-                    <td class="quote-product-offer-select-offer-choice " >
+                    <td class="grid-cell--offset-l-none" >
                         {% set formattedUnitCode = '' %}
                         {% if oro_is_unit_code_visible(offer.productUnit.code) %}
                             {% set formattedUnitCode = offer.productUnit.code|oro_format_product_unit_label(true) %}

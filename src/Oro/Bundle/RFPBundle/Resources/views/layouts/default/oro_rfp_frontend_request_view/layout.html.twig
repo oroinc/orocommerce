@@ -40,42 +40,42 @@
             <div class="grid__column grid__column--6 grid__column--no-gutters-l">
                 <table class="customer-info-grid__table table borderless">
                     <tbody>
-                        <tr class="customer-oq__order-info__control">
+                        <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.first_name.label'|trans }}</td>
                             <td class="customer-info-grid__element-content">{{ request.firstName }}</td>
                         </tr>
-                        <tr class="customer-oq__order-info__control">
+                        <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.last_name.label'|trans }}</td>
                             <td class="customer-info-grid__element-content">{{ request.lastName }}</td>
                         </tr>
-                        <tr class="customer-oq__order-info__control">
+                        <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.email.label'|trans }}</td>
                             <td class="customer-info-grid__element-content">{{ request.email }}</td>
                         </tr>
                         {% if request.phone %}
-                            <tr class="customer-oq__order-info__control">
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.phone.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">{{ request.phone }}</td>
                             </tr>
                         {% endif %}
-                        <tr class="customer-oq__order-info__control">
+                        <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.company.label'|trans }}</td>
                             <td class="customer-info-grid__element-content">{{ request.company|default('N/A'|trans) }}</td>
                         </tr>
                         {% if request.role %}
-                            <tr class="customer-oq__order-info__control">
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.role.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">{{ request.role }}</td>
                             </tr>
                         {% endif %}
                         {% if request.poNumber %}
-                            <tr class="customer-oq__order-info__control">
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.po_number.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">{{ request.poNumber }}</td>
                             </tr>
                         {% endif %}
                         {% if request.shipUntil %}
-                            <tr class="customer-oq__order-info__control">
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.ship_until.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">{{ request.shipUntil|oro_format_date }}</td>
                             </tr>
@@ -87,7 +87,7 @@
                 <table class="customer-info-grid__table table borderless">
                     <tbody>
                         {% if is_granted_view_customer_user(request) and request.customerUser %}
-                            <tr class="customer-oq__order-info__control">
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.customer_user.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">
                                     {{ UI.entityViewLink(request.customerUser, request.customerUser.fullName, 'oro_customer_frontend_customer_user_view') }}
@@ -169,7 +169,7 @@
                 {% for requestProductItem in requestProduct.requestProductItems %}
                     <tr class="grid-row">
                         {% if loop.first %}
-                            <td class="grid-cell primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
+                            <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
                                 <h3 class="oro-grid-table__title">
                                     {% if (requestProduct.product.id is defined) %}
                                         {{ UI.link({
@@ -182,14 +182,14 @@
                                 </h3>
                                 <div>{{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="red">{{ requestProduct.productSku }}</span></div>
                             </td>
-                            <td class="grid-cell first-cell-mobile hide-on-desktop hide-on-strict-tablet">
+                            <td class="grid-cell grid-cell--offset-l-none-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
                                 {{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}
                             </td>
-                            <td class="grid-cell last-on-mobile hide-on-desktop hide-on-strict-tablet">
+                            <td class="grid-cell last-on-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
                                 {{ 'oro.frontend.rfp.request.sections.request_products.columns.price.label'|trans }}
                             </td>
                         {% endif %}
-                        <td class="grid-cell first-cell-mobile">
+                        <td class="grid-cell grid-cell--offset-l-none-mobile">
                             {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
                                 {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
                             {% else %}
