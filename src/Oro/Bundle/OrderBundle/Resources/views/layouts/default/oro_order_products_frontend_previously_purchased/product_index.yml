@@ -11,3 +11,9 @@ layout:
 
         - '@remove':
             id: product_datagrid_cell_recency
+
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue:
+                label: 'oro.order.menu.product.previously_purchased.label'
