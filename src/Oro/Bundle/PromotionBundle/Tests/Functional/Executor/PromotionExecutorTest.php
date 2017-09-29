@@ -8,20 +8,26 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCheckoutData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponPromotionDiscountData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadOrderData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionDiscountData;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @dbIsolationPerTest
  */
 class PromotionExecutorTest extends FrontendWebTestCase
 {
+    const STRATEGY_APPLY_ALL = 'apply_all';
+    const SHIPPING_METHOD = '';
+
     /**
      * @var ConfigManager $configManager
      */
@@ -40,7 +46,8 @@ class PromotionExecutorTest extends FrontendWebTestCase
             LoadOrderData::class,
             LoadCheckoutData::class,
             LoadCombinedProductPrices::class,
-            LoadPromotionDiscountData::class
+            LoadPromotionDiscountData::class,
+            LoadCouponPromotionDiscountData::class
         ]);
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::EMAIL);
@@ -56,20 +63,11 @@ class PromotionExecutorTest extends FrontendWebTestCase
      */
     public function testExecute(array $enabledPromotions, $strategy, array $expected)
     {
-        // Enable only necessary promotions
-        foreach ($enabledPromotions as $promotion) {
-            /** @var Promotion $promotion */
-            $promotion = $this->getReference($promotion);
-
-            $promotion->getRule()->setEnabled(true);
-        }
+        $this->enablePromotions($enabledPromotions);
 
         static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class)->flush();
 
-        // Change calculation strategy
-        $this->configManager = static::getContainer()->get('oro_config.manager');
-        $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
-        $this->configManager->flush();
+        $this->setStrategy($strategy);
 
         // Execute calculation
         $executor = static::getContainer()->get('oro_promotion.promotion_executor');
@@ -77,18 +75,14 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $actualDiscountContext = $executor->execute($checkout);
 
-        // Check totals
-        static::assertSame($expected['totalLineItemsDiscount'], $actualDiscountContext->getTotalLineItemsDiscount());
-        static::assertSame($expected['subtotalDiscountTotal'], $actualDiscountContext->getSubtotalDiscountTotal());
-        static::assertSame($expected['discountAmount'], $actualDiscountContext->getTotalDiscountAmount());
-        static::assertSame($expected['shippingDiscountTotal'], $actualDiscountContext->getShippingDiscountTotal());
+        $this->assertDiscountContextTotals($actualDiscountContext, $expected);
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
         return [
             [
@@ -591,75 +585,40 @@ class PromotionExecutorTest extends FrontendWebTestCase
         $strategy,
         array $expected
     ) {
-        // Enable only necessary promotions
-        foreach ($enabledPromotions as $promotion) {
-            /** @var Promotion $promotion */
-            $promotion = $this->getReference($promotion);
-
-            $promotion->getRule()->setEnabled(true);
-        }
+        $this->enablePromotions($enabledPromotions);
 
         /** @var Order $order */
         $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
 
-        /** @var AppliedPromotionMapper $appliedPromotionMapper */
-        $appliedPromotionMapper = static::getContainer()->get('oro_promotion.mapper.applied_promotion');
         $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
 
         // Create applied discounts data for order based on applied promotions
         foreach ($appliedPromotions as $appliedPromotionData) {
-            /** @var Promotion $basePromotion */
-            $basePromotion = $this->getReference($appliedPromotionData['basePromotion']);
-
-            $appliedPromotion = new AppliedPromotion();
-            $appliedPromotionMapper->mapPromotionDataToAppliedPromotion($appliedPromotion, $basePromotion, $order);
-
-            $configOptions = array_merge(
-                $basePromotion->getDiscountConfiguration()->getOptions(),
-                $appliedPromotionData['configOptions']
-            );
-            $appliedPromotion->setConfigOptions($configOptions);
+            $appliedPromotion = $this->createAppliedPromotionWithDiscount($order, $appliedPromotionData);
 
             $appliedPromotion->setActive($appliedPromotionData['enabled']);
 
-            $appliedDiscount = new AppliedDiscount();
-            $appliedDiscount
-                ->setAppliedPromotion($appliedPromotion)
-                ->setCurrency('USD')
-                ->setAmount(1234); //Some irrelevant data
-
-            $appliedPromotion->addAppliedDiscount($appliedDiscount);
-
             $entityManager->persist($appliedPromotion);
-            $entityManager->persist($appliedDiscount);
         }
 
         $entityManager->persist($order);
 
         $entityManager->flush();
 
-        // Change calculation strategy
-        $this->configManager = static::getContainer()->get('oro_config.manager');
-        $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
-        $this->configManager->flush();
+        $this->setStrategy($strategy);
 
-        // Execute calculation
         $executor = static::getContainer()->get('oro_promotion.promotion_executor');
 
         $actualDiscountContext = $executor->execute($order);
 
-        // Check totals
-        static::assertSame($expected['totalLineItemsDiscount'], $actualDiscountContext->getTotalLineItemsDiscount());
-        static::assertSame($expected['subtotalDiscountTotal'], $actualDiscountContext->getSubtotalDiscountTotal());
-        static::assertSame($expected['discountAmount'], $actualDiscountContext->getTotalDiscountAmount());
-        static::assertSame($expected['shippingDiscountTotal'], $actualDiscountContext->getShippingDiscountTotal());
+        $this->assertDiscountContextTotals($actualDiscountContext, $expected);
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
-    public function executeAppliedPromotionsDataProvider()
+    public function executeAppliedPromotionsDataProvider(): array
     {
         return [
             'test that applied order discount with previous configuration is used' => [
@@ -816,8 +775,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'discountAmount' => 10.55
                 ]
             ],
-            //TODO: Test recalculation of applied discount when order changed?
-            //TODO: Test that promotion data is used for conditions (e.g. expression or rule?)
             'test that disabled order applied discount gives zero discount amount' => [
                 'enabledPromotions' => [],
                 'appliedPromotions' => [
@@ -862,7 +819,476 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'shippingDiscountTotal' => 0.0,
                     'discountAmount' => 10.00,
                 ]
-            ]
+            ],
         ];
+    }
+
+    /**
+     * @dataProvider executeAppliedPromotionsDataDataProvider
+     * @param array $appliedPromotions
+     * @param array $expected
+     */
+    public function testExecuteWithAppliedPromotionsData(array $appliedPromotions, array $expected)
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+
+        // Create applied discounts data for order based on applied promotions
+        foreach ($appliedPromotions as $appliedPromotionData) {
+            $appliedPromotion = $this->createAppliedPromotionWithDiscount($order, $appliedPromotionData);
+
+            $appliedPromotion->setPromotionData(array_replace_recursive(
+                $appliedPromotion->getPromotionData(),
+                $appliedPromotionData['promotionData']
+            ));
+
+            $entityManager->persist($appliedPromotion);
+        }
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        $this->setStrategy(self::STRATEGY_APPLY_ALL);
+        $queryBuilder = $entityManager->getRepository(Promotion::class)->createQueryBuilder('p');
+        $queryBuilder->delete(Promotion::class, 'p')->getQuery()->execute();
+
+        $actualDiscountContext = static::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
+
+        $this->assertDiscountContextTotals($actualDiscountContext, $expected);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array
+     */
+    public function executeAppliedPromotionsDataDataProvider(): array
+    {
+        return [
+            'test sort order and stop further processing' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_42_USD',
+                        'configOptions' => [],
+                        'promotionData' => [
+                            'rule' => [
+                                'sortOrder' => 10
+                            ]
+                        ]
+                    ],
+                    [
+                        'basePromotion' => 'promo_order_10_USD_stop_processing',
+                        'configOptions' => [
+                            'discount_value' => 5.00
+                        ],
+                        'promotionData' => [
+                            'rule' => [
+                                'sortOrder' => -10,
+                            ]
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 5.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 5.00
+                ]
+            ],
+            'test migrated promotion with negative promotion id and with empty scopes' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'promotionData' => [
+                            'id' => -777,
+                            'scopes' => []
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55,
+                ]
+            ],
+            'test applied promotion with expression that matches order' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'promotionData' => [
+                            'rule' => [
+                                'expression' => 'shippingMethod="flat-rate"'
+                            ]
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55,
+                ]
+            ],
+            'test applied promotion with expression that does not match order' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'promotionData' => [
+                            'rule' => [
+                                'expression' => 'shippingMethod="curved-rate"'
+                            ]
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.00,
+                ]
+            ],
+            'test applied promotion with segment definition that matches order' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'promotionData' => [
+                            'productsSegment' => [ // product id is greater than or equals to 1
+                                'definition' => json_encode([
+                                    'columns' => [
+                                        [
+                                            'func' => null,
+                                            'label' => 'id',
+                                            'name' => 'id',
+                                            'sorting' => null,
+                                        ],
+                                        [
+                                            'func' => null,
+                                            'label' => 'sku',
+                                            'name' => 'sku',
+                                            'sorting' => null,
+                                        ],
+                                    ],
+                                    'filters' => [
+                                        [
+                                            [
+                                                'columnName' => 'id',
+                                                'criterion' => [
+                                                    'filter' => 'number',
+                                                    'data' => [
+                                                        'value' => 1,
+                                                        'type' => 1
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ]),
+                            ],
+                        ],
+                    ],
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55,
+                ]
+            ],
+            'test applied promotion with segment definition that does not match order' => [
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_12.77_USD',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ],
+                        'promotionData' => [
+                            'productsSegment' => [ // product id is less than 1
+                                'definition' => json_encode([
+                                    'columns' => [
+                                        [
+                                            'func' => null,
+                                            'label' => 'id',
+                                            'name' => 'id',
+                                            'sorting' => null,
+                                        ],
+                                        [
+                                            'func' => null,
+                                            'label' => 'sku',
+                                            'name' => 'sku',
+                                            'sorting' => null,
+                                        ],
+                                    ],
+                                    'filters' => [
+                                        [
+                                            [
+                                                'columnName' => 'id',
+                                                'criterion' => [
+                                                    'filter' => 'number',
+                                                    'data' => [
+                                                        'value' => 1,
+                                                        'type' => 6
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ]),
+                            ],
+                        ],
+                    ],
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.00,
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider executeWithCouponsDataProvider
+     * @param array $enabledPromotions
+     * @param array $orderCoupons
+     * @param array $appliedPromotions
+     * @param array $expected
+     */
+    public function testExecuteWithCoupons(
+        array $enabledPromotions,
+        array $orderCoupons,
+        array $appliedPromotions,
+        array $expected
+    ) {
+        $this->enablePromotions($enabledPromotions);
+
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
+
+        $entityCouponsProvider = self::getContainer()->get('oro_promotion.provider.entity_coupons_provider');
+
+        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+
+        foreach ($orderCoupons as $orderCouponReference) {
+            $orderCoupon = $this->getReference($orderCouponReference);
+            $appliedCoupon = $entityCouponsProvider->createAppliedCouponByCoupon($orderCoupon);
+            $entityManager->persist($appliedCoupon);
+            $order->addAppliedCoupon($appliedCoupon);
+        }
+
+        foreach ($appliedPromotions as $appliedPromotionData) {
+            $appliedPromotion = $this->createAppliedPromotionWithDiscount($order, $appliedPromotionData);
+
+            $entityManager->persist($appliedPromotion);
+        }
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        $this->setStrategy(self::STRATEGY_APPLY_ALL);
+
+        $actualDiscountContext = static::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
+
+        $this->assertDiscountContextTotals($actualDiscountContext, $expected);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array
+     */
+    public function executeWithCouponsDataProvider(): array
+    {
+        return [
+            'test that promotions with coupons are not applied when no coupon are attached to order' => [
+                'enabledPromotions' => [
+                    'promo_shipping_20%_flat_rate_method_with_coupon',
+                    'promo_order_10_USD_with_coupon'
+                ],
+                'orderCoupons' => [],
+                'appliedPromotions' => [],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.00,
+                ]
+            ],
+            'test that promotion with coupons is applied when coupon is attached to order' => [
+                'enabledPromotions' => [
+                    'promo_shipping_20%_flat_rate_method_with_coupon',
+                    'promo_order_10_USD_with_coupon'
+                ],
+                'orderCoupons' => [
+                    LoadCouponPromotionDiscountData::COUPON_ORDER
+                ],
+                'appliedPromotions' => [],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.00,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.00,
+                ]
+            ],
+            'test that promotions with coupons are applied when coupons are attached to order' => [
+                'enabledPromotions' => [
+                    'promo_shipping_20%_flat_rate_method_with_coupon',
+                    'promo_order_10_USD_with_coupon'
+                ],
+                'orderCoupons' => [
+                    LoadCouponPromotionDiscountData::COUPON_ORDER,
+                    LoadCouponPromotionDiscountData::COUPON_SHIPPING
+                ],
+                'appliedPromotions' => [],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.00,
+                    'shippingDiscountTotal' => 4.0,
+                    'discountAmount' => 14.00
+                ]
+            ],
+            'test that applied promotion is applied by coupon' => [
+                'enabledPromotions' => [],
+                'orderCoupons' => [
+                    LoadCouponPromotionDiscountData::COUPON_ORDER
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_10_USD_with_coupon',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55
+                ]
+            ],
+            'test that only applied promotion is applied by coupon (not both applied and regular promotion)' => [
+                'enabledPromotions' => [
+                    'promo_order_10_USD_with_coupon'
+                ],
+                'orderCoupons' => [
+                    LoadCouponPromotionDiscountData::COUPON_ORDER
+                ],
+                'appliedPromotions' => [
+                    [
+                        'basePromotion' => 'promo_order_10_USD_with_coupon',
+                        'configOptions' => [
+                            'discount_value' => 10.55
+                        ]
+                    ]
+                ],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 10.55
+                ]
+            ],
+            'test adding coupon with not applicable promotion' => [
+                'enabledPromotions' => [
+                    'promo_shipping_10_USD_unsupported_method_with_coupon'
+                ],
+                'orderCoupons' => [
+                    LoadCouponPromotionDiscountData::COUPON_WITH_NOT_APPLICABLE_PROMOTION
+                ],
+                'appliedPromotions' => [],
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 0.0,
+                    'discountAmount' => 0.0
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param DiscountContextInterface $discountContext
+     * @param array $expected
+     */
+    private function assertDiscountContextTotals(DiscountContextInterface $discountContext, array $expected)
+    {
+        // Check totals
+        static::assertSame($expected['totalLineItemsDiscount'], $discountContext->getTotalLineItemsDiscount());
+        static::assertSame($expected['subtotalDiscountTotal'], $discountContext->getSubtotalDiscountTotal());
+        static::assertSame($expected['discountAmount'], $discountContext->getTotalDiscountAmount());
+        static::assertSame($expected['shippingDiscountTotal'], $discountContext->getShippingDiscountTotal());
+    }
+
+    /**
+     * @param array $enabledPromotions
+     */
+    private function enablePromotions(array $enabledPromotions)
+    {
+        // Enable only necessary promotions
+        foreach ($enabledPromotions as $promotion) {
+            /** @var Promotion $promotion */
+            $promotion = $this->getReference($promotion);
+
+            $promotion->getRule()->setEnabled(true);
+        }
+    }
+
+    /**
+     * @param Order $order
+     * @param array $data
+     * @return AppliedPromotion
+     */
+    private function createAppliedPromotionWithDiscount(Order $order, array $data): AppliedPromotion
+    {
+        /** @var AppliedPromotionMapper $appliedPromotionMapper */
+        $appliedPromotionMapper = static::getContainer()->get('oro_promotion.mapper.applied_promotion');
+
+        /** @var Promotion $basePromotion */
+        $basePromotion = $this->getReference($data['basePromotion']);
+        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotionMapper->mapPromotionDataToAppliedPromotion($appliedPromotion, $basePromotion, $order);
+
+        $configOptions = array_merge(
+            $basePromotion->getDiscountConfiguration()->getOptions(),
+            $data['configOptions']
+        );
+        $appliedPromotion->setConfigOptions($configOptions);
+
+        // AppliedPromotion always has at least one applied discount
+        // We need to add this discount with currency for filtering purposes
+        $appliedDiscount = new AppliedDiscount();
+        $appliedDiscount
+            ->setAppliedPromotion($appliedPromotion)
+            ->setCurrency('USD')
+            ->setAmount(1234); //Some irrelevant data, will be recalculated
+
+        $appliedPromotion->addAppliedDiscount($appliedDiscount);
+
+        return $appliedPromotion;
+    }
+
+    /**
+     * @param string $strategy
+     */
+    private function setStrategy(string $strategy)
+    {
+        // Change calculation strategy
+        $this->configManager = static::getContainer()->get('oro_config.manager');
+        $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
+        $this->configManager->flush();
     }
 }
