@@ -183,7 +183,7 @@ services:
             - '@oro_catalog.manager.product_index_scheduler'
             - '@property_accessor'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_catalog.visibility.default_product_options:
