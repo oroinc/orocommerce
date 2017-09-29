@@ -324,6 +324,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_promotion_discounts_information }
 
+    oro_promotion.layout.oro_promotion_applied_coupons:
+        class: Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: layout.data_provider, alias: oro_promotion_applied_coupons }
+
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:

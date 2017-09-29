@@ -4,4 +4,24 @@ layout:
             id: oro_promotion_coupon_form
             namespace: coupon_form
             root: shopping_list_checkout_container
-    actions: []
+    actions:
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_rows_container
+            optionName: appliedCoupons
+            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["entity"])'
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_rows_container
+            optionName: appliedCouponsPromotions
+            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["entity"])'
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_container
+            optionName: visible
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"])'
+        - '@setOption':
+            id: coupon_form_expand_link
+            optionName: visible
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"]) != true'
+        - '@setOption':
+            id: coupon_form_widget_container
+            optionName: opened
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["entity"])'

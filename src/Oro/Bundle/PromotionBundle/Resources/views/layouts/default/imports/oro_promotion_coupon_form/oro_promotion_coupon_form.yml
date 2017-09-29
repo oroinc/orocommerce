@@ -11,7 +11,7 @@ layout:
                 __expandable_container:
                     blockType: container
                 __widget_container:
-                    blockType: container
+                    blockType: promotion_coupons_expandable
                 __widget_header:
                     blockType: block
                 __form_container:
@@ -25,7 +25,7 @@ layout:
                 __applied_coupons_list_header:
                     blockType: block
                 __applied_coupons_list_rows_container:
-                    blockType: container
+                    blockType: promotion_applied_coupons
                 __applied_coupons_list_row_container:
                     blockType: container
                 __applied_coupons_list_row_text_container:
