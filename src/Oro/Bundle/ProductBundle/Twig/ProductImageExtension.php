@@ -18,8 +18,26 @@ class ProductImageExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'collect_product_images_by_types',
                 [$this, 'collectProductImagesByTypes']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_product_image_get_sub_path',
+                [$this, 'getSubPath']
             )
         ];
+    }
+
+    /**
+     * @param string $applicationUrl
+     * @return string
+     */
+    public function getSubPath(string $applicationUrl): string
+    {
+        $matches = [];
+        if (preg_match('/^(?:https?\:\/\/)?[^\/\:]+(\/.+)$/', trim($applicationUrl, '/'), $matches)) {
+            return $matches[1];
+        }
+
+        return '';
     }
 
     /**
