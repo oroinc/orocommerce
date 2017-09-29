@@ -9,11 +9,11 @@ class LoadOrderInternalStatuses extends AbstractEnumFixture
 {
     /** @var array */
     protected static $data = [
-        'open' => 'Open',
-        'cancelled' => 'Cancelled',
-        'shipped' => 'Shipped',
-        'closed' => 'Closed',
-        'archived' => 'Archived',
+        Order::INTERNAL_STATUS_OPEN => 'Open',
+        Order::INTERNAL_STATUS_CANCELLED => 'Cancelled',
+        Order::INTERNAL_STATUS_SHIPPED => 'Shipped',
+        Order::INTERNAL_STATUS_CLOSED => 'Closed',
+        Order::INTERNAL_STATUS_ARCHIVED => 'Archived',
     ];
 
     /**

@@ -430,3 +430,22 @@ services:
             - '@oro_config.manager'
             - '@oro_locale.settings'
             - '@oro_search.formatter.datetime_formatter'
+
+    oro_order.order.listener.orm.reindex_product_line_item_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
+        public: false
+        arguments:
+            - '@oro_product.manager.product_reindex_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postRemove, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preUpdate, method: reindexProductOnLineItemUpdate}
+
+    oro_order.order.listener.orm.reindex_product_order_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener'
+        public: false
+        arguments:
+            - '@oro_product.manager.product_reindex_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preUpdate, method: processIndexOnOrderStatusChange}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postRemove, method: reindexProductsInOrder}

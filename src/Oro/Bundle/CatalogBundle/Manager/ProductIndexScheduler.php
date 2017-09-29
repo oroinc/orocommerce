@@ -5,10 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Manager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
 
 /**
  * Receives categories that has been changed and schedule
@@ -19,17 +16,17 @@ class ProductIndexScheduler
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    /** @var ProductReindexManager */
+    private $reindexManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param ProductReindexManager $reindexManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
+    public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $reindexManager)
     {
         $this->doctrineHelper = $doctrineHelper;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->reindexManager = $reindexManager;
     }
 
     /**
@@ -42,20 +39,6 @@ class ProductIndexScheduler
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
-        $this->triggerReindexationRequestEvent($productIds, $websiteId, $isScheduled);
-    }
-
-    /**
-     * @param array $productIds
-     * @param int|null $websiteId
-     * @param bool $isScheduled
-     */
-    public function triggerReindexationRequestEvent(array $productIds, $websiteId = null, $isScheduled = true)
-    {
-        if ($productIds) {
-            $websiteId = is_null($websiteId) ? [] : [$websiteId];
-            $event = new ReindexationRequestEvent([Product::class], $websiteId, $productIds, $isScheduled);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
-        }
+        $this->reindexManager->triggerReindexationRequestEvent($productIds, $websiteId, $isScheduled);
     }
 }

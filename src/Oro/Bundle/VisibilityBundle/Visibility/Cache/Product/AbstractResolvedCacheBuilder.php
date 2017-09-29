@@ -7,10 +7,12 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -57,6 +59,11 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $insertExecutor;
 
     /**
+     * @var ProductReindexManager
+     */
+    protected $reindexManager;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
      * @param ProductIndexScheduler $indexScheduler
@@ -67,12 +74,14 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
         ProductIndexScheduler $indexScheduler,
-        InsertFromSelectQueryExecutor $insertExecutor
+        InsertFromSelectQueryExecutor $insertExecutor,
+        ProductReindexManager $reindexManager
     ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->indexScheduler = $indexScheduler;
         $this->insertExecutor = $insertExecutor;
+        $this->reindexManager = $reindexManager;
     }
 
     /**
@@ -192,7 +201,7 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function triggerProductReindexation(Product $product, Website $website = null)
     {
-        $this->indexScheduler->triggerReindexationRequestEvent(
+        $this->reindexManager->triggerReindexationRequestEvent(
             [$product->getId()],
             $website ? $website->getId() : null,
             false

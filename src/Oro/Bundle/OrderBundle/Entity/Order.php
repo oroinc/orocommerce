@@ -89,6 +89,9 @@ class Order extends ExtendOrder implements
 
     const INTERNAL_STATUS_OPEN = 'open';
     const INTERNAL_STATUS_CANCELLED = 'cancelled';
+    const INTERNAL_STATUS_CLOSED = 'closed';
+    const INTERNAL_STATUS_ARCHIVED = 'archived';
+    const INTERNAL_STATUS_SHIPPED = 'shipped';
 
     /**
      * @var integer
