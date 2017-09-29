@@ -12,8 +12,8 @@ Format of sluggable urls cache was changed, added support of localized slugs. Ca
  
 CatalogBundle
 -------------
-- Class `Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider`
-    - changed signature of `__construct` method. Dependency on `UserLocalizationManager` added. 
+- Class `Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider`  
+    - changed signature of `__construct` method. Dependency on `UserLocalizationManager` added.
  
 OrderBundle
 -------------

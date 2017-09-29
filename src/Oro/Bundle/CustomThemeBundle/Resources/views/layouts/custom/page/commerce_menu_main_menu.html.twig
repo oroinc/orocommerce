@@ -16,7 +16,6 @@
 
     <div {{ block('block_attributes') }}>
         <div class="main-menu"
-                data-dom-relocation
                 data-dom-relocation-options="{{ dom_relocation_options }}"
         >
             <ul class="main-menu__list">
@@ -62,7 +61,6 @@
                          component: 'oroui/js/app/components/view-component',
                          view: 'orocommercemenu/js/app/widgets/menu-traveling-widget'
                      }|json_encode() }}"
-                     data-dom-relocation
                      data-dom-relocation-options="{{ dom_relocation_options }}"
                 >
                     <button class="main-menu__back-trigger"

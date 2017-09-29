@@ -1,0 +1,186 @@
+include:
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon1:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-1'
+        promotion: '@orderDiscountPromotion'
+        usesPerPerson: 2
+        usesPerCoupon: 3
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon2:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-2'
+        promotion: '@orderDiscountPromotion'
+        usesPerPerson: 2
+        usesPerCoupon: 3
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon3:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-3'
+        promotion: '@orderDiscountPromotion2'
+        usesPerPerson: 2
+        usesPerCoupon: 3
+        validUntil: '<(new DateTime("01-01-1000 00:00:00"))>'
+    coupon4:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-4'
+        promotion: '@orderDiscountPromotion2'
+        usesPerPerson: 5
+        usesPerCoupon: 1
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon5:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-5'
+        promotion: '@orderDiscountPromotion3'
+        usesPerPerson: 5
+        usesPerCoupon: 5
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon6:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-6'
+        usesPerPerson: 5
+        usesPerCoupon: 5
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+    coupon7:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-7'
+        promotion: '@orderDiscountPromotion2'
+        usesPerPerson: 1
+        usesPerCoupon: 1
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderDiscountPromotionSegment:
+        name: 'Promotion Matching Products'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"AA1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+    orderDiscountPromotion3Segment:
+        name: 'Promotion Matching Products 3'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderDiscountPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+    orderDiscountPromotion2DiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+    orderDiscountPromotion3DiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion'
+    orderDiscountPromotion2Rule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion 2'
+    orderDiscountPromotion3Rule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion 3'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderDiscountPromotion:
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionRule'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    orderDiscountPromotion2:
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotion2Rule'
+        discountConfiguration: '@orderDiscountPromotion2DiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    orderDiscountPromotion3:
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotion3Segment'
+        rule: '@orderDiscountPromotion3Rule'
+        discountConfiguration: '@orderDiscountPromotion3DiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    firstOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'FirstOrder'
+        website: '@website1'
+        currency: USD
+    secondOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'SecondOrder'
+        website: '@website1'
+        currency: USD
+    thirdOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'ThirdOrder'
+        website: '@website1'
+        currency: USD
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    firstOrderLineItem:
+        product: '@product1'
+        order: '@firstOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    secondOrderLineItem:
+        product: '@product1'
+        order: '@secondOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    thirdOrderLineItem:
+        product: '@product1'
+        order: '@thirdOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
