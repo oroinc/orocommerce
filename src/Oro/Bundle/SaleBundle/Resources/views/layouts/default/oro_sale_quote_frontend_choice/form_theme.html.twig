@@ -49,7 +49,7 @@
                     {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
                 </div>
             </div>
-            <div class="product__select inline va-m_md" style="margin-left: 10px">
+            <div class="product__select va-m_md" style="margin-left: 10px">
                 {{ form_widget(form.unit) }}
                 <span data-role="unit-view">
                     {% if oro_is_unit_code_visible(defaultUnitCode) %}
