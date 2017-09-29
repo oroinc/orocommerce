@@ -85,6 +85,11 @@ class ProductShoppingListsDataProvider
 
         $lineItems = $this->getLineItems($currentShoppingList, $products);
 
+        $productsById = [];
+        foreach ($products as $product) {
+            $productsById[is_object($product) ? $product->getId() : $product] = $product;
+        }
+
         if (!count($lineItems)) {
             return [];
         }
@@ -93,8 +98,18 @@ class ProductShoppingListsDataProvider
         foreach ($lineItems as $lineItem) {
             $shoppingList = $lineItem->getShoppingList();
             $shoppingListId = $shoppingList->getId();
+
             $product = $lineItem->getProduct();
             $productId = $product->getId();
+
+            $parentProduct = $lineItem->getParentProduct();
+            $parentProductId = $parentProduct ? $parentProduct->getId() : null;
+
+            if ($parentProductId && !isset($productsById[$parentProductId])) {
+                continue;
+            }
+
+            $productId = $parentProductId ? $parentProductId : $productId;
 
             $productShoppingLists = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : [];
             if (!isset($productShoppingLists[$shoppingListId])) {

@@ -2,6 +2,12 @@ layout:
     imports:
         -
             id: matrix_grid_order
-            root: product_view_content_container
+            root: matrix_grid_order_inline
             namespace: matrix_grid_order
-    actions: []
+    actions:
+        - '@add':
+            id: matrix_grid_order_inline
+            parentId: product_view_content_container
+            blockType: container
+            options:
+                visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'

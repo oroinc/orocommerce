@@ -1,8 +1,4 @@
 layout:
-    imports:
-        -
-            id: line_item_buttons
-            root: __form_actions
     actions:
         - '@setBlockTheme':
             themes: 'matrix_grid_order.html.twig'
@@ -13,39 +9,38 @@ layout:
                 __wrapper:
                     blockType: matrix_grid_prices
                     options:
-                        visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'
-                        productPrices: []
+                        visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
+                        productPrices: '=data.offsetExists("products") ? data["frontend_product_prices"].getByProducts(data["products"]) : []'
                         unit: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderForm(data["product"]).getData().unit.getCode()'
                 __form_start:
                     blockType: form_start
                     options:
-                        visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'
+                        visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
                         form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
                         form_route_name: 'oro_shopping_list_frontend_matrix_grid_order'
-                        form_route_parameters: { productId: '=data["product"].getId()' }
+                        form_route_parameters:
+                            productId: '=data["product"].getId()'
+                            shoppingListId: '=data.offsetExists("shoppingList") ? data["shoppingList"].getId() : ""'
                 __form_fields:
                     blockType: form_fields
                     options:
-                        visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'
+                        visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
                         form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
                 __form_end:
                     blockType: form_end
                     options:
-                        visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'
+                        visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
                         form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
                 __form_summary:
                     blockType: matrix_order_form_summary
                     options:
-                        visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"])'
+                        visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
                         totalQuantity: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'
                         totalPrice: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'
-                __form_actions:
-                    blockType: container
             tree:
                 __root:
                     __wrapper:
                         __form_start: ~
                         __form_fields: ~
                         __form_summary: ~
-                        __form_actions: ~
                         __form_end: ~

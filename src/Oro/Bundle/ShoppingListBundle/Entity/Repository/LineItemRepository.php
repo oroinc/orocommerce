@@ -50,6 +50,7 @@ class LineItemRepository extends EntityRepository
         $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->andWhere('li.product IN (:products)')
+            ->orWhere('li.parentProduct IN (:products)')
             ->setParameter('products', $products)
             ->addOrderBy($qb->expr()->asc('li.id'));
 

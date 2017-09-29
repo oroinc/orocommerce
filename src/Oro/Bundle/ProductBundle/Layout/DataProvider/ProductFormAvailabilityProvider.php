@@ -75,7 +75,7 @@ class ProductFormAvailabilityProvider
      * @param Product $product
      * @return bool
      */
-    protected function isMatrixAvailable(Product $product)
+    public function isMatrixAvailable(Product $product)
     {
         if (isset($this->matrixGridAvailable[$product->getId()])) {
             return $this->matrixGridAvailable[$product->getId()];

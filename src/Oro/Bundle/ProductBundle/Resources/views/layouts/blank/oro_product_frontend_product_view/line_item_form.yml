@@ -12,7 +12,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['layout-subtree:update:product']
-                        visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple() && context["is_logged_in"]'
+                        visible: '=context["is_logged_in"]'
                 line_item_form:
                     blockType: container
                     options:
@@ -45,3 +45,8 @@ layout:
                             line_item_form_fields: ~
                             product_line_item_form_buttons: ~
                             line_item_form_end: ~
+
+        - '@setOption':
+            id: line_item_form_buttons_shopping_list
+            optionName: attr.componentModule
+            optionValue: '=data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'

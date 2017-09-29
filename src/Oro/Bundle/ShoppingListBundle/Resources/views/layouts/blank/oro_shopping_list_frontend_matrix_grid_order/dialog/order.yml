@@ -3,3 +3,21 @@ layout:
         -
             id: matrix_grid_order
             root: widget_content
+            namespace: matrix_grid_order
+    actions:
+        - '@add':
+            id: form_actions_submit
+            blockType: button
+            parentId: widget_actions
+            options:
+                action: submit
+                text:
+                    label: '=data["hasLineItems"] ? "oro.shoppinglist.actions.update_shopping_list" : "oro.shoppinglist.actions.add_to_shopping_list"'
+                    parameters:
+                        '{{ shoppingList }}': '=data["shoppingList"].getLabel()'
+                style: auto
+        - '@move':
+            id: widget_actions
+            parentId: matrix_grid_order_wrapper
+            siblingId: matrix_grid_order_form_end
+            prepend: true

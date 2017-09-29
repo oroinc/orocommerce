@@ -53,3 +53,8 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block __matrix_grid_order__form_fields_widget %}
+    {{ block_widget(block) }}
+    <input type="hidden" name="updateQuantity" value="true"/>
+{% endblock %}

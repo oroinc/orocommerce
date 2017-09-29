@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class MatrixGridOrderController extends AbstractLineItemController
 {
@@ -57,24 +58,51 @@ class MatrixGridOrderController extends AbstractLineItemController
                 }
             }
 
-            if ($lineItems) {
-                $message = $this->getSuccessMessage($shoppingList, 'oro.shoppinglist.product.added.label');
-                $this->get('session')->getFlashBag()->add('success', $message);
-            }
-
             if ($request->isXmlHttpRequest()) {
-                $url = $this->generateUrl(
-                    'oro_product_frontend_product_view',
-                    ['id' => $product->getId()]
+                return new JsonResponse(
+                    $this->getSuccessResponse(
+                        $shoppingList,
+                        $product,
+                        'oro.shoppinglist.flash.update_success'
+                    )
                 );
-
-                return new JsonResponse(['redirectUrl' => $url]);
             }
         }
 
         $products = $this->get('oro_product.provider.product_variant_availability_provider')
             ->getSimpleProductsByVariantFields($product);
 
-        return ['data' => ['product' => $product, 'products' => ['data' => $products]]];
+        return ['data' => [
+            'product' => $product,
+            'shoppingList' => $shoppingList,
+            'hasLineItems' => $form->getData()->hasLineItems(),
+            'products' => ['data' => $products]
+        ]];
+    }
+
+    /**
+     * @see \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::getSuccessResponse
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param string $message
+     * @return array
+     */
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    {
+        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
+            ->getProductUnitsQuantity($product);
+
+        return [
+            'successful' => true,
+            'message' => $this->getSuccessMessage($shoppingList, $message),
+            'product' => [
+                'id' => $product->getId(),
+                'shopping_lists' => $productShoppingLists
+            ],
+            'shoppingList' => [
+                'id' => $shoppingList->getId(),
+                'label' => $shoppingList->getLabel()
+            ]
+        ];
     }
 }

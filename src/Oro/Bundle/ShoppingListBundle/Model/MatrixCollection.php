@@ -18,4 +18,17 @@ class MatrixCollection
      * @var ProductUnit
      */
     public $unit;
+
+    public function hasLineItems()
+    {
+        foreach ($this->rows as $row) {
+            foreach ($row->columns as $column) {
+                if ($column->quantity > 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
