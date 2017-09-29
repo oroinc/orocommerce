@@ -623,13 +623,26 @@ services:
             - '@oro_promotion.scope_normalizer'
             - '@oro_promotion.segment_normalizer'
 
-    oro_promotion.handler.coupon_validation_handler:
-        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+    oro_promotion.handler.abstract_coupon_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler
+        abstract: true
         arguments:
-            - '@oro_promotion.validation_service.coupon_applicability_validation'
             - '@oro_entity.routing_helper'
             - '@doctrine'
             - '@event_dispatcher'
+
+    oro_promotion.handler.coupon_validation_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+        parent: oro_promotion.handler.abstract_coupon_handler
+        calls:
+            - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
+
+    oro_promotion.handler.frontend_coupon_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler
+        parent: oro_promotion.handler.abstract_coupon_handler
+        calls:
+            - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
+            - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
 
     oro_promotion.event_listener.actualize_coupons_state_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener

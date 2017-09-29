@@ -77,6 +77,7 @@ class CouponApplicabilityValidationService
         if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion())) {
             return [self::MESSAGE_PROMOTION_NOT_APPLICABLE];
         }
+        $entity->removeAppliedCoupon($appliedCoupon);
 
         return [];
     }

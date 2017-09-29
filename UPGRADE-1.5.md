@@ -45,3 +45,10 @@ WebsiteSearchBundle
         - added second argument `Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher`
 - Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
 - Implementation can decorate original implementation of interface `Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface` that as service with tag `oro_entity_config.attribute_type`.
+
+PromotionBundle
+---------------
+- Class `Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler`
+    - now extends from `Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler`
+    - changes in constructor:
+        - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
