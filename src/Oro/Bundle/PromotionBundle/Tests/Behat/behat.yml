@@ -13,6 +13,7 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext
         - OroShippingBundle::FeatureContext
+        - OroShoppingListBundle::FeatureContext
         - OroImportExportBundle::ImportExportContext:
           - '@oro_entity.entity_alias_resolver'
           - '@oro_importexport.processor.registry'
@@ -106,3 +107,12 @@ oro_behat_extension:
     Promotions Grid Button:
       selector: '.entity-select-btn'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    CouponCodeInput:
+      selector: 'input[data-role="coupon-code"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    IHaveACouponCode:
+      selector:
+        type: 'xpath'
+        locator: '//a[text()[contains(.,"I have a Coupon Code")]]'
