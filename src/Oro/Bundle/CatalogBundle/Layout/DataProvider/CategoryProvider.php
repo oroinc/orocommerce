@@ -2,28 +2,37 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 class CategoryProvider
 {
-    /** @var array */
+    use DataProviderCacheTrait;
+
+    /** @var Category[] */
     protected $categories = [];
 
     /** @var array */
     protected $tree = [];
 
-    /** @var CategoryRepository  */
+    /** @var CategoryRepository */
     protected $categoryRepository;
 
-    /** @var RequestProductHandler  */
+    /** @var RequestProductHandler */
     protected $requestProductHandler;
 
     /** @var CategoryTreeProvider */
     protected $categoryTreeProvider;
+
+    /** @var LocalizationHelper */
+    protected $localizationHelper;
 
     /**
      * @param RequestProductHandler $requestProductHandler
@@ -41,11 +50,19 @@ class CategoryProvider
     }
 
     /**
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function setLocalizationHelper(LocalizationHelper $localizationHelper)
+    {
+        $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
      * @return Category
      */
     public function getCurrentCategory()
     {
-        return $this->loadCategory((int) $this->requestProductHandler->getCategoryId());
+        return $this->loadCategory((int)$this->requestProductHandler->getCategoryId());
     }
 
     /**
@@ -83,6 +100,36 @@ class CategoryProvider
     /**
      * @param CustomerUser|null $user
      *
+     * @return array
+     */
+    public function getCategoryTreeArray(CustomerUser $user = null)
+    {
+        $this->initCache(
+            [$user ? $user->getId() : 0, $this->getCurrentLocalization()]
+        );
+
+        $useCache = $this->isCacheUsed();
+
+        if (true === $useCache) {
+            $result = $this->getFromCache();
+            if ($result) {
+                return $result;
+            }
+        }
+
+        $result = $this->categoryTreeToArray(
+            $this->getCategoryTree($user)
+        );
+
+        if (true === $useCache) {
+            $this->saveToCache($result);
+        }
+        return $result;
+    }
+
+    /**
+     * @param CustomerUser|null $user
+     *
      * @return Category[]
      */
     public function getCategoryTree(CustomerUser $user = null)
@@ -115,6 +162,14 @@ class CategoryProvider
     }
 
     /**
+     * @return bool
+     */
+    public function getIncludeSubcategoriesChoice()
+    {
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
+    }
+
+    /**
      * @return array
      */
     public function getParentCategories()
@@ -128,6 +183,32 @@ class CategoryProvider
         } else {
             return [];
         }
+    }
+
+    /**
+     * @param ArrayCollection|Category[] $items
+     * @return array
+     */
+    protected function categoryTreeToArray(ArrayCollection $items)
+    {
+        $data = [];
+
+        /** @var DTO\Category[] $item */
+        foreach ($items as $key => $item) {
+            $children = $this->categoryTreeToArray($item->getChildCategories());
+
+            $data[$key] = [
+                'id' => $item->id(),
+                'title' =>
+                    $this->localizationHelper
+                        ->getLocalizedValue($item->titles())
+                        ->getString(),
+                'hasSublist' => count($children),
+                'childCategories' => $children
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -149,10 +230,13 @@ class CategoryProvider
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function getIncludeSubcategoriesChoice()
+    protected function getCurrentLocalization()
     {
-        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        $localization_id = ($this->localizationHelper && $this->localizationHelper->getCurrentLocalization()) ?
+            $this->localizationHelper->getCurrentLocalization()->getId() : 0;
+
+        return $localization_id;
     }
 }
