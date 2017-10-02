@@ -77,7 +77,9 @@
              data-page-component-options="{{ {
                  view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_customer'
+                 tierPricesRoute: 'oro_pricing_price_by_customer',
+                 customer: entity.customer is null ? null : entity.customer.id,
+                 currency: entity.currency
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
