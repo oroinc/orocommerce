@@ -22,6 +22,7 @@ define(function(require) {
             removeCouponRoute: 'oro_promotion_frontend_remove_coupon',
             skipMaskView: false,
             messageNamespace: 'frontend-coupon-add-view',
+            refreshOnSuccess: true,
             selectors: {
                 couponCodeSelector: null,
                 couponApplySelector: null,
@@ -136,7 +137,11 @@ define(function(require) {
          * @private
          */
         _showSuccess: function(message) {
-            mediator.execute('showFlashMessage', 'success', message, {flash: true});
+            var attr = {flash: true};
+            if (this.options.refreshOnSuccess) {
+                attr.afterReload = true;
+            }
+            mediator.execute('showFlashMessage', 'success', message, attr);
         },
 
         /**
@@ -171,8 +176,8 @@ define(function(require) {
         },
 
         _updatePageData: function() {
-            // TODO change this condition in scope of BB-12228.
-            if ($('[data-role="checkout-content"]').length) {
+            if (this.options.refreshOnSuccess) {
+                mediator.execute('showLoading');
                 mediator.execute('refreshPage');
             } else {
                 mediator.trigger('frontend:coupons:changed');

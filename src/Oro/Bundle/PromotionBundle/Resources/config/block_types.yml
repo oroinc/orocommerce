@@ -32,6 +32,7 @@ services:
                 -
                     -
                         entity: {required: true}
+                        refreshOnSuccess: {default: true}
             - [setName, ['promotion_applied_coupons_container']]
         tags:
             - { name: layout.block_type, alias: promotion_applied_coupons_container }

@@ -13,7 +13,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': 'coupon-container',
         'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': options|json_encode
+        '~data-page-component-options': options
     }) %}
 
     <div {{ block('block_attributes') }}>
