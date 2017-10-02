@@ -48,7 +48,6 @@ class OrderMapperDecorator implements MapperInterface
     private function getAppliedCouponCopy(AppliedCoupon $appliedCoupon): AppliedCoupon
     {
         return (new AppliedCoupon())
-            ->setAppliedPromotion($appliedCoupon->getAppliedPromotion())
             ->setSourceCouponId($appliedCoupon->getSourceCouponId())
             ->setSourcePromotionId($appliedCoupon->getSourcePromotionId())
             ->setCouponCode($appliedCoupon->getCouponCode());

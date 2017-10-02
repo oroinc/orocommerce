@@ -5,28 +5,39 @@ layout:
             namespace: coupon_form
             root: checkout_order_summary_totals_container
     actions:
+        - '@move':
+            id: coupon_form_container
+            parentId: checkout_order_summary_totals_container
+            siblingId: checkout_order_summary_totals
+
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCoupons
             optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"].getSourceEntity())'
+
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCouponsPromotions
             optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["checkout"].getSourceEntity())'
+
         - '@setOption':
             id: coupon_form_applied_coupons_list_container
             optionName: visible
             optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
+
         - '@setOption':
             id: coupon_form_expand_link
             optionName: visible
             optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity()) != true'
+
         - '@setOption':
             id: coupon_form_widget_container
             optionName: opened
             optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
+
         - '@setOption':
             id: coupon_form_container
             optionName: entity
             optionValue: '=data["checkout"].getSourceEntity()'
+
     conditions: 'context["isAppliedCouponsAware"] == true'

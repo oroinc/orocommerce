@@ -67,8 +67,7 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
             'id' => 5,
             'couponCode' => $couponCode,
             'sourcePromotionId' => $sourcePromotionId,
-            'sourceCouponId' => $sourceCouponId,
-            'appliedPromotion' => $appliedPromotion
+            'sourceCouponId' => $sourceCouponId
         ]);
 
         $shoppingList = new ShoppingList();
@@ -95,8 +94,7 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
         $expectedAppliedCoupon = (new AppliedCoupon())
             ->setCouponCode($couponCode)
             ->setSourcePromotionId($sourcePromotionId)
-            ->setSourceCouponId($sourceCouponId)
-            ->setAppliedPromotion($appliedPromotion);
+            ->setSourceCouponId($sourceCouponId);
 
         $expectedOrder = new Order();
         $expectedOrder->addAppliedCoupon($expectedAppliedCoupon);

@@ -289,8 +289,7 @@ oro:
                 header.label: 'Coupon'
                 coupon_input.placeholder: 'Enter Coupon Code here'
                 apply_button.label: 'Apply'
-                applied_coupons_header.label: 'Applied Coupons'
-                delete_coupon.tooltip: 'Delete Coupon'
+                applied_coupons_header.label: 'Applied Code'
         shoppinglist:
             view:
                 discount.label: 'Row Discount:'
