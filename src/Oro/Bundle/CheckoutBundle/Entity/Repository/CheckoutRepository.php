@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -24,6 +25,10 @@ class CheckoutRepository extends EntityRepository
      */
     public function countItemsPerCheckout(array $checkoutIds)
     {
+        if (0 === count($checkoutIds)) {
+            return [];
+        }
+
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
             ->addSelect('count(cli.id) as itemsCount')

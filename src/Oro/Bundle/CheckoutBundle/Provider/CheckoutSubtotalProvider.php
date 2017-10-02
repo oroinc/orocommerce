@@ -119,7 +119,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
             /** @var Price $price */
             foreach ($prices as $identifier => $price) {
-                if ($price) {
+                if ($price && array_key_exists($identifier, $productsPriceCriteria)) {
                     $priceValue = $price->getValue();
                     $subtotalAmount += (float)$priceValue * $productsPriceCriteria[$identifier]->getQuantity();
                     $subtotal->setVisible(true);

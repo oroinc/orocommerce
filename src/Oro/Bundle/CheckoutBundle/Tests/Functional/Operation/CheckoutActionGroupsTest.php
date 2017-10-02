@@ -40,8 +40,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateBillingAddressWithoutRrequiredParameters()
     {
-        $this->expectException(
-            InvalidParameterException::class,
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
             'Trying to execute ActionGroup "b2b_flow_checkout_update_billing_address" '
             . 'with invalid or missing parameter(s): "checkout"'
         );
@@ -116,8 +116,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateShippingAddressWithoutRequiredAttributes()
     {
-        $this->expectException(
-            InvalidParameterException::class,
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
             'Trying to execute ActionGroup "b2b_flow_checkout_update_shipping_address" '
             . 'with invalid or missing parameter(s): "checkout"'
         );
@@ -160,8 +160,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testUpdateShippingMethodWithoutRrequiredParameters()
     {
-        $this->expectException(
-            InvalidParameterException::class,
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
             'Trying to execute ActionGroup "b2b_flow_checkout_update_shipping_method" '
             . 'with invalid or missing parameter(s): "checkout"'
         );
@@ -188,10 +188,10 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testPlaceOrderWithoutRequiredAttributes()
     {
-        $this->expectException(
-            InvalidParameterException::class,
-            'Trying to execute ActionGroup "b2b_flow_checkout_place_order" '
-            . 'with invalid or missing parameter(s): "checkout"'
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
+            'Trying to execute ActionGroup "b2b_flow_checkout_place_order" ' .
+            'with invalid or missing parameter(s): "checkout"'
         );
 
         $this->executeActionGroup('b2b_flow_checkout_place_order');
@@ -222,7 +222,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $this->assertNotNull($order);
         $this->assertNotNull($order->getId());
         $this->assertEquals(Quote::class, $order->getSourceEntityClass());
-        $this->assertCount(3, $order->getLineItems());
+        $this->assertSameSize($checkout->getLineItems(), $order->getLineItems());
         $this->assertEquals($this->getOrderSubtotal($order), $order->getSubtotal());
 
         $this->assertNotNull($order->getShippingAddress());
@@ -244,10 +244,10 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testPurchaseWithoutRrequiredParameters()
     {
-        $this->expectException(
-            InvalidParameterException::class,
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
             'Trying to execute ActionGroup "b2b_flow_checkout_purchase" '
-            . 'with invalid or missing parameter(s): "order", "checkout"'
+            . 'with invalid or missing parameter(s): "checkout", "order"'
         );
 
         $this->executeActionGroup('b2b_flow_checkout_purchase');
@@ -289,10 +289,10 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testFinishCheckoutWithoutRrequiredParameters()
     {
-        $this->expectException(
-            InvalidParameterException::class,
-            'Trying to execute ActionGroup "b2b_flow_checkout_purchase" '
-            . 'with invalid or missing parameter(s): "order", "checkout"'
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
+            'Trying to execute ActionGroup "b2b_flow_checkout_finish_checkout" '
+            . 'with invalid or missing parameter(s): "checkout", "order"'
         );
 
         $this->executeActionGroup('b2b_flow_checkout_finish_checkout');

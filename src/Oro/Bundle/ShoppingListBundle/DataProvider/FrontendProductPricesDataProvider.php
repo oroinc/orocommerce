@@ -44,7 +44,7 @@ class FrontendProductPricesDataProvider
 
     /**
      * @param ProductLineItemInterface[] $lineItems
-     * @return array|null
+     * @return array
      */
     public function getProductsMatchedPrice(array $lineItems)
     {

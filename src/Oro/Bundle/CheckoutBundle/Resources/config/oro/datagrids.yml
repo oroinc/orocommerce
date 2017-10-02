@@ -120,6 +120,8 @@ datagrids:
                     data_name: checkout.customerNotes
                 subtotal:
                     data_name: subtotal
+                total:
+                    data_name: total
         filters:
             columns:
                 createdAt:
@@ -141,6 +143,9 @@ datagrids:
                 subtotal:
                     type: number
                     data_name: subtotal
+                total:
+                    type: number
+                    data_name: total
         properties:
             id: ~
             view_link:

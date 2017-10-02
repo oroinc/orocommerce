@@ -28,11 +28,13 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => $paymentMethodIdentifier]
+                'checkout' => ['payment_method' => $paymentMethodIdentifier],
+                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 600]],
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
-                'checkout' => ['payment_method' => $paymentMethodIdentifier]
+                'checkout' => ['payment_method' => $paymentMethodIdentifier],
+                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 700]],
             ],
         ];
     }

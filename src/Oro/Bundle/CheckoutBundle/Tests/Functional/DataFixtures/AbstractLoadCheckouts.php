@@ -9,12 +9,16 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -98,6 +102,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             );
             $checkout->setPaymentMethod($checkoutData['checkout']['payment_method']);
             $checkout->setSource($source);
+            $checkout->setCustomerNotes($name);
             $checkout->setCompleted(!empty($checkoutData['completed']));
             if (!empty($checkoutData['completedData'])) {
                 $completedData = $checkout->getCompletedData();
@@ -108,6 +113,27 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             }
             if (!empty($checkoutData['checkout']['currency'])) {
                 $checkout->setCurrency($checkoutData['checkout']['currency']);
+            }
+            if (!empty($checkoutData['checkout']['shippingCostAmount'])) {
+                $checkout->setShippingCost(Price::create($checkoutData['checkout']['shippingCostAmount'], 'USD'));
+            }
+            if (!empty($checkoutData['lineItems'])) {
+                /** @var CheckoutLineItem $lineItem */
+                foreach ($checkoutData['lineItems'] as $lineItem) {
+                    $checkout->addLineItem($lineItem);
+                }
+            }
+            if (!empty($checkoutData['checkoutSubtotals'])) {
+                /** @var CheckoutSubtotal $checkoutSubtotal */
+                foreach ($checkoutData['checkoutSubtotals'] as $checkoutSubtotalData) {
+                    $subtotal = new Subtotal();
+                    $subtotal->setCurrency($checkoutSubtotalData['currency'])
+                        ->setAmount($checkoutSubtotalData['amount']);
+                    $checkoutSubtotal = new CheckoutSubtotal($checkout, $checkoutSubtotalData['currency']);
+                    $checkoutSubtotal->setSubtotal($subtotal)
+                        ->setValid(true);
+                    $manager->persist($checkoutSubtotal);
+                }
             }
             $manager->persist($checkout);
             $manager->flush();

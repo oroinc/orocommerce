@@ -87,7 +87,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
             $expectedPrice = $price;
         }
 
-        $this->frontendProductPricesDataProvider->expects($this->once())
+        $this->frontendProductPricesDataProvider->expects($this->atMost(1))
             ->method('getProductsMatchedPrice')
             ->willReturn([2 => ['code' => $expectedPrice]]);
 

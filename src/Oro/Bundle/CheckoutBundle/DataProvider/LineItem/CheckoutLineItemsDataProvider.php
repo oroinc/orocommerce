@@ -83,13 +83,16 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     /**
      * @param array $lineItems
      *
-     * @return array|null
+     * @return array
      */
     protected function findPrices(array $lineItems)
     {
         $lineItemsWithoutPrice = array_filter($lineItems, function (CheckoutLineItem $lineItem) {
             return !$lineItem->isPriceFixed() && !$lineItem->getPrice() && $lineItem->getProduct();
         });
+        if (!$lineItemsWithoutPrice) {
+            return [];
+        }
 
         return $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItemsWithoutPrice);
     }

@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -62,7 +63,8 @@ class Checkout implements
     DatesAwareInterface,
     ShippingAwareInterface,
     PaymentMethodAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CurrencyAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -216,7 +218,7 @@ class Checkout implements
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -243,7 +245,7 @@ class Checkout implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getPaymentMethod()
     {
@@ -251,8 +253,7 @@ class Checkout implements
     }
 
     /**
-     * @param string $paymentMethod
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setPaymentMethod($paymentMethod)
     {
@@ -338,7 +339,7 @@ class Checkout implements
     }
 
     /**
-     * @return Website
+     * {@inheritDoc}
      */
     public function getWebsite()
     {
@@ -346,8 +347,7 @@ class Checkout implements
     }
 
     /**
-     * @param Website $website
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setWebsite(Website $website = null)
     {
@@ -357,7 +357,7 @@ class Checkout implements
     }
 
     /**
-     * @return CheckoutSourceEntityInterface|null
+     * {@inheritDoc}
      */
     public function getSourceEntity()
     {
@@ -369,7 +369,7 @@ class Checkout implements
     }
 
     /**
-     * @return CheckoutSource
+     * {@inheritDoc}
      */
     public function getSource()
     {
@@ -377,8 +377,7 @@ class Checkout implements
     }
 
     /**
-     * @param CheckoutSource $source
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setSource(CheckoutSource $source)
     {
@@ -388,9 +387,7 @@ class Checkout implements
     }
 
     /**
-     * Get shipping estimate
-     *
-     * @return Price|null
+     * {@inheritDoc}
      */
     public function getShippingCost()
     {
@@ -413,7 +410,7 @@ class Checkout implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getCurrency()
     {
@@ -421,8 +418,7 @@ class Checkout implements
     }
 
     /**
-     * @param string $currency
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setCurrency($currency)
     {

@@ -265,3 +265,6 @@ oro:
             payment:
                   error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
                   error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
+
+        subtotals:
+            checkout_subtotal.label: Subtotal

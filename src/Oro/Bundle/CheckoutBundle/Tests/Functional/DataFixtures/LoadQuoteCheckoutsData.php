@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
@@ -18,11 +21,19 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
      */
     protected function getData()
     {
+        $lineItem1 = (new CheckoutLineItem())
+            ->setQuantity(10)
+            ->setPrice(Price::create(100, 'USD'));
+        $lineItem2 = (new CheckoutLineItem())
+            ->setQuantity(20)
+            ->setPrice(Price::create(200, 'USD'));
+
         return [
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => self::PAYMENT_METHOD, 'currency' => 'USD']
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD, 'currency' => 'USD'],
+                'lineItems' => new ArrayCollection([$lineItem1, $lineItem2])
             ],
             self::CHECKOUT_2 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
