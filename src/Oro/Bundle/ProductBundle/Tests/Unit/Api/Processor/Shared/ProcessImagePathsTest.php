@@ -63,31 +63,6 @@ class ProcessImagePathsTest extends GetProcessorTestCase
         );
     }
 
-    public function testProcessShouldAddFilePathToConfig()
-    {
-        $config = new EntityDefinitionConfig();
-        $config->setKey('config_key');
-        $metadata = new EntityMetadata();
-
-        $this->context->setConfig($config);
-        $this->context->setMetadata($metadata);
-        $this->processor->process($this->context);
-
-        self::assertEquals(
-            [
-                'fields' => [
-                    ProcessImagePaths::CONFIG_FILE_PATH => [
-                        'data_type' => 'string'
-                    ]
-                ]
-            ],
-            $config->toArray()
-        );
-        self::assertEquals('config_keynew', $config->getKey());
-        self::assertTrue($this->context->hasMetadata());
-        self::assertNotSame($metadata, $this->context->hasMetadata());
-    }
-
     /**
      * @dataProvider getTestProcessShouldHandlePathsCorrectlyProvider
      */
@@ -115,19 +90,11 @@ class ProcessImagePathsTest extends GetProcessorTestCase
         $this->attachmentManager->expects($this->any())
             ->method('isImageType')
             ->willReturn($isImageType);
-        if (array_key_exists('content', $initialResults)) {
-            $this->repo->expects($this->any())
-                ->method('findOneBy')
-                ->with(['image' => $initialResults['id']])
-                ->willReturn($productImage);
-        } else {
-            foreach ($initialResults as $initialResult) {
-                $this->repo->expects($this->any())
-                    ->method('findOneBy')
-                    ->with(['image' => $initialResult['id']])
-                    ->willReturn($productImage[$initialResult['id']]);
-            }
-        }
+
+        $this->repo->expects($this->any())
+            ->method('findOneBy')
+            ->with(['image' => $initialResults['id']])
+            ->willReturn($productImage);
 
         $this->context->setConfig(new EntityDefinitionConfig());
         $this->context->setMetadata(new EntityMetadata());
@@ -165,28 +132,6 @@ class ProcessImagePathsTest extends GetProcessorTestCase
                 'isImageType' => true,
                 'productImage' => $productImage,
                 'expectedResults' => array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-            ],
-            [
-                'initialResults' => [$basicInitialResults],
-                'isImageType' => true,
-                'productImage' => [1 => $productImage],
-                'expectedResults' => [
-                    array_merge(
-                        $basicInitialResults,
-                        [
-                            'filePath' => ['testDimension' => 'testUrl']
-                        ]
-                    )
-                ],
-            ],
-            [
-                'initialResults' => [$basicInitialResults, $basicInitialResults],
-                'isImageType' => true,
-                'productImage' => [1 => $productImage],
-                'expectedResults' => [
-                    array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-                    array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-                ],
             ],
         ];
     }
