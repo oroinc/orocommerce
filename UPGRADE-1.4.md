@@ -54,6 +54,7 @@ SaleBundle
 ----------
 - Class `Oro\Bundle\SaleBundle\Entity\Quote`
     - now implements `Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface` (corresponding methods have been implemented before, thus it's just a formal change)
+- Removed unused twig template `Oro/Bundle/SaleBundle/Resources/views/Action/quoteToOrder.html.twig`
 
 PricingBundle
 -------------

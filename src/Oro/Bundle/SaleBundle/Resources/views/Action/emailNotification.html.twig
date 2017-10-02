@@ -2,9 +2,21 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% block widget_content %}
-    <div class="widget-content email-form">
-        {{ block('widget_content_inner') }}
-    </div>
+    {% if response is defined %}
+        {% set data = {
+            trigger: [{
+                eventBroker: 'widget',
+                name: 'formSave',
+                args: [response|json_encode],
+            }],
+        } %}
+
+        {{ data|json_encode|raw }}
+    {% else %}
+        <div class="widget-content email-form">
+            {{ block('widget_content_inner') }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block form %}
