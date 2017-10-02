@@ -232,7 +232,7 @@
 
 {% block _shopping_list_line_items_list_item_widget %}
     <td class="va-t_md" colspan="2">
-        <div class="product-item product-item_in-cart">
+        <div class="product-item product-item--in-cart">
             {{ block('container_widget') }}
         </div>
     </td>
@@ -240,20 +240,20 @@
 
 {% block _shopping_list_line_items_list_item_image_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-    <div class="product-item__image-holder product-item__image-holder_in-cart">
+    <div class="product-item__image-holder product-item__image-holder--in-cart">
         {% set productImage = mainProduct.getImagesByType('listing')|length > 0  ? mainProduct.getImagesByType('listing').first.image : null %}
         <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
     </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_description_widget %}
-    <div class="product-item__desctiption product-item__desctiption_in-cart">
+    <div class="product-item__desctiption product-item__desctiption--in-cart">
         {{ block('container_widget') }}
     </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_name_widget %}
-    <h3 class="product-item__title product-item__title_in-cart">
+    <h3 class="product-item__title product-item__title--in-cart">
         <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value }}</a>
     </h3>
 {% endblock %}
@@ -263,7 +263,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_inventory_status_widget %}
-    <div class="product-item__status_in-cart">{{ mainProduct.InventoryStatus }}</div>
+    <div class="product-item__status--in-cart">{{ mainProduct.InventoryStatus }}</div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
