@@ -21,6 +21,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     const ORDER_2 = 'simple_order2';
     const ORDER_3 = 'simple_order3';
     const ORDER_4 = 'simple_order4';
+    const ORDER_5 = 'simple_order5';
     const MY_ORDER = 'my_order';
     const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
     const SUBTOTAL = '789.0000';
@@ -61,6 +62,16 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
         self::ORDER_4 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO3',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_5 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO3',

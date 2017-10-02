@@ -750,6 +750,7 @@ datagrids:
 
     order-products-previously-purchased-grid:
         extends: frontend-product-search-grid
+        acl_resource: oro_order_frontend_view
         source:
             query:
                 select:
