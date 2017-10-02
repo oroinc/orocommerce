@@ -18,10 +18,12 @@ define(function(require) {
             entityClass: null,
             entityId: null,
             addCouponRoute: 'oro_promotion_frontend_add_coupon',
+            removeCouponRoute: 'oro_promotion_frontend_remove_coupon',
             skipMaskView: false,
             selectors: {
                 couponCodeSelector: null,
-                couponApplySelector: null
+                couponApplySelector: null,
+                couponRemoveSelector: null
             }
         },
 
@@ -48,6 +50,7 @@ define(function(require) {
         events: function() {
             var events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
+            events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
 
             return events;
         },
@@ -67,22 +70,57 @@ define(function(require) {
             };
 
             this._showLoadingMask();
-            var self = this;
             $.ajax({
                 url: routing.generate(this.options.addCouponRoute),
                 type: 'POST',
                 data: data,
                 dataType: 'json',
-                success: function(response) {
+                success: _.bind(function(response) {
                     if (response.success) {
-                        mediator.execute('showFlashMessage', 'success', __('oro.promotion.coupon.messages.success'));
+                        this._showMessage('success', __('oro.promotion.coupon.messages.success'));
+                        this._updatePageData();
                         mediator.trigger('frontend:coupons:changed');
                     } else {
-                        self._hideLoadingMask();
-                        mediator.execute('showFlashMessage', 'error', response.message);
+                        this._showMessage('error', response.message);
                     }
-                }
-            });
+                }, this)
+            }).always(
+                _.bind(this._hideLoadingMask, this)
+            );
+        },
+
+        removeCoupon: function(e) {
+            e.preventDefault();
+            var $el = $(e.currentTarget);
+            var appliedCouponId = $el.data('object-id');
+
+            this._showLoadingMask();
+            $.ajax({
+                url: routing.generate(
+                    this.options.removeCouponRoute,
+                    {
+                        entityClass: this.options.entityClass,
+                        entityId: this.options.entityId,
+                        id: appliedCouponId
+                    }
+                ),
+                type: 'DELETE',
+                dataType: 'json',
+                success: _.bind(function() {
+                    this._showMessage('success', __('oro.promotion.coupon.messages.removed'));
+                    this._updatePageData();
+                }, this)
+            }).always(
+                _.bind(this._hideLoadingMask, this)
+            );
+        },
+
+        _showMessage: function(type, message) {
+            mediator.execute('showFlashMessage', type, message);
+        },
+
+        _updatePageData: function() {
+            mediator.execute('refreshPage');
         },
 
         /**

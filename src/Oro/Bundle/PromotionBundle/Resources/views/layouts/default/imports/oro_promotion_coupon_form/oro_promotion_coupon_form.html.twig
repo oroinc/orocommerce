@@ -6,6 +6,7 @@
         selectors: {
             couponCodeSelector: '[data-role="coupon-code"]',
             couponApplySelector: '[data-role="apply-coupon"]',
+            couponRemoveSelector: '[data-role="remove-coupon"]'
         }
     } %}
     <div
@@ -101,5 +102,5 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
-    <a href="javascript:void(0)" data-object-id="{{ appliedCoupon.id }}" title="{{ 'oro.frontend.coupon.widget.delete_coupon.tooltip'|trans }}"><i class="fa fa-trash"></i></a>
+    <a href="javascript:void(0)" data-object-id="{{ appliedCoupon.id }}" title="{{ 'oro.frontend.coupon.widget.delete_coupon.tooltip'|trans }}" data-role="remove-coupon"><i class="fa fa-trash"></i></a>
 {% endblock %}

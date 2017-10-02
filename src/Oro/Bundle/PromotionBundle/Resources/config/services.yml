@@ -649,6 +649,12 @@ services:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
             - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
 
+    oro_promotion.handler.frontend_coupon_remove_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler
+        arguments:
+            - '@security.authorization_checker'
+            - '@doctrine'
+
     oro_promotion.event_listener.actualize_coupons_state_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
         arguments:

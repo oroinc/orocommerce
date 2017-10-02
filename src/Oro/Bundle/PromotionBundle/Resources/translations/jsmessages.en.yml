@@ -12,3 +12,4 @@ oro:
                 invalid_coupon_code: Invalid coupon code, please try another one
             messages:
                 success: Coupon code has been applied successfully, please review discounts
+                removed: Coupon code has been removed
