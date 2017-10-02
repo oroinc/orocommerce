@@ -49,18 +49,18 @@ class LowInventoryQuantityManager
     public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null)
     {
         if (!$productUnit) {
-            $productUnit = $product->getPrimaryUnitPrecision()->getProductUnit();
+            $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
         }
 
         /** @var InventoryLevelRepository $inventoryLevelRepository */
         $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
-        /** @var InventoryLevel $productLevel */
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $inventoryLevelRepository->getLevelByProductAndProductUnit($product, $productUnit);
         $productQuantity = $inventoryLevel->getQuantity();
 
         $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'lowInventoryThreshold');
 
-        if ($productQuantity > 0 && $productQuantity <= $lowInventoryThreshold) {
+        if ($productQuantity <= $lowInventoryThreshold) {
             return true;
         }
 
@@ -99,7 +99,7 @@ class LowInventoryQuantityManager
                 //TODO: Two lines below is just a STUB which will be replaced in scope of BB-12178
                 /** @var Product $product */
                 $productEntity = $this->doctrineHelper->getEntity(Product::class, $productId);
-                $hasLowInventoryMarker = $this->productHasLowInventoryMarker($productEntity, $productUnit);
+                $hasLowInventoryMarker = $this->isLowInventoryProduct($productEntity, $productUnit);
 
                 $response[$productId] = $hasLowInventoryMarker;
             }

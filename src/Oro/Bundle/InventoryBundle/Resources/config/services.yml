@@ -74,3 +74,10 @@ services:
         arguments:
             - "@oro_entity.fallback.resolver.entity_fallback_resolver"
             - '@oro_entity.doctrine_helper'
+
+    oro_inventory.layout.data_provider.low_inventory_provider:
+        class: Oro\Bundle\InventoryBundle\Layout\DataProvider\LowInventoryProvider
+        arguments:
+            - '@oro_inventory.manager.low_inventory_quantity_manager'
+        tags:
+            - { name: layout.data_provider, alias: low_inventory_provider }
