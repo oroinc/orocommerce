@@ -53,7 +53,7 @@
                 {% endfor %}
                 <tr>
                     <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
-                    <td class="order-checkout-widget__total"><span class="blue">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                    <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>
         </div>

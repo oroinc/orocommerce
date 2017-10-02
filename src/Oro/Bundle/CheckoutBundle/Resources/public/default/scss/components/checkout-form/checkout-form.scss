@@ -92,6 +92,12 @@
         color: $checkout-form-req-text-color;
     }
 
+    &__asterix {
+        margin: $checkout-form-asterix-offset;
+
+        color: $checkout-form-asterix-color;
+    }
+
     &__back {
         padding: $checkout-form-back-padding;
     }

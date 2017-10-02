@@ -8,6 +8,10 @@
         padding: 10px 0;
         text-align: center;
     }
+    
+    &__sku-value {
+        color: $product-item-sku-value-color;
+    }
 
     &--gallery-view {
         position: relative;

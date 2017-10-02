@@ -45,6 +45,10 @@
         font-weight: 700;
     }
 
+    &__total-price {
+        color: get-color('ui', 'normal');
+    }
+
     &__col {
         float: right;
 
