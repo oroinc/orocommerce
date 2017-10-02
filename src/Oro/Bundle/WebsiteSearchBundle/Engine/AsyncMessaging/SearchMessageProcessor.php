@@ -30,11 +30,21 @@ class SearchMessageProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $topic = $message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME);
         $data = JSON::decode($message->getBody());
 
-        $result = static::REJECT;
+        return $this->executeIndexActionByTopic($topic, $data);
+    }
 
-        switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
+    /**
+     * @param string $topic
+     * @param mixed  $data
+     *
+     * @return string
+     */
+    protected function executeIndexActionByTopic($topic, $data)
+    {
+        switch ($topic) {
             case AsyncIndexer::TOPIC_SAVE:
                 $this->indexer->save($data['entity'], $data['context']);
 
@@ -58,6 +68,9 @@ class SearchMessageProcessor implements MessageProcessorInterface
 
                 $result = static::ACK;
                 break;
+
+            default:
+                $result = static::REJECT;
         }
 
         return $result;
