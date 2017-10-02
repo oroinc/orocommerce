@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxCouponControllerTest extends WebTestCase
@@ -24,7 +23,7 @@ class AjaxCouponControllerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadCouponData::class,
-            LoadOrderLineItemData::class,
+            LoadShoppingLists::class,
         ]);
     }
 
@@ -35,8 +34,8 @@ class AjaxCouponControllerTest extends WebTestCase
             $this->getUrl('oro_promotion_frontend_add_coupon'),
             [
                 'couponCode' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getCode(),
-                'entityClass' => Order::class,
-                'entityId' => $this->getReference(LoadOrders::ORDER_1)->getId(),
+                'entityClass' => ShoppingList::class,
+                'entityId' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId(),
             ]
         );
         $result = $this->client->getResponse();
