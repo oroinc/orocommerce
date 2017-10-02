@@ -10,9 +10,12 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItemsData;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class AbstractCouponHandlerTestCase extends WebTestCase
 {
@@ -29,8 +32,13 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
         $this->loadFixtures([
             LoadCouponData::class,
             LoadOrderLineItemData::class,
+            LoadShoppingListLineItemsData::class,
         ]);
         $this->handler = static::getContainer()->get($this->getHandlerServiceName());
+
+        static::getContainer()->get('security.token_storage')->setToken($this->getToken());
+        $this->setEditPermissions(true);
+        static::getContainer()->get('request_stack')->push(new Request());
     }
 
     public function testHandleWhenNoEntityClass()
@@ -64,6 +72,17 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
         $this->handler->handle($request);
     }
 
+    public function testHandleWhenEntityDoesNotHaveNeededPermissions()
+    {
+        $this->expectException(AccessDeniedException::class);
+        $this->setEditPermissions();
+
+        $request = $this->getRequestWithCouponData([
+            'entityClass' => Order::class,
+        ]);
+        $this->handler->handle($request);
+    }
+
     public function testHandleWhenNoEntityId()
     {
         $request = $this->getRequestWithCouponData([
@@ -92,6 +111,32 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
             $jsonContent['errors']
         );
     }
+
+    /**
+     * @param bool $add
+     */
+    protected function setEditPermissions($add = false)
+    {
+        $aclManager = self::getContainer()->get('oro_security.acl.manager');
+
+        $sid = $aclManager->getSid($this->getRole());
+        $oid = $aclManager->getOid('entity:' . Order::class);
+        $builder = $aclManager->getMaskBuilder($oid);
+        $mask = $add ? $builder->reset()->add('EDIT_GLOBAL')->get() : $builder->reset()->get();
+        $aclManager->setPermission($sid, $oid, $mask, true);
+
+        $aclManager->flush();
+    }
+
+    /**
+     * @return string
+     */
+    abstract protected function getRole();
+
+    /**
+     * @return TokenInterface
+     */
+    abstract protected function getToken();
 
     /**
      * @return string

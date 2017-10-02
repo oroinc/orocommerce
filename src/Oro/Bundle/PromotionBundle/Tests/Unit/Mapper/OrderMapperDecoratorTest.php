@@ -61,13 +61,12 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
         $couponCode = 'First';
         $sourcePromotionId = 3;
         $sourceCouponId = 22;
-        $appliedPromotion = new AppliedPromotion();
 
         $appliedCoupon = $this->getEntity(AppliedCoupon::class, [
             'id' => 5,
             'couponCode' => $couponCode,
             'sourcePromotionId' => $sourcePromotionId,
-            'sourceCouponId' => $sourceCouponId
+            'sourceCouponId' => $sourceCouponId,
         ]);
 
         $shoppingList = new ShoppingList();

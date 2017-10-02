@@ -14,6 +14,8 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class AbstractCouponHandler
 {
@@ -33,18 +35,26 @@ abstract class AbstractCouponHandler
     protected $eventDispatcher;
 
     /**
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
+
+    /**
      * @param EntityRoutingHelper $routingHelper
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         EntityRoutingHelper $routingHelper,
         ManagerRegistry $registry,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->routingHelper = $routingHelper;
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -63,7 +73,7 @@ abstract class AbstractCouponHandler
     /**
      * @param Request $request
      * @return AppliedCouponsAwareInterface
-     * @throws LogicException
+     * @throws LogicException|AccessDeniedException
      */
     protected function getActualizedEntity(Request $request)
     {
@@ -82,6 +92,10 @@ abstract class AbstractCouponHandler
 
         if (!$entity instanceof AppliedCouponsAwareInterface) {
             throw new LogicException('Entity should be instance of AppliedCouponsAwareInterface');
+        }
+
+        if (!$this->authorizationChecker->isGranted('EDIT', $entity)) {
+            throw new AccessDeniedException();
         }
 
         $event = new TotalCalculateBeforeEvent($entity, $request);

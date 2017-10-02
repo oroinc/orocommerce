@@ -635,6 +635,7 @@ services:
             - '@oro_entity.routing_helper'
             - '@doctrine'
             - '@event_dispatcher'
+            - '@security.authorization_checker'
 
     oro_promotion.handler.coupon_validation_handler:
         class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler

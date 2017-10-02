@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Handler;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
@@ -57,7 +58,7 @@ class FrontendCouponHandler extends AbstractCouponHandler
         $entity = $this->getActualizedEntity($request);
         $errors = $this->couponApplicabilityValidationService->getViolations($coupon, $entity);
 
-        if (empty($errors)) {
+        if (empty($errors) && !$entity instanceof AppliedPromotionsAwareInterface) {
             $this->saveAppliedCoupon($coupon, $entity);
         }
 

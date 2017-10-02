@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadShoppingListsData;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\HttpFoundation\Request;
 
 class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
@@ -24,6 +29,34 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         $this->client->useHashNavigation(true);
 
         parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getToken()
+    {
+        $user = self::getContainer()->get('doctrine')
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
+        $organization = static::getContainer()->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
+
+        return new UsernamePasswordOrganizationToken(
+            $user,
+            false,
+            'main',
+            $organization
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRole()
+    {
+        return 'ROLE_FRONTEND_ADMINISTRATOR';
     }
 
     /**
@@ -55,12 +88,31 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         self::assertEquals('oro.promotion.coupon.violation.invalid_coupon_code', reset($jsonContent['errors']));
     }
 
-    public function testHandle()
+    public function testHandleWhenNoAppliedPromotionInterface()
     {
         /** @var AppliedCouponsAwareInterface|Order $entity */
         $entity = $this->getReference(LoadOrders::ORDER_2);
         $request = $this->getRequestWithCouponData([
             'entityClass' => Order::class,
+            'entityId' => $entity->getId(),
+        ]);
+        $response = $this->handler->handle($request);
+
+        self::assertJsonResponseStatusCodeEquals($response, 200);
+        $jsonContent = json_decode($response->getContent(), true);
+        self::assertTrue($jsonContent['success']);
+        self::assertEmpty($jsonContent['errors']);
+
+        $expectedAppliedCoupons = $entity->getAppliedCoupons()->toArray();
+        self::assertCount(0, $expectedAppliedCoupons);
+    }
+
+    public function testHandle()
+    {
+        /** @var AppliedCouponsAwareInterface|Order $entity */
+        $entity = $this->getReference(LoadShoppingListsData::PROMOTION_SHOPPING_LIST);
+        $request = $this->getRequestWithCouponData([
+            'entityClass' => ShoppingList::class,
             'entityId' => $entity->getId(),
         ]);
         $response = $this->handler->handle($request);

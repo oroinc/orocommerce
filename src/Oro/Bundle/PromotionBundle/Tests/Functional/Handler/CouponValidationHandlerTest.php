@@ -4,9 +4,11 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Symfony\Component\HttpFoundation\Request;
 
 class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
@@ -20,6 +22,31 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
         $this->client->useHashNavigation(true);
 
         parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getToken()
+    {
+        $organization = static::getContainer()->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
+
+        return new UsernamePasswordOrganizationToken(
+            'admin',
+            'admin',
+            'main',
+            $organization
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRole()
+    {
+        return 'ROLE_ADMINISTRATOR';
     }
 
     /**
