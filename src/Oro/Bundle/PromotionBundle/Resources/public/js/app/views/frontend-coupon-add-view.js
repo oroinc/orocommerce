@@ -77,9 +77,8 @@ define(function(require) {
                 dataType: 'json',
                 success: _.bind(function(response) {
                     if (response.success) {
-                        this._showMessage('success', __('oro.promotion.coupon.messages.success'));
                         this._updatePageData();
-                        mediator.trigger('frontend:coupons:changed');
+                        this._showMessage('success', __('oro.promotion.coupon.messages.success'));
                     } else {
                         this._showMessage('error', response.message);
                     }
@@ -120,7 +119,12 @@ define(function(require) {
         },
 
         _updatePageData: function() {
-            mediator.execute('refreshPage');
+            // TODO change this condition in scope of BB-12228.
+            if ($('[data-role="checkout-content"]').length) {
+                mediator.execute('refreshPage');
+            } else {
+                mediator.trigger('frontend:coupons:changed');
+            }
         },
 
         /**
