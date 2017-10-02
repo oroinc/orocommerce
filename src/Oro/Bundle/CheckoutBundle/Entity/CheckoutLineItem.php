@@ -42,7 +42,7 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
 
@@ -50,7 +50,7 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $parentProduct;
 
