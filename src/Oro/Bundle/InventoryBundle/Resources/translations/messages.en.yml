@@ -70,6 +70,8 @@ oro:
             fields:
                 manage_inventory.label: Managed Inventory
                 inventory_threshold.label: Inventory Threshold
+                highlight_low_inventory.label: Highlight Low Inventory
+                low_inventory_threshold.label: Low Inventory Threshold
                 backorders.label: Backorders
                 decrement_inventory:
                     label: Decrement Inventory
@@ -82,8 +84,8 @@ oro:
             choice:
                 'true': Yes
                 'false': No
-        manage_low_inventory:
-            label: Managed Low Inventory
+        highlight_low_inventory:
+            label: Highlight Low Inventory
             choice:
                 'true': Yes
                 'false': No
@@ -111,8 +113,8 @@ oro:
     product:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not
-        manage_low_inventory:
-            description:  Option which defines if low inventory for products is managed or not
+        highlight_low_inventory:
+            description:  Option which defines if low inventory for products is highlighted or not
         inventory_threshold:
             description: The value that defines the limit of the inventory after which this product can not be ordered
         low_inventory_threshold:

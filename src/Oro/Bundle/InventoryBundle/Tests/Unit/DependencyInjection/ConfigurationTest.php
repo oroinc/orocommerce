@@ -29,7 +29,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => true,
                     'scope' => 'app'
                 ],
+                'highlight_low_inventory' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
                 'inventory_threshold' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'low_inventory_threshold' => [
                     'value' => false,
                     'scope' => 'app'
                 ],

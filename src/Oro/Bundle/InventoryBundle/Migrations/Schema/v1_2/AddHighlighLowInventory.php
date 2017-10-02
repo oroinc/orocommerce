@@ -13,7 +13,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
+class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterface
 {
     use AddFallbackRelationTrait;
 
@@ -33,8 +33,8 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addManageLowInventoryFieldToProduct($schema);
-        $this->addManageLowInventoryFieldToCategory($schema);
+        $this->addHighlightLowInventoryFieldToProduct($schema);
+        $this->addHighlightLowInventoryFieldToCategory($schema);
         $this->addLowInventoryThresholdFieldToProduct($schema);
         $this->addLowInventoryThresholdFieldToCategory($schema);
     }
@@ -42,9 +42,9 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
     /**
      * @param Schema $schema
      */
-    protected function addManageLowInventoryFieldToProduct(Schema $schema)
+    protected function addHighlightLowInventoryFieldToProduct(Schema $schema)
     {
-        if ($schema->getTable('oro_product')->hasColumn('managelowinventory_id')) {
+        if ($schema->getTable('oro_product')->hasColumn('highlightlowinventory_id')) {
             return;
         }
 
@@ -52,11 +52,11 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $this->extendExtension,
             'oro_product',
-            'manageLowInventory',
-            'oro.inventory.manage_low_inventory.label',
+            'highlightLowInventory',
+            'oro.inventory.highlight_low_inventory.label',
             [
-                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageLowInventory'],
-                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_low_inventory'],
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'highlightLowInventory'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
             ]
         );
     }
@@ -90,7 +90,7 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function addLowInventoryThresholdFieldToCategory(Schema $schema)
     {
-        if ($schema->getTable('oro_catalog_category')->hasColumn('inventoryLowThreshold_id')) {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('lowInventoryThreshold_id')) {
             return;
         }
 
@@ -98,12 +98,12 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            'inventoryLowThreshold',
-            'oro.inventory.inventory_low_threshold.label',
+            'lowInventoryThreshold',
+            'oro.inventory.low_inventory_threshold.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'inventoryLowThreshold'],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'lowInventoryThreshold'],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
-                    'configName' => 'oro_inventory.inventory_low_threshold'
+                    'configName' => 'oro_inventory.low_inventory_threshold'
                 ],
             ]
         );
@@ -112,9 +112,9 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
     /**
      * @param Schema $schema
      */
-    protected function addManageLowInventoryFieldToCategory(Schema $schema)
+    protected function addHighlightLowInventoryFieldToCategory(Schema $schema)
     {
-        if ($schema->getTable('oro_catalog_category')->hasColumn('managelowinventory_id')) {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('highlightlowinventory_id')) {
             return;
         }
 
@@ -122,11 +122,11 @@ class OroInventoryBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            'manageLowInventory',
-            'oro.inventory.manage_low_inventory.label',
+            'highlightLowInventory',
+            'oro.inventory.highlight_low_inventory.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageLowInventory'],
-                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_low_inventory'],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'highlightLowInventory'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
             ]
         );
     }

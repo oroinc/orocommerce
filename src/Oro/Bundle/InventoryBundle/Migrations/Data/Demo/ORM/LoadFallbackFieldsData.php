@@ -22,7 +22,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         'minimumQuantityToOrder',
         'maximumQuantityToOrder',
         'manageInventory',
-        'manageLowInventory',
+        'highlightLowInventory',
         'inventoryThreshold',
         'lowInventoryThreshold',
         'decrementQuantity',

@@ -405,13 +405,13 @@ Example:
           "id": "2abcd"
         }
       },
-      "manageLowInventory": {
+      "highlightLowInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
           "id": "low1abcd"
         }
       },
-      "inventoryThreshold": {
+      "lowInventoryThreshold": {
         "data": {
           "type": "entityfieldfallbackvalues",
           "id": "low2abcd"
@@ -1009,7 +1009,7 @@ Example:
 
 ### manageInventory
 
-### manageLowInventory
+### highlightLowInventory
 
 #### create
 
@@ -1207,7 +1207,7 @@ Retrieve an ID of the manageInventory flag for a specific product
 
 Replace the manageInventory entity fallback value for a specific product record.
 
-### manageLowInventory
+### highlightLowInventory
 
 #### get_subresource
 
