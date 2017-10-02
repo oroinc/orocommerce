@@ -153,6 +153,9 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     IHaveACouponCode:
-      selector:
-        type: 'xpath'
-        locator: '//a[text()[contains(.,"I have a Coupon Code")]]'
+      selector: 'div.collapse-view__trigger:contains("I have a Coupon Code")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    CouponsList:
+      selector: 'ul.coupons-list'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

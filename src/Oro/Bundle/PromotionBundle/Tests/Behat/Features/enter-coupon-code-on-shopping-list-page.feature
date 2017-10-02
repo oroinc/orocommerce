@@ -11,11 +11,11 @@ Feature: Enter coupon code on shopping list page
     And I open shopping list widget
     And I click "View Details"
     And I scroll to "I have a Coupon Code"
-    Then I click "I have a Coupon Code"
+    When I click "I have a Coupon Code"
     And I type "coupon-1" in "CouponCodeInput"
     And I press "Apply"
-    # TODO fix in BB-12230, when already refresh will be possible to see message not briefly
-    # And I should see "Coupon code has been applied successfully, please review discounts" flash message
+    Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I should see "coupon-1 Shopping list Promotion" in the "Coupons List" element
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
       | Discount | -$1.00 |
