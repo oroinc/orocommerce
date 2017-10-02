@@ -138,10 +138,6 @@ define(function(require) {
          * Render actual view
          */
         render: function() {
-            this.getElement('submitButtons')
-                .toggleClass('disabled', this.total.commonQuantity === 0)
-                .data('disabled', this.total.commonQuantity === 0);
-
             this.getElement('totalQty').text(this.total.commonQuantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)

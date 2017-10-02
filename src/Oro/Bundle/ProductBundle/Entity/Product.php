@@ -1256,7 +1256,7 @@ class Product extends ExtendProduct implements
         return [
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitsPrecision(),
-            'unit' => $this->getPrimaryUnitPrecision()->getUnit()->getCode(),
+            'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }

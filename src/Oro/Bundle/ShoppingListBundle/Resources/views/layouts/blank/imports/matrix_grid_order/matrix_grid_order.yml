@@ -10,13 +10,13 @@ layout:
                     blockType: matrix_grid_prices
                     options:
                         visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
-                        productPrices: '=data.offsetExists("products") ? data["frontend_product_prices"].getByProducts(data["products"]) : []'
-                        unit: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderForm(data["product"]).getData().unit.getCode()'
+                        productPrices: '=data["frontend_product_prices"].getSimpleByConfigurable(data["product"])'
+                        unit: '=data["product"].getPrimaryUnitPrecision().getProductUnitCode()'
                 __form_start:
                     blockType: form_start
                     options:
                         visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
                         form_route_name: 'oro_shopping_list_frontend_matrix_grid_order'
                         form_route_parameters:
                             productId: '=data["product"].getId()'
@@ -25,12 +25,12 @@ layout:
                     blockType: form_fields
                     options:
                         visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
                 __form_end:
                     blockType: form_end
                     options:
                         visible: '=data["oro_product_form_availability"].isMatrixAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
                 __form_summary:
                     blockType: matrix_order_form_summary
                     options:

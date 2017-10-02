@@ -44,18 +44,6 @@
 
     .pinned-dropdown {
         max-width: $matrix-order-widget-pinned-dropdown-max-width;
-
-        .btn-group {
-            &.open .dropdown-menu {
-                bottom: 100%;
-                top: auto;
-
-                display: flex;
-                flex-direction: column-reverse;
-                margin-bottom: $offset-y-s;
-
-            }
-        }
     }
 
     &--dialog {

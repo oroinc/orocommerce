@@ -50,8 +50,9 @@ class MatrixGridOrderManager
      */
     public function getMatrixCollection(Product $product, ShoppingList $shoppingList = null)
     {
-        if (isset($this->collectionCache[$product->getId()])) {
-            return $this->collectionCache[$product->getId()];
+        $shoppingListId = $shoppingList ? $shoppingList->getId() : null;
+        if (isset($this->collectionCache[$product->getId()][$shoppingListId])) {
+            return $this->collectionCache[$product->getId()][$shoppingListId];
         }
 
         $variantFields = $this->getVariantFields($product);
@@ -89,7 +90,7 @@ class MatrixGridOrderManager
             $collection->rows[] = $row;
         }
 
-        return $this->collectionCache[$product->getId()] = $collection;
+        return $this->collectionCache[$product->getId()][$shoppingListId] = $collection;
     }
 
     /**
