@@ -99,3 +99,15 @@ oro_behat_extension:
           Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
           Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
+
+    Add Product Price Form:
+      selector: '[id^="oro_action_operation-uid"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_action_operation_price_product-uid")]//input'
+          Quantity: 'oro_action_operation[price][quantity]'
+          Unit: 'oro_action_operation[price][unit]'
+          Price: 'oro_action_operation[price][price][value]'
