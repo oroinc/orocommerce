@@ -11,5 +11,5 @@ oro:
                 coupon_promotion_not_applicable: This coupon's discount is not applicable
                 invalid_coupon_code: Invalid coupon code, please try another one
             messages:
-                success: Coupon code has been applied successfully, please review discounts
+                coupon_code_applied_successfully: Coupon code has been applied successfully, please review discounts
                 removed: Coupon code has been removed

@@ -8,6 +8,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var mediator = require('oroui/js/mediator');
+    var messenger = require('oroui/js/messenger');
     var FrontendCouponAddView;
 
     FrontendCouponAddView = BaseView.extend({
@@ -20,10 +21,12 @@ define(function(require) {
             addCouponRoute: 'oro_promotion_frontend_add_coupon',
             removeCouponRoute: 'oro_promotion_frontend_remove_coupon',
             skipMaskView: false,
+            messageNamespace: 'frontend-coupon-add-view',
             selectors: {
                 couponCodeSelector: null,
                 couponApplySelector: null,
-                couponRemoveSelector: null
+                couponRemoveSelector: null,
+                messagesContainer: null
             }
         },
 
@@ -50,11 +53,24 @@ define(function(require) {
         events: function() {
             var events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
+            events['keydown ' + this.options.selectors.couponCodeSelector] = 'applyCouponByEnter';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
 
             return events;
         },
 
+        /**
+         @param {jQuery.Event} e
+         */
+        applyCouponByEnter: function(e) {
+            if (e.keyCode === 13) {
+                this.applyCoupon(e);
+            }
+        },
+
+        /**
+         @param {jQuery.Event} e
+         */
         applyCoupon: function(e) {
             e.preventDefault();
 
@@ -77,10 +93,10 @@ define(function(require) {
                 dataType: 'json',
                 success: _.bind(function(response) {
                     if (response.success) {
+                        this._showSuccess(__('oro.promotion.coupon.messages.coupon_code_applied_successfully'));
                         this._updatePageData();
-                        this._showMessage('success', __('oro.promotion.coupon.messages.success'));
                     } else {
-                        this._showMessage('error', response.message);
+                        this._showErrors(response.errors);
                     }
                 }, this)
             }).always(
@@ -106,7 +122,7 @@ define(function(require) {
                 type: 'DELETE',
                 dataType: 'json',
                 success: _.bind(function() {
-                    this._showMessage('success', __('oro.promotion.coupon.messages.removed'));
+                    this._showSuccess(__('oro.promotion.coupon.messages.removed'));
                     this._updatePageData();
                 }, this)
             }).always(
@@ -114,8 +130,44 @@ define(function(require) {
             );
         },
 
-        _showMessage: function(type, message) {
-            mediator.execute('showFlashMessage', type, message);
+        /**
+         * @param {string} message
+         *
+         * @private
+         */
+        _showSuccess: function(message) {
+            mediator.execute('showFlashMessage', 'success', message, {flash: true});
+        },
+
+        /**
+         * @param {Array} errors
+         *
+         * @private
+         */
+        _showErrors: function(errors) {
+            this._clearMessages();
+            var messageOptions = this._prepareMessageOptions();
+            _.each(errors, function(message) {
+                messageOptions.delay = false;
+                mediator.execute('showMessage', 'error', __(message), messageOptions);
+            }, messageOptions);
+        },
+
+        _clearMessages: function() {
+            messenger.clear(this.options.messageNamespace, {
+                container: this.options.selectors.messagesContainer
+            });
+        },
+
+        /**
+         * @returns {Object} messageOptions
+         * @private
+         */
+        _prepareMessageOptions: function() {
+            return {
+                container: this.options.selectors.messagesContainer,
+                namespace: this.options.messageNamespace
+            };
         },
 
         _updatePageData: function() {
