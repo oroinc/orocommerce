@@ -19,6 +19,17 @@ Feature: Enter coupon code on shopping list page
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
       | Discount | -$1.00 |
+
+  Scenario: Entered invalid coupon should not pass validation
+    When I type "coupon-1" in "CouponCodeInput"
+    And I press "Apply"
+    Then I should see "This coupon has been already added"
+    When I type "not-existing-coupon" in "CouponCodeInput"
+    And I press "Apply"
+    Then I should see "Invalid coupon code, please try another one"
+    And I should not see "not-existing-coupon" in the "Coupons List" element
+
+  Scenario: Removed coupon should not give discount
     When I click "Coupon Delete Button"
     Then I should not see "coupon-1 Shopping list Promotion"
     And I should see "I have a Coupon Code"
