@@ -19,3 +19,7 @@ Feature: Enter coupon code on shopping list page
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
       | Discount | -$1.00 |
+    When I click "Coupon Delete Button"
+    Then I should not see "coupon-1 Shopping list Promotion"
+    And I should see "I have a Coupon Code"
+    And I should not see "Discount -$1.00" in the "Subtotals" element

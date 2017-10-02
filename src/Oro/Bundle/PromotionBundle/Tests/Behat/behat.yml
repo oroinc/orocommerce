@@ -159,3 +159,7 @@ oro_behat_extension:
     CouponsList:
       selector: 'ul.coupons-list'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Coupon Delete Button:
+      selector: 'button[data-role="remove-coupon"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
