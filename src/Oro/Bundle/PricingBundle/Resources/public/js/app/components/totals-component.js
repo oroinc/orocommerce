@@ -270,6 +270,8 @@ define(function(require) {
                 );
             }
 
+            item.label = _.escape(item.label);
+
             var renderedItem = null;
 
             if (localItem.template) {

@@ -1,5 +1,6 @@
 @ticket-BB-10469
 @ticket-BB-10920
+@ticket-BB-12071
 @automatically-ticket-tagged
 @fixture-OroOrderBundle:order.yml
 Feature: Order with Discounts
@@ -24,8 +25,9 @@ Feature: Order with Discounts
 
   Scenario: Check manual discounts without description functionality
     When I fill "Order Form" with:
-      | Discount Value (first) | 2 |
-      | Discount Type (first) | USD |
+      | Discount Value (first)       | 2                         |
+      | Discount Type (first)        | USD                       |
+      | Discount Description (first) | My <script>alert(1)</script> |
     Then I should see that "Discount Row (first)" contains "$2.00 (4%)"
     And I click "Order Totals"
     And I should see that "Backend Order Subtotals" contains "Discount $2.00"
@@ -34,20 +36,20 @@ Feature: Order with Discounts
     And click "Discounts" tab in navigation menu
     And I should see that "Discount Row (first)" contains "$2.00 (4%)"
     Then I click "Order Totals"
-    And I should see that "Backend Order Subtotals" contains "Discount $2.00"
+    And I should see that "Backend Order Subtotals" contains "My <script>alert(1)</script> (Discount) $2.00"
 
   Scenario: Check manual discounts with description functionality
     When I fill "Order Form" with:
-      | Discount Description (first) | Some |
-      | Discount Value (first) | 10 |
-      | Discount Type (first) | % |
+      | Discount Description (first) | Some <script>alert(1)</script> |
+      | Discount Value (first)       | 10                             |
+      | Discount Type (first)        | %                              |
     Then I should see that "Discount Row (first)" contains "$5.00 (10%)"
     When I click "Order Totals"
-    Then I should see that "Backend Order Subtotals" contains "Some (Discount) $5.00"
+    Then I should see that "Backend Order Subtotals" contains "Some <script>alert(1)</script> (Discount) $5.00"
     When I save form
     And I click "Save" in confirmation dialogue
     Then should see "Order has been saved" flash message
     And click "Discounts" tab in navigation menu
     And I should see that "Discount Row (first)" contains "$5.00 (10%)"
     Then I click "Order Totals"
-    And I should see that "Backend Order Subtotals" contains "Some (Discount) $5.00"
+    And I should see that "Backend Order Subtotals" contains "Some <script>alert(1)</script> (Discount) $5.00"
