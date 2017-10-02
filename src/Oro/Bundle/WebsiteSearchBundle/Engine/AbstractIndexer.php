@@ -207,7 +207,10 @@ abstract class AbstractIndexer implements IndexerInterface
 
         if ($contextEntityIds) {
             // Remove certain entities from index before reindexation
-            $this->deleteEntities($entityClass, $contextEntityIds, $context);
+            if (false === $this->deleteEntities($entityClass, $contextEntityIds, $context)) {
+                throw new \RuntimeException('Delete has not been successful, cannot proceed with reindex');
+            }
+
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
                 ->setParameter('contextEntityIds', $contextEntityIds);
         }
@@ -245,6 +248,8 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
+     *
+     * @return bool
      */
     protected function deleteEntities($entityClass, array $entityIds, array $context)
     {
@@ -255,7 +260,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $entities[$id] = $entityManager->getReference($entityClass, $id);
         }
 
-        $this->delete($entities, $context);
+        return $this->delete($entities, $context);
     }
 
     /**
