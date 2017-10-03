@@ -4,6 +4,18 @@
     margin-top: 10px;
 }
 
+@include breakpoint('tablet-small') {
+    .cart-table {
+        .status-cell {
+            display: none;
+        }
+
+        .line-item-price {
+            width: auto;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .cart-table {
         thead {

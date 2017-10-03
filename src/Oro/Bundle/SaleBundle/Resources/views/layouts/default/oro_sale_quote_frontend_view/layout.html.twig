@@ -15,67 +15,59 @@
 {% endblock %}
 
 {% block _quote_view_information_widget %}
-    <div class="customer-oq-container">
-        <div class="customer-oq__item__head">
-            <div class="customer-oq__item customer-oq__item_full mb0-sm">
-                <h2 class="customer-oq__item__title">
-                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
-                </h2>
+    <div class="customer-info-grid">
+        <h2 class="customer-info-grid__title">
+            {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+        </h2>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+                <table class="customer-info-grid__table table borderless">
+                    <tbody>
+                    {% if quote.assignedUsers | length %}
+                        <tr>
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">
+                                {% set assigned_users = [] %}
+                                {% for entity in quote.assignedUsers %}
+                                    {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                {% endfor %}
+                                {{ assigned_users|join(', ') }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr class="customer-info-grid__row">
+                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                        <td class="customer-info-grid__element-content">{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                    </tr>
+                    <tr class="customer-info-grid__row">
+                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                        <td class="customer-info-grid__element-content">{{ quote.poNumber|default('N/A'|trans) }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
-        <div class="customer-oq__item__body">
-            <div class="customer-oq__item">
-                <div class="customer-oq__order-info">
-                    <table class="table borderless mobile-table">
-                        <tbody>
-                        {% if quote.assignedUsers | length %}
-                            <tr>
-                                <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
-                                <td>
-                                    {% set assigned_users = [] %}
-                                    {% for entity in quote.assignedUsers %}
-                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
-                                    {% endfor %}
-                                    {{ assigned_users|join(', ') }}
-                                </td>
+            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+                <table class="customer-info-grid__table table borderless">
+                    <tbody>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                        </tr>
+                        {% if quote.shippingCost is not empty %}
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.shippingCost|oro_format_price }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if paymentTerm is defined and paymentTerm is not empty %}
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.paymentterm.entity_label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">{{ paymentTerm.label|escape }}</td>
                             </tr>
                         {% endif %}
-                        <tr class="customer-oq__order-info__control">
-                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
-                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
-                        </tr>
-                        <tr class="customer-oq__order-info__control">
-                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
-                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="customer-oq__item">
-                <div class="customer-oq__order-info">
-                    <table class="table borderless  mobile-table">
-                        <tbody>
-                            <tr class="customer-oq__order-info__control">
-                                <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
-                                <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
-                            </tr>
-                            {% if quote.shippingCost is not empty %}
-                            <tr class="customer-oq__order-info__control">
-                                <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
-                                <td>{{ quote.shippingCost|oro_format_price }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if paymentTerm is defined and paymentTerm is not empty %}
-                                <tr class="customer-oq__order-info__control">
-                                    <td class="customer-oq__order-info__title">{{ 'oro.paymentterm.entity_label'|trans }}</td>
-                                    <td>{{ paymentTerm.label|escape }}</td>
-                                </tr>
-                            {% endif %}
-                            {{ block_widget(block) }}
-                        </tbody>
-                    </table>
-                </div>
+                        {{ block_widget(block) }}
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -84,118 +76,25 @@
 
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <!-- START ITEMS ORDERED DESKTOP -->
-    <div class="customer-oq-container hidden-sm hidden-xs">
-        <div class="customer-oq__item customer-oq__item_full">
-            <div class="customer-oq__item__head">
-                <h2 class="customer-oq__item__title">
-                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
-                </h2>
-            </div>
-            <div class="customer-oq__item__body">
-
-                <table class="oro-grid-table oro-grid-table__orders">
-                    <thead>
-                    <tr>
-                        <th colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
-                        <th>{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
-                        <th class="text-right">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for quoteProduct in quoteProducts %}
-                        {% for productOffer in quoteProduct.quoteProductOffers %}
-                            <tr class="borderless">
-                                {% if loop.first %}
-                                    <td class="va-t_md" colspan="2" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
-                                        <h3 class="oro-grid-table__title">
-                                            {% if (quoteProduct.product.id is defined) %}
-                                                {{ UI.link({
-                                                    path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
-                                                    label : quoteProduct.product.names|localized_value,
-                                                }) }}
-                                            {% else %}
-                                                {{ quoteProduct.productName }}
-                                            {% endif %}
-                                        </h3>
-                                        <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span></div>
-                                    </td>
-                                {% endif %}
-                                <td>
-                                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
-                                        {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
-                                    {% else %}
-                                        {{ productOffer.quantity }}
-                                    {% endif %}
-                                    {% if productOffer.allowIncrements %}
-                                        {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
-                                    {% endif %}
-                                </td>
-                                <td class="text-right">{{ productOffer.price|oro_format_price }}</td>
-                            </tr>
-                        {% endfor %}
-
-                        {% if (quoteProduct.commentCustomer is not empty) %}
-                            <tr class="borderless">
-                                <td colspan="4">
-                                    <div class="customer-oq__order-item-more">
-                                         <div class="expand-text" data-page-component-expand-text="80">
-                                            {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endif %}
-
-                        {% if (quoteProduct.comment is not empty) %}
-                            <tr class="borderless">
-                                <td colspan="4">
-                                    <div class="customer-oq__order-item-more">
-                                        <div class="expand-text" data-page-component-expand-text="80">
-                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endif %}
-
-                        <tr>
-                            <td colspan="4">
-                                <div class="decor-row"></div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="order-checkout-widget text-right">
-                    <div class="order-builder-clear-btn">
-                        <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END ITEMS ORDERED DESKTOP -->
-{% endblock %}
-
-{% block _quote_view_line_items_mobile_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <!-- START ITEMS ORDERED MOBILE -->
-    <div class="customer-oq-container hidden-lg hidden-md">
-        <div class="customer-oq__item customer-oq__item_full">
-            <div class="customer-oq__item__head">
-                <h2 class="customer-oq__item__title styled">
-                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
-                </h2>
-            </div>
-            <div class="customer-oq__item__body">
-                <table class="oro-grid-table  oro-grid-table-properties oro-grid-table__orders_order-details">
-                    <tbody>
-                    {% for quoteProduct in quoteProducts %}
-                        <tr>
-                            <td class="va-t_sm">
-                                <h3 class="product-item__title product-item__title_in-cart mb1-md">
+    <div class="customer-line-items">
+        <h2 class="customer-line-items__title">
+            {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
+        </h2>
+        <table class="oro-grid-table customer-line-items__table">
+            <thead class="grid-header hide-on-tablet-small">
+                <tr class="grid-header-row">
+                    <th class="grid-cell" colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
+                </tr>
+            </thead>
+            {% for quoteProduct in quoteProducts %}
+                <tbody class="grid-body">
+                {% for productOffer in quoteProduct.quoteProductOffers %}
+                    <tr class="grid-row">
+                        {% if loop.first %}
+                            <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell" colspan="2" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
+                                <h3 class="oro-grid-table__title">
                                     {% if (quoteProduct.product.id is defined) %}
                                         {{ UI.link({
                                             path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
@@ -206,66 +105,57 @@
                                     {% endif %}
                                 </h3>
                                 <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
-
-                                <table class="oro-grid-table oro-grid-table-properties">
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-left">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</td>
-                                            <td class="text-left">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</td>
-                                        </tr>
-                                        {% for productOffer in quoteProduct.quoteProductOffers %}
-                                            <tr>
-                                                <td class="text-left">
-                                                    {% if oro_is_unit_code_visible(productOffer.productUnit) %}
-                                                        {{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}
-                                                    {% else %}
-                                                        {{ productOffer.quantity }}
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        {% if (quoteProduct.commentCustomer is not empty) %}
-                                            <tr class="borderless t_paddingless">
-                                                <td colspan="2">
-                                                    <div class="customer-oq__order-item-more">
-                                                        <div class="expand-text" data-page-component-expand-text="100">
-                                                            {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-
-                                        {% if (quoteProduct.comment is not empty) %}
-                                            <tr class="borderless t_paddingless">
-                                                <td colspan="2">
-                                                    <div class="customer-oq__order-item-more">
-                                                        <div class="expand-text" data-page-component-expand-text="100">
-                                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="decor-row"></div>
+                            <td class="grid-cell grid-cell--offset-l-none-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
+                                {{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}
                             </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                            <td class="grid-cell last-on-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
+                                {{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}
+                            </td>
+                        {% endif %}
+                        <td class="grid-cell grid-cell--offset-l-none-mobile">
+                            {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
+                                {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                            {% else %}
+                                {{ productOffer.quantity }}
+                            {% endif %}
+                            {% if productOffer.allowIncrements %}
+                                {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                            {% endif %}
+                        </td>
+                        <td class="grid-cell">{{ productOffer.price|oro_format_price }}</td>
+                    </tr>
+                {% endfor %}
+
+                {% if (quoteProduct.commentCustomer is not empty) %}
+                    <tr class="grid-row">
+                        <td class="grid-cell notes-cell" colspan="4">
+                            <div class="customer-line-items__notes">
+                                {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if (quoteProduct.comment is not empty) %}
+                    <tr class="grid-row">
+                        <td class="grid-cell notes-cell" colspan="4">
+                            <div class="customer-line-items__notes">
+                                {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            {% endfor %}
+        </table>
+
+        <div class="order-checkout-widget text-right">
+            <div class="order-builder-clear-btn">
                 <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>
     </div>
-    <!-- END ITEMS ORDERED MOBILE -->
 {% endblock %}
 
 {% block _quote_view_page_widget %}
@@ -298,9 +188,9 @@
 
 {% block quote_body_column_element_widget %}
     {% if address is not null %}
-        <tr class="customer-oq__order-info__control">
-            <td class="customer-oq__order-info__title">{{ label|trans }}</td>
-            <td>{{ block_widget(block) }}</td>
+        <tr>
+            <td class="customer-info-grid__element-label">{{ label|trans }}</td>
+            <td class="customer-info-grid__element-content">{{ block_widget(block) }}</td>
         </tr>
     {% endif %}
 {% endblock %}
