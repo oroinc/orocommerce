@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
@@ -52,13 +53,14 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     public function testGetViolationsWhenCouponIsNotValid()
     {
         $coupon = new Coupon();
-        $entity = new OrderStub();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
 
         $errorMessages = ['oro.order.some_error_message'];
         $this->couponValidationService
             ->expects($this->once())
             ->method('getViolations')
-            ->with($coupon)
+            ->with($coupon, $customerUser)
             ->willReturn($errorMessages);
 
         $this->assertEquals(
@@ -71,14 +73,15 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     {
         /** @var Coupon $coupon */
         $coupon = $this->getEntity(Coupon::class, ['id' => 5]);
-        $entity = new OrderStub();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
         $appliedCoupon = (new AppliedCoupon())->setSourceCouponId(5);
         $entity->addAppliedCoupon($appliedCoupon);
 
         $this->couponValidationService
             ->expects($this->once())
             ->method('getViolations')
-            ->with($coupon)
+            ->with($coupon, $customerUser)
             ->willReturn([]);
 
         $this->assertEquals(
@@ -91,12 +94,13 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     {
         $promotion = new Promotion();
         $coupon = (new Coupon())->setPromotion($promotion);
-        $entity = new OrderStub();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
 
         $this->couponValidationService
             ->expects($this->once())
             ->method('getViolations')
-            ->with($coupon)
+            ->with($coupon, $customerUser)
             ->willReturn([]);
 
         $this->promotionProvider
@@ -115,12 +119,13 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     {
         $promotion = new Promotion();
         $coupon = (new Coupon())->setPromotion($promotion);
-        $entity = new OrderStub();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
 
         $this->couponValidationService
             ->expects($this->once())
             ->method('getViolations')
-            ->with($coupon)
+            ->with($coupon, $customerUser)
             ->willReturn([]);
 
         $this->promotionProvider
@@ -145,12 +150,13 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     {
         $promotion = new Promotion();
         $coupon = (new Coupon())->setPromotion($promotion);
-        $entity = new OrderStub();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
 
         $this->couponValidationService
             ->expects($this->once())
             ->method('getViolations')
-            ->with($coupon)
+            ->with($coupon, $customerUser)
             ->willReturn([]);
 
         $this->promotionProvider
@@ -166,5 +172,15 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
             ->willReturn(true);
 
         $this->assertEmpty($this->couponApplicabilityValidationService->getViolations($coupon, $entity));
+    }
+
+    public function testGetViolationsWithInvalidEntityPassed()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Argument $entity should implements CustomerOwnerAwareInterface and AppliedCouponsAwareInterface'
+        );
+
+        $this->couponApplicabilityValidationService->getViolations(new Coupon(), new \stdClass());
     }
 }

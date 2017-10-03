@@ -351,6 +351,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         // check remove source
         $this->getContainer()->get('doctrine')->getManagerForClass($checkoutSourceClass)->flush();
         $this->assertNull($this->findEntity($checkoutSourceClass, $checkoutSourceId));
+
+        $this->getContainer()->get('oro_entity_config.config_manager')->clear();
     }
 
     /**
