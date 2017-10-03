@@ -46,7 +46,6 @@
         <td class="grid-cell qty-cell">
             <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
                 {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
-
                 {{ form_widget(form.unit) }}
                 <span data-role="unit-view">
                     {% if oro_is_unit_code_visible(defaultUnitCode) %}
