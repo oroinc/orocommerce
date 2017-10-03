@@ -129,4 +129,23 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->inventoryQuantityManager->decrementInventory($this->inventoryLevel, 5);
     }
+
+    public function testShouldDecrementReturnTrue()
+    {
+        $this->entityFallbackResolver->expects($this->at(0))
+            ->method('getFallbackValue')
+            ->willReturn(true);
+        $product = $this->createMock(Product::class);
+        $this->assertTrue($this->inventoryQuantityManager->shouldDecrement($product));
+    }
+
+    public function testShouldDecrementReturnFalse()
+    {
+        $this->entityFallbackResolver->expects($this->at(0))
+            ->method('getFallbackValue')
+            ->willReturn(false);
+        $product = $this->createMock(Product::class);
+        $this->assertFalse($this->inventoryQuantityManager->shouldDecrement($product));
+        $this->assertFalse($this->inventoryQuantityManager->shouldDecrement(null));
+    }
 }
