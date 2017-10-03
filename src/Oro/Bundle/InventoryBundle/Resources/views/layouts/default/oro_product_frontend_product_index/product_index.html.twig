@@ -1,0 +1,7 @@
+{% block _low_inventory_label_widget %}
+    {% if (product.low_inventory) %}
+        <div class="grid">
+            <div class="grid__row">{{ "oro.inventory.low_invetory.label"|trans }}</div>
+        </div>
+    {% endif %}
+{% endblock %}
