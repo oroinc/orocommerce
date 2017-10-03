@@ -19,6 +19,15 @@ services:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
 
+    oro_catalog.provider.subcategory_provider:
+        class: 'Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider'
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@oro_security.token_accessor'
+            - '@oro_catalog.repository.category'
+            - '@oro_catalog.provider.category_tree_provider'
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository
