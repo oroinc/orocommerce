@@ -269,6 +269,7 @@ oro:
                 order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
                 order_automation_target_status.title: 'Target Status'
                 order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
+                enable_purchase_history.title: 'Enable Purchase History'
                 order_previously_purchased_period.title: 'Display products purchased within (days)'
                 order_previously_purchased_period.tooltip: 'Enter the number of days that the purchase history should cover.'
                 order_creation_new_internal_order_status.title: 'New Internal Order Status'

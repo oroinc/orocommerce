@@ -5,8 +5,10 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -29,6 +31,15 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
     /** @var ReindexProductOrderListener */
     protected $listener;
 
+    /** @var FeatureChecker  */
+    protected $featureChecker;
+
+    /** @var  Website */
+    protected $website;
+
+    /** @var  OrderStub */
+    protected $order;
+
     /**
      * {@inheritdoc}
      */
@@ -37,8 +48,22 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->event = $this->createMock(PreUpdateEventArgs::class);
         $this->reindexManager = $this->createMock(ProductReindexManager::class);
         $statusProvider = new PreviouslyPurchasedOrderStatusesProviderStub();
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->listener = new ReindexProductOrderListener($this->reindexManager, $statusProvider);
+        $this->order = $this->getEntity(OrderStub::class);
+        $this->order->setInternalStatus(new StubEnumValue('closed', 'closed'));
+        $this->website = $this->createMock(Website::class);
+        $this->website->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->listener = new ReindexProductOrderListener(
+            $this->reindexManager,
+            $statusProvider
+        );
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('previously_purchased_products');
     }
 
     /**
@@ -47,12 +72,18 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->listener);
+        unset($this->website);
         unset($this->event);
         unset($this->reindexManager);
+        unset($this->featureChecker);
     }
 
     public function testOrderStatusNotChanged()
     {
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
         $this->event->expects($this->once())
             ->method('hasChangedField')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
@@ -61,8 +92,8 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->reindexManager->expects($this->never())
             ->method('triggerReindexationRequestEvent');
 
-        $order = $this->getEntity(OrderStub::class);
-        $this->listener->processIndexOnOrderStatusChange($order, $this->event);
+        $this->order->setInternalStatus(new StubEnumValue(2, ''));
+        $this->listener->processIndexOnOrderStatusChange($this->order, $this->event);
     }
 
     /**
@@ -72,8 +103,13 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
      * @param string $getNewValue
      * @param string $expectThatReindexEventWilBeCalled
      */
-    public function testOrderStatusChanged($getOldValue, $getNewValue, $expectThatReindexEventWilBeCalled)
+    public function testOrderStatusNotArchivedOrClosed($getOldValue, $getNewValue, $expectThatReindexEventWilBeCalled)
     {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
         $this->event->expects($this->once())
             ->method('hasChangedField')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
@@ -106,23 +142,44 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'Test that order change from trackable to untrackable status' => [
-                'getOldValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-                'getNewValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                'getOldValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED
+                ),
+                'getNewValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                ),
                 'expectThatReindexEventWilBeCalled' => true
             ],
             'Test that order change from untrackable to trackable status' => [
-                'getOldValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-                'getNewValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                'getOldValue' => null,
+                'getNewValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED
+                ),
                 'expectThatReindexEventWilBeCalled' => true
             ],
             'Test that order change from trackable to trackable status' => [
-                'getOldValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-                'getNewValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+                'getOldValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED
+                ),
+                'getNewValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
+                ),
                 'expectThatReindexEventWilBeCalled' => false
             ],
             'Test that order change from untrackable to untrackable status' => [
-                'getOldValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-                'getNewValue' => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                'getOldValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ),
+                'getNewValue' => new StubEnumValue(
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                ),
                 'expectThatReindexEventWilBeCalled' => false
             ],
         ];
@@ -138,15 +195,21 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getOldValue')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED);
+            ->willReturn(new StubEnumValue(
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+            ));
 
         $this->event->expects($this->once())
             ->method('getNewValue')
             ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED);
+            ->willReturn(new StubEnumValue(
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
+                )
+            );
 
-        $this->reindexManager
-            ->expects($this->never())
+        $this->reindexManager->expects($this->never())
             ->method('triggerReindexationRequestEvent');
 
         $order = $this->getEntity(OrderStub::class);
@@ -159,17 +222,21 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $websiteId = 1;
         $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn($websiteId);
-        $order = $this->getEntity(OrderStub::class);
-        $order->setWebsite($website);
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $website)
+            ->willReturn(true);
+
         $lineItems = new ArrayCollection($this->prepareLineItemsOnOrder($productIds));
-        $order->setLineItems($lineItems);
+        $this->order->setLineItems($lineItems);
+        $this->order->setWebsite($website);
 
         $this->reindexManager
             ->expects($this->once())
             ->method('triggerReindexationRequestEvent')
             ->with($productIds, $websiteId);
 
-        $this->listener->reindexProductsInOrder($order);
+        $this->listener->processOrderRemove($this->order);
     }
 
     public function testOrderRemovedButItHasInvalidWebsite()
@@ -185,7 +252,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('triggerReindexationRequestEvent')
             ->with($productIds, $websiteId);
 
-        $this->listener->reindexProductsInOrder($order);
+        $this->listener->processOrderRemove($order);
     }
 
     /**
@@ -204,5 +271,54 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
 
             return $lineItem;
         }, $productIds);
+    }
+
+    public function testReindexWhenFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(false);
+
+        $this->reindexManager->expects($this->never())
+            ->method('triggerReindexationRequestEvent');
+
+        $this->order->setWebsite($this->website);
+        $this->listener->processOrderRemove($this->order);
+    }
+
+    public function testReindexOnOrderWebsiteChange()
+    {
+        $this->event->expects($this->once())
+            ->method('hasChangedField')
+            ->with(ReindexProductOrderListener::ORDER_INTERNAL_WEBSITE_FIELD)
+            ->willReturn(true);
+
+        $website2 = $this->createMock(Website::class);
+        $website2->expects($this->any())
+            ->method('getId')
+            ->willReturn(2);
+
+        $this->event->expects($this->once())
+            ->method('getOldValue')
+            ->with(ReindexProductOrderListener::ORDER_INTERNAL_WEBSITE_FIELD)
+            ->willReturn($this->website);
+
+        $this->event->expects($this->once())
+            ->method('getNewValue')
+            ->with(ReindexProductOrderListener::ORDER_INTERNAL_WEBSITE_FIELD)
+            ->willReturn($website2);
+
+        $this->featureChecker->expects($this->exactly(2))
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
+        $this->order->setWebsite($this->website);
+
+        $this->reindexManager->expects($this->exactly(2))
+            ->method('triggerReindexationRequestEvent');
+
+        $this->listener->processIndexOnOrderWebsiteChange($this->order, $this->event);
     }
 }

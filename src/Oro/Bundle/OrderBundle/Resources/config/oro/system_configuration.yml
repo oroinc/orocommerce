@@ -66,6 +66,11 @@ system_configuration:
                 enum_code: order_internal_status
                 multiple: false
                 empty_value: false
+        oro_order.enable_purchase_history:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.order.system_configuration.fields.enable_purchase_history.title
         oro_order.order_previously_purchased_period:
             data_type: integer
             type: integer
@@ -105,5 +110,6 @@ system_configuration:
                                 children:
                                     purchase_history:
                                         children:
+                                            - oro_order.enable_purchase_history
                                             - oro_order.order_previously_purchased_period
 

@@ -5,13 +5,18 @@ namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ReindexProductLineItemListener
 {
+    use FeatureCheckerHolderTrait;
+
     /** @see \Oro\Bundle\OrderBundle\Entity\OrderLineItem::$product */
     const ORDER_LINE_ITEM_PRODUCT_FIELD = 'product';
 
@@ -43,15 +48,17 @@ class ReindexProductLineItemListener
      */
     public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem, LifecycleEventArgs $args)
     {
-        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
-        $orderStatus = $lineItem->getOrder()->getInternalStatus();
-
-        if ($orderStatus && in_array($orderStatus->getId(), $availableStatuses)
-            && $this->isReindexAllowed($lineItem)) {
-            $product = $lineItem->getProduct();
-            $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-            $this->reindexManager->reindexProduct($product, $websiteId);
+        if (!$this->isReindexAllowed($lineItem)) {
+            return;
         }
+
+        $product = $lineItem->getProduct();
+        if (!($product instanceof Product)) {
+            return;
+        }
+
+        $websiteId = $lineItem->getOrder()->getWebsite()->getId();
+        $this->reindexManager->reindexProduct($product, $websiteId);
     }
 
     /**
@@ -60,21 +67,28 @@ class ReindexProductLineItemListener
      */
     public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
     {
-        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
-        $orderStatus = $lineItem->getOrder()->getInternalStatus();
+        if (!$this->isReindexAllowed($lineItem)) {
+            return;
+        }
 
-        if ($orderStatus && in_array($orderStatus->getId(), $availableStatuses)
-            && $event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD)
-            && $this->isReindexAllowed($lineItem)) {
+        if ($event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD)) {
             $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-            $this->reindexManager->reindexProduct(
-                $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD),
-                $websiteId
-            );
-            $this->reindexManager->reindexProduct(
-                $event->getNewValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD),
-                $websiteId
-            );
+
+            $oldProduct = $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
+            if ($oldProduct instanceof Product) {
+                $this->reindexManager->reindexProduct(
+                    $oldProduct,
+                    $websiteId
+                );
+            }
+
+            $newProduct = $event->getNewValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
+            if ($newProduct instanceof Product) {
+                $this->reindexManager->reindexProduct(
+                    $newProduct,
+                    $websiteId
+                );
+            }
         }
     }
 
@@ -86,10 +100,21 @@ class ReindexProductLineItemListener
     protected function isReindexAllowed(OrderLineItem $lineItem)
     {
         $website = $lineItem->getOrder()->getWebsite();
+
         /**
          * Ignore reindex update in case when order doesn't attached to any website
          */
         if (!($website instanceof Website)) {
+            return false;
+        }
+
+        if (!$this->isFeaturesEnabled($website)) {
+            return false;
+        }
+
+        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
+        $orderStatus = $lineItem->getOrder()->getInternalStatus();
+        if (!$orderStatus instanceof AbstractEnumValue || !in_array($orderStatus->getId(), $availableStatuses)) {
             return false;
         }
 
