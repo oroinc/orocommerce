@@ -152,10 +152,10 @@ oro:
 
         system_configuration:
             groups:
-                promotion.title: Promotion
-                promotion_general.title: Promotion General
+                promotion.title: Promotions
+                promotion_general.title: General Options
             fields:
-                feature_enabled.label: Enable Promotion
+                feature_enabled.label: Enable Store Frontend Promotions
                 discount_strategy.label: Discount Strategy
 
         controller:
