@@ -13,6 +13,8 @@ layout:
                 text:
                     label: 'oro.frontend.shoppinglist.matrix_grid_order.close'
                 style: 'btn btn--action btn--size-s'
+                attr:
+                    data-role: 'close'
             prepend: true
         - '@setOption':
             id: form_actions_submit
