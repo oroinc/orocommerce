@@ -1,5 +1,10 @@
 {% block __matrix_grid_order_button__matrix_grid_order_button_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
+    {% set productImageUrl = Image.url(productImage, 'product_small') %}
+
     {{ UI.clientLink({
         'aCss': 'matrix-order-widget__btn',
         'iCss': 'fa-list-ul',
@@ -7,7 +12,12 @@
         'widget' : {
             'type' : 'matrix-grid-order',
             'options': {
-                'productId': product.id
+                'productId': product.id,
+                'productData': {
+                    'imageUrl': productImageUrl,
+                    'title': product.name.string,
+                    'subtitle': 'oro.frontend.shoppinglist.matrix_grid_order.item_number'|trans ~ product.sku,
+                }
             }
         }
     }) }}

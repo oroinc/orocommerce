@@ -17,6 +17,13 @@ define(function(require) {
             this.options.url = options.url;
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
+            this.fullscreenViewOptions = {
+                keepAliveOnClose: false,
+                popupLabel: null,
+                headerContent: true,
+                headerContentOptions: options.productData,
+                footerContent: true
+            };
             if (_.isMobile()) {
                 this.options.fullscreenViewport = {
                     maxScreenType: 'any'
@@ -24,12 +31,12 @@ define(function(require) {
             }
 
             options.dialogOptions = {
-                'modal': true,
-                'title': null,
-                'resizable': false,
-                'width': '480',
-                'autoResize': true,
-                'dialogClass': 'matrix-order-widget--dialog'
+                modal: true,
+                title: null,
+                resizable: false,
+                width: '480',
+                autoResize: true,
+                dialogClass: 'matrix-order-widget--dialog'
             };
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);

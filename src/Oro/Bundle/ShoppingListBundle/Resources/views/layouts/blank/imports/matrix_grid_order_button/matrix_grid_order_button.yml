@@ -8,4 +8,6 @@ layout:
             parentId: __root
             options:
                 product: '=data["product"]'
+                vars:
+                    productImage: '=data["system_config_provider"].getValue("oro_product.image_preview_on_product_listing_enabled")'
                 visible: '=data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'

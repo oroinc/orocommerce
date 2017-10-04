@@ -19,8 +19,6 @@
         {% set rowIndex = loop.index %}
         <tr>
             <td>{{ row.vars.label }}
-                <div data-row-quantity="{{ loop.index }}">0</div>
-                <div data-row-subtotal="{{ loop.index }}">0</div>
             </td>
             {% for column in row.columns %}
                 <td>

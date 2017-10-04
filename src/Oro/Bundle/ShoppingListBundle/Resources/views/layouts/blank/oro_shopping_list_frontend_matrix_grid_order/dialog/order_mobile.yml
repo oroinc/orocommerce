@@ -10,6 +10,6 @@ layout:
             id: form_summary
         - '@add':
             id: matrix_order_actions
-            parentId: form_actions
+            parentId: widget_actions
             blockType: container
     conditions: 'context["is_mobile"]'

@@ -1,5 +1,6 @@
 // @theme: blank;
 
+//TODO: Should move all properties of the component to config with variables
 .matrix-order-widget {
     &__grid {
         width: 100%;
@@ -79,34 +80,94 @@
     &--dialog-fullscreen {
         position: static;
 
-        .ui-dialog-titlebar {
+        .ui-dialog-titlebar,
+        .ui-dialog-buttonpane {
             display: none;
+        }
+
+        .ui-widget-content {
+            padding: 0;
         }
     }
 
-    //Mobile view
     &__item {
-        border-top: 1px solid #ccc;
-        padding: 10px 0;
+        position: relative;
+        overflow: hidden;
+
+        &:not(:first-child) {
+            border-top: 1px solid get-color('additional', 'light');;
+        }
+
+        &.expanded {
+            .fa-minus {
+                display: block;
+            }
+
+            .fa-plus {
+                display: none;
+            }
+        }
+
+        .fa-minus,
+        .fa-plus {
+            position: absolute;
+
+            right: 12px;
+            top: 20px;
+        }
+
+        .fa-minus {
+            display: none;
+        }
+
+        &-label {
+            min-width: 45%;
+            margin: 0 10px;
+            word-wrap: break-word;
+            line-height: 1.4rem;
+        }
+
+        &-value {
+            min-width: 45%;
+
+            input {
+                text-align: center;
+            }
+        }
+
+        &-seperator {
+            margin: 0 10px;
+        }
 
         &-info {
             display: inline-flex;
-            width: 100%;
+            flex-direction: column;
             justify-content: space-between;
-            border-bottom: 1px solid #ccc;
-            padding: 10px 0;
+
+            width: 100%;
+            padding: 10px 15px;
+
+            &-wrapper {
+                display: inline-flex;
+            }
         }
 
         &-content {
             display: inline-flex;
-            margin: 5px;
+            align-items: center;
+            justify-content: center;
+            flex-basis: 12%;
 
+            padding: 10px 30px 10px 5px;
         }
 
         &-content-wrapper {
             display: inline-flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+
+            padding: 10px;
             width: 100%;
-            justify-content: space-between;
         }
     }
 }
@@ -118,3 +179,45 @@
         }
     }
 }
+
+@include breakpoint('strict-tablet') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: 20%;
+                padding: 10px 45px 10px 15px;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: 25%;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: 33%;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: 50%;
+            }
+        }
+    }
+}
+

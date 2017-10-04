@@ -188,6 +188,8 @@ oro:
             matrix_grid_order:
                 total_qty: 'Total QTY'
                 total: 'TOTAL'
+                subtotal: 'Subtotal'
+                item_number: 'Item #: '
             lineitem:
                 product:
                     added.label: 'Product has been added to "%shoppinglist%"'
