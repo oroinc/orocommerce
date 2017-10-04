@@ -7,7 +7,10 @@ Feature: Enter coupon code on Front Store
   I need to have ability to add and manage coupons for discount on shopping list and checkout
 
   Scenario: Entered coupon should give discount on shopping list page
-    Given I login as AmandaRCole@example.org buyer
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
+    And I disable inventory management
+    And I proceed as the Buyer
     And I open shopping list widget
     And I click "View Details"
     And I scroll to "I have a Coupon Code"
@@ -81,3 +84,25 @@ Feature: Enter coupon code on Front Store
     Then I should see "Checkout"
     And I should not see "coupon-1 Shopping list Promotion"
     And I should not see "Discount -$1.00" in the "Subtotals" element
+
+  Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
+    Given I should see "Billing Information" in the "Checkout Step Title" element
+    When I click "I have a Coupon Code"
+    And I type "coupon-1" in "CouponCodeInput"
+    And I press "Apply"
+    Then I see next subtotals for "Checkout Step":
+      | Subtotal | Amount  |
+      | Discount | -$1.00 |
+    When I click "Continue"
+    And I should see "Shipping Information" in the "Checkout Step Title" element
+    And I click "Continue"
+    And I should see "Shipping Method" in the "Checkout Step Title" element
+    And I click "Continue"
+    And I should see "Payment" in the "Checkout Step Title" element
+    And I click "Continue"
+    And I should see "Order Review" in the "Checkout Step Title" element
+    And I click "Submit Order"
+    And I follow "click here to review"
+    Then I see next subtotals for "Order":
+      | Subtotal          | Amount |
+      | Discount          | -$1.00 |
