@@ -6,6 +6,7 @@ define(function(require) {
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
 
     MatrixGridOrderWidget = FrontendDialogWidget.extend({
         optionNames: FrontendDialogWidget.prototype.optionNames.concat([
@@ -40,7 +41,7 @@ define(function(require) {
                 headerContentOptions: {
                     imageUrl: this.model.attributes.productData.imageUrl,
                     title: this.model.attributes.productData.name,
-                    subtitle: this.model.attributes.productData.sku
+                    subtitle: __('oro.frontend.shoppinglist.matrix_grid_order.item_number') + this.model.attributes.productData.sku
                 },
                 footerContent: true
             };

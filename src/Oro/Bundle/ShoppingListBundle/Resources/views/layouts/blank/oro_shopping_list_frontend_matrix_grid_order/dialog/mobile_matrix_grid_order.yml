@@ -3,9 +3,7 @@ layout:
         - '@setFormTheme':
             themes: 'mobile_matrix_grid_order_form.html.twig'
         - '@remove':
-            id: line_item_buttons
-        - '@remove':
-            id: form_summary
+            id: matrix_grid_order_form_summary
         - '@add':
             id: form_actions_close
             blockType: button
