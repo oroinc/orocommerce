@@ -8,7 +8,7 @@ define(function(require) {
     var _ = require('underscore');
 
     MatrixGridOrderWidget = FrontendDialogWidget.extend({
-        optionNames: DialogWidget.prototype.optionNames.concat([
+        optionNames: FrontendDialogWidget.prototype.optionNames.concat([
             'shoppingListId'
         ]),
 
@@ -33,11 +33,15 @@ define(function(require) {
                 dialogClass: 'matrix-order-widget--dialog'
             };
 
-            options.fullscreenViewOptions = {
+            this.fullscreenViewOptions = {
                 keepAliveOnClose: false,
                 popupLabel: null,
                 headerContent: true,
-                headerContentOptions: options.productData,
+                headerContentOptions: {
+                    imageUrl: this.model.attributes.productData.imageUrl,
+                    title: this.model.attributes.productData.name,
+                    subtitle: this.model.attributes.productData.sku
+                },
                 footerContent: true
             };
             if (_.isMobile()) {

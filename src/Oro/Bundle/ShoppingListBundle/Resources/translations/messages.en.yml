@@ -190,6 +190,7 @@ oro:
                 total: 'TOTAL'
                 subtotal: 'Subtotal'
                 item_number: 'Item #: '
+                close: 'Close'
             lineitem:
                 product:
                     added.label: 'Product has been added to "%shoppinglist%"'
