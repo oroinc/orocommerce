@@ -23,6 +23,7 @@ services:
                 -
                     -
                         lineItemErrors: {required: true}
+                        lineItemWarnings: {required: true}
                         shoppingList: {required: true}
                         productsMatchedPrice: {required: true}
                         productsAllPrices: {required: true}
