@@ -375,7 +375,7 @@
     </div>
 {%- endblock %}
 
-{% block _checkout_order_summary_totals_container_widget %}
+{% block _checkout_order_summary_totals_sticky_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-sticky-target': 'top-sticky-panel',
         'data-sticky': {
@@ -388,7 +388,9 @@
             }
         }
     }) %}
-    {{ parent_block_widget(block) }}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _checkout_button_continue_right_widget %}

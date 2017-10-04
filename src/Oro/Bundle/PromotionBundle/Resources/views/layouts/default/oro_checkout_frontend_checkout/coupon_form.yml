@@ -9,6 +9,7 @@ layout:
             id: coupon_form_container
             parentId: checkout_order_summary_totals_container
             siblingId: checkout_order_summary_totals
+            prepend: true
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
@@ -39,5 +40,10 @@ layout:
             id: coupon_form_container
             optionName: entity
             optionValue: '=data["checkout"].getSourceEntity()'
+
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_row_delete_button
+            optionName: attr.class
+            optionValue: 'btn btn--link btn--baseline'
 
     conditions: 'context["isAppliedCouponsAware"] == true'
