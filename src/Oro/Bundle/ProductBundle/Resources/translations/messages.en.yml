@@ -112,6 +112,18 @@ oro:
             description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
             plural_label: Product Families
 
+        entity_config:
+            block_titles:
+                backend.label: Backoffice options
+                frontend.label: Frontend options
+            field.items:
+                attribute:
+                    searchable.tooltip: 'If enabled, attribute content can be found in the front store'
+                    sortable.tooltip: 'Defines whether sorting is available for the attribute in the front store'
+                    filterable.tooltip: 'Defines whether filter is available for the attribute in the front store'
+                    enabled.tooltip: 'Defines whether the attribute is enabled in the front store'
+                    visible.tooltip: 'Defines whether the attribute is visible or hidden'
+
         status:
             enabled: Enabled
             disabled: Disabled
@@ -292,6 +304,8 @@ oro:
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
+                configurable_products.title: 'Configurable Products'
+                configurable_products_matrix_form.title: 'Matrix form in product views'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -406,6 +420,11 @@ oro:
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
+                matrix_form_on_product_view:
+                    label: 'Display matrix form (where applicable)'
+                    none.label: 'Do not display'
+                    inline.label: 'Inline matrix form'
+                    popup.label: 'Popup matrix form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

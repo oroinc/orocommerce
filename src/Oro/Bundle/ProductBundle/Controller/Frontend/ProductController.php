@@ -55,15 +55,23 @@ class ProductController extends Controller
      */
     public function viewAction(Request $request, Product $product)
     {
-        $data = ['product' => $product];
+        $data = [
+            'product' => $product,
+            'parentProduct' => null,
+        ];
 
         $ignoreProductVariants = $request->get('ignoreProductVariant', false);
+        if (!$ignoreProductVariants) {
+            $ignoreProductVariants = !$this->get('oro_product.layout.data_provider.product_form_availability')
+                ->isSimpleAvailable($product);
+        }
 
         if (!$ignoreProductVariants && $product->isConfigurable()) {
             $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
             if ($simpleProduct) {
                 $data['productVariant'] = $simpleProduct;
+                $data['parentProduct'] = $product;
             }
         }
 

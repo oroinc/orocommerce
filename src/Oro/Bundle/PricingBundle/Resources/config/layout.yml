@@ -4,6 +4,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.shard_manager'

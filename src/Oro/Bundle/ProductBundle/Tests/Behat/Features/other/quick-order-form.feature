@@ -5,8 +5,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @automatically-ticket-tagged
 @regression
-@skip
-# @todo remove skip tag after BB-11891 or BB-11896
+
 Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer
@@ -34,7 +33,7 @@ Feature: Quick order form
     And "PSKU1" product should has "$45.00" value in price field
     And I wait for products to load
     And I type "2" in "Quick Order Form > QTY1"
-    And I click on empty space
+    And I wait for "PSKU1" price recalculation
     Then "PSKU1" product should has "$90.00" value in price field
 
   Scenario: Get A Quote from quick order page

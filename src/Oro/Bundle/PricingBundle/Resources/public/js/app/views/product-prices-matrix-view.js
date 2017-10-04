@@ -52,6 +52,9 @@ define(function(require) {
             ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
+            _.each(this.getElement('fields'), function(element) {
+                this.update(element);
+            }, this);
         },
 
         /**
@@ -80,13 +83,22 @@ define(function(require) {
         },
 
         /**
-         * Listen input event, calculate total values of quantity and price
-         * Prevent enter string
-
+         * Listen input event
+         *
          * @param event
          */
         updateTotals: _.debounce(function(event) {
-            var currentIndex = $(event.currentTarget).closest('[data-index]').data('index');
+            this.update(event.currentTarget);
+        }, 150),
+
+        /**
+         * Calculate total values of quantity and price
+         * Prevent enter string
+         *
+         * @param element
+         */
+        update: function(element) {
+            var currentIndex = $(element).closest('[data-index]').data('index');
 
             this.total = _.reduce(this.getElement('fields'), function(total, field) {
                 if (_.isEmpty(field.value)) {
@@ -131,7 +143,7 @@ define(function(require) {
             }, this);
 
             this.render();
-        }, 150),
+        },
 
         getValidValue: function(value) {
             var val = parseInt(value, 10) || 0;
@@ -147,11 +159,7 @@ define(function(require) {
          * Render actual view
          */
         render: function() {
-            this.getElement('submitButtons')
-                .toggleClass('disabled', this.total.quantity === 0)
-                .data('disabled', this.total.quantity === 0);
-
-            this.getElement('totalQty').text(this.total.quantity);
+            this.getElement('totalQty').text(this.total.commonQuantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );

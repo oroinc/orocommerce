@@ -78,7 +78,7 @@ class IndexEntityEvent extends Event
     {
         $this->validate($value);
 
-        $this->entitiesData[$entityId][$fieldName] = [
+        $this->entitiesData[$entityId][$fieldName][] = [
             'value' => $value,
             'all_text' => $addToAllText
         ];

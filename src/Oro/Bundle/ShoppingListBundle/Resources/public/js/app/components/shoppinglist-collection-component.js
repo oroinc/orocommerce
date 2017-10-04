@@ -9,27 +9,62 @@ define(function(require) {
 
     ShoppingListCollectionComponent = BaseComponent.extend({
         /**
-         * @param {Object} options
+         * @inheritDoc
+         */
+        listen: {
+            'shopping-list:line-items:update-response mediator': '_onLineItemsUpdate'
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
-            var collection = new BaseCollection(options.shoppingLists);
-            collection.comparator = this.comparator;
+            this.collection = new BaseCollection(options.shoppingLists);
+            this.collection.comparator = this.comparator;
 
-            collection.on('update', function(collection, options) {
+            this.collection.on('update', function(collection, options) {
                 if (options.add) {
                     mediator.trigger('shopping-list:refresh');
                 }
             });
-            collection.on('change', function(options) {
+            this.collection.on('change', function(options) {
                 if (options && options.refresh) {
                     mediator.trigger('shopping-list:refresh');
                 }
             });
-            ShoppingListCollectionService.shoppingListCollection.resolve(collection);
+            ShoppingListCollectionService.shoppingListCollection.resolve(this.collection);
         },
 
         comparator: function(model) {
             return model.get('id');
+        },
+
+        _onLineItemsUpdate: function(model, response) {
+            if (!model || !response) {
+                return;
+            }
+
+            if (response.message) {
+                mediator.execute(
+                    'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                    response.message
+                );
+            }
+
+            if (response.product) {
+                model.set('shopping_lists', response.product.shopping_lists, {silent: true});
+                model.trigger('change:shopping_lists');
+            }
+
+            if (response.shoppingList && !this.collection.find({id: response.shoppingList.id})) {
+                this.collection.add(_.defaults(response.shoppingList, {is_current: true}), {
+                    silent: true
+                });
+            }
+
+            this.collection.trigger('change', {
+                refresh: true
+            });
         }
     });
 

@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
 class FrontendProductPricesProvider
 {
@@ -34,6 +35,11 @@ class FrontendProductPricesProvider
     protected $priceListRequestHandler;
 
     /**
+     * @var ProductVariantAvailabilityProvider
+     */
+    protected $productVariantAvailabilityProvider;
+
+    /**
      * @var UserCurrencyManager
      */
     protected $userCurrencyManager;
@@ -41,6 +47,7 @@ class FrontendProductPricesProvider
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceFormatter $productPriceFormatter
      * @param ShardManager $shardManager
@@ -48,11 +55,13 @@ class FrontendProductPricesProvider
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRequestHandler $priceListRequestHandler,
+        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         UserCurrencyManager $userCurrencyManager,
         ProductPriceFormatter $productPriceFormatter,
         ShardManager $shardManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->shardManager = $shardManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
@@ -91,6 +100,16 @@ class FrontendProductPricesProvider
         }
 
         return $productPrices;
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    public function getSimpleByConfigurable($product)
+    {
+        $products = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
+        return $this->getByProducts($products);
     }
 
     /**

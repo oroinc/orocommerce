@@ -601,6 +601,14 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
+    oro_product.layout.data_provider.product_form_availability:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider'
+        arguments:
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_form_availability }
+
     oro_product.layout.data_provider.product_variant:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider'
         arguments:
@@ -616,6 +624,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: 255 }
 
+    oro_product.provider.website_search_index_data:
+        class: 'Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider'
+        arguments:
+            - '@oro_entity_config.registry.attribute_type'
+            - '@oro_entity_config.provider.attribute_configuration'
+            - '@oro_product.provider.index_fields'
+            - '@property_accessor'
+
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
@@ -623,6 +639,8 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@doctrine'
             - '@oro_attachment.manager'
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_product.provider.website_search_index_data'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
@@ -1059,6 +1077,16 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
 
+    oro_product.datagrid.event_listener.frontend_product_grid:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener'
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.registry.attribute_type'
+            - '@oro_entity_config.provider.attribute_configuration'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
         public: false
@@ -1173,6 +1201,45 @@ services:
         arguments:
             - '@oro_layout.provider.image_type'
 
+    oro_product.event_listener.attribute_changes:
+        class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
+
+    oro_product.event_listener.attribute_family_changes:
+        class: 'Oro\Bundle\ProductBundle\EventListener\AttributeFamilyChangesListener'
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+
+    oro_product.provider.index_fields:
+        class: 'Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider'
+        public: false
+        # These attributes are forced to be indexed as a separate fields because they are used at main product grid of front store
+        calls:
+            - [addForceIndexed,  ['sku']]
+            - [addForceIndexed,  ['names']]
+            - [addForceIndexed,  ['shortDescriptions']]
+            - [addForceIndexed,  ['inventory_status']]
+            - [addForceIndexed,  ['newArrival']]
+
+    oro_product.event_listener.website_search_mapping:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchMappingListener'
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.registry.attribute_type'
+            - '@oro_entity_config.provider.attribute_configuration'
+            - '@oro_product.provider.index_fields'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 
     oro_product.voter.guest_quick_order:
         parent: oro_customer.voter.anonymous_customer_user
@@ -1194,3 +1261,24 @@ services:
            - '@oro_featuretoggle.voter.config_voter'
            - '@security.token_storage'
         abstract: true
+
+    oro_product.provider.brand_entity_name:
+        class: 'Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_product.provider.serialized_field_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\SerializedFieldProvider'
+        decorates: oro_entity_config.provider.serialized_field_provider
+        arguments:
+            - '@oro_entity_config.provider.extend'
+
+    oro_product.entity_alias_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductEntityAliasProvider
+        arguments:
+            - '@oro_entity_config.config.attributes_config_helper'
+            - '@oro_entity_config.config_manager'
+        public: false
+        tags:
+            - { name: oro_entity.alias_provider }
