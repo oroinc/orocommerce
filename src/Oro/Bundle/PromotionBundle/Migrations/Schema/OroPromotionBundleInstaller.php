@@ -5,6 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -12,12 +15,28 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwareInterface
+class OroPromotionBundleInstaller implements
+    Installation,
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     /**
      * @var ActivityExtension
      */
     private $activityExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    private $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_1';
+    }
 
     /**
      * {@inheritdoc}
@@ -30,9 +49,9 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     /**
      * {@inheritdoc}
      */
-    public function getMigrationVersion()
+    public function setExtendExtension(ExtendExtension $extendExtension)
     {
-        return 'v1_1';
+        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -49,6 +68,9 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->createOroPromotionScheduleTable($schema);
         $this->createOroPromotionScopeTable($schema);
         $this->createOroPromotionAppliedDiscountTable($schema);
+        $this->createOroPromotionCouponUsageTable($schema);
+        $this->createOroPromotionAppliedCouponTable($schema);
+        $this->createOroPromotionAppliedTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPromotionForeignKeys($schema);
@@ -58,8 +80,13 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionScheduleForeignKeys($schema);
         $this->addOroPromotionScopeForeignKeys($schema);
         $this->addOroPromotionAppliedDiscountForeignKeys($schema);
+        $this->addOroPromotionCouponUsageForeignKeys($schema);
+        $this->addOroPromotionAppliedCouponForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
+
+        $this->addAppliedCouponsToOrder($schema);
+        $this->addAppliedPromotionsToOrder($schema);
     }
 
     /**
@@ -96,12 +123,11 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('total_uses', 'integer', ['default' => '0']);
         $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('uses_per_person', 'integer', ['notnull' => false, 'default' => '1']);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('valid_until', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
         $table->addUniqueIndex(['code']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_promotion_coupon_created_at', []);
@@ -188,20 +214,69 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         $table = $schema->createTable('oro_promotion_applied_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('line_item_id', 'integer', ['notnull' => false]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
+        $table->addColumn('applied_promotion_id', 'integer', []);
         $table->addColumn('amount', 'money_value', [
             'precision' => 19,
             'scale' => 4,
             'comment' => '(DC2Type:money_value)',
         ]);
         $table->addColumn('currency', 'currency', ['length' => 3, 'comment' => '(DC2Type:currency)']);
-        $table->addColumn('config_options', 'json_array', []);
-        $table->addColumn('promotion_name', 'text', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_promotion_coupon_usage table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPromotionCouponUsageTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_promotion_coupon_usage');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('promotion_id', 'integer', ['notnull' => true]);
+        $table->addColumn('coupon_id', 'integer', ['notnull' => true]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_promotion_applied_coupon table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPromotionAppliedCouponTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_promotion_applied_coupon');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('applied_promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('coupon_code', 'string', ['length' => 255]);
+        $table->addColumn('source_promotion_id', 'integer');
+        $table->addColumn('source_coupon_id', 'integer');
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addUniqueIndex(['applied_promotion_id']);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_promotion_applied table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPromotionAppliedTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_promotion_applied');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('source_promotion_id', 'integer');
+        $table->addColumn('active', 'boolean', ['default' => '1']);
         $table->addColumn('type', 'string', ['length' => 255]);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('promotion_name', 'text', []);
+        $table->addColumn('config_options', 'json_array', []);
+        $table->addColumn('promotion_data', 'json_array', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -364,20 +439,58 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         $table = $schema->getTable('oro_promotion_applied_discount');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion'),
-            ['promotion_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_order_line_item'),
             ['line_item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_order'),
-            ['order_id'],
+            $schema->getTable('oro_promotion_applied'),
+            ['applied_promotion_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add oro_promotion_coupon_usage foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPromotionCouponUsageForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_promotion_coupon_usage');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_promotion'),
+            ['promotion_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_promotion_coupon'),
+            ['coupon_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_promotion_applied_coupon foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPromotionAppliedCouponForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_promotion_applied_coupon');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_promotion_applied'),
+            ['applied_promotion_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -389,5 +502,95 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAppliedCouponsToOrder(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_promotion_applied_coupon',
+            'order',
+            'oro_order',
+            'id',
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            'oro_promotion_applied_coupon',
+            'order',
+            'oro_order',
+            'appliedCoupons',
+            ['coupon_code'],
+            ['coupon_code'],
+            ['coupon_code'],
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE'
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAppliedPromotionsToOrder(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_promotion_applied',
+            'order',
+            'oro_order',
+            'id',
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            'oro_promotion_applied',
+            'order',
+            'oro_order',
+            'appliedPromotions',
+            ['promotion_name'],
+            ['promotion_name'],
+            ['promotion_name'],
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE'
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
     }
 }

@@ -1,4 +1,20 @@
 oro_behat_extension:
+  suites:
+    OroApplicationBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
+        - OroApplicationBundle::CommerceMainContext
+        - OroCheckoutBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - OroProductBundle::FeatureContext
+      paths:
+        - '@OroApplicationBundle/Tests/Behat/Features'
   elements:
     Registration Form:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -16,3 +32,381 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//*[contains(@class, "tab-collection")]/..'
+    Tax Calculation Form:
+      selector: 'form[name="tax_calculation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Use As Base By Default Use Default: 'tax_calculation[oro_tax___use_as_base_by_default][use_parent_scope_value]'
+          Use As Base By Default: 'tax_calculation[oro_tax___use_as_base_by_default][value]'
+    Create Category Form:
+      selector: 'form[name="oro_catalog_category"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Title: 'oro_catalog_category[titles][values][default]'
+          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
+
+    Create Product Form:
+      selector: 'form[name="oro_product"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU: 'oro_product[sku]'
+          Name: 'oro_product[names][values][default]'
+          Status: 'oro_product[status]'
+          Unit Of Quantity: 'oro_product[primaryUnitPrecision][unit]'
+          Product Image: 'oro_product[images][0][image][file]'
+          Main Image: 'oro_product[images][0][main]'
+          Listing Image: 'oro_product[images][0][listing]'
+          Additional Image: 'oro_product[images][0][additional]'
+          Configurable Attributes Color:
+            type: 'xpath'
+            locator: '//input[contains(@id,"oro_product_variantFields_Color_is_selected-uid")]'
+          Configurable Attributes Size:
+            type: 'xpath'
+            locator: '//input[contains(@id,"oro_product_variantFields_Size_is_selected-uid")]'
+          Inventory Status: 'oro_product[inventory_status]'
+
+    Tax Rule Form:
+      selector: 'form[name="oro_tax_rule_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Tax:
+           type: 'xpath'
+           locator: '//div[contains(@id,"s2id_oro_tax_rule_type_tax-uid")]//input'
+
+    Customer User Addresses Form:
+      selector: 'form[name="oro_customer_customer_user"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          First Name Add: 'oro_customer_customer_user[addresses][0][firstName]'
+          Last Name Add: 'oro_customer_customer_user[addresses][0][lastName]'
+
+    Attributes Group Form:
+      selector: 'form[name="oro_attribute_family"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Attribute Groups Attributes0:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_0_attributeRelations-uid")]]//input'
+          Attribute Groups Attributes1:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_1_attributeRelations-uid")]]//input'
+          Attribute Groups Attributes2:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_2_attributeRelations-uid")]]//input'
+          Attribute Groups Attributes3:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_3_attributeRelations-uid")]]//input'
+          Attribute Groups Attributes4:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_4_attributeRelations-uid")]]//input'
+          Attribute Groups Attributes5:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_5_attributeRelations-uid")]]//input'
+          Attribute Groups Label0: 'oro_attribute_family[attributeGroups][0][labels][values][default]'
+          Attribute Groups Label1: 'oro_attribute_family[attributeGroups][1][labels][values][default]'
+          Attribute Groups Label2: 'oro_attribute_family[attributeGroups][2][labels][values][default]'
+          Attribute Groups Label3: 'oro_attribute_family[attributeGroups][3][labels][values][default]'
+          Attribute Groups Label4: 'oro_attribute_family[attributeGroups][4][labels][values][default]'
+          Attribute Groups Label5: 'oro_attribute_family[attributeGroups][5][labels][values][default]'
+          Attribute Groups Visible0: 'oro_attribute_family[attributeGroups][0][isVisible]'
+          Attribute Groups Visible1: 'oro_attribute_family[attributeGroups][1][isVisible]'
+          Attribute Groups Visible2: 'oro_attribute_family[attributeGroups][2][isVisible]'
+          Attribute Groups Visible3: 'oro_attribute_family[attributeGroups][3][isVisible]'
+          Attribute Groups Visible4: 'oro_attribute_family[attributeGroups][4][isVisible]'
+          Attribute Groups Visible5: 'oro_attribute_family[attributeGroups][5][isVisible]'
+
+    Add Price Calculation Rules:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//h4[text()="Price Calculation Rules"]/..//a[contains(text(),"Add")]'
+        type: xpath
+
+    Price Calculation Rules Form:
+      selector: 'form[name="oro_pricing_price_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
+          Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
+          Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
+
+    Customer Form:
+      selector: 'form[name="oro_customer_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price List:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+
+    Customer Group Form:
+      selector: 'form[name="oro_customer_group_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price List:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_customer_group_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+          Name: 'oro_customer_group_type[name]'
+
+    Enter expression unit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[@class="price-rule-item-product-unit-type-expression input-type-switcher"]'
+        type: xpath
+
+    Enter expression currency:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[@class="price-rule-item-currency-type-expression input-type-switcher"]'
+        type: xpath
+
+    Product Image:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@class,"product-item__image-holder product-item__image-holder")]'
+        type: xpath
+
+    Product Image (view page):
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="product-view-media-gallery__image-item"]'
+        type: xpath
+
+    View Details prodlink:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@class,"product__view-details-link product__view-details-link")]'
+        type: xpath
+
+    Product Name:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//h3[contains(@class,"product-item__title product-item__title")]'
+        type: xpath
+
+    Green Box:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="shopping-lists"]'
+        type: xpath
+
+    Update Shopping list button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div/a[@title="Update Shopping list"]'
+        type: xpath
+
+    Add to Shopping List button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div/a[@title="Add to Shopping list"]'
+        type: xpath
+
+    Gallery View:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[contains(@href,"gallery-view")]'
+        type: xpath
+
+    List View:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[contains(@href,"list-view")]'
+        type: xpath
+
+    No Image View:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[contains(@href,"no-image-view")]'
+        type: xpath
+
+    Matrix Grid Popup:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front matrix-order-widget--dialog ui-draggable ui-dialog-normal"]'
+        type: xpath
+
+    Matrix Grid Form:
+      selector: 'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front matrix-order-widget--dialog ui-draggable ui-dialog-normal"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Black L: 'matrix_collection[rows][0][columns][0][quantity]'
+          Black M: 'matrix_collection[rows][0][columns][1][quantity]'
+          White L: 'matrix_collection[rows][1][columns][0][quantity]'
+          White M: 'matrix_collection[rows][1][columns][1][quantity]'
+
+    Add to Shopping List form Matrix Grid:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping list"]'
+        type: xpath
+
+    Add to Shopping list button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[@title="Add to Shopping list"]'
+        type: xpath
+
+    Create New Shopping List popup:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front shopping-list-dialog ui-draggable ui-dialog-normal ui-dialog-buttons"]'
+        type: xpath
+
+    ShoppingListLineItemForm:
+      selector: 'tbody[class="line_item"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'product_qty'
+          Unit: 'product_unit'
+
+    ShoppingListLineItemForm > Quantity:
+      selector:
+        type: 'css'
+        locator: "input[name='product_qty']"
+
+    Shopping List Label:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[@type="text" and @name="value"]'
+        type: xpath
+
+    Edit Shoppping List Label:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//button[@data-title="Edit Shoppping List Label"]'
+        type: xpath
+
+    Add Line Item Popup:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[text()="Add Line Item"]/../..'
+        type: xpath
+
+    Ship to this address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[text()="Ship to this address"]'
+        type: xpath
+
+    Use billing address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[@name="oro_workflow_transition[ship_to_billing_address]"]'
+        type: xpath
+
+    Edit RFQ Line Item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@title="Edit"]'
+        type: xpath
+
+    Frontstore RFQ Line Item Form1:
+      selector: 'form[name="oro_rfp_frontend_request"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_0_product-uid")]//input'
+          Quantity: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][quantity]'
+          Unit: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]'
+          Target Price: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'
+
+    Frontstore RFQ Line Item Form2:
+      selector: 'form[name="oro_rfp_frontend_request"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_1_product-uid")]//input'
+          Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
+          Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
+          Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
+
+    Update Line Item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="request-form-editline" and @data-role="line-item-edit"]//button[@data-role="update"]'
+        type: xpath
+
+    Delete Line Item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@data-role="remove"]'
+        type: xpath
+
+
+    AdminPanel RFQ Line Item Form:
+      selector: 'form[name="oro_rfp_request"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU1:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_0_product-uid")]//input'
+          Quantity1: 'oro_rfp_request[requestProducts][0][requestProductItems][0][quantity]'
+          Target Price1: 'oro_rfp_request[requestProducts][0][requestProductItems][0][price][value]'
+          SKU2:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_1_product-uid")]//input'
+          Unit2: 'oro_rfp_request[requestProducts][1][requestProductItems][0][productUnit]'
+          Quantity2: 'oro_rfp_request[requestProducts][1][requestProductItems][0][quantity]'
+          Target Price2: 'oro_rfp_request[requestProducts][1][requestProductItems][0][price][value]'
+
+    Add Another Line2:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//a[text()="Add Another Line"]'
+        type: xpath
+
+    Quotes Role Tab:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="tab-collection oro-tabs clearfix"]//a[text()="Quotes"]'
+        type: xpath
+
+    Shopping List Configuration Form:
+      selector: 'form[name="shopping_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
+
+    Save on conf window:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[@class="modal oro-modal-normal in"]//a[text()="Save"]'
+        type: xpath
+
+    Quick Order Configuration Form:
+      selector: 'form[name="quick_order"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Guest Quick Order Form Default: 'quick_order[oro_product___guest_quick_order_form][use_parent_scope_value]'
+
+    Request For Quote Configuration Form:
+      selector: 'form[name="rfq"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Guest RFQ Default: 'rfq[oro_rfp___guest_rfp][use_parent_scope_value]'
+
+    Checkout Configuration Form:
+      selector: 'form[name="checkout"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+

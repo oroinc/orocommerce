@@ -1,0 +1,52 @@
+{% import 'OroScopeBundle::macros.html.twig' as scopeMacros %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="widget-content">
+    {% set discountBlock %}
+        {% placeholder render_discount_information with {entity: entity} %}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.promotion.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'title': 'oro.promotion.sections.general.subsection.general_info.label'|trans,
+                    'useSpan': false,
+                    'data': [
+                        UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name),
+                        UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder),
+                        UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans),
+                    ]
+                },
+                {
+                    'title': 'oro.promotion.sections.general.subsection.discount_options.label'|trans,
+                    'useSpan': false,
+                    'data': [discountBlock]
+                }
+            ]
+        }
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.promotion.sections.conditions.label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [
+                        UI.renderHtmlProperty('oro.promotion.restrictions.label'|trans, scopeMacros.renderRestrictionsViewGrid(scopeEntities, entity.scopes)),
+                        UI.renderProperty('oro.promotion.advanced_conditions.label'|trans, entity.rule.expression)
+                    ]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set id = 'promotion-details' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ UI.scrollData(id, data, entity) }}
+</div>

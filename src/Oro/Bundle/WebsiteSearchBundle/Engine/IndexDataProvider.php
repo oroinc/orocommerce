@@ -9,6 +9,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event;
+use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
@@ -38,22 +39,28 @@ class IndexDataProvider
     /** @var HtmlTagHelper */
     private $htmlTagHelper;
 
+    /** @var PlaceholderHelper */
+    private $placeholderHelper;
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param EntityAliasResolver $entityAliasResolver
      * @param PlaceholderInterface $placeholder
      * @param HtmlTagHelper $htmlTagHelper
+     * @param PlaceholderHelper $placeholderHelper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
         PlaceholderInterface $placeholder,
-        HtmlTagHelper $htmlTagHelper
+        HtmlTagHelper $htmlTagHelper,
+        PlaceholderHelper $placeholderHelper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityAliasResolver = $entityAliasResolver;
         $this->placeholder = $placeholder;
         $this->htmlTagHelper = $htmlTagHelper;
+        $this->placeholderHelper = $placeholderHelper;
     }
 
     /**
@@ -122,10 +129,9 @@ class IndexDataProvider
 
             foreach ($this->toArray($fieldsValues) as $fieldName => $values) {
                 $type = $this->getFieldConfig($entityConfig, $fieldName, 'type');
-                $name = $this->getFieldConfig($entityConfig, $fieldName, 'name');
 
                 foreach ($this->toArray($values) as $value) {
-                    $singleValueFieldName = $name;
+                    $singleValueFieldName = $fieldName;
                     $addToAllText = $value['all_text'];
                     $value = $value['value'];
 
@@ -219,7 +225,7 @@ class IndexDataProvider
 
         $value = $this->clearValue($type, $value);
 
-        if (!$value) {
+        if ($value === null || $value === '') {
             return;
         }
 
@@ -289,7 +295,8 @@ class IndexDataProvider
                 return false;
             }
 
-            return $fieldConfig['name'] === $fieldName;
+            return $fieldConfig['name'] === $fieldName ||
+                $this->placeholderHelper->isNameMatch($fieldConfig['name'], $fieldName);
         });
 
         if (!$fields) {

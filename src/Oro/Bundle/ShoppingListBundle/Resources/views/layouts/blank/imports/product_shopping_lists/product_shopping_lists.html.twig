@@ -94,7 +94,15 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <a class="shopping-lists-popup__link" href="#"><%= _.escape(list.label) %></a>
+                    <% if (_.isString(list.href)) { %>
+                        <a class="shopping-lists-popup__link" href="<%- list.href %>">
+                            <%= _.escape(list.label) %>
+                        </a>
+                    <% } else { %>
+                        <span class="shopping-lists-popup__link">
+                            <%= _.escape(list.label) %>
+                        </span>
+                    <% } %>
                 </td>
                 <td class="shopping-lists-popup__quantity">
                     <% var ListLineItems = list.line_items; %>

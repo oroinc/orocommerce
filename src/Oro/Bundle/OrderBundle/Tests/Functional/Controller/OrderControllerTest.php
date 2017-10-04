@@ -258,14 +258,12 @@ class OrderControllerTest extends WebTestCase
 
         $discountItems = [
             [
-                'value' => '33',
                 'percent' => '33',
                 'amount' => '33.33',
                 'type' => OrderDiscount::TYPE_PERCENT,
                 'description' => 'some test description 333'
             ],
             [
-                'value' => '44.44',
                 'percent' => '44',
                 'amount' => '44.44',
                 'type' => OrderDiscount::TYPE_AMOUNT,
@@ -297,17 +295,15 @@ class OrderControllerTest extends WebTestCase
         $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
         $expectedDiscountItems = [
             [
-                'value' => '33',
                 'percent' => '33',
-                'amount' => '33.3300',
-                'type' => '%',
+                'amount' => '33.33',
+                'type' => OrderDiscount::TYPE_PERCENT,
                 'description' => 'some test description 333'
             ],
             [
-                'value' => '44.4400',
                 'percent' => '21.161904761905',
-                'amount' => '44.4400',
-                'type' => 'USD',
+                'amount' => '44.44',
+                'type' => OrderDiscount::TYPE_AMOUNT,
                 'description' => 'some other test description 444'
             ]
         ];
@@ -590,16 +586,14 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'value' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][value]"]')
-                    ->extract('value')[0],
                 'percent' => $crawler
                     ->filter('input[name="oro_order_type[discounts]['. $i .'][percent]"]')
                     ->extract('value')[0],
                 'amount' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][amount]"]')
                     ->extract('value')[0],
                 'type' => $crawler
-                    ->filter('select[name="oro_order_type[discounts]['. $i .'][type]"] :selected')
-                    ->html(),
+                    ->filter('input[name="oro_order_type[discounts]['. $i .'][type]"]')
+                    ->extract('value')[0],
                 'description' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][description]"]')
                     ->extract('value')[0]
             ];
@@ -615,14 +609,12 @@ class OrderControllerTest extends WebTestCase
     {
         return [
             [
-                'value' => '11',
                 'percent' => '11',
                 'amount' => '11.11',
                 'type' => OrderDiscount::TYPE_PERCENT,
                 'description' => 'some test description'
             ],
             [
-                'value' => '22.22',
                 'percent' => '22',
                 'amount' => '22.22',
                 'type' => OrderDiscount::TYPE_AMOUNT,
@@ -638,17 +630,15 @@ class OrderControllerTest extends WebTestCase
     {
         return [
             [
-                'value' => '11',
                 'percent' => '11',
-                'amount' => '11.1100',
-                'type' => '%',
+                'amount' => '11.11',
+                'type' => OrderDiscount::TYPE_PERCENT,
                 'description' => 'some test description'
             ],
             [
-                'value' => '22.2200',
-                'percent' => '2.2220',
-                'amount' => '22.2200',
-                'type' => 'USD',
+                'percent' => '2.222',
+                'amount' => '22.22',
+                'type' => OrderDiscount::TYPE_AMOUNT,
                 'description' => 'some other test description'
             ]
         ];

@@ -40,6 +40,9 @@ class WebsiteSearchSegmentListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        // entity check is done inside the listener intentionally because common event has to be used instead of
+        // product specific event to make sure that this listener will be executed
+        // before the Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener
         if ($event->getEntityClass() !== Product::class) {
             return;
         }

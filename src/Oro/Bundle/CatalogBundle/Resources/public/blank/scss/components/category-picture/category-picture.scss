@@ -3,13 +3,13 @@
 .category-picture {
     position: relative;
 
-    margin-top: 15px;
+    margin-bottom: $category-picture-offset-bottom;
 
-    border: 1px solid get-color('additional', 'light');
+    border: $category-picture-border;
 
     &__image {
         display: block;
 
-        width: 100%;
+        width: $category-picture-image-width;
     }
 }

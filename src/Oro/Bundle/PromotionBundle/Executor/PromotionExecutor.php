@@ -3,28 +3,19 @@
 namespace Oro\Bundle\PromotionBundle\Executor;
 
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
-use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
-use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
+use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 
+/**
+ * This class fills context with discounts' information for a given source entity using currently selected strategy.
+ */
 class PromotionExecutor
 {
-    /**
-     * @var PromotionProvider
-     */
-    private $promotionProvider;
-
     /**
      * @var DiscountContextConverterInterface
      */
     private $discountContextConverter;
-
-    /**
-     * @var DiscountFactory
-     */
-    private $discountFactory;
 
     /**
      * @var StrategyProvider
@@ -32,49 +23,34 @@ class PromotionExecutor
     private $discountStrategyProvider;
 
     /**
-     * @var MatchingProductsProvider
+     * @var PromotionDiscountsProviderInterface
      */
-    private $matchingProductsProvider;
+    private $promotionDiscountsProvider;
 
     /**
-     * @param PromotionProvider $promotionProvider
      * @param DiscountContextConverterInterface $discountContextConverter
-     * @param DiscountFactory $discountFactory
      * @param StrategyProvider $discountStrategyProvider
-     * @param MatchingProductsProvider $matchingProductsProvider
+     * @param PromotionDiscountsProviderInterface $promotionDiscountsProvider
      */
     public function __construct(
-        PromotionProvider $promotionProvider,
         DiscountContextConverterInterface $discountContextConverter,
-        DiscountFactory $discountFactory,
         StrategyProvider $discountStrategyProvider,
-        MatchingProductsProvider $matchingProductsProvider
+        PromotionDiscountsProviderInterface $promotionDiscountsProvider
     ) {
-        $this->promotionProvider = $promotionProvider;
         $this->discountContextConverter = $discountContextConverter;
-        $this->discountFactory = $discountFactory;
         $this->discountStrategyProvider = $discountStrategyProvider;
-        $this->matchingProductsProvider = $matchingProductsProvider;
+        $this->promotionDiscountsProvider = $promotionDiscountsProvider;
     }
 
     /**
      * @param object $sourceEntity
-     * @return DiscountContext
+     * @return DiscountContextInterface
      */
-    public function execute($sourceEntity): DiscountContext
+    public function execute($sourceEntity): DiscountContextInterface
     {
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
-        $discounts = [];
-        foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
-            $discount->setMatchingProducts(
-                $this->matchingProductsProvider->getMatchingProducts(
-                    $promotion->getProductsSegment(),
-                    $discountContext->getLineItems()
-                )
-            );
-            $discounts[] = $discount;
-        }
+        $discounts = $this->promotionDiscountsProvider->getDiscounts($sourceEntity, $discountContext);
+
         if (!$discounts) {
             return $discountContext;
         }

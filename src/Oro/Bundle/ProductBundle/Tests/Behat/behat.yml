@@ -138,6 +138,11 @@ oro_behat_extension:
           Type: 'oro_product_step_one[type]'
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
+    Product Attribute Frontend Options:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-section")]//h4[contains(., "Frontend options")]/..'
+
     ProductForm:
       selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -158,6 +163,22 @@ oro_behat_extension:
           Size: 'oro_product[Size]'
           Color Attribute: 'oro_product[color_attribute]'
           Size Attribute: 'oro_product[size_attribute]'
+        # for testing product attributes
+          StringField: 'oro_product[StringField]'
+          IntegerField: 'oro_product[IntegerField]'
+          BigIntField: 'oro_product[BigIntField]'
+          SmallIntField: 'oro_product[SmallIntField]'
+          BooleanField: 'oro_product[BooleanField]'
+          DecimalField: 'oro_product[DecimalField]'
+          FloatField: 'oro_product[FloatField]'
+          PercentField: 'oro_product[PercentField]'
+          CurrencyField: 'oro_product[CurrencyField]'
+          DateField:
+            type: 'css'
+            locator: 'input[name^="date_selector_oro_product_DateField"]'
+          DateTimeField: 'oro_product[DateTimeField]'
+          SelectField: 'oro_product[SelectField]'
+          TextField: 'oro_product[TextField]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -663,6 +684,13 @@ oro_behat_extension:
         type: xpath
         locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
 
+    Frontend Product Grid MultipleChoice:
+      selector: 'div.filter-item'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice
+
+    Frontend Product Grid Sorter:
+      selector: 'div.datagrid-tool div.sorting select'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
@@ -685,6 +713,7 @@ oro_behat_extension:
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
+        - '@OroProductBundle/Tests/Behat/Features/product-attributes'
     OroProductBundleRelatedItems:
       contexts:
         - OroApplicationBundle::CommerceMainContext

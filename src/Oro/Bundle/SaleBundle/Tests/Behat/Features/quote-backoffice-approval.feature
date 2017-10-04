@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9130
 @ticket-BB-11080
+@ticket-BB-12075
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Backoffice Quote Flow with Approvals
@@ -18,14 +19,12 @@ Feature: Backoffice Quote Flow with Approvals
     And I click Configuration Backoffice Quote Flow with Approvals in grid
     Then the "Price override requires approval" checkbox should be checked
 
-  Scenario: Add workflow permissions for user
+  Scenario: Check workflow permissions for user
     Given I go to System/ User Management/ Roles
-    And I filter Label as is equal to "Sales Rep"
-    When I click edit Sales Rep in grid
-    And I select following permissions:
+    When I filter Label as is equal to "Sales Rep"
+    And I click view Sales Rep in grid
+    Then the role has following active workflow permissions:
       | Backoffice Quote Flow with Approvals | View Workflow:Global | Perform transitions:Global |
-    And I save and close form
-    Then I should see "Role saved" flash message
 
   Scenario: Draft -> Edit: Quote prices not changed
     Given I proceed as the Manager
@@ -91,13 +90,13 @@ Feature: Backoffice Quote Flow with Approvals
       | Internal Status | Draft |
     When I click "Submit for Review"
     And I fill form with:
-      | Comment | Test comment for submitting |
+      | Comment | Test comment for submitting <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #2 successfully submitted for review" flash message
     And I should see Quote with:
       | PO Number       | PO2                  |
       | Internal Status | Submitted for Review |
-    And should see "Test comment for submitting" note in activity list
+    And should see "Test comment for submitting alert(1)" note in activity list
 
   Scenario Outline: Quotes change and Submit for Review
     Given I go to Sales/Quotes
@@ -167,13 +166,13 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO2 in grid
     And I click "Return"
     And I fill form with:
-      | Comment | Return reason note text |
+      | Comment | Return reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #2 returned" flash message
     And I should see Quote with:
       | PO Number       | PO2   |
       | Internal Status | Draft |
-    And should see "Return reason note text" note in activity list
+    And should see "Return reason note text alert(1)" note in activity list
 
   Scenario: Under Review -> Approve and Send to Customer: Quote prices changed
     Given I go to Sales/Quotes
@@ -227,13 +226,13 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO4 in grid
     When I click "Approve"
     And I fill form with:
-      | Comment | Approve reason note text |
+      | Comment | Approve reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #4 approved" flash message
     And I should see Quote with:
       | PO Number       | PO4      |
       | Internal Status | Reviewed |
-    And should see "Approve reason note text" note in activity list
+    And should see "Approve reason note text alert(1)" note in activity list
     And I should see "Send to Customer"
 
   Scenario: Approved -> Sent to Customer: Quote prices changed
@@ -265,13 +264,13 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO5 in grid
     When I click "Decline"
     And I fill form with:
-      | Comment | Decline reason note text |
+      | Comment | Decline reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #5 declined" flash message
     And I should see Quote with:
       | PO Number       | PO5          |
       | Internal Status | Not Approved |
-    And should see "Decline reason note text" note in activity list
+    And should see "Decline reason note text alert(1)" note in activity list
 
   Scenario: Draft -> Delete: Internal status: Deleted, customer status: N/A
     Given I proceed as the Manager

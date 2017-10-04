@@ -14,6 +14,8 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -205,11 +207,14 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
-        $constraint = new EnabledTypeConfigsValidationGroup();
+        $enabledTypeConfigsValidationGroup = new EnabledTypeConfigsValidationGroup();
+        $shippingRuleEnable = new ShippingRuleEnable();
+        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
 
         return [
-            $constraint->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
-            (new ShippingRuleEnable())->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
+            $enabledTypeConfigsValidationGroup->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
+            $shippingRuleEnable->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
+            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 

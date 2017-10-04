@@ -29,7 +29,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -66,7 +66,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
-        $table->addColumn('value', 'decimal', ['scale' => 2]);
+        $table->addColumn('value', 'decimal', ['precision' => 21, 'scale' => 6]);
         $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
     }

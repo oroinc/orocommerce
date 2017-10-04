@@ -59,6 +59,8 @@
 .customer-oq__order-info {
   max-width: 350px;
 
+  word-wrap: break-word;
+
   &__title {
     font-size: 16px;
 
@@ -66,6 +68,8 @@
   }
 
   .table {
+    table-layout: fixed;
+
     // TODO: override hard selector
     > tbody > tr > td {
       padding-left: 0;

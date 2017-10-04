@@ -46,6 +46,12 @@ services:
         tags:
             - { name: website_search.placeholder }
 
+    oro_website_search.enum_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
     oro_website_search.loader.mapping_configuration_loader:
         public: false
         class: 'Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader'
@@ -92,6 +98,7 @@ services:
         public: false
         arguments:
             - '@oro_website_search.loader.mapping_configuration_cache_loader'
+            - '@event_dispatcher'
 
     oro_website_search.query_factory:
         class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory'
@@ -135,6 +142,12 @@ services:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_website_search.placeholder_decorator'
             - '@oro_ui.html_tag_helper'
+            - '@oro_website_search.helper.placeholder_helper'
+
+    oro_website_search.helper.placeholder_helper:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper'
+        arguments:
+            - '@oro_website_search.placeholder.registry'
 
     oro_website_search.placeholder_decorator:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator'
@@ -256,3 +269,12 @@ services:
         public: false
         tags:
             - { name: website_search.placeholder }
+
+    oro_website_search.multi_enum_filter:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Datagrid\Filter\SearchMultiEnumFilter'
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_entity.manager.dictionary.api'
+        tags:
+            - { name: oro_search.extension.search_filter.filter, type: multi-enum, datasource: search }
