@@ -167,3 +167,7 @@ oro_behat_extension:
       options:
         mapping:
           PO Number: 'oro_workflow_transition[po_number]'
+
+    Checkout Edit Order Link:
+      selector: '.checkout-order-summary__edit-link'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
