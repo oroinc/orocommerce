@@ -73,8 +73,12 @@ class InventoryQuantityManager
         $inventoryLevel->setQuantity($inventoryLevel->getQuantity() + $quantityToIncrement);
     }
 
-    public function shouldDecrement(Product $product)
+    public function shouldDecrement(Product $product = null)
     {
+        if (!$product instanceof Product) {
+            return false;
+        }
+
         if ($this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')) {
             return true;
         }
