@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
@@ -24,16 +28,22 @@ class SearchCategoryFilteringEventListener
     /** @var CategoryRepository */
     private $repository;
 
+    /** @var SubcategoryProvider */
+    private $categoryProvider;
+
     /**
      * @param RequestProductHandler $requestProductHandler
      * @param CategoryRepository $categoryRepository
+     * @param SubcategoryProvider $categoryProvider
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        SubcategoryProvider $categoryProvider
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->repository = $categoryRepository;
+        $this->categoryProvider = $categoryProvider;
     }
 
     /**
@@ -54,6 +64,32 @@ class SearchCategoryFilteringEventListener
         $config = $event->getConfig();
         $config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
         $config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param int $categoryId
+     */
+    protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId)
+    {
+        $category = $this->repository->find($categoryId);
+
+        $filters = $config->offsetGetByPath('[filters]', []);
+        $filters['columns'][SubcategoryFilter::FILTER_TYPE_NAME] = [
+            'data_name' => 'category_path',
+            'label' => 'oro.catalog.filter.subcategory.label',
+            'type' => SubcategoryFilter::FILTER_TYPE_NAME,
+            'rootCategory' => $category,
+            'options' => [
+                'categories' => $this->categoryProvider->getAvailableSubcategories($category)
+            ]
+        ];
+
+        $filters['default'][SubcategoryFilter::FILTER_TYPE_NAME] = [
+            'type' => SubcategoryFilterType::TYPE_INCLUDE,
+        ];
+
+        $config->offsetSetByPath('[filters]', $filters);
     }
 
     /**

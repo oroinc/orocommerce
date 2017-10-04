@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -25,6 +26,9 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
     /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
+    /** @var SubcategoryProvider */
+    protected $categoryProvider;
+
     /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
     protected $config;
 
@@ -38,8 +42,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->repository = $this->createMock(CategoryRepository::class);
 
         $this->category = new Category();
         $this->category->setMaterializedPath('1_23');
@@ -48,8 +51,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('find')
             ->willReturn($this->category);
 
-        $this->config = $this->getMockBuilder(DatagridConfiguration::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->categoryProvider = $this->createMock(SubcategoryProvider::class);
+        $this->config = $this->createMock(DatagridConfiguration::class);
     }
 
     public function testPreBuildWithoutCategory()
@@ -79,7 +82,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->repository
+            $this->repository,
+            $this->categoryProvider
         );
 
         $listener->onPreBuild($event);
@@ -106,7 +110,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->repository
+            $this->repository,
+            $this->categoryProvider
         );
 
         $this->config->expects($this->at(0))
@@ -159,7 +164,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->repository
+            $this->repository,
+            $this->categoryProvider
         );
 
         /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDataSource */
@@ -235,7 +241,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->repository
+            $this->repository,
+            $this->categoryProvider
         );
 
         /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */

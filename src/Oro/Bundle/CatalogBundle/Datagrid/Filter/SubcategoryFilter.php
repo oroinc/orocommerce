@@ -2,66 +2,40 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Filter;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
-use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
-use Oro\Bundle\FilterBundle\Filter\EntityFilter;
+use Oro\Bundle\FilterBundle\Filter\AbstractFilter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Symfony\Component\Form\FormFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 
-class SubcategoryFilter extends EntityFilter
+class SubcategoryFilter extends AbstractFilter
 {
     const FILTER_TYPE_NAME = 'subcategory';
-
-    /** @var SubcategoryProvider */
-    protected $categoryProvider;
-
-    /**
-     * @param FormFactoryInterface $factory
-     * @param FilterUtility $util
-     * @param SubcategoryProvider $categoryProvider
-     */
-    public function __construct(
-        FormFactoryInterface $factory,
-        FilterUtility $util,
-        SubcategoryProvider $categoryProvider
-    ) {
-        parent::__construct($factory, $util);
-
-        $this->categoryProvider = $categoryProvider;
-    }
 
     /**
      * {@inheritDoc}
      */
     protected function getFormType()
     {
-        return EntityFilterType::NAME;
+        return SubcategoryFilterType::NAME;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function init($name, array $params)
+    public function getMetadata()
     {
-        parent::init($name, $params);
+        $metadata = parent::getMetadata();
 
-        //TODO: Configuration of filter should be not in filter class
-        $categories = array_filter(
-            $this->categoryProvider->getAvailableSubcategories(),
-            function (Category $item) {
-                return count($item->getProducts()) > 0;
-            }
-        );
+        $formView = $this->getForm()->createView();
+        $fieldView = $formView->children['value'];
 
-        $this->params['enabled'] = count($categories) > 0;
-        $this->params['options']['field_options']['multiple'] = true;
-        $this->params['options']['field_options']['class'] = Category::class;
-        $this->params['options']['field_options']['choices'] = $categories;
+        $metadata['categories'] = $fieldView->vars['choices'];
+
+        return $metadata;
     }
 
     /**
@@ -73,52 +47,80 @@ class SubcategoryFilter extends EntityFilter
             throw new \RuntimeException('Invalid filter datasource adapter provided: ' . get_class($ds));
         }
 
-        return $this->applyRestrictions($ds, $data['value']->toArray());
+        return $this->applyRestrictions($ds, $data);
     }
 
     /**
      * @param FilterDatasourceAdapterInterface $ds
-     * @param array $categories
+     * @param array $data
      *
      * @return bool
      */
-    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $categories)
+    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data)
     {
-        $expr = Criteria::expr();
+        $rootCategory = $this->get('rootCategory');
+        $type = $data['type'];
+        $builder = Criteria::expr();
 
-        $placeholder = new CategoryPathPlaceholder();
-        $sourceField = $this->get(FilterUtility::DATA_NAME_KEY);
+        switch ($type) {
+            case SubcategoryFilterType::TYPE_NOT_INCLUDE:
+                $ds->addRestriction(
+                    $builder->eq(
+                        $this->getFieldName($type),
+                        $rootCategory->getMaterializedPath()
+                    ),
+                    FilterUtility::CONDITION_AND
+                );
 
-        if (!$categories) {
-            //TODO: filter should be configured from outside and it shouldn't aware of external dependency like that
-            $currentCategory = $this->categoryProvider->getCurrentCategory();
+                return true;
+                break;
+            case SubcategoryFilterType::TYPE_INCLUDE:
+                $categories = $data['value']->toArray();
 
-            $fieldName = $placeholder->replace(
-                $sourceField,
-                [CategoryPathPlaceholder::NAME => $currentCategory->getMaterializedPath()]
-            );
+                if (count($categories) === 0) {
+                    $categories = [$rootCategory];
+                }
 
-            $ds->addRestriction(
-                $expr->eq($fieldName, 1),
-                FilterUtility::CONDITION_AND
-            );
+                $criteria = Criteria::create();
 
-            return true;
+                $placeholder = new CategoryPathPlaceholder();
+                foreach ($categories as $category) {
+                    $fieldName = $placeholder->replace(
+                        $this->getFieldName($type),
+                        [CategoryPathPlaceholder::NAME => $category->getMaterializedPath()]
+                    );
+
+                    $criteria->orWhere(
+                        $builder->eq($fieldName, 1)
+                    );
+                }
+
+                $ds->addRestriction($criteria->getWhereExpression(), FilterUtility::CONDITION_AND);
+
+                return true;
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * @param int $type
+     *
+     * @return string
+     */
+    protected function getFieldName($type)
+    {
+        $source = Query::TYPE_TEXT;
+        $dataName = $this->get(FilterUtility::DATA_NAME_KEY);
+        $postfix = '';
+
+        if ($type === SubcategoryFilterType::TYPE_INCLUDE) {
+            $source = Query::TYPE_INTEGER;
+            $postfix = '_' . CategoryPathPlaceholder::NAME;
         }
 
-        $criteria = Criteria::create();
-
-        foreach ($categories as $category) {
-            $path = $category->getMaterializedPath();
-            $fieldName = $placeholder->replace($sourceField, [CategoryPathPlaceholder::NAME => $path]);
-
-            $criteria->orWhere(
-                $expr->eq($fieldName, 1)
-            );
-        }
-
-        $ds->addRestriction($criteria->getWhereExpression(), FilterUtility::CONDITION_AND);
-
-        return true;
+        return sprintf('%s.%s%s', $source, $dataName, $postfix);
     }
 }

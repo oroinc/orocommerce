@@ -23,9 +23,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider'
         public: false
         arguments:
-            - '@request_stack'
             - '@oro_security.token_accessor'
-            - '@oro_catalog.repository.category'
             - '@oro_catalog.provider.category_tree_provider'
 
     oro_catalog.repository.category:
@@ -106,6 +104,7 @@ services:
         arguments:
             - "@oro_catalog.handler.request_product"
             - "@oro_catalog.repository.category"
+            - '@oro_catalog.provider.subcategory_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }

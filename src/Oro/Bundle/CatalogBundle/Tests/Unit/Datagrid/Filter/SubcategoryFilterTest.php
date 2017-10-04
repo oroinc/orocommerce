@@ -2,15 +2,179 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Datagrid\Filter;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
+use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
+use Oro\Bundle\FilterBundle\Filter\FilterUtility;
+use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
+    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $formFactory;
+
+    /** @var FilterUtility|\PHPUnit_Framework_MockObject_MockObject */
+    protected $filterUtility;
+
     /** @var SubcategoryFilter */
     protected $filter;
 
     protected function setUp()
     {
-        $this->filter = new SubcategoryFilter();
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+
+        $this->filterUtility = $this->createMock(FilterUtility::class);
+        $this->filterUtility->expects($this->any())
+            ->method('getExcludeParams')
+            ->willReturn([]);
+
+        $this->filter = new SubcategoryFilter($this->formFactory, $this->filterUtility);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Invalid filter datasource adapter provided
+     */
+    public function testApplyExceptionForWrongFilterDatasourceAdapter()
+    {
+        /** @var FilterDatasourceAdapterInterface $datasource */
+        $datasource = $this->createMock(FilterDatasourceAdapterInterface::class);
+
+        $this->filter->apply($datasource, []);
+    }
+
+    public function testGetMetadata()
+    {
+        $category = $this->getCategory(42, '1_2');
+
+        $this->filter->init(
+            'test',
+            [
+                FilterUtility::DATA_NAME_KEY => 'field',
+                'options' => [
+                    'categories' => [$category]
+                ]
+            ]
+        );
+
+        $typeFormView = new FormView();
+        $typeFormView->vars['choices'] = [];
+
+        $valueFormView = new FormView();
+        $valueFormView->vars['choices'] = [$category->getId() => $category];
+
+        $formView = new FormView();
+        $formView->children['type'] = $typeFormView;
+        $formView->children['value'] = $valueFormView;
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->any())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(
+                SubcategoryFilterType::NAME,
+                [],
+                ['csrf_protection' => false, 'categories' => [$category]]
+            )
+            ->willReturn($form);
+
+        $this->assertEquals(
+            [
+                'name' => 'test',
+                'label' => 'Test',
+                'choices' => [],
+                'data_name' => 'field',
+                'options' => [
+                    'categories' => [$category]
+                ],
+                'lazy' => false,
+                'categories' => [$category->getId() => $category]
+            ],
+            $this->filter->getMetadata()
+        );
+    }
+
+    public function testApplyNotInclude()
+    {
+        $category = $this->getCategory(42, '1_42');
+        $fieldName = 'field';
+
+        /** @var SearchFilterDatasourceAdapter|\PHPUnit_Framework_MockObject_MockObject $ds */
+        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
+        $ds->expects($this->once())
+            ->method('addRestriction')
+            ->with(new Comparison('text.field', Comparison::EQ, $category->getMaterializedPath()));
+
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => $fieldName, 'rootCategory' => $category]);
+
+        $this->assertTrue(
+            $this->filter->apply(
+                $ds,
+                [
+                    'type' => SubcategoryFilterType::TYPE_NOT_INCLUDE,
+                    'value' => null,
+                ]
+            )
+        );
+    }
+
+    public function testApplyInclude()
+    {
+        $rootCategory = $this->getCategory(42, '1_42');
+        $category1 = $this->getCategory(100, '1_42_100');
+        $category2 = $this->getCategory(200, '1_42_200');
+
+        $fieldName = 'field';
+        $value = new ArrayCollection([$category1, $category2]);
+
+        /** @var SearchFilterDatasourceAdapter|\PHPUnit_Framework_MockObject_MockObject $ds */
+        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
+        $ds->expects($this->once())
+            ->method('addRestriction')
+            ->with(
+                new CompositeExpression(
+                    CompositeExpression::TYPE_OR,
+                    [
+                        new Comparison('integer.field_1_42_100', Comparison::EQ, 1),
+                        new Comparison('integer.field_1_42_200', Comparison::EQ, 1),
+                    ]
+                )
+            );
+
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => $fieldName, 'rootCategory' => $rootCategory]);
+
+        $this->assertTrue(
+            $this->filter->apply(
+                $ds,
+                [
+                    'type' => SubcategoryFilterType::TYPE_INCLUDE,
+                    'value' => $value,
+                ]
+            )
+        );
+    }
+
+    /**
+     * @param int $id
+     * @param string $path
+     * @return Category
+     */
+    protected function getCategory($id, $path)
+    {
+        return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
     }
 }

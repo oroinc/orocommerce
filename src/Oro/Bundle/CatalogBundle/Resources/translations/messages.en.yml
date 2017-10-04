@@ -91,3 +91,10 @@ oro:
             all_products_page:
                 label: All products page
                 description: This feature enables a page where all products are shown on one page grouped by category
+
+        filter:
+            subcategory:
+                label: 'Sub-Categories'
+                type:
+                    include: 'Include, show as filter'
+                    not_include: 'Do not include'

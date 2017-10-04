@@ -4,6 +4,5 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
-            - '@oro_catalog.provider.subcategory_provider'
         tags:
             - { name: oro_search.extension.search_filter.filter, type: subcategory, datasource: search }
