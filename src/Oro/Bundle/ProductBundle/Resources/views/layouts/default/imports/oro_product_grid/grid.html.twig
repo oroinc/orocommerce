@@ -53,16 +53,16 @@
 {% endblock %}
 
 {% block _product_datagrid_toolbar_display_options_widget %}
+    {% set gridName = block.vars['datagrid'].name %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
         'data-page-component-options': {
-            'parameterName': 'frontend-product-search-grid'
+            'parameterName': gridName
         },
         'data-server-render': '',
         class: attr.class|default('') ~ " datagrid-tool display-options"
     }) %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-    {% set gridName = block.vars['datagrid'].name %}
 
     {% if toolbarPosition != 'bottom' %}
         <div{{ block('block_attributes') }}>
@@ -100,4 +100,61 @@
             </div>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block _product_grid_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'orofrontend/default/js/app/views/footer-align-view',
+            elements: {
+                items: '.product-item--gallery-view',
+                footer: '.product-item__qty'
+            }
+        }
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _sticky_element_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'sticky_element_toolbar',
+        '~class': ' sticky-panel__toolbar toolbar-sticky-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_require_js_config_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-grid-toolbar': 'top'
+    }) %}
+
+    {% if (not isMobileVersion()) %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-grid-toolbar': 'top',
+            'data-sticky-target': 'top-sticky-panel',
+            'data-proxy-data': 'true',
+            'data-sticky': {
+                'isSticky': true,
+                'autoWidth': true,
+                'toggleClass': 'toolbar-sticky-container',
+                'placeholderId': 'sticky_element_toolbar'
+            }
+        }) %}
+    {% endif %}
+
+    {% set attr = block('block_attributes') %}
+    <script>
+        require({
+            config: {
+                'orofrontend/js/app/datafilter/frontend-collection-filters-manager': {
+                    templateData: {
+                        attributes: '{{ attr|raw }}'
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}

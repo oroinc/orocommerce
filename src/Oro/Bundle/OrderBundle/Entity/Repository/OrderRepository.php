@@ -60,7 +60,7 @@ class OrderRepository extends EntityRepository
      *
      * @return QueryBuilder
      */
-    public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses = ['closed', 'archived'])
+    public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses)
     {
         $qb = $this->createQueryBuilder('orders');
         $qb->select('IDENTITY(orders.customerUser) as customer_id')

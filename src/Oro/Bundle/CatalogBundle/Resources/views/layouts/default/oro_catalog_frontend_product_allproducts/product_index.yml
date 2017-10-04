@@ -11,6 +11,26 @@ layout:
             optionName: grid_name
             optionValue: frontend-catalog-allproducts-grid
 
+        - '@setOption':
+            id: product_datagrid
+            optionName: current_row_view
+            optionValue: '=data["oro_datagrid_row_view_theme"].getThemeByGridName("frontend-catalog-allproducts-grid")'
+
+        - '@setOption':
+            id: product_datagrid_toolbar_display_options
+            optionName: current_row_view
+            optionValue: '=data["oro_datagrid_row_view_theme"].getThemeByGridName("frontend-catalog-allproducts-grid")'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new
+            optionName: visible
+            optionValue: '=data["oro_datagrid_row_view_theme"].getThemeByGridName("frontend-catalog-allproducts-grid")!="no-image-view"'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: '=data["oro_datagrid_row_view_theme"].getThemeByGridName("frontend-catalog-allproducts-grid")=="no-image-view"'
+
         - '@addTree':
             items:
                 category_title:
@@ -20,6 +40,7 @@ layout:
             tree:
                 page_main_header:
                     category_title: ~
+
         - '@remove':
             id: product_datagrid_cell_categoryId
         - '@remove':

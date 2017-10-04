@@ -585,13 +585,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
 
-    oro_product.layout.data_provider.frontend_datagrid_row_view:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
-        arguments:
-            - '@oro_product.datagrid_theme_helper'
-        tags:
-            - { name: layout.data_provider, alias: oro_product_frontend_datagrid_row_view }
-
     oro_product.layout.data_provider.product_form:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
