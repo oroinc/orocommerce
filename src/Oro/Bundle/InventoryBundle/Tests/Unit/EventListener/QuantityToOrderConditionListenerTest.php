@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;

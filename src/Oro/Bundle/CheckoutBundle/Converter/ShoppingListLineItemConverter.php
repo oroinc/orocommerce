@@ -29,6 +29,7 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
         $lineItems = $source->getLineItems();
         $checkoutLineItems = new ArrayCollection();
 
+        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $checkoutLineItem = new CheckoutLineItem();
             $checkoutLineItem
