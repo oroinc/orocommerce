@@ -151,35 +151,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
-     */
-    public function productShouldHasValueInPriceField($sku, $price)
-    {
-        $priceField = $this->createElement('Quick Add Price Field', $this->findProductRow($sku));
-
-        static::assertEquals($price, trim($priceField->getValue()));
-    }
-
-    /**
-     * @param string $sku
-     *
-     * @return NodeElement|null
-     */
-    private function findProductRow($sku)
-    {
-        /** @var NodeElement[] $productRows */
-        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
-
-        foreach ($productRows as $skuField) {
-            if ($skuField->getValue() === $sku) {
-                return $skuField->getParent()->getParent();
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @Then I should see flash error messages
      */
     public function shouldSeeFlashErrorMessages()

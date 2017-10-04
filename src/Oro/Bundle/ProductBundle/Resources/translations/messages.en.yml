@@ -56,7 +56,9 @@ oro:
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
-        variant_links.label: Product Variant Links
+        variant_links:
+            label: Product Variant Links
+            description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images.label: Images

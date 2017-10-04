@@ -8,6 +8,7 @@ class LoadUserData extends AbstractLoadUserData
 {
     const USER_NAME_CATALOG_MANAGER = 'system_user_catalog_manager';
     const USER_PASSWORD_CATALOG_MANAGER = 'system_user_cm_api_key';
+    const ROLE_CATALOG_MANAGER = 'ROLE_CATALOG_MANAGER';
 
     /**
      * {@inheritdoc}
@@ -24,7 +25,7 @@ class LoadUserData extends AbstractLoadUserData
                 'apiKey' => 'system_user_cm_api_key',
                 'reference' => 'oro_user:user:system_user_cm',
                 'enabled' => true,
-                'role' => 'ROLE_CATALOG_MANAGER',
+                'role' => self::ROLE_CATALOG_MANAGER,
                 'group' => 'Administrators',
             ],
         ];

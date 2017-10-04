@@ -21,15 +21,19 @@ databaseBefore:
         product_1:
             sku: product_1
             taxCode: '@product_tax_code'
+            addName: ['@product_name_1']
         product_2:
             sku: product_2
             taxCode: '@product_tax_code'
+            addName: ['@product_name_2']
         product_3:
             sku: product_3
             taxCode: '@product_tax_code'
+            addName: ['@product_name_3']
         product_4:
             sku: product_4
             taxCode: '@product_tax_code'
+            addName: ['@product_name_4']
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_3.42:
             value: 3.42
@@ -71,6 +75,15 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
         product_tax_code:
             code: product_tax_code
+    'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue':
+        product_name_1:
+            string: 'product 1'
+        product_name_2:
+            string: 'product 2'
+        product_name_3:
+            string: 'product 3'
+        product_name_4:
+            string: 'product 4'
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule_1:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
