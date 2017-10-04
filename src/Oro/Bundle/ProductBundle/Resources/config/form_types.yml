@@ -224,6 +224,9 @@ services:
 
     oro_product.form.extension.attribute_config_extension:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
+        arguments:
+            - '@oro_entity_config.provider.attribute'
+            - '@translator'
         tags:
             - { name: form.type_extension, alias: oro_entity_config_type }
 

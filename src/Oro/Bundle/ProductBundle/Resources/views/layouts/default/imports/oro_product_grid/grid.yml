@@ -16,6 +16,33 @@ layout:
                 - 'grid.html.twig'
                 - 'grid_row.html.twig'
 
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
+
+        - '@addTree':
+            items:
+                product_index_page:
+                    blockType: container
+                product_grid_container:
+                    blockType: container
+            tree:
+                page_content:
+                    product_index_page:
+                        product_grid_container: ~
+
+        - '@add':
+            id: sticky_element_toolbar
+            parentId: top_sticky_panel_content
+            siblingId: sticky_header_row
+            blockType: block
+
+        - '@add':
+            id: product_require_js_config
+            parentId: require_js
+            blockType: block
+
         - '@changeBlockType':
             id: product_datagrid
             blockType: product_datagrid
@@ -24,6 +51,21 @@ layout:
             id: product_datagrid
             optionName: grid_name
             optionValue: frontend-product-search-grid
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addResetAction
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addRefreshAction
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addColumnManager
+            optionValue: false
 
         - '@setOption':
             id: product_datagrid
@@ -56,9 +98,6 @@ layout:
             id: product_datagrid_toolbar_sorting
             optionName: visible
             optionValue: true
-
-        - '@remove':
-            id: product_datagrid_toolbar_actions
 
         - '@remove':
             id: product_datagrid_toolbar_filter_container

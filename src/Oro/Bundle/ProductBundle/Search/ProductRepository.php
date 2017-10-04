@@ -41,7 +41,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery
             ->addSelect('sku')
-            ->addSelect('name_LOCALIZATION_ID as name')
+            ->addSelect('names_LOCALIZATION_ID as name')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
@@ -70,7 +70,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery
             ->addSelect('sku')
-            ->addSelect('name_LOCALIZATION_ID as name')
+            ->addSelect('names_LOCALIZATION_ID as name')
             ->addWhere(Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search))
             ->setOrderBy('integer.product_id', Criteria::ASC)
             ->setFirstResult($firstResult)
@@ -93,12 +93,12 @@ class ProductRepository extends WebsiteSearchRepository
 
         $query->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
-            ->addSelect('name_LOCALIZATION_ID as name')
+            ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->orX(
                     Criteria::expr()->in('sku_uppercase', [strtoupper($search)]),
-                    Criteria::expr()->contains('name_LOCALIZATION_ID', $search)
+                    Criteria::expr()->contains('names_LOCALIZATION_ID', $search)
                 )
             )
             ->setFirstResult($firstResult);

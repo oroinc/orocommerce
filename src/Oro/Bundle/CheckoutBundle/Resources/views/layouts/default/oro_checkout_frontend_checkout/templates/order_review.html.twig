@@ -20,7 +20,7 @@
                         <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
                         {{ form_widget(form.ship_until, {
                             'attr': {
-                                'class': 'datepicker-box__input input',
+                                'class': 'datepicker-input input',
                                 'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
                             },
                             'datePickerOptions': {
@@ -82,4 +82,11 @@
         '~class': " checkout__body--offset-none"
     }) %}
     {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _payment_additional_data_widget %}
+    {% if options.views[options.payment_method] is defined %}
+        {% set view = options.views[options.payment_method] %}
+        {{ parent_block_widget(block) }}
+    {% endif %}
 {% endblock %}

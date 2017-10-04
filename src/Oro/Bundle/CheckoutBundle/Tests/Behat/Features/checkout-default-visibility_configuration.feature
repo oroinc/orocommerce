@@ -8,8 +8,9 @@ Feature: Checkout from Shopping List with different Inventory configuration
   I want to start checkout from Shopping List view page and view validation messages according to Inventory configuration
 
   Scenario: Changing Inventory AllowedStatuses for Order
-    Given I login as administrator
-    And I go to System/Configuration
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
+    Given I go to System/Configuration
     And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
     And uncheck "Use default" for "Can Be Added to Orders" field
     And I fill form with:
@@ -18,15 +19,13 @@ Feature: Checkout from Shopping List with different Inventory configuration
     Then I should see "Configuration saved" flash message
 
   Scenario: Create order from Shopping List 1 with Visibility validation error with RFP enabled
-    Given AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
-
+    Given I operate as the Buyer
     When I open page with shopping list List 1
     And I press "Create Order"
     Then I should see "No products can be added to this order. Please create an RFQ to request price." flash message
 
   Scenario: Changing Inventory AllowedStatuses for RFQ
-    Given I login as administrator
+    Given I operate as the Admin
     And I go to System/Configuration
     And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
     And uncheck "Use default" for "Can Be Added to RFQs" field
@@ -36,9 +35,7 @@ Feature: Checkout from Shopping List with different Inventory configuration
     Then I should see "Configuration saved" flash message
 
   Scenario: Create order from Shopping List 1 with Visibility validation error with RFQ enabled
-    Given AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
-
+    Given I operate as the Buyer
     When I open page with shopping list List 1
     And I press "Create Order"
     Then I should see "No products can be added to this order." flash message

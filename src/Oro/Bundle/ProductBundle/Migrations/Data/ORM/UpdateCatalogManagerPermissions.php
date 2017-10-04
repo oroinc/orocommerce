@@ -100,6 +100,8 @@ class UpdateCatalogManagerPermissions extends AbstractFixture implements
             'action:oro_attribute_update',
             'action:oro_attribute_view',
             'action:oro_attribute_remove',
+            'action:oro_related_products_edit',
+            'action:oro_upsell_products_edit',
         ];
 
         $sid = $manager->getSid($role);

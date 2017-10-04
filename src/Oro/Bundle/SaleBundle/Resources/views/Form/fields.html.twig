@@ -220,6 +220,7 @@
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
             view: 'orosale/js/app/views/line-item-offer-view',
+            normalizeQuantityField: false,
             '$': {
                 product: '#' ~ productForm.product.vars.id,
                 priceValue: '#' ~ form.price.value.vars.id,

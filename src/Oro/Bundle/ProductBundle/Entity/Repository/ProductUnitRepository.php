@@ -34,18 +34,23 @@ class ProductUnitRepository extends EntityRepository
         $productsUnits = $this->getProductsUnitsQueryBuilder($products)
             ->select(
                 'IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code,
-                 COALESCE(IDENTITY(product.primaryUnitPrecision), 0) as primary'
+                 COALESCE(IDENTITY(product.primaryUnitPrecision), 0) as primary,
+                 productUnitPrecision.precision'
             )
             ->getQuery()->getArrayResult();
 
         $result = [];
         foreach ($productsUnits as $unit) {
             if ($unit['primary'] && (isset($result[$unit['productId']]))) {
-                array_unshift($result[$unit['productId']], $unit['code']);
+                $result[$unit['productId']] = array_merge(
+                    [$unit['code'] => $unit['precision']],
+                    $result[$unit['productId']]
+                );
             } else {
-                $result[$unit['productId']][] = $unit['code'];
+                $result[$unit['productId']][$unit['code']] = $unit['precision'];
             }
         }
+
         return $result;
     }
 

@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 
 abstract class AbstractStrategy implements StrategyInterface
 {
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    protected function processLineItemDiscounts(DiscountContext $discountContext)
+    protected function processLineItemDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($discountLineItem->getDiscounts() as $discount) {
@@ -24,9 +24,9 @@ abstract class AbstractStrategy implements StrategyInterface
     }
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    protected function processTotalDiscounts(DiscountContext $discountContext)
+    protected function processTotalDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getSubtotalDiscounts() as $discount) {
             $discountAmount = $discount->calculate($discountContext);
@@ -38,9 +38,9 @@ abstract class AbstractStrategy implements StrategyInterface
     }
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    protected function processShippingDiscounts(DiscountContext $discountContext)
+    protected function processShippingDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getShippingDiscounts() as $discount) {
             $discountAmount = $discount->calculate($discountContext);

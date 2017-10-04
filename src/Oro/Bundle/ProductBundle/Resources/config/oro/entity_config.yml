@@ -1,0 +1,24 @@
+entity_config:
+    attribute:
+        field:
+            items:
+                searchable:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.searchable.tooltip
+                filterable:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.filterable.tooltip
+                sortable:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip
+                enabled:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.enabled.tooltip
+                visible:
+                    form:
+                        options:
+                            tooltip: oro.product.entity_config.field.items.attribute.visible.tooltip

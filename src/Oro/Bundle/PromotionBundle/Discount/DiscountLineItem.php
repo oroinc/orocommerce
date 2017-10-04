@@ -3,20 +3,14 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 
-class DiscountLineItem implements
-    QuantityAwareInterface,
-    PriceAwareInterface,
-    PriceTypeAwareInterface,
-    SettablePriceAwareInterface,
-    SubtotalAwareInterface
+/**
+ * Implements DiscountLineItemInterface to support adding discount information on line item's level.
+ */
+class DiscountLineItem implements DiscountLineItemInterface
 {
     /**
      * @var Product|null

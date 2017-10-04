@@ -15,7 +15,7 @@
 #    tax code - TaxCode1
 
 include:
-    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:

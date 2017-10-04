@@ -1,0 +1,6 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% block form_actions_inner %}
+    <button class="btn" type="reset">{{ (options.cancelText|default('Cancel'))|trans }}</button>
+    <button class="btn btn-primary" type="submit" disabled="disabled">{{ (options.okText|default('Submit'))|trans }}</button>
+{% endblock %}

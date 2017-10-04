@@ -15,7 +15,7 @@ class ShippingDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function apply(DiscountContext $discountContext)
+    public function apply(DiscountContextInterface $discountContext)
     {
         $discountContext->addShippingDiscount($this);
     }

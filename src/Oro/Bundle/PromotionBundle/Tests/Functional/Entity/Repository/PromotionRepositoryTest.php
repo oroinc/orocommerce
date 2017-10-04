@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadSegmentData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -21,7 +23,7 @@ class PromotionRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                LoadPromotionData::class
+                LoadCouponData::class
             ]
         );
         $this->repository = $this->getContainer()->get('doctrine')

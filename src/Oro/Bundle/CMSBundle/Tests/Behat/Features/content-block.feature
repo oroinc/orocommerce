@@ -25,14 +25,13 @@ Feature: Content Block
     And fill "Content Block Form" with:
       |Customer Group|All Customers |
     And I save and close form
-    And click logout in user menu
-    When I go to "/"
+    When I am on homepage
     Then I should not see "LOREM IPSUM"
     When I signed in as AmandaRCole@example.org on the store frontend
     Then I should see "LOREM IPSUM"
 
   Scenario: Block for different customers
-    Given I login as administrator
+    Given I am on dashboard
     And I go to Marketing/ Content Blocks
     And I click edit "home-page-slider" in grid
     And press "Add Content"

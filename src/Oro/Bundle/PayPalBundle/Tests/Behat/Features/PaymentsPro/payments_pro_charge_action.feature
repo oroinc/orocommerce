@@ -2,7 +2,8 @@
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 Feature: Process order submission with PayPal Payments Pro and Authorize & Charge payment action
   Scenario: Create new PayPal Payments Pro Integration
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "PayPal Payments Pro" from "Type"
@@ -36,7 +37,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Charg
 
   Scenario: Error from Backend when pay order with PayPal Payments Pro
     Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I operate as the Buyer
     When I open page with shopping list List 2
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -66,6 +67,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Charg
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And I login as administrator
+
+    And I operate as the Admin
     And I go to Sales/Orders
     And I should see Paid in full in grid

@@ -12,7 +12,7 @@ layout:
                     siblingId: ~
                     prepend: true
                     options:
-                        categories: '=data["category"].getCategoryTree(data["current_user"].getCurrentUser())'
+                        categories: '=data["category"].getCategoryTreeArray(data["current_user"].getCurrentUser())'
                         max_size: 4
                 categories_main_menu_first_level_item:
                     blockType: container

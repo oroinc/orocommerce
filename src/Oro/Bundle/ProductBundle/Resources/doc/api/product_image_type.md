@@ -4,7 +4,24 @@
 
 ### create
 
-{@inheritdoc}
+Example:
+
+    {
+      "data": {
+        "type": "productimagetypes",
+        "attributes": {
+          "productImageTypeType": "main"
+        },
+        "relationships": {
+          "productImage": {
+            "data": {
+              "type": "productimages",
+              "id": "1"
+            }
+          }
+        }
+      }
+    }
 
 ##### Validation
 
@@ -21,7 +38,37 @@ The type attribute of the product image type model ("productImageTypeType") shou
 
 ### update
 
-{@inheritdoc}
+Example:
+
+    {
+      "data": {
+        "type": "productimagetypes",
+        "id": "6",
+        "attributes": {
+          "productImageTypeType": "additional"
+        },
+        "relationships": {
+          "productImage": {
+            "data": {
+              "type": "productimages",
+              "id": "3"
+            }
+          }
+        }
+      },
+      "included": [
+        {
+          "meta": {
+            "update": true
+          },
+          "type": "productimages",
+          "id": "3",
+          "attributes": {
+            "updatedAt": "2017-09-07T08:14:36Z"
+          }
+        }
+      ]
+    }
 
 ### delete
 
@@ -56,3 +103,12 @@ Retrieve the ID of the productImage for a specific productImageType.
 #### update_relationship
 
 Replace the productImage for a specific productImageType.
+
+Example:
+
+    {
+      "data": {
+        "type": "productimages",
+        "id": "3"
+      }
+    }

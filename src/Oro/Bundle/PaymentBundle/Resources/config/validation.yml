@@ -10,6 +10,8 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
         currency:
             - Currency: ~
             - NotBlank: ~
+        rule:
+            - Valid: ~
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
     properties:
@@ -23,3 +25,9 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     properties:
         type:
             - NotBlank: ~
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    properties:
+        expression:
+            - Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax:
+                groups: ['PaymentMethodsConfigsRule']
