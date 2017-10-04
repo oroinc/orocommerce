@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
@@ -39,15 +38,13 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         $user = self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
-        $organization = static::getContainer()->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
 
         return new UsernamePasswordOrganizationToken(
             $user,
             false,
-            'main',
-            $organization
+            'k',
+            $user->getOrganization(),
+            $user->getRoles()
         );
     }
 
