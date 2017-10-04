@@ -22,6 +22,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.order-line-items-table'
 
+    BackendOrderLineItems:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
+      selector: 'table.order-line-items-table'
+
     BackendOrderSubtotals:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderSubtotals
       selector:
@@ -90,10 +94,18 @@ oro_behat_extension:
         locator: '//input[contains(@id,"oro_order_type_overriddenShippingCostAmount_value-uid")]'
         type: xpath
 
-    DiscountType:
-      selector: 'select[name="oro_action_operation[orderDiscount][type]"]'
+    Order Discount Form:
+      selector:
+        locator: '//div[@class="discount-popup"]/ancestor::form'
+        type: xpath
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Type:
+            locator: '[data-role=type]'
+            type: 'css'
 
-    DiscountAmount:
+    DiscountValue:
       selector: 'input[name="oro_action_operation[orderDiscount][value]"]'
 
     DiscountDescription:
