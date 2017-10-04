@@ -171,3 +171,7 @@ oro_behat_extension:
     Checkout Edit Order Link:
       selector: '.checkout-order-summary__edit-link'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Submit Order:
+        selector: '.order-checkout-widget button:contains("Submit Order")'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
