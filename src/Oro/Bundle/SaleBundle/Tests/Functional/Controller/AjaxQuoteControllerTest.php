@@ -25,13 +25,13 @@ class AjaxQuoteControllerTest extends WebTestCase
     /**
      * @dataProvider getRelatedDataActionDataProvider
      *
-     * @param string $customer
+     * @param string|null $customer
      * @param string|null $customerUser
      */
     public function testGetRelatedDataAction($customer, $customerUser = null)
     {
         /** @var Customer $order */
-        $customerEntity = $this->getReference($customer);
+        $customerEntity = $customer ? $this->getReference($customer) : null;
 
         /** @var CustomerUser $order */
         $customerUserEntity = $customerUser ? $this->getReference($customerUser) : null;
@@ -41,7 +41,7 @@ class AjaxQuoteControllerTest extends WebTestCase
             $this->getUrl('oro_quote_related_data'),
             [
                 QuoteType::NAME => [
-                    'customer' => $customerEntity->getId(),
+                    'customer' => $customerEntity ? $customerEntity->getId() : null,
                     'customerUser' => $customerUserEntity ? $customerUserEntity->getId() : null
                 ]
             ]
@@ -69,6 +69,10 @@ class AjaxQuoteControllerTest extends WebTestCase
             ],
             [
                 'customer' => 'sale-customer1',
+                'customerUser' => null
+            ],
+            [
+                'customer' => null,
                 'customerUser' => null
             ]
         ];

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
@@ -37,6 +38,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnBeforeTotalCalculate($entity, $createFormAmount, $executeSubmitAmount)
     {
+        /** @var Request $request */
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();

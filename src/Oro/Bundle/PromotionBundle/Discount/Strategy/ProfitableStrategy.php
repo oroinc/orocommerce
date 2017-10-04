@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
 class ProfitableStrategy extends AbstractStrategy
@@ -18,7 +18,7 @@ class ProfitableStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function process(DiscountContext $discountContext, array $discounts): DiscountContext
+    public function process(DiscountContextInterface $discountContext, array $discounts): DiscountContextInterface
     {
         $appliedDiscountContext = $this->getContextCopyWithAppliedDiscounts($discountContext, $discounts);
 
@@ -30,9 +30,9 @@ class ProfitableStrategy extends AbstractStrategy
 
     /**
      * @param DiscountInterface $discount
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    private function calculateDiscount(DiscountInterface $discount, DiscountContext $discountContext)
+    private function calculateDiscount(DiscountInterface $discount, DiscountContextInterface $discountContext)
     {
         $discount->apply($discountContext);
 
@@ -42,11 +42,13 @@ class ProfitableStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
-     * @param DiscountContext $appliedDiscountContext
+     * @param DiscountContextInterface $discountContext
+     * @param DiscountContextInterface $appliedDiscountContext
      */
-    private function applyMaxProductDiscount(DiscountContext $discountContext, DiscountContext $appliedDiscountContext)
-    {
+    private function applyMaxProductDiscount(
+        DiscountContextInterface $discountContext,
+        DiscountContextInterface $appliedDiscountContext
+    ) {
         $maxDiscount = $this->getMaxDiscount(
             $discountContext,
             array_merge(
@@ -63,11 +65,13 @@ class ProfitableStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
-     * @param DiscountContext $appliedDiscountContext
+     * @param DiscountContextInterface $discountContext
+     * @param DiscountContextInterface $appliedDiscountContext
      */
-    private function applyMaxShippingDiscount(DiscountContext $discountContext, DiscountContext $appliedDiscountContext)
-    {
+    private function applyMaxShippingDiscount(
+        DiscountContextInterface $discountContext,
+        DiscountContextInterface $appliedDiscountContext
+    ) {
         $maxShippingDiscount = $this->getMaxDiscount($discountContext, $appliedDiscountContext->getShippingDiscounts());
 
         if ($maxShippingDiscount) {
@@ -77,11 +81,11 @@ class ProfitableStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      * @param array|DiscountInterface[] $discounts
      * @return DiscountInterface|null
      */
-    private function getMaxDiscount(DiscountContext $discountContext, array $discounts)
+    private function getMaxDiscount(DiscountContextInterface $discountContext, array $discounts)
     {
         $maxDiscountAmount = 0.0;
         $maxDiscount = null;
@@ -100,11 +104,11 @@ class ProfitableStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      * @param array|DiscountInterface[] $discounts
-     * @return DiscountContext
+     * @return DiscountContextInterface
      */
-    private function getContextCopyWithAppliedDiscounts(DiscountContext $discountContext, array $discounts)
+    private function getContextCopyWithAppliedDiscounts(DiscountContextInterface $discountContext, array $discounts)
     {
         $appliedDiscountContext = $this->cloneContext($discountContext);
         foreach ($discounts as $discount) {
@@ -115,10 +119,10 @@ class ProfitableStrategy extends AbstractStrategy
     }
 
     /**
-     * @param DiscountContext $discountContext
-     * @return DiscountContext
+     * @param DiscountContextInterface $discountContext
+     * @return DiscountContextInterface
      */
-    private function cloneContext(DiscountContext $discountContext): DiscountContext
+    private function cloneContext(DiscountContextInterface $discountContext): DiscountContextInterface
     {
         return unserialize(serialize($discountContext));
     }

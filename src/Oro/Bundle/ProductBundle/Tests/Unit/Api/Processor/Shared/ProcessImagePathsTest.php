@@ -5,7 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
+use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
@@ -14,10 +15,8 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ContextStub;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
+class ProcessImagePathsTest extends GetProcessorTestCase
 {
     /**
      * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
@@ -37,17 +36,7 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ProcessImagePaths
      */
-    protected $addImagePathToResultsProcessor;
-
-    /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $context;
-
-    /**
-     * @var EntityDefinitionConfig|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $config;
+    protected $processor;
 
     /**
      * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -56,63 +45,47 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->attachmentManager = $this->getMockBuilder(AttachmentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repo = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+
+        $this->attachmentManager = $this->createMock(AttachmentManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->typeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->repo = $this->createMock(EntityRepository::class);
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->repo);
 
-        $this->typeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->addImagePathToResultsProcessor = new ProcessImagePaths(
+        $this->processor = new ProcessImagePaths(
             $this->attachmentManager,
             $this->doctrineHelper,
             $this->typeProvider
         );
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $this->context = $this->createMock(ContextStub::class);
-        $this->config = $this->createMock(EntityDefinitionConfig::class);
-        $this->context->expects($this->once())
-            ->method('getConfig')
-            ->willReturn($this->config);
     }
 
     public function testProcessShouldAddFilePathToConfig()
     {
-        $this->config->expects($this->once())
-            ->method('getKey')
-            ->willReturn('testKey');
-        $this->config->expects($this->once())
-            ->method('addField')
-            ->willReturnCallback(
-                function ($fieldName, $configValue) {
-                    $this->assertEquals(ProcessImagePaths::CONFIG_FILE_PATH, $fieldName);
-                    $this->assertInstanceOf(EntityDefinitionFieldConfig::class, $configValue);
-                }
-            );
-        $this->config->expects($this->once())
-            ->method('setKey')
-            ->willReturnCallback(
-                function ($newKey) {
-                    $this->assertEquals('testKeynew', $newKey);
-                }
-            );
-        $this->context->expects($this->once())
-            ->method('setMetadata');
-        $this->context->expects($this->once())
-            ->method('getMetadata');
-        $this->context->expects($this->once())
-            ->method('setConfig');
+        $config = new EntityDefinitionConfig();
+        $config->setKey('config_key');
+        $metadata = new EntityMetadata();
 
-        $this->addImagePathToResultsProcessor->process($this->context);
+        $this->context->setConfig($config);
+        $this->context->setMetadata($metadata);
+        $this->processor->process($this->context);
+
+        self::assertEquals(
+            [
+                'fields' => [
+                    ProcessImagePaths::CONFIG_FILE_PATH => [
+                        'data_type' => 'string'
+                    ]
+                ]
+            ],
+            $config->toArray()
+        );
+        self::assertEquals('config_keynew', $config->getKey());
+        self::assertTrue($this->context->hasMetadata());
+        self::assertNotSame($metadata, $this->context->hasMetadata());
     }
 
     /**
@@ -124,7 +97,7 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
         $productImage,
         $expectedResults
     ) {
-        $type1 = $this->getMockBuilder(ThemeImageType::class)->disableOriginalConstructor()->getMock();
+        $type1 = $this->createMock(ThemeImageType::class);
         $type1->expects($this->any())
             ->method('getDimensions')
             ->willReturn(['testDimension' => [1, 2, 3]]);
@@ -133,10 +106,6 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
         $this->typeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn($allTypes);
-
-        $this->context->expects($this->once())
-            ->method('getResult')
-            ->willReturn($initialResults);
 
         $this->attachmentManager->expects($this->any())
             ->method('getFilteredImageUrl')
@@ -160,15 +129,12 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->context->expects($this->once())
-            ->method('setResult')
-            ->willReturnCallback(
-                function ($results) use ($expectedResults, $initialResults) {
-                    $this->assertSame($expectedResults, $results);
-                }
-            );
+        $this->context->setConfig(new EntityDefinitionConfig());
+        $this->context->setMetadata(new EntityMetadata());
+        $this->context->setResult($initialResults);
+        $this->processor->process($this->context);
 
-        $this->addImagePathToResultsProcessor->process($this->context);
+        self::assertEquals($expectedResults, $this->context->getResult());
     }
 
     public function getTestProcessShouldHandlePathsCorrectlyProvider()

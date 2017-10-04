@@ -85,6 +85,11 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    LineItemQuantity:
+      selector:
+        type: 'xpath'
+        locator: '//input[@name="oro_product_frontend_line_item[quantity]"]'
+
     FrontendLineItemForm > Quantity:
       selector:
         type: 'css'

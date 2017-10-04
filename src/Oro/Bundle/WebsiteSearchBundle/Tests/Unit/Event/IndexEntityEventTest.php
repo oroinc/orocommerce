@@ -57,14 +57,14 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 
         $expectedData = [
             1 => [
-                'name' => ['value' => 'Product name', 'all_text' => true],
-                'description' => ['value' => 'Product description', 'all_text' => true],
-                'price' => ['value' => 100.00, 'all_text' => false],
-                'categoryId' => ['value' => 3, 'all_text' => false],
+                'name' => [['value' => 'Product name', 'all_text' => true]],
+                'description' => [['value' => 'Product description', 'all_text' => true]],
+                'price' => [['value' => 100.00, 'all_text' => false]],
+                'categoryId' => [['value' => 3, 'all_text' => false]],
             ],
             2 => [
-                'name' => ['value' => 'Another product name', 'all_text' => true],
-                'date' => ['value' => $date, 'all_text' => false],
+                'name' => [['value' => 'Another product name', 'all_text' => true]],
+                'date' => [['value' => $date, 'all_text' => false]],
             ],
         ];
 

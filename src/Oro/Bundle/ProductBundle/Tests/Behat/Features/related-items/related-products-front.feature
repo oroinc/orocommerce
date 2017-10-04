@@ -22,7 +22,7 @@ Feature: Showing related products
     Given I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should not see "Related Products"
 
@@ -48,7 +48,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should not see "Related Products"
 
@@ -65,7 +65,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     And I should see "PSKU2"
@@ -85,7 +85,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     And I should see "PSKU2"
@@ -114,7 +114,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU3" in "search"
     And click "Search Button"
-    And I should see "PSKU3" in search results
+    And I should see "PSKU3" product
     And I click "View Details" for "PSKU3" product
     Then I should see "Related Products"
     And I should see "PSKU2"
@@ -141,7 +141,7 @@ Feature: Showing related products
       When I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"
-      And I should see "PSKU1" in search results
+      And I should see "PSKU1" product
       And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       And I should see "PSKU2"
@@ -153,7 +153,7 @@ Feature: Showing related products
       Given I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"
-      And I should see "PSKU1" in search results
+      And I should see "PSKU1" product
       And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       And I should see "Add to Shopping List" in related products
@@ -167,7 +167,7 @@ Feature: Showing related products
       And I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"
-      And I should see "PSKU1" in search results
+      And I should see "PSKU1" product
       And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       Then I should not see "Add to Shopping List" in related products
@@ -177,7 +177,7 @@ Feature: Showing related products
 #    Given I proceed as the Buyer
 #    And type "PSKU1" in "search"
 #    And click "Search Button"
-#    And I should see "PSKU1" in search results
+#    And I should see "PSKU1" product
 #    And I click "Product 1"
 #    And I should see "Related Products"
 #    And I should see an "Related Products Slider" element
@@ -195,7 +195,7 @@ Feature: Showing related products
 #    And I proceed as the Buyer
 #    And type "PSKU1" in "search"
 #    And click "Search Button"
-#    And I should see "PSKU1" in search results
+#    And I should see "PSKU1" product
 #    And I click "Product 1"
 #    And I should see "Related Products"
 #    And I should see an "Related Products Slider" element
@@ -214,7 +214,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
 
@@ -229,7 +229,7 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
 
@@ -244,6 +244,6 @@ Feature: Showing related products
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
-    And I should see "PSKU1" in search results
+    And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"

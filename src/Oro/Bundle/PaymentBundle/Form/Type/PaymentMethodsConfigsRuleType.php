@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraint;
 
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
@@ -85,6 +86,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => PaymentMethodsConfigsRule::class,
+            'validation_groups' => [Constraint::DEFAULT_GROUP, 'PaymentMethodsConfigsRule'],
         ]);
     }
 

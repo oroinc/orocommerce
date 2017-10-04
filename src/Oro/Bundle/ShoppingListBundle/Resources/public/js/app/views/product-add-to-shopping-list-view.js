@@ -145,29 +145,17 @@ define(function(require) {
             }
 
             var currentShoppingList = this.findCurrentShoppingList();
-            var $currentButton = $(this.options.buttonTemplate(currentShoppingList));
-            if (this.findShoppingListById(currentShoppingList)) {
-                $currentButton = this.updateLabel($currentButton, currentShoppingList);
-            }
-            buttons.push($currentButton);
+            this._addShippingListButtons(buttons, currentShoppingList);
 
-            if (this.findShoppingListById(currentShoppingList) && this.editLineItem) {
-                var $removeButton =  $(this.options.removeButtonTemplate(currentShoppingList));
-                buttons.push($removeButton);
-            }
-
-            var self = this;
             this.shoppingListCollection.sort();
             this.shoppingListCollection.each(function(model) {
-                var $button;
                 var shoppingList = model.toJSON();
                 if (shoppingList.id === currentShoppingList.id) {
                     return;
                 }
-                $button = $(self.options.buttonTemplate(shoppingList));
-                $button = self.updateLabel($button, shoppingList);
-                buttons.push($button);
-            });
+
+                this._addShippingListButtons(buttons, shoppingList);
+            }, this);
 
             if (this.options.shoppingListCreateEnabled) {
                 var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
@@ -181,6 +169,24 @@ define(function(require) {
             }
 
             return buttons;
+        },
+
+        _addShippingListButtons: function(buttons, shoppingList) {
+            var $button = $(this.options.buttonTemplate(shoppingList));
+            if (!this.model) {
+                buttons.push($button);
+                return;
+            }
+            var hasLineItems = this.findShoppingListByIdAndUnit(shoppingList, this.model.get('unit'));
+            if (hasLineItems) {
+                $button = this.updateLabel($button, shoppingList, hasLineItems);
+            }
+            buttons.push($button);
+
+            if (hasLineItems) {
+                var $removeButton =  $(this.options.removeButtonTemplate(shoppingList));
+                buttons.push($removeButton);
+            }
         },
 
         _afterRenderButtons: function() {
@@ -222,9 +228,16 @@ define(function(require) {
             if (!this.model) {
                 return null;
             }
-            return _.find(this.model.get('shopping_lists'), function(list) {
-                return list.id === shoppingList.id;
-            }) || null;
+            return _.find(this.model.get('shopping_lists'), {id: shoppingList.id}) || null;
+        },
+
+        findShoppingListByIdAndUnit: function(shoppingList, unit) {
+            var foundShoppingList = this.findShoppingListById(shoppingList);
+            if (!foundShoppingList) {
+                return null;
+            }
+            var hasUnits = _.find(foundShoppingList.line_items, {unit: unit});
+            return hasUnits ? foundShoppingList : null;
         },
 
         _onQuantityEnter: function(e) {
@@ -280,26 +293,29 @@ define(function(require) {
             }
         },
 
-        updateLabel: function($button, shoppingList) {
+        updateLabel: function($button, shoppingList, hasLineItems) {
             var label;
+            var intention;
 
-            if (this.editLineItem && shoppingList && shoppingList.is_current) {
+            if (shoppingList && hasLineItems) {
                 label = _.__('oro.shoppinglist.actions.update_shopping_list', {
                     shoppingList: shoppingList.label
                 });
-                $button.find('a').attr('data-intention', 'update');
+                intention = 'update';
             } else if (!shoppingList) {
                 label = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
-                $button.find('a').attr('data-intention', 'new');
+                intention = 'new';
             } else {
                 label =  _.__('oro.shoppinglist.actions.add_to_shopping_list', {
                     shoppingList: shoppingList.label
                 });
-                $button.find('a').attr('data-intention', 'add');
+                intention = 'add';
             }
 
-            $button.find('a').attr('title', label);
-            $button.find('a').text(label);
+            $button.find('a')
+                .text(label)
+                .attr('title', label)
+                .attr('data-intention', intention);
 
             return $button;
         },

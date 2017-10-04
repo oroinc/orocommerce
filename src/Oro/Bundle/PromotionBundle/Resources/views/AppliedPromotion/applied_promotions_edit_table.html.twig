@@ -1,0 +1,2 @@
+{% set collection = oro_promotion_prepare_applied_promotions_info(collection) %}
+{% include 'OroPromotionBundle:AppliedPromotion:applied_promotions_table.html.twig' with {collection: collection, editable: true} %}

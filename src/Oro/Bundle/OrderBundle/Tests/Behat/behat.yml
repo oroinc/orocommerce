@@ -4,6 +4,10 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
       selector: 'div.layout-content'
 
+    CollectionTableRow:
+      selector: 'tbody tr'
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTableRow
+
     Order Billing Address Select:
       selector: '[name="oro_order_type[billingAddress][customerAddress]"]'
 
@@ -16,6 +20,10 @@ oro_behat_extension:
 
     BackendOrderLineItemsTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.order-line-items-table'
+
+    BackendOrderLineItems:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
       selector: 'table.order-line-items-table'
 
     BackendOrderSubtotals:
@@ -76,21 +84,32 @@ oro_behat_extension:
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
-          Discount Value (first):
-            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__value"]'
-            type: 'css'
-          Discount Type (first):
-            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__type"]'
-            type: 'css'
+
+    Discounts:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
+      selector: 'div.oro-discount-collection > table'
 
     Overridden Shipping Cost Amount:
       selector:
         locator: '//input[contains(@id,"oro_order_type_overriddenShippingCostAmount_value-uid")]'
         type: xpath
 
-    Add Discount:
-      selector: '.oro-discount-collection .add-list-item'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    Order Discount Form:
+      selector:
+        locator: '//div[@class="discount-popup"]/ancestor::form'
+        type: xpath
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Type:
+            locator: '[data-role=type]'
+            type: 'css'
+
+    DiscountValue:
+      selector: 'input[name="oro_action_operation[orderDiscount][value]"]'
+
+    DiscountDescription:
+      selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
   pages:
     OrderFrontendView:
@@ -113,5 +132,6 @@ oro_behat_extension:
         - OroActionBundle::OroActionContext
         - OroOrderBundle::OrderContext
         - OroNavigationBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

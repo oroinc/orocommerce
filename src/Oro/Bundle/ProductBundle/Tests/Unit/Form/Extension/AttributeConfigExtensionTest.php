@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
@@ -26,8 +29,24 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject $datagridProvider */
+    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $attributeConfigProvider;
+
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $translator;
+
+    /** @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $config;
+
+    protected function setUp()
+    {
+        $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
+
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())->method('trans')->willReturnArgument(0);
+
+        parent::setUp();
+    }
 
     /**
      * @dataProvider configProvider
@@ -99,8 +118,143 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
 
     public function testGetExtendedType()
     {
-        $extension = new AttributeConfigExtension();
+        $extension = new AttributeConfigExtension($this->attributeConfigProvider, $this->translator);
         $this->assertEquals('oro_entity_config_type', $extension->getExtendedType());
+    }
+
+    public function testFinishViewNotApplicable()
+    {
+        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $view */
+        $view = $this->createMock(FormView::class);
+        $view->expects($this->never())->method($this->anything());
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->never())->method($this->anything());
+
+        $this->assertConfigProviderCalled(true, false);
+
+        $extension = new AttributeConfigExtension($this->attributeConfigProvider, $this->translator);
+        $extension->finishView($view, $form, ['config_model' => $this->getFieldConfigModel()]);
+    }
+
+    /**
+     * @return FieldConfigModel
+     */
+    protected function getFieldConfigModel()
+    {
+        $fieldConfigModel = new FieldConfigModel('test', 'string');
+        $fieldConfigModel->setEntity(new EntityConfigModel(\stdClass::class));
+
+        return $fieldConfigModel;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testFinishView()
+    {
+        $child1 = new FormView();
+
+        $blockConfig = [
+            'general' => [
+                'title' => 'General',
+                'priority' => 10,
+                'subblocks' => []
+            ]
+        ];
+        $attributeBlockConfig = [
+            'attribute' => [
+                'title' => 'Attribute',
+                'priority' => 20,
+                'subblocks' => ['attribute_config']
+            ]
+        ];
+        $backendBlockConfig = [
+            'other' => [
+                'title' => 'Other',
+                'priority' => 30,
+                'subblocks' => []
+            ]
+        ];
+
+        $child2 = new FormView();
+        $child2->vars['block'] = 'general';
+        $child2->vars['block_config'] = $blockConfig;
+
+        $child3 = new FormView();
+        $child3->vars['block'] = 'attribute';
+        $child3->vars['block_config'] = $attributeBlockConfig;
+
+        $child4 = new FormView();
+        $child4->vars['block'] = 'other';
+        $child4->vars['block_config'] = $backendBlockConfig;
+
+        $view = new FormView();
+        $view->children[] = $child1;
+        $view->children[] = $child2;
+        $view->children[] = $child3;
+        $view->children[] = $child4;
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->never())->method($this->anything());
+
+        $this->assertConfigProviderCalled(true, true);
+
+        $extension = new AttributeConfigExtension($this->attributeConfigProvider, $this->translator);
+        $extension->finishView($view, $form, ['config_model' => $this->getFieldConfigModel()]);
+
+        // check that block configurations of child1 is empty
+        $this->assertArrayNotHasKey('block', $child1->vars);
+        $this->assertArrayNotHasKey('subblock', $child1->vars);
+        $this->assertArrayNotHasKey('block_config', $child1->vars);
+
+        // check that block configurations of child2 not changed
+        $this->assertArrayHasKey('block', $child2->vars);
+        $this->assertEquals('general', $child2->vars['block']);
+        $this->assertArrayNotHasKey('subblock', $child2->vars);
+        $this->assertArrayHasKey('block_config', $child2->vars);
+        $this->assertEquals($blockConfig, $child2->vars['block_config']);
+
+        // check that block configurations of child3 changed for frontend
+        $this->assertArrayHasKey('block', $child3->vars);
+        $this->assertEquals('frontend', $child3->vars['block']);
+        $this->assertArrayNotHasKey('subblock', $child3->vars);
+        $this->assertArrayHasKey('block_config', $child3->vars);
+        $this->assertEquals(
+            [
+                'frontend' => [
+                    'title' => 'oro.product.entity_config.block_titles.frontend.label',
+                    'priority' => 20,
+                    'subblocks' => [
+                        'attribute' => [
+                            'title' => null,
+                            'priority' => 20,
+                            'subblocks' => ['attribute_config']
+                        ]
+                    ]
+                ]
+            ],
+            $child3->vars['block_config']
+        );
+
+        // check that block configurations of child4 changed for backend
+        $this->assertArrayHasKey('block', $child4->vars);
+        $this->assertEquals('backend', $child4->vars['block']);
+        $this->assertArrayHasKey('subblock', $child4->vars);
+        $this->assertEquals('other', $child4->vars['subblock']);
+        $this->assertArrayHasKey('block_config', $child4->vars);
+        $this->assertEquals(
+            [
+                'backend' => [
+                    'title' => 'oro.product.entity_config.block_titles.backend.label',
+                    'priority' => 10,
+                    'subblocks' => $backendBlockConfig
+                ]
+            ],
+            $child4->vars['block_config']
+        );
     }
 
     /**
@@ -128,6 +282,28 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 'expected datagrid' => []
             ]
         ];
+    }
+
+    /**
+     * @param bool $hasAttributes
+     * @param bool $isAttribute
+     */
+    protected function assertConfigProviderCalled($hasAttributes, $isAttribute)
+    {
+        $entityConfig = $this->createMock(ConfigInterface::class);
+        $entityConfig->expects($this->any())->method('is')->with('has_attributes')->willReturn($hasAttributes);
+
+        $fieldConfig = $this->createMock(ConfigInterface::class);
+        $fieldConfig->expects($this->any())->method('is')->with('is_attribute')->willReturn($isAttribute);
+
+        $this->attributeConfigProvider->expects($this->atLeastOnce())
+            ->method('getConfig')
+            ->willReturnMap(
+                [
+                    [\stdClass::class, null, $entityConfig],
+                    [\stdClass::class, 'test', $fieldConfig]
+                ]
+            );
     }
 
     /**
@@ -182,7 +358,9 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                     'oro_entity_config_type' => new ConfigType($translatorHelper, $configManager, $translator),
                 ],
                 [
-                    'oro_entity_config_type' => [new AttributeConfigExtension()],
+                    'oro_entity_config_type' => [
+                        new AttributeConfigExtension($this->attributeConfigProvider, $this->translator)
+                    ],
                     'form' => [new DataBlockExtension()]
                 ]
             ),

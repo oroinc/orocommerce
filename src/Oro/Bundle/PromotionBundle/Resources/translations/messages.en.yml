@@ -45,6 +45,7 @@ oro:
             shipping_method:
                 label: Shipping Method
     promotion:
+        all_label: All Promotions
         entity_label: Promotion
         entity_plural_label: Promotions
         entity_description: Represents promotion information
@@ -84,6 +85,11 @@ oro:
         advanced_conditions.label: Advanced Conditions
 
         ui:
+            apply_button.label: Apply
+            add_coupon_code.label: Add Coupon Code
+            add_coupon_codes.title: Add Coupon Codes
+            order_add_coupon.added.message: Coupons were added to order
+            order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
@@ -163,9 +169,21 @@ oro:
                 label: General Information
                 subsection:
                     general_info.label: General Information
-                    discount_optins.label: Discount Options
+                    discount_options.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
+            promotion_and_discounts.label: Promotions and Discounts
+
+        applieddiscount:
+            entity_label: Applied Discount
+            entity_plural_label: Applied Discounts
+            id.label: ID
+            applied_promotion.label: Applied Promotion
+            amount.label: Amount
+            currency.label: Currency
+            line_item.label: Line Item
+            order.label: Order
+            promotion.label: Promotion
 
         coupon:
             entity_label: Coupon
@@ -175,7 +193,6 @@ oro:
             id.label: Id
             code.label: Coupon Code
             promotion.label: Promotion
-            total_uses.label: Used
             uses_per_coupon.label: Uses per Coupon
             uses_per_person.label: Uses per Person
             valid_until.label: Valid Until
@@ -195,6 +212,10 @@ oro:
                     coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
                     uses_per_person: 'Limits how many times the coupon may be used by the same customer user'
                     uses_per_coupon: 'Limits how many times the coupon may be used'
+                add_type:
+                    add_button.label: Add
+            autocomplete:
+                placeholder: Choose a Coupon Code...
             generation:
                 label: Generate Coupons
                 action:
@@ -214,6 +235,48 @@ oro:
                 message:
                     save_success: Coupons have been generated successfully
 
+        appliedpromotion:
+            entity_label: Applied Promotion
+            entity_plural_label: Applied Promotions
+            id.label: ID
+            active:
+                label: Active
+                active: Active
+                inactive: Inactive
+            applied_coupon.label: Applied Coupon
+            type.label: Type
+            promotion.label: Promotion
+            source_promotion_id.label: Source Promotion ID
+            promotion_name.label: Promotion Name
+            config_options.label: Options
+            coupon_code.label: Coupon Code
+            currency.label: Currency
+            promotion_data.label: Promotion Data
+            applied_discounts.label: Applied Discounts
+            order.label: Order
+            table_columns:
+                code: Code
+                promotion: Promotion
+                type: Type
+                status: Status
+                discount: Discount
+            actions:
+                deactivate: Deactivate
+                activate: Activate
+                remove: Remove
+                view: View
+            no_entities: No records found
+
+        appliedcoupon:
+            entity_label: Applied Coupon
+            entity_plural_label: Applied Coupons
+            id.label: ID
+            applied_promotion.label: Applied Promotion
+            coupon_code.label: Coupon Code
+            source_promotion_id.label: Source Promotion ID
+            source_coupon_id.label: Source Coupon ID
+            order.label: Order
+
     applied_discount:
         name: Name
         amount: Amount
@@ -226,14 +289,13 @@ oro:
             view:
                 discount.label: 'Row Discount:'
     order:
+        applied_coupons.label: Applied Coupons
+        applied_discounts.label: Applied Discounts
+        applied_promotions.label: Applied Promotions
         promotions:
             applied_discount:
                 name: Name
                 amount: Amount
-            nav_button:
-                information_notice: Promotion discounts will be recalculated after saving the order
-                important: Important
-                save_without_discounts_recalculation: Save Without Discounts Recalculation
 
         view:
             order_line_item:

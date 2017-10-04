@@ -9,12 +9,26 @@ api:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image_type.md'
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
+            form_options:
+                constraints:
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
             fields:
                 createdAt:
                     exclude: true
                 updatedAt:
                     exclude: true
                 skuUppercase:
+                    exclude: true
+                parentVariantLinks:
+                    exclude: true
+                denormalizedDefaultName:
+                    exclude: true
+                denormalizedDefaultNameUppercase:
                     exclude: true
             actions:
                 create:
@@ -49,3 +63,5 @@ api:
                                 constraints:
                                     - NotBlank: ~
         Oro\Bundle\ProductBundle\Entity\Brand: ~
+        Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'

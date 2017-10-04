@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -14,9 +13,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PromotionBundle\Model\ExtendPromotion;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
-use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
@@ -56,9 +53,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 class Promotion extends ExtendPromotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
-    RuleOwnerInterface,
-    ScopeCollectionAwareInterface,
-    ScheduleIntervalsAwareInterface
+    PromotionDataInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -225,7 +220,8 @@ class Promotion extends ExtendPromotion implements
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *     mappedBy="promotion"
+     *     mappedBy="promotion",
+     *     fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
@@ -260,7 +256,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -355,7 +351,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return Collection|Scope[]
+     * {@inheritdoc}
      */
     public function getScopes()
     {
@@ -434,7 +430,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return DiscountConfiguration
+     * {@inheritdoc}
      */
     public function getDiscountConfiguration()
     {
@@ -453,7 +449,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isUseCoupons()
     {
@@ -472,7 +468,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return Collection|Coupon[]
+     * {@inheritdoc}
      */
     public function getCoupons()
     {

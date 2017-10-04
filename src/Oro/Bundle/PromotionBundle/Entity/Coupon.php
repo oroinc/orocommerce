@@ -91,23 +91,6 @@ class Coupon implements
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_uses", type="integer", nullable=false, options={"default"=0})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     *  )
-     */
-    protected $totalUses = 0;
-
-    /**
-     * @var integer
-     *
      * @ORM\Column(name="uses_per_coupon", type="integer", nullable=true, options={"default"=1})
      * @ConfigField(
      *      defaultValues={
@@ -249,25 +232,6 @@ class Coupon implements
     public function setCode($code)
     {
         $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTotalUses()
-    {
-        return $this->totalUses;
-    }
-
-    /**
-     * @param int $totalUses
-     * @return Coupon
-     */
-    public function setTotalUses($totalUses)
-    {
-        $this->totalUses = (int)$totalUses;
 
         return $this;
     }

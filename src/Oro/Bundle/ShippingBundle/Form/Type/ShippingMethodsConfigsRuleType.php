@@ -9,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraint;
 
 class ShippingMethodsConfigsRuleType extends AbstractType
 {
@@ -44,6 +45,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ShippingMethodsConfigsRule::class,
+            'validation_groups' => [Constraint::DEFAULT_GROUP, 'ShippingMethodsConfigsRule'],
         ]);
     }
 

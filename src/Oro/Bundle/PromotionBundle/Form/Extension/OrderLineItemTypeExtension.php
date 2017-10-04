@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
-use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
+use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 /**
  * Aimed to add new column `Applied Discounts` to Order Line Items list in Order form on Order edit page
@@ -32,9 +31,9 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     protected $taxManager;
 
     /**
-     * @var DiscountsProvider
+     * @var AppliedDiscountsProvider
      */
-    protected $discountsProvider;
+    protected $appliedDiscountsProvider;
 
     /**
      * @var SectionProvider
@@ -49,20 +48,20 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
-     * @param DiscountsProvider $discountsProvider
+     * @param AppliedDiscountsProvider $appliedDiscountsProvider
      * @param SectionProvider $sectionProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxManager $taxManager,
-        DiscountsProvider $discountsProvider,
+        AppliedDiscountsProvider $appliedDiscountsProvider,
         SectionProvider $sectionProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
-        $this->discountsProvider = $discountsProvider;
+        $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->sectionProvider = $sectionProvider;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
     }
@@ -107,7 +106,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         $currency = $orderLineItem->getCurrency();
 
         $rowTotalWithoutDiscount = $this->lineItemSubtotalProvider->getRowTotal($orderLineItem, $currency);
-        $discountAmount = $this->discountsProvider->getDiscountsAmountByLineItem($orderLineItem);
+        $discountAmount = $this->appliedDiscountsProvider->getDiscountsAmountByLineItem($orderLineItem);
 
         $view->vars['applied_discounts'] = [
             'discountAmount' => $discountAmount,

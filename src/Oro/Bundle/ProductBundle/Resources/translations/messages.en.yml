@@ -56,7 +56,9 @@ oro:
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
-        variant_links.label: Product Variant Links
+        variant_links:
+            label: Product Variant Links
+            description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images.label: Images
@@ -111,6 +113,18 @@ oro:
             label: Product Family
             description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
             plural_label: Product Families
+
+        entity_config:
+            block_titles:
+                backend.label: Backoffice options
+                frontend.label: Frontend options
+            field.items:
+                attribute:
+                    searchable.tooltip: 'If enabled, attribute content can be found in the front store'
+                    sortable.tooltip: 'Defines whether sorting is available for the attribute in the front store'
+                    filterable.tooltip: 'Defines whether filter is available for the attribute in the front store'
+                    enabled.tooltip: 'Defines whether the attribute is enabled in the front store'
+                    visible.tooltip: 'Defines whether the attribute is visible or hidden'
 
         status:
             enabled: Enabled
