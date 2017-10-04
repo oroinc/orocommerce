@@ -16,7 +16,7 @@ layout:
                 line_item_form:
                     blockType: container
                     options:
-                        visible: '=data["oro_product_form_availability"].isSimpleAvailable(data["product"]) or data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"])'
+                        visible: '=context["is_mobile"] or data["oro_product_form_availability"].isSimpleAvailable(data["product"]) or data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"])'
                 line_item_form_start:
                     blockType: form_start
                     options:
@@ -49,4 +49,4 @@ layout:
         - '@setOption':
             id: line_item_form_buttons_shopping_list
             optionName: attr.componentModule
-            optionValue: '=data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'
+            optionValue: '=context["is_mobile"] or data["oro_product_form_availability"].isPopupMatrixAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'
