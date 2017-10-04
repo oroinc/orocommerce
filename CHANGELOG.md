@@ -1,9 +1,17 @@
 ## 1.5.0 (Unreleased)
 
 ### Added
+#### CheckoutBundle
+* Added entities `CheckoutLineItem` and `CheckoutSubtotal` for using in `Checkout` instead of line items and subtotals of Checkout source entity (`ShoppingList` or `QuoteDemand`) 
+
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
 ### Changed
+#### CheckoutBundle
+* Entity `Oro\Bundle\CheckoutBundle\Entity\Checkout`:
+    * no more implements `LineItemsNotPricedAwareInterface`;
+    * implements `CurrencyAwareInterface`.
+
 #### ProductBundle
 * Updated website search configuration file `Oro/Bundle/ProductBundle/Resources/config/oro/website_search.yml`:
     * removed configuration for next fields:
