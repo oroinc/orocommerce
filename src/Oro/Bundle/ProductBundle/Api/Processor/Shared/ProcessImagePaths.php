@@ -10,8 +10,6 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Class ProcessImagePaths
- *
  * Adds the file path(or paths) of a file if it's an image type to the File API endpoints
  */
 class ProcessImagePaths implements ProcessorInterface
@@ -54,8 +52,9 @@ class ProcessImagePaths implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         $result = $context->getResult();
+        $filePathField = $context->getConfig()->getField(self::CONFIG_FILE_PATH);
 
-        if (!is_array($result)) {
+        if (!is_array($result) || !$filePathField || $filePathField->isExcluded()) {
             return;
         }
 
@@ -80,7 +79,7 @@ class ProcessImagePaths implements ProcessorInterface
             ['image' => $result['id']]
         );
 
-        if (!$productImage) {
+        if (!$productImage || empty($types = $productImage->getTypes())) {
             return $result;
         }
 
@@ -98,7 +97,6 @@ class ProcessImagePaths implements ProcessorInterface
                 $dimension
             );
         }
-
         $result[self::CONFIG_FILE_PATH] = $urls;
 
         return $result;

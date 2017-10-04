@@ -8,8 +8,6 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Class ProcessImagePathsConfig
- *
  * Adds the file path(or paths) of a file if it's an image type to the File API endpoints
  */
 class ProcessImagePathsConfig implements ProcessorInterface
@@ -29,7 +27,7 @@ class ProcessImagePathsConfig implements ProcessorInterface
 
         // add the filePath as a field config
         $fieldConfig = new EntityDefinitionFieldConfig();
-        $fieldConfig->set('data_type', 'string');
+        $fieldConfig->set('data_type', 'array');
         $config->addField(self::CONFIG_FILE_PATH, $fieldConfig);
     }
 }

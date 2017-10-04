@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -13,6 +14,7 @@ use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
+use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
@@ -77,6 +79,7 @@ class ProcessImagePathsTest extends GetProcessorTestCase
             ->method('getDimensions')
             ->willReturn(['testDimension' => [1, 2, 3]]);
 
+
         $allTypes = ['type1' => $type1];
         $this->typeProvider->expects($this->any())
             ->method('getImageTypes')
@@ -96,7 +99,11 @@ class ProcessImagePathsTest extends GetProcessorTestCase
             ->with(['image' => $initialResults['id']])
             ->willReturn($productImage);
 
-        $this->context->setConfig(new EntityDefinitionConfig());
+        $fieldConfig = $this->createMock(EntityDefinitionFieldConfig::class);
+        $entityConfig  = new EntityDefinitionConfig();
+        $entityConfig->addField(ProcessImagePathsConfig::CONFIG_FILE_PATH, $fieldConfig);
+
+        $this->context->setConfig($entityConfig);
         $this->context->setMetadata(new EntityMetadata());
         $this->context->setResult($initialResults);
         $this->processor->process($this->context);
