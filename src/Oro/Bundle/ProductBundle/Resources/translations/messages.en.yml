@@ -420,9 +420,11 @@ oro:
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
-                inline_matrix_form_on_product_view:
-                    label: 'Inline matrix form'
-                    tooltip: 'Display inline matrix form (where applicable)'
+                matrix_form_on_product_view:
+                    label: 'Display matrix form (where applicable)'
+                    none.label: 'Do not display'
+                    inline.label: 'Inline matrix form'
+                    popup.label: 'Popup matrix form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

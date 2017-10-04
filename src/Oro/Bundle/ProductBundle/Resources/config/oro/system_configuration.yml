@@ -429,13 +429,16 @@ system_configuration:
                 label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
                 tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
 
-        oro_product.inline_matrix_form_on_product_view:
-            data_type: boolean
-            type: oro_config_checkbox
+        oro_product.matrix_form_on_product_view:
+            data_type: string
+            type: choice
             priority: 10
             options:
-                label: oro.product.system_configuration.fields.inline_matrix_form_on_product_view.label
-                tooltip: oro.product.system_configuration.fields.inline_matrix_form_on_product_view.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_on_product_view.label
+                choices:
+                    none: oro.product.system_configuration.fields.matrix_form_on_product_view.none.label
+                    inline: oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label
+                    popup: oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label
 
     tree:
         system_configuration:
@@ -525,7 +528,7 @@ system_configuration:
                                 children:
                                     configurable_products_matrix_form:
                                         children:
-                                            - oro_product.inline_matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_view
                             product_collections:
                                 priority: 0
                                 children:
@@ -585,7 +588,7 @@ system_configuration:
                                 children:
                                     configurable_products_matrix_form:
                                         children:
-                                            - oro_product.inline_matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_view
 
         user_configuration:
             commerce:
@@ -597,4 +600,4 @@ system_configuration:
                                 children:
                                     configurable_products_matrix_form:
                                         children:
-                                            - oro_product.inline_matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_view

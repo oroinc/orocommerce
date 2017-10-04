@@ -42,8 +42,8 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_product.inline_matrix_form_on_product_view')
-            ->willReturn(true);
+            ->with('oro_product.matrix_form_on_product_view')
+            ->willReturn('inline');
 
         $unit = $this->getEntity(ProductUnit::class);
         $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
@@ -68,9 +68,9 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->provider->isInlineMatrixAvailable($product));
     }
 
-    public function testIsInlineMatrixAvailableReturnsFalseOnConfigOptionFalse()
+    public function testIsInlineMatrixAvailableReturnsFalseOnConfigOptionPopup()
     {
-        $this->setInlineMatrixFormOption(false);
+        $this->setInlineMatrixFormOption('popup');
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class);
@@ -80,7 +80,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsPopupMatrixAvailable()
     {
-        $this->setInlineMatrixFormOption(false);
+        $this->setInlineMatrixFormOption('popup');
 
         $unit = $this->getEntity(ProductUnit::class);
         $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
@@ -102,9 +102,9 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->provider->isPopupMatrixAvailable($product));
     }
 
-    public function testIsPopupMatrixAvailableReturnsFalseOnConfigOptionTrue()
+    public function testIsPopupMatrixAvailableReturnsFalseOnConfigOptionInline()
     {
-        $this->setInlineMatrixFormOption(true);
+        $this->setInlineMatrixFormOption('inline');
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class);
@@ -112,8 +112,23 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->provider->isPopupMatrixAvailable($product));
     }
 
-    public function testIsSimpleAvailable()
+    public function testIsSimpleAvailableWithConfigNone()
     {
+        $this->setInlineMatrixFormOption('none');
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class);
+
+        $this->productVariantAvailability->expects($this->never())
+            ->method('getVariantFieldsAvailability');
+
+        $this->assertEquals(true, $this->provider->isSimpleAvailable($product));
+    }
+
+    public function testIsSimpleAvailableWithConfigInline()
+    {
+        $this->setInlineMatrixFormOption('inline');
+
         /** @var Product $product */
         $product = $this->getEntity(Product::class);
 
@@ -127,7 +142,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsInlineMatrixAvailableReturnsFalseOnSimpleProduct()
     {
-        $this->setInlineMatrixFormOption(true);
+        $this->setInlineMatrixFormOption('inline');
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class);
@@ -142,7 +157,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsInlineMatrixAvailableReturnsFalseOnMoreThanTwoVariantFields()
     {
-        $this->setInlineMatrixFormOption(true);
+        $this->setInlineMatrixFormOption('inline');
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class);
@@ -157,7 +172,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsInlineMatrixAvailableReturnsFalseOnUnitNotSupportedBySimpleProduct()
     {
-        $this->setInlineMatrixFormOption(true);
+        $this->setInlineMatrixFormOption('inline');
 
         $unit = $this->getEntity(ProductUnit::class);
         $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
@@ -185,13 +200,13 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool $value
+     * @param string $value
      */
     private function setInlineMatrixFormOption($value)
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_product.inline_matrix_form_on_product_view')
+            ->with('oro_product.matrix_form_on_product_view')
             ->willReturn($value);
     }
 }

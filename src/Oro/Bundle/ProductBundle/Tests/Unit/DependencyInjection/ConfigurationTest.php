@@ -184,8 +184,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => false,
                     'scope' => 'app',
                 ],
-                'inline_matrix_form_on_product_view' => [
-                    'value' => true,
+                'matrix_form_on_product_view' => [
+                    'value' => 'inline',
                     'scope' => 'app',
                 ],
             ]

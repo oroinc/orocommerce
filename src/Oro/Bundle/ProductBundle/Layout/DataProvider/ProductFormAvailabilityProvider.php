@@ -44,10 +44,8 @@ class ProductFormAvailabilityProvider
      */
     public function isInlineMatrixAvailable(Product $product)
     {
-        $inlineMatrixForm = $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::INLINE_MATRIX_FORM_ON_PRODUCT_VIEW));
-
-        return $inlineMatrixForm && $this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
+            && $this->isMatrixAvailable($product);
     }
 
     /**
@@ -56,10 +54,8 @@ class ProductFormAvailabilityProvider
      */
     public function isPopupMatrixAvailable(Product $product)
     {
-        $inlineMatrixForm = $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::INLINE_MATRIX_FORM_ON_PRODUCT_VIEW));
-
-        return !$inlineMatrixForm && $this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_POPUP
+            && $this->isMatrixAvailable($product);
     }
 
     /**
@@ -68,7 +64,17 @@ class ProductFormAvailabilityProvider
      */
     public function isSimpleAvailable(Product $product)
     {
-        return !$this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_NONE
+            || !$this->isMatrixAvailable($product);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getMatrixFormConfig()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_VIEW));
     }
 
     /**
