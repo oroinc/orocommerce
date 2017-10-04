@@ -65,10 +65,10 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 
     /**
      * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     * @param ProductIndexScheduler $indexScheduler
+     * @param ScopeManager                  $scopeManager
+     * @param ProductIndexScheduler         $indexScheduler
      * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ScopeManager $scopeManager
+     * @param ProductReindexManager         $reindexManager
      */
     public function __construct(
         ManagerRegistry $registry,

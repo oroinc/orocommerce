@@ -43,14 +43,15 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $container = $this->client->getContainer();
         $indexScheduler = new ProductIndexScheduler(
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('event_dispatcher')
+            $container->get('oro_product.manager.product_reindex_manager')
         );
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->builder = new CategoryResolvedCacheBuilder(
             $container->get('doctrine'),
             $this->scopeManager,
             $indexScheduler,
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $container->get('oro_product.manager.product_reindex_manager')
         );
         $this->scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->builder->setCacheClass(

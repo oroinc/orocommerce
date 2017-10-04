@@ -1272,7 +1272,6 @@ services:
             - { name: oro_entity.alias_provider }
 
     oro_product.manager.product_reindex_manager:
-            class: 'Oro\Bundle\ProductBundle\Manager\ProductReindexManager'
-            arguments:
-                - '@event_dispatcher'
-
+        class: 'Oro\Bundle\ProductBundle\Manager\ProductReindexManager'
+        arguments:
+            - '@event_dispatcher'

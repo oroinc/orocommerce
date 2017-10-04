@@ -206,8 +206,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new StubEnumValue(
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
-                )
-            );
+            ));
 
         $this->reindexManager->expects($this->never())
             ->method('triggerReindexationRequestEvent');

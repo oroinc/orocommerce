@@ -245,7 +245,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
      */
     protected function getOrderInternalStatusById($id = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
     {
-        $className = ExtendHelper::buildEnumValueClassName(OrderStatusesProviderInterface::INTERNAL_STATUS_CODE);
+        $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
         return $this->managerRegistry->getManagerForClass($className)->getRepository($className)->find($id);
     }
