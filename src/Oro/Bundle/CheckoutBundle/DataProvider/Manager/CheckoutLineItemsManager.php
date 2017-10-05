@@ -116,23 +116,20 @@ class CheckoutLineItemsManager
      */
     protected function isLineItemHasCurrencyAndSupportedStatus($lineItem, $currency, array $supportedStatuses)
     {
+        if (!$lineItem instanceof ProductHolderInterface || !$lineItem instanceof PriceAwareInterface) {
+            return false;
+        }
         $allowedProduct = true;
 
-        if ($lineItem instanceof ProductHolderInterface) {
-            $product = $lineItem->getProduct();
-            if ($product) {
-                $allowedProduct = false;
-                if ($product->getInventoryStatus()) {
-                    $statusId = $product->getInventoryStatus()->getId();
-                    $allowedProduct = !empty($supportedStatuses[$statusId]);
-                }
+        if ($product = $lineItem->getProduct()) {
+            $allowedProduct = false;
+            if ($product->getInventoryStatus()) {
+                $statusId = $product->getInventoryStatus()->getId();
+                $allowedProduct = !empty($supportedStatuses[$statusId]);
             }
         }
 
-        $lineItemPrice = null;
-        if ($lineItem instanceof PriceAwareInterface) {
-            $lineItemPrice = $lineItem->getPrice();
-        }
+        $lineItemPrice = $lineItem->getPrice();
 
         return $allowedProduct
             && (bool)$lineItemPrice

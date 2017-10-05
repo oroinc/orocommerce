@@ -23,7 +23,6 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
@@ -539,7 +538,11 @@ class Checkout implements
      */
     public function setLineItems(Collection $lineItems)
     {
-        $this->lineItems = $lineItems;
+        $this->lineItems->clear();
+
+        foreach ($lineItems as $lineItem) {
+            $this->addLineItem($lineItem);
+        }
 
         return $this;
     }

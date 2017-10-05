@@ -52,7 +52,6 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['deleted', true],
             ['completed', true],
             ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
-            ['lineItems', new ArrayCollection([new CheckoutLineItem()]), false],
             ['subtotals', new ArrayCollection([$this->createMock(CheckoutSubtotal::class)]), false],
         ];
 
@@ -118,5 +117,42 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $checkout->setSource($checkoutSource);
 
         $this->assertEquals('session id', $checkout->getVisitor()->getSessionId());
+    }
+
+    /**
+     * @dataProvider getLineItemsDataProvider
+     *
+     * @param array $lineItems
+     * @param array $expected
+     */
+    public function testGetLineItems(array $lineItems, array $expected)
+    {
+        $entity = new Checkout();
+
+        if ($lineItems) {
+            $entity->setLineItems(new ArrayCollection($lineItems));
+        }
+
+        $this->assertEquals(new ArrayCollection($expected), $entity->getLineItems());
+    }
+
+    /**
+     * @return array
+     */
+    public function getLineItemsDataProvider()
+    {
+        $lineItem1 = $this->createMock(CheckoutLineItem::class);
+        $lineItem2 = $this->createMock(CheckoutLineItem::class);
+
+        return [
+            'empty' => [
+                'lineItems' => [],
+                'expected' => [],
+            ],
+            'filled, repeated' => [
+                'lineItems' => [$lineItem1, $lineItem2, $lineItem1],
+                'expected' => [$lineItem1, $lineItem2],
+            ],
+        ];
     }
 }

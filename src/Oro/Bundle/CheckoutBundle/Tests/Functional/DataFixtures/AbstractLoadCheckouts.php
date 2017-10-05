@@ -11,7 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -117,30 +116,19 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             if (!empty($checkoutData['checkout']['shippingCostAmount'])) {
                 $checkout->setShippingCost(Price::create($checkoutData['checkout']['shippingCostAmount'], 'USD'));
             }
+
             if (!empty($checkoutData['lineItems'])) {
-                /** @var CheckoutLineItem $lineItem */
-                foreach ($checkoutData['lineItems'] as $lineItem) {
-                    $checkout->addLineItem($lineItem);
-                }
+                $checkout->setLineItems($checkoutData['lineItems']);
             }
-            if (!empty($checkoutData['checkoutSubtotals'])) {
-                /** @var CheckoutSubtotal $checkoutSubtotal */
-                foreach ($checkoutData['checkoutSubtotals'] as $checkoutSubtotalData) {
-                    $subtotal = new Subtotal();
-                    $subtotal->setCurrency($checkoutSubtotalData['currency'])
-                        ->setAmount($checkoutSubtotalData['amount']);
-                    $checkoutSubtotal = new CheckoutSubtotal($checkout, $checkoutSubtotalData['currency']);
-                    $checkoutSubtotal->setSubtotal($subtotal)
-                        ->setValid(true);
-                    $manager->persist($checkoutSubtotal);
-                }
-            }
+
+            $this->loadCheckoutSubtotals($checkout, $checkoutData, $manager);
+
             $manager->persist($checkout);
-            $manager->flush();
             $this->setReference($name, $checkout);
 
             $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
         }
+        $manager->flush();
     }
 
     protected function clearPreconditions()
@@ -151,6 +139,28 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         $config = $workflowDefinition->getConfiguration();
         $config['transition_definitions']['__start___definition']['preconditions'] = [];
         $workflowDefinition->setConfiguration($config);
+    }
+
+    /**
+     * @param Checkout $checkout
+     * @param array $checkoutData
+     * @param ObjectManager $manager
+     */
+    protected function loadCheckoutSubtotals(Checkout $checkout, array $checkoutData, ObjectManager $manager)
+    {
+        if (empty($checkoutData['checkoutSubtotals'])) {
+            return;
+        }
+        /** @var CheckoutSubtotal $checkoutSubtotal */
+        foreach ($checkoutData['checkoutSubtotals'] as $checkoutSubtotalData) {
+            $subtotal = new Subtotal();
+            $subtotal->setCurrency($checkoutSubtotalData['currency'])
+                ->setAmount($checkoutSubtotalData['amount']);
+            $checkoutSubtotal = new CheckoutSubtotal($checkout, $checkoutSubtotalData['currency']);
+            $checkoutSubtotal->setSubtotal($subtotal)
+                ->setValid(true);
+            $manager->persist($checkoutSubtotal);
+        }
     }
 
     /**
