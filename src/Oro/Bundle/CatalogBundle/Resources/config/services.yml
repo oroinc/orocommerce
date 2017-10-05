@@ -230,3 +230,18 @@ services:
         public: false
         tags:
             - { name: website_search.placeholder }
+
+    oro_catalog.datagrid.extension.category_counts:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Extension\CategoryCountsExtension'
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_datagrid.datagrid.request_parameters_factory'
+            - '@oro_catalog.website_search.repository.product'
+        calls:
+            - [addApplicableGrid, ['frontend-product-search-grid']]
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_catalog.website_search.repository.product:
+        class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
+        parent: oro_website_search.repository.abstract

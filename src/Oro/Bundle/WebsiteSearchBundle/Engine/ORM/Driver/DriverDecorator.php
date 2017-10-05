@@ -133,4 +133,10 @@ class DriverDecorator implements DriverInterface
     {
         $this->getDriver()->writeItem($item);
     }
+
+    /** {@inheritdoc} */
+    public function getGroupedData(Query $query)
+    {
+        return $this->getDriver()->getGroupedData($query);
+    }
 }

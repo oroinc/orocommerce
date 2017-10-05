@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
+use Oro\Bundle\SearchBundle\Query\LazyResult;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
@@ -44,22 +44,35 @@ class OrmEngine extends AbstractEngine
      */
     protected function doSearch(Query $query, array $context = [])
     {
-        $results = [];
-        $searchResults = $this->driver->search($query);
+        $elementsCallback = function () use ($query) {
+            $results = [];
+            $searchResults = $this->driver->search($query);
 
-        foreach ($searchResults as $searchResult) {
-            $item = $searchResult['item'];
+            foreach ($searchResults as $searchResult) {
+                $item = $searchResult['item'];
 
-            $results[] = new Item(
-                $item['entity'],
-                $item['recordId'],
-                $item['title'],
-                null,
-                $this->mapper->mapSelectedData($query, $searchResult),
-                $this->mappingProvider->getEntityConfig($item['entity'])
-            );
-        }
+                $results[] = new Item(
+                    $item['entity'],
+                    $item['recordId'],
+                    $item['title'],
+                    null,
+                    $this->mapper->mapSelectedData($query, $searchResult),
+                    $this->mappingProvider->getEntityConfig($item['entity'])
+                );
+            }
 
-        return new Result($query, $results, $this->driver->getRecordsCount($query));
+            return $results;
+        };
+
+        $recordsCountCallback = function () use ($query) {
+            return $this->driver->getRecordsCount($query);
+        };
+
+        $groupedDataCallback = function () use ($query) {
+            return $this->driver->getGroupedData($query);
+        };
+
+        // LazyResult is used here to do not trigger additional requests if they are not required
+        return new LazyResult($query, $elementsCallback, $recordsCountCallback, $groupedDataCallback);
     }
 }
