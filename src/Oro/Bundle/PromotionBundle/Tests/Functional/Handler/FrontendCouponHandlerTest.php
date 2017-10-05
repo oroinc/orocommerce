@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadShoppingListsData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\HttpFoundation\Request;
 
 class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
@@ -21,6 +22,8 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
      */
     protected function setUp()
     {
+        $this->fixturesToLoad[] = LoadCheckoutData::class;
+        $this->fixturesToLoad[] = LoadCombinedProductPrices::class;
         $this->initClient(
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
@@ -106,10 +109,10 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandle()
     {
-        /** @var AppliedCouponsAwareInterface|Order $entity */
-        $entity = $this->getReference(LoadShoppingListsData::PROMOTION_SHOPPING_LIST);
+        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
         $request = $this->getRequestWithCouponData([
-            'entityClass' => ShoppingList::class,
+            'entityClass' => Checkout::class,
             'entityId' => $entity->getId(),
         ]);
         $response = $this->handler->handle($request);
@@ -121,7 +124,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
         $expectedAppliedCoupons = array_values($entity->getAppliedCoupons()->toArray());
         self::assertCount(1, $expectedAppliedCoupons);
-        self::getContainer()->get('doctrine')->getManagerForClass(Order::class)->refresh($entity);
+        self::getContainer()->get('doctrine')->getManagerForClass(Checkout::class)->refresh($entity);
 
         $appliedCoupons = $entity->getAppliedCoupons()->toArray();
         self::assertEquals($expectedAppliedCoupons, $appliedCoupons);

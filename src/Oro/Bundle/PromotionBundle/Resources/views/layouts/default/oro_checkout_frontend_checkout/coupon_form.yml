@@ -14,32 +14,32 @@ layout:
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCoupons
-            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"].getSourceEntity())'
+            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"])'
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container
             optionName: appliedCouponsPromotions
-            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["checkout"].getSourceEntity())'
+            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["checkout"])'
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_container
             optionName: visible
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"])'
 
         - '@setOption':
             id: coupon_form_expand_link
             optionName: visible
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity()) != true'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"]) != true'
 
         - '@setOption':
             id: coupon_form_widget_container
             optionName: opened
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"].getSourceEntity())'
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"])'
 
         - '@setOption':
             id: coupon_form_container
             optionName: entity
-            optionValue: '=data["checkout"].getSourceEntity()'
+            optionValue: '=data["checkout"]'
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_row_delete_button

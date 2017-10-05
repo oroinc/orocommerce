@@ -19,6 +19,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     public function testSupports($class, $expected)
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
+        $extension->registerSupportedEntity(Order::class);
         $schema = ['class' => $class];
         $this->assertSame($expected, $extension->supports($schema));
     }
@@ -30,7 +31,6 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     {
         return [
             'supported Order' => [Order::class, true],
-            'supported ShoppingList' => [ShoppingList::class, true],
             'unsupported' => [\stdClass::class, false],
         ];
     }

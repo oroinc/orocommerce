@@ -2,25 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList as BaseShoppingList;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 
-class ShoppingList extends BaseShoppingList implements AppliedCouponsAwareInterface
+trait AppliedCouponsTrait
 {
     /**
      * @var Collection|AppliedCoupon[]
      */
-    private $appliedCoupons;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->appliedCoupons = new ArrayCollection();
-    }
+    protected $appliedCoupons;
 
     /**
      * {@inheritdoc}
@@ -38,7 +28,7 @@ class ShoppingList extends BaseShoppingList implements AppliedCouponsAwareInterf
         $this->appliedCoupons = $coupons;
     }
 
-      /**
+    /**
      * {@inheritdoc}
      */
     public function getAppliedCoupons()

@@ -5,6 +5,9 @@ parameters:
 services:
     oro_promotion.entity_generator_extension.order:
         class: Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension
+        calls:
+            - ['registerSupportedEntity', ['%oro_order.entity.order.class%']]
+            - ['registerSupportedEntity', ['%oro_checkout.entity.checkout.class%']]
         tags:
             - { name: oro_entity_extend.entity_generator_extension }
 
@@ -183,8 +186,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
-            - '@oro_promotion.validation_service.coupon_validation'
-            - '@oro_promotion.provider.entity_coupons_provider'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 

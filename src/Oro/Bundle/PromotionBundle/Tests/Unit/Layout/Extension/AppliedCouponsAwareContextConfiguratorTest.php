@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator;
 use Oro\Component\Layout\LayoutContext;
@@ -30,17 +29,8 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit_Framework_Test
     /**
      * @return array
      */
-    public function contextDataProvider()
+    public function contextDataProvider(): array
     {
-        $unsupportedCheckout = $this->createMock(Checkout::class);
-        $unsupportedCheckout->expects($this->any())
-            ->method('getSourceEntity')
-            ->willReturn(new \stdClass());
-        $supportedCheckout = $this->createMock(Checkout::class);
-        $supportedCheckout->expects($this->any())
-            ->method('getSourceEntity')
-            ->willReturn($this->createMock(AppliedCouponsAwareInterface::class));
-
         return [
             'no required keys' => [
                 'some', 'test', false
@@ -51,11 +41,8 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit_Framework_Test
             'entity is instanceof' => [
                 'entity', $this->createMock(AppliedCouponsAwareInterface::class), true
             ],
-            'checkout source entity is not instance of' => [
-                'checkout', $unsupportedCheckout, false
-            ],
             'checkout source entity is instance of' => [
-                'checkout', $supportedCheckout, true
+                'checkout', $this->createMock(AppliedCouponsAwareInterface::class), true
             ],
         ];
     }

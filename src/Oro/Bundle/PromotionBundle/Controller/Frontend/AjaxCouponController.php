@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Controller\Frontend;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +16,7 @@ class AjaxCouponController extends Controller
 {
     /**
      * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @return JsonResponse
@@ -33,6 +35,7 @@ class AjaxCouponController extends Controller
      *          "id"="\d+"
      *     }
      * )
+     * @Method({"DELETE"})
      *
      * @param string $entityClass
      * @param int $entityId

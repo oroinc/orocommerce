@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Mapper;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
@@ -32,30 +29,6 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->orderMapperDecorator = new OrderMapperDecorator($this->orderMapper);
     }
 
-    public function testMapWhenSourceEntityIsNotShoppingList()
-    {
-        /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSource = $this->createMock(CheckoutSource::class);
-        $checkoutSource
-            ->expects($this->any())
-            ->method('getEntity')
-            ->willReturn(new \stdClass());
-
-        $checkout = (new Checkout())->setSource($checkoutSource);
-        $order = $this->createMock(Order::class);
-        $order->expects($this->never())
-            ->method('addAppliedCoupon');
-        $data = ['paymentTerm' => 'Term30'];
-
-        $this->orderMapper
-            ->expects($this->once())
-            ->method('map')
-            ->with($checkout, $data)
-            ->willReturn($order);
-
-        static::assertSame($order, $this->orderMapperDecorator->map($checkout, $data));
-    }
-
     public function testMapWhenSourceEntityIsShoppingList()
     {
         $couponCode = 'First';
@@ -69,17 +42,8 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
             'sourceCouponId' => $sourceCouponId,
         ]);
 
-        $shoppingList = new ShoppingList();
-        $shoppingList->setAppliedCoupons([$appliedCoupon]);
-
-        /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSource = $this->createMock(CheckoutSource::class);
-        $checkoutSource
-            ->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($shoppingList);
-
-        $checkout = (new Checkout())->setSource($checkoutSource);
+        $checkout = new Checkout();
+        $checkout->addAppliedCoupon($appliedCoupon);
 
         $order = new Order();
         $data = ['paymentTerm' => 'Term30'];
@@ -87,7 +51,7 @@ class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->orderMapper
             ->expects($this->once())
             ->method('map')
-            ->with($checkout, $data)
+            ->with($checkout, $data, ['appliedCoupons' => true])
             ->willReturn($order);
 
         $expectedAppliedCoupon = (new AppliedCoupon())

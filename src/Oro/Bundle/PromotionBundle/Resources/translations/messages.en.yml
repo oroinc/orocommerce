@@ -276,7 +276,7 @@ oro:
             source_promotion_id.label: Source Promotion ID
             source_coupon_id.label: Source Coupon ID
             order.label: Order
-            shopping_list.label: Shopping List
+            checkout.label: Checkout
 
     applied_discount:
         name: Name
@@ -322,5 +322,5 @@ oro:
                     includingTax.label: After Disc. Incl. Tax
                     excludingTax.label:  After Disc. Excl. Tax
 
-    shoppinglist:
+    checkout:
         applied_coupons.label: Applied Coupons

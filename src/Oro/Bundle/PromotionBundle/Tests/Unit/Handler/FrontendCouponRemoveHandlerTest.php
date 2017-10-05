@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -54,7 +54,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleRemoveWhenAccessToEntityNotGranted()
     {
-        $entity = new ShoppingList();
+        $entity = new Checkout();
         $appliedCoupon = new AppliedCoupon();
 
         $this->authorizationChecker->expects($this->once())
@@ -71,7 +71,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleRemoveWhenCouponDoesNotBelongToEntity()
     {
-        $entity = new ShoppingList();
+        $entity = new Checkout();
         /** @var AppliedCoupon $coupon1 */
         $coupon1 = $this->getEntity(AppliedCoupon::class, ['id' => 1]);
         /** @var AppliedCoupon $coupon2 */
@@ -92,7 +92,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandle()
     {
-        $entity = new ShoppingList();
+        $entity = new Checkout();
         /** @var AppliedCoupon $coupon1 */
         $coupon1 = $this->getEntity(AppliedCoupon::class, ['id' => 1]);
         /** @var AppliedCoupon $coupon2 */

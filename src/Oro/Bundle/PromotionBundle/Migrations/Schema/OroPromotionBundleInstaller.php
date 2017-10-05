@@ -86,7 +86,7 @@ class OroPromotionBundleInstaller implements
         $this->addActivityAssociations($schema);
 
         $this->addAppliedCouponsToOrder($schema);
-        $this->addAppliedCouponsToShoppingList($schema);
+        $this->addAppliedCouponsToCheckout($schema);
         $this->addAppliedPromotionsToOrder($schema);
     }
 
@@ -553,13 +553,13 @@ class OroPromotionBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addAppliedCouponsToShoppingList(Schema $schema)
+    protected function addAppliedCouponsToCheckout(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
             $schema,
             'oro_promotion_applied_coupon',
-            'shoppingList',
-            'oro_shopping_list',
+            'checkout',
+            'oro_checkout',
             'id',
             [
                 'extend' => [
@@ -576,8 +576,8 @@ class OroPromotionBundleInstaller implements
         $this->extendExtension->addManyToOneInverseRelation(
             $schema,
             'oro_promotion_applied_coupon',
-            'shoppingList',
-            'oro_shopping_list',
+            'checkout',
+            'oro_checkout',
             'appliedCoupons',
             ['coupon_code'],
             ['coupon_code'],

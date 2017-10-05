@@ -9,7 +9,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroPromotionBundle implements Migration, ExtendExtensionAwareInterface
+class AddAppliedCouponsToCheckout implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension
@@ -29,19 +29,19 @@ class OroPromotionBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addAppliedCouponsToShoppingList($schema);
+        $this->addAppliedCouponsToCheckout($schema);
     }
 
     /**
      * @param Schema $schema
      */
-    protected function addAppliedCouponsToShoppingList(Schema $schema)
+    protected function addAppliedCouponsToCheckout(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
             $schema,
             'oro_promotion_applied_coupon',
-            'shoppingList',
-            'oro_shopping_list',
+            'checkout',
+            'oro_checkout',
             'id',
             [
                 'extend' => [
@@ -58,8 +58,8 @@ class OroPromotionBundle implements Migration, ExtendExtensionAwareInterface
         $this->extendExtension->addManyToOneInverseRelation(
             $schema,
             'oro_promotion_applied_coupon',
-            'shoppingList',
-            'oro_shopping_list',
+            'checkout',
+            'oro_checkout',
             'appliedCoupons',
             ['coupon_code'],
             ['coupon_code'],

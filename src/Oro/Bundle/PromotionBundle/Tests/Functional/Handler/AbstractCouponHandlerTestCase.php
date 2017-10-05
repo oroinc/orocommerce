@@ -10,7 +10,6 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItemsData;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,15 +24,19 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
     protected $handler;
 
     /**
+     * @var array
+     */
+    protected $fixturesToLoad = [
+        LoadCouponData::class,
+        LoadOrderLineItemData::class
+    ];
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->loadFixtures([
-            LoadCouponData::class,
-            LoadOrderLineItemData::class,
-            LoadShoppingListLineItemsData::class,
-        ]);
+        $this->loadFixtures($this->fixturesToLoad);
         $this->handler = static::getContainer()->get($this->getHandlerServiceName());
 
         static::getContainer()->get('security.token_storage')->setToken($this->getToken());

@@ -25,15 +25,14 @@ class OrderMapperDecorator implements MapperInterface
     /**
      * {@inheritdoc}
      */
-    public function map(Checkout $checkout, array $data = [])
+    public function map(Checkout $checkout, array $data = [], array $skipped = [])
     {
+        $skipped['appliedCoupons'] = true;
         /** @var AppliedCouponsAwareInterface $order */
-        $order = $this->orderMapper->map($checkout, $data);
+        $order = $this->orderMapper->map($checkout, $data, $skipped);
 
-        $sourceEntity = $checkout->getSourceEntity();
-
-        if ($sourceEntity instanceof AppliedCouponsAwareInterface) {
-            foreach ($sourceEntity->getAppliedCoupons() as $appliedCoupon) {
+        if ($checkout instanceof AppliedCouponsAwareInterface) {
+            foreach ($checkout->getAppliedCoupons() as $appliedCoupon) {
                 $order->addAppliedCoupon($this->getAppliedCouponCopy($appliedCoupon));
             }
         }

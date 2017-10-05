@@ -19,8 +19,7 @@ class AppliedCouponsAwareContextConfigurator implements ContextConfiguratorInter
     {
         $isAppliedCouponsAware = false;
         if ($context->data()->has('checkout')) {
-            $isAppliedCouponsAware = $context->data()->get('checkout')->getSourceEntity()
-                instanceof AppliedCouponsAwareInterface;
+            $isAppliedCouponsAware = $context->data()->get('checkout') instanceof AppliedCouponsAwareInterface;
         } elseif ($context->data()->has('entity')) {
             $isAppliedCouponsAware = $context->data()->get('entity') instanceof AppliedCouponsAwareInterface;
         }

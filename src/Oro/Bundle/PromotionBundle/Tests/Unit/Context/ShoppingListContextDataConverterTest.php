@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Context;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -15,20 +14,14 @@ use Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\ShoppingList;
-use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-
     /**
      * @var CriteriaDataProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -55,16 +48,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
     private $lineItemNotPricedSubtotalProvider;
 
     /**
-     * @var CouponValidationService|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $couponValidationService;
-
-    /**
-     * @var EntityCouponsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $entityCouponsProvider;
-
-    /**
      * @var ShoppingListContextDataConverter
      */
     private $converter;
@@ -76,17 +59,12 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->lineItemNotPricedSubtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
-        $this->couponValidationService = $this->createMock(CouponValidationService::class);
-        $this->entityCouponsProvider = $this->createMock(EntityCouponsProviderInterface::class);
-
         $this->converter = new ShoppingListContextDataConverter(
             $this->criteriaDataProvider,
             $this->lineItemsConverter,
             $this->userCurrencyManager,
             $this->scopeManager,
-            $this->lineItemNotPricedSubtotalProvider,
-            $this->couponValidationService,
-            $this->entityCouponsProvider
+            $this->lineItemNotPricedSubtotalProvider
         );
     }
 
@@ -122,15 +100,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $entity->setCustomerUser($customerUser);
         $entity->addLineItem($lineItem);
 
-        /** @var Coupon $coupon1 */
-        $coupon1 = $this->getEntity(Coupon::class, ['id' => 1, 'code' => 'COUPON1']);
-
-        /** @var Coupon $coupon2 */
-        $coupon2 = $this->getEntity(Coupon::class, ['id' => 2, 'code' => 'COUPON2']);
-
-        $entity->addAppliedCoupon($coupon1);
-        $entity->addAppliedCoupon($coupon2);
-
         $subtotalAmount = 100.0;
         $subtotal = new Subtotal();
         $subtotal->setAmount($subtotalAmount);
@@ -160,18 +129,6 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ->with($entity, $currency)
             ->willReturn($subtotal);
 
-        $this->couponValidationService->expects($this->exactly(2))
-            ->method('isValid')
-            ->willReturnMap([
-                [$coupon1, null, true],
-                [$coupon2, null, false]
-            ]);
-
-        $this->entityCouponsProvider->expects($this->once())
-            ->method('getCoupons')
-            ->with($entity)
-            ->willReturn(new ArrayCollection([$coupon1, $coupon2]));
-
         $expectedData = [
             ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
             ContextDataConverterInterface::CUSTOMER => $customer,
@@ -180,9 +137,7 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
             ContextDataConverterInterface::CURRENCY => $currency,
             ContextDataConverterInterface::CRITERIA => $scopeCriteria,
-            ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$coupon1])
         ];
-
         $this->assertEquals($expectedData, $this->converter->getContextData($entity));
     }
 
