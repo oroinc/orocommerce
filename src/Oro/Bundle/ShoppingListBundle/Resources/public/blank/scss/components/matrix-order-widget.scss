@@ -142,10 +142,10 @@
 
         &-content {
             display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            align-items: baseline;
             flex-basis: 12%;
 
+            box-sizing: border-box;
             padding: 10px 30px 10px 5px;
         }
 
@@ -154,6 +154,7 @@
             flex-wrap: wrap;
             overflow: hidden;
 
+            box-sizing: border-box;
             padding: 10px;
             width: 100%;
         }
