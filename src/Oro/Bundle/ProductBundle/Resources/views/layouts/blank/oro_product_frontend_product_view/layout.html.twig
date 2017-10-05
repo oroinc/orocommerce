@@ -7,11 +7,9 @@
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
-        'productData': {
-            'imageUrl': productImageUrl,
-            'name': product.name.string,
-            'sku': product.sku
-        }
+        'imageUrl': productImageUrl,
+        'name': product.name.string,
+        'sku': product.sku
     }) %}
 
     {% if parentProduct is not null %}

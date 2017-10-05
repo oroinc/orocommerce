@@ -43,7 +43,7 @@
             <td>Qty</td>
             {% for column in form.rows[0].columns %}
                 <td>
-                    <div class="matrix-order-widget__grid-footer-total" data-column-quantity="{{ loop.index }}">0</div>
+                    <div class="matrix-order-widget__grid-footer-total" data-columns-quantity="{{ loop.index }}">0</div>
                 </td>
             {% endfor %}
         </tr>

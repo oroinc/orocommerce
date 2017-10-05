@@ -6,7 +6,6 @@ define(function(require) {
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
 
     MatrixGridOrderWidget = FrontendDialogWidget.extend({
         optionNames: FrontendDialogWidget.prototype.optionNames.concat([
@@ -35,21 +34,19 @@ define(function(require) {
             };
 
             this.fullscreenViewOptions = {
-                keepAliveOnClose: false,
                 popupLabel: null,
                 headerContent: true,
+                footerContentOptions: {},
                 headerContentOptions: {
-                    imageUrl: this.model.attributes.productData.imageUrl,
-                    title: this.model.attributes.productData.name,
-                    subtitle: __('oro.frontend.shoppinglist.matrix_grid_order.item_number') + this.model.attributes.productData.sku
-                },
-                footerContent: true
+                    imageUrl: this.model.get('imageUrl'),
+                    title: this.model.get('name'),
+                    subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
+                        ': ' + this.model.get('sku')
+                }
             };
-            if (_.isMobile()) {
-                this.options.fullscreenViewport = {
-                    maxScreenType: 'any'
-                };
-            }
+            this.options.fullscreenViewport = {
+                isMobile: true
+            };
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },

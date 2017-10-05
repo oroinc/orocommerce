@@ -21,22 +21,15 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'fields': ['input', 'updateTotals']
+            'fields': ['input', '_onQuantityChange']
         },
 
         total: {
             price: 0,
             quantity: 0,
-            row: {
-                index: null,
-                quantity: 0,
-                subtotal: 0
-            },
-            column: {
-                index: null,
-                quantity: 0,
-                subtotal: 0
-            }
+            rows: {},
+            columns: {},
+            cells: {}
         },
 
         prices: null,
@@ -52,9 +45,7 @@ define(function(require) {
             ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
-            _.each(this.getElement('fields'), function(element) {
-                this.update(element);
-            }, this);
+            this.updateTotals();
         },
 
         /**
@@ -85,70 +76,95 @@ define(function(require) {
         /**
          * Listen input event
          *
-         * @param event
+         * @param {Event} event
          */
-        updateTotals: _.debounce(function(event) {
-            this.update(event.currentTarget);
+        _onQuantityChange: _.debounce(function(event) {
+            this.updateTotal($(event.currentTarget));
+            this.render();
         }, 150),
 
         /**
-         * Calculate total values of quantity and price
-         * Prevent enter string
-         *
-         * @param element
+         * Update all totals
          */
-        update: function(element) {
-            var currentIndex = $(element).closest('[data-index]').data('index');
-
-            this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                if (_.isEmpty(field.value)) {
-                    return total;
-                }
-
-                var $this = $(field);
-                var $parent = $this.closest('[data-index]');
-                var productId = $parent.data('product-id');
-                var productPrice = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
-                var validValue = this.getValidValue(field.value);
-
-                if ($parent.data('index').row === currentIndex.row) {
-                    total.row.quantity += validValue;
-                    total.row.subtotal += productPrice;
-                }
-
-                if ($parent.data('index').column === currentIndex.column) {
-                    total.column.quantity += validValue;
-                    total.column.subtotal += productPrice;
-                }
-
-                $this.val(validValue);
-
-                total.quantity += validValue;
-                total.price += productPrice;
-
-                return total;
-            }, {
-                price: 0,
-                quantity: 0,
-                row: {
-                    index: currentIndex.row,
-                    quantity: 0,
-                    subtotal: 0
-                },
-                column: {
-                    index: currentIndex.column,
-                    quantity: 0,
-                    subtotal: 0
-                }
+        updateTotals: function() {
+            _.each(this.getElement('fields'), function(element) {
+                this.updateTotal($(element));
             }, this);
-
-            this.render();
         },
 
-        getValidValue: function(value) {
-            var val = parseInt(value, 10) || 0;
+        /**
+         * Calculate totals for individual field
+         *
+         * @param {jQuery} $element
+         */
+        updateTotal: function($element) {
+            var $cell = $element.closest('[data-index]');
+            var index = $cell.data('index');
+            var productId = $cell.data('product-id');
+            var indexKey = index.row + '.' + index.column;
+            var value = $element.val();
 
-            if (_.isEmpty(value)) {
+            var cells = this.total.cells;
+            var columns = this.total.columns;
+            var rows = this.total.rows;
+
+            var cell = cells[indexKey] = this.getTotal(cells, indexKey);
+            var column = columns[index.column] = this.getTotal(columns, index.column);
+            var row = rows[index.row] = this.getTotal(rows, index.row);
+
+            //remove old values
+            this.changeTotal(this.total, cell, -1);
+            this.changeTotal(column, cell, -1);
+            this.changeTotal(row, cell, -1);
+
+            //recalculate cell total
+            cell.quantity = this.getValidQuantity(value);
+            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, value);
+            $element.val(cell.quantity);
+
+            //add new values
+            this.changeTotal(this.total, cell);
+            this.changeTotal(column, cell);
+            this.changeTotal(row, cell);
+        },
+
+        /**
+         * Get total by key
+         *
+         * @param {Object} totals
+         * @param {String} key
+         * @return {Object}
+         */
+        getTotal: function(totals, key) {
+            return totals[key] || {
+                quantity: 0,
+                price: 0
+            };
+        },
+
+        /**
+         * Change totals by subtotals using modifier
+         *
+         * @param {Object} totals
+         * @param {Object} subtotals
+         * @param {Number|null} modifier
+         */
+        changeTotal: function(totals, subtotals, modifier) {
+            modifier = modifier || 1;
+            totals.quantity += subtotals.quantity * modifier;
+            totals.price += subtotals.price * modifier;
+        },
+
+        /**
+         * Validate quantity value
+         *
+         * @param {String} quantity
+         * @return {Number}
+         */
+        getValidQuantity: function(quantity) {
+            var val = parseInt(quantity, 10) || 0;
+
+            if (_.isEmpty(quantity)) {
                 return 0;
             } else {
                 return val < this.minValue ? this.minValue : val;
@@ -156,7 +172,7 @@ define(function(require) {
         },
 
         /**
-         * Render actual view
+         * Update totals
          */
         render: function() {
             this.getElement('totalQty').text(this.total.quantity);
@@ -164,26 +180,22 @@ define(function(require) {
                 NumberFormatter.formatCurrency(this.total.price)
             );
 
-            _.each(
-                _.pick(this.total, 'row', 'column'), // Select need entities
-                _.bind(this.renderDataEntity, this, {
-                    'subtotal': NumberFormatter.formatCurrency // Define formatted properties
-                }),
-            this);
+            _.each(_.pick(this.total, 'rows', 'columns'), this.renderSubTotals, this);
         },
 
         /**
-         * Render property matrix grid
+         * Update subtotals
          *
-         * @param {Object} formatters
-         * @param {Object} value
+         * @param {Object} totals
          * @param {String} key
          */
-        renderDataEntity: function(formatters, value, key) {
-            _.each(_.omit(value, 'index'), function(entity, type) {
-                this.$el.find('[data-' + key + '-' + type + '="' + value.index + '"]')
-                    .toggleClass('valid', entity > 0)
-                    .html(_.has(formatters, type) ? formatters[type].call(this, entity) : entity);
+        renderSubTotals: function(totals, key) {
+            _.each(totals, function(total, index) {
+                var $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
+                var $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
+
+                $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
+                $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
             }, this);
         }
     }));

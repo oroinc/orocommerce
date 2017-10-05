@@ -24,4 +24,4 @@ oro:
             messages:
                 delete_title: Delete Confirmation
             matrix_grid_order:
-                item_number: 'Item #: '
+                item_number: 'Item #'
