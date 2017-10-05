@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
 
 class CategoryHighlightLowInventoryFormExtension extends AbstractTypeExtension
 {

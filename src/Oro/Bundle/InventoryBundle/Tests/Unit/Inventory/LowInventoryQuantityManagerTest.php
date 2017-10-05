@@ -169,7 +169,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo('lowInventoryThreshold')
             ))
             ->will($this->returnCallback(
-                function(Product $product, $option) use ($highlightLowInventory, $lowInventoryThreshold) {
+                function (Product $product, $option) use ($highlightLowInventory, $lowInventoryThreshold) {
                     if ($option === 'highlightLowInventory') {
                         return $highlightLowInventory[$product->getId()];
                     }

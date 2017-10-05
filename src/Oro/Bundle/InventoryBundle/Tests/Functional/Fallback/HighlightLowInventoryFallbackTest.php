@@ -75,10 +75,16 @@ class HighlightLowInventoryFallbackTest extends WebTestCase
         $updateProduct = false
     ) {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
+
         if ($updateProduct) {
             $this->setProductHighlightLowInventoryField($product, null, true, 'category');
         }
-        $this->setCategoryHighlightLowInventoryField($categoryOwnValue, $categoryUseFallbackValue, $categoryFallbackValue);
+
+        $this->setCategoryHighlightLowInventoryField(
+            $categoryOwnValue,
+            $categoryUseFallbackValue,
+            $categoryFallbackValue
+        );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertProductHighlightLowInventoryValue($crawler, $expectedProductValue);
