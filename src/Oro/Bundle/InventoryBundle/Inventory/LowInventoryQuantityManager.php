@@ -27,7 +27,7 @@ class LowInventoryQuantityManager
 
     /**
      * @param EntityFallbackResolver $entityFallbackResolver
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper         $doctrineHelper
      */
     public function __construct(
         EntityFallbackResolver $entityFallbackResolver,
@@ -48,19 +48,21 @@ class LowInventoryQuantityManager
      */
     public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null)
     {
+        $highlightLowInventory = $this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory');
+
+        if (!$highlightLowInventory) {
+            return false;
+        }
+
         if (!$productUnit) {
             $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
         }
 
-        /** @var InventoryLevelRepository $inventoryLevelRepository */
-        $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
-        /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $inventoryLevelRepository->getLevelByProductAndProductUnit($product, $productUnit);
-        $productQuantity = $inventoryLevel->getQuantity();
-
         $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'lowInventoryThreshold');
 
-        if ($productQuantity <= $lowInventoryThreshold) {
+        $quantity = $this->getQuantityByProductAndProductUnit($product, $productUnit);
+
+        if ($quantity <= $lowInventoryThreshold) {
             return true;
         }
 
@@ -68,43 +70,111 @@ class LowInventoryQuantityManager
     }
 
     /**
+     * @param Product     $product
+     * @param ProductUnit $productUnit
+     *
+     * @return mixed
+     */
+    protected function getQuantityByProductAndProductUnit(Product $product, ProductUnit $productUnit)
+    {
+        /** @var InventoryLevelRepository $inventoryLevelRepository */
+        $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
+
+        $inventoryLevel = $inventoryLevelRepository->getLevelByProductAndProductUnit($product, $productUnit);
+
+        return $inventoryLevel->getQuantity();
+    }
+
+    /**
      * Returns low inventory flags for product collection.
      * Will be useful for all product listing (Catalog, Checkout, Shopping list)
      *
-     * @param $products - [
+     * @param $data - [
      *      [
-     *          'productId' => value,
-     *          'productUnit' => productUnit entity
+     *          'product' => Product Entity,
+     *          'product_unit' => ProductUnit entity
      *      ]
      * ]
      *
      * @return array [
-     *      'productId' => bool - has low inventory marker,
+     *      'product id' => bool - has low inventory marker,
      *       ...
-     *      'productId' => bool
+     *      'product id' => bool
      * ]
      */
-    public function isLowInventoryCollection($products)
+    public function isLowInventoryCollection(array $data)
     {
         $response = [];
 
-        foreach ($products as $product) {
-            if (isset($product['productId'])) {
-                $productId = $product['productId'];
-                $productUnit = null;
-                if (isset($product['productUnit'])) {
-                    $productUnit = $product['productUnit'];
-                }
+        $products = $this->extractProducts($data);
+        $productLevelQuantities = $this->getProductLevelQuantities($products);
 
-                //TODO: Two lines below is just a STUB which will be replaced in scope of BB-12178
-                /** @var Product $product */
-                $productEntity = $this->doctrineHelper->getEntity(Product::class, $productId);
-                $hasLowInventoryMarker = $this->isLowInventoryProduct($productEntity, $productUnit);
+        foreach ($data as $item) {
+            /** @var Product $product */
+            $product = $item['product'];
 
-                $response[$productId] = $hasLowInventoryMarker;
+            $highlightLowInventory = $this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory');
+
+            if ($highlightLowInventory) {
+                /** @var ProductUnit $productUnit */
+                $productUnit = $item['product_unit'];
+                $code = $productUnit->getCode();
+
+                $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
+                    $product,
+                    'lowInventoryThreshold'
+                );
+
+                $quantity = $productLevelQuantities[$product->getId()][$code];
+                $response[$product->getId()] = $quantity <= $lowInventoryThreshold;
+            } else {
+                $response[$product->getId()] = false;
             }
         }
 
         return $response;
+    }
+
+    /**
+     * @param Product[] $products
+     *
+     * @return array
+     */
+    protected function getProductLevelQuantities(array $products)
+    {
+        /** @var InventoryLevelRepository $inventoryLevelRepository */
+        $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
+        $productLevelQuantities = $inventoryLevelRepository->getQuantityForProductCollection($products);
+
+        return $this->formatProductLevelQuantities($productLevelQuantities);
+    }
+
+    /**
+     * @param $inventoryLevelRepository
+     *
+     * @return array
+     */
+    protected function formatProductLevelQuantities($inventoryLevelRepository)
+    {
+        $formattedQuantities = [];
+
+        foreach ($inventoryLevelRepository as $item) {
+            $productId = $item['product_id'];
+            $code = $item['code'];
+
+            $formattedQuantities[$productId][$code] = $item['quantity'];
+        }
+
+        return $formattedQuantities;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return array
+     */
+    protected function extractProducts($data)
+    {
+        return array_column($data, 'product');
     }
 }

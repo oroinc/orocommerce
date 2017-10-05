@@ -2,18 +2,23 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridListener;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +28,11 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      * @var LowInventoryQuantityManager|\PHPUnit_Framework_MockObject_MockObject
      */
     private $lowInventoryQuantityManager;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
 
     /**
      * @var ProductDatagridListener
@@ -35,7 +45,12 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new ProductDatagridListener($this->lowInventoryQuantityManager);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->listener = new ProductDatagridListener(
+            $this->lowInventoryQuantityManager,
+            $this->doctrineHelper
+        );
     }
 
     public function testOnPreBuild()
@@ -61,24 +76,40 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoLowInventory()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        $dataGrid = $this->createMock(DatagridInterface::class);
 
-        $record = new ResultRecord(['id' => 777]);
+        $product1 = $this->getProductEntity(777);
+
+        $record = new ResultRecord(['id' => $product1->getId()]);
+
         $products = [
-            ['productId' => 777, 'productUnit' => null]
+            [
+                'product' => $product1,
+                'product_unit' =>  $product1->getPrimaryUnitPrecision()->getUnit()
+            ]
         ];
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())->method('findBy')
+            ->willReturn([
+                $product1
+            ]);
+
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+            ->willReturn($productRepository);
 
         $this->lowInventoryQuantityManager
             ->expects($this->once())
             ->method('isLowInventoryCollection')
             ->with($products)
             ->willReturn([]);
+
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
         /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new SearchResultAfter($datagrid, $query, [$record]);
+        $event = new SearchResultAfter($dataGrid, $query, [$record]);
 
         $this->listener->onResultAfter($event);
 
@@ -89,6 +120,13 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())->method('findBy')
+            ->willReturn([]);
+
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+            ->willReturn($productRepository);
 
         $this->lowInventoryQuantityManager
             ->expects($this->once())
@@ -109,15 +147,39 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        $record1 = new ResultRecord(['id' => 777, 'unit' => 'lbs']);
-        $record2 = new ResultRecord(['id' => 555, 'unit' => 'lbs']);
-        $record3 = new ResultRecord(['id' => 444, 'unit' => 'lbs']);
+        $product1 = $this->getProductEntity(777);
+        $product2 = $this->getProductEntity(555);
+        $product3 = $this->getProductEntity(444);
+
+        $record1 = new ResultRecord(['id' => $product1->getId()]);
+        $record2 = new ResultRecord(['id' => $product2->getId()]);
+        $record3 = new ResultRecord(['id' => $product3->getId()]);
 
         $preparedRecords = [
-            ['productId' => 777, 'productUnit' => 'lbs'],
-            ['productId' => 555, 'productUnit' => 'lbs'],
-            ['productId' => 444, 'productUnit' => 'lbs']
+            [
+                'product' => $product1,
+                'product_unit' => $product1->getPrimaryUnitPrecision()->getUnit()
+            ],
+            [
+                'product' => $product2,
+                'product_unit' => $product2->getPrimaryUnitPrecision()->getUnit()
+            ],
+            [
+                'product' => $product3,
+                'product_unit' => $product3->getPrimaryUnitPrecision()->getUnit()
+            ]
         ];
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())->method('findBy')
+            ->willReturn([
+                $product1,
+                $product2,
+                $product3
+            ]);
+
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+            ->willReturn($productRepository);
 
         $this->lowInventoryQuantityManager
             ->expects($this->once())
@@ -127,6 +189,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 777 => true,
                 555 => false
             ]);
+
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
@@ -138,5 +201,24 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $record1->getValue('low_inventory'));
         $this->assertEquals(false, $record2->getValue('low_inventory'));
         $this->assertNull($record3->getValue('low_inventory'));
+    }
+
+    /**
+     * @param $id
+     *
+     * @return ProductStub
+     */
+    protected function getProductEntity($id)
+    {
+        $product = new ProductStub();
+        $product->setId($id);
+
+        $primaryUnitPrecision = new ProductUnitPrecision();
+        $unit = new ProductUnit();
+        $primaryUnitPrecision->setUnit($unit);
+
+        $product->setPrimaryUnitPrecision($primaryUnitPrecision);
+
+        return $product;
     }
 }

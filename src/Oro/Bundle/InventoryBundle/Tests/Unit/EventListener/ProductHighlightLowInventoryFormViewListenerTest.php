@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 use Oro\Bundle\InventoryBundle\EventListener\ProductHighlightLowInventoryFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductManageInventoryFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
+class ProductHighlightLowInventoryFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var ProductHighlightLowInventoryFormViewListener */
     protected $listener;
