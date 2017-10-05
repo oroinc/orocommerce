@@ -275,7 +275,6 @@
     {% set includedProductsElementId = '#' ~ form.includedProducts.vars.id %}
     {% set productCollectionApplyQueryComponentOptions = {
         'selectors': {
-            'conditionBuilder': '#' ~ form.vars.id ~ '-condition-builder',
             'reset': '.filter-reset',
             'apply': '.filter-apply',
             'included': includedProductsElementId,
@@ -307,7 +306,7 @@
                 data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
         >
             {# --Grid sidebar component start-- #}
-            <div class="{{ controlsBlockAlias }} control-group fields-row"
+            <div class="{{ controlsBlockAlias }}"
                  data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
@@ -364,7 +363,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div data-collapse-container class="filter">
+                                <div data-collapse-container class="filter control-group fields-row">
                                     {{ block('oro_segment_filter_builder_row') }}
                                     {# --Apply Query button start--#}
                                     <div class="clearfix">
