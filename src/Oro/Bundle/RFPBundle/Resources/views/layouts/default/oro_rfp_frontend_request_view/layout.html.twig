@@ -169,7 +169,7 @@
                 {% for requestProductItem in requestProduct.requestProductItems %}
                     <tr class="grid-row">
                         {% if loop.first %}
-                            <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
+                            <td class="grid-cell grid-cell--offset-none-mobile primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
                                 <h3 class="oro-grid-table__title">
                                     {% if (requestProduct.product.id is defined) %}
                                         {{ UI.link({
@@ -181,12 +181,15 @@
                                     {% endif %}
                                 </h3>
                                 <div>{{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ requestProduct.productSku }}</span></div>
-                            </td>
-                            <td class="grid-cell grid-cell--offset-l-none-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
-                                {{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}
-                            </td>
-                            <td class="grid-cell last-on-mobile hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
-                                {{ 'oro.frontend.rfp.request.sections.request_products.columns.price.label'|trans }}
+
+                                <div class="grid-row hide-on-desktop hide-on-strict-tablet">
+                                    <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
+                                        {{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}
+                                    </div>
+                                    <div class="grid-head" aria-hidden="true">
+                                        {{ 'oro.frontend.rfp.request.sections.request_products.columns.price.label'|trans }}
+                                    </div>
+                                </div>
                             </td>
                         {% endif %}
                         <td class="grid-cell grid-cell--offset-l-none-mobile">
