@@ -1,4 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
+@fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-shopping-list-page.yml
 Feature: Enter coupon code on Front Store
