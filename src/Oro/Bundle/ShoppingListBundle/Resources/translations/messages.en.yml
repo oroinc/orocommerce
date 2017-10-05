@@ -189,7 +189,6 @@ oro:
                 total_qty: 'Total QTY'
                 total: 'TOTAL'
                 subtotal: 'Subtotal'
-                item_number: 'Item #: '
                 close: 'Close'
             lineitem:
                 product:

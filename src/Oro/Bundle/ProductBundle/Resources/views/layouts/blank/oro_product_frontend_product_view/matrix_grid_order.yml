@@ -14,7 +14,7 @@ layout:
             parentId: product_view_content_container
             blockType: container
             options:
-                visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
+                visible: '=!context["is_mobile"] and data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
 
 #        - '@add':
 #            id: matrix_grid_order_inline
