@@ -159,7 +159,7 @@ define(function(require) {
          * Render actual view
          */
         render: function() {
-            this.getElement('totalQty').text(this.total.commonQuantity);
+            this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
