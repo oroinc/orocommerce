@@ -92,14 +92,14 @@ oro:
             order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
             unassign_coupon:
-                label: Remove
-                success.message: Coupon was Removed from the current Promotion
+                label: Unassign
+                success.message: Coupon was Unassigned from the current Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
                 label: Duplicate
                 success_message: Promotion has been duplicated
         mass_action:
-            unassign.success_message: "{0} No entities were removed|{1} One entity was removed|]1,Inf[ %count% entities were removed"
+            unassign.success_message: "{0} No entities were Unassigned|{1} One entity was Unassigned|]1,Inf[ %count% entities were removed"
 
         blocks:
             general: General

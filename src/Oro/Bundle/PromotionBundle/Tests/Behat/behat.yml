@@ -8,6 +8,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroPromotionBundle::PromotionContext
+        - OroEmailBundle::EmailContext
         - OroApplicationBundle::CommerceMainContext
         - OroCustomerBundle::FrontendGridContext
         - OroConfigBundle::FeatureContext
@@ -106,3 +107,19 @@ oro_behat_extension:
     Promotions Grid Button:
       selector: '.entity-select-btn'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Assigned Coupons Grid:
+      selector: 'div[data-page-component-name="promotion-coupons-assigned-to-promotion-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Export Grid:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"grid-promotion-coupons-assigned-to-promotion-grid")]//a/../../../../div[@class="extra-actions-panel"]'
+        type: xpath
+
+    CSV:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"grid-promotion-coupons-assigned-to-promotion-grid")]//a[@title="CSV"]'
+        type: xpath
