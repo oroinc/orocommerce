@@ -169,20 +169,26 @@ class HighlightLowInventoryFallbackTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getPhpValues();
         if (is_null($ownValue)) {
+            unset($formValues['oro_catalog_category']['manageInventory']['scalarValue']);
             unset($formValues['oro_catalog_category']['highlightLowInventory']['scalarValue']);
         } else {
+            $formValues['oro_catalog_category']['manageInventory']['scalarValue'] = $ownValue;
             $formValues['oro_catalog_category']['highlightLowInventory']['scalarValue'] = $ownValue;
         }
 
         if (!is_null($useFallbackValue)) {
+            $formValues['oro_catalog_category']['manageInventory']['useFallback'] = $useFallbackValue;
             $formValues['oro_catalog_category']['highlightLowInventory']['useFallback'] = $useFallbackValue;
         }
         if (is_null($fallbackValue)) {
+            unset($formValues['oro_catalog_category']['manageInventory']['fallback']);
             unset($formValues['oro_catalog_category']['highlightLowInventory']['fallback']);
         } else {
+            $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
             $formValues['oro_catalog_category']['highlightLowInventory']['fallback'] = $fallbackValue;
         }
 
+        $formValues['oro_catalog_category']['inventoryThreshold']['useFallback'] = '1';
         $formValues['oro_catalog_category']['lowInventoryThreshold']['useFallback'] = '1';
         $formValues['oro_catalog_category']['_token'] =
             $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
@@ -207,16 +213,21 @@ class HighlightLowInventoryFallbackTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
         if (is_null($ownValue)) {
+            unset($form['oro_product[manageInventory][scalarValue]']);
             unset($form['oro_product[highlightLowInventory][scalarValue]']);
         } else {
+            $form['oro_product[manageInventory][scalarValue]'] = $ownValue;
             $form['oro_product[highlightLowInventory][scalarValue]'] = $ownValue;
         }
         if (!is_null($useFallbackValue)) {
+            $form['oro_product[manageInventory][useFallback]'] = $useFallbackValue;
             $form['oro_product[highlightLowInventory][useFallback]'] = $useFallbackValue;
         }
         if (is_null($fallbackValue)) {
+            unset($form['oro_product[manageInventory][fallback]']);
             unset($form['oro_product[highlightLowInventory][fallback]']);
         } else {
+            $form['oro_product[manageInventory][fallback]'] = $fallbackValue;
             $form['oro_product[highlightLowInventory][fallback]'] = $fallbackValue;
         }
 
