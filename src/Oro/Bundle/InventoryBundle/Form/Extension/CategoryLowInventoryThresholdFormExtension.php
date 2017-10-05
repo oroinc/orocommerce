@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class CategoryLowInventoryThresholdFormExtension extends AbstractTypeExtension
@@ -28,7 +29,7 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            'lowInventoryThreshold',
+            LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.low_inventory_threshold.label',
@@ -54,10 +55,10 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractTypeExtension
     {
         $data = $event->getData();
 
-        if (isset($data['lowInventoryThreshold']['useFallback'])
-            && $data['lowInventoryThreshold']['useFallback'] == '1'
+        if (isset($data[LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION]['useFallback'])
+            && $data[LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION]['useFallback'] == '1'
         ) {
-            $data['lowInventoryThreshold']['scalarValue'] = 0;
+            $data[LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
         }
 
         $event->setData($data);

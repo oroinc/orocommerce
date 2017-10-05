@@ -115,6 +115,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
+    oro_inventory.event_listener.low_inventory_line_item_validation_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\LowInventoryLineItemValidationListener
+        arguments:
+            - '@oro_inventory.validator.low_inventory_validator'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
+
     oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
         arguments:

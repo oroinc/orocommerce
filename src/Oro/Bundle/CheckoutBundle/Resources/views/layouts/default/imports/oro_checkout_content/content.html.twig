@@ -342,6 +342,25 @@
     {% endif %}
 {% endblock %}
 
+{% block __oro_checkout_content__checkout_order_summary_line_item_warnings_widget %}
+    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% if parent.lineItemWarnings is iterable and parent.lineItemWarnings[errorPath] is defined and parent.lineItemWarnings[errorPath] is iterable %}
+        {% for error in parent.lineItemWarnings[errorPath] %}
+            <script>
+                require(['oroui/js/messenger'], function(messenger) {
+                    messenger.notificationFlashMessage('warning', '{{ error.message }}', {
+                        style: 'validation',
+                        container: $('#product-error-{{ lineItem.productSku }}')
+                    })
+                });
+            </script>
+            <tr>
+                <td id="product-error-{{ lineItem.productSku }}" colspan="5"></td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' checkout-order-summary__totals-container'

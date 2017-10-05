@@ -123,6 +123,7 @@ services:
                         lineItemsWithTotals: {required: true}
                         workflowItem: {required: true}
                         lineItemErrors: {required: true}
+                        lineItemWarnings: {required: true}
                         configurableProducts: {required: true}
             - [setName, ['checkout_order_summary_line_items']]
         tags:

@@ -30,8 +30,9 @@ oro:
         inventory_level_save.flash.success: Inventory Level has been saved
         inventory:
             entity_plural_label: Inventories
-        low_invetory:
+        low_inventory:
             label: Low Inventory
+            message: This item is running low on inventory
 
         export:
             popup:

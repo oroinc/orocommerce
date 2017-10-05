@@ -15,6 +15,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class LowInventoryQuantityManager
 {
+    const LOW_INVENTORY_THRESHOLD_OPTION = 'lowInventoryThreshold';
+    const HIGHLIGHT_LOW_INVENTORY_OPTION = 'highlightLowInventory';
+
     /**
      * @var DoctrineHelper
      */
@@ -58,7 +61,10 @@ class LowInventoryQuantityManager
             $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
         }
 
-        $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'lowInventoryThreshold');
+        $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
+            $product,
+            static::LOW_INVENTORY_THRESHOLD_OPTION
+        );
 
         $quantity = $this->getQuantityByProductAndProductUnit($product, $productUnit);
 

@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -90,7 +91,13 @@ class LowInventoryThresholdFallbackTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
 
-        $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'lowInventoryThreshold');
+        $this->updateFallbackField(
+            $form,
+            $ownValue,
+            $fallbackValue,
+            'oro_product',
+            LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION
+        );
 
         $this->client->followRedirects(true);
 

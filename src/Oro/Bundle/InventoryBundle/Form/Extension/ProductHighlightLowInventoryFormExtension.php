@@ -34,7 +34,7 @@ class ProductHighlightLowInventoryFormExtension extends AbstractTypeExtension
         }
 
         $builder->add(
-            'highlightLowInventory',
+            LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.highlight_low_inventory.label',
