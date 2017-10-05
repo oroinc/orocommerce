@@ -32,6 +32,8 @@
         * `precision` changed from `10` to `21`.
         * `scale` changed from `2` to `6`.
 * Implementation can decorate original implementation of interface `Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface` that as service with tag `oro_entity_config.attribute_type`.
+* Class `Oro\Bundle\SearchBundle\Engine\OrmIndexer`
+    * The construction signature of was changed and the constructor was updated - `DbalStorer $dbalStorer` parameter removed.
 
 ## 1.4.0 (2017-09-21)
 [Show detailed list of changes](incompatibilities-1-4.md)
