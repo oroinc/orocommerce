@@ -2,8 +2,72 @@
 
 //TODO: Should move all properties of the component to config with variables
 .matrix-order-widget {
+    max-width: 100%;
+
     &__grid {
         width: 100%;
+    }
+
+    &__grid-head,
+    &__grid-footer {
+        &-wrapper {
+            margin-left: 100px;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+        }
+
+        &-label {
+            float: left;
+
+            width: 100px;
+
+            text-align: center;
+        }
+    }
+
+    &__form__row {
+        white-space: nowrap;
+    }
+
+    &__form__col {
+        display: inline-block;
+
+        min-width: 150px;
+
+        text-align: center;
+
+        .form-field-quantity {
+            max-width: 150px;
+        }
+    }
+
+    &__grid-side {
+        float: left;
+
+        width: 100px;
+        max-height: 400px;
+
+        overflow: hidden;
+
+        .matrix-order-widget__form__row {
+            height: 33px;
+            line-height: 33px;
+
+            margin-bottom: 16px;
+
+            text-align: center;
+        }
+    }
+
+    &__grid-body {
+        display: block;
+
+        max-height: 400px;
+        margin-left: 100px;
+
+        overflow: auto;
     }
 
     &__summary {

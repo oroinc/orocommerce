@@ -6,6 +6,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var PricesHelper = require('oropricing/js/app/prices-helper');
+    var ScrollView = require('oroui/js/app/views/scroll-view');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -45,6 +46,11 @@ define(function(require) {
             ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
+            if (_.isDesktop()) {
+                this.subview('scrollView', new ScrollView({
+                    el: this.el
+                }));
+            }
             this.updateTotals();
         },
 

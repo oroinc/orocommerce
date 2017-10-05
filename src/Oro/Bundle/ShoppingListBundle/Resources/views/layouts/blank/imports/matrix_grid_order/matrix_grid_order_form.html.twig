@@ -1,52 +1,61 @@
 {% block _matrix_collection_widget %}
-<table class="matrix-order-widget__grid">
-    {% if form.rows|length > 0 and form.rows[0].columns|length > 1 %}
-        <thead class="matrix-order-widget__grid-head">
-            <tr class="matrix-order-widget__grid-head-wrapper">
-                <td></td>
-                {% for column in form.rows[0].columns %}
-                    <td class="matrix-order-widget__form__col">
-                        <div class="matrix-order-widget__form__col-wrapper">
-                            {{ column.vars.label }}
-                        </div>
-                    </td>
+    <div class="matrix-order-widget__grid">
+        {% if form.rows|length > 0 and form.rows[0].columns|length > 1 %}
+            <div class="matrix-order-widget__grid-head">
+                <div class="matrix-order-widget__grid-header-label"></div>
+                <div class="matrix-order-widget__grid-head-wrapper">
+                    <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+                        {% for column in form.rows[0].columns %}
+                            <div class="matrix-order-widget__form__col">
+                                <div class="matrix-order-widget__form__col-wrapper">
+                                    {{ column.vars.label }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="matrix-order-widget__grid-side">
+            <div class="matrix-order-widget__grid-side-wrapper" data-scroll-view-follow="y">
+                {% for row in form.rows %}
+                    <div class="matrix-order-widget__form__row">{{ row.vars.label }}</div>
                 {% endfor %}
-            </tr>
-        </thead>
-    {% endif %}
-    <tbody class="matrix-order-widget__grid-body">
-    {% for row in form.rows %}
-        {% set rowIndex = loop.index %}
-        <tr>
-            <td>{{ row.vars.label }}
-            </td>
-            {% for column in row.columns %}
-                <td>
-                    {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
-                    {{ form_widget(column,{
-                        'attr': {
-                            'data-product-id': column.vars.productId,
-                            'data-index': {
-                                'row': rowIndex,
-                                'column': loop.index
-                            }|json_encode
-                        },
-                    })
-                    }}
-                </td>
+            </div>
+        </div>
+        <div class="matrix-order-widget__grid-body" data-scroll-view>
+            {% for row in form.rows %}
+                {% set rowIndex = loop.index %}
+                <div class="matrix-order-widget__form__row">
+                    {% for column in row.columns %}
+                        <div class="matrix-order-widget__form__col">
+                            {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
+                            {{ form_widget(column,{
+                                'attr': {
+                                    'data-product-id': column.vars.productId,
+                                    'data-index': {
+                                        'row': rowIndex,
+                                        'column': loop.index
+                                    }|json_encode
+                                },
+                            })
+                            }}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot class="matrix-order-widget__grid-footer">
-        <tr>
-            <td>Qty</td>
-            {% for column in form.rows[0].columns %}
-                <td>
-                    <div class="matrix-order-widget__grid-footer-total" data-columns-quantity="{{ loop.index }}">0</div>
-                </td>
-            {% endfor %}
-        </tr>
-    </tfoot>
-</table>
+        </div>
+        <div class="matrix-order-widget__grid-footer">
+            <div class="matrix-order-widget__grid-footer-label">Qty</div>
+            <div class="matrix-order-widget__grid-footer-wrapper">
+                <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+                    {% for column in form.rows[0].columns %}
+                        <div class="matrix-order-widget__form__col">
+                            <div class="matrix-order-widget__grid-footer-total" data-columns-quantity="{{ loop.index }}">0</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

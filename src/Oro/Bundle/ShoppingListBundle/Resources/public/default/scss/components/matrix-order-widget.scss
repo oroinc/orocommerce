@@ -8,17 +8,18 @@
     font-family: $font-family-base;
 
     border-bottom: 1px solid get-color('additional', 'light');
+    width: auto;
   }
 
   &__grid-head {
+    padding: 5px;
+
     border-top: 1px solid get-color('additional', 'light');
     border-bottom: 1px solid get-color('additional', 'light');
     background: get-color('additional', 'base');
 
-    padding: 20px;
-
     line-height: 3.5;
-    text-align: center
+    text-align: center;
   }
 
   &__head-body-wrapper {
@@ -27,24 +28,23 @@
       border-bottom: 1px solid get-color('additional', 'light');
 
       line-height: 60px;
+      white-space: nowrap;
   }
 
   &__form__row {
-    padding-top: 20px;
+    margin-top: 20px;
+
+    height: 39px;
   }
 
   &__form__col {
-    padding: 0 26px 0 0;
+    padding: 0 13px;
     margin: 0;
-    vertical-align: middle;
-
-    line-height: 1.5;
 
     border: none;
+    line-height: 1.5;
 
-    @include breakpoint('mobile-landscape') {
-      padding-right: 5px;
-    }
+    vertical-align: middle;
 
     .form-field-quantity {
       font-family: $font-family-base;
@@ -61,50 +61,59 @@
     justify-content: center;
   }
 
+  &__grid-side {
+    .matrix-order-widget__form__row {
+      height: 39px;
+      line-height: 39px;
+    }
+  }
+
+  &__grid-body {
+    padding-bottom: 20px;
+  }
+
   &__grid-body,
-  &__grid-footer{
+  &__grid-footer {
     td {
       padding: 6px 26px 6px 0;
 
       border-top: 1px solid get-color('additional', 'light');
 
       text-align: center;
-
-      @include breakpoint('mobile-landscape') {
-        padding-right: 5px;
-      }
+      min-width: 150px;
 
       &:first-child {
         padding-left: 11px;
         padding-right: 20px;
         text-align: left;
-
-        @include breakpoint('mobile-landscape') {
-          padding-left: 5px;
-          padding-right: 5px;
-        }
       }
 
       .input{
+        min-width: 30px;
+
         padding-left: 5px;
         padding-right: 5px;
-        min-width: 30px;
 
         text-align: center;
       }
     }
 
     .form-row {
-      margin: 0;
+      width: 100px;
+      margin: 0 auto;
+    }
+  }
+
+  &__grid-footer {
+    &-label {
+      height: 41px;
+
+      line-height: 41px;
     }
   }
 
   &__summary-wrapper {
     padding-right: 26px;
-
-    @include breakpoint('mobile-landscape') {
-      padding-right: 5px;
-    }
   }
 
   &__grid-footer {
@@ -122,6 +131,15 @@
       &.valid {
         color: get-color('additional', 'dark');
       }
+    }
+  }
+}
+
+//Enable styled scroll only for desktop version
+@include only-desktop {
+  .matrix-order-widget {
+    &__grid-body {
+      @include styled-scrollbar();
     }
   }
 }
@@ -148,9 +166,25 @@
 @include breakpoint('mobile-landscape') {
   .matrix-order-widget {
     &__form__col {
+      padding-right: 5px;
+
       .form-field-quantity {
         padding: 9px;
       }
+    }
+
+    &__grid-body,
+    &__grid-footer {
+      padding-right: 5px;
+
+      &:first-child {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    }
+
+    &__summary-wrapper {
+      padding-right: 5px;
     }
   }
 }
