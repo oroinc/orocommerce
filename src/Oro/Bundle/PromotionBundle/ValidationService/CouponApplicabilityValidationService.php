@@ -53,9 +53,10 @@ class CouponApplicabilityValidationService
     /**
      * @param Coupon $coupon
      * @param object $entity
+     * @param array $skipFilters
      * @return array
      */
-    public function getViolations(Coupon $coupon, $entity): array
+    public function getViolations(Coupon $coupon, $entity, array $skipFilters = []): array
     {
         if (!$entity instanceof CustomerOwnerAwareInterface || !$entity instanceof AppliedCouponsAwareInterface) {
             throw new \InvalidArgumentException(
@@ -82,7 +83,7 @@ class CouponApplicabilityValidationService
 
         $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);
         $entity->addAppliedCoupon($appliedCoupon);
-        if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion())) {
+        if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion(), $skipFilters)) {
             return [self::MESSAGE_PROMOTION_NOT_APPLICABLE];
         }
         $entity->removeAppliedCoupon($appliedCoupon);

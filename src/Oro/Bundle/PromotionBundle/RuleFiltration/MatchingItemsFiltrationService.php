@@ -14,7 +14,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
  * This class filters out promotions which are not applicable to current context (i.e. such promotions cannot be
  * applied to any product of lineItems from context).
  */
-class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
+class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -41,7 +41,7 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];
 

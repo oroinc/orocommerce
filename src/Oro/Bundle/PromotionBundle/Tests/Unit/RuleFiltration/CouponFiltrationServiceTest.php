@@ -14,7 +14,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     use EntityTrait;
 
@@ -203,5 +203,10 @@ class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             [$appliedPromotion],
             $this->couponFiltrationService->getFilteredRuleOwners([$appliedPromotion], $context)
         );
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->couponFiltrationService, $this->filtrationService);
     }
 }

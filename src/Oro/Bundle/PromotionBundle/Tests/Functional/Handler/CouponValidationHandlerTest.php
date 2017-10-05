@@ -21,7 +21,9 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
+
         parent::setUp();
+        $this->loadFixtures([]);
     }
 
     /**

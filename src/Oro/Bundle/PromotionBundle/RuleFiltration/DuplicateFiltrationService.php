@@ -8,7 +8,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 /**
  * Filter out rule owners that are already present.
  */
-class DuplicateFiltrationService implements RuleFiltrationServiceInterface
+class DuplicateFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -26,7 +26,7 @@ class DuplicateFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $appliedIds = [];
         $ruleOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use (&$appliedIds) {

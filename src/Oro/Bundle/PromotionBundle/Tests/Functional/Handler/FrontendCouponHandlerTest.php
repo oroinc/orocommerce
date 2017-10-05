@@ -130,6 +130,34 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         self::assertEquals($expectedAppliedCoupons, $appliedCoupons);
     }
 
+    public function testHandleShippingPromotionForShoppingList()
+    {
+        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
+        $request = $this->getRequestWithEuroCouponData([
+            'entityClass' => Checkout::class,
+            'entityId' => $entity->getId(),
+        ]);
+        $response = $this->handler->handle($request);
+
+        self::assertJsonResponseStatusCodeEquals($response, 200);
+        $jsonContent = json_decode($response->getContent(), true);
+        self::assertTrue($jsonContent['success']);
+        self::assertEmpty($jsonContent['errors']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function getRequestWithEuroCouponData(array $postData = [])
+    {
+        $postData['couponCode'] = $this
+            ->getReference(LoadCouponData::COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL)
+            ->getCode();
+
+        return new Request([], $postData);
+    }
+
     /**
      * {@inheritdoc}
      */

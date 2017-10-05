@@ -26,6 +26,11 @@ class FrontendCouponHandler extends AbstractCouponHandler
     private $entityCouponsProvider;
 
     /**
+     * @var array
+     */
+    private $skippedFilters = [];
+
+    /**
      * @param CouponApplicabilityValidationService $couponApplicabilityValidationService
      */
     public function setCouponApplicabilityValidationService(
@@ -43,6 +48,14 @@ class FrontendCouponHandler extends AbstractCouponHandler
     }
 
     /**
+     * @param string $filterClass
+     */
+    public function disableFilter(string $filterClass)
+    {
+        $this->skippedFilters[$filterClass] = true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function handle(Request $request)
@@ -56,7 +69,11 @@ class FrontendCouponHandler extends AbstractCouponHandler
         }
 
         $entity = $this->getActualizedEntity($request);
-        $errors = $this->couponApplicabilityValidationService->getViolations($coupon, $entity);
+        $errors = $this->couponApplicabilityValidationService->getViolations(
+            $coupon,
+            $entity,
+            $this->skippedFilters
+        );
 
         if (empty($errors) && !$entity instanceof AppliedPromotionsAwareInterface) {
             $this->saveAppliedCoupon($coupon, $entity);

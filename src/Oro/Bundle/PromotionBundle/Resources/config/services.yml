@@ -650,6 +650,7 @@ services:
         calls:
             - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
             - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
+            - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
 
     oro_promotion.handler.frontend_coupon_remove_handler:
         class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler
