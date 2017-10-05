@@ -3,6 +3,7 @@ define(function(require) {
 
     var BackendGrid;
     var _ = require('underscore');
+    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
@@ -17,6 +18,17 @@ define(function(require) {
         /** @property */
         themeOptions: {
             optionPrefix: 'backendgrid'
+        },
+
+        /** @property */
+        massActionsContainer: $('[data-mass-actions-container]'),
+
+        /** @property */
+        massActionsStickyContainer: $('[data-mass-actions-sticky-container]'),
+
+        /** @property */
+        visibleState: {
+            visible: !_.isMobile()
         },
 
         /**
@@ -67,8 +79,11 @@ define(function(require) {
                 'backgrid:selectAllVisible': this.selectAllVisible,
                 'backgrid:selectNone': this.selectNone,
                 'backgrid:isSelected': this.isSelected,
-                'backgrid:getSelected': this.getSelected
+                'backgrid:getSelected': this.getSelected,
+                'backgrid:getVisibleState': this.getVisibleState
             });
+
+            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
         },
 
         /**
@@ -130,15 +145,40 @@ define(function(require) {
         },
 
         renderSelectAll: function() {
-            new BackendSelectAllHeaderCell({
+            this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
-                selectState: this.selectState
+                selectState: this.selectState,
+                visibleState: this.visibleState
             });
 
-            new BackendSelectHeaderCell({
+            this.selectHeaderCell = new BackendSelectHeaderCell({
                 collection: this.collection,
                 column: this.columns.findWhere('massActions')
             });
+
+            this.massActionsContainer.append(this.selectAllHeaderCell.$el);
+            if (_.isMobile()) {
+                this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
+                    collection: this.collection,
+                    selectState: this.selectState,
+                    additionalTpl: true
+                });
+
+                this.massActionsStickyContainer.append(this.additionalSelectAllHeaderCell.$el);
+                this.massActionsStickyContainer.append(this.selectHeaderCell.$el);
+            } else {
+                this.massActionsContainer.append(this.selectHeaderCell.$el);
+            }
+        },
+
+        showStickyContainer: function(selectState) {
+            this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
+        },
+
+        getVisibleState: function(obj) {
+            if ($.isEmptyObject(obj)) {
+                obj.visible = this.visibleState.visible;
+            }
         }
     });
 

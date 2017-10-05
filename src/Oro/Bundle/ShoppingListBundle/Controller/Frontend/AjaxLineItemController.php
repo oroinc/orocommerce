@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -105,7 +105,8 @@ class AjaxLineItemController extends AbstractLineItemController
 
         $aclGroupProvider = $this->get('oro_security.acl.group_provider.chain');
         if (!$this->get('security.authorization_checker')
-            ->isGranted('CREATE', 'entity:'.sprintf('%s@%s', $aclGroupProvider->getGroup(), LineItem::class))) {
+            ->isGranted('CREATE', 'entity:' . sprintf('%s@%s', $aclGroupProvider->getGroup(), LineItem::class))
+        ) {
             throw $this->createAccessDeniedException();
         }
 
@@ -199,7 +200,7 @@ class AjaxLineItemController extends AbstractLineItemController
 
     /**
      * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
-     * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param Request $request
@@ -212,7 +213,9 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $form = $this->createForm(ShoppingListType::NAME);
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
-        $response = $this->get('oro_form.model.update_handler')->handleUpdate($manager->create(), $form, [], [], null);
+        $shoppingList = $manager->create();
+
+        $response = $this->get('oro_form.model.update_handler')->handleUpdate($shoppingList, $form, [], [], null);
 
         if ($form->isValid()) {
             $manager->setCurrent($this->getUser(), $form->getData());
@@ -223,7 +226,14 @@ class AjaxLineItemController extends AbstractLineItemController
             $response['message'] = $result->getMessage();
         }
 
-        return $response;
+        // TODO: Remove Hard code
+        return [
+            'data' => [
+                'savedId' => null,
+                'shoppingList' => $shoppingList,
+                'createOnly' => true
+            ]
+        ];
     }
 
     /**

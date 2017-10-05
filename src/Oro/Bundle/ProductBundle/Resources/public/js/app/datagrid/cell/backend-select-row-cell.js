@@ -3,8 +3,9 @@ define(function(require) {
 
     var BackendSelectRowCell;
     var $ = require('jquery');
+    var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var template = require('tpl!orodatagrid/templates/datagrid/select-row-cell.html');
+    var template = require('tpl!oroproduct/templates/datagrid/backend-select-row-cell.html');
     var SelectRowCell = require('oro/datagrid/cell/select-row-cell');
 
     /**
@@ -15,6 +16,10 @@ define(function(require) {
      * @extends BaseView
      */
     BackendSelectRowCell = SelectRowCell.extend({
+        /** @property */
+        autoRender: true,
+
+        /** @property */
         keepElement: true,
 
         /** @property */
@@ -36,35 +41,60 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.$container = $(options._sourceElement);
+
             if (options.productModel) {
                 this.model = options.productModel;
             }
-            this.$container = $(options._sourceElement);
 
             this.template = this.getTemplateFunction();
 
-            this.listenTo(this.model, 'backgrid:select', function(model, checked) {
+            this.model.on('backgrid:select', _.bind(function(model, checked) {
                 this.$(':checkbox').prop('checked', checked).change();
-            });
+            }, this));
 
-            this.render();
+            this.model.on('backgrid:canSelected', _.bind(function(checked) {
+                this.hideView(checked);
+            }, this));
         },
 
         /**
          * @inheritDoc
          */
         render: function() {
+            var visibleState = {};
             var state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
+            this.model.trigger('backgrid:getVisibleState', visibleState);
+
             this.$el.html(this.template({
                 checked: state.selected,
                 text: this.text
             }));
+
             this.$checkbox = this.$el.find(this.checkboxSelector);
 
             this.$container.append(this.$el);
+
+            this.hideView(visibleState.visible);
+
             return this;
+        },
+
+        /**
+         * @param {Boolean} bool
+         */
+        hideView: function(bool) {
+            this.$el[bool ? 'removeClass' : 'addClass']('hidden');
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+            delete this.hide;
+            BackendSelectRowCell.__super__.dispose.apply(this, arguments);
         }
     });
 

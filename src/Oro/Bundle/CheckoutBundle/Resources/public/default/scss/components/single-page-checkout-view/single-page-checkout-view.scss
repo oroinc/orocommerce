@@ -1,5 +1,11 @@
 // theme: default;
 
+@mixin update-checkout-blocks() {
+    .checkout-order-summary__totals {
+        float: none;
+    }
+}
+
 .single-page-checkout-view {
     position: $checkout-view-position;
 
