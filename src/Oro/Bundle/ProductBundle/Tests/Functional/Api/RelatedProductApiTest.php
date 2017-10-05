@@ -8,6 +8,7 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadUserData as CatalogLoadUserData;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
 use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\LoadUserData;
@@ -16,6 +17,7 @@ use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\LoadUserData;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @dbIsolationPerTest
  */
 class RelatedProductApiTest extends RestJsonApiTestCase
 {
@@ -27,6 +29,7 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             LoadUserData::class,
             CatalogLoadUserData::class
         ]);
+        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, true);
     }
 
     public function testGetList()
@@ -42,6 +45,27 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testGetListAccessDeniedOnLackOfPermissionToEditRelatedProducts()
     {
+        $response = $this->cget(
+            ['entity' => 'relatedproducts'],
+            [],
+            $this->generateWsseAuthHeader(
+                LoadUserData::USER_NAME,
+                LoadUserData::USER_PASSWORD
+            ),
+            false
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * oro_related_products_edit - true
+     * Product::VIEW             - false
+     */
+    public function testGetListAccessDeniedOnLackOfPermissionToViewProductEntity()
+    {
+        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, false);
+
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
             [],
@@ -71,6 +95,30 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testGetAccessDeniedOnLackOfPermissionToEditRelatedProducts()
     {
+        $response = $this->get(
+            [
+                'entity' => 'relatedproducts',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
+            ],
+            [],
+            $this->generateWsseAuthHeader(
+                LoadUserData::USER_NAME,
+                LoadUserData::USER_PASSWORD
+            ),
+            false
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * oro_related_products_edit - true
+     * Product::VIEW             - false
+     */
+    public function testGetAccessDeniedOnLackOfPermissionToViewProductEntity()
+    {
+        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, false);
+
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
@@ -216,6 +264,63 @@ class RelatedProductApiTest extends RestJsonApiTestCase
         );
     }
 
+    public function testDelete()
+    {
+        $this->delete(
+            [
+                'entity' => 'relatedproducts',
+                'id' => '<toString(@related-product-product-5-product-4->id)>',
+            ]
+        );
+
+        $response = $this->get(
+            [
+                'entity' => 'relatedproducts',
+                'id' => '<toString(@related-product-product-5-product-4->id)>',
+            ],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * oro_related_products_edit - true
+     * Product::EDIT             - true
+     * Product::VIEW             - false
+     */
+    public function testDeleteDeniedOnLackOfPermissionToViewProductEntity()
+    {
+        $this->setEditPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, true);
+        $this->setActionPermissions(CatalogLoadUserData::ROLE_CATALOG_MANAGER, 'oro_related_products_edit', true);
+
+        $response = $this->delete(
+            [
+                'entity' => 'relatedproducts',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
+            ],
+            [],
+            $this->generateWsseAuthHeader(
+                CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
+                CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
+            ),
+            false
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+
+        $response = $this->get(
+            [
+                'entity' => 'relatedproducts',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
+            ]
+        );
+
+        $this->assertResponseContains('related_product/get.yml', $response);
+    }
+
     public function testRelatedProductIsAddedOnPost()
     {
         $this->setRelatedProductsEnabled(true);
@@ -240,8 +345,8 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
             $this->generateWsseAuthHeader(
-                CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
-                CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
+                LoadUserData::USER_NAME,
+                LoadUserData::USER_PASSWORD
             ),
             false
         );
@@ -288,7 +393,8 @@ class RelatedProductApiTest extends RestJsonApiTestCase
     {
         $configManager = $this->getContainer()->get('oro_config.manager');
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
-        $configManager->set($name, $limit);
+        $configManager->set($name, $limit, 0);
+        $configManager->set($name, $limit, 1);
         $configManager->flush();
     }
 
@@ -302,9 +408,45 @@ class RelatedProductApiTest extends RestJsonApiTestCase
         $aclManager = $this->getContainer()->get('oro_security.acl.manager');
 
         $sid = $aclManager->getSid($role);
-        $oid = $aclManager->getOid('action:'.$actionId);
+        $oid = $aclManager->getOid('Action:' . $actionId);
         $builder = $aclManager->getMaskBuilder($oid);
         $mask = $value ? $builder->reset()->add('EXECUTE')->get() : $builder->reset()->get();
+        $aclManager->setPermission($sid, $oid, $mask);
+
+        $aclManager->flush();
+    }
+
+    /**
+     * @param string $role
+     * @param string $entity
+     * @param bool   $value
+     */
+    private function setViewPermission($role, $entity, $value)
+    {
+        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
+
+        $sid = $aclManager->getSid($role);
+        $oid = $aclManager->getOid('entity:' . $entity);
+        $builder = $aclManager->getMaskBuilder($oid);
+        $mask = $value ? $builder->reset()->add('VIEW_GLOBAL')->get() : $builder->reset()->get();
+        $aclManager->setPermission($sid, $oid, $mask, true);
+
+        $aclManager->flush();
+    }
+
+    /**
+     * @param string $role
+     * @param string $entity
+     * @param bool   $value
+     */
+    private function setEditPermission($role, $entity, $value)
+    {
+        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
+
+        $sid = $aclManager->getSid($role);
+        $oid = $aclManager->getOid('entity:' . $entity);
+        $builder = $aclManager->getMaskBuilder($oid);
+        $mask = $value ? $builder->reset()->add('EDIT_GLOBAL')->get() : $builder->reset()->get();
         $aclManager->setPermission($sid, $oid, $mask, true);
 
         $aclManager->flush();
