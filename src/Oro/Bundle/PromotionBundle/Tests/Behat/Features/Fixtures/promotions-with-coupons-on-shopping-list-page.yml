@@ -6,6 +6,14 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'First Promotion Label'
     orderPromotionDesc:
         string: 'First Promotion Description'
+    flatRateShippingPromotionLabel:
+        string: 'Flat rate shipping Promotion'
+    flatRateShippingPromotionDesc:
+        string: 'Flat rate shipping Promotion Description'
+    flatRate2ShippingPromotionLabel:
+        string: 'Flat rate2 shipping Promotion'
+    flatRate2ShippingPromotionDesc:
+        string: 'Flat rate2 shipping Promotion Description'
 
 Oro\Bundle\PromotionBundle\Entity\Coupon:
     coupon1:
@@ -20,6 +28,20 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'coupon-2'
         promotion: '@orderDiscountPromotion2'
+        usesPerPerson: 100
+        usesPerCoupon: 100
+    flatRateCoupon:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-flat-rate'
+        promotion: '@flatRateShippingPromotion'
+        usesPerPerson: 100
+        usesPerCoupon: 100
+    flatRate2Coupon:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-flat-rate2'
+        promotion: '@flatRate2ShippingPromotion'
         usesPerPerson: 100
         usesPerCoupon: 100
 
@@ -45,6 +67,24 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             discount_type: 'amount'
             discount_currency: 'USD'
             discount_value: 1
+    flatRateShippingPromotionDiscountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 2
+            shipping_options:
+                shipping_method: '<("flat_rate_".@flatRateIntegration->id)>'
+                shipping_method_type: 'primary'
+    flatRate2ShippingPromotionDiscountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 1
+            shipping_options:
+                shipping_method: '<("flat_rate_".@flatRate2Integration->id)>'
+                shipping_method_type: 'primary'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
     orderDiscountPromotionRule1:
@@ -55,6 +95,14 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         enabled: true
         sortOrder: 1
         name: 'Second Promotion Name'
+    flatRateShippingPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Flat rate shipping Promotion'
+    flatRate2ShippingPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Flat rate2 shipping Promotion'
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     orderDiscountPromotion1:
@@ -72,6 +120,26 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         productsSegment: '@promotionSegment'
         rule: '@orderDiscountPromotionRule2'
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration2'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    flatRateShippingPromotion:
+        addLabel: ['@flatRateShippingPromotionLabel']
+        addDescription: ['@flatRateShippingPromotionDesc']
+        addScope: [1]
+        productsSegment: '@promotionSegment'
+        rule: '@flatRateShippingPromotionRule'
+        discountConfiguration: '@flatRateShippingPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    flatRate2ShippingPromotion:
+        addLabel: ['@flatRate2ShippingPromotionLabel']
+        addDescription: ['@flatRate2ShippingPromotionDesc']
+        addScope: [1]
+        productsSegment: '@promotionSegment'
+        rule: '@flatRate2ShippingPromotionRule'
+        discountConfiguration: '@flatRate2ShippingPromotionDiscountConfiguration'
         organization: '@organization'
         owner: '@admin'
         useCoupons: true
