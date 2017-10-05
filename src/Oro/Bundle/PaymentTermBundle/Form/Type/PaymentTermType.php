@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\FormBundle\Form\DataTransformer\SanitizeHTMLTransformer;
+
 class PaymentTermType extends AbstractType
 {
     const NAME = 'oro_payment_term';
@@ -29,6 +31,9 @@ class PaymentTermType extends AbstractType
     {
         $builder
             ->add('label', 'text', ['required' => true, 'label' => 'oro.paymentterm.label.label']);
+
+        // used for preventing XSS attacks
+        $builder->get('label')->addModelTransformer(new SanitizeHTMLTransformer());
     }
 
     /**

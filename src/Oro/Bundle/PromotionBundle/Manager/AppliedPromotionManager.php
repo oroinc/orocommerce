@@ -132,6 +132,7 @@ class AppliedPromotionManager
 
             $appliedDiscount = $this->createAppliedDiscount($discountInformation, $order);
             $appliedDiscount->setLineItem($orderLineItem);
+            $manager->persist($appliedDiscount);
             $appliedPromotions[$promotion->getId()]->addAppliedDiscount($appliedDiscount);
         }
 
