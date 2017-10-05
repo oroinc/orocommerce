@@ -3,6 +3,7 @@ oro_behat_extension:
     OroPromotionBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroCheckoutBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroDataGridBundle::GridContext
@@ -162,4 +163,15 @@ oro_behat_extension:
 
     Coupon Delete Button:
       selector: 'button[data-role="remove-coupon"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    FlatRateShippingMethod:
+      selector: 'label:contains("Flat Rate:")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    FlatRate2ShippingMethod:
+      selector: 'label:contains("Flat Rate 2:")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    BackendFlatRate2ShippingMethod:
+      selector: 'label:contains("Flat Rate 2")'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
