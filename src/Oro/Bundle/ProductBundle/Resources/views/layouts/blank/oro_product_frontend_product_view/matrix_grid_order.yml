@@ -15,13 +15,6 @@ layout:
             blockType: container
             options:
                 visible: '=!context["is_mobile"] and data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
-
-#        - '@add':
-#            id: matrix_grid_order_inline
-#            parentId: product_view_content_container
-#            blockType: container
-#            options:
-#                visible: '=data["oro_product_form_availability"].isInlineMatrixAvailable(data["product"]) and data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
         - '@move':
             id: matrix_grid_order_line_item_buttons
             parentId: matrix_grid_order_wrapper
