@@ -23,6 +23,7 @@
     - now extends from `Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler`
     - changes in constructor:
         - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
+- Filtration services are now skippable. More details can be found in [documentation](https://github.com/orocommerce/orocommerce/tree/1.5.0/src/Oro/Bundle/PromotionBundle/README.md#filters-skippability-during-checkout).
 
 #### WebsiteSearchBundle
 * Entity `Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal`:
