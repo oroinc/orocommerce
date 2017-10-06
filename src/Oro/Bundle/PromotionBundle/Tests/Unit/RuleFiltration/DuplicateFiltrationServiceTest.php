@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class DuplicateFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     /**
      * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -69,5 +69,10 @@ class DuplicateFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn($id);
 
         return $ruleOwner;
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->duplicateFiltrationService, $this->filtrationService);
     }
 }

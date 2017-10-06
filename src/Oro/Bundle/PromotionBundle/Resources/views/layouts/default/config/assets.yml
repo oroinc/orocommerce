@@ -1,0 +1,6 @@
+styles:
+    inputs:
+        - 'bundles/oropromotion/default/scss/variables/coupon-container-config.scss'
+        - 'bundles/oropromotion/default/scss/variables/coupons-list-config.scss'
+
+        - 'bundles/oropromotion/default/scss/styles.scss'

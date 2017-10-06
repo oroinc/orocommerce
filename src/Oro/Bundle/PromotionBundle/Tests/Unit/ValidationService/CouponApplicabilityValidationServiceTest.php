@@ -174,6 +174,35 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
         $this->assertEmpty($this->couponApplicabilityValidationService->getViolations($coupon, $entity));
     }
 
+    public function testGetViolationsWhenCouponIsValidWithSkipFilters()
+    {
+        $promotion = new Promotion();
+        $coupon = (new Coupon())->setPromotion($promotion);
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
+
+        $this->couponValidationService
+            ->expects($this->once())
+            ->method('getViolations')
+            ->with($coupon, $customerUser)
+            ->willReturn([]);
+
+        $this->promotionProvider
+            ->expects($this->once())
+            ->method('isPromotionApplied')
+            ->with($entity, $promotion)
+            ->willReturn(false);
+
+        $skipFilters = ['SomeFilterClass'];
+        $this->promotionProvider
+            ->expects($this->once())
+            ->method('isPromotionApplicable')
+            ->with($entity, $promotion, $skipFilters)
+            ->willReturn(true);
+
+        $this->assertEmpty($this->couponApplicabilityValidationService->getViolations($coupon, $entity, $skipFilters));
+    }
+
     public function testGetViolationsWithInvalidEntityPassed()
     {
         $this->expectException(\InvalidArgumentException::class);

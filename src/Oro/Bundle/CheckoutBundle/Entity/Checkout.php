@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -53,7 +54,7 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
  *      }
  * )
  */
-class Checkout implements
+class Checkout extends ExtendCheckout implements
     CheckoutInterface,
     CheckoutLineItemsHolderInterface,
     OrganizationAwareInterface,
@@ -211,6 +212,7 @@ class Checkout implements
 
     public function __construct()
     {
+        parent::__construct();
         $this->completedData = new CompletedCheckoutData();
         $this->lineItems = new ArrayCollection();
         $this->subtotals = new ArrayCollection();
