@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -86,6 +86,7 @@ class OroPromotionBundleInstaller implements
         $this->addActivityAssociations($schema);
 
         $this->addAppliedCouponsToOrder($schema);
+        $this->addAppliedCouponsToCheckout($schema);
         $this->addAppliedPromotionsToOrder($schema);
     }
 
@@ -514,7 +515,7 @@ class OroPromotionBundleInstaller implements
             'oro_promotion_applied_coupon',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,
@@ -552,6 +553,51 @@ class OroPromotionBundleInstaller implements
     /**
      * @param Schema $schema
      */
+    protected function addAppliedCouponsToCheckout(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_promotion_applied_coupon',
+            'checkout',
+            'oro_checkout',
+            'id',
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            'oro_promotion_applied_coupon',
+            'checkout',
+            'oro_checkout',
+            'appliedCoupons',
+            ['coupon_code'],
+            ['coupon_code'],
+            ['coupon_code'],
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE'
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
     protected function addAppliedPromotionsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -559,7 +605,7 @@ class OroPromotionBundleInstaller implements
             'oro_promotion_applied',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,

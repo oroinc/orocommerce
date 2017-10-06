@@ -11,7 +11,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
  * It filter out promotions for shipping discount if promotion's options not fit shipping method and shipping method
  * type from context.
  */
-class ShippingFiltrationService implements RuleFiltrationServiceInterface
+class ShippingFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -29,7 +29,7 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $shippingMethod = $context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null;
         $shippingMethodType = $context[ContextDataConverterInterface::SHIPPING_METHOD_TYPE] ?? null;

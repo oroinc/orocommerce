@@ -14,7 +14,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     use EntityTrait;
 
@@ -132,5 +132,10 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             });
 
         $this->assertEquals($expected, $this->scopeFiltrationService->getFilteredRuleOwners([$promotion], $context));
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->scopeFiltrationService, $this->filtrationService);
     }
 }

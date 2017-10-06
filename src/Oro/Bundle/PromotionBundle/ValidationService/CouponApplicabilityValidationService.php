@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\ValidationService;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
@@ -51,11 +53,18 @@ class CouponApplicabilityValidationService
     /**
      * @param Coupon $coupon
      * @param object $entity
+     * @param array $skipFilters
      * @return array
      */
-    public function getViolations(Coupon $coupon, $entity): array
+    public function getViolations(Coupon $coupon, $entity, array $skipFilters = []): array
     {
-        $violations = $this->couponValidationService->getViolations($coupon);
+        if (!$entity instanceof CustomerOwnerAwareInterface || !$entity instanceof AppliedCouponsAwareInterface) {
+            throw new \InvalidArgumentException(
+                'Argument $entity should implements CustomerOwnerAwareInterface and AppliedCouponsAwareInterface'
+            );
+        }
+
+        $violations = $this->couponValidationService->getViolations($coupon, $entity->getCustomerUser());
 
         if (!empty($violations)) {
             return $violations;
@@ -74,9 +83,10 @@ class CouponApplicabilityValidationService
 
         $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);
         $entity->addAppliedCoupon($appliedCoupon);
-        if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion())) {
+        if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion(), $skipFilters)) {
             return [self::MESSAGE_PROMOTION_NOT_APPLICABLE];
         }
+        $entity->removeAppliedCoupon($appliedCoupon);
 
         return [];
     }
