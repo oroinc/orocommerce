@@ -1,61 +1,128 @@
 {% block _matrix_collection_widget %}
-    <div class="matrix-order-widget__grid">
-        {% if form.rows|length > 0 and form.rows[0].columns|length > 1 %}
-            <div class="matrix-order-widget__grid-head">
-                <div class="matrix-order-widget__grid-header-label"></div>
-                <div class="matrix-order-widget__grid-head-wrapper">
-                    <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
-                        {% for column in form.rows[0].columns %}
-                            <div class="matrix-order-widget__form__col">
-                                <div class="matrix-order-widget__form__col-wrapper">
-                                    {{ column.vars.label }}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        <div class="matrix-order-widget__grid-side">
-            <div class="matrix-order-widget__grid-side-wrapper" data-scroll-view-follow="y">
-                {% for row in form.rows %}
-                    <div class="matrix-order-widget__form__row">{{ row.vars.label }}</div>
+    {% set defaultColumns = form.rows[0].columns %}
+    {% set rowsCount = form.rows|length %}
+    {% set columnsCount = defaultColumns|length %}
+    <div class="matrix-order-widget__grid {{ columnsCount > 1 ? 'matrix-order-widget__grid--multi-rows' }}">
+        {{ block('_matrix_collection_widget_head') }}
+        {{ block('_matrix_collection_widget_side') }}
+        {{ block('_matrix_collection_widget_body') }}
+        {{ block('_matrix_collection_widget_footer') }}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_head %}
+    {% set cells = columnsCount > 1 ? defaultColumns : form.rows %}
+    <div class="matrix-order-widget__grid-head">
+        <div class="matrix-order-widget__grid-header-label"></div>
+        <div class="matrix-order-widget__grid-head-wrapper">
+            <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+                {% for cell in cells %}
+                    {{ block('_matrix_collection_widget_head_cell') }}
                 {% endfor %}
             </div>
         </div>
-        <div class="matrix-order-widget__grid-body" data-scroll-view>
-            {% for row in form.rows %}
-                {% set rowIndex = loop.index %}
-                <div class="matrix-order-widget__form__row">
-                    {% for column in row.columns %}
-                        <div class="matrix-order-widget__form__col">
-                            {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
-                            {{ form_widget(column,{
-                                'attr': {
-                                    'data-product-id': column.vars.productId,
-                                    'data-index': {
-                                        'row': rowIndex,
-                                        'column': loop.index
-                                    }|json_encode
-                                },
-                            })
-                            }}
-                        </div>
-                    {% endfor %}
-                </div>
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_head_cell %}
+    <div class="matrix-order-widget__form__col">
+        <div class="matrix-order-widget__form__col-wrapper">
+            {{ block('_matrix_collection_widget_head_cell_label') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_head_cell_label %}
+    {{ block('_matrix_collection_widget_cell_label') }}
+{% endblock %}
+
+{% block _matrix_collection_widget_cell_label %}
+    {{ cell.vars.label }}
+{% endblock %}
+
+{% block _matrix_collection_widget_side %}
+    {% if columnsCount > 1 %}
+    {% set cells = form.rows %}
+    <div class="matrix-order-widget__grid-side">
+        <div class="matrix-order-widget__grid-side-wrapper" data-scroll-view-follow="y">
+            {% for cell in cells %}
+                {{ block('_matrix_collection_widget_side_cell') }}
             {% endfor %}
         </div>
-        <div class="matrix-order-widget__grid-footer">
-            <div class="matrix-order-widget__grid-footer-label">Qty</div>
-            <div class="matrix-order-widget__grid-footer-wrapper">
-                <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
-                    {% for column in form.rows[0].columns %}
-                        <div class="matrix-order-widget__form__col">
-                            <div class="matrix-order-widget__grid-footer-total" data-columns-quantity="{{ loop.index }}">0</div>
-                        </div>
-                    {% endfor %}
-                </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block _matrix_collection_widget_side_cell %}
+    <div class="matrix-order-widget__form__row">
+        {{ block('_matrix_collection_widget_side_cell_label') }}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_side_cell_label %}
+    {{ block('_matrix_collection_widget_cell_label') }}
+{% endblock %}
+
+{% block _matrix_collection_widget_body %}
+    {% set rows = columnsCount > 1 ? form.rows : [form.rows[0]] %}
+    <div class="matrix-order-widget__grid-body" data-scroll-view>
+        {% for row in rows %}
+            {% set rowIndex = loop.index %}
+            {{ block('_matrix_collection_widget_body_row') }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row %}
+    {% set cells = columnsCount > 1 ? row.columns : form.rows %}
+    <div class="matrix-order-widget__form__row">
+        {% for cell in cells %}
+            {% set cellIndex = loop.index %}
+            {{ block('_matrix_collection_widget_body_row_cell') }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_cell %}
+    {% set row = columnsCount > 1 ? row : cell %}
+    {% set cell = columnsCount > 1 ? cell : row.columns[0] %}
+    <div class="matrix-order-widget__form__col">
+        {{ block('_matrix_collection_widget_body_row_cell_widget') }}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_cell_widget %}
+    {% do set_class_prefix_to_form(cell, 'matrix-order-widget') %}
+    {{ form_widget(cell, {
+        'attr': {
+            'data-product-id': cell.vars.productId,
+            'data-index': {
+                'row': rowIndex,
+                'column': cellIndex
+            }|json_encode
+        },
+    }) }}
+{% endblock %}
+
+{% block _matrix_collection_widget_footer %}
+    {% if columnsCount > 1 %}
+    {% set cells = defaultColumns %}
+    <div class="matrix-order-widget__grid-footer">
+        <div class="matrix-order-widget__grid-footer-label">Qty</div>
+        <div class="matrix-order-widget__grid-footer-wrapper">
+            <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+                {% for cell in cells %}
+                    {% set cellIndex = loop.index %}
+                    {{ block('_matrix_collection_widget_footer_cell') }}
+                {% endfor %}
             </div>
         </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block _matrix_collection_widget_footer_cell %}
+    <div class="matrix-order-widget__form__col">
+        <div class="matrix-order-widget__grid-footer-total" data-columns-quantity="{{ cellIndex }}">0</div>
     </div>
 {% endblock %}

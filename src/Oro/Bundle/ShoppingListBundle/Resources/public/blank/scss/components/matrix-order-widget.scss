@@ -3,19 +3,66 @@
 //TODO: Should move all properties of the component to config with variables
 .matrix-order-widget {
     max-width: 100%;
+    margin: 0;
 
     &__grid {
         width: 100%;
+        margin-bottom: 15px;
+
+        font-family: $font-family-base;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+    }
+
+    &__grid-head {
+        border-top: 1px solid get-color('additional', 'light');
+        border-bottom: 1px solid get-color('additional', 'light');
+        background: get-color('additional', 'base');
+
+        text-align: center;
+    }
+
+    &__grid-body {
+        display: block;
+
+        max-height: 310px;
+
+        overflow: auto;
+
+        .form-row {
+            width: 75px;
+            margin: 0 auto;
+        }
+    }
+
+    &__head-body-wrapper {
+        padding-bottom: 20px;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        line-height: 60px;
+        white-space: nowrap;
+    }
+
+    &__grid--multi-rows {
+        .matrix-order-widget {
+            &__grid-head,
+            &__grid-body,
+            &__grid-footer {
+                &-wrapper {
+                    margin-left: 100px;
+                }
+            }
+        }
     }
 
     &__grid-head,
     &__grid-footer {
         &-wrapper {
-            margin-left: 100px;
-
             overflow: hidden;
 
             white-space: nowrap;
+            text-align: left;
         }
 
         &-label {
@@ -27,47 +74,86 @@
         }
     }
 
+    &__grid-footer {
+        background: get-color('additional', 'base');
+
+        &-label {
+            height: 41px;
+
+            line-height: 41px;
+            text-transform: uppercase;
+        }
+
+        &-total {
+            padding: 10px 0;
+
+            color: get-color('additional', 'middle');
+
+            &.valid {
+                color: get-color('additional', 'dark');
+            }
+        }
+    }
+
     &__form__row {
+        height: 49px;
+        margin: 10px 0;
+
         white-space: nowrap;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid get-color('additional', 'light');
+        }
     }
 
     &__form__col {
         display: inline-block;
+        margin: 0;
 
-        min-width: 150px;
+        width: 90px;
+        border: none;
 
+        line-height: 1.5;
         text-align: center;
+        vertical-align: middle;
+
+        &-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 9px 0;
+
+            white-space: normal;
+            word-break: break-all;
+        }
 
         .form-field-quantity {
-            max-width: 150px;
+            font-family: $font-family-base;
+            text-align: center;
         }
+    }
+
+    &__summary-wrapper {
+        padding-right: 26px;
     }
 
     &__grid-side {
         float: left;
 
         width: 100px;
-        max-height: 400px;
+        max-height: 310px;
 
         overflow: hidden;
-
-        .matrix-order-widget__form__row {
-            height: 33px;
-            line-height: 33px;
-
-            margin-bottom: 16px;
-
-            text-align: center;
-        }
     }
 
-    &__grid-body {
-        display: block;
+    &__grid-side & {
+        &__form__row {
+            height: 49px;
 
-        max-height: 400px;
-        margin-left: 100px;
-
-        overflow: auto;
+            text-align: center;
+            line-height: 39px;
+        }
     }
 
     &__summary {
@@ -177,6 +263,7 @@
             margin: 0 10px;
             word-wrap: break-word;
             line-height: 1.4rem;
+            align-self: center;
         }
 
         &-value {
@@ -206,7 +293,7 @@
 
         &-content {
             display: inline-flex;
-            align-items: baseline;
+            align-items: center;
             flex-basis: 12%;
 
             box-sizing: border-box;
