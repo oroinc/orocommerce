@@ -1,17 +1,25 @@
+@regression
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased-visibility.yml
-@skip This test is skipped due to the bugs BB-10035 and BB-10034
 Feature: Previously purchased products visibility
+  As a store owner
+  I want Customer Users to see only products that they are allowed to see in the Previously Purchased page
 
-#  TODO: Write feature description
+ Scenario: Create different window session
+   Given sessions active:
+     | Admin     |first_session |
+     | Customer  |second_session|
 
-  Scenario: Create different window session
-    Given sessions active:
-      | Admin  |first_session |
-      | Customer  |second_session|
-
-  Scenario: Product visibility: Visibility to All: Visible
-    Given I operate as the Customer
+  Scenario: Previously purchased products feature is enabled and Product visibility: Visibility to All: Visible
+    Given I operate as the Admin
+    And I login as administrator
+    When I go to System / Configuration
+    And I follow "Commerce/Orders/Purchase History" on configuration sidebar
+    And fill "Purchase History Settings Form" with:
+      | Enable Purchase History Use Default | false |
+      | Enable Purchase History             | true  |
+    And I save setting
+    And I proceed as the Customer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
     When I click "Account"
@@ -20,12 +28,14 @@ Feature: Previously purchased products visibility
 
   Scenario: Product visibility: Visibility to All: Hidden
     Given I proceed as the Admin
-    And I login as administrator
     When go to Products / Products
     And click "View" on row "PSKU1" in grid
     And click "More actions"
     And click "Manage Visibility"
     And I select "Hidden" from "Visibility to All"
+    And I fill "Product Form" with:
+      | Visibility To Customer First Group | Current Product |
+      | Visibility To Customers First      | Current Product |
     And I save and close form
     And I operate as the Customer
     And click "Account"
@@ -61,29 +71,27 @@ Feature: Previously purchased products visibility
     And go to System / Configuration
     And follow "Commerce/Customer/Visibility" on configuration sidebar
     And fill "Visibility Settings Form" with:
-      |Product Visibility Use Default |false     |
-      |Product Visibility             |hidden    |
+      |Product Visibility Use Default |false  |
+      |Product Visibility             |hidden |
+      |Category Visibility Use Default|false  |
+      |Category Visibility            |hidden |
     And I save setting
     And I proceed as the Customer
     And click "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
+
   Scenario: Product visibility: Visibility to Customer Groups: Hidden
     Given I proceed as the Admin
-    And go to System / Configuration
-    And follow "Commerce/Customer/Visibility" on configuration sidebar
-    And fill "Visibility Settings Form" with:
-      |Product Visibility Use Default |false     |
-      |Product Visibility             |visible   |
-    And I save setting
     And go to Products / Products
     And click "View" on row "PSKU1" in grid
     And click "More actions"
     And click "Manage Visibility"
     And I select "Visible" from "Visibility to All"
     And I fill "Product Form" with:
-      | Visibility To Customer First Group | Hidden |
+      | Visibility To Customer First Group | Hidden          |
+      | Visibility To Customers First      | Customer Group  |
     And I save and close form
     And I proceed as the Customer
     And click "Account"
