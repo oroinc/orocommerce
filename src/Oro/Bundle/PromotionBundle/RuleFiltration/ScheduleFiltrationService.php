@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class ScheduleFiltrationService implements RuleFiltrationServiceInterface
+class ScheduleFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -35,7 +35,7 @@ class ScheduleFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $filteredOwners = array_values(array_filter($ruleOwners, [$this, 'isScheduleEnabled']));
 

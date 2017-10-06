@@ -175,6 +175,8 @@
     .datepicker-input {
         max-width: $checkout-view-shipping-methods-datepicker-box-max-width;
     }
+
+    @include update-checkout-blocks;
 }
 
 @include breakpoint('tablet') {
