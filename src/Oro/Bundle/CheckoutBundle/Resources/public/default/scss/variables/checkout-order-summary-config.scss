@@ -49,7 +49,7 @@ $checkout-order-summary-grid-last-row-td-border-bottom: 0 !default;
 $checkout-order-summary-grid-td-offset: $offset-y-m $offset-x !default;
 $checkout-order-summary-grid-td-border-bottom: 1px solid get-color('additional', 'middle') !default;
 
-$checkout-order-summary-totals-clear: both !default;
+$checkout-order-summary-totals-float: right !default;
 
 $checkout-order-summary-totals-container-margin: ($offset-y + $offset-y-m) 0 0 !default;
 $checkout-order-summary-totals-container-offset: ($offset-y + $offset-y-m) 0 0 !default;

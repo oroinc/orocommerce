@@ -89,9 +89,10 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $data = [
             'shippingAddress' => $newAddress,
             'paymentTerm' => $paymentTerm,
+            'skipMe' => true
         ];
 
-        $order = $this->mapper->map($checkout, $data);
+        $order = $this->mapper->map($checkout, $data, ['skipMe' => true]);
 
         $this->assertInstanceOf(Order::class, $order);
         $this->assertEquals($address, $order->getBillingAddress());

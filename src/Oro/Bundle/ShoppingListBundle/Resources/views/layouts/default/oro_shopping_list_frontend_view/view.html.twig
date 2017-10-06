@@ -5,15 +5,17 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
-       <div {{ block('block_attributes') }}
-            id="shopping_list_view_container_content"
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {
-                view: 'oroui/js/app/views/layout-subtree-view',
-                blockId : block.vars.id,
-                reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
-            }|json_encode }}"
-       >
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'shopping_list_view_container_content',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            'view': 'oroui/js/app/views/layout-subtree-view',
+            'blockId' : block.vars.id,
+            'reloadEvents': ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -516,14 +518,14 @@
 {% endblock %}
 
 {% block _shopping_list_checkout_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _shopping_list_button_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " buttons-equal order-builder-clear-btn fs0"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " buttons-equal order-builder-clear-btn"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -541,9 +543,8 @@
 
 {% block _shopping_list_combined_button_widget %}
     {% set actionButtonClass = 'btn btn--info btn--size-l full direct-link' %}
-    <div data-name="empty-items__hide" class="clearfix">
-        <div class="order-checkout-widget__col">
-            {{ block('combined_buttons_widget') }}
-        </div>
+
+    <div class="order-checkout-widget__col" data-name="empty-items__hide">
+        {{ block('combined_buttons_widget') }}
     </div>
 {% endblock %}

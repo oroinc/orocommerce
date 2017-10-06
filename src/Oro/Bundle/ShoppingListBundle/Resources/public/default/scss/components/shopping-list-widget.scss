@@ -93,10 +93,7 @@
 }
 
 .order-builder-clear-btn {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    float: left;
 
     [class^="fa-"] {
         &:before{
@@ -109,11 +106,8 @@
     width: 200px;
 }
 
-// *** All code below has not implemented yet!!!
-.main-menu__item {
-    .cart-widget__list-trigger {
-        text-indent: 4px;
-    }
+.cart-widget-counter{
+    text-indent: 4px;
 }
 
 .delete-item-btn {
