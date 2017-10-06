@@ -21,7 +21,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
  *          )
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class ProductShippingOptions implements

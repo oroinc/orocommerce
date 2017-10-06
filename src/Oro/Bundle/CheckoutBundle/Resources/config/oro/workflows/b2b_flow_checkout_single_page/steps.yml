@@ -7,9 +7,8 @@ workflows:
                     - save_state
                     - create_order
                     - finish_checkout
+                    - payment_error
 
             order_created:
                 order: 20
-                allowed_transitions:
-                    - payment_error
                 is_final: true

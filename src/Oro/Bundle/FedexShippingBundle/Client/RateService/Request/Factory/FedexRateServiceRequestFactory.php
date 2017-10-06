@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
-use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Modifier\ShippingLineItemCollectionModifierInterface;
 
-class FedexRateServiceRequestFactory implements FedexRequestFromShippingContextFactoryInterface
+class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettingsFactoryInterface
 {
     /**
      * @var SymmetricCrypterInterface
@@ -17,30 +20,62 @@ class FedexRateServiceRequestFactory implements FedexRequestFromShippingContextF
     private $crypter;
 
     /**
-     * @var FedexRequestFromShippingContextFactoryInterface
+     * @var FedexPackageSettingsByIntegrationSettingsFactoryInterface
      */
-    private $lineItemsFactory;
+    private $packageSettingsFactory;
 
     /**
-     * @param SymmetricCrypterInterface                       $crypter
-     * @param FedexRequestFromShippingContextFactoryInterface $lineItemsFactory
+     * @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface
+     */
+    private $packagesFactory;
+
+    /**
+     * @var ShippingLineItemCollectionModifierInterface
+     */
+    private $addProductOptionsModifier;
+
+    /**
+     * @var ShippingLineItemCollectionBySettingsModifierInterface
+     */
+    private $convertToFedexUnitsModifier;
+
+    /**
+     * @param SymmetricCrypterInterface                                  $crypter
+     * @param FedexPackageSettingsByIntegrationSettingsFactoryInterface  $packageSettingsFactory
+     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory
+     * @param ShippingLineItemCollectionModifierInterface                $addProductOptionsModifier
+     * @param ShippingLineItemCollectionBySettingsModifierInterface      $convertToFedexUnitsModifier
      */
     public function __construct(
         SymmetricCrypterInterface $crypter,
-        FedexRequestFromShippingContextFactoryInterface $lineItemsFactory
+        FedexPackageSettingsByIntegrationSettingsFactoryInterface $packageSettingsFactory,
+        FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory,
+        ShippingLineItemCollectionModifierInterface $addProductOptionsModifier,
+        ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
     ) {
         $this->crypter = $crypter;
-        $this->lineItemsFactory = $lineItemsFactory;
+        $this->packageSettingsFactory = $packageSettingsFactory;
+        $this->packagesFactory = $packagesFactory;
+        $this->addProductOptionsModifier = $addProductOptionsModifier;
+        $this->convertToFedexUnitsModifier = $convertToFedexUnitsModifier;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function create(
-        FedexIntegrationSettings $settings,
-        ShippingContextInterface $context
-    ): FedexRequestInterface {
-        $packages = $this->lineItemsFactory->create($settings, $context)->getRequestData();
+    public function create(FedexIntegrationSettings $settings, ShippingContextInterface $context)
+    {
+        $packageSettings = $this->packageSettingsFactory->create($settings);
+
+        $lineItems = $this->convertToFedexUnitsModifier->modify(
+            $this->addProductOptionsModifier->modify($context->getLineItems()),
+            $settings
+        );
+
+        $packages = $this->packagesFactory->create($lineItems, $packageSettings);
+        if (empty($packages)) {
+            return null;
+        }
 
         return new FedexRequest([
             'WebAuthenticationDetail' => [

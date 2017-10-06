@@ -95,8 +95,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'Queue Message is invalid',
                 [
-                    'exception' => $exception,
-                    'message' => json_encode($messageBody)
+                    'exception' => $exception
                 ]
             );
 
@@ -120,7 +119,6 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'message' => json_encode($messageBody),
                     'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                     'exception' => $exception,
                 ]

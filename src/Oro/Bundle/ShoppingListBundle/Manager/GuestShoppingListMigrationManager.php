@@ -6,8 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class GuestShoppingListMigrationManager
 {

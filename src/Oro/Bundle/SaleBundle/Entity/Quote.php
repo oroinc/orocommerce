@@ -23,6 +23,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Table(name="oro_sale_quote")
@@ -69,7 +70,8 @@ class Quote extends ExtendQuote implements
     OrganizationAwareInterface,
     MethodLockedShippingMethodConfigurationInterface,
     AllowUnlistedShippingMethodConfigurationInterface,
-    OverriddenCostShippingMethodConfigurationInterface
+    OverriddenCostShippingMethodConfigurationInterface,
+    WebsiteAwareInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;

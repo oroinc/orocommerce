@@ -28,5 +28,8 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - OroConfigBundle::FeatureContext
+        - OroDataGridBundle::GridContext
+        - OroProductBundle::FeatureContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'

@@ -77,7 +77,7 @@ class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
             $context,
             array_merge(
                 [
-                    'transaction' => $capturePaymentTransaction->getEntityIdentifier(),
+                    'transaction' => $capturePaymentTransaction->getId(),
                     'successful' => $capturePaymentTransaction->isSuccessful(),
                     'message' => $capturePaymentTransaction->isSuccessful() ? null : 'oro.payment.message.error',
                 ],
