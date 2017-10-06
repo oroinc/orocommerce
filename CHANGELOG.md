@@ -27,7 +27,7 @@
 * Class `Oro\Bundle\SearchBundle\Engine\OrmIndexer`
     * The construction signature of was changed and the constructor was updated - `DbalStorer $dbalStorer` parameter removed.
 
-## 1.4.0 (2017-09-21)
+## 1.4.0 (2017-09-29)
 [Show detailed list of changes](incompatibilities-1-4.md)
 
 ### Added
