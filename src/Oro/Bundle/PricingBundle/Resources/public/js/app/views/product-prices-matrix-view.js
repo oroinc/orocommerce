@@ -108,7 +108,6 @@ define(function(require) {
             var index = $cell.data('index');
             var productId = $cell.data('product-id');
             var indexKey = index.row + '.' + index.column;
-            var value = $element.val();
 
             var cells = this.total.cells;
             var columns = this.total.columns;
@@ -124,9 +123,10 @@ define(function(require) {
             this.changeTotal(row, cell, -1);
 
             //recalculate cell total
-            cell.quantity = this.getValidQuantity(value);
-            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, value);
-            $element.val(cell.quantity);
+            cell.quantity = this.getValidQuantity($element.val());
+            var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
+            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, quantity);
+            $element.val(quantity);
 
             //add new values
             this.changeTotal(this.total, cell);
@@ -159,6 +159,9 @@ define(function(require) {
             modifier = modifier || 1;
             totals.quantity += subtotals.quantity * modifier;
             totals.price += subtotals.price * modifier;
+            if (NumberFormatter.formatDecimal(totals.price) === 'NaN') {
+                totals.price = 0;
+            }
         },
 
         /**
