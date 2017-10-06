@@ -249,4 +249,19 @@ class CategoryRepository extends NestedTreeRepository
 
         return $productCategoryMap;
     }
+
+    /**
+     * @param Category $category
+     */
+    public function updateMaterializedPath(Category $category)
+    {
+        $this->_em->createQueryBuilder()
+            ->update($this->_entityName, 'category')
+            ->set('category.materializedPath', ':newPath')
+            ->where('category.id = :category')
+            ->setParameter('category', $category)
+            ->setParameter('newPath', $category->getMaterializedPath())
+            ->getQuery()
+            ->execute();
+    }
 }

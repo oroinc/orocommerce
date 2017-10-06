@@ -208,7 +208,8 @@ abstract class AbstractIndexer implements IndexerInterface
         if ($contextEntityIds) {
             // Remove certain entities from index before reindexation
             $this->deleteEntities($entityClass, $contextEntityIds, $context);
-            $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
+            $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
+                ->setParameter('contextEntityIds', $contextEntityIds);
         }
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);

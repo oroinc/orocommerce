@@ -23,6 +23,9 @@ class FedexIntegrationSettings extends Transport
     const UNIT_OF_WEIGHT_KG = 'KG';
     const UNIT_OF_WEIGHT_LB = 'LB';
 
+    const DIMENSION_CM = 'CM';
+    const DIMENSION_IN = 'IN';
+
     /**
      * @var string
      *
@@ -308,5 +311,17 @@ class FedexIntegrationSettings extends Transport
     public function getSettingsBag()
     {
         return new ParameterBag();
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsUnit(): string
+    {
+        if ($this->getUnitOfWeight() === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {
+            return self::DIMENSION_IN;
+        }
+
+        return self::DIMENSION_CM;
     }
 }

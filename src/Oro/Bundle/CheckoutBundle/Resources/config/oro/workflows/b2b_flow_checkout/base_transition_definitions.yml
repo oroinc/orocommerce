@@ -37,8 +37,14 @@ workflows:
                             class: $init_context.entityClass
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowed
+                        attribute: $isAllowed
                 preconditions:
-                    '@has_elements': $.result.shoppingList.lineItems
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout

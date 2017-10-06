@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -18,7 +19,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListener
@@ -39,6 +39,11 @@ class CreateOrderEventListener
     protected $statusHandler;
 
     /**
+     * @var CheckoutLineItemsManager
+     */
+    protected $checkoutLineItemsManager;
+
+    /**
      * @param InventoryQuantityManager $quantityManager
      * @param InventoryStatusHandler $statusHandler
      * @param DoctrineHelper $doctrineHelper
@@ -46,11 +51,13 @@ class CreateOrderEventListener
     public function __construct(
         InventoryQuantityManager $quantityManager,
         InventoryStatusHandler $statusHandler,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
         $this->quantityManager = $quantityManager;
         $this->statusHandler = $statusHandler;
         $this->doctrineHelper = $doctrineHelper;
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
     /**
@@ -63,7 +70,7 @@ class CreateOrderEventListener
             return;
         }
 
-        $orderLineItems = $event->getContext()->getData()->get('order')->getLineItems();
+        $orderLineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
 
         /** @var OrderLineItem $lineItem */
         foreach ($orderLineItems as $lineItem) {
@@ -92,8 +99,8 @@ class CreateOrderEventListener
             return;
         }
 
-        $lineItems = $event->getContext()->getEntity()->getSource()->getEntity()->getLineItems();
-        /** @var CheckoutLineItemInterface $lineItem */
+        $lineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
+        /** @var OrderLineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $product = $lineItem->getProduct();
             if (!$this->quantityManager->shouldDecrement($product)) {

@@ -103,6 +103,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'class' => 'oro_checkout.entity.checkout.class',
                 'acls'  => ['VIEW_LOCAL', 'EDIT_LOCAL', 'CREATE_LOCAL'],
             ],
+            [
+                'oid' => ['workflow', '(root)'],
+                'acls'  => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+            ],
         ],
     ];
 
@@ -237,9 +241,13 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $role->setLabel($key);
 
             foreach ($items as $acls) {
-                $className = $this->container->getParameter($acls['class']);
+                if (isset($acls['class'])) {
+                    $identity = $this->container->getParameter($acls['class']);
+                } else {
+                    $identity = $acls['oid'];
+                }
 
-                $this->setRolePermissions($aclManager, $role, $className, $acls['acls']);
+                $this->setRolePermissions($aclManager, $role, $identity, $acls['acls']);
             }
 
             $manager->persist($role);
@@ -353,13 +361,13 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param AclManager $aclManager
      * @param CustomerUserRole $role
-     * @param string $className
+     * @param string|array $identity
      * @param array $allowedAcls
      */
     protected function setRolePermissions(
         AclManager $aclManager,
         CustomerUserRole $role,
-        $className,
+        $identity,
         array $allowedAcls
     ) {
         /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
@@ -367,7 +375,11 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
-            $oid = $aclManager->getOid('entity:' . $className);
+            if (is_array($identity)) {
+                $oid = $aclManager->getOid(implode(':', $identity));
+            } else {
+                $oid = $aclManager->getOid('entity:' . $identity);
+            }
             $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
             $builder = $aclManager->getMaskBuilder($oid);

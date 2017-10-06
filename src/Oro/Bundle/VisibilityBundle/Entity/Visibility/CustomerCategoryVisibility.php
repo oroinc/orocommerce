@@ -27,7 +27,7 @@ class CustomerCategoryVisibility implements VisibilityInterface, ScopeAwareInter
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
-    const ACCOUNT_GROUP = 'customer_group';
+    const CUSTOMER_GROUP = 'customer_group';
     const VISIBILITY_TYPE = 'customer_category_visibility';
 
     /**
@@ -96,7 +96,7 @@ class CustomerCategoryVisibility implements VisibilityInterface, ScopeAwareInter
      */
     public static function getDefault($category)
     {
-        return self::ACCOUNT_GROUP;
+        return self::CUSTOMER_GROUP;
     }
 
     /**
@@ -124,7 +124,7 @@ class CustomerCategoryVisibility implements VisibilityInterface, ScopeAwareInter
     public static function getVisibilityList($category)
     {
         $visibilityList = [
-            self::ACCOUNT_GROUP,
+            self::CUSTOMER_GROUP,
             self::CATEGORY,
             self::PARENT_CATEGORY,
             self::HIDDEN,

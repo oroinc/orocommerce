@@ -306,7 +306,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(json_encode([]));
         $this->logger->expects($this->once())
             ->method('error')
-            ->with('Message is invalid: Wrong message. Original message: "[]"');
+            ->with('Message is invalid: Wrong message');
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
         $this->assertEquals(

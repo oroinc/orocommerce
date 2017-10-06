@@ -21,37 +21,35 @@
     {% set creditCardComponentOptions = options.creditCardComponentOptions|default({})|merge({paymentMethod: paymentMethod}) %}
     {% set isAuthorizedCard = creditCardComponentOptions.acct is defined %}
 
-    <div class="{{ class_prefix }}__form__payment-methods"
+    <div class="{{ class_prefix }}-form__payment-methods"
         data-page-component-module="{{ creditCardComponent }}"
         data-page-component-options="{{ creditCardComponentOptions|json_encode }}">
         {% if isAuthorizedCard %}
-            <div class="{{ class_prefix }}__form__payment-methods-authorized-card" data-authorized-card>
+            <div class="{{ class_prefix }}-form__payment-methods-authorized-card" data-authorized-card>
                 <p>
                     {{ 'oro.paypal.payflow.authorized_card'|trans({'{{ last4 }}': creditCardComponentOptions.acct}) }}
                 </p>
-                <a href="javascript: void(0);" class="{{ class_prefix }}__form__payment-methods-different-card-handle" data-different-card-handle>
+                <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-different-card-handle" data-different-card-handle>
                     {{ 'oro.paypal.payflow.use_different_card'|trans }}
                 </a>
             </div>
         {% endif %}
         <div {% if isAuthorizedCard %} style="display: none;" data-different-card{% endif %}>
             {% if isAuthorizedCard %}
-                <div class="{{ class_prefix }}__form__payment-methods-different-card">
-                    <a href="javascript: void(0);" class="{{ class_prefix }}__form__payment-methods-authorized-card-handle" data-authorized-card-handle>
+                <div class="{{ class_prefix }}-form__payment-methods-different-card">
+                    <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-authorized-card-handle" data-authorized-card-handle>
                         {{ 'oro.paypal.payflow.use_authorized_card'|trans }}
                     </a>
                 </div>
             {% endif %}
-            <ul class="{{ class_prefix }}__form__payment-methods__list">
+            <ul class="{{ class_prefix }}-form__payment-methods-list">
                 {% for cc_name in options.creditCardComponentOptions.allowedCreditCards %}
-                    <li><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
+                    <li class="{{ class_prefix }}-form__payment-methods-item"><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
                 {% endfor %}
             </ul>
-            <div class="{{ class_prefix }}__form__payment-methods__form" data-credit-card-form="data-credit-card-form">
+            <div class="{{ class_prefix }}-form__payment-methods-form" data-credit-card-form="data-credit-card-form">
                 {% for child in form.children %}
-                    <div class="{{ class_prefix }}__form__row">
-                        {{ form_row(child, {class_prefix: class_prefix}) }}
-                    </div>
+                    {{ form_row(child, {class_prefix: class_prefix}) }}
                 {% endfor %}
             </div>
         </div>
