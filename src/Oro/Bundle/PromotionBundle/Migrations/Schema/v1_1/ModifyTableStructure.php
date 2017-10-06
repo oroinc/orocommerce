@@ -236,7 +236,7 @@ class ModifyTableStructure implements
             'oro_promotion_applied_coupon',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,
@@ -281,7 +281,7 @@ class ModifyTableStructure implements
             'oro_promotion_applied',
             'order',
             'oro_order',
-            'identifier',
+            'id',
             [
                 'extend' => [
                     'is_extend' => true,

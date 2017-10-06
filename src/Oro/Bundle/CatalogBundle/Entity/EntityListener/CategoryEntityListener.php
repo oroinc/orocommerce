@@ -6,18 +6,26 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
 class CategoryEntityListener
 {
     /** @var ProductIndexScheduler */
     private $productIndexScheduler;
 
+    /** @var DataProviderCacheCleaner */
+    private $categoryCacheCleaner;
+
     /**
      * @param ProductIndexScheduler $productIndexScheduler
+     * @param DataProviderCacheCleaner $cacheCleaner
      */
-    public function __construct(ProductIndexScheduler $productIndexScheduler)
-    {
+    public function __construct(
+        ProductIndexScheduler $productIndexScheduler,
+        DataProviderCacheCleaner $cacheCleaner
+    ) {
         $this->productIndexScheduler = $productIndexScheduler;
+        $this->categoryCacheCleaner = $cacheCleaner;
     }
 
     /**
@@ -26,6 +34,7 @@ class CategoryEntityListener
     public function preRemove(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
+        $this->categoryCacheCleaner->clearCache();
     }
 
     /**
@@ -34,6 +43,7 @@ class CategoryEntityListener
     public function postPersist(Category $category)
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
+        $this->categoryCacheCleaner->clearCache();
     }
 
     /**
@@ -44,6 +54,7 @@ class CategoryEntityListener
     {
         if ($eventArgs->getEntityChangeSet()) {
             $this->productIndexScheduler->scheduleProductsReindex([$category]);
+            $this->categoryCacheCleaner->clearCache();
         }
     }
 }

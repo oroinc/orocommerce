@@ -91,10 +91,15 @@ oro:
             order_add_coupon.added.message: Coupons were added to order
             order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
+            unassign_coupon:
+                label: Unassign
+                success.message: Coupon was Unassigned from the current Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
                 label: Duplicate
                 success_message: Promotion has been duplicated
+        mass_action:
+            unassign.success_message: "{0} No entities were Unassigned|{1} One entity was Unassigned|]1,Inf[ %count% entities were removed"
 
         blocks:
             general: General
@@ -152,10 +157,10 @@ oro:
 
         system_configuration:
             groups:
-                promotion.title: Promotion
-                promotion_general.title: Promotion General
+                promotion.title: Promotions
+                promotion_general.title: General Options
             fields:
-                feature_enabled.label: Enable Promotion
+                feature_enabled.label: Enable Promotions
                 discount_strategy.label: Discount Strategy
 
         controller:
@@ -172,6 +177,7 @@ oro:
                     discount_options.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
+            assigned_coupons.label: Assigned Coupons
             promotion_and_discounts.label: Promotions and Discounts
 
         applieddiscount:
@@ -264,6 +270,7 @@ oro:
                 deactivate: Deactivate
                 activate: Activate
                 remove: Remove
+                view: View
             no_entities: No records found
 
         appliedcoupon:

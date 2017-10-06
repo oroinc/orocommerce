@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -57,6 +58,7 @@ class ProductEntityListenerTest extends WebTestCase
 
         $product = new Product();
         $product->setSku('TEST');
+        $this->addDefaultName($product, LoadProductData::PRODUCT_1);
 
         $em->persist($product);
         $em->flush();
@@ -72,5 +74,17 @@ class ProductEntityListenerTest extends WebTestCase
                 PriceListTriggerFactory::PRODUCT => $product->getId()
             ]
         );
+    }
+
+    /**
+     * @param Product $product
+     * @param string $name
+     */
+    protected function addDefaultName(Product $product, $name)
+    {
+        $defaultName = new LocalizedFallbackValue();
+        $defaultName->setString($name);
+
+        $product->addName($defaultName);
     }
 }

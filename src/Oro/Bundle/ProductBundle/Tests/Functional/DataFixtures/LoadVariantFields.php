@@ -26,9 +26,6 @@ class LoadVariantFields extends AbstractFixture
         'The best' => false,
     ];
 
-    const VARIANT_FIELD_COLOR = 'color';
-    const VARIANT_FIELD_SIZE = 'size';
-
     /**
      * {@inheritdoc}
      */
@@ -54,6 +51,8 @@ class LoadVariantFields extends AbstractFixture
 
         $defaultFamily = $manager->getRepository(AttributeFamily::class)
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+
+        $this->setReference(LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE, $defaultFamily);
 
         $attributeGroup = $defaultFamily->getAttributeGroup(LoadProductDefaultAttributeFamilyData::GENERAL_GROUP_CODE);
 
