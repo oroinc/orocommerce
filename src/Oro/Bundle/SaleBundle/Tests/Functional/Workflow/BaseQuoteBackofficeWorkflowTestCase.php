@@ -199,7 +199,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $form = $crawler->selectButton('Submit')->form();
         $this->client->submit($form);
 
-        $this->assertContains('transitionSuccess = true', $this->client->getResponse()->getContent());
+        $this->assertContains('"name":"transitionSuccess"', $this->client->getResponse()->getContent());
     }
 
     /**
