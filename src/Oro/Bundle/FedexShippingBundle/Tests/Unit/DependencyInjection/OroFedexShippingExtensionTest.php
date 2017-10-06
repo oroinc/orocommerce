@@ -46,7 +46,6 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.event_listener.shipping_method_config_data',
             'oro_fedex_shipping.event_listener.disable_integration',
             'oro_fedex_shipping.entity_listener.delete_integration_settings_services',
-            'oro_fedex_shipping.client.rate_service.connection_request.factory',
             'oro_fedex_shipping.cache.cache_key_factory',
             'oro_fedex_shipping.cache.response',
             'oro_fedex_shipping.client.rate_service_cached',
