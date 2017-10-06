@@ -67,6 +67,11 @@ services:
             - { name: oro.api.processor, action: delete, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
 
+    oro_product.create.add_image_path_config:
+        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig
+        tags:
+            - { name: oro.api.processor, action: get_config,  class: Oro\Bundle\AttachmentBundle\Entity\File }
+
     oro_product.create.add_image_path:
         class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths
         arguments:
@@ -74,7 +79,4 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_layout.provider.image_type'
         tags:
-            - { name: oro.api.processor, action: get, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
-            - { name: oro.api.processor, action: create, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
-            - { name: oro.api.processor, action: update, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
-            - { name: oro.api.processor, action: get_list, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\AttachmentBundle\Entity\File }
