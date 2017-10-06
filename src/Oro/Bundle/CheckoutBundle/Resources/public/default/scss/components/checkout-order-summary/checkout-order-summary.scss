@@ -1,5 +1,11 @@
 // @theme: default;
 
+@mixin update-checkout-blocks() {
+    .checkout-order-summary__totals {
+        float: none;
+    }
+}
+
 .checkout-order-summary {
     &__header {
         position: $checkout-order-summary-header-position;
@@ -144,7 +150,7 @@
     }
 
     &__totals {
-        clear: $checkout-order-summary-totals-clear;
+        float: $checkout-order-summary-totals-float;
 
         @include clearfix();
 
@@ -161,6 +167,8 @@
         padding: $checkout-order-summary-totals-container-offset;
 
         border-top: $checkout-order-summary-totals-container-border-top;
+
+        @include clearfix();
 
         &.in-sticky {
             width: calc(#{$checkout-view-column-extra-width} - #{$offset-x-m});
