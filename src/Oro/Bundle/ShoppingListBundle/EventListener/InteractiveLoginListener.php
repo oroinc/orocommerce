@@ -11,6 +11,7 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorManager;
 use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
+use Oro\Bundle\DataAuditBundle\EventListener\SendChangedEntitiesToMessageQueueListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
 
@@ -36,22 +37,28 @@ class InteractiveLoginListener
      */
     private $configManager;
 
+    /** @var SendChangedEntitiesToMessageQueueListener */
+    private $sendChangedEntitiesToMessageQueueListener;
+
     /**
      * @param CustomerVisitorManager $visitorManager
      * @param GuestShoppingListMigrationManager $guestShoppingListMigrationManager
      * @param LoggerInterface $logger
      * @param ConfigManager $configManager
+     * @param SendChangedEntitiesToMessageQueueListener $sendChangedEntitiesToMessageQueueListener
      */
     public function __construct(
         CustomerVisitorManager $visitorManager,
         GuestShoppingListMigrationManager $guestShoppingListMigrationManager,
         LoggerInterface $logger,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        SendChangedEntitiesToMessageQueueListener $sendChangedEntitiesToMessageQueueListener
     ) {
-        $this->visitorManager                    = $visitorManager;
-        $this->guestShoppingListMigrationManager = $guestShoppingListMigrationManager;
-        $this->logger                            = $logger;
-        $this->configManager                     = $configManager;
+        $this->visitorManager                            = $visitorManager;
+        $this->guestShoppingListMigrationManager         = $guestShoppingListMigrationManager;
+        $this->logger                                    = $logger;
+        $this->configManager                             = $configManager;
+        $this->sendChangedEntitiesToMessageQueueListener = $sendChangedEntitiesToMessageQueueListener;
     }
 
     /**
@@ -70,6 +77,9 @@ class InteractiveLoginListener
             if ($credentials) {
                 $visitor = $this->visitorManager->find($credentials['visitor_id'], $credentials['session_id']);
                 if ($visitor) {
+                    // Disable data audit 'cause it could fail the consumer
+                    $this->sendChangedEntitiesToMessageQueueListener->setEnabled(false);
+
                     /** @var ArrayCollection $shoppingLists */
                     $shoppingLists = $visitor->getShoppingLists();
                     /** @var ShoppingList $visitorShoppingList */
@@ -82,6 +92,8 @@ class InteractiveLoginListener
             }
         } catch (\Exception $e) {
             $this->logger->error('Migration of the guest shopping list failed.', ['exception' => $e]);
+        } finally {
+            $this->sendChangedEntitiesToMessageQueueListener->setEnabled();
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
@@ -123,7 +124,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
 
 
     /**
-     * @dataProvider testViewDataProvider
+     * @dataProvider viewDataProvider
      *
      * @param string $resource
      * @param string $user
@@ -131,7 +132,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
      */
     public function testView($resource, $user, $status)
     {
-        $this->loginUser($user);
+        $this->simulateAuthentication($user, $user, 'customer_identity', CustomerUser::class);
 
         /** @var Checkout $checkout */
         $checkout = $this->getReference($resource);
@@ -144,13 +145,13 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
     /**
      * @return array
      */
-    public function testViewDataProvider()
+    public function viewDataProvider()
     {
         return [
             'anonymous user' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => '',
-                'status' => 401,
+                'status' => 404,
             ],
             'user from another customer' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,

@@ -298,7 +298,6 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => json_encode($data),
                     'topic' => Topics::CALCULATE_URL_CACHE_MASS,
                     'exception' => $exception
                 ]

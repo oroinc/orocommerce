@@ -20,6 +20,6 @@ services:
     oro_checkout.form.type.oro_save_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType'
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         tags:
             - { name: form.type, alias: oro_save_address }

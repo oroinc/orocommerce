@@ -57,14 +57,7 @@ class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->arrayHasKey('exception'),
-                    $this->arrayHasKey('message')
-                )
-            );
+            ->with('Queue Message is invalid');
 
         $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -99,15 +92,7 @@ class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->arrayHasKey('exception'),
-                    $this->arrayHasKey('message'),
-                    $this->arrayHasKey('topic')
-                )
-            );
+            ->with('Unexpected exception occurred during queue message processing');
 
         $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
     }

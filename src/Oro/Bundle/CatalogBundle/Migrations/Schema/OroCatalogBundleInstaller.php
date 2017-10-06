@@ -39,6 +39,12 @@ class OroCatalogBundleInstaller implements
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
+    const MIME_TYPES = [
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+        'image/svg+xml'
+    ];
 
     /** @var ActivityExtension */
     protected $activityExtension;
@@ -58,7 +64,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -107,8 +113,8 @@ class OroCatalogBundleInstaller implements
         $this->addOroCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroCatalogCategoryLongDescriptionForeignKeys($schema);
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
-        $this->addCategoryImageAssociation($schema, 'largeImage');
-        $this->addCategoryImageAssociation($schema, 'smallImage');
+        $this->addCategoryImageAssociation($schema, 'largeImage', self::MIME_TYPES);
+        $this->addCategoryImageAssociation($schema, 'smallImage', self::MIME_TYPES);
 
         $this->addContentVariantTypes($schema);
     }
@@ -361,9 +367,10 @@ class OroCatalogBundleInstaller implements
 
     /**
      * @param Schema $schema
-     * @param $fieldName
+     * @param string $fieldName
+     * @param array  $mimeTypes
      */
-    public function addCategoryImageAssociation(Schema $schema, $fieldName)
+    public function addCategoryImageAssociation(Schema $schema, $fieldName, array $mimeTypes = [])
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
@@ -372,7 +379,8 @@ class OroCatalogBundleInstaller implements
             [],
             self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
-            self::THUMBNAIL_HEIGHT_SIZE_IN_PX
+            self::THUMBNAIL_HEIGHT_SIZE_IN_PX,
+            $mimeTypes
         );
     }
 
