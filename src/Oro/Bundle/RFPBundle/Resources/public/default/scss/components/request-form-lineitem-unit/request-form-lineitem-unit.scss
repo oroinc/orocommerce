@@ -35,6 +35,10 @@
         @extend .request-form-lineitem-unit;
         text-align: right;
     }
+
+    &--prices {
+        white-space: nowrap;
+    }
 }
 
 @include breakpoint('mobile') {

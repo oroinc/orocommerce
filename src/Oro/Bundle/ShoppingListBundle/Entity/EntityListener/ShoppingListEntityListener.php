@@ -2,30 +2,29 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\EntityListener;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\OroShoppingListExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
+use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
 class ShoppingListEntityListener
 {
-    /** @var ConfigManager */
-    private $configManager;
+    /** @var DefaultUserProvider */
+    private $defaultUserProvider;
 
-    /** @var GuestShoppingListManager */
-    private $guestShoppingListManager;
+    /** @var TokenAccessorInterface */
+    private $tokenAccessor;
 
     /**
-     * @param ConfigManager $configManager
-     * @param GuestShoppingListManager $guestShoppingListManager
+     * @param DefaultUserProvider $defaultUserProvider
+     * @param TokenAccessorInterface $tokenAccessor
      */
-    public function __construct(ConfigManager $configManager, GuestShoppingListManager $guestShoppingListManager)
+    public function __construct(DefaultUserProvider $defaultUserProvider, TokenAccessorInterface $tokenAccessor)
     {
-        $this->configManager = $configManager;
-        $this->guestShoppingListManager = $guestShoppingListManager;
+        $this->defaultUserProvider = $defaultUserProvider;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -33,18 +32,13 @@ class ShoppingListEntityListener
      */
     public function prePersist(ShoppingList $shoppingList)
     {
-        if (!$shoppingList->getOwner()) {
-            $settingsKey = TreeUtils::getConfigKey(
+        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+            && null === $shoppingList->getOwner()
+        ) {
+            $shoppingList->setOwner($this->defaultUserProvider->getDefaultUser(
                 OroShoppingListExtension::ALIAS,
                 Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER
-            );
-
-            $userId = $this->configManager->get($settingsKey);
-
-            /** @var User $user */
-            $user = $this->guestShoppingListManager->getDefaultUser($userId);
-
-            $shoppingList->setOwner($user);
+            ));
         }
     }
 }

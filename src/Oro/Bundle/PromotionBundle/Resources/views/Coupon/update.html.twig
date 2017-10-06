@@ -3,7 +3,7 @@
 
 {% set formAction = entity.id ? path('oro_promotion_coupon_update', {id: entity.id}) : path('oro_promotion_coupon_create') %}
 
-{% oro_title_set({params : {"%entityName%": 'oro.promotion.coupon.entity_label'|trans}}) %}
+{% oro_title_set({params : {"%code%": entity.code, "%entityName%": 'oro.promotion.coupon.entity_label'|trans}}) %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -48,7 +48,7 @@
                         form_row(form.code),
                         form_row(form.promotion),
                         form_row(form.usesPerCoupon),
-                        form_row(form.usesPerUser),
+                        form_row(form.usesPerPerson),
                         form_row(form.validUntil)
                     ]
                 }
