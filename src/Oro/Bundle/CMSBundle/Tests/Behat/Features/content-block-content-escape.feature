@@ -1,8 +1,8 @@
 @fixture-OroCMSBundle:CustomerUserFixture.yml
-Feature: Content Block content purify
+Feature: Content Block content escape
   In order to avoid xss vulnerability
   As an Administrator
-  I want to purify text data for Content Block form
+  I want to escape text data for Content Block form
 
   Scenario: Create new content block with tags in text data
     Given I login as administrator
@@ -17,10 +17,8 @@ Feature: Content Block content purify
       |Localization  |English                      |
       |Website       |Default                      |
       |Customer Group|Non-Authentificated Visitors |
-      |Content       |<style>div {display: none;}</style><div onclick="alert('test');">Some Content <script>alert('test')</script></div> |
+      |Content       |<style>div {display: none;}</style>Some Content <script>alert('test')</script> |
     When I save and close form
     Then I should see "Content block has been saved" flash message
     And I should not see alert
-    And I should see "Some Content"
-    When I click on "Content Field Data"
-    Then I should not see alert
+    And I should see "<style>div {display: none;}</style>Some Content <script>alert('test')</script>"
