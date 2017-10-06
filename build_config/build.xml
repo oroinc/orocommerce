@@ -335,6 +335,7 @@
         <attribute name="websocket-bind-port" default="8080"/>
         <attribute name="websocket-frontend-host" default="'*'"/>
         <attribute name="websocket-frontend-port" default="8080"/>
+        <attribute name="websocket-frontend-path" default="8080"/>
         <attribute name="websocket-backend-host" default="'*'"/>
         <attribute name="websocket-backend-port" default="8080"/>
         <attribute name="web-backend-prefix" default="/admin"/>
@@ -371,6 +372,7 @@
             <echo file="${appconfig.filename}" append="true">    websocket_bind_port: @{websocket-bind-port}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_frontend_host: @{websocket-frontend-host}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_frontend_port: @{websocket-frontend-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_frontend_path: @{websocket-frontend-path}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_backend_host: @{websocket-backend-host}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_backend_port: @{websocket-backend-port}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    web_backend_prefix: @{web-backend-prefix}${line.separator}</echo>
