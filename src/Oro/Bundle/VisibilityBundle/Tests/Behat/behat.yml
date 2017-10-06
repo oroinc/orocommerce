@@ -25,3 +25,4 @@ oro_behat_extension:
             locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
+          Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
