@@ -80,4 +80,13 @@ class AbsenceBootstrap3ClassesTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
         $this->assertBootstrapClassesNotExist($crawler);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        $config = $this->getContainer()->get('oro_config.global');
+        $config->reset('oro_frontend.frontend_theme');
+    }
 }
