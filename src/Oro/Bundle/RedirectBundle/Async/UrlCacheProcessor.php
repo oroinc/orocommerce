@@ -49,10 +49,7 @@ class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInt
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
-                [
-                    'exception' => $e,
-                    'message' => $message->getBody()
-                ]
+                ['exception' => $e]
             );
 
             return self::REJECT;
@@ -60,7 +57,6 @@ class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInt
             $this->logger->error(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::PROCESS_CALCULATE_URL_CACHE,
                     'exception' => $e
                 ]

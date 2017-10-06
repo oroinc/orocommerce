@@ -1,5 +1,6 @@
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:
+        currency: 'USD'
         customer: '@customer'
         customerUser: '@amanda'
         owner: '@admin'

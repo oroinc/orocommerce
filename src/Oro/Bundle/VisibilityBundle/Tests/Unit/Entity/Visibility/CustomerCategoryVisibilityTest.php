@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CustomerCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +32,7 @@ class CustomerCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $entity->setTargetEntity($category);
         $this->assertEquals($entity->getTargetEntity(), $category);
 
-        $this->assertEquals(CustomerCategoryVisibility::ACCOUNT_GROUP, $entity->getDefault($category));
+        $this->assertEquals(CustomerCategoryVisibility::CUSTOMER_GROUP, $entity->getDefault($category));
 
         $visibilityList = CustomerCategoryVisibility::getVisibilityList($category);
         $this->assertInternalType('array', $visibilityList);

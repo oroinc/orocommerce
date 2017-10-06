@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class PaymentMethodProvider
 {
@@ -16,17 +16,17 @@ class PaymentMethodProvider
     private $paymentMethodProvider;
 
     /**
-     * @var PaymentMethodsConfigsRulesProviderInterface
+     * @var MethodsConfigsRulesByContextProviderInterface
      */
     private $paymentMethodsConfigsRulesProvider;
 
     /**
      * @param PaymentMethodProviderInterface $paymentMethodProvider
-     * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
+     * @param MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider
      */
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
-        PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
+        MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentMethodsConfigsRulesProvider = $paymentMethodsConfigsRulesProvider;
@@ -40,7 +40,7 @@ class PaymentMethodProvider
     public function getApplicablePaymentMethods(PaymentContextInterface $context)
     {
         $paymentMethodsConfigsRules = $this->paymentMethodsConfigsRulesProvider
-            ->getFilteredPaymentMethodsConfigs($context);
+            ->getPaymentMethodsConfigsRules($context);
 
         $paymentMethods = [];
 

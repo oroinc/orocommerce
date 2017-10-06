@@ -201,6 +201,16 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
      */
     public function productUnitsDataProvider()
     {
+        $sellAdditionalUnitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $sellAdditionalUnitPrecision->expects($this->once())
+            ->method('isSell')
+            ->willReturn(true);
+
+        $notSellAdditionalUnitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $notSellAdditionalUnitPrecision->expects($this->once())
+            ->method('isSell')
+            ->willReturn(false);
+
         return [
             'primary default and empty additional' => [
                 'primaryUnitCode' => self::TEST_UNIT_CODE,
@@ -217,14 +227,20 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
             'primary default and not empty additional' => [
                 'primaryUnitCode' => self::TEST_UNIT_CODE,
                 'defaultUnitCode' => self::TEST_UNIT_CODE,
-                'additionalUnits' => [$this->createMock(ProductUnitPrecision::class)],
+                'additionalUnits' => [$sellAdditionalUnitPrecision],
                 'expectedVisibility' => true,
             ],
             'primary not default and not empty additional' => [
                 'primaryUnitCode' => self::TEST_UNIT_CODE,
                 'defaultUnitCode' => self::TEST_DEFAULT_UNIT_CODE,
-                'additionalUnits' => [$this->createMock(ProductUnitPrecision::class)],
+                'additionalUnits' => [$sellAdditionalUnitPrecision],
                 'expectedVisibility' => true,
+            ],
+            'primary default and not empty not sell additional' => [
+                'primaryUnitCode' => 'each',
+                'defaultUnitCode' => 'each',
+                'additionalUnits' => [$notSellAdditionalUnitPrecision],
+                'expectedVisibility' => false,
             ],
         ];
     }

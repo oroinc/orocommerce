@@ -21,7 +21,7 @@ class OrderPaymentContextFactory
     private $paymentContextBuilderFactory;
 
     /**
-     * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
+     * @param OrderPaymentLineItemConverterInterface     $paymentLineItemConverter
      * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
      */
     public function __construct(
@@ -34,6 +34,7 @@ class OrderPaymentContextFactory
 
     /**
      * @param Order $order
+     *
      * @return PaymentContextInterface
      */
     public function create(Order $order)
@@ -47,16 +48,16 @@ class OrderPaymentContextFactory
             (string)$order->getId()
         );
 
-        $subtotal = Price::create(
-            $order->getSubtotal(),
-            $order->getCurrency()
-        );
+        $subtotal = Price::create($order->getSubtotal(), $order->getCurrency());
 
         $paymentContextBuilder
             ->setSubTotal($subtotal)
-            ->setCurrency($order->getCurrency());
+            ->setCurrency($order->getCurrency())
+            ->setShippingMethod($order->getShippingMethod());
 
-        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
+        if (null !== $order->getWebsite()) {
+            $paymentContextBuilder->setWebsite($order->getWebsite());
+        }
 
         if (null !== $order->getBillingAddress()) {
             $paymentContextBuilder->setBillingAddress($order->getBillingAddress());
@@ -74,12 +75,10 @@ class OrderPaymentContextFactory
             $paymentContextBuilder->setCustomerUser($order->getCustomerUser());
         }
 
+        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
+
         if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
             $paymentContextBuilder->setLineItems($convertedLineItems);
-        }
-
-        if (null !== $order->getShippingMethod()) {
-            $paymentContextBuilder->setShippingMethod($order->getShippingMethod());
         }
 
         return $paymentContextBuilder->getResult();

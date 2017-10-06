@@ -10,9 +10,7 @@ Feature: Minimum Price Selection Strategies
   Scenario: Minimum price strategy is available by default
     Given I operate as the Manager
     When I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Catalog" on configuration sidebar
-    And I click "Pricing" on configuration sidebar
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     Then I should see "Pricing Strategy"
     Then I should see "Minimal prices"
     And I submit form
@@ -39,7 +37,7 @@ Feature: Minimum Price Selection Strategies
     When I continue as the Buyer
     And I am on the homepage
     And I click "NewCategory"
-    And I click "product2"
+    And I click "View Details" for "product2" product
     And I should see "$1.00"
 
   Scenario: Add new price to product price
@@ -57,7 +55,7 @@ Feature: Minimum Price Selection Strategies
     When I continue as the Buyer
     And I am on the homepage
     And I click "NewCategory"
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     And I should see "$7.00"
 
   Scenario: Price for Customer
@@ -125,9 +123,7 @@ Feature: Minimum Price Selection Strategies
   Scenario: Pricing strategy changing
     Given I operate as the Manager
     When I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Catalog" on configuration sidebar
-    And I click "Pricing" on configuration sidebar
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     And I fill "PriceSelectionStrategyForm" with:
       | Use Default          | false             |
       | Pricing Strategy     | Merge by priority |
