@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -13,6 +14,7 @@ use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
+use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
@@ -63,31 +65,6 @@ class ProcessImagePathsTest extends GetProcessorTestCase
         );
     }
 
-    public function testProcessShouldAddFilePathToConfig()
-    {
-        $config = new EntityDefinitionConfig();
-        $config->setKey('config_key');
-        $metadata = new EntityMetadata();
-
-        $this->context->setConfig($config);
-        $this->context->setMetadata($metadata);
-        $this->processor->process($this->context);
-
-        self::assertEquals(
-            [
-                'fields' => [
-                    ProcessImagePaths::CONFIG_FILE_PATH => [
-                        'data_type' => 'string'
-                    ]
-                ]
-            ],
-            $config->toArray()
-        );
-        self::assertEquals('config_keynew', $config->getKey());
-        self::assertTrue($this->context->hasMetadata());
-        self::assertNotSame($metadata, $this->context->hasMetadata());
-    }
-
     /**
      * @dataProvider getTestProcessShouldHandlePathsCorrectlyProvider
      */
@@ -102,6 +79,7 @@ class ProcessImagePathsTest extends GetProcessorTestCase
             ->method('getDimensions')
             ->willReturn(['testDimension' => [1, 2, 3]]);
 
+
         $allTypes = ['type1' => $type1];
         $this->typeProvider->expects($this->any())
             ->method('getImageTypes')
@@ -115,21 +93,17 @@ class ProcessImagePathsTest extends GetProcessorTestCase
         $this->attachmentManager->expects($this->any())
             ->method('isImageType')
             ->willReturn($isImageType);
-        if (array_key_exists('content', $initialResults)) {
-            $this->repo->expects($this->any())
-                ->method('findOneBy')
-                ->with(['image' => $initialResults['id']])
-                ->willReturn($productImage);
-        } else {
-            foreach ($initialResults as $initialResult) {
-                $this->repo->expects($this->any())
-                    ->method('findOneBy')
-                    ->with(['image' => $initialResult['id']])
-                    ->willReturn($productImage[$initialResult['id']]);
-            }
-        }
 
-        $this->context->setConfig(new EntityDefinitionConfig());
+        $this->repo->expects($this->any())
+            ->method('findOneBy')
+            ->with(['image' => $initialResults['id']])
+            ->willReturn($productImage);
+
+        $fieldConfig = $this->createMock(EntityDefinitionFieldConfig::class);
+        $entityConfig  = new EntityDefinitionConfig();
+        $entityConfig->addField(ProcessImagePathsConfig::CONFIG_FILE_PATH, $fieldConfig);
+
+        $this->context->setConfig($entityConfig);
         $this->context->setMetadata(new EntityMetadata());
         $this->context->setResult($initialResults);
         $this->processor->process($this->context);
@@ -165,28 +139,6 @@ class ProcessImagePathsTest extends GetProcessorTestCase
                 'isImageType' => true,
                 'productImage' => $productImage,
                 'expectedResults' => array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-            ],
-            [
-                'initialResults' => [$basicInitialResults],
-                'isImageType' => true,
-                'productImage' => [1 => $productImage],
-                'expectedResults' => [
-                    array_merge(
-                        $basicInitialResults,
-                        [
-                            'filePath' => ['testDimension' => 'testUrl']
-                        ]
-                    )
-                ],
-            ],
-            [
-                'initialResults' => [$basicInitialResults, $basicInitialResults],
-                'isImageType' => true,
-                'productImage' => [1 => $productImage],
-                'expectedResults' => [
-                    array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-                    array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
-                ],
             ],
         ];
     }
