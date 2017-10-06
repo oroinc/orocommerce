@@ -13,8 +13,8 @@ use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
+use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
@@ -26,7 +26,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ShippingMethodsConfigsRulesProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $shippingRulesProvider;
 
@@ -52,7 +52,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingRulesProvider = $this->getMockBuilder(ShippingMethodsConfigsRulesProvider::class)
+        $this->shippingRulesProvider = $this->getMockBuilder(MethodsConfigsRulesByContextProviderInterface::class)
             ->disableOriginalConstructor()->getMock();
 
         $methods = [
@@ -125,7 +125,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->shippingRulesProvider->expects($this->once())
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn($shippingRules);
 
@@ -327,7 +327,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->shippingRulesProvider->expects(static::exactly(2))
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
                 $this->getEntity(ShippingMethodsConfigsRule::class, [
@@ -415,7 +415,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->shippingRulesProvider->expects($this->once())
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn($shippingRules);
 
@@ -567,7 +567,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->shippingRulesProvider->expects(static::exactly(2))
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
                 $this->getEntity(ShippingMethodsConfigsRule::class, [

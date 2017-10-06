@@ -3,6 +3,7 @@ Product Unit Value Formatting
 
 Table of Contents
 -----------------
+
  - [Formats source](#format-source)
  - [PHP Product Unit Value Formatter](#php-product-unit-value-formatter)
     - [Methods and examples of usage](#methods-and-examples-of-usage)
@@ -15,9 +16,10 @@ Table of Contents
 
 Formats source
 ==============
+
 Product Unit formats may be found in ``messages.<locale>.yml``.
 
-Example of format configuration for en_US:
+Here is an example of format configuration for en_US:
 
 ```yaml
 product_unit.kg:
@@ -40,7 +42,7 @@ PHP Name Formatter
 
 **Service id:** oro_product.formatter.product_unit_value
 
-Formats product unit value based on given product unit.
+Formats product unit value based on the given product unit.
 
 Methods and examples of usage
 -----------------------------
@@ -49,9 +51,9 @@ Methods and examples of usage
 
 string *public* *format*(float|integer *value*, ProductUnit *unit*)
 
-This method can be used to format value that is type of float or integer.
+This method can be used to format the value that is of float or integer type.
 
-To format value *unit* parameters must be passed and it must be instance of ProductUnit class.
+To format value, *unit* parameter must be passed and it must be instance of ProductUnit class.
 
 Format:
 
@@ -86,9 +88,9 @@ Outputs:
 
 string *public* *formatShort*(float|integer *value*, ProductUnit *unit*)
 
-This method can be used to format value that is type of float or integer.
+This method can be used to format a value that is of float or integer type.
 
-To format value *unit* parameters must be passed and it must be instance of ProductUnit class.
+To format value, *unit* parameters must be passed and it must be instance of ProductUnit class.
 
 Format:
 
@@ -126,7 +128,7 @@ Filters
 
 ### oro_format_product_unit_value
 
-This filter use *format* method from product unit value formatter, and has same logic.
+This filter uses the *format* method from the product unit value formatter, and has the same logic.
 
 ```
 {{ value|oro_format_product_unit_value(unit) }}
@@ -135,7 +137,7 @@ This filter use *format* method from product unit value formatter, and has same 
 
 ### oro_format_short_product_unit_value
 
-This filter use *formatShort* method from product unit value formatter, and has same logic.
+This filter uses the *formatShort* method from the product unit value formatter, and has the same logic.
 
 ```
 {{ value|oro_format_short_product_unit_value(unit) }}

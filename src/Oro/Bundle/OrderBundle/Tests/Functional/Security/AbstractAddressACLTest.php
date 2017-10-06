@@ -12,9 +12,6 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\Role;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- */
 abstract class AbstractAddressACLTest extends WebTestCase
 {
     /** @var Role */
@@ -38,7 +35,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
         // Check customer addresses
         if (!empty($expected['customer'])) {
             $filter = sprintf(
-                'select[name="%s[%s][customerAddress]"] optgroup[label="Global Address Book"]',
+                'select[name="%s[%s][customerAddress]"] optgroup[label="Customer Address Book"]',
                 $formName,
                 $addressType
             );
@@ -52,7 +49,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
         // Check customer users addresses
         if (!empty($expected['customerUser'])) {
             $filter = sprintf(
-                'select[name="%s[%s][customerAddress]"] optgroup[label="My Address Book"]',
+                'select[name="%s[%s][customerAddress]"] optgroup[label="User Address Book"]',
                 $formName,
                 $addressType
             );

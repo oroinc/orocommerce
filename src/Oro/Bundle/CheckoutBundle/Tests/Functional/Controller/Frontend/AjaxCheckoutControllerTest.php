@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
@@ -32,6 +33,12 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
                 LoadShippingMethodsConfigsRulesWithConfigs::class,
                 LoadShoppingListsCheckoutsData::class,
             ]
+        );
+        $this->simulateAuthentication(
+            LoadCustomerUserData::EMAIL,
+            LoadCustomerUserData::PASSWORD,
+            'customer_identity',
+            CustomerUser::class
         );
     }
 

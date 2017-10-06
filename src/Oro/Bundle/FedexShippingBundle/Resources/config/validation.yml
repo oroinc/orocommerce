@@ -1,0 +1,19 @@
+Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings:
+    properties:
+        key:
+            - NotBlank: ~
+        password:
+            - NotBlank: ~
+        accountNumber:
+            - NotBlank: ~
+        meterNumber:
+            - NotBlank: ~
+        pickupType:
+            - NotBlank: ~
+        unitOfWeight:
+            - NotBlank: ~
+        shippingServices:
+            - NotBlank: ~
+        labels:
+            - NotBlank: ~
+            - Valid: ~

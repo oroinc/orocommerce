@@ -6,9 +6,9 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductRepository extends EntityRepository
@@ -65,7 +65,8 @@ class ProductRepository extends EntityRepository
 
         if (count($productIds) > 0) {
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p.id', $productIds));
+                ->where($productsQueryBuilder->expr()->in('p.id', ':productIds'))
+                ->setParameter('productIds', $productIds);
         }
 
         return $productsQueryBuilder;
@@ -246,6 +247,29 @@ class ProductRepository extends EntityRepository
         }
 
         return $images;
+    }
+
+    /**
+     * @param int $productId
+     *
+     * @return File[]
+     */
+    public function getImagesFilesByProductId($productId)
+    {
+        $qb = $this->_em->createQueryBuilder()
+                        ->select('imageFile')
+                        ->from(File::class, 'imageFile')
+                        ->join(
+                            ProductImage::class,
+                            'pi',
+                            Expr\Join::WITH,
+                            'imageFile.id = pi.image'
+                        );
+
+        $qb->where($qb->expr()->eq('pi.product', ':product_id'))
+           ->setParameter('product_id', $productId);
+
+        return $qb->getQuery()->execute();
     }
 
     /**

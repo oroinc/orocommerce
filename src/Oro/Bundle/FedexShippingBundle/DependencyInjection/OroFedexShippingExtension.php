@@ -26,6 +26,10 @@ class OroFedexShippingExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('form_types.yml');
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $loader->load('services_test.yml');
+        }
     }
 
     /**

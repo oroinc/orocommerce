@@ -76,6 +76,7 @@ oro:
             destinations.label: Destinations
             currency.label: Currency
             organization.label: Organization
+            websites.label: Websites
 
             notification:
                 enabled: Payment rule has been enabled successfully
