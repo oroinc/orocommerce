@@ -38,5 +38,6 @@ class AddIndicesToProductTables implements Migration
             [],
             ['where' => '(is_new_arrival = true)']
         );
+        $table->addIndex(['status'], 'idx_oro_product_status');
     }
 }

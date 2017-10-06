@@ -180,6 +180,7 @@ class OroProductBundleInstaller implements
         $table->addIndex(['is_featured'], 'idx_oro_product_featured', [], ['where' => '(is_featured = true)']);
         $table->addIndex(['id', 'updated_at'], 'idx_oro_product_id_updated_at');
         $table->addIndex(['is_new_arrival'], 'idx_oro_product_new_arrival', [], ['where' => '(is_new_arrival = true)']);
+        $table->addIndex(['status'], 'idx_oro_product_status');
         $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_oro_product_primary_unit_precision_id');
     }
 
