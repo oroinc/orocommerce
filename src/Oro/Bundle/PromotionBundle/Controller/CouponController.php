@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class CouponController extends Controller
 {
@@ -106,7 +106,17 @@ class CouponController extends Controller
             'values' => $request->get('values', null),
         ];
 
-        $form = $this->createForm(BaseCouponType::class, new Coupon());
+        $emptyData = new Coupon();
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+        $gridName = $request->get('gridName');
+        $gridParameters = $request->get($gridName);
+        if (!empty($gridParameters['promotion_id'])) {
+            /** @var Promotion $promotion */
+            $promotion = $doctrineHelper->getEntityReference(Promotion::class, $gridParameters['promotion_id']);
+            $emptyData->setPromotion($promotion);
+        }
+        $form = $this->createForm(BaseCouponType::class, $emptyData);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var MassActionDispatcher $massActionDispatcher */

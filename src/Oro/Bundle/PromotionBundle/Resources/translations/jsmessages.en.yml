@@ -13,3 +13,5 @@ oro:
             messages:
                 coupon_code_applied_successfully: Coupon code has been applied successfully, please review discounts
                 removed: Coupon code has been removed
+        ui:
+            unassign_coupon.confirmation.message: Are you sure you want to Remove a Coupon from the current Promotion?
