@@ -131,6 +131,8 @@ oro:
             success.message: 'The shopping list has been duplicated'
             list.label: Duplicate List
 
+        visitors.label: 'Visitors'
+
     customer:
         customervisitor:
             shopping_lists.label: Shopping Lists
@@ -182,7 +184,7 @@ oro:
                 delete: 'Delete'
                 matrix_grid_order: 'Order with Matrix Grid'
             workflow:
-                remove_source.label: Delete the shopping list
+                remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
                 total_qty: 'Total QTY'
                 total: 'TOTAL'

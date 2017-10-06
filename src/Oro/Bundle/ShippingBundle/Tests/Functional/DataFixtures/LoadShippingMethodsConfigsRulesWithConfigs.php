@@ -47,7 +47,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
     /**
      * @return array
      */
-    protected function getShippingRuleData()
+    protected function getShippingRuleData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules_with_configs.yml'));
     }
@@ -59,41 +59,48 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
      */
     private function loadShippingRule($reference, $data, ObjectManager $manager)
     {
-        $rule = $this->buildRule($reference, $data);
-        $configRule = $this->buildMethodsConfigsRule($rule, $data);
-
-        $this->setDestinations($configRule, $manager, $data);
-        $this->setMethodConfigs($configRule, $manager, $data);
-
-        $manager->persist($configRule);
+        $rule = $this->buildRule($reference, $data, $manager);
+        $configRule = $this->buildMethodsConfigsRule($reference, $data, $rule, $manager);
 
         $this->setReference($reference, $configRule);
+
+        $manager->persist($configRule);
     }
 
     /**
-     * @param RuleInterface $rule
+     * @param string        $reference
      * @param array         $data
+     * @param RuleInterface $rule
+     * @param ObjectManager $manager
      *
      * @return ShippingMethodsConfigsRule
      */
-    private function buildMethodsConfigsRule(RuleInterface $rule, $data)
-    {
+    protected function buildMethodsConfigsRule(
+        string $reference,
+        array $data,
+        RuleInterface $rule,
+        ObjectManager $manager
+    ) {
         $configRule = new ShippingMethodsConfigsRule();
 
         $configRule
             ->setRule($rule)
             ->setCurrency($data['currency']);
 
+        $this->setDestinations($configRule, $manager, $data);
+        $this->setMethodConfigs($configRule, $manager, $data);
+
         return $configRule;
     }
 
     /**
-     * @param string $reference
-     * @param array  $data
+     * @param string        $reference
+     * @param array         $data
+     * @param ObjectManager $manager
      *
-     * @return RuleInterface
+     * @return Rule
      */
-    private function buildRule($reference, $data)
+    protected function buildRule(string $reference, array $data, ObjectManager $manager)
     {
         $rule = new Rule();
 

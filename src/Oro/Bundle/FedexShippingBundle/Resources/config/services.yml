@@ -28,7 +28,7 @@ services:
     oro_fedex_shipping.client.rate_service.soap_settings:
         class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
         public: false
-        factory: 'oro_soap.client.factory.settings:create'
+        factory: ['Oro\Bundle\SoapBundle\Client\Settings\Factory\SoapClientSettingsFactory', create]
         arguments:
             - '@=service("kernel").locateResource("@OroFedexShippingBundle/Resources/wsdl/RateService_v20.wsdl")'
             - 'getRates'
@@ -106,28 +106,6 @@ services:
             - '@oro_security.encoder.mcrypt'
             - '@oro_shipping.shipping_origin.provider'
 
-    oro_fedex_shipping.cache.cache_key_factory:
-        class: 'Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactory'
-        public: false
-
-    oro_fedex_shipping.cache:
-        public: false
-        parent: oro.cache.abstract
-
-    oro_fedex_shipping.cache.response:
-        class: 'Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache'
-        public: false
-        arguments:
-            - '@oro_fedex_shipping.cache'
-
-    oro_fedex_shipping.client.rate_service_cached:
-        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceCachedClient'
-        public: false
-        arguments:
-            - '@oro_fedex_shipping.client.rate_service'
-            - '@oro_fedex_shipping.cache.response'
-            - '@oro_fedex_shipping.cache.cache_key_factory'
-
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
         public: false
@@ -195,6 +173,28 @@ services:
             - '@oro_shipping.method.event.dispatcher.type_removal'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings', event: postUpdate }
+
+    oro_fedex_shipping.cache.cache_key_factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactory'
+        public: false
+
+    oro_fedex_shipping.cache:
+        public: false
+        parent: oro.cache.abstract
+
+    oro_fedex_shipping.cache.response:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.cache'
+
+    oro_fedex_shipping.client.rate_service_cached:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceCachedClient'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.client.rate_service'
+            - '@oro_fedex_shipping.cache.response'
+            - '@oro_fedex_shipping.cache.cache_key_factory'
 
     oro_fedex_shipping.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator'

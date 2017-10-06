@@ -10,6 +10,7 @@ interface FedexRequestByContextAndSettingsFactoryInterface
 {
     /**
      * @param FedexIntegrationSettings $settings
+     * @param ShippingContextInterface $context
      *
      * @return FedexRequestInterface|null
      */

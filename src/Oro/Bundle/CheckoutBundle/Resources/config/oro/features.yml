@@ -1,0 +1,10 @@
+features:
+    guest_checkout:
+        label: oro.checkout.system_configuration.fields.guest_checkout.label
+        description: oro.checkout.system_configuration.fields.guest_checkout.tooltip
+        toggle: oro_checkout.guest_checkout
+        routes:
+            - 'oro_checkout_frontend_checkout'
+        configuration:
+            - guest_checkout_owner_section
+        strategy: affirmative

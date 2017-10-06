@@ -71,12 +71,12 @@ class ProductPricesTypeTest extends BlockTypeTestCase
                 'productPrices' => $pricesExpression,
                 'attributeFamily' => $attributeFamily,
                 'product' => $product,
-                'productUnitSelectionVisible' => false
+                'isPriceUnitsVisible' => false
             ]
         );
 
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
-        $this->assertFalse($view->vars['productUnitSelectionVisible']);
+        $this->assertFalse($view->vars['isPriceUnitsVisible']);
         $this->assertEquals($product, $view->vars['product']);
 
         $this->assertTrue($this->attributeRenderRegistry->isAttributeRendered($attributeFamily, 'attribute'));
@@ -90,12 +90,12 @@ class ProductPricesTypeTest extends BlockTypeTestCase
             ProductPricesType::NAME,
             [
                 'productPrices' => $pricesExpression,
-                'productUnitSelectionVisible' => false
+                'isPriceUnitsVisible' => false
             ]
         );
 
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
-        $this->assertFalse($view->vars['productUnitSelectionVisible']);
+        $this->assertFalse($view->vars['isPriceUnitsVisible']);
         $this->assertNull($view->vars['product']);
     }
 

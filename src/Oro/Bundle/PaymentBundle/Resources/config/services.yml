@@ -49,7 +49,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
             - '@oro_payment.payment_method.composite_provider'
-            - '@oro_payment.payment_methods_configs.rules_provider_basic'
+            - '@oro_payment.provider.methods_configs_rules.by_context.basic'
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
@@ -232,6 +232,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_payment.repository.payment_method_config:
         class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository'
@@ -244,20 +246,6 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction'
-
-    oro_payment.payment_methods_configs.rules_provider_basic:
-        class: 'Oro\Bundle\PaymentBundle\Provider\BasicPaymentMethodsConfigsRulesProvider'
-        arguments:
-            - '@oro_payment.context.rules_converter_basic'
-            - '@oro_payment.repository.payment_methods_configs_rule'
-            - '@oro_rule.rule_filtration.service'
-
-    oro_payment.enabled_payment_methods_configs.rules_provider_basic:
-        class: 'Oro\Bundle\PaymentBundle\Provider\BasicPaymentMethodsConfigsRulesProvider'
-        arguments:
-            - '@oro_payment.context.rules_converter_basic'
-            - '@oro_payment.repository.payment_methods_configs_rule'
-            - '@oro_rule.enabled_rule_filtration.service'
 
     oro_payment.expression_language.decorated_product_line_item_factory:
         class: 'Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory'
@@ -292,3 +280,29 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory'
         arguments:
             - '@oro_payment.context.factory.composite_supports_entity'
+
+    oro_payment.rule_filtration.basic_service:
+        class: 'Oro\Bundle\PaymentBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
+        arguments:
+            - '@oro_rule.rule_filtration.service'
+            - '@oro_payment.context.rules_converter_basic'
+
+    oro_payment.provider.methods_configs_rules.by_context.basic:
+        class: 'Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider'
+        public: false
+        arguments:
+            - '@oro_payment.rule_filtration.basic_service'
+            - '@oro_payment.repository.payment_methods_configs_rule'
+
+    oro_payment.enabled_rule_filtration.basic_service:
+        class: 'Oro\Bundle\PaymentBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
+        arguments:
+            - '@oro_rule.enabled_rule_filtration.service'
+            - '@oro_payment.context.rules_converter_basic'
+
+    oro_payment.provider.methods_configs_rules.by_context_required_parameters:
+        class: 'Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\RegardlessDestination\RegardlessDestinationMethodsConfigsRulesByContextProvider'
+        public: false
+        arguments:
+            - '@oro_payment.enabled_rule_filtration.basic_service'
+            - '@oro_payment.repository.payment_methods_configs_rule'

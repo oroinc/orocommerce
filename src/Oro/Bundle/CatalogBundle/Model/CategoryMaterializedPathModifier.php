@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\CatalogBundle\Model;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryMaterializedPathModifier
 {
     /**
-     * @var ExtraActionEntityStorageInterface
+     * @var DoctrineHelper
      */
-    protected $storage;
+    protected $doctrineHelper;
 
     /**
-     * @param ExtraActionEntityStorageInterface $storage
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ExtraActionEntityStorageInterface $storage)
+    public function __construct(DoctrineHelper $doctrineHelper)
     {
-        $this->storage = $storage;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -49,7 +47,9 @@ class CategoryMaterializedPathModifier
 
         $category->setMaterializedPath($path);
         if ($scheduleForInsert) {
-            $this->storage->scheduleForExtraInsert($category);
+            $this->doctrineHelper
+                ->getEntityRepositoryForClass(Category::class)
+                ->updateMaterializedPath($category);
         }
     }
 }
