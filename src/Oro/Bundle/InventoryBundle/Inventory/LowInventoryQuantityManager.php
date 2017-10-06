@@ -88,7 +88,7 @@ class LowInventoryQuantityManager
 
         $inventoryLevel = $inventoryLevelRepository->getLevelByProductAndProductUnit($product, $productUnit);
 
-        return $inventoryLevel->getQuantity();
+        return $inventoryLevel ? $inventoryLevel->getQuantity() : 0;
     }
 
     /**
@@ -131,7 +131,11 @@ class LowInventoryQuantityManager
                     'lowInventoryThreshold'
                 );
 
-                $quantity = $productLevelQuantities[$product->getId()][$code];
+                $quantity = 0;
+                if (isset($productLevelQuantities[$product->getId()][$code])) {
+                    $quantity = $productLevelQuantities[$product->getId()][$code];
+                }
+
                 $response[$product->getId()] = $quantity <= $lowInventoryThreshold;
             } else {
                 $response[$product->getId()] = false;

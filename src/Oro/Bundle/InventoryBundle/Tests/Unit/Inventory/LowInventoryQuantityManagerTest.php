@@ -191,21 +191,66 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $isLowInventoryProduct);
     }
 
+    /**
+     * @param string $productUnitCode
+     *
+     * @return array
+     */
+    protected function getTestProducts($productUnitCode)
+    {
+        return [
+            [
+                'product' => $this->getProductEntity(1),
+                'product_unit' => $this->getProductUnitEntity($productUnitCode),
+            ],
+            [
+                'product' => $this->getProductEntity(2),
+                'product_unit' => $this->getProductUnitEntity($productUnitCode),
+            ],
+        ];
+    }
+
+    /**
+     * @param float $itemQuantity
+     * @param float $setQuantity
+     *
+     * @return array
+     */
+    protected function getQuantityForProductCollection($itemQuantity, $setQuantity)
+    {
+        return [
+            [
+                'product_id' => 1,
+                'code' => 'item',
+                'quantity' => $itemQuantity,
+            ],
+            [
+                'product_id' => 1,
+                'code' => 'set',
+                'quantity' => $setQuantity,
+            ],
+            [
+                'product_id' => 2,
+                'code' => 'item',
+                'quantity' => $itemQuantity,
+            ],
+            [
+                'product_id' => 2,
+                'code' => 'set',
+                'quantity' => $setQuantity,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function providerTestIsLowInventoryCollection()
     {
         return [
             '1. show low inventory for all products with enabled highlightLowInventory 
             (quantity < lowInventoryThreshold)' => [
-                'products' => [
-                    [
-                        'product' => $this->getProductEntity(1),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                    [
-                        'product' => $this->getProductEntity(2),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                ],
+                'products' => $this->getTestProducts('set'),
                 'highlightLowInventory' => [
                     1 => true,
                     2 => true,
@@ -214,28 +259,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                     1 => 10,
                     2 => 10,
                 ],
-                'quantityForProductCollection' => [
-                    [
-                        'product_id' => 1,
-                        'code' => 'item',
-                        'quantity' => 10,
-                    ],
-                    [
-                        'product_id' => 1,
-                        'code' => 'set',
-                        'quantity' => 5,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'item',
-                        'quantity' => 10,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'set',
-                        'quantity' => 5,
-                    ],
-                ],
+                'quantityForProductCollection' => $this->getQuantityForProductCollection(10, 5),
                 'expectedResult' => [
                     1 => true,
                     2 => true,
@@ -243,16 +267,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ],
             '2. hide low inventory for all products with enabled highlightLowInventory
             quantity > lowInventoryThreshold' => [
-                'products' => [
-                    [
-                        'product' => $this->getProductEntity(1),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                    [
-                        'product' => $this->getProductEntity(2),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                ],
+                'products' => $this->getTestProducts('set'),
                 'highlightLowInventory' => [
                     1 => true,
                     2 => true,
@@ -261,44 +276,14 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                     1 => 10,
                     2 => 10,
                 ],
-                'quantityForProductCollection' => [
-                    [
-                        'product_id' => 1,
-                        'code' => 'item',
-                        'quantity' => 15,
-                    ],
-                    [
-                        'product_id' => 1,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'item',
-                        'quantity' => 15,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                ],
+                'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
                 'expectedResult' => [
                     1 => false,
                     2 => false,
                 ],
             ],
             '3. hide low inventory for all products with disabled highlightLowInventory' => [
-                'products' => [
-                    [
-                        'product' => $this->getProductEntity(1),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                    [
-                        'product' => $this->getProductEntity(2),
-                        'product_unit' => $this->getProductUnitEntity('set'),
-                    ],
-                ],
+                'products' => $this->getTestProducts('set'),
                 'highlightLowInventory' => [
                     1 => false,
                     2 => false,
@@ -307,28 +292,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                     1 => 10,
                     2 => 10,
                 ],
-                'quantityForProductCollection' => [
-                    [
-                        'product_id' => 1,
-                        'code' => 'item',
-                        'quantity' => 15,
-                    ],
-                    [
-                        'product_id' => 1,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'item',
-                        'quantity' => 15,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                ],
+                'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
                 'expectedResult' => [
                     1 => false,
                     2 => false,
@@ -336,16 +300,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ],
             '4. show low inventory for product with enabled highlightLowInventory
             and hide product with disabled highlightLowInventory (quantity < lowInventoryThreshold)' => [
-                'products' => [
-                    [
-                        'product' => $this->getProductEntity(1),
-                        'product_unit' => $this->getProductUnitEntity('item'),
-                    ],
-                    [
-                        'product' => $this->getProductEntity(2),
-                        'product_unit' => $this->getProductUnitEntity('item'),
-                    ],
-                ],
+                'products' => $this->getTestProducts('item'),
                 'highlightLowInventory' => [
                     1 => true,
                     2 => false,
@@ -354,28 +309,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                     1 => 10,
                     2 => 10,
                 ],
-                'quantityForProductCollection' => [
-                    [
-                        'product_id' => 1,
-                        'code' => 'item',
-                        'quantity' => 5,
-                    ],
-                    [
-                        'product_id' => 1,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'item',
-                        'quantity' => 5,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                ],
+                'quantityForProductCollection' => $this->getQuantityForProductCollection(5, 30),
                 'expectedResult' => [
                     1 => true,
                     2 => false,
@@ -383,16 +317,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ],
             '5. hide low inventory for product with enabled highlightLowInventory
             and hide product with disabled highlightLowInventory (quantity > lowInventoryThreshold)' => [
-                'products' => [
-                    [
-                        'product' => $this->getProductEntity(1),
-                        'product_unit' => $this->getProductUnitEntity('item'),
-                    ],
-                    [
-                        'product' => $this->getProductEntity(2),
-                        'product_unit' => $this->getProductUnitEntity('item'),
-                    ],
-                ],
+                'products' => $this->getTestProducts('item'),
                 'highlightLowInventory' => [
                     1 => true,
                     2 => false,
@@ -401,28 +326,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                     1 => 10,
                     2 => 10,
                 ],
-                'quantityForProductCollection' => [
-                    [
-                        'product_id' => 1,
-                        'code' => 'item',
-                        'quantity' => 15,
-                    ],
-                    [
-                        'product_id' => 1,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'item',
-                        'quantity' => 5,
-                    ],
-                    [
-                        'product_id' => 2,
-                        'code' => 'set',
-                        'quantity' => 30,
-                    ],
-                ],
+                'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
                 'expectedResult' => [
                     1 => false,
                     2 => false,
