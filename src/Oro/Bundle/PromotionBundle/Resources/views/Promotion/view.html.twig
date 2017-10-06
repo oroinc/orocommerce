@@ -111,6 +111,27 @@
         }
     ]) %}
 
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.promotion.sections.assigned_coupons.label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [
+                        dataGrid.renderGrid(
+                            'promotion-coupons-assigned-to-promotion-grid',
+                            {
+                                '_grid_view': {'_disabled': true},
+                                'promotion_id': entity.id
+                            }
+                        )
+                    ]
+                }
+            ]
+        }
+    ]) %}
+
     {% set id = 'promotions-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
