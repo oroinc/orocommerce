@@ -28,7 +28,7 @@ define(function(require) {
 
         /** @property */
         visibleState: {
-            visible: !_.isMobile()
+            visible: _.isMobile()
         },
 
         /**
@@ -153,7 +153,8 @@ define(function(require) {
 
             this.selectHeaderCell = new BackendSelectHeaderCell({
                 collection: this.collection,
-                column: this.columns.findWhere('massActions')
+                column: this.columns.findWhere('massActions'),
+                selectState: this.selectState
             });
 
             this.massActionsContainer.append(this.selectAllHeaderCell.$el);

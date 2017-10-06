@@ -1,7 +1,7 @@
 <% if (_.isMobile()) { %>
     <div class="datagrid-massaction">
         <div class="btn-group full dropup">
-            <button class="btn bnt--full btn--info btn--size-s">Add too ..</button>
+            <button class="btn bnt--full btn--info btn--size-s" data-toggle> Add to Cart</button>
             <button class="btn btn--info btn--size-s dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>
             </button>
@@ -14,8 +14,10 @@
 <% } else { %>
     <div class="datagrid-massaction">
         <div class="btn-group">
-            <button class="btn btn--default btn--size-s">Add too ..</button>
-            <button class="btn btn--default btn--size-s dropdown-toggle" data-toggle="dropdown">
+            <button class="btn btn--default btn--size-s disabled dropdown-toggle"
+                    data-toggle="dropdown"
+                >
+                Chose Action
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu datagrid-massaction__dropdown-menu"

@@ -44,6 +44,8 @@ define(function(require) {
             this.$('[data-select-unbind]')
                 .on('click' + this.eventNamespace(), _.bind(this.onSelectUnbind, this));
 
+            this.collection.on('backgrid:visible-changed', _.bind(_.debounce(this.unCheckCheckbox, 50), this));
+
             BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
         },
 
@@ -54,34 +56,28 @@ define(function(require) {
                 this.collection.trigger('backgrid:selectNone');
             }
 
-            this.visibleState.visible = checked;
+            this.visibleState.visible = !checked;
 
-            this.canTSelect(checked);
+            this.canTSelect(!checked);
         },
 
         onSelectUnbind: function() {
             this.collection.trigger('backgrid:selectNone');
+            this.collection.trigger('backgrid:visible-changed');
             this.canTSelect(true);
         },
+
         canTSelect: function(flag) {
             this.collection.each(function(model) {
                 model.trigger('backgrid:canSelected', flag);
             });
         },
 
-        /**
-         * @inheritDoc
-         */
-        updateState: function(selectState) {
-            BackendSelectAllHeaderCell.__super__.updateState.call(this, selectState);
-
-            if (selectState.isEmpty()) {
-                this.unCheckCheckbox();
-            }
-        },
-
         unCheckCheckbox: function() {
-            this.$('[data-checkbox-change-visible]').prop('checked', false).trigger('change');
+            this.$('[data-checkbox-change-visible]')
+                .prop('checked', false)
+                .parent()
+                .removeClass('checked');
         }
     });
 

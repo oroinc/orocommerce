@@ -86,7 +86,7 @@ define(function(require) {
          * @param {Boolean} bool
          */
         hideView: function(bool) {
-            this.$el[bool ? 'removeClass' : 'addClass']('hidden');
+            this.$el[bool ? 'addClass' : 'removeClass']('hidden');
         },
 
         dispose: function() {
