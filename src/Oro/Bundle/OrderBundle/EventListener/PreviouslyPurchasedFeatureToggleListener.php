@@ -3,20 +3,20 @@
 namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration as OrderConfig;
 
 class PreviouslyPurchasedFeatureToggleListener
 {
     /** @var ProductReindexManager */
-    protected $reindexManager;
+    protected $productReindexManager;
 
     /**
-     * @param ProductReindexManager $reindexManager
+     * @param ProductReindexManager $productReindexManager
      */
-    public function __construct(ProductReindexManager $reindexManager)
+    public function __construct(ProductReindexManager $productReindexManager)
     {
-        $this->reindexManager = $reindexManager;
+        $this->productReindexManager = $productReindexManager;
     }
 
     /**
@@ -26,11 +26,8 @@ class PreviouslyPurchasedFeatureToggleListener
     {
         if ($event->isChanged(OrderConfig::getConfigKey(OrderConfig::CONFIG_KEY_ENABLE_PURCHASE_HISTORY))) {
             $scope = $event->getScope();
-            if ($scope == 'website') {
-                $this->reindexManager->triggerReindexationRequestEvent([], $event->getScopeId());
-            } else {
-                $this->reindexManager->triggerReindexationRequestEvent();
-            }
+            $websiteId = $scope == 'website' ? $event->getScopeId() : null;
+            $this->productReindexManager->reindexAllProducts($websiteId);
         }
     }
 }

@@ -1271,7 +1271,15 @@ services:
         tags:
             - { name: oro_entity.alias_provider }
 
-    oro_product.manager.product_reindex_manager:
-        class: 'Oro\Bundle\ProductBundle\Manager\ProductReindexManager'
+    oro_product.search.product_reindex_manager:
+        class: 'Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager'
+        public: false
         arguments:
             - '@event_dispatcher'
+
+    oro_product.search.delayed_product_reindex_manager:
+        class: 'Oro\Bundle\ProductBundle\Search\Reindex\DelayedProductReindexManager'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: flushReIndexEvents }

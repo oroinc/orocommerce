@@ -12,7 +12,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -61,27 +61,27 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     /**
      * @var ProductReindexManager
      */
-    protected $reindexManager;
+    protected $productReindexManager;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry               $registry
      * @param ScopeManager                  $scopeManager
      * @param ProductIndexScheduler         $indexScheduler
      * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ProductReindexManager         $reindexManager
+     * @param ProductReindexManager         $productReindexManager
      */
     public function __construct(
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
         ProductIndexScheduler $indexScheduler,
         InsertFromSelectQueryExecutor $insertExecutor,
-        ProductReindexManager $reindexManager
+        ProductReindexManager $productReindexManager
     ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->indexScheduler = $indexScheduler;
         $this->insertExecutor = $insertExecutor;
-        $this->reindexManager = $reindexManager;
+        $this->productReindexManager = $productReindexManager;
     }
 
     /**
@@ -201,8 +201,8 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function triggerProductReindexation(Product $product, Website $website = null)
     {
-        $this->reindexManager->triggerReindexationRequestEvent(
-            [$product->getId()],
+        $this->productReindexManager->reindexProduct(
+            $product,
             $website ? $website->getId() : null,
             false
         );

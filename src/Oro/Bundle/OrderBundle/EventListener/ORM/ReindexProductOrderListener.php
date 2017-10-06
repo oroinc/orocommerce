@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -27,9 +27,20 @@ class ReindexProductOrderListener
     const ORDER_INTERNAL_WEBSITE_FIELD = 'website';
 
     /**
+     * This is extended field
+     * @see \Oro\Bundle\OrderBundle\Entity\Order::$customerUser
+     */
+    const ORDER_CUSTOMER_USER_FIELD = 'customerUser';
+
+    /**
+     * @see \Oro\Bundle\OrderBundle\Entity\Order::$createdAt
+     */
+    const ORDER_CREATED_AT_FIELD = 'createdAt';
+
+    /**
      * @var ProductReindexManager
      */
-    protected $reindexManager;
+    protected $productReindexManager;
 
     /**
      * @var OrderStatusesProviderInterface
@@ -37,14 +48,14 @@ class ReindexProductOrderListener
     protected $statusesProvider;
 
     /**
-     * @param ProductReindexManager $reindexManager
+     * @param ProductReindexManager        $productReindexManager
      * @param OrderStatusesProviderInterface $statusesProvider
      */
     public function __construct(
-        ProductReindexManager $reindexManager,
+        ProductReindexManager $productReindexManager,
         OrderStatusesProviderInterface $statusesProvider
     ) {
-        $this->reindexManager = $reindexManager;
+        $this->productReindexManager = $productReindexManager;
         $this->statusesProvider = $statusesProvider;
     }
 
@@ -52,14 +63,13 @@ class ReindexProductOrderListener
      * @param Order $order
      * @param PreUpdateEventArgs $event
      */
-    public function processIndexOnOrderStatusChange(Order $order, PreUpdateEventArgs $event)
+    protected function processIndexOnOrderStatusChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_INTERNAL_STATUS_FIELD)) {
             $oldStatus = $event->getOldValue(static::ORDER_INTERNAL_STATUS_FIELD);
             $newStatus = $event->getNewValue(static::ORDER_INTERNAL_STATUS_FIELD);
             if ($this->isOrderStatusChangedForReindex($oldStatus, $newStatus)) {
-                $website = $order->getWebsite();
-                $this->reindexProductsInOrder($order, $website);
+                $this->reindexProductsInOrderWithoutStatusChecking($order, $order->getWebsite());
             }
         }
     }
@@ -68,19 +78,48 @@ class ReindexProductOrderListener
      * @param Order $order
      * @param PreUpdateEventArgs $event
      */
-    public function processIndexOnOrderWebsiteChange(Order $order, PreUpdateEventArgs $event)
+    protected function processIndexOnOrderWebsiteChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_INTERNAL_WEBSITE_FIELD)) {
-            $orderStatus = $order->getInternalStatus();
-            if (!$this->isAllowedStatus($orderStatus)) {
-                return;
-            }
-
             $oldWebsite = $event->getOldValue(static::ORDER_INTERNAL_WEBSITE_FIELD);
             $newWebsite = $event->getNewValue(static::ORDER_INTERNAL_WEBSITE_FIELD);
-            $this->reindexProductsInOrder($order, $oldWebsite);
-            $this->reindexProductsInOrder($order, $newWebsite);
+            $this->reindexProductsInOrderWithinWebsite($order, $oldWebsite);
+            $this->reindexProductsInOrderWithinWebsite($order, $newWebsite);
         }
+    }
+
+    /**
+     * @param Order              $order
+     * @param PreUpdateEventArgs $event
+     */
+    protected function processIndexOnCustomerUserChange(Order $order, PreUpdateEventArgs $event)
+    {
+        if ($event->hasChangedField(static::ORDER_CUSTOMER_USER_FIELD)) {
+            $this->reindexProductsInOrder($order);
+        }
+    }
+
+    /**
+     * @param Order              $order
+     * @param PreUpdateEventArgs $event
+     */
+    protected function processIndexOnOrderCreatedAtChange(Order $order, PreUpdateEventArgs $event)
+    {
+        if ($event->hasChangedField(static::ORDER_CREATED_AT_FIELD)) {
+            $this->reindexProductsInOrder($order);
+        }
+    }
+
+    /**
+     * @param Order              $order
+     * @param PreUpdateEventArgs $event
+     */
+    public function processOrderUpdate(Order $order, PreUpdateEventArgs $event)
+    {
+        $this->processIndexOnOrderStatusChange($order, $event);
+        $this->processIndexOnOrderCreatedAtChange($order, $event);
+        $this->processIndexOnOrderWebsiteChange($order, $event);
+        $this->processIndexOnCustomerUserChange($order, $event);
     }
 
     /**
@@ -88,32 +127,49 @@ class ReindexProductOrderListener
      */
     public function processOrderRemove(Order $order)
     {
+        $this->reindexProductsInOrder($order);
+    }
+
+    /**
+     * @param Order $order
+     */
+    protected function reindexProductsInOrder(Order $order)
+    {
+        $website = $order->getWebsite();
+        $this->reindexProductsInOrderWithinWebsite($order, $website);
+    }
+
+    /**
+     * @param Order        $order
+     * @param Website|null $website
+     */
+    protected function reindexProductsInOrderWithinWebsite(Order $order, Website $website = null)
+    {
         $orderStatus = $order->getInternalStatus();
         if (!$this->isAllowedStatus($orderStatus)) {
             return;
         }
 
-        $website = $order->getWebsite();
-        $this->reindexProductsInOrder($order, $website);
+        $this->reindexProductsInOrderWithoutStatusChecking($order, $website);
     }
 
     /**
      * @param Order $order
      * @param Website|null $website
      */
-    protected function reindexProductsInOrder(Order $order, Website $website = null)
+    protected function reindexProductsInOrderWithoutStatusChecking(Order $order, Website $website = null)
     {
         if (!$this->isReindexAllowed($website)) {
             return;
         }
 
         $productIds = [];
-        $websiteId = $order->getWebsite()->getId();
+        $websiteId = $website->getId();
         foreach ($order->getProductsFromLineItems() as $product) {
             $productIds[] = $product->getId();
         }
 
-        $this->reindexManager->triggerReindexationRequestEvent($productIds, $websiteId);
+        $this->productReindexManager->reindexProducts($productIds, $websiteId);
     }
 
     /**

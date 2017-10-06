@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -23,7 +22,7 @@ class ReindexProductLineItemListener
     /**
      * @var ProductReindexManager
      */
-    protected $reindexManager;
+    protected $productReindexManager;
 
     /**
      * @var OrderStatusesProviderInterface
@@ -31,22 +30,21 @@ class ReindexProductLineItemListener
     protected $statusesProvider;
 
     /**
-     * @param ProductReindexManager $reindexManager
+     * @param ProductReindexManager        $productReindexManager
      * @param OrderStatusesProviderInterface $statusesProvider
      */
     public function __construct(
-        ProductReindexManager $reindexManager,
+        ProductReindexManager $productReindexManager,
         OrderStatusesProviderInterface $statusesProvider
     ) {
-        $this->reindexManager = $reindexManager;
+        $this->productReindexManager = $productReindexManager;
         $this->statusesProvider = $statusesProvider;
     }
 
     /**
      * @param OrderLineItem $lineItem
-     * @param LifecycleEventArgs $args
      */
-    public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem, LifecycleEventArgs $args)
+    public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem)
     {
         if (!$this->isReindexAllowed($lineItem)) {
             return;
@@ -58,7 +56,7 @@ class ReindexProductLineItemListener
         }
 
         $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-        $this->reindexManager->reindexProduct($product, $websiteId);
+        $this->productReindexManager->reindexProduct($product, $websiteId);
     }
 
     /**
@@ -76,7 +74,7 @@ class ReindexProductLineItemListener
 
             $oldProduct = $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
             if ($oldProduct instanceof Product) {
-                $this->reindexManager->reindexProduct(
+                $this->productReindexManager->reindexProduct(
                     $oldProduct,
                     $websiteId
                 );
@@ -84,7 +82,7 @@ class ReindexProductLineItemListener
 
             $newProduct = $event->getNewValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
             if ($newProduct instanceof Product) {
-                $this->reindexManager->reindexProduct(
+                $this->productReindexManager->reindexProduct(
                     $newProduct,
                     $websiteId
                 );

@@ -93,7 +93,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('triggerReindexationRequestEvent');
 
         $this->order->setInternalStatus(new StubEnumValue(2, ''));
-        $this->listener->processIndexOnOrderStatusChange($this->order, $this->event);
+        $this->listener->processOrderUpdate($this->order, $this->event);
     }
 
     /**
@@ -132,7 +132,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $website = $this->createMock(Website::class);
         $order = $this->getEntity(OrderStub::class);
         $order->setWebsite($website);
-        $this->listener->processIndexOnOrderStatusChange($order, $this->event);
+        $this->listener->processOrderUpdate($order, $this->event);
     }
 
     /**
@@ -212,7 +212,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('triggerReindexationRequestEvent');
 
         $order = $this->getEntity(OrderStub::class);
-        $this->listener->processIndexOnOrderStatusChange($order, $this->event);
+        $this->listener->processOrderUpdate($order, $this->event);
     }
 
     public function testOrderRemoved()
@@ -318,6 +318,6 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->reindexManager->expects($this->exactly(2))
             ->method('triggerReindexationRequestEvent');
 
-        $this->listener->processIndexOnOrderWebsiteChange($this->order, $this->event);
+        $this->listener->processOrderUpdate($this->order, $this->event);
     }
 }

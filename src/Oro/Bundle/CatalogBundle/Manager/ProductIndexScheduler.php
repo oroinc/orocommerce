@@ -5,7 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Manager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 /**
  * Receives categories that has been changed and schedule
@@ -17,16 +17,16 @@ class ProductIndexScheduler
     private $doctrineHelper;
 
     /** @var ProductReindexManager */
-    private $reindexManager;
+    private $productReindexManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ProductReindexManager $reindexManager
+     * @param ProductReindexManager $productReindexManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $reindexManager)
+    public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $productReindexManager)
     {
         $this->doctrineHelper = $doctrineHelper;
-        $this->reindexManager = $reindexManager;
+        $this->productReindexManager = $productReindexManager;
     }
 
     /**
@@ -39,6 +39,6 @@ class ProductIndexScheduler
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
-        $this->reindexManager->triggerReindexationRequestEvent($productIds, $websiteId, $isScheduled);
+        $this->productReindexManager->reindexProducts($productIds, $websiteId, $isScheduled);
     }
 }
