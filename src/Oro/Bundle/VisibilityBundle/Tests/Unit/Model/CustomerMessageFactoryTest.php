@@ -3,13 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Model\CustomerMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CustomerMessageFactoryTest extends \PHPUnit_Framework_TestCase
@@ -40,7 +38,7 @@ class CustomerMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $customer = $this->getEntity(Customer::class, $params);
 
         $message = $this->customerMessageFactory->createMessage($customer);
-        $this->assertEquals($params, $message);
+        $this->assertEquals(['id' => 1,  'entity_class_name' => Customer::class], $message);
     }
 
     public function testGetEntityFromMessage()

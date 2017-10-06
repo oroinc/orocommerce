@@ -1,0 +1,5 @@
+config:
+    paths:
+        'orosale/js/app/components/quote-demand-component': 'bundles/orosale/js/app/components/quote-demand-component.js'
+        'orosale/js/app/components/quote-product-to-order-component': 'bundles/orosale/js/app/components/quote-product-to-order-component.js'
+        'orosale/js/app/views/product-add-to-rfq-view': 'bundles/orosale/js/app/views/product-add-to-rfq-view.js'

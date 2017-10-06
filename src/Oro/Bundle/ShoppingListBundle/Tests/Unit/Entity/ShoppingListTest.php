@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -71,6 +73,16 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($shoppingList, $shoppingList->getSourceDocument());
         $this->assertEquals('TEST', $shoppingList->getSourceDocumentIdentifier());
+    }
+
+    public function testGetVisitor()
+    {
+        $visitor = new CustomerVisitor();
+
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor($visitor);
+
+        $this->assertSame($visitor, $shoppingList->getVisitor());
     }
 
     public function testJsonSerialize()

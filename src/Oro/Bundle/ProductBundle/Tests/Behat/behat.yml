@@ -131,7 +131,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
     ProductForm Step One:
-      selector: 'div#container'
+      selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -139,7 +139,7 @@ oro_behat_extension:
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
     ProductForm:
-      selector: 'div#container'
+      selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -180,7 +180,7 @@ oro_behat_extension:
           Use Slider On Mobile: 'related_items[oro_product___related_products_use_slider_on_mobile][value]'
 
     UpsellProductsConfig:
-      selector: 'div#container'
+      selector: 'form[name="related_items"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -198,7 +198,7 @@ oro_behat_extension:
           Use Slider On Mobile: 'related_items[oro_product___upsell_products_use_slider_on_mobile][value]'
 
     Product Family Form:
-      selector: 'div#container'
+      selector: 'form[name="oro_attribute_family"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -467,6 +467,9 @@ oro_behat_extension:
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
 
+    T_shirt attribute group:
+      selector: "select[name='oro_attribute_family[attributeGroups][t_shirt_group][attributeRelations][]']"
+
     ImageCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
 
@@ -538,6 +541,8 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Product Images Default: 'product_images[oro_product___image_preview_on_product_listing_enabled][use_parent_scope_value]'
+          Product Images: 'product_images[oro_product___image_preview_on_product_listing_enabled][value]'
           Popup Gallery Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
           Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
 
@@ -591,6 +596,13 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+
+    Product Item Preview:
+      selector: '.product-item .product-item__preview'
+
+    Product Item Gallery Trigger:
+      selector: '.product-item [data-trigger-gallery-open]'
+
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
 

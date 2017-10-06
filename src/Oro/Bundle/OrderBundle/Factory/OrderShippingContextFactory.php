@@ -67,7 +67,12 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
 
         $shippingContextBuilder
             ->setSubTotal($subtotal)
-            ->setCurrency($order->getCurrency());
+            ->setCurrency($order->getCurrency())
+            ->setPaymentMethod($this->getOrderPaymentMethodIdentifier($order));
+
+        if (null !== $order->getWebsite()) {
+            $shippingContextBuilder->setWebsite($order->getWebsite());
+        }
 
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
 
@@ -91,18 +96,6 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
             $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 
-        $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
-
-        $paymentTransaction = $repository->findOneBy([
-            'entityClass' => Order::class,
-            'entityIdentifier' => $order->getId()
-        ]);
-
-        if (null !== $paymentTransaction) {
-            /** @var PaymentTransaction $paymentTransaction */
-            $shippingContextBuilder->setPaymentMethod($paymentTransaction->getPaymentMethod());
-        }
-
         return $shippingContextBuilder->getResult();
     }
 
@@ -119,5 +112,36 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
                 is_object($entity) ? get_class($entity) : gettype($entity)
             ));
         }
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return null|string
+     */
+    private function getOrderPaymentMethodIdentifier(Order $order)
+    {
+        $paymentTransaction = $this->findFirstPaymentTransaction($order);
+
+        if (null !== $paymentTransaction) {
+            return $paymentTransaction->getPaymentMethod();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return null|object|PaymentTransaction
+     */
+    private function findFirstPaymentTransaction(Order $order)
+    {
+        $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
+
+        return $repository->findOneBy([
+            'entityClass' => Order::class,
+            'entityIdentifier' => $order->getId()
+        ]);
     }
 }

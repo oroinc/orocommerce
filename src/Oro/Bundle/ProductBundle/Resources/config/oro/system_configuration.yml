@@ -398,6 +398,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.tooltip
 
+        oro_product.image_preview_on_product_listing_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.product.system_configuration.fields.image_preview_on_product_listing_enabled.label
+                tooltip: oro.product.system_configuration.fields.image_preview_on_product_listing_enabled.tooltip
+
         oro_product.popup_gallery_on_product_view:
             data_type: boolean
             type: oro_config_checkbox
@@ -469,6 +477,7 @@ system_configuration:
                                             - oro_product.product_image_watermark_position
                                     image_gallery:
                                         children:
+                                            - oro_product.image_preview_on_product_listing_enabled
                                             - oro_product.popup_gallery_on_product_view
                             featured_products:
                                 priority: 100

@@ -38,14 +38,6 @@ services:
         tags:
              - { name: layout.block_type, alias: product_view_container }
 
-    oro_product.layout.type.product_image:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{product: {required: true}}]]
-            - [setName, ['product_image']]
-        tags:
-             - { name: layout.block_type, alias: product_image }
-
     oro_product.layout.type.product_datagrid:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
@@ -107,3 +99,12 @@ services:
             - [setParent, ['container']]
         tags:
             - { name: layout.block_type, alias: quick_add_form_directions }
+
+    oro_product.block_type.product_listing_view:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{popup_gallery: {default: true}}]]
+            - [setName, ['product_listing_view']]
+            - [setParent, ['container']]
+        tags:
+            - { name: layout.block_type, alias: product_listing_view }

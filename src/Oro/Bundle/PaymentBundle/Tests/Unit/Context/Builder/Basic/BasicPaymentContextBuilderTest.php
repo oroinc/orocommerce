@@ -12,6 +12,7 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItem
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,6 +56,11 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private $paymentLineItemCollectionFactoryMock;
 
+    /**
+     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteMock;
+
     protected function setUp()
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
@@ -75,6 +81,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
         $this->paymentLineItemCollectionFactoryMock = $this->createMock(
             PaymentLineItemCollectionFactoryInterface::class
         );
+        $this->websiteMock = $this->createMock(Website::class);
     }
 
     public function testFullContextBuilding()
@@ -112,7 +119,8 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->setBillingAddress($this->billingAddressMock)
             ->setCustomer($this->customerMock)
             ->setCustomerUser($this->customerUserMock)
-            ->setShippingMethod($shippingMethod);
+            ->setShippingMethod($shippingMethod)
+            ->setWebsite($this->websiteMock);
 
         $expectedContext = $this->getExpectedFullContext(
             $shippingMethod,
@@ -168,6 +176,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
+            PaymentContext::FIELD_WEBSITE => $this->websiteMock,
         ];
 
         return new PaymentContext($params);
