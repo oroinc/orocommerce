@@ -96,7 +96,6 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::CALCULATE_WEB_CATALOG_CACHE,
                     'exception' => $e
                 ]

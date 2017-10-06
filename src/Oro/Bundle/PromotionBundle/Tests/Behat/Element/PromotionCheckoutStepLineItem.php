@@ -11,7 +11,10 @@ class PromotionCheckoutStepLineItem extends CheckoutStepLineItem implements Disc
      */
     public function getDiscount()
     {
-        $discount = $this->find('xpath', '//table//td[text()="Row Discount:"]/following-sibling::td');
+        $discount = $this->find(
+            'xpath',
+            'td[contains(@class, "checkout-order-summary__grid-td--subtotal")]/div[2]'
+        );
 
         return $discount ? $discount->getText() : null;
     }

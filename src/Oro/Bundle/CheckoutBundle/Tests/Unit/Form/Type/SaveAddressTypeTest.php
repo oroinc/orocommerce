@@ -5,30 +5,30 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class SaveAddressTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var  SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var  AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->securityFacade = $this->createMock('Oro\Bundle\SecurityBundle\SecurityFacade');
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         parent::setUp();
     }
 
     public function testCreateByUserWithoutPermissions()
     {
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->will($this->returnValueMap(
                 [
@@ -44,7 +44,7 @@ class SaveAddressTypeTest extends FormIntegrationTestCase
 
     public function testCreateByUserWithPermissions()
     {
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->will($this->returnValueMap(
                 [
@@ -62,7 +62,7 @@ class SaveAddressTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $type = new SaveAddressType($this->securityFacade);
+        $type = new SaveAddressType($this->authorizationChecker);
 
         return [
             new PreloadedExtension([$type], [])

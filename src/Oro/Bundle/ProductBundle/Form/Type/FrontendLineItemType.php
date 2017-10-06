@@ -87,6 +87,8 @@ class FrontendLineItemType extends AbstractType
                     'multiple' => false,
                     'required' => $options['required'],
                     'label' => $options['label'],
+                    'data' => $product->getPrimaryUnitPrecision()->getUnit(),
+                    'data_class' => null,
                 ]
             );
         }

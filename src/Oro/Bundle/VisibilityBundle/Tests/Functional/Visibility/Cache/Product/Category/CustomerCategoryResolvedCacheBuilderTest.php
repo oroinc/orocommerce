@@ -8,11 +8,11 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CustomerCategoryResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCustomerSubtreeCacheBuilder;
@@ -163,7 +163,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
     public function testChangeCustomerCategoryVisibilityToCustomerGroup()
     {
         $visibility = $this->getVisibility();
-        $visibility->setVisibility(CustomerCategoryVisibility::ACCOUNT_GROUP);
+        $visibility->setVisibility(CustomerCategoryVisibility::CUSTOMER_GROUP);
 
         $this->assertNotNull($this->getVisibilityResolved());
 

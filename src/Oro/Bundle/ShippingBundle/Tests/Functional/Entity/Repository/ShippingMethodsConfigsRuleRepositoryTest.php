@@ -65,7 +65,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     public function testGetByDestinationAndCurrency(array $shippingAddressData, $currency, array $expectedRules)
     {
         $expectedRulesIds = $this->getEntitiesIds($this->getEntitiesByReferences($expectedRules));
-        $actualRules = $this->repository->getByDestinationAndCurrency(
+        $actualRules = $this->repository->getByDestinationAndCurrencyAndWebsite(
             $this->createShippingAddress($shippingAddressData),
             $currency
         );
@@ -108,7 +108,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
             'shipping_rule.11'
         ]);
 
-        $actualRules = $this->repository->getByCurrencyWithoutDestination($currency);
+        $actualRules = $this->repository->getByCurrencyAndWebsiteWithoutDestination($currency);
 
         $this->assertEquals($this->getEntitiesIds($expectedRules), $this->getEntitiesIds($actualRules));
     }
@@ -232,12 +232,12 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $this->getEntitiesIds($expectedRules),
-            $this->getEntitiesIds($this->repository->getByCurrency('UAH'))
+            $this->getEntitiesIds($this->repository->getByCurrencyAndWebsite('UAH'))
         );
     }
 
     public function testGetByCurrencyWhenCurrencyNotExists()
     {
-        $this->assertEmpty($this->repository->getByCurrency('WON'));
+        $this->assertEmpty($this->repository->getByCurrencyAndWebsite('WON'));
     }
 }

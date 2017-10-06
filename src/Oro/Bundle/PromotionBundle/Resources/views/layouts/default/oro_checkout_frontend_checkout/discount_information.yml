@@ -8,6 +8,6 @@ layout:
             optionValue: '=data["oro_promotion_discounts_information"].getDiscountLineItemDiscounts(data["checkout"])'
         - '@add':
             id: 'promotion_checkout_line_items_list_discount_info'
-            parentId: 'checkout_order_summary_line_item_price_column'
             blockType: block
-            siblingId: 'checkout_order_summary_line_item_price_row_total'
+            parentId: 'checkout_order_summary_line_item_price_total_column'
+            siblingId: 'checkout_order_summary_line_item_price_total'

@@ -2,7 +2,7 @@
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
-
+  
 Feature: Manage up-sell products
   In order to be able to offer the customer to buy some products instead of the one that he is looking at
   As an Administrator
@@ -146,7 +146,7 @@ Feature: Manage up-sell products
   Scenario: Disable up-sell products functionality
     Given I login as administrator
     When go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products Use Default | false |
       | Enable Up-sell Products             | false |
@@ -158,7 +158,7 @@ Feature: Manage up-sell products
 
   Scenario: Limit should be restricted
     Given go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products                      | true  |
       | Maximum Number Of Assigned Items Use Default | false |
@@ -178,7 +178,7 @@ Feature: Manage up-sell products
 
   Scenario: Check up-sell grid view after up-sell product title has been updated
     Given go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products                      | true  |
       | Maximum Number Of Assigned Items Use Default | false |
@@ -216,7 +216,7 @@ Feature: Manage up-sell products
 
   Scenario: Check if relation is saved after disable/enable up-sell items feature
     Given go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products Use Default | false |
       | Enable Up-sell Products             | false |
@@ -226,7 +226,7 @@ Feature: Manage up-sell products
     And I should not see "Up-sell Products"
     And I should not see "UpsellProductsViewGrid" grid
     When go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products Use Default | false |
       | Enable Up-sell Products             | true  |

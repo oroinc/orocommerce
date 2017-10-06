@@ -72,10 +72,7 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                 } catch (InvalidArgumentException $e) {
                     $this->logger->error(
                         'Queue Message is invalid',
-                        [
-                            'exception' => $e,
-                            'message' => $message->getBody()
-                        ]
+                        ['exception' => $e]
                     );
 
                     return false;
@@ -83,7 +80,6 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                     $this->logger->error(
                         'Unexpected exception occurred during queue message processing',
                         [
-                            'message' => $message->getBody(),
                             'exception' => $exception,
                             'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
                         ]
@@ -97,10 +93,7 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message does not contain correct jobId',
-                [
-                    'exception' => $e,
-                    'message' => $message->getBody()
-                ]
+                ['exception' => $e]
             );
 
             return self::REJECT;

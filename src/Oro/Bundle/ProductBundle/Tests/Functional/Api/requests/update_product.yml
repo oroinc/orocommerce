@@ -1,0 +1,127 @@
+data:
+    type: products
+    id: '<toString(@product-1->getId())>'
+    attributes:
+        sku: 'new-sku'
+        status: 'disabled'
+        variantFields: []
+        productType: 'simple'
+        featured: true
+        newArrival: true
+    relationships:
+        names:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.names.default->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.names.en_US->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: 'names-new'
+        slugPrototypes:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.default->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.en_US->getId())>'
+        descriptions:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.descriptions.default->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.descriptions.en_US->getId())>'
+        shortDescriptions:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.shortDescriptions.default->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.shortDescriptions.en_US->getId())>'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->getId())>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->getId())>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->getId())>'
+                -
+                    type: productunitprecisions
+                    id: 'new-product-unit-precision'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: 'out_of_stock'
+included:
+    -
+        meta:
+            update: true
+        type: localizedfallbackvalues
+        id: '<toString(@product-1.descriptions.default->getId())>'
+        attributes:
+            fallback: null
+            string: null
+            text: '<b>Description Bold</b>'
+        relationships:
+            localization:
+                data: null
+    -
+        meta:
+            update: true
+        type: localizedfallbackvalues
+        id: '<toString(@product-1.names.default->getId())>'
+        attributes:
+            fallback: null
+            string: 'Test product changed'
+            text: null
+        relationships:
+            localization:
+                data: null
+    -
+        type: localizedfallbackvalues
+        id: 'names-new'
+        attributes:
+            fallback: null
+            string: 'Product in spanish'
+            text: null
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -
+        meta:
+            update: true
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.bottle->getId())>'
+        attributes:
+            precision: 0
+            conversionRate: 99
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit_precision.product-1.bottle->getUnit()->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'new-product-unit-precision'
+        attributes:
+            precision: 0
+            conversionRate: 15
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->getCode())>'
