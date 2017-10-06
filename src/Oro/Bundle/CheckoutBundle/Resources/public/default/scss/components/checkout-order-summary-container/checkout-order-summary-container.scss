@@ -1,0 +1,30 @@
+// @theme: default;
+
+.checkout-order-summary-container {
+    margin: $checkout-order-summary-container-margin;
+    padding: $checkout-order-summary-container-padding;
+
+    background-color: $checkout-order-summary-container-background-color;
+
+    border-radius: $checkout-order-summary-container-border-radius;
+
+    .checkout-order-summary__collapse {
+        @include clearfix();
+
+        &-container {
+            &::after {
+                background: $checkout-order-summary-container-collapse-container-shadow-background;
+            }
+        }
+    }
+
+    .checkout-order-summary__grid-th {
+        background-color: get-color('additional', 'middle');
+    }
+}
+
+@include breakpoint('tablet') {
+    .checkout-order-summary-container {
+        padding: $checkout-order-summary-container-tablet-padding;
+    }
+}

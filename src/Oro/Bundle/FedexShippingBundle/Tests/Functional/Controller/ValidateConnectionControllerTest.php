@@ -64,7 +64,11 @@ class ValidateConnectionControllerTest extends WebTestCase
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
             $this->getRequestFormData(SoapClientStub::NO_SERVICES_OPTION)
         );
-        $this->assertResponseHasErrorMessage('No services are available for current configuration');
+        $this->assertResponseHasErrorMessage(
+            'No services are available for current configuration,'
+            .' make sure that Shipping Origin configuration is correct in'
+            .' System Configuration -> Shipping -> Shipping Origin'
+        );
     }
 
     public function testValidateConnectionActionOk()
@@ -108,9 +112,9 @@ class ValidateConnectionControllerTest extends WebTestCase
                     'meterNumber' => 'meterNumber',
                     'pickupType' => 'pickupType',
                     'unitOfWeight' => 'unitOfWeight',
-                    'shippingServices' => ['2']
-                ]
-            ]
+                    'shippingServices' => ['2'],
+                ],
+            ],
         ];
     }
 

@@ -1,0 +1,37 @@
+data:
+    type: products
+    id: '<toString(@product-3->getId())>'
+    relationships:
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-1'
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-2'
+included:
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-1'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-2'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'

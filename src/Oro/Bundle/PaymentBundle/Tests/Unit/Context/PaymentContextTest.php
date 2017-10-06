@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PaymentContextTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +48,11 @@ class PaymentContextTest extends \PHPUnit_Framework_TestCase
      */
     private $sourceEntityMock;
 
+    /**
+     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteMock;
+
     protected function setUp()
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
@@ -64,6 +70,7 @@ class PaymentContextTest extends \PHPUnit_Framework_TestCase
         $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->websiteMock = $this->createMock(Website::class);
     }
 
     public function testConstructionAndGetters()
@@ -83,6 +90,7 @@ class PaymentContextTest extends \PHPUnit_Framework_TestCase
             PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
+            PaymentContext::FIELD_WEBSITE => $this->websiteMock,
         ];
 
         $paymentContext = new PaymentContext($params);
@@ -98,6 +106,7 @@ class PaymentContextTest extends \PHPUnit_Framework_TestCase
             PaymentContext::FIELD_SUBTOTAL => $paymentContext->getSubtotal(),
             PaymentContext::FIELD_SOURCE_ENTITY => $paymentContext->getSourceEntity(),
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $paymentContext->getSourceEntityIdentifier(),
+            PaymentContext::FIELD_WEBSITE => $paymentContext->getWebsite(),
         ];
 
         static::assertEquals($params, $getterValues);

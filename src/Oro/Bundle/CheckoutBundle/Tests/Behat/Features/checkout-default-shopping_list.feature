@@ -20,7 +20,7 @@ Feature: Default Checkout From Shopping List
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I check "Delete the shopping list" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     When I follow "click here to review"

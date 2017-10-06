@@ -1,0 +1,16 @@
+//@theme: default;
+
+.checkout-sidebar {
+    padding-right: 15px;
+
+    &--inner-invader {
+        float: left;
+        width: 220px;
+    }
+}
+
+@include breakpoint('tablet') {
+    .checkout-sidebar {
+        display: none;
+    }
+}

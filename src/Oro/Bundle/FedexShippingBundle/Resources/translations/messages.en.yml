@@ -21,12 +21,15 @@ oro:
                     lb.label: 'Pound'
                 labels.label: 'Label'
                 shipping_services.label: 'Shipping Services'
+        shipping_method_options:
+            surcharge.label: Surcharge
+            surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
 
         connection_validation:
             button.text: Check FedEx Connection
             result:
                 authorization_error.message: 'Authentication error has occurred'
-                no_services_error.message: 'No services are available for current configuration'
+                no_services_error.message: 'No services are available for current configuration, make sure that Shipping Origin configuration is correct in System Configuration -> Shipping -> Shipping Origin'
                 no_shipping_origin_error.message: 'No shipping origin options provided. Please, fill them in System Configuration -> Shipping -> Shipping Origin'
                 success.message: 'Connection is valid'
                 connection_error.message: 'Connection error has occurred. Please, try again later'

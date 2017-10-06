@@ -121,6 +121,7 @@ services:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
 
     oro_shipping.repository.product_shipping_options:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_shipping.entity.product_shipping_options.class%'
@@ -225,7 +226,7 @@ services:
     oro_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
-            - '@oro_shipping.methods_configs_rules.provider'
+            - '@oro_shipping.provider.methods_configs_rules.by_context.basic'
             - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
@@ -239,22 +240,6 @@ services:
         arguments:
              - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
              - '@oro_shipping.shipping_method_provider'
-
-    oro_shipping.methods_configs_rules.provider:
-        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
-        public: false
-        arguments:
-            - '@oro_rule.rule_filtration.service'
-            - '@oro_shipping.converter.shipping_context_to_rule_values'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
-
-    oro_shipping.enabled_methods_configs_rules.provider:
-        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
-        public: false
-        arguments:
-            - '@oro_rule.enabled_rule_filtration.service'
-            - '@oro_shipping.converter.shipping_context_to_rule_values'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
@@ -331,7 +316,7 @@ services:
         parent: oro_rule.action.visibility_provider
 
     oro_shipping.converter.shipping_context_to_rule_values:
-        class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
+        class: 'Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter'
         arguments:
             - '@oro_shipping.expression_language.decorated_product_line_item_factory'
 
@@ -493,3 +478,41 @@ services:
             - ['setLogger', ['@logger']]
         public: false
         lazy: true
+
+    oro_shipping.rule_filtration.basic_service:
+        class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
+        arguments:
+            - '@oro_rule.rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+
+    oro_shipping.provider.methods_configs_rules.by_context.basic:
+        class: 'Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider'
+        public: false
+        arguments:
+            - '@oro_shipping.rule_filtration.basic_service'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+
+    oro_shipping.enabled_rule_filtration.basic_service:
+        class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
+        arguments:
+            - '@oro_rule.enabled_rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+
+    oro_shipping.provider.methods_configs_rules.by_context_required_parameters:
+        class: 'Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\RegardlessDestination\RegardlessDestinationMethodsConfigsRulesByContextProvider'
+        public: false
+        arguments:
+            - '@oro_shipping.enabled_rule_filtration.basic_service'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+
+    oro_shipping.modifier.add_product_options_to_shipping_line_item_colection:
+        class: 'Oro\Bundle\ShippingBundle\Modifier\AddProductOptionsShippingLineItemCollectionModifier'
+        public: false
+        arguments:
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_shipping.repository.product_shipping_options'
+            - '@oro_shipping.line_item.factory_basic'
+
+    oro_shipping.factory.shipping_package_options:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
+        public: false
