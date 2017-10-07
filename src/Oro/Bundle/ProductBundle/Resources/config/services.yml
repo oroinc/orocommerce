@@ -1283,3 +1283,10 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: flushReIndexEvents }
+
+    oro_product.layout.data_provider.row_view_theme:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\RowViewThemeProvider'
+        arguments:
+            - '@oro_product.datagrid_theme_helper'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_datagrid_row_view }
