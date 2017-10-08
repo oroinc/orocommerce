@@ -1,0 +1,29 @@
+// @theme: default;
+
+.coupon-container {
+    display: inline-block;
+    margin: $coupon-container-container-offset;
+
+    &__content {
+        padding: $coupon-container-content-inner-offset;
+    }
+
+    &__form {
+        margin: $coupon-container-form-offset;
+    }
+
+    &__input-wrap {
+        display: inline-block;
+        padding: $coupon-container-input-wrap-inner-offset;
+        width: $coupon-container-input-wrap-width;
+    }
+}
+
+
+@include breakpoint('mobile') {
+    .coupon-container {
+        &__input-wrap {
+            width: $coupon-container-input-wrap-mobile-width;
+        }
+    }
+}

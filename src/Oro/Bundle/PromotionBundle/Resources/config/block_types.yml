@@ -1,0 +1,38 @@
+services:
+    oro_promotion.layout.block_type.promotion_applied_coupons:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        appliedCoupons: {required: true}
+                        appliedCouponsPromotions: {required: true}
+            - [setName, ['promotion_applied_coupons']]
+        tags:
+            - { name: layout.block_type, alias: promotion_applied_coupons }
+
+    oro_promotion.layout.block_type.promotion_coupons_expandable:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        opened: {default: false}
+            - [setName, ['promotion_coupons_expandable']]
+        tags:
+            - { name: layout.block_type, alias: promotion_coupons_expandable }
+
+    oro_promotion.layout.block_type.promotion_applied_coupons_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        entity: {required: true}
+                        refreshOnSuccess: {default: true}
+            - [setName, ['promotion_applied_coupons_container']]
+        tags:
+            - { name: layout.block_type, alias: promotion_applied_coupons_container }

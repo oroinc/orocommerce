@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -52,7 +53,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class Checkout implements
+class Checkout extends ExtendCheckout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     CustomerOwnerAwareInterface,
@@ -184,6 +185,7 @@ class Checkout implements
 
     public function __construct()
     {
+        parent::__construct();
         $this->completedData = new CompletedCheckoutData();
     }
 
