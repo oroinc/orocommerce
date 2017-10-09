@@ -23,6 +23,16 @@ oro_behat_extension:
     VisibilityToAll:
       selector: 'select[name="oro_catalog_category[visibility][all]"]'
 
+    Featured Item_0:
+      selector:
+        type: xpath
+        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "featured_menu")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Featured Item_0")]'
+
+    Featured Item_1:
+      selector:
+        type: xpath
+        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "featured_menu")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Featured Item_1")]'
+
     Language Form:
       selector: 'form[name="oro_action_operation"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
