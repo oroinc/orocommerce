@@ -143,7 +143,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
 
         $fallbackRepository->expects($this->exactly(count($customerGroupsData)))
             ->method('getCustomerIdentityByGroup')
-            ->willReturn(new \ArrayIterator($customersData));
+            ->willReturn($customersData);
 
         $this->checkoutSubtotalRepository
             ->expects($this->exactly(count($customersData)))
@@ -180,7 +180,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
             ]);
         $fallbackRepository->expects($this->exactly(count($websiteIds)))
             ->method('getCustomerIdentityByWebsite')
-            ->willReturn(new \ArrayIterator($customersData));
+            ->willReturn($customersData);
 
         $this->checkoutSubtotalRepository
             ->expects($this->exactly(count($websiteIds)))
@@ -223,7 +223,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
 
         $fallbackRepository->expects($this->exactly(count($websitesData)))
             ->method('getCustomerIdentityByWebsite')
-            ->willReturn(new \ArrayIterator($customersData));
+            ->willReturn($customersData);
 
         $this->checkoutSubtotalRepository
             ->expects($this->exactly(count($websitesData)))
