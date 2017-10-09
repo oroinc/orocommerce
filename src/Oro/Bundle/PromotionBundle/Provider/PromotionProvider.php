@@ -8,6 +8,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
+use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class PromotionProvider
@@ -92,21 +93,29 @@ class PromotionProvider
      *
      * @param $sourceEntity
      * @param PromotionDataInterface $promotion
+     * @param array|string[] $skipFilters
      * @return bool
      */
-    public function isPromotionApplicable($sourceEntity, PromotionDataInterface $promotion): bool
-    {
-        return !empty($this->filterPromotions($sourceEntity, [$promotion]));
+    public function isPromotionApplicable(
+        $sourceEntity,
+        PromotionDataInterface $promotion,
+        array $skipFilters = []
+    ): bool {
+        return !empty($this->filterPromotions($sourceEntity, [$promotion], $skipFilters));
     }
 
     /**
      * @param object $sourceEntity
      * @param array|PromotionDataInterface[] $promotions
+     * @param array|string[] $skipFilters
      * @return array|\Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface[]
      */
-    private function filterPromotions($sourceEntity, array $promotions): array
+    private function filterPromotions($sourceEntity, array $promotions, array $skipFilters = []): array
     {
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
+        if (!empty($skipFilters)) {
+            $contextData[AbstractSkippableFiltrationService::SKIP_FILTERS_KEY] = $skipFilters;
+        }
 
         return $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
     }

@@ -85,6 +85,11 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    LineItemQuantity:
+      selector:
+        type: 'xpath'
+        locator: '//input[@name="oro_product_frontend_line_item[quantity]"]'
+
     FrontendLineItemForm > Quantity:
       selector:
         type: 'css'
@@ -117,6 +122,9 @@ oro_behat_extension:
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
+
+    Create Order:
+      selector: 'a[title="Create Order"]'
 
   suites:
     OroShoppingListBundle:
