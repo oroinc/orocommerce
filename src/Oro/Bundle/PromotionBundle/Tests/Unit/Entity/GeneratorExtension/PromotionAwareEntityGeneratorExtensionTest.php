@@ -7,6 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,6 +19,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     public function testSupports($class, $expected)
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
+        $extension->registerSupportedEntity(Order::class);
         $schema = ['class' => $class];
         $this->assertSame($expected, $extension->supports($schema));
     }
@@ -28,7 +30,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     public function classDataProvider(): array
     {
         return [
-            'supported' => [Order::class, true],
+            'supported Order' => [Order::class, true],
             'unsupported' => [\stdClass::class, false],
         ];
     }
@@ -52,6 +54,26 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
                 [AppliedPromotionsAwareInterface::class],
                 [AppliedCouponsAwareInterface::class]
             );
+        $extension->generate($schema, $class);
+    }
+
+    public function testGenerateOnlyAppliedCouponsPropertyExists()
+    {
+        $extension = new PromotionAwareEntityGeneratorExtension();
+        $schema = [];
+        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        $class = $this->createMock(PhpClass::class);
+        $class->expects($this->any())
+            ->method('hasProperty')
+            ->willReturnMap([
+                ['appliedPromotions', false],
+                ['appliedCoupons', true]
+            ]);
+
+        $class->expects($this->once())
+            ->method('addInterfaceName')
+            ->with(AppliedCouponsAwareInterface::class);
+
         $extension->generate($schema, $class);
     }
 
