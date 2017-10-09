@@ -21,9 +21,9 @@ class ProductRepository extends WebsiteSearchRepository
         $query->setMaxResults(1);
 
         # calculate category counts
-        $query->addGroupBy('categoryCounts', 'text.category_path', Query::GROUP_FUNCTION_COUNT);
-        $groupedData = $query->getResult()->getGroupedData();
+        $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
+        $aggregatedData = $query->getResult()->getAggregatedData();
 
-        return $groupedData['categoryCounts'];
+        return $aggregatedData['categoryCounts'];
     }
 }

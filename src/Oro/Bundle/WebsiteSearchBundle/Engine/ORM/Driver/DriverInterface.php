@@ -30,12 +30,12 @@ interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterfac
     public function getRecordsCount(Query $query);
 
     /**
-     * Get grouped data assigned based on requirements from query
+     * Get aggregated data assigned based on requirements from query
      *
      * @param Query $query
      * @return array
      */
-    public function getGroupedData(Query $query);
+    public function getAggregatedData(Query $query);
 
     /**
      * @param EntityManagerInterface $entityManager
