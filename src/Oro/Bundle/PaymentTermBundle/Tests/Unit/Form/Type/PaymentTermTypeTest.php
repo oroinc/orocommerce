@@ -74,6 +74,24 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
                     'label' => 'Test Payment Term',
                 ],
             ],
+            'new payment term_xss' => [
+                'defaultData' => null,
+                'submittedData' => [
+                    'label' => '<script>alert(something)</script>',
+                ],
+                'expectedData' => [
+                    'label' => '',
+                ],
+            ],
+            'new payment term_xss_and_valid' => [
+                'defaultData' => null,
+                'submittedData' => [
+                    'label' => '<script>alert(something)</script>Valid',
+                ],
+                'expectedData' => [
+                    'label' => 'Valid',
+                ],
+            ],
             'update payment term' => [
                 'defaultData' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
                 'submittedData' => [
@@ -81,6 +99,24 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'label' => 'Test Payment Term Update',
+                ],
+            ],
+            'update payment term_xss' => [
+                'defaultData' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
+                'submittedData' => [
+                    'label' => '<script>alert(something)</script>',
+                ],
+                'expectedData' => [
+                    'label' => '',
+                ],
+            ],
+            'update payment term_xss_and_valid' => [
+                'defaultData' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
+                'submittedData' => [
+                    'label' => '<script>alert(something)</script>Valid',
+                ],
+                'expectedData' => [
+                    'label' => 'Valid',
                 ],
             ],
         ];
