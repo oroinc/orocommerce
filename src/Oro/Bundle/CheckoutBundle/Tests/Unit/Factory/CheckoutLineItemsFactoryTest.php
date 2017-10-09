@@ -24,14 +24,6 @@ class CheckoutLineItemsFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory = new CheckoutLineItemsFactory($this->registry);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->registry, $this->factory);
-    }
-
     public function testCreate()
     {
         $source = new \stdClass();

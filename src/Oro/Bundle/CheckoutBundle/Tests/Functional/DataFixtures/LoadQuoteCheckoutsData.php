@@ -11,8 +11,8 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandDa
 
 class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
 {
-    const CHECKOUT_1 = 'checkout.1';
-    const CHECKOUT_2 = 'checkout.2';
+    const CHECKOUT_1 = 'quote.checkout.1';
+    const CHECKOUT_2 = 'quote.checkout.2';
 
     const PAYMENT_METHOD = 'payment_term';
 

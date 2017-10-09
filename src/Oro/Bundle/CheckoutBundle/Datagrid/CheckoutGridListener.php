@@ -128,7 +128,7 @@ class CheckoutGridListener
         );
 
         $counts = $this->checkoutRepository->countItemsPerCheckout($ids);
-        $sources = $this->checkoutRepository->getCheckoutsByIds($ids);
+        $checkouts = $this->checkoutRepository->getCheckoutsByIds($ids);
 
         foreach ($records as $record) {
             $id = $record->getValue('id');
@@ -137,8 +137,8 @@ class CheckoutGridListener
             $ch = $this->checkoutRepository->find($id);
             $data = $ch->getCompletedData();
 
-            if (isset($sources[$id])) {
-                $record->addData(['startedFrom' => $this->getStartedFrom($sources[$id]->getSource()->getEntity())]);
+            if (isset($checkouts[$id])) {
+                $record->addData(['startedFrom' => $this->getStartedFrom($checkouts[$id]->getSource()->getEntity())]);
             }
 
             if ($record->getValue('completed')) {
@@ -154,21 +154,22 @@ class CheckoutGridListener
                 $record->addData(['itemsCount' => $counts[$id]]);
             }
 
-            if (isset($sources[$id]) && !$record->getValue('is_subtotal_valid')) {
-                $this->updateTotal($sources[$id], $record);
+            if (isset($checkouts[$id]) && !$record->getValue('isSubtotalValid')) {
+                $this->updateTotal($checkouts[$id], $record);
             }
         }
     }
 
     /**
-     * @param object $entity
+     * @param object $checkout
      * @param ResultRecord $record
      */
-    protected function updateTotal($entity, ResultRecord $record)
+    protected function updateTotal($checkout, ResultRecord $record)
     {
-        $subtotal = $this->totalProcessor->getTotal($entity);
+        $subtotal = $this->totalProcessor->getTotal($checkout);
         $record->setValue('subtotal', $subtotal->getAmount());
         $record->setValue('total', $record->getValue('subtotal') + $record->getValue('shippingEstimateAmount'));
+        $record->setValue('currency', $subtotal->getCurrency());
     }
 
     /**

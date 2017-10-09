@@ -29,12 +29,10 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
                 'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
                 'checkout' => ['payment_method' => $paymentMethodIdentifier],
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 600]],
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
                 'checkout' => ['payment_method' => $paymentMethodIdentifier],
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 700]],
             ],
         ];
     }

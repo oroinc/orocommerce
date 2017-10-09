@@ -29,18 +29,18 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
         $lineItems = $source->getLineItems();
         $checkoutLineItems = new ArrayCollection();
 
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $checkoutLineItem = new CheckoutLineItem();
             $checkoutLineItem
+                ->setFromExternalSource(false)
+                ->setPriceFixed(false)
                 ->setProduct($lineItem->getProduct())
-                ->setProductSku($lineItem->getProductSku())
                 ->setParentProduct($lineItem->getParentProduct())
+                ->setProductSku($lineItem->getProductSku())
                 ->setProductUnit($lineItem->getProductUnit())
                 ->setProductUnitCode($lineItem->getProductUnitCode())
-                ->setComment($lineItem->getNotes())
                 ->setQuantity($lineItem->getQuantity())
-                ->setPriceFixed(false);
+                ->setComment($lineItem->getNotes());
             $checkoutLineItems->add($checkoutLineItem);
         }
 

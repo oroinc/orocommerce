@@ -14,8 +14,6 @@ class CheckoutLineItemConverterRegistry
     protected $logger;
 
     /**
-     * CheckoutLineItemConverterRegistry constructor.
-     *
      * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
@@ -40,7 +38,7 @@ class CheckoutLineItemConverterRegistry
 
         $exception = new CheckoutLineItemConverterNotFoundException($source);
 
-        $this->logger->critical($exception->getMessage(), [$source]);
+        $this->logger->critical($exception->getMessage(), ['source_instance' => $source]);
 
         throw $exception;
     }

@@ -121,7 +121,8 @@ class CheckoutLineItemsManager
         }
         $allowedProduct = true;
 
-        if ($product = $lineItem->getProduct()) {
+        $product = $lineItem->getProduct();
+        if ($product) {
             $allowedProduct = false;
             if ($product->getInventoryStatus()) {
                 $statusId = $product->getInventoryStatus()->getId();

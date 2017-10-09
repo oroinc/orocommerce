@@ -21,6 +21,9 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Invalidate Checkout Subtotal when it's no longer valid
+ */
 class CheckoutSubtotalListener
 {
     const ACCOUNT_BATCH_SIZE = 500;
@@ -48,7 +51,7 @@ class CheckoutSubtotalListener
     {
         /** @var CheckoutSubtotalRepository $repository */
         $repository = $this->getRepository(CheckoutSubtotal::class);
-        $repository->invalidateByCpl($event->getCombinedPriceListIds());
+        $repository->invalidateByCombinedPriceList($event->getCombinedPriceListIds());
 
         $this->recalculateSubtotals();
     }
@@ -76,23 +79,9 @@ class CheckoutSubtotalListener
         $customersData = $event->getCustomerGroupsData();
         /** @var PriceListCustomerFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->getRepository(PriceListCustomerFallback::class);
-        /** @var CheckoutSubtotalRepository $subtotalRepository */
-        $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);
         foreach ($customersData as $data) {
             $customers = $fallbackRepository->getCustomerIdentityByGroup($data['customerGroups'], $data['websiteId']);
-            $i = 0;
-            $ids = [];
-            foreach ($customers as $customerData) {
-                $ids[] = $customerData['id'];
-                $i++;
-                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $subtotalRepository->invalidateByCustomers($ids, $data['websiteId']);
-                    $ids = [];
-                }
-            }
-            if (!empty($ids)) {
-                $subtotalRepository->invalidateByCustomers($ids, $data['websiteId']);
-            }
+            $this->invalidateSubtotalsByCustomers($customers, $data['websiteId']);
         }
 
         $this->recalculateSubtotals();
@@ -106,23 +95,9 @@ class CheckoutSubtotalListener
         $websiteIds = $event->getWebsiteIds();
         /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->getRepository(PriceListCustomerGroupFallback::class);
-        /** @var CheckoutSubtotalRepository $subtotalRepository */
-        $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);
         foreach ($websiteIds as $websiteId) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteId);
-            $i = 0;
-            $ids = [];
-            foreach ($customers as $customerData) {
-                $ids[] = $customerData['id'];
-                $i++;
-                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $subtotalRepository->invalidateByCustomers($ids, $websiteId);
-                    $ids = [];
-                }
-            }
-            if (!empty($ids)) {
-                $subtotalRepository->invalidateByCustomers($ids, $websiteId);
-            }
+            $this->invalidateSubtotalsByCustomers($customers, $websiteId);
         }
 
         $this->recalculateSubtotals();
@@ -137,25 +112,10 @@ class CheckoutSubtotalListener
         $fallbackWebsiteRepository = $this->getRepository(PriceListWebsiteFallback::class);
         /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->getRepository(PriceListCustomerGroupFallback::class);
-        /** @var CheckoutSubtotalRepository $subtotalRepository */
-        $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);
-
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
         foreach ($websitesData as $websiteData) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteData['id']);
-            $i = 0;
-            $ids = [];
-            foreach ($customers as $customerData) {
-                $ids[] = $customerData['id'];
-                $i++;
-                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $subtotalRepository->invalidateByCustomers($ids, $websiteData['id']);
-                    $ids = [];
-                }
-            }
-            if (!empty($ids)) {
-                $subtotalRepository->invalidateByCustomers($ids, $websiteData['id']);
-            }
+            $this->invalidateSubtotalsByCustomers($customers, $websiteData['id']);
         }
 
         $this->recalculateSubtotals();
@@ -176,5 +136,26 @@ class CheckoutSubtotalListener
     {
         $message = new Message();
         $this->messageProducer->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+    }
+
+    /**
+     * @param array $customers
+     * @param int $websiteId
+     */
+    protected function invalidateSubtotalsByCustomers(array $customers, $websiteId)
+    {
+        /** @var CheckoutSubtotalRepository $subtotalRepository */
+        $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);
+        $ids = [];
+        foreach ($customers as $customerData) {
+            $ids[] = $customerData['id'];
+            if (self::ACCOUNT_BATCH_SIZE === count($ids)) {
+                $subtotalRepository->invalidateByCustomers($ids, $websiteId);
+                $ids = [];
+            }
+        }
+        if (!empty($ids)) {
+            $subtotalRepository->invalidateByCustomers($ids, $websiteId);
+        }
     }
 }

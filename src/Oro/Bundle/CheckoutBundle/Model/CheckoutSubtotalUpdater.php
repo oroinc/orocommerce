@@ -10,6 +10,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
+/**
+ * Recalculate subtotals of checkout for list of enabled system currencies
+ */
 class CheckoutSubtotalUpdater
 {
     const BATCH_COUNT = 50;
@@ -44,10 +47,12 @@ class CheckoutSubtotalUpdater
         /** @var CheckoutRepository $repository */
         $repository = $entityManager->getRepository(Checkout::class);
         $checkouts = $repository->findWithInvalidSubtotals();
+        $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
+
         $cnt = 0;
         foreach ($checkouts as $checkout) {
             $cnt++;
-            $this->processCheckoutSubtotals($checkout);
+            $this->processCheckoutSubtotals($checkout, $enabledCurrencies);
             if ($cnt % self::BATCH_COUNT === 0) {
                 $entityManager->flush();
                 $cnt = 0;
@@ -65,7 +70,7 @@ class CheckoutSubtotalUpdater
      */
     public function recalculateCheckoutSubtotals(Checkout $checkout, $doFlush = false)
     {
-        $this->processCheckoutSubtotals($checkout);
+        $this->processCheckoutSubtotals($checkout, $this->currencyManager->getAvailableCurrencies());
 
         if ($doFlush) {
             $this->getEntityManager()->flush();
@@ -73,12 +78,16 @@ class CheckoutSubtotalUpdater
     }
 
     /**
+     * Prepare subtotals collection for all enabled system currencies. Old subtotals of checkout will be updated.
+     * If for some currencies there are no ssubtotals they will be created.
+     *
      * @param Checkout $checkout
+     * @param array $enabledCurrencies
      */
-    protected function processCheckoutSubtotals(Checkout $checkout)
+    protected function processCheckoutSubtotals(Checkout $checkout, array $enabledCurrencies)
     {
         $checkoutSubtotals = $checkout->getSubtotals();
-        $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
+
         $processedCurrencies = [];
         foreach ($checkoutSubtotals as $checkoutSubtotal) {
             $currency = $checkoutSubtotal->getCurrency();

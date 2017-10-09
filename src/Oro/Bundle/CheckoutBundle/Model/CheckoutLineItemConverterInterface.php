@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 
 /**
- * Should be used by services which can convert given source to CheckoutLineItems array
+ * Interface for converter that should create CheckoutLineItems array from given source
  */
 interface CheckoutLineItemConverterInterface
 {

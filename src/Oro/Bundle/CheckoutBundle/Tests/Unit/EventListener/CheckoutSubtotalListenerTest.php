@@ -9,6 +9,9 @@ use Oro\Bundle\CheckoutBundle\Async\Topics;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutSubtotalListener;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
@@ -68,14 +71,14 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($ids);
 
         $this->entityManager
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getRepository')
             ->with(CheckoutSubtotal::class)
             ->willReturn($this->checkoutSubtotalRepository);
 
         $this->checkoutSubtotalRepository
             ->expects($this->once())
-            ->method('invalidateByCpl')
+            ->method('invalidateByCombinedPriceList')
             ->with($ids);
 
         $this->assertMessageSent();
@@ -96,7 +99,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($customersData);
 
         $this->entityManager
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getRepository')
             ->with(CheckoutSubtotal::class)
             ->willReturn($this->checkoutSubtotalRepository);
@@ -131,13 +134,12 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
         $fallbackRepository = $this->createMock(PriceListCustomerFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
-            ->willReturn($fallbackRepository);
-        $this->entityManager
-            ->expects($this->at(1))
-            ->method('getRepository')
-            ->willReturn($this->checkoutSubtotalRepository);
+            ->willReturnMap([
+                [PriceListCustomerFallback::class, $fallbackRepository],
+                [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
+            ]);
 
         $fallbackRepository->expects($this->exactly(count($customerGroupsData)))
             ->method('getCustomerIdentityByGroup')
@@ -170,14 +172,12 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
         $fallbackRepository = $this->createMock(PriceListCustomerGroupFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
-            ->willReturn($fallbackRepository);
-        $this->entityManager
-            ->expects($this->at(1))
-            ->method('getRepository')
-            ->willReturn($this->checkoutSubtotalRepository);
-
+            ->willReturnMap([
+                [PriceListCustomerGroupFallback::class, $fallbackRepository],
+                [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
+            ]);
         $fallbackRepository->expects($this->exactly(count($websiteIds)))
             ->method('getCustomerIdentityByWebsite')
             ->willReturn($customersData);
@@ -209,17 +209,13 @@ class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
         $fallbackRepository = $this->createMock(PriceListCustomerGroupFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
-            ->willReturn($fallbackWebsiteRepository);
-        $this->entityManager
-            ->expects($this->at(1))
-            ->method('getRepository')
-            ->willReturn($fallbackRepository);
-        $this->entityManager
-            ->expects($this->at(2))
-            ->method('getRepository')
-            ->willReturn($this->checkoutSubtotalRepository);
+            ->willReturnMap([
+                [PriceListWebsiteFallback::class, $fallbackWebsiteRepository],
+                [PriceListCustomerGroupFallback::class, $fallbackRepository],
+                [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
+            ]);
 
         $fallbackWebsiteRepository->expects($this->once())
             ->method('getWebsiteIdByDefaultFallback')

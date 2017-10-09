@@ -17,7 +17,7 @@ class CheckoutRepository extends EntityRepository
     use WorkflowQueryTrait;
 
     /**
-     * This method is returning the count of line items per Checkout.
+     * Return the count of line items per Checkout.
      *
      * @param array $checkoutIds
      *
@@ -43,7 +43,7 @@ class CheckoutRepository extends EntityRepository
     }
 
     /**
-     * Returning checkouts by ids.
+     * Return the list of checkouts by ids.
      *
      * @param array $checkoutIds
      *
@@ -52,7 +52,13 @@ class CheckoutRepository extends EntityRepository
     public function getCheckoutsByIds(array $checkoutIds)
     {
         /* @var $checkouts Checkout[] */
-        $checkouts = $this->findBy(['id' => $checkoutIds]);
+        $checkouts = $this->createQueryBuilder('c')
+            ->select('c, s')
+            ->leftJoin('c.source', 's')
+            ->where('c.id in (:ids)')
+            ->setParameter('ids', $checkoutIds)
+            ->getQuery()
+            ->getResult();
 
         $sources = [];
         foreach ($checkouts as $checkout) {

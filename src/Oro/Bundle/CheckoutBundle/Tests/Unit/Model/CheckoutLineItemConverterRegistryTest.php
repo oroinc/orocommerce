@@ -24,14 +24,6 @@ class CheckoutLineItemConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry = new CheckoutLineItemConverterRegistry($this->logger);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->logger, $this->registry);
-    }
-
     public function testAddAndGetConverter()
     {
         $source = new \stdClass();
@@ -72,7 +64,10 @@ class CheckoutLineItemConverterRegistryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetConverterException($object, $expectedMessage)
     {
-        $this->logger->expects($this->once())->method('critical')->with($expectedMessage, [$object]);
+        $this->logger->expects($this->once())
+            ->method('critical')
+            ->with($expectedMessage, ['source_instance' => $object]);
+
         $this->expectException(RegistryException::class);
         $this->expectExceptionMessage($expectedMessage);
         $this->registry->getConverter($object);

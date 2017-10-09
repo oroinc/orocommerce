@@ -10,6 +10,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductUnitData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
@@ -27,35 +29,43 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     protected function getData()
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
+        $product = $this->getReference(LoadProductData::PRODUCT_5);
+        $productUnit = $this->getReference('product_unit.bottle');
         $lineItem1 = (new CheckoutLineItem())
             ->setQuantity(10)
             ->setPrice(Price::create(100, 'USD'));
         $lineItem2 = (new CheckoutLineItem())
             ->setQuantity(20)
             ->setPrice(Price::create(200, 'USD'));
+        $lineItem3 = (new CheckoutLineItem())
+            ->setQuantity(30)
+            ->setProduct($product)
+            ->setProductUnit($productUnit);
+        $lineItem4 = (new CheckoutLineItem())
+            ->setQuantity(40)
+            ->setProduct($product)
+            ->setProductUnit($productUnit);
 
         return [
             self::CHECKOUT_1 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_1,
                 'checkout' => ['payment_method' => $paymentTermIdentifier, 'shippingCostAmount' => 10],
                 'lineItems' => new ArrayCollection([$lineItem1, $lineItem2]),
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 500]],
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_2,
                 'checkout' => ['payment_method' => $paymentTermIdentifier],
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 300]],
             ],
             self::CHECKOUT_3 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_3,
                 'checkout' => ['payment_method' => $paymentTermIdentifier],
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 100]],
+                'lineItems' => new ArrayCollection([$lineItem3]),
             ],
             self::CHECKOUT_7 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_7,
                 'checkout' => ['payment_method' => $paymentTermIdentifier],
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
-                'checkoutSubtotals' => [['currency' => 'USD', 'amount' => 200]],
+                'lineItems' => new ArrayCollection([$lineItem4]),
             ],
         ];
     }
@@ -92,6 +102,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
         return array_merge(
             parent::getDependencies(),
             [
+                LoadProductData::class,
                 LoadShoppingLists::class,
                 LoadPaymentTermData::class,
                 LoadPaymentMethodsConfigsRuleData::class,

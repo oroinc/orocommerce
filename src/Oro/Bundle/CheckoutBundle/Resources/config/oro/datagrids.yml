@@ -22,8 +22,9 @@ datagrids:
                     - checkout.customerNotes
                     - checkout.shippingMethod
                     - checkout.shippingMethodType
-                    - checkout_subtotals.valid as is_subtotal_valid
+                    - checkout_subtotals.valid as isSubtotalValid
                     - checkout_subtotals.value as subtotal
+                    - checkout_subtotals.currency as currency
                     - (checkout_subtotals.value + COALESCE(checkout.shippingEstimateAmount, 0)) AS total
                 from:
                     - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }

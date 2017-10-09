@@ -27,14 +27,6 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->converter);
-    }
-
-    /**
      * @param bool $expected
      * @param mixed $source
      *

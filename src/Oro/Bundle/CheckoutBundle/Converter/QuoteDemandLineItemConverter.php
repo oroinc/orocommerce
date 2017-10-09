@@ -30,8 +30,9 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
         $checkoutLineItems = new ArrayCollection();
 
         foreach ($lineItems as $lineItem) {
-            $checkoutLineItem = new CheckoutLineItem();
             $quoteProductOffer = $lineItem->getQuoteProductOffer();
+
+            $checkoutLineItem = new CheckoutLineItem();
             $checkoutLineItem
                 ->setFromExternalSource(true)
                 ->setPriceFixed(true)

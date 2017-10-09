@@ -274,7 +274,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->totalProcessor
             ->expects($this->atMost(1))
             ->method('getTotal')
-            ->willReturn((new Subtotal())->setAmount(self::SUBTOTAL));
+            ->willReturn((new Subtotal())->setAmount(self::SUBTOTAL)->setCurrency('EUR'));
 
         $shoppingList = new ShoppingList();
         $checkout = new Checkout();
@@ -311,9 +311,10 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 'recordData' => [
                     'id' => 1,
                     'subtotal' => 5,
-                    'is_subtotal_valid' => false,
+                    'isSubtotalValid' => false,
                     'shippingEstimateAmount' => self::SHIPPING_COST,
                     'total' => 100,
+                    'currency' => 'EUR',
                 ],
                 true,
                 'expectedData' => [
@@ -321,15 +322,17 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                     'subtotal' => self::SUBTOTAL,
                     'shippingEstimateAmount' => self::SHIPPING_COST,
                     'total' => self::TOTAL,
+                    'currency' => 'EUR',
                 ],
             ],
             'without source and not valid totals' => [
                 'recordData' => [
                     'id' => 1,
                     'subtotal' => 5,
-                    'is_subtotal_valid' => false,
+                    'isSubtotalValid' => false,
                     'shippingEstimateAmount' => self::SHIPPING_COST,
                     'total' => 100,
+                    'currency' => 'EUR',
                 ],
                 false,
                 'expectedData' => [
@@ -337,15 +340,17 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                     'subtotal' => 5,
                     'shippingEstimateAmount' => 10,
                     'total' => 100,
+                    'currency' => 'EUR',
                 ],
             ],
             'with valid totals' => [
                 'recordData' => [
                     'id' => 1,
                     'subtotal' => 5,
-                    'is_subtotal_valid' => true,
+                    'isSubtotalValid' => true,
                     'shippingEstimateAmount' => self::SHIPPING_COST,
                     'total' => 100,
+                    'currency' => 'EUR',
                 ],
                 true,
                 'expectedData' => [
@@ -353,15 +358,17 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                     'subtotal' => 5,
                     'shippingEstimateAmount' => 10,
                     'total' => 100,
+                    'currency' => 'EUR',
                 ],
             ],
             'completed' => [
                 'recordData' => [
                     'id' => 1,
                     'subtotal' => 5,
-                    'is_subtotal_valid' => true,
+                    'isSubtotalValid' => true,
                     'shippingEstimateAmount' => self::SHIPPING_COST,
                     'total' => 100,
+                    'currency' => 'EUR',
                     'completed' => true,
                 ],
                 true,

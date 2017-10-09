@@ -2,24 +2,23 @@
 
 namespace Oro\Bundle\CheckoutBundle\DataProvider\LineItem;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
+/**
+ * Provide info to build collection of line items by given source entity.
+ * Source entity should implement CheckoutLineItemsHolderInterface.
+ */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
      */
     protected $frontendProductPricesDataProvider;
-
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $currencyManager;
 
     /**
      * @var ManagerRegistry
@@ -41,11 +40,11 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     /**
      * @param Checkout $entity
      *
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function prepareData($entity)
     {
-        $lineItems = $entity->getLineItems()->toArray();
+        $lineItems = $entity->getLineItems();
         $lineItemsPrices = $this->findPrices($lineItems);
 
         $data = [];
@@ -81,15 +80,18 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     }
 
     /**
-     * @param array $lineItems
+     * @param Collection $lineItems
      *
      * @return array
      */
-    protected function findPrices(array $lineItems)
+    protected function findPrices(Collection $lineItems)
     {
-        $lineItemsWithoutPrice = array_filter($lineItems, function (CheckoutLineItem $lineItem) {
-            return !$lineItem->isPriceFixed() && !$lineItem->getPrice() && $lineItem->getProduct();
-        });
+        $lineItemsWithoutPrice = $lineItems->filter(
+            function (CheckoutLineItem $lineItem) {
+                return !$lineItem->isPriceFixed() && !$lineItem->getPrice() && $lineItem->getProduct();
+            }
+        )->toArray();
+
         if (!$lineItemsWithoutPrice) {
             return [];
         }

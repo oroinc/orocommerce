@@ -21,7 +21,7 @@ class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit_Framework_TestC
     /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $message;
 
-    /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+    /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
     /** @var RecalculateCheckoutSubtotalsProcessor */

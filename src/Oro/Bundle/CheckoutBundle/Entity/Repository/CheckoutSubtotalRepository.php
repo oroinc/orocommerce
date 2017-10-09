@@ -14,13 +14,14 @@ class CheckoutSubtotalRepository extends EntityRepository
     /**
      * Invalidate checkout subtotals by given Combined Price List ids
      *
-     * @param array $cplIds
+     * @param array $combinedPriceListIds
      */
-    public function invalidateByCpl(array $cplIds)
+    public function invalidateByCombinedPriceList(array $combinedPriceListIds)
     {
-        if (0 === count($cplIds)) {
+        if (!$combinedPriceListIds) {
             return;
         }
+
         $qb = $this->createQueryBuilder('cs');
         $qb->select('DISTINCT cs.id')
             ->join('cs.checkout', 'c')
@@ -31,11 +32,13 @@ class CheckoutSubtotalRepository extends EntityRepository
                 Join::WITH,
                 $qb->expr()->eq('cli.product', 'cpp.product')
             )
-            ->where($qb->expr()->in('cpp.priceList', ':priceLists'))
-            ->andWhere('cs.valid = :isValid')
-            ->andWhere($qb->expr()->eq('cli.priceFixed', ':isPriceFixed'))
+            ->where(
+                $qb->expr()->in('cpp.priceList', ':priceLists'),
+                $qb->expr()->eq('cs.valid', ':isValid'),
+                $qb->expr()->eq('cli.priceFixed', ':isPriceFixed')
+            )
             ->setParameter('isValid', true)
-            ->setParameter('priceLists', $cplIds)
+            ->setParameter('priceLists', $combinedPriceListIds)
             ->setParameter('isPriceFixed', false);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
@@ -53,9 +56,8 @@ class CheckoutSubtotalRepository extends EntityRepository
             return;
         }
         $qb = $this->getBaseInvalidateQb($websiteId);
-        $qb->andWhere($qb->expr()->in('checkout.customer', ':customers'))
+        $qb->andWhere($qb->expr()->in('c.customer', ':customers'))
             ->setParameter('customers', $customerIds);
-
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $this->invalidateTotals($iterator);

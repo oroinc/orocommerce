@@ -108,7 +108,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
      *
      * @return Subtotal
      */
-    protected function getCheckoutSubtotal(Checkout $entity, string $currency)
+    protected function getCheckoutSubtotal(Checkout $entity, $currency)
     {
         $subtotalAmount = 0.0;
         $subtotal = $this->createSubtotal();

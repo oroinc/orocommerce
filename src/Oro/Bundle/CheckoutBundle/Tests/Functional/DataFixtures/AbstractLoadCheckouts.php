@@ -9,7 +9,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -17,7 +16,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -121,8 +119,6 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
                 $checkout->setLineItems($checkoutData['lineItems']);
             }
 
-            $this->loadCheckoutSubtotals($checkout, $checkoutData, $manager);
-
             $manager->persist($checkout);
             $this->setReference($name, $checkout);
 
@@ -139,28 +135,6 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         $config = $workflowDefinition->getConfiguration();
         $config['transition_definitions']['__start___definition']['preconditions'] = [];
         $workflowDefinition->setConfiguration($config);
-    }
-
-    /**
-     * @param Checkout $checkout
-     * @param array $checkoutData
-     * @param ObjectManager $manager
-     */
-    protected function loadCheckoutSubtotals(Checkout $checkout, array $checkoutData, ObjectManager $manager)
-    {
-        if (empty($checkoutData['checkoutSubtotals'])) {
-            return;
-        }
-        /** @var CheckoutSubtotal $checkoutSubtotal */
-        foreach ($checkoutData['checkoutSubtotals'] as $checkoutSubtotalData) {
-            $subtotal = new Subtotal();
-            $subtotal->setCurrency($checkoutSubtotalData['currency'])
-                ->setAmount($checkoutSubtotalData['amount']);
-            $checkoutSubtotal = new CheckoutSubtotal($checkout, $checkoutSubtotalData['currency']);
-            $checkoutSubtotal->setSubtotal($subtotal)
-                ->setValid(true);
-            $manager->persist($checkoutSubtotal);
-        }
     }
 
     /**

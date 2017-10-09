@@ -123,7 +123,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->with(Checkout::class)
             ->willReturn($repository);
-        $this->currencyManager->expects($this->never())->method('getAvailableCurrencies');
+        $this->currencyManager->expects($this->once())->method('getAvailableCurrencies');
 
         $this->objectManager->expects($this->never())->method('persist');
         $this->objectManager->expects($this->never())->method('flush');

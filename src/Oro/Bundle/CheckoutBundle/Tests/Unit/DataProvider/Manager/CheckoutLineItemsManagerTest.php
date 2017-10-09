@@ -11,7 +11,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -43,15 +42,9 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->checkoutLineItemsConverter = $this
-            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
 
-        $this->currencyManager = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
@@ -63,9 +56,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 }
                 return $result;
             }));
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,

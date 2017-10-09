@@ -148,8 +148,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -178,8 +176,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set product
-     *
      * @param Product $product
      *
      * @return $this
@@ -220,8 +216,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set productSku
-     *
      * @param string $productSku
      *
      * @return $this
@@ -262,8 +256,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set quantity
-     *
      * @param float $quantity
      *
      * @return $this
@@ -284,8 +276,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set productUnit
-     *
      * @param ProductUnit $productUnit
      *
      * @return $this
@@ -306,8 +296,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set productUnitCode
-     *
      * @param string $productUnitCode
      *
      * @return $this
@@ -348,8 +336,6 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * Set priceType
-     *
      * @param int $priceType
      *
      * @return $this

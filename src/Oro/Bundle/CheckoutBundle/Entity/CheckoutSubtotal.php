@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 
 /**
- * Entity for caching checkout subtotals data by currency
+ * Entity holds checkout subtotals data by currency
  * If isValid=false values should be recalculated
  *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository")

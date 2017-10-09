@@ -40,20 +40,12 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->frontendProductPricesDataProvider, $this->doctrine, $this->provider);
-    }
-
-    /**
      * @dataProvider isEntitySupportedProvider
      *
      * @param bool $expected
      * @param object $entity
      */
-    public function testisEntitySupported($expected, $entity)
+    public function testIsEntitySupported($expected, $entity)
     {
         $this->assertEquals($expected, $this->provider->isEntitySupported($entity));
     }

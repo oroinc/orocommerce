@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Exception;
 
-class CheckoutLineItemConverterNotFoundException extends \Exception
+class CheckoutLineItemConverterNotFoundException extends \RuntimeException
 {
     const MESSAGE_PATTERN = 'Unable to find proper converter for "%s"';
 
