@@ -12,8 +12,12 @@ class ProductRepository extends WebsiteSearchRepository
      * @param SearchQueryInterface $query
      * @return array ['<materializedPath>' => <numberOfProducts>, ...]
      */
-    public function getCategoryCounts(SearchQueryInterface $query)
+    public function getCategoryCounts(SearchQueryInterface $query = null)
     {
+        if (!$query) {
+            $query = $this->createQuery();
+        }
+
         # reset query parts to make it work as fast as possible
         $query->getQuery()->select([]);
         $query->getQuery()->getCriteria()->orderBy([]);
