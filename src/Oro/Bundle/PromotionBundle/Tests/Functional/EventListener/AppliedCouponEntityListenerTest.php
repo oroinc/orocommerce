@@ -77,26 +77,6 @@ class AppliedCouponEntityListenerTest extends WebTestCase
         $this->assertEmpty($this->findAllCouponUsage());
     }
 
-    public function testPostPersistWithoutOrderCoupon()
-    {
-        /** @var Coupon $coupon */
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
-
-        $appliedCoupon = new AppliedCoupon();
-        $appliedCoupon->setCouponCode($coupon->getCode());
-        $appliedCoupon->setSourceCouponId($coupon->getId());
-        $appliedCoupon->setSourcePromotionId($coupon->getPromotion()->getId());
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(
-            'AppliedCoupon object should have order for Oro\Bundle\PromotionBundle\Entity\CouponUsage creation.'
-        );
-
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(AppliedCoupon::class);
-        $em->persist($appliedCoupon);
-        $em->flush();
-    }
-
     /**
      * @return array|CouponUsage[]
      */

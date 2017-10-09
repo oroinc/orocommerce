@@ -77,6 +77,6 @@ class LoadOrderData extends AbstractFixture implements DependentFixtureInterface
      */
     private function getMapper()
     {
-        return $this->container->get('oro_checkout.mapper.order_mapper');
+        return $this->container->get('oro_checkout.alias.mapper.order_mapper');
     }
 }

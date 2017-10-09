@@ -32,6 +32,7 @@ class CouponSearchHandlerTest extends WebTestCase
             [
                 LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
                 LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL,
+                LoadCouponData::COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL
             ]
         );
 
@@ -49,6 +50,7 @@ class CouponSearchHandlerTest extends WebTestCase
             [
                 LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
                 LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL,
+                LoadCouponData::COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL
             ]
         );
 
