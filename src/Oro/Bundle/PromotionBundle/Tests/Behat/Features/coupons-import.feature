@@ -13,7 +13,7 @@ Feature: Import of Coupons codes
     And I see Uses per Coupon column
     And I see Uses per Person column
     And I see Valid Until column
-    And I see Promotion Rule Name column
+    And I see Promotion Name column
     And I see Owner Name column
     And I don't see Id column
     And I don't see Created at column
@@ -22,7 +22,7 @@ Feature: Import of Coupons codes
 
   Scenario: Import new Coupons
     Given I fill template with data:
-      | Coupon Code |  Uses per Coupon | Uses per Person | Valid Until         | Promotion Rule Name          | Owner Name           |
+      | Coupon Code |  Uses per Coupon | Uses per Person | Valid Until         | Promotion Name               | Owner Name           |
       | test1       |  101             | 91              | 01/01/2020 00:00:00 | order Discount Promotion     | Main                 |
       | test2       |  102             | 92              | 10/10/2010 10:00:00 | line Item Discount Promotion | Main                 |
       | test3       |  103             | 93              |                     |                              | Main                 |
