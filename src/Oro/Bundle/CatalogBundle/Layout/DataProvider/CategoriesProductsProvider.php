@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
 
 class CategoriesProductsProvider
 {
@@ -50,40 +50,42 @@ class CategoriesProductsProvider
      */
     public function getCountByCategories($categoriesIds)
     {
-        $countByCategories = [];
-
         /** @var Category[] $categories */
         $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
         $categoriesCounts = [];
 
+        $searchQb = $this->searchRepository->createQuery();
+        $searchQb->addSelect('id')
+            ->setFrom('oro_product_WEBSITE_ID')
+            ->addWhere(Criteria::expr()->in('integer.category_id', $categoriesIds));
+
+        $counts = $this->searchRepository->getCategoryCounts($searchQb);
+
         foreach ($categories as $category) {
+            unset($searchQb);
             $categoryId = $category->getId();
+            $categoryPath = $category->getMaterializedPath();
+            $categoriesCounts[$categoryId] = isset($counts[$categoryPath]) ? (int) $counts[$categoryPath] : 0;
+
+            if (!($childrenIds = $this->categoryRepository->getChildrenIds($category))) {
+                continue;
+            }
+
             $searchQb = $this->searchRepository->createQuery();
             $searchQb->addSelect('id')
-                ->addWhere(Criteria::expr()->eq('integer.category_id', $categoryId));
+                ->setFrom('oro_product_WEBSITE_ID')
+                ->addWhere(Criteria::expr()->in('integer.category_id', $childrenIds));
 
-            $count = $searchQb->getTotalCount();
-
-            $categoriesCounts[$categoryId] = $count;
-            unset($searchQb);
-        }
-
-        foreach ($categories as $category) {
-            $childrenIds = $this->categoryRepository->getChildrenIds($category);
-
-            $count = $categoriesCounts[$category->getId()] ?? 0;
-
-            foreach ($childrenIds as $id) {
-                if (isset($categoriesCounts[$id])) {
-                    $count += (int) $categoriesCounts[$id];
-                }
+            if (!($counts = $this->searchRepository->getCategoryCounts($searchQb))) {
+                continue;
             }
 
-            if ($count > 0) {
-                $countByCategories[$category->getId()] = $count;
+            foreach ($counts as $count) {
+                $categoriesCounts[$categoryId] += $count;
+                unset($searchQb);
             }
         }
 
-        return $countByCategories;
+        return $categoriesCounts;
     }
 }
