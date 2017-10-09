@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
+use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsSubtotalsData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
@@ -38,6 +39,7 @@ class OrderControllerTest extends FrontendWebTestCase
             [
                 LoadOrders::class,
                 LoadQuoteCheckoutsData::class,
+                LoadQuoteCheckoutsSubtotalsData::class,
                 LoadShoppingListsCheckoutsData::class,
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class

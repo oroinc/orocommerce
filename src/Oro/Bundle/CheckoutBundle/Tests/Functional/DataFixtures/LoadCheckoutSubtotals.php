@@ -64,7 +64,7 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
      */
     public function load(ObjectManager $manager)
     {
-        foreach (self::$data as $key => $item) {
+        foreach (static::$data as $key => $item) {
             /** @var Checkout $checkout */
             $checkout = $this->getReference($item['checkout']);
             $checkoutSubtotal = new CheckoutSubtotal($checkout, $item['currency']);

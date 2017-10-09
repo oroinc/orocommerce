@@ -139,10 +139,10 @@ class CheckoutSubtotalListener
     }
 
     /**
-     * @param array $customers
+     * @param \Iterator $customers
      * @param int $websiteId
      */
-    protected function invalidateSubtotalsByCustomers(array $customers, $websiteId)
+    protected function invalidateSubtotalsByCustomers(\Iterator $customers, $websiteId)
     {
         /** @var CheckoutSubtotalRepository $subtotalRepository */
         $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);
