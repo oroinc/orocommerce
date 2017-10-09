@@ -55,7 +55,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
 
         $indexScheduler = new ProductIndexScheduler(
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('oro_product.manager.product_reindex_manager')
+            $container->get('oro_product.search.product_reindex_manager')
         );
 
         $this->insertExecutor = $container->get('oro_entity.orm.insert_from_select_query_executor');
@@ -69,7 +69,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
             $this->scopeManager,
             $indexScheduler,
             $this->insertExecutor,
-            $container->get('oro_product.manager.product_reindex_manager')
+            $container->get('oro_product.search.product_reindex_manager')
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.customer_group_category_visibility_resolved.class')

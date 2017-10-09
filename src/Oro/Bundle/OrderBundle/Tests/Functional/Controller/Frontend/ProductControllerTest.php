@@ -49,7 +49,7 @@ class ProductControllerTest extends FrontendWebTestCase
         $productData = $result['data'];
 
         $this->assertEquals(LoadProductData::PRODUCT_1, $productData[0]['sku']);
-        $this->assertEquals(LoadProductData::PRODUCT_2, $productData[1]['sku']);
+        $this->assertEquals(LoadProductData::PRODUCT_6, $productData[1]['sku']);
     }
 
     public function testPreviouslyPurchasedGridIfUserNonAuth()
@@ -93,7 +93,7 @@ class ProductControllerTest extends FrontendWebTestCase
                     self::FRONTEND_GRID_NAME . '[_sort_by][names]' => 'DESC'
                 ],
                 [
-                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_1,
                 ]
             ],
@@ -103,16 +103,16 @@ class ProductControllerTest extends FrontendWebTestCase
                 ],
                 [
                     LoadProductData::PRODUCT_1,
-                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
                 ]
             ],
             'With filter by sku case_1' => [
                 [
                     self::FRONTEND_GRID_NAME . '[_filter][sku][type]'  => NumberFilterTypeInterface::TYPE_EQUAL,
-                    self::FRONTEND_GRID_NAME . '[_filter][sku][value]' => LoadProductData::PRODUCT_2,
+                    self::FRONTEND_GRID_NAME . '[_filter][sku][value]' => LoadProductData::PRODUCT_6,
                 ],
                 [
-                    LoadProductData::PRODUCT_2
+                    LoadProductData::PRODUCT_6
                 ]
             ],
             'With filter by sku case_2' => [

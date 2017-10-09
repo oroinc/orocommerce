@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Search\Reindex;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,16 +23,16 @@ class ProductReindexManagerTest extends \PHPUnit_Framework_TestCase
         $this->reindexManager = new ProductReindexManager($this->eventDispatcher);
     }
 
-    public function testTriggerReindexationNoProducts()
+    public function testReindexNoProducts()
     {
         $productIds = [];
         $websiteId = 777;
 
         $this->eventDispatcher->expects($this->never())->method('dispatch');
-        $this->reindexManager->triggerReindexationRequestEvent($productIds, $websiteId);
+        $this->reindexManager->reindexProducts($productIds, $websiteId);
     }
 
-    public function testTriggerReindexationRequestEvent()
+    public function testReindexProducts()
     {
         $productIds = [1, 2, 3];
         $websiteId = 777;
@@ -40,6 +40,6 @@ class ProductReindexManagerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(ReindexationRequestEvent::EVENT_NAME, $event);
-        $this->reindexManager->triggerReindexationRequestEvent($productIds, $websiteId);
+        $this->reindexManager->reindexProducts($productIds, $websiteId);
     }
 }

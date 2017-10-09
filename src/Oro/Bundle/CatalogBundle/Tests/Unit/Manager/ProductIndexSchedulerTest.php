@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,7 +54,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->with($categories)
             ->willReturn($productIds);
         $this->reindexManager->expects($this->once())
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
     }

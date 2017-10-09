@@ -71,7 +71,7 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
         ],
         self::ORDER_LINEITEM_6 => [
             'order' => LoadOrders::ORDER_5,
-            'product' => LoadProductData::PRODUCT_2,
+            'product' => LoadProductData::PRODUCT_6,
             'quantity' => 20,
             'productUnit' => LoadProductUnits::LITER,
             'price' => [

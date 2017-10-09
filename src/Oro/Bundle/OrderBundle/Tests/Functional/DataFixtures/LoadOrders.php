@@ -159,6 +159,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
 
         $website = $this->getDefaultWebsite();
+        $this->setReference('defaultWebsite', $website);
 
         $order = new Order();
         $order

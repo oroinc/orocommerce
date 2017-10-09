@@ -15,7 +15,7 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\PreviouslyPurchasedOrderStatusesProviderStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
@@ -84,13 +84,12 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('hasChangedField')
-            ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
             ->willReturn(false);
 
         $this->reindexManager->expects($this->never())
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $this->order->setInternalStatus(new StubEnumValue(2, ''));
         $this->listener->processOrderUpdate($this->order, $this->event);
@@ -110,10 +109,17 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('hasChangedField')
-            ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(true);
+            ->willReturnCallback(
+                function ($fieldName) {
+                    if ($fieldName == ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD) {
+                        return true;
+                    }
+
+                    return false;
+                }
+            );
 
         $this->event->expects($this->once())
             ->method('getOldValue')
@@ -127,7 +133,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->reindexManager
             ->expects($expectThatReindexEventWilBeCalled ? $this->once() : $this->never())
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $website = $this->createMock(Website::class);
         $order = $this->getEntity(OrderStub::class);
@@ -189,8 +195,15 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->event->expects($this->any())
             ->method('hasChangedField')
-            ->with(ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD)
-            ->willReturn(true);
+            ->willReturnCallback(
+                function ($fieldName) {
+                    if ($fieldName == ReindexProductOrderListener::ORDER_INTERNAL_STATUS_FIELD) {
+                        return true;
+                    }
+
+                    return false;
+                }
+            );
 
         $this->event->expects($this->once())
             ->method('getOldValue')
@@ -209,7 +222,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ));
 
         $this->reindexManager->expects($this->never())
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $order = $this->getEntity(OrderStub::class);
         $this->listener->processOrderUpdate($order, $this->event);
@@ -232,7 +245,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->reindexManager
             ->expects($this->once())
-            ->method('triggerReindexationRequestEvent')
+            ->method('reindexProducts')
             ->with($productIds, $websiteId);
 
         $this->listener->processOrderRemove($this->order);
@@ -248,7 +261,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('triggerReindexationRequestEvent')
+            ->method('reindexProducts')
             ->with($productIds, $websiteId);
 
         $this->listener->processOrderRemove($order);
@@ -280,7 +293,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->reindexManager->expects($this->never())
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $this->order->setWebsite($this->website);
         $this->listener->processOrderRemove($this->order);
@@ -288,10 +301,17 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testReindexOnOrderWebsiteChange()
     {
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('hasChangedField')
-            ->with(ReindexProductOrderListener::ORDER_INTERNAL_WEBSITE_FIELD)
-            ->willReturn(true);
+            ->willReturnCallback(
+                function ($fieldName) {
+                    if ($fieldName == ReindexProductOrderListener::ORDER_INTERNAL_WEBSITE_FIELD) {
+                        return true;
+                    }
+
+                    return false;
+                }
+            );
 
         $website2 = $this->createMock(Website::class);
         $website2->expects($this->any())
@@ -316,7 +336,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->order->setWebsite($this->website);
 
         $this->reindexManager->expects($this->exactly(2))
-            ->method('triggerReindexationRequestEvent');
+            ->method('reindexProducts');
 
         $this->listener->processOrderUpdate($this->order, $this->event);
     }

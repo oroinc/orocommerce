@@ -41,7 +41,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $container = $this->client->getContainer();
         $indexScheduler = new ProductIndexScheduler(
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('oro_product.manager.product_reindex_manager')
+            $container->get('oro_product.search.product_reindex_manager')
         );
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->cacheBuilder = new ProductResolvedCacheBuilder(
@@ -49,7 +49,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
             $container->get('oro_scope.scope_manager'),
             $indexScheduler,
             $container->get('oro_entity.orm.insert_from_select_query_executor'),
-            $container->get('oro_product.manager.product_reindex_manager')
+            $container->get('oro_product.search.product_reindex_manager')
         );
         $this->cacheBuilder->setCacheClass(
             $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
