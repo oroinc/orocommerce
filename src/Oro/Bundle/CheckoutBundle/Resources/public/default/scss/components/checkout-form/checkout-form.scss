@@ -19,6 +19,12 @@
         }
     }
 
+    &__datepicker {
+        .datepicker-input {
+            max-width: none;
+        }
+    }
+
     &__datepicker,
     &__optional-ref-number,
     &__order-notes {

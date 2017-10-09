@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Entity\GeneratorExtension;
 
 use CG\Generator\PhpClass;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
@@ -15,11 +14,24 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 class PromotionAwareEntityGeneratorExtension extends AbstractEntityGeneratorExtension
 {
     /**
+     * @var array
+     */
+    private $supportedEntities = [];
+
+    /**
+     * @param string $entityClassName
+     */
+    public function registerSupportedEntity($entityClassName)
+    {
+        $this->supportedEntities[$entityClassName] = true;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function supports(array $schema)
+    public function supports(array $schema): bool
     {
-        return $schema['class'] === Order::class;
+        return !empty($this->supportedEntities[$schema['class']]);
     }
 
     /**
