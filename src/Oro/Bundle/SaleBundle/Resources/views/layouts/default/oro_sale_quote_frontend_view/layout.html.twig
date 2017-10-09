@@ -191,7 +191,7 @@
 
 {% block quote_body_column_element_widget %}
     {% if address is not null %}
-        <tr>
+        <tr class="customer-info-grid__row">
             <td class="customer-info-grid__element-label">{{ label|trans }}</td>
             <td class="customer-info-grid__element-content">{{ block_widget(block) }}</td>
         </tr>
