@@ -240,6 +240,8 @@ oro:
                     suffix.label: Symbols
                 message:
                     save_success: Coupons have been generated successfully
+            importexport:
+                promotion: Promotion Name
 
         appliedpromotion:
             entity_label: Applied Promotion

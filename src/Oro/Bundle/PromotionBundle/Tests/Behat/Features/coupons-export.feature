@@ -11,7 +11,7 @@ Feature: Export of Coupons codes
     When I press "Export"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     And Exported file for "Coupon" contains the following data:
-      | Coupon Code |  Uses per Coupon | Uses per Person | Valid Until         | Promotion Rule Name           | Owner Name          |
+      | Coupon Code |  Uses per Coupon | Uses per Person | Valid Until         | Promotion Name                | Owner Name          |
       | test-1      |  3               | 2               | 01/01/2020 00:00:00 | order Discount Promotion      | Main                |
       | test-2      |  4               | 3               | 10/10/2010 10:00:00 | line Item Discount Promotion  | Main                |
       | test-3      |  5               | 4               |                     |                               | Main                |
