@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemCollectionHandler;
-use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemCollectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -43,7 +41,6 @@ class AjaxLineItemController extends AbstractLineItemController
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
-
         if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
         }
@@ -75,56 +72,7 @@ class AjaxLineItemController extends AbstractLineItemController
         }
 
         return new JsonResponse(
-            $this->getProductSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
-        );
-    }
-
-    /**
-     * Add Several Products to Shopping List (product view form)
-     *
-     * @Route("/add-products-from-view/", name="oro_shopping_list_frontend_add_products")
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function addSeveralProductsFromViewAction(Request $request)
-    {
-        $configManager = $this->get('oro_config.manager');
-        if (!($this->getUser() || $configManager->get('oro_shopping_list.availability_for_guests'))) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
-
-        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $aclGroupProvider = $this->get('oro_security.acl.group_provider.chain');
-        if (!$this->get('security.authorization_checker')
-            ->isGranted('CREATE', 'entity:'.sprintf('%s@%s', $aclGroupProvider->getGroup(), LineItem::class))) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createForm(LineItemCollectionType::NAME, $shoppingList);
-
-        $handler = new LineItemCollectionHandler(
-            $form,
-            $request,
-            $this->getDoctrine(),
-            $shoppingListManager
-        );
-        $isFormHandled = $handler->process();
-
-        if (!$isFormHandled) {
-            return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
-        }
-
-        return new JsonResponse(
-            $this->getSuccessResponse($shoppingList, 'oro.shoppinglist.products.added.label')
+            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
         );
     }
 
@@ -232,7 +180,7 @@ class AjaxLineItemController extends AbstractLineItemController
      * @param string $message
      * @return array
      */
-    protected function getProductSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
         $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
             ->getProductUnitsQuantity($product);
@@ -244,23 +192,6 @@ class AjaxLineItemController extends AbstractLineItemController
                 'id' => $product->getId(),
                 'shopping_lists' => $productShoppingLists
             ],
-            'shoppingList' => [
-                'id' => $shoppingList->getId(),
-                'label' => $shoppingList->getLabel()
-            ]
-        ];
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $message
-     * @return array
-     */
-    protected function getSuccessResponse(ShoppingList $shoppingList, $message)
-    {
-        return [
-            'successful' => true,
-            'message' => $this->getSuccessMessage($shoppingList, $message),
             'shoppingList' => [
                 'id' => $shoppingList->getId(),
                 'label' => $shoppingList->getLabel()

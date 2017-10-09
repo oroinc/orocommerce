@@ -131,61 +131,6 @@ class AjaxLineItemControllerTest extends WebTestCase
         ];
     }
 
-    public function testAddProductsFromView()
-    {
-        $firstProduct = $this->getReference(LoadProductData::PRODUCT_1);
-        $secondProduct = $this->getReference(LoadProductData::PRODUCT_3);
-        $firstProductUnit = $this->getReference('product_unit.bottle');
-        $secondProductUnit = $this->getReference('product_unit.liter');
-        $expectedSubtotals = ['EUR' => 1342, 'USD' => 1516];
-
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
-
-        $this->client->request(
-            'POST',
-            $this->getUrl(
-                'oro_shopping_list_frontend_add_products',
-                [
-                    'shoppingListId' => $shoppingList->getId(),
-                ]
-            ),
-            [
-                'oro_shopping_list_line_item_collection' => [
-                    'lineItems' => [
-                        [
-                            'product' => $firstProduct->getId(),
-                            'quantity' => 110,
-                            'unit' => $firstProductUnit->getCode(),
-                        ],
-                        [
-                            'product' => $secondProduct->getId(),
-                            'quantity' => 15,
-                            'unit' => $secondProductUnit->getCode(),
-                        ]
-                    ],
-                    '_token' => $this->getCsrfToken()
-
-                ],
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertArrayHasKey('successful', $result);
-        $this->assertTrue($result['successful']);
-
-        $shoppingList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
-            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
-
-        $this->assertSubtotals($expectedSubtotals, $shoppingList);
-        $this->assertArrayHasKey('shoppingList', $result);
-        $this->assertArrayHasKey('id', $result['shoppingList']);
-        $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
-        $this->assertArrayHasKey('label', $result['shoppingList']);
-    }
-
     public function testAddProductFromViewNotValidData()
     {
         /** @var Product $product */
@@ -486,7 +431,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         return $this->client
             ->getContainer()
             ->get('security.csrf.token_manager')
-            ->getToken('oro_shopping_list_line_item_collection')
+            ->getToken('oro_product_frontend_line_item')
             ->getValue();
     }
 

@@ -40,9 +40,6 @@ oro:
             create_new_shopping_list.label: Create New Shopping List
             added.label: 'Product has been added to "%shoppinglist%"'
 
-        products:
-            added.label: 'Products has been added to "%shoppinglist%"'
-
         actions:
             set_current: Set as current
             choose_list: Choose list
