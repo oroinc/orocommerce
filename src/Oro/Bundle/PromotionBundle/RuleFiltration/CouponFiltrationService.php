@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class CouponFiltrationService implements RuleFiltrationServiceInterface
+class CouponFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -36,7 +36,7 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $ruleOwners = array_filter($ruleOwners, function ($ruleOwner) {
             return $ruleOwner instanceof PromotionDataInterface;

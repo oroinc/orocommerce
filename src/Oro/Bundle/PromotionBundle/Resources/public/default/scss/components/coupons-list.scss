@@ -1,0 +1,11 @@
+// @theme default;
+
+.coupons-list {
+    margin: $coupons-list-offset;
+
+    &__item {
+        &:not(&first-child) {
+            margin-top: $coupons-list-item-offset;
+        }
+    }
+}

@@ -123,8 +123,7 @@ class CategoryRepository extends NestedTreeRepository
 
         return $qb
             ->select('partial category.{id}')
-            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'))
-            ->andWhere('title.string = :title')
+            ->andWhere('category.denormalizedDefaultTitle = :title')
             ->setParameter('title', $title)
             ->setMaxResults(1)
             ->getQuery()

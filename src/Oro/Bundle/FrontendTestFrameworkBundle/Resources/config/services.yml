@@ -1,3 +1,6 @@
 services:
     oro_product.alias.provider.content_variant_segment_provider:
         alias: oro_product.provider.content_variant_segment_provider
+
+    oro_checkout.alias.mapper.order_mapper:
+        alias: oro_checkout.mapper.order_mapper
