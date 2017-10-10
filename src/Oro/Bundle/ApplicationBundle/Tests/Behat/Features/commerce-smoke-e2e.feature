@@ -442,7 +442,7 @@ Feature: Commerce smoke e2e
       | Password         | AmandaRCole1@example.org |
       | Confirm Password | AmandaRCole1@example.org |
     When I press "Create An Account"
-    Then I should see "Please check your email to complete registration"
+    Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Create customer from the frontstore
     Given I proceed as the User
