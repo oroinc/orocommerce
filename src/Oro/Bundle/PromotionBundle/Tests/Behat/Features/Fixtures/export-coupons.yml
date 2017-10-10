@@ -4,6 +4,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-1'
         promotion: '@orderDiscountPromotion'
+        enabled: true
         usesPerPerson: 2
         usesPerCoupon: 3
         validUntil: '<(new DateTime("01-01-2020 00:00:00"))>'
@@ -12,6 +13,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-2'
         promotion: '@lineItemDiscountPromotion'
+        enabled: true
         usesPerPerson: 3
         usesPerCoupon: 4
         validUntil: '<(new DateTime("10-10-2010 10:00:00"))>'
@@ -19,17 +21,20 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         owner: '@business_unit'
         organization: '@organization'
         code: 'test-3'
+        enabled: true
         usesPerPerson: 4
         usesPerCoupon: 5
     coupon4:
         owner: '@businessUnit'
         organization: '@organization'
         code: 'test-4'
+        enabled: true
         usesPerPerson: 5
         usesPerCoupon: 6
     coupon5:
         owner: '@businessUnit'
         organization: '@organization'
         code: 'test-5'
+        enabled: false
         usesPerPerson: 6
         usesPerCoupon: 7

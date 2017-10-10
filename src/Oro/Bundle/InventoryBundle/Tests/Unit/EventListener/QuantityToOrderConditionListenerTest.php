@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
@@ -36,11 +35,6 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
     protected $validatorService;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
      * @var QuantityToOrderConditionListener
      */
     protected $quantityToOrderConditionListener;
@@ -55,11 +49,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->validatorService = $this->getMockBuilder(QuantityToOrderValidatorService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener(
-            $this->validatorService,
-            $this->translator
-        );
+        $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener($this->validatorService);
         $this->event = new CheckoutValidateEvent();
     }
 
@@ -101,7 +91,6 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $checkout = new Checkout();
         $source = new CheckoutSourceStub();
         $checkout->setSource($source);
-        $source->setShoppingList(new ShoppingList());
         $source->setQuoteDemand(new QuoteDemand());
 
         $workflowItem->setEntity($checkout);
@@ -168,11 +157,11 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnStartCheckoutConditionCheckAddsErrorToEvent()
     {
-        $lineItems = new ArrayCollection();
-        $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
+        $lineItems = new ArrayCollection([$this->getEntity(CheckoutLineItem::class)]);
+        $shoppingList = $this->getEntity(ShoppingList::class);
         $checkoutSource = new CheckoutSourceStub();
         $checkoutSource->setShoppingList($shoppingList);
-        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource, 'lineItems' => $lineItems]);
         $context = new ActionData(['checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);
 
@@ -189,11 +178,11 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnStartCheckoutConditionCheckAddsNoErrorToEvent()
     {
-        $lineItems = new ArrayCollection();
-        $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
+        $lineItems = new ArrayCollection([$this->getEntity(CheckoutLineItem::class)]);
+        $shoppingList = $this->getEntity(ShoppingList::class);
         $checkoutSource = new CheckoutSourceStub();
         $checkoutSource->setShoppingList($shoppingList);
-        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource, 'lineItems' => $lineItems]);
         $context = new ActionData(['checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);
 
@@ -224,6 +213,10 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getContext')
             ->willReturn($workflowItem);
+
+        $this->validatorService->expects($this->once())
+            ->method('isLineItemListValid')
+            ->willReturn(false);
 
         $event->expects($this->once())
             ->method('addError')

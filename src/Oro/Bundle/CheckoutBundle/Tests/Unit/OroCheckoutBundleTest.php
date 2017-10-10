@@ -14,7 +14,7 @@ class OroCheckoutBundleTest extends \PHPUnit_Framework_TestCase
         $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerBuilder');
         $kernel = $this->createMock('Symfony\Component\HttpKernel\KernelInterface');
 
-        $container->expects($this->exactly(3))
+        $container->expects($this->exactly(4))
             ->method('addCompilerPass')
             ->with($this->isInstanceOf('Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface'))
             ->will($this->returnSelf());

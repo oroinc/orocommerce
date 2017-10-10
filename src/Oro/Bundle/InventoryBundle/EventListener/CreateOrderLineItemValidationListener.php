@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
@@ -18,8 +16,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderLineItemValidationListener
 {
@@ -32,11 +28,6 @@ class CreateOrderLineItemValidationListener
      * @var TranslatorInterface
      */
     protected $translator;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
 
     /**
      * @var DoctrineHelper
@@ -57,6 +48,7 @@ class CreateOrderLineItemValidationListener
      * @param InventoryQuantityManager $inventoryQuantityManager
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
      */
     public function __construct(
         InventoryQuantityManager $inventoryQuantityManager,
@@ -110,8 +102,6 @@ class CreateOrderLineItemValidationListener
         return ($context instanceof WorkflowItem
             && in_array($context->getCurrentStep()->getName(), self::$allowedValidationSteps)
             && $context->getEntity() instanceof Checkout
-            && $context->getEntity()->getSource() instanceof CheckoutSource
-            && $context->getEntity()->getSource()->getEntity() instanceof CheckoutLineItemsHolderInterface
         );
     }
 

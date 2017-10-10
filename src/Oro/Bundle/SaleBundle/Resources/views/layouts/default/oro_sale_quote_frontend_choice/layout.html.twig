@@ -53,7 +53,7 @@
                 {% endfor %}
                 <tr>
                     <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
-                    <td class="order-checkout-widget__total"><span class="blue">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                    <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>
         </div>
@@ -61,23 +61,18 @@
 {% endblock %}
 
 {% block _quote_view_information_widget %}
-    <div class="customer-oq-container">
-        <div class="customer-oq__item__head">
-            <div class="customer-oq__item customer-oq__item_full mb0-sm">
-                <h2 class="customer-oq__item__title">
-                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
-                </h2>
-            </div>
-        </div>
-        <div class="customer-oq__item__body">
-            <div class="customer-oq__item">
-                <div class="customer-oq__order-info">
-                    <table class="table borderless mobile-table">
-                        <tbody>
+    <div class="customer-info-grid">
+        <h2 class="customer-info-grid__title">
+            {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+        </h2>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+                <table class="customer-info-grid__table">
+                    <tbody>
                         {% if quote.assignedUsers | length %}
                             <tr>
-                                <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
-                                <td>
+                                <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">
                                     {% set assigned_users = [] %}
                                     {% for entity in quote.assignedUsers %}
                                         {% set assigned_users = assigned_users|merge([entity.fullName]) %}
@@ -86,36 +81,33 @@
                                 </td>
                             </tr>
                         {% endif %}
-                        <tr class="customer-oq__order-info__control">
-                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
-                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
                         </tr>
-                        <tr class="customer-oq__order-info__control">
-                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
-                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.poNumber|default('N/A'|trans) }}</td>
                         </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
-            <div class="customer-oq__item">
-                <div class="customer-oq__order-info">
-                    <table class="table borderless  mobile-table">
-                        <tbody>
-                        <tr class="customer-oq__order-info__control">
-                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
-                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+            <div class="grid__column grid__column--6 grid__column--no-gutters-r">
+                <table class="customer-info-grid__table">
+                    <tbody>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
                         {% if paymentTerm is defined and paymentTerm is not empty %}
-                            <tr class="customer-oq__order-info__control">
-                                <td class="customer-oq__order-info__title">{{ 'oro.paymentterm.entity_label'|trans }}</td>
-                                <td>{{ paymentTerm.label|escape }}</td>
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.paymentterm.entity_label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">{{ paymentTerm.label|escape }}</td>
                             </tr>
                         {% endif %}
                         {{ block_widget(block) }}
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -135,9 +127,9 @@
 
 {% block quote_body_column_element_widget %}
     {% if address is not null %}
-        <tr class="customer-oq__order-info__control">
-            <td class="customer-oq__order-info__title">{{ label|trans }}</td>
-            <td>{{ block_widget(block) }}</td>
+        <tr class="customer-info-grid__row">
+            <td class="customer-info-grid__element-label">{{ label|trans }}</td>
+            <td class="customer-info-grid__element-content">{{ block_widget(block) }}</td>
         </tr>
     {% endif %}
 {% endblock %}
