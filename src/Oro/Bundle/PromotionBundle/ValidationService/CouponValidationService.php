@@ -8,6 +8,7 @@ use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 
 class CouponValidationService
 {
+    const MESSAGE_DISABLED = 'oro.promotion.coupon.violation.disabled';
     const MESSAGE_ABSENT_PROMOTION = 'oro.promotion.coupon.violation.absent_promotion';
     const MESSAGE_EXPIRED = 'oro.promotion.coupon.violation.expired';
     const MESSAGE_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.usage_limit_exceeded';
@@ -44,6 +45,10 @@ class CouponValidationService
     public function getViolations(Coupon $coupon, CustomerUser $customerUser = null): array
     {
         $violations = [];
+
+        if (!$coupon->isEnabled()) {
+            $violations[] = self::MESSAGE_DISABLED;
+        }
 
         if (!$coupon->getPromotion()) {
             $violations[] = self::MESSAGE_ABSENT_PROMOTION;

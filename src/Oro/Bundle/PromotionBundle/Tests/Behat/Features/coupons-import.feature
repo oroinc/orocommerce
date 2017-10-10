@@ -22,21 +22,21 @@ Feature: Import of Coupons codes
 
   Scenario: Import new Coupons
     Given I fill template with data:
-      | Coupon Code |  Uses per Coupon | Uses per Person | Valid Until         | Promotion Name               | Owner Name           |
-      | test1       |  101             | 91              | 01/01/2020 00:00:00 | order Discount Promotion     | Main                 |
-      | test2       |  102             | 92              | 10/10/2010 10:00:00 | line Item Discount Promotion | Main                 |
-      | test3       |  103             | 93              |                     |                              | Main                 |
-      | test4       |  104             | 94              |                     |                              | Child Business Unit  |
-      | test5       |  105             | 95              |                     |                              | Child Business Unit  |
+      | Coupon Code | Enabled | Uses per Coupon | Uses per Person | Valid Until         | Promotion Name               | Owner Name           |
+      | test1       | 1       | 101             | 91              | 01/01/2020 00:00:00 | order Discount Promotion     | Main                 |
+      | test2       | 1       | 102             | 92              | 10/10/2010 10:00:00 | line Item Discount Promotion | Main                 |
+      | test3       | 0       | 103             | 93              |                     |                              | Main                 |
+      | test4       | 0       | 104             | 94              |                     |                              | Child Business Unit  |
+      | test5       | 0       | 105             | 95              |                     |                              | Child Business Unit  |
     When I import file
     And I reload the page
     Then I should see following grid:
-      | Coupon Code | Promotion                    |  Valid Until            | Uses per Coupon | Uses per Person |
-      | test1       | order Discount Promotion     |  Jan 1, 2020, 12:00 AM  | 101             | 91              |
-      | test2       | line Item Discount Promotion |  Oct 10, 2010, 10:00 AM | 102             | 92              |
-      | test3       | N/A                          |                         | 103             | 93              |
-      | test4       | N/A                          |                         | 104             | 94              |
-      | test5       | N/A                          |                         | 105             | 95              |
+      | Coupon Code | Enabled | Promotion                    |  Valid Until            | Uses per Coupon | Uses per Person |
+      | test1       | Yes     | order Discount Promotion     |  Jan 1, 2020, 12:00 AM  | 101             | 91              |
+      | test2       | Yes     | line Item Discount Promotion |  Oct 10, 2010, 10:00 AM | 102             | 92              |
+      | test3       | No      | N/A                          |                         | 103             | 93              |
+      | test4       | No      | N/A                          |                         | 104             | 94              |
+      | test5       | No      | N/A                          |                         | 105             | 95              |
     And number of records should be 5
     When I click on test5 in grid
     Then I should see "Owner: Child Business Unit"

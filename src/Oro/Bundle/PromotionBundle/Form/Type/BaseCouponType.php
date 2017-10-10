@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,6 +29,14 @@ class BaseCouponType extends AbstractType
                     'label' => 'oro.promotion.coupon.promotion.label',
                     'autocomplete_alias' => 'oro_promotion_use_coupons',
                     'grid_name' => 'promotion-for-coupons-select-grid',
+                ]
+            )
+            ->add(
+                'enabled',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.enabled.label',
                 ]
             )
             ->add(

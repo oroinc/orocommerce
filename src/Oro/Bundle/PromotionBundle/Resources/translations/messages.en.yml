@@ -199,6 +199,10 @@ oro:
             id.label: Id
             code.label: Coupon Code
             promotion.label: Promotion
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
             uses_per_coupon.label: Uses per Coupon
             uses_per_person.label: Uses per Person
             valid_until.label: Valid Until
