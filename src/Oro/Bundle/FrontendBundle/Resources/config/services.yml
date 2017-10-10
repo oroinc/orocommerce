@@ -1,6 +1,8 @@
 services:
     oro_frontend.extension.transtation_packages_provider:
         class: 'Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension'
+        arguments:
+            - '%kernel.root_dir%'
         tags:
             - {name: oro_translation.extension.packages_provider}
 
