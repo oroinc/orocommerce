@@ -154,24 +154,25 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
     When I click "Request More Information"
     And I fill "Request More Information Popup Form" with:
-      | Notes | Message for customer |
+      | Notes | Message for customer <script>alert(1)</script> |
     And I click "Submit"
     Then I should see RFQ with:
       | PO Number       | 0112                |
       | Internal Status | More Info Requested |
       | Customer Status | Requires Attention  |
+    And I should see "Message for customer alert(1)"
     Then I continue as the Buyer
     And I click "Account"
     And I click "Requests For Quote"
     And I click view 0112 in grid
     Then I should see RFQ status is "Requires Attention"
-    And I should see that "Request Notes Block" contains "Message for customer"
+    And I should see that "Request Notes Block" contains "Message for customer alert(1)"
     When I click "Provide More Information"
     And I fill "Request More Information Popup Form" with:
-      | Notes | Answer for manager |
+      | Notes | Answer for manager <script>alert(1)</script> |
     And I click "Submit"
     And I reload the page
-    Then I should see that "Request Notes Block" contains "Answer for manager"
+    Then I should see that "Request Notes Block" contains "Answer for manager alert(1)"
     And I should see RFQ status is "Submitted"
     When I continue as the Manager
     And I go to Sales/Requests For Quote
@@ -180,6 +181,7 @@ Feature: Default RFQ Workflows
       | PO Number       | 0112      |
       | Internal Status | Open      |
       | Customer Status | Submitted |
+    And I should see "Answer for manager alert(1)"
 
   Scenario: Cancel RFQ after Customer status: Requires Attention
     Given I operate as the Manager
