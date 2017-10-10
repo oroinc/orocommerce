@@ -62,7 +62,6 @@ class CategoriesProductsProvider
         $counts = $this->searchRepository->getCategoryCounts($searchQb);
 
         foreach ($categories as $category) {
-            unset($searchQb);
             $categoryId = $category->getId();
             $categoryPath = $category->getMaterializedPath();
             $categoriesCounts[$categoryId] = isset($counts[$categoryPath]) ? (int) $counts[$categoryPath] : 0;
@@ -71,18 +70,18 @@ class CategoriesProductsProvider
                 continue;
             }
 
+            unset($searchQb);
             $searchQb = $this->searchRepository->createQuery();
             $searchQb->addSelect('id')
                 ->setFrom('oro_product_WEBSITE_ID')
                 ->addWhere(Criteria::expr()->in('integer.category_id', $childrenIds));
 
-            if (!($counts = $this->searchRepository->getCategoryCounts($searchQb))) {
+            if (!($childrenCounts = $this->searchRepository->getCategoryCounts($searchQb))) {
                 continue;
             }
 
-            foreach ($counts as $count) {
+            foreach ($childrenCounts as $count) {
                 $categoriesCounts[$categoryId] += $count;
-                unset($searchQb);
             }
         }
 
