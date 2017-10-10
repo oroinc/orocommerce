@@ -82,7 +82,7 @@ Feature: Quote Backoffice Approvals Workflow
     And I should see Quote with:
       | PO Number       | PO2                  |
       | Internal Status | Submitted for Review |
-    And should see "Test comment for submitting alert(1)" note in activity list
+    And I collapse "Test comment for submitting alert(1)" in activity list
 
   Scenario Outline: Quotes change and Submit for Review
     Given I go to Sales/Quotes
@@ -157,7 +157,7 @@ Feature: Quote Backoffice Approvals Workflow
     And I should see Quote with:
       | PO Number       | PO2   |
       | Internal Status | Draft |
-    And should see "Return reason note text alert(1)" note in activity list
+    And I collapse "Return reason note text alert(1)" in activity list
 
   Scenario: Under Review -> Approve and Send to Customer: Quote prices changed
     Given I go to Sales/Quotes
@@ -217,7 +217,7 @@ Feature: Quote Backoffice Approvals Workflow
     And I should see Quote with:
       | PO Number       | PO4      |
       | Internal Status | Reviewed |
-    And should see "Approve reason note text alert(1)" note in activity list
+    And I collapse "Approve reason note text alert(1)" in activity list
     And I should see "Send to Customer"
 
   Scenario: Approved -> Sent to Customer: Quote prices changed
@@ -255,7 +255,7 @@ Feature: Quote Backoffice Approvals Workflow
     And I should see Quote with:
       | PO Number       | PO5          |
       | Internal Status | Not Approved |
-    And should see "Decline reason note text alert(1)" note in activity list
+    And I collapse "Decline reason note text alert(1)" in activity list
 
   Scenario: Draft -> Delete: Internal status: Deleted, customer status: N/A
     Given I login as "john" user
