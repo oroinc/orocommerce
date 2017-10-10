@@ -65,3 +65,22 @@ Feature: Managing promotions
     And I click "Add" in modal window
     And I save form
     Then I should see "Should be chosen only one field. Customer Group or Customer."
+
+  Scenario: At view, N/A should be displayed for no restrictions, and restrictions grid if they specified
+    Given I go to Marketing / Promotions / Promotions
+    And I click "Create Promotion"
+    And I fill "Promotion Form" with:
+      | Name           | Promotion for anyone |
+      | Sort Order     | 10                  |
+      | Discount Value | 10.0                |
+    And I press "Add" in "Matching Items" section
+    And I check PSKU1 record in "Add Products Popup" grid
+    And I click "Add" in modal window
+    And I save and close form
+    Then I should see "N/A" in the "Restrictions" element
+    When I click "Edit"
+    And I fill "Promotion Form" with:
+      | Name           | Promotion for first customer |
+      | Customer       | first customer      |
+    And I save and close form
+    Then I should see "first customer" in the "Restrictions" element
