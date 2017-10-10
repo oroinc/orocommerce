@@ -217,6 +217,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
+    oro_catalog.category_path.placeholder:
+        class: 'Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
     oro_catalog.provider.category_counts:
         class: 'Oro\Bundle\CatalogBundle\Provider\CategoryCountsProvider'
         arguments:
