@@ -7,14 +7,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -46,44 +45,29 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected $configManager;
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
     public function setUp()
     {
         parent::setUp();
-        $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $this->emFallback = $this->doctrineHelper->getEntityManager(
+        $this->emFallback = $this->registry->getManagerForClass(
             EntityFieldFallbackValue::class
         );
         $this->translator = $this->getContainer()->get('translator');
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
+    protected function tearDown()
+    {
+        $this->updateSystemQuantityLimits(null, null);
+    }
+
     public function testRequestForQuoteCheckoutIsNotAffectedByQuantityLimits()
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $lineItem = $shoppingList->getLineItems()[0];
-        $product = $lineItem->getProduct();
-        $this->initProductLimitAsSystemFallback($product);
+        /** @var QuoteDemand $quoteDemand */
+        $quoteDemand = $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_3);
+        $lineItem = $quoteDemand->getLineItems()->first();
         $lineItem->setQuantity(3);
-        $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(LineItem::class)->flush();
-
-        $this->startCheckout($shoppingList);
-        $sourceRepository = $this->doctrineHelper->getEntityRepository('OroCheckoutBundle:CheckoutSource');
-        /** @var CheckoutSource $checkoutSource */
-        $checkoutSource = $sourceRepository->findOneBy(['shoppingList' => $shoppingList]);
-        $quoteDemand = new QuoteDemand();
-        $emQuoteDemand = $this->doctrineHelper->getEntityManager(QuoteDemand::class);
-        $emQuoteDemand->persist($quoteDemand);
-        $emQuoteDemand->flush();
-        $checkoutSource->setQuoteDemand($quoteDemand);
-
-        $this->doctrineHelper->getEntityManager(CheckoutSource::class)->flush();
-
+        $this->registry->getManagerForClass(LineItem::class)->flush();
+        $this->startCheckoutFromQuoteDemand($quoteDemand);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
         $this->updateSystemQuantityLimits(1, 2);
@@ -107,7 +91,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $product = $lineItem->getProduct();
         $this->initProductLimitAsSystemFallback($product);
         $lineItem->setQuantity(3);
-        $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(LineItem::class)->flush();
+        $this->registry->getManagerForClass(LineItem::class)->flush();
 
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
@@ -285,34 +269,13 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     /**
      * @param int $minLimit
      * @param int $maxLimit
-     * @return null|Crawler
      */
     protected function updateSystemQuantityLimits($minLimit, $maxLimit)
     {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_config_configuration_system',
-                ['activeGroup' => 'commerce', 'activeSubGroup' => 'limitations']
-            ),
-            [],
-            [],
-            $this->generateBasicAuthHeader()
-        );
-        $form = $crawler->selectButton('Save settings')->form();
-        $formValues = $form->getPhpValues();
-        $formValues['limitations']['oro_inventory___minimum_quantity_to_order']['use_parent_scope_value'] = false;
-        $formValues['limitations']['oro_inventory___minimum_quantity_to_order']['value'] = $minLimit;
-        $formValues['limitations']['oro_inventory___maximum_quantity_to_order']['use_parent_scope_value'] = false;
-        $formValues['limitations']['oro_inventory___maximum_quantity_to_order']['value'] = $maxLimit;
-
-        return $this->client->request(
-            $form->getMethod(),
-            $form->getUri(),
-            $formValues,
-            [],
-            $this->generateBasicAuthHeader()
-        );
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set('oro_inventory.minimum_quantity_to_order', $minLimit);
+        $configManager->set('oro_inventory.maximum_quantity_to_order', $maxLimit);
+        $configManager->flush();
     }
 
     /**
@@ -328,7 +291,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->emFallback->persist($entityFallback2);
         $product->setMinimumQuantityToOrder($entityFallback);
         $product->setMaximumQuantityToOrder($entityFallback2);
-        $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(Product::class)->flush();
+        $this->registry->getManagerForClass(Product::class)->flush();
         $this->emFallback->flush();
     }
 }

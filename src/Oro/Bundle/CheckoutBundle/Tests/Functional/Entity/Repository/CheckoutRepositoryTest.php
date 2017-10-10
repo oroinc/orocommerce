@@ -72,7 +72,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->assertEquals(count($ids), $found);
     }
 
-    public function testGetSourcePerCheckout()
+    public function testGetCheckoutsByIds()
     {
         $repository = $this->getRepository();
 
@@ -90,7 +90,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             }
         }
 
-        $sources = $repository->getSourcePerCheckout($ids);
+        $sources = $repository->getCheckoutsByIds($ids);
 
         $found = 0;
 

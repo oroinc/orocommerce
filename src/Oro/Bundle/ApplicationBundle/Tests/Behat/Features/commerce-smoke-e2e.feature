@@ -723,7 +723,7 @@ Feature: Commerce smoke e2e
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And click "Sign Out"
 
-  Scenario: Checkout by customer created from front store throug the shopping list created by himself and review the submited order
+  Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
     When I hover on "Shopping Cart"
