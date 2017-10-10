@@ -41,7 +41,7 @@ class DatagridListener
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
         $this->addCategoryJoin($event->getConfig());
-        $this->addCategoryRelation($event->getConfig());
+        $this->addCategoryInfo($event->getConfig());
     }
 
     /**
@@ -56,15 +56,19 @@ class DatagridListener
     /**
      * @param DatagridConfiguration $config
      */
-    protected function addCategoryRelation(DatagridConfiguration $config)
+    protected function addCategoryInfo(DatagridConfiguration $config)
     {
-        // columns
-        $categoryColumn = ['label' => 'oro.catalog.category.entity_label'];
-        $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
+        $query = $config->getOrmQuery();
 
-        // properties
-        $categoryProperty = ['type' => LocalizedValueProperty::NAME, 'data_name' => 'productCategory.titles'];
-        $this->addConfigElement($config, '[properties]', $categoryProperty, self::CATEGORY_COLUMN);
+        // select
+        $query->addSelect('productCategory.denormalizedDefaultTitle as ' . self::CATEGORY_COLUMN);
+
+        // columns
+        $categoryColumn = [
+            'label' => 'oro.catalog.category.entity_label',
+            'data_name' => self::CATEGORY_COLUMN
+        ];
+        $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
 
         // sorter
         $categorySorter = ['data_name' => self::CATEGORY_COLUMN];
@@ -76,6 +80,15 @@ class DatagridListener
             'data_name' => self::CATEGORY_COLUMN,
         ];
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @deprecated since 1.5. Please use denormalizedDefaultTitle instead of Category and associated relation
+     */
+    protected function addCategoryRelation(DatagridConfiguration $config)
+    {
+        $this->addCategoryInfo($config);
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemCollectionHandler;
-use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemCollectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -42,7 +40,6 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
-
 
         if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
@@ -242,7 +239,7 @@ class AjaxLineItemController extends AbstractLineItemController
      * @param string $message
      * @return array
      */
-    protected function getProductSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
         $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
             ->getProductUnitsQuantity($product);
@@ -254,23 +251,6 @@ class AjaxLineItemController extends AbstractLineItemController
                 'id' => $product->getId(),
                 'shopping_lists' => $productShoppingLists
             ],
-            'shoppingList' => [
-                'id' => $shoppingList->getId(),
-                'label' => $shoppingList->getLabel()
-            ]
-        ];
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $message
-     * @return array
-     */
-    protected function getSuccessResponse(ShoppingList $shoppingList, $message)
-    {
-        return [
-            'successful' => true,
-            'message' => $this->getSuccessMessage($shoppingList, $message),
             'shoppingList' => [
                 'id' => $shoppingList->getId(),
                 'label' => $shoppingList->getLabel()

@@ -515,7 +515,7 @@ services:
             - '@oro_visibility.indexer.product_visibility_indexer'
             - '@oro_website_search.manager.website_context_manager'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
     oro_visibility.provider.visibility_scope_provider:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider'

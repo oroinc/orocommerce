@@ -53,4 +53,4 @@ Feature: RFQ from Shipping List
     And I click "Submit"
     And I proceed as the Admin
     And I reload the page
-    Then I should see "<script>alert(1)</script>"
+    Then I should see "alert(1)"

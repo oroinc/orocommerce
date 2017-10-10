@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class CurrencyFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     /**
      * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -107,5 +107,10 @@ class CurrencyFiltrationServiceTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->currencyFiltrationService, $this->filtrationService);
     }
 }

@@ -13,16 +13,6 @@ services:
         tags:
             - { name: form.type, alias: oro_shopping_list_line_item }
 
-    oro_shopping_list.form.type.line_item_collection:
-        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\LineItemCollectionType'
-        tags:
-            - { name: form.type, alias: oro_shopping_list_line_item_collection }
-
-    oro_shopping_list.form.type.line_item_row_collection:
-        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\LineItemRowCollectionType'
-        tags:
-            - { name: form.type, alias: oro_shopping_list_line_item_row_collection }
-
     oro_shopping_list.form.type.frontend_line_item_widget:
         class: 'Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType'
         arguments:

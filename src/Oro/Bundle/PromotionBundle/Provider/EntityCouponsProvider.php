@@ -49,8 +49,7 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
     }
 
     /**
-     * @param Coupon $coupon
-     * @return AppliedCoupon
+     * {@inheritdoc}
      */
     public function createAppliedCouponByCoupon(Coupon $coupon)
     {

@@ -5,14 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterDriverTrait;
+use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class DriverDecorator implements DriverInterface
 {
-    use DBALPersisterDriverTrait;
-
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
@@ -119,5 +120,17 @@ class DriverDecorator implements DriverInterface
     public function getRecordsCount(Query $query)
     {
         return $this->getDriver()->getRecordsCount($query);
+    }
+
+    /** {@inheritdoc} */
+    public function flushWrites()
+    {
+        $this->getDriver()->flushWrites();
+    }
+
+    /** {@inheritdoc} */
+    public function writeItem(AbstractItem $item)
+    {
+        $this->getDriver()->writeItem($item);
     }
 }
