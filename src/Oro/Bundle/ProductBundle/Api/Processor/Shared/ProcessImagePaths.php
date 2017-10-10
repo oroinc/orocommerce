@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
 
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -12,8 +10,6 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Class ProcessImagePaths
- *
  * Adds the file path(or paths) of a file if it's an image type to the File API endpoints
  */
 class ProcessImagePaths implements ProcessorInterface
@@ -55,66 +51,36 @@ class ProcessImagePaths implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        // include filePath into config, otherwise it will be ignored in the response
-        $this->addFilePathToConfig($context);
+        $result = $context->getResult();
+        $filePathField = $context->getConfig()->getField(self::CONFIG_FILE_PATH);
 
-        $results = $context->getResult();
-        if (!is_array($results)) {
+        if (!is_array($result) || !$filePathField || $filePathField->isExcluded()) {
             return;
         }
 
-        if (isset($results['content'])) {
-            // single item request
-            $results = $this->addPathToResults($results);
-        } else {
-            // collection request
-            foreach ($results as &$fileItem) {
-                $fileItem = $this->addPathToResults($fileItem);
-            }
-        }
+        //update result with computed file path
+        $result = $this->addPathToResult($result);
 
-        $context->setResult($results);
+        $context->setResult($result);
     }
 
     /**
-     * @param ContextInterface $context
-     */
-    protected function addFilePathToConfig(ContextInterface $context)
-    {
-        /** @var EntityDefinitionConfig $config */
-        $config = $context->getConfig();
-        if ($config->hasField(self::CONFIG_FILE_PATH)) {
-            return;
-        }
-        // add the filePath as a field config, otherwise it will be ignored
-        $fieldConfig = new EntityDefinitionFieldConfig();
-        $fieldConfig->set('data_type', 'string');
-        $config->addField(self::CONFIG_FILE_PATH, $fieldConfig);
-        // Set a new config key and set metadata to null to trigger a new metadata refresh,
-        // otherwise the new field won't be populated in the response, as metadata is cached
-        $config->setKey($config->getKey() . 'new');
-        $context->setConfig($config);
-        $context->setMetadata(null);
-        $context->getMetadata();
-    }
-
-    /**
-     * @param array $results
+     * @param array $result
      * @return array
      */
-    protected function addPathToResults(array $results)
+    protected function addPathToResult(array $result)
     {
-        if (!$this->attachmentManager->isImageType($results['mimeType'])) {
-            return $results;
+        if (!$this->attachmentManager->isImageType($result['mimeType'])) {
+            return $result;
         }
 
         /** @var ProductImage $productImage */
         $productImage = $this->doctrineHelper->getEntityRepository(ProductImage::class)->findOneBy(
-            ['image' => $results['id']]
+            ['image' => $result['id']]
         );
 
-        if (!$productImage) {
-            return $results;
+        if (!$productImage || empty($types = $productImage->getTypes())) {
+            return $result;
         }
 
         $allTypes = $this->typeProvider->getImageTypes();
@@ -131,9 +97,8 @@ class ProcessImagePaths implements ProcessorInterface
                 $dimension
             );
         }
+        $result[self::CONFIG_FILE_PATH] = $urls;
 
-        $results[self::CONFIG_FILE_PATH] = $urls;
-
-        return $results;
+        return $result;
     }
 }

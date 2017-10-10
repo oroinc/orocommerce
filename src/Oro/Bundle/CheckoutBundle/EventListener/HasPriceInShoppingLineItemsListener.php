@@ -4,13 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
@@ -64,17 +65,24 @@ class HasPriceInShoppingLineItemsListener
 
         /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
-        if (!$checkout->getLineItems()->count()) {
+        $lineItems = $checkout->getLineItems();
+
+        if (!$lineItems->count()) {
             return;
         }
 
-        if (!$this->isThereAPricePresent($checkout->getLineItems())) {
+        if (!$this->isThereAPricePresent($lineItems)) {
             $conditionEvent->addError(
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'
             );
         }
     }
 
+    /**
+     * @param ActionData|mixed $context
+     *
+     * @return bool
+     */
     private function isApplicable($context)
     {
         if (!$context instanceof ActionData) {
@@ -87,10 +95,10 @@ class HasPriceInShoppingLineItemsListener
     }
 
     /**
-     * @param LineItem[]|ArrayCollection $lineItems
+     * @param Collection|CheckoutLineItem[] $lineItems
      * @return boolean
      */
-    private function isThereAPricePresent($lineItems)
+    private function isThereAPricePresent(Collection $lineItems)
     {
         $productsPricesCriteria = [];
 

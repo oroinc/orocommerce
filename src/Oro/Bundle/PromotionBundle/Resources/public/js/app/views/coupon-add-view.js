@@ -109,7 +109,9 @@ define(function(require) {
                         $couponAutocomplete.val(null).trigger('change');
                     } else {
                         self._hideLoadingMask();
-                        var errors = _.map(response.errors, __);
+                        var errors = _.map(response.errors, function(message) {
+                            return __(message);
+                        });
                         self.$(self.options.selectors.selectCouponValidationContainerSelector)
                             .html(errorsTemplate({messages: errors}));
                     }

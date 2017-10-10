@@ -18,7 +18,7 @@ Feature: Open Orders Grid
     Then I should see "Quote #1 successfully sent to customer" flash message
 
   Scenario: Prepare Checkouts
-    Given There is EUR currency in the system configuration
+    Given There is USD currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
 

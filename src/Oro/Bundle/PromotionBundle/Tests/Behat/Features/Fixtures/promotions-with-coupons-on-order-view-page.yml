@@ -1,0 +1,40 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderPromotionLabel:
+        string: 'Order Promotion'
+    orderPromotionDesc:
+        string: 'Order Promotion Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderPromotionSegment:
+        name: 'Promotion Matching All Products'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"number","data":{"value":0,"type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 7
+            discount_currency: 'USD'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderDiscountPromotion:
+        addLabel: ['@orderPromotionLabel']
+        addDescription: ['@orderPromotionDesc']
+        addScope: [1]
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderPromotionRule'
+        discountConfiguration: '@orderPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

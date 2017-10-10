@@ -7,7 +7,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
-use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 
 class ConfigurableProductProvider
 {
@@ -68,14 +67,15 @@ class ConfigurableProductProvider
     }
 
     /**
-     * @param $lineItem
+     * @param ProductHolderInterface|mixed $lineItem
      * @return array
      */
     public function getLineItemProduct($lineItem)
     {
         $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
         $variantFieldNames = [];
-        if ($lineItem instanceof ProductHolderInterface) {
+        if (method_exists($lineItem, 'getParentProduct') && is_callable([$lineItem, 'getParentProduct'])) {
+            /** @var Product $parentProduct */
             $parentProduct = $lineItem->getParentProduct();
             if (!$parentProduct) {
                 return [];
@@ -94,11 +94,11 @@ class ConfigurableProductProvider
 
     /**
      * @param Product $product
-     * @param $variantFields
-     * @param $customFields
+     * @param array $variantFields
+     * @param array $customFields
      * @return array
      */
-    private function getVariantFields(Product $product, $variantFields, $customFields)
+    private function getVariantFields(Product $product, array $variantFields, array $customFields)
     {
         $fields = [];
         foreach ($variantFields as $key => $fieldName) {

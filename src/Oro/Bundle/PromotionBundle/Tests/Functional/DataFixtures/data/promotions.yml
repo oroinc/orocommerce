@@ -719,3 +719,56 @@ promo_shipping_20%_flat_rate_method:
                 shipping_method: 'flat-rate'
                 shipping_method_type: 'air'
     scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_10_USD_with_coupon:
+    rule:
+        name: 'promo_order_10_USD_with_coupon_rule'
+        sortOrder: 200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    useCoupons: true
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 10
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_shipping_20%_flat_rate_method_with_coupon:
+    rule:
+        name: 'promo_shipping_20%_flat_rate_method_with_coupon'
+        sortOrder: 350
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    useCoupons: true
+    discountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.2
+            shipping_options:
+                shipping_method: 'flat-rate'
+                shipping_method_type: 'air'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_shipping_10_USD_unsupported_method_with_coupon:
+    rule:
+        name: 'promo_shipping_10_USD_unsupported_method'
+        sortOrder: 200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    useCoupons: true
+    discountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_value: 10
+            discount_currency: 'USD'
+            shipping_options:
+                shipping_method: 'unsupported-shipping-method'
+                shipping_method_type: 'unsupported-shipping-method-type'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]

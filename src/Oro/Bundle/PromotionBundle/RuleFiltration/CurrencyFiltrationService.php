@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class CurrencyFiltrationService implements RuleFiltrationServiceInterface
+class CurrencyFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -26,7 +26,7 @@ class CurrencyFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $currentCurrency = $context[ContextDataConverterInterface::CURRENCY] ?? null;
         $filteredOwners = array_values(array_filter(
