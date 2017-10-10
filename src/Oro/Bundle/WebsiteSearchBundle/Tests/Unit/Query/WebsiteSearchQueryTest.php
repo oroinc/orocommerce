@@ -69,4 +69,24 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteSearchQuery->execute();
     }
+
+    public function testClone()
+    {
+        $result1 = new Result($this->query);
+        $result2 = new Result($this->query);
+
+        $this->engine->expects($this->exactly(2))
+            ->method('search')
+            ->with($this->query)
+            ->willReturnOnConsecutiveCalls($result1, $result2);
+
+        $this->assertSame($result1, $this->websiteSearchQuery->getResult());
+        $this->assertSame($this->query, $this->websiteSearchQuery->getQuery());
+
+        $newQuery = clone $this->websiteSearchQuery;
+
+        $this->assertSame($result2, $newQuery->getResult());
+        $this->assertNotSame($this->query, $newQuery->getQuery());
+        $this->assertEquals($this->query, $newQuery->getQuery());
+    }
 }

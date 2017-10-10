@@ -223,11 +223,6 @@ services:
         tags:
             - { name: website_search.placeholder }
 
-    oro_catalog.provider.category_counts:
-        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryCountsProvider'
-        arguments:
-            - '@oro_catalog.website_search.repository.product'
-
     oro_catalog.website_search.repository.product:
         class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
         parent: oro_website_search.repository.abstract

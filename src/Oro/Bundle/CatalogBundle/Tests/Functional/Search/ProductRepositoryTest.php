@@ -22,43 +22,49 @@ class ProductRepositoryTest extends WebTestCase
         ]);
     }
 
-    public function testGetCategoryCountsWithCustomQuery()
+    public function testGetCategoryCountsByCategoryWithCustomQuery()
     {
-        $category1 = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $category2 = $this->getReference(LoadCategoryData::FOURTH_LEVEL1);
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $subCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $query = $this->getQueryFactory()->create();
         $query->addSelect('text.sku');
         $query->setFrom('oro_product_WEBSITE_ID');
-        $query->addWhere(Criteria::expr()->startsWith('text.category_path', $category1->getMaterializedPath()));
+        $query->addWhere(Criteria::expr()->startsWith('text.category_path', $subCategory->getMaterializedPath()));
 
         $this->assertEquals(
             [
-                $category1->getMaterializedPath() => 1,
-                $category2->getMaterializedPath() => 1,
+                $subCategory->getId() => 3,
             ],
-            $this->getRepository()->getCategoryCounts($query)
+            $this->getRepository()->getCategoryCountsByCategory($category, $query)
         );
     }
 
-    public function testGetCategoryCountsWithoutQuery()
+    public function testGetCategoryCountsByCategory()
     {
-        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $category3 = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $category4 = $this->getReference(LoadCategoryData::FOURTH_LEVEL1);
-        $category5 = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category1 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
 
         $this->assertEquals(
             [
-                $category1->getMaterializedPath() => 1,
-                $category2->getMaterializedPath() => 1,
-                $category3->getMaterializedPath() => 1,
-                $category4->getMaterializedPath() => 1,
-                $category5->getMaterializedPath() => 2,
+                $category1->getId() => 3,
+                $category2->getId() => 2,
             ],
-            $this->getRepository()->getCategoryCounts()
+            $this->getRepository()->getCategoryCountsByCategory($category)
         );
+    }
+
+    public function testGetCategoryCountsByCategoryWithoutProducts()
+    {
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        $query = $this->getQueryFactory()->create();
+        $query->addSelect('text.sku');
+        $query->setFrom('oro_product_WEBSITE_ID');
+        $query->addWhere(Criteria::expr()->eq('text.category_path', 'null'));
+
+        $this->assertSame([], $this->getRepository()->getCategoryCountsByCategory($category, $query));
     }
 
     /**
