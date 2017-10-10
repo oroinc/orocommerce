@@ -67,7 +67,7 @@
     {% if toolbarPosition != 'bottom' %}
         <div{{ block('block_attributes') }}>
             {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
-            <span class="va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>
+            <span class="datagrid-tool__label">{{ 'oro.product.frontend.grid.toolbar.display.label'|trans }}: &nbsp;</span>
             <div class="btn-group catalog-switcher">
                 {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
                 {% set query_parameters = app.request.query.all() %}

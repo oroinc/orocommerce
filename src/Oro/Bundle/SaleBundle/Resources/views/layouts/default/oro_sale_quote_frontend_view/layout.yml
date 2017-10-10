@@ -45,10 +45,6 @@ layout:
                     blockType: quote_products_container
                     options:
                         quoteProducts: '=data["entity"].getQuoteProducts()'
-                quote_view_line_items_mobile:
-                    blockType: quote_products_container
-                    options:
-                        quoteProducts: '=data["entity"].getQuoteProducts()'
                 quote_view_accept_button:
                     blockType: combined_buttons
                     options:
@@ -70,6 +66,5 @@ layout:
                         quote_view_information:
                             quote_shipping_address: ~
                         quote_view_line_items: ~
-                        quote_view_line_items_mobile: ~
                         quote_view_accept_container:
                             quote_view_accept_button: ~
