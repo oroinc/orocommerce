@@ -4,12 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Search;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EwsBundle\Connector\Search\SearchQuery;
 use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\SearchBundle\Tests\Selenium\Pages\Search;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
