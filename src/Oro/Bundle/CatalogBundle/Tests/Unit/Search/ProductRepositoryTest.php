@@ -41,39 +41,28 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCategoryCountsByCategory(Category $category, array $expected)
     {
-        $query = new Query();
-
-        /** @var Indexer|\PHPUnit_Framework_MockObject_MockObject $indexer */
-        $indexer = $this->createMock(Indexer::class);
-        $indexer->expects($this->once())
-            ->method('query')
-            ->with($query)
-            ->willReturn(
-                new Result(
-                    $query,
-                    [],
-                    0,
-                    [
-                        'categoryCounts' => [
-                            '1' => 0,
-                            '1_2' => 3,
-                            '1_2_3' => 5,
-                            '1_2_4' => 5,
-                            '1_2_4_5' => 7,
-                            '1_6_7' => 10,
-                            '1_6_7_8_9' => 20,
-                            '1_10_11' => 7,
-                            '1_10_12' => 5,
-                        ]
-                    ]
-                )
-            );
-
-        $this->queryFactory->expects($this->once())
-            ->method('create')
-            ->willReturn(new IndexerQuery($indexer, $query));
+        $this->createIndex();
 
         $this->assertEquals($expected, $this->repository->getCategoryCountsByCategory($category));
+    }
+
+    public function testGetCategoriesCounts()
+    {
+        $categories = [
+            $this->getCategory(2, '1_2'),
+            $this->getCategory(5, '1_2_5'),
+            $this->getCategory(8, '1_6_7_8')
+        ];
+
+        $expected = [
+            2 => 20,
+            5 => 7,
+            8 => 20
+        ];
+
+        $this->createIndex();
+
+        $this->assertEquals($expected, $this->repository->getCategoriesCounts($categories));
     }
 
     /**
@@ -112,5 +101,40 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
     protected function getCategory($id, $path)
     {
         return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
+    }
+
+    protected function createIndex()
+    {
+        $query = new Query();
+
+        /** @var Indexer|\PHPUnit_Framework_MockObject_MockObject $indexer */
+        $indexer = $this->createMock(Indexer::class);
+        $indexer->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn(
+                new Result(
+                    $query,
+                    [],
+                    0,
+                    [
+                        'categoryCounts' => [
+                            '1' => 0,
+                            '1_2' => 3,
+                            '1_2_3' => 5,
+                            '1_2_4' => 5,
+                            '1_2_4_5' => 7,
+                            '1_6_7' => 10,
+                            '1_6_7_8_9' => 20,
+                            '1_10_11' => 7,
+                            '1_10_12' => 5,
+                        ]
+                    ]
+                )
+            );
+
+        $this->queryFactory->expects($this->once())
+            ->method('create')
+            ->willReturn(new IndexerQuery($indexer, $query));
     }
 }
