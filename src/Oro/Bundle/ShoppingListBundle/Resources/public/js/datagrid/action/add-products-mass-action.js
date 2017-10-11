@@ -1,9 +1,8 @@
-/*jslint nomen:true*/
-/*global define*/
 define([
     'oro/datagrid/action/mass-action',
-    'oroui/js/mediator'
-], function(MassAction, mediator) {
+    'oroui/js/mediator',
+    'underscore'
+], function(MassAction, mediator, _) {
     'use strict';
 
     var AddProductsAction;
@@ -33,6 +32,31 @@ define([
 
         _onSuccess: function() {
             mediator.trigger('datagrid:doRefresh:' + this.datagrid.name);
+        },
+
+        /**
+         * Get action parameters
+         *
+         * @returns {Object}
+         * @private
+         */
+        getActionParameters: function() {
+            var selectionState = this.datagrid.getSelectionState();
+            var collection = this.datagrid.collection;
+            var stateKey = collection.stateHashKey();
+            var attributes = ['id', 'unit', 'quantity'];
+            var selectedIds  = _.map(selectionState.selectedIds, function(productModel) {
+                return _.pick(productModel.toJSON(), attributes);
+            });
+            var params = {
+                inset: selectionState.inset ? 1 : 0,
+                values: JSON.stringify(selectedIds)
+            };
+
+            params[stateKey] = collection.stateHashValue();
+            params = collection.processFiltersParams(params, null, 'filters');
+
+            return params;
         },
 
         /**
