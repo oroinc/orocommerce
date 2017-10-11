@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CheckoutBundle\Model\ExtendCheckout;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -18,11 +22,9 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  * @ORM\Table(name="oro_checkout")
@@ -52,16 +54,17 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class Checkout implements
+class Checkout extends ExtendCheckout implements
     CheckoutInterface,
+    CheckoutLineItemsHolderInterface,
     OrganizationAwareInterface,
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
     DatesAwareInterface,
     ShippingAwareInterface,
-    LineItemsNotPricedAwareInterface,
     PaymentMethodAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CurrencyAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -182,13 +185,41 @@ class Checkout implements
      */
     protected $completedData;
 
+    /**
+     * @var Collection|CheckoutLineItem[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem",
+     *      mappedBy="checkout",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"id" = "ASC"})
+     **/
+    protected $lineItems;
+
+    /**
+     * @var Collection|CheckoutSubtotal[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal",
+     *      mappedBy="checkout",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $subtotals;
+
     public function __construct()
     {
+        parent::__construct();
         $this->completedData = new CompletedCheckoutData();
+        $this->lineItems = new ArrayCollection();
+        $this->subtotals = new ArrayCollection();
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -215,7 +246,7 @@ class Checkout implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getPaymentMethod()
     {
@@ -223,8 +254,7 @@ class Checkout implements
     }
 
     /**
-     * @param string $paymentMethod
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setPaymentMethod($paymentMethod)
     {
@@ -310,7 +340,7 @@ class Checkout implements
     }
 
     /**
-     * @return Website
+     * {@inheritDoc}
      */
     public function getWebsite()
     {
@@ -318,8 +348,7 @@ class Checkout implements
     }
 
     /**
-     * @param Website $website
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setWebsite(Website $website = null)
     {
@@ -329,7 +358,7 @@ class Checkout implements
     }
 
     /**
-     * @return CheckoutSourceEntityInterface|null
+     * {@inheritDoc}
      */
     public function getSourceEntity()
     {
@@ -341,7 +370,7 @@ class Checkout implements
     }
 
     /**
-     * @return CheckoutSource
+     * {@inheritDoc}
      */
     public function getSource()
     {
@@ -349,8 +378,7 @@ class Checkout implements
     }
 
     /**
-     * @param CheckoutSource $source
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setSource(CheckoutSource $source)
     {
@@ -360,9 +388,7 @@ class Checkout implements
     }
 
     /**
-     * Get shipping estimate
-     *
-     * @return Price|null
+     * {@inheritDoc}
      */
     public function getShippingCost()
     {
@@ -385,7 +411,7 @@ class Checkout implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getCurrency()
     {
@@ -393,8 +419,7 @@ class Checkout implements
     }
 
     /**
-     * @param string $currency
-     * @return Checkout
+     * {@inheritDoc}
      */
     public function setCurrency($currency)
     {
@@ -474,14 +499,62 @@ class Checkout implements
     }
 
     /**
-     * {@inheritdoc}
+     * @param CheckoutLineItem $item
+     *
+     * @return $this
+     */
+    public function addLineItem(CheckoutLineItem $item)
+    {
+        if (!$this->lineItems->contains($item)) {
+            $item->setCheckout($this);
+            $this->lineItems->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param CheckoutLineItem $item
+     *
+     * @return $this
+     */
+    public function removeLineItem(CheckoutLineItem $item)
+    {
+        $this->lineItems->removeElement($item);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CheckoutLineItem[]
      */
     public function getLineItems()
     {
-        /** @var LineItemsNotPricedAwareInterface|LineItemsAwareInterface $sourceEntity */
-        $sourceEntity = $this->getSourceEntity();
-        return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
-            || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+        return $this->lineItems;
+    }
+
+    /**
+     * @param Collection $lineItems
+     *
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        $this->lineItems->clear();
+
+        foreach ($lineItems as $lineItem) {
+            $this->addLineItem($lineItem);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CheckoutSubtotal[]
+     */
+    public function getSubtotals()
+    {
+        return $this->subtotals;
     }
 
     /**

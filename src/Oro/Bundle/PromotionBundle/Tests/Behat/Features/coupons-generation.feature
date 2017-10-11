@@ -8,6 +8,7 @@ Feature: Generation of coupons
     When I fill form with:
       | Promotion       | order Discount Promotion         |
       | Coupon Quantity | 10                               |
+      | Enabled         | true                             |
       | Uses per Coupon | 5                                |
       | Uses per Person | 5                                |
       | Valid Until     | <DateTime:Jul 1, 2018, 12:00 AM> |
@@ -21,6 +22,7 @@ Feature: Generation of coupons
       | Uses per Coupon | 5                        |
       | Uses per Person | 5                        |
       | Promotion       | order Discount Promotion |
+      | Enabled         | Yes                      |
 
   Scenario: Generate more coupons then available combination
     Given I go to Marketing/Promotions/Coupons

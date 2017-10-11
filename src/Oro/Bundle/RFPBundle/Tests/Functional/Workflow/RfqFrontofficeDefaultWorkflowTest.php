@@ -141,7 +141,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
 
         $result = $this->transitWeb($link, ['oro_workflow_transition[notes]' => 'customer notes']);
         $this->assertNotEmpty($result, 'Transit failed');
-        $this->assertContains('transitionSuccess = true', $result);
+        $this->assertContains('transitionSuccess', $result);
 
         $this->request = $this->refreshEntity($this->request);
         $this->assertEquals('submitted', $this->request->getCustomerStatus()->getId());

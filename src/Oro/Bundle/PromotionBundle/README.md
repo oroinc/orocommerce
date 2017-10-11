@@ -15,6 +15,7 @@ Table of Contents
     * [Flow and Filters Types](#flow-and-filters-types)
     * [Context Data Converters](#context-data-converters)
     * [Add new filter](#add-new-filter)
+    * [Filters skippability during checkout](#filters-skippability-during-checkout)
  * [Discount Strategy](#discount-strategy)
  * [Applied Promotions](#applied-promotions)
 
@@ -146,6 +147,19 @@ Next, define a service for this class which decorates `oro_promotion.rule_filtra
             - '@app.promotion.rule_filtration.my_filter.inner'
 ```
 Please keep in mind the `decoration_priority` that affects the order in which filters will be executed.
+
+**<a name="filters-skippability-during-checkout">Filters skippability during checkout</a>**
+
+User can apply coupons during checkout process on frontend before needed information is entered to make decision whether promotion for a coupon is applicable. For example, shipping promotion can be applied by coupon on first checkout step before shipping method is chosen (that's why `ShippingFiltrationService` would filter this promotion out). So some filters need to be skipped during coupon applying process.
+As a result filters should support skippability based on option from context (see `AbstractSkippableFiltrationService::SKIP_FILTERS_KEY`).
+To make you filters skippable you may inherit `AbstractSkippableFiltrationService` or implement skipping logic on your own.
+
+To skip a filter during coupon applying `disableFilter` method should be called for `oro_promotion.handler.frontend_coupon_handler` service with filter's class name:
+```
+    oro_promotion.handler.frontend_coupon_handler:
+        calls:
+            - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
+```
 
 Discount Strategy
 -----------------

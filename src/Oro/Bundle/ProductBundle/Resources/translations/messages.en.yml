@@ -497,6 +497,9 @@ oro:
                     invalid_request: Invalid request submitted
             titles:
                 catalog: Catalog
+            grid:
+                toolbar:
+                    display.label: Display
 
         export:
             inventory_status_only: "Inventory statuses only"

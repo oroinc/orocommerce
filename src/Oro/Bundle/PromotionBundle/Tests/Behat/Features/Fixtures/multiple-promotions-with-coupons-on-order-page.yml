@@ -7,6 +7,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-1'
         promotion: '@orderDiscountPromotion1'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     coupon2:
@@ -14,6 +15,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-2'
         promotion: '@orderDiscountPromotion2'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     coupon3:
@@ -21,6 +23,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-3'
         promotion: '@orderDiscountPromotion3'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     coupon4:
@@ -28,6 +31,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'test-4'
         promotion: '@orderDiscountPromotion4'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
 

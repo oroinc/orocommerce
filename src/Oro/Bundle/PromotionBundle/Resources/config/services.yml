@@ -5,6 +5,9 @@ parameters:
 services:
     oro_promotion.entity_generator_extension.order:
         class: Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension
+        calls:
+            - ['registerSupportedEntity', ['%oro_order.entity.order.class%']]
+            - ['registerSupportedEntity', ['%oro_checkout.entity.checkout.class%']]
         tags:
             - { name: oro_entity_extend.entity_generator_extension }
 
@@ -322,6 +325,18 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_promotion_discounts_information }
 
+    oro_promotion.layout.oro_promotion_applied_coupons:
+        class: Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: layout.data_provider, alias: oro_promotion_applied_coupons }
+
+    oro_promotion.layout.extension.applied_coupons_aware_context_configurator:
+        class: Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator
+        tags:
+            - { name: layout.context_configurator }
+
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:
@@ -626,13 +641,34 @@ services:
             - '@oro_promotion.scope_normalizer'
             - '@oro_promotion.segment_normalizer'
 
-    oro_promotion.handler.coupon_validation_handler:
-        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+    oro_promotion.handler.abstract_coupon_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\AbstractCouponHandler
+        abstract: true
         arguments:
-            - '@oro_promotion.validation_service.coupon_applicability_validation'
             - '@oro_entity.routing_helper'
             - '@doctrine'
             - '@event_dispatcher'
+            - '@security.authorization_checker'
+
+    oro_promotion.handler.coupon_validation_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+        parent: oro_promotion.handler.abstract_coupon_handler
+        calls:
+            - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
+
+    oro_promotion.handler.frontend_coupon_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler
+        parent: oro_promotion.handler.abstract_coupon_handler
+        calls:
+            - [setCouponApplicabilityValidationService, ['@oro_promotion.validation_service.coupon_applicability_validation']]
+            - [setEntityCouponsProviderService, ['@oro_promotion.provider.entity_coupons_provider']]
+            - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
+
+    oro_promotion.handler.frontend_coupon_remove_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler
+        arguments:
+            - '@security.authorization_checker'
+            - '@doctrine'
 
     oro_promotion.event_listener.actualize_coupons_state_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
@@ -674,3 +710,10 @@ services:
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PromotionBundle\Entity\AppliedCoupon', event: postPersist }
+
+    oro_promotion.mapper.order_mapper_decorator:
+        class: Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator
+        public: false
+        decorates: oro_checkout.mapper.order_mapper
+        arguments:
+            - '@oro_promotion.mapper.order_mapper_decorator.inner'

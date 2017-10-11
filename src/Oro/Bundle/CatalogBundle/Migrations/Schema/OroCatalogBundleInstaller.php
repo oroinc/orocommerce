@@ -64,7 +64,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -137,9 +137,10 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('title', 'string', ['length' => 255, 'notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-
+        $table->addIndex(['title'], 'idx_oro_category_default_title', []);
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::ORO_CATALOG_CATEGORY_TABLE_NAME);
     }
 

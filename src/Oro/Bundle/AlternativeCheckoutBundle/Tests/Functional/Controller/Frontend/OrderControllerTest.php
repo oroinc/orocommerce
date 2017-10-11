@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
+use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsSubtotalsData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
@@ -12,14 +13,13 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
 class OrderControllerTest extends FrontendWebTestCase
 {
     const GRID_NAME      = 'frontend-checkouts-grid';
-    const TOTAL_VALUE    = 400;
-    const SUBTOTAL_VALUE = 20;
+    const TOTAL_VALUE    = 510;
+    const SUBTOTAL_VALUE = 300;
 
     /** @var Checkout[] */
     protected $allCheckouts;
@@ -39,6 +39,7 @@ class OrderControllerTest extends FrontendWebTestCase
             [
                 LoadOrders::class,
                 LoadQuoteCheckoutsData::class,
+                LoadQuoteCheckoutsSubtotalsData::class,
                 LoadShoppingListsCheckoutsData::class,
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class
@@ -55,73 +56,105 @@ class OrderControllerTest extends FrontendWebTestCase
     }
 
     /**
-     * @dataProvider filtersDataProvider
-     * @param string $columnName
-     * @param float  $value
-     * @param        $filterType
-     * @param        $expectedCheckouts
+     * @dataProvider subtotalFilterDataProvider
+     *
+     * @param float $value
+     * @param string $filterType
+     * @param array $expectedCheckouts
      */
-    public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
+    public function testSubtotalFilter($value, $filterType, array $expectedCheckouts)
     {
         $checkouts = $this->getDatagridData(
             self::GRID_NAME,
             [
-                sprintf('[%s][value]', $columnName) => $value,
-                sprintf('[%s][type]', $columnName)  => $filterType
+                sprintf('[%s][value]', 'subtotal') => $value,
+                sprintf('[%s][type]', 'subtotal')  => $filterType
             ]
         );
 
         $this->assertCount(count($expectedCheckouts), $checkouts);
 
         $expectedCheckouts = $this->getCheckoutsByReferences($expectedCheckouts);
-        $actualCheckouts   = $this->prepareCheckouts($checkouts);
-        $container         = $this->getContainer();
+        $actualCheckouts = $this->prepareCheckouts($checkouts);
+        $container = $this->getContainer();
         /** @var  Checkout $expectedCheckout */
         foreach ($expectedCheckouts as $id => $expectedCheckout) {
             $this->assertTrue(isset($actualCheckouts[$id]));
-            if ($columnName === 'subtotal') {
-                $sourceEntity     = $expectedCheckout->getSourceEntity();
-                $propertyAccessor = $container->get('property_accessor');
+            /** @var Subtotal $subtotal */
+            $subtotal = $expectedCheckout->getSubtotals()->first()->getSubtotal();
 
-                if ($sourceEntity instanceof ShoppingList) {
-                    /** @var Subtotal $subtotal */
-                    $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
+            $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
+                $subtotal->getAmount(),
+                $subtotal->getCurrency()
+            );
 
-                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
-                        $subtotal->getAmount(),
-                        $subtotal->getCurrency()
-                    );
-                } else {
-                    $currencyField  = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
-                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
-                        $propertyAccessor->getValue($sourceEntity, $columnName),
-                        $propertyAccessor->getValue($sourceEntity, $currencyField)
-                    );
-                }
-
-                $actualCheckout = $actualCheckouts[$id];
-                $this->assertEquals($formattedPrice . "\n", $actualCheckout[$columnName]);
-            }
+            $actualCheckout = $actualCheckouts[$id];
+            $this->assertEquals($formattedPrice . "\n", $actualCheckout['subtotal']);
         }
     }
 
     /**
      * @return array
      */
-    public function filtersDataProvider()
+    public function subtotalFilterDataProvider()
     {
         return [
-            'subtotal' => [
-                'columnName'        => 'subtotal',
-                'value'             => self::SUBTOTAL_VALUE,
-                'filterType'        => NumberFilterTypeInterface::TYPE_GREATER_THAN,
+            'greater than' => [
+                'value' => self::SUBTOTAL_VALUE,
+                'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
                 'expectedCheckouts' => ['checkout.1', 'alternative.checkout.2']
             ]
         ];
     }
 
     /**
-     * @param array $checkoutReferences
+     * @dataProvider totalFilterDataProvider
+     *
+     * @param float $value
+     * @param string $filterType
+     * @param array $expectedCheckouts
+     */
+    public function testTotalFilter($value, $filterType, array $expectedCheckouts)
+    {
+        $checkouts = $this->getDatagridData(
+            self::GRID_NAME,
+            [
+                sprintf('[%s][value]', 'total') => $value,
+                sprintf('[%s][type]', 'total')  => $filterType
+            ]
+        );
+
+        $this->assertCount(count($expectedCheckouts), $checkouts);
+
+        $expectedCheckoutIds = array_keys($this->getCheckoutsByReferences($expectedCheckouts));
+        $actualCheckouts = $this->prepareCheckouts($checkouts);
+        /** @var  Checkout $expectedCheckout */
+        foreach ($expectedCheckoutIds as $id) {
+            $this->assertTrue(isset($actualCheckouts[$id]));
+            $actualCheckout = $actualCheckouts[$id];
+            $this->assertEquals(
+                (float) $actualCheckout['subtotal'] + (float) $actualCheckout['shippingCost'],
+                (float) $actualCheckout['total']
+            );
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function totalFilterDataProvider()
+    {
+        return [
+            'equal' => [
+                'value' => self::TOTAL_VALUE,
+                'filterType' => NumberFilterTypeInterface::TYPE_EQUAL,
+                'expectedCheckouts' => ['checkout.1']
+            ]
+        ];
+    }
+
+    /**
+     * @param array|Checkout[] $checkoutReferences
      * @return array
      */
     protected function getCheckoutsByReferences(array $checkoutReferences)
@@ -157,12 +190,13 @@ class OrderControllerTest extends FrontendWebTestCase
      */
     protected function checkSorting(array $checkouts, $column, $order, $stringSorting = false)
     {
+        $lastValue = null;
         foreach ($checkouts as $checkout) {
             /** @var Subtotal|string $actualValue */
-            $actualValue = $stringSorting ? $checkout[$column] : $this->getValue($checkout['id'], $column);
+            $actualValue = $stringSorting ? $checkout[$column] : $this->getSubtotalValue($checkout['id']);
             $actualValue = ($actualValue instanceof Subtotal) ? $actualValue->getAmount() : $actualValue;
 
-            if (isset($lastValue)) {
+            if (null !== $lastValue) {
                 if ($order === OrmSorterExtension::DIRECTION_DESC) {
                     $this->assertGreaterThanOrEqual($actualValue, $lastValue);
                 } elseif ($order === OrmSorterExtension::DIRECTION_ASC) {
@@ -210,17 +244,16 @@ class OrderControllerTest extends FrontendWebTestCase
 
     /**
      * @param integer $checkoutId
-     * @param string  $columnName
      * @return float
      */
-    protected function getValue($checkoutId, $columnName)
+    protected function getSubtotalValue($checkoutId)
     {
-        $container        = $this->getContainer();
-        $checkout         = $this->getCheckoutById($checkoutId);
-        $sourceEntity     = $checkout->getSourceEntity();
-        $propertyAccessor = $container->get('property_accessor');
+        $checkout = $this->getCheckoutById($checkoutId);
+        if (0 === $checkout->getSubtotals()->count()) {
+            return 0;
+        }
 
-        return $propertyAccessor->getValue($sourceEntity, $columnName);
+        return $checkout->getSubtotals()->first()->getSubtotal()->getAmount();
     }
 
     /**
@@ -230,6 +263,7 @@ class OrderControllerTest extends FrontendWebTestCase
     protected function getCheckoutById($checkoutId)
     {
         if (empty($this->allCheckouts)) {
+            /** @var array|Checkout[] $checkouts */
             $checkouts = $this->getContainer()->get('doctrine')
                 ->getManagerForClass('OroCheckoutBundle:Checkout')
                 ->getRepository('OroCheckoutBundle:Checkout')
