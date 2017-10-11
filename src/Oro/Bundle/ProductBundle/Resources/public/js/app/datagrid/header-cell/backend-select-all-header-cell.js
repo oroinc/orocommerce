@@ -49,6 +49,15 @@ define(function(require) {
             BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
         },
 
+        onCheckboxClick: function(e) {
+            if (this.selectState.get('inset') && this.selectState.isEmpty()) {
+                this.collection.trigger('backgrid:selectAllVisible');
+            } else {
+                this.collection.trigger('backgrid:selectNone');
+            }
+            e.stopPropagation();
+        },
+
         onCheckboxChange: function(event) {
             var checked = $(event.currentTarget).is(':checked');
 

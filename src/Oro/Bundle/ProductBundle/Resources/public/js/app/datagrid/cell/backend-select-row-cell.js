@@ -23,9 +23,6 @@ define(function(require) {
         keepElement: true,
 
         /** @property */
-        className: 'product-item__select-row',
-
-        /** @property */
         tagName: 'div',
 
         /** @property */

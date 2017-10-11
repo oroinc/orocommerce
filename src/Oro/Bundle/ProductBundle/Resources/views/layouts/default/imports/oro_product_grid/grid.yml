@@ -129,7 +129,6 @@ layout:
         - '@add':
             id: product_mass_actions_sticky_container
             parentId: bottom_sticky_panel_content
-
             prepend: true
             blockType: block
 

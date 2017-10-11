@@ -162,18 +162,7 @@
 
 {% block _product_item_select_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__select-row product-item__select-row--{{ class_prefix }}',
-        'data-dom-relocation': true,
-        'data-dom-relocation-options': {
-            responsive: [
-                {
-                    viewport: {
-                        maxScreenType: 'tablet'
-                    },
-                    moveTo: '[data-row-id=' ~ datagrid_row.id  ~ '] .product-item__image-holder'
-                }
-            ]
-        }
+        '~class': ' product-item__select-row product-item__select-row--{{ class_prefix }}'
     }) %}
 
     <div {{ block('block_attributes') }}>
