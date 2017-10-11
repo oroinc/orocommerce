@@ -6,7 +6,6 @@ namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 
 class CategoriesProductsProvider
 {
@@ -24,11 +23,6 @@ class CategoriesProductsProvider
      * @var CategoryRepository
      */
     protected $categoryRepository;
-
-    /**
-     * @var ProductManager $productManager
-     */
-    protected $productManager;
 
     /**
      * @param CategoryRepository $categoryRepository
