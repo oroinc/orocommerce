@@ -28,7 +28,10 @@ class ProcessImagePathsConfigTest extends ConfigProcessorTestCase
             [
                 'fields' => [
                     ProcessImagePathsConfig::CONFIG_FILE_PATH => [
-                        'data_type' => 'array'
+                        'data_type' => 'array',
+                        'form_options' => [
+                            'mapped' => false
+                        ]
                     ]
                 ]
             ],

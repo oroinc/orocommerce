@@ -3,14 +3,15 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
-use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -18,6 +19,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+
+    const LOCALIZED_VALUE = 'some string';
 
     /** @var Category $category */
     protected $category;
@@ -252,13 +255,39 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testPrePersistWithoutDefaultName()
+    {
+        $category = $this->category;
+        $this->expectException(\RuntimeException::class);
+        $category->prePersist();
+    }
+
+    public function testPrePersist()
+    {
+        $category = $this->category;
+        $category->addTitle($this->createLocalizedValue(true));
+        $category->prePersist();
+        $this->assertInstanceOf('\DateTime', $category->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $category->getUpdatedAt());
+        $this->assertEquals(self::LOCALIZED_VALUE, $category->getDenormalizedDefaultTitle());
+    }
+
+    public function testPreUpdateWithoutDefaultTitle()
+    {
+        $category = $this->category;
+        $this->expectException(\RuntimeException::class);
+        $category->preUpdate();
+    }
+
     public function testPreUpdate()
     {
         $category = $this->category;
+        $category->addTitle($this->createLocalizedValue(true));
         $category->preUpdate();
 
         $this->assertInstanceOf('DateTime', $category->getUpdatedAt());
         $this->assertLessThanOrEqual(new \DateTime(), $category->getUpdatedAt());
+        $this->assertEquals(self::LOCALIZED_VALUE, $category->getDenormalizedDefaultTitle());
     }
 
     public function testToString()
@@ -281,7 +310,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function createLocalizedValue($default = false)
     {
-        $localized = (new LocalizedFallbackValue())->setString('some string');
+        $localized = (new LocalizedFallbackValue())->setString(self::LOCALIZED_VALUE);
 
         if (!$default) {
             $localized->setLocalization(new Localization());

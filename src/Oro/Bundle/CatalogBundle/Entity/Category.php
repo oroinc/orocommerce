@@ -5,7 +5,9 @@ namespace Oro\Bundle\CatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Gedmo\Mapping\Annotation as Gedmo;
+
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
@@ -19,7 +21,12 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * @ORM\Table(name="oro_catalog_category")
+ * @ORM\Table(
+ *      name="oro_catalog_category",
+ *      indexes={
+ *              @ORM\Index(name="idx_oro_category_default_title", columns={"title"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @ORM\AssociationOverrides({
@@ -254,6 +261,24 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $materializedPath;
 
     /**
+     * This is a mirror field for performance reasons only.
+     * It mirrors getDefaultTitle()->getString()
+     *
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
+     */
+    protected $denormalizedDefaultTitle;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -431,11 +456,29 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        if (!$this->getDefaultTitle()) {
+            throw new \RuntimeException('Category has to have a default title');
+        }
+        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
+    }
+
+    /**
      * @ORM\PreUpdate
      */
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if (!$this->getDefaultTitle()) {
+            throw new \RuntimeException('Category has to have a default title');
+        }
+        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
     }
 
     /**
@@ -559,5 +602,15 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
         $this->materializedPath = $materializedPath;
 
         return $this;
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getDenormalizedDefaultTitle()
+    {
+        return $this->denormalizedDefaultTitle;
     }
 }

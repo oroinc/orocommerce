@@ -36,8 +36,10 @@ class CouponRepository extends EntityRepository
         $result = $queryBuilder->select('DISTINCT IDENTITY(coupon.promotion) AS id')
             ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotions'))
             ->andWhere($queryBuilder->expr()->in('coupon.code', ':couponCodes'))
+            ->andWhere($queryBuilder->expr()->eq('coupon.enabled', ':enabled'))
             ->setParameter('promotions', $promotions)
             ->setParameter('couponCodes', array_map('strval', $couponCodes)) //Ensure coupon codes are passed as strings
+            ->setParameter('enabled', true)
             ->getQuery()->getArrayResult();
 
         return array_column($result, 'id');

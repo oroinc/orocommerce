@@ -49,8 +49,7 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
     }
 
     /**
-     * @param Coupon $coupon
-     * @return AppliedCoupon
+     * {@inheritdoc}
      */
     public function createAppliedCouponByCoupon(Coupon $coupon)
     {
@@ -77,6 +76,7 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
             /** @var Coupon $coupon */
             $coupon = $this->createEntity(Coupon::class, $appliedCoupon->getSourceCouponId());
             $coupon
+                ->setEnabled(true)
                 ->setCode($appliedCoupon->getCouponCode())
                 ->setPromotion($promotion)
                 ->setUsesPerCoupon(null)
