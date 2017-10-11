@@ -176,7 +176,9 @@
         }
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
-    </div>
+    {% if not is_configurable_product_type(product.type) %}
+        <div {{ block('block_attributes') }}>
+            <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+        </div>
+    {% endif %}
 {% endblock %}
