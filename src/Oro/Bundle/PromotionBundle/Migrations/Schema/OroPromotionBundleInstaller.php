@@ -123,6 +123,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('enabled', 'boolean', ['default' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('uses_per_person', 'integer', ['notnull' => false, 'default' => '1']);

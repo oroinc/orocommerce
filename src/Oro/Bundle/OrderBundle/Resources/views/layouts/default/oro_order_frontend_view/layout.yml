@@ -46,10 +46,6 @@ layout:
                     blockType: container
                     options:
                         additional_block_prefixes: ['order_body_block_container']
-                order_head_container:
-                    blockType: container
-                    options:
-                        additional_block_prefixes: ['order_head_block_container']
                 order_information_head:
                     blockType: text
                     options:
@@ -157,8 +153,7 @@ layout:
                     order_view_page:
                         order_container:
                             order_body:
-                                order_head_container:
-                                    order_information_head: ~
+                                order_information_head: ~
                                 order_body_container:
                                     order_body_column_left:
                                         order_date: ~

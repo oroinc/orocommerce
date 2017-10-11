@@ -21,6 +21,11 @@ class CouponGenerationOptions extends CodeGenerationOptions
     protected $promotion;
 
     /**
+     * @var bool
+     */
+    protected $enabled = false;
+
+    /**
      * @var int
      */
     protected $usesPerCoupon = 1;
@@ -70,6 +75,22 @@ class CouponGenerationOptions extends CodeGenerationOptions
     public function setPromotion($promotion)
     {
         $this->promotion = $promotion;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
     }
 
     /**

@@ -32,7 +32,7 @@ class CouponApplicabilityQueryBuilderModifierTest extends WebTestCase
 
         $queryBuilder = $repository->createQueryBuilder('c')->orderBy('c.usesPerCoupon');
         $coupons = $queryBuilder->getQuery()->getResult();
-        $this->assertCount(5, $coupons);
+        $this->assertCount(6, $coupons);
 
         $this->modifier->modify($queryBuilder);
         $coupons = $queryBuilder->getQuery()->getResult();

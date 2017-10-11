@@ -11,7 +11,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -43,15 +42,9 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->checkoutLineItemsConverter = $this
-            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
 
-        $this->currencyManager = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
@@ -63,9 +56,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 }
                 return $result;
             }));
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
@@ -100,18 +91,19 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $entity = new \stdClass();
+        $checkout = $this->getCheckout();
         $data = [];
+
         if ($withDataProvider) {
             if ($isEntitySupported) {
                 $data = [$this->getLineItemData(true, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
-            $provider = $this->getProvider($entity, $data, $isEntitySupported);
+            $provider = $this->getProvider($checkout, $data, $isEntitySupported);
 
             $this->checkoutLineItemsManager->addProvider($provider);
         }
 
-        $result = $this->checkoutLineItemsManager->getData($this->getCheckout($entity));
+        $result = $this->checkoutLineItemsManager->getData($checkout);
         $this->assertEquals($this->checkoutLineItemsConverter->convert($data), $result);
     }
 
@@ -128,12 +120,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $entity = new \stdClass();
+        $checkout = $this->getCheckout();
 
-        $this->checkoutLineItemsManager->addProvider($this->getProvider($entity, $providerData));
+        $this->checkoutLineItemsManager->addProvider($this->getProvider($checkout, $providerData));
 
         $expectedData = $this->checkoutLineItemsConverter->convert($expectedData);
-        $actualData = $this->checkoutLineItemsManager->getData($this->getCheckout($entity), $disablePriceFilter);
+        $actualData = $this->checkoutLineItemsManager->getData($checkout, $disablePriceFilter);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -223,19 +215,19 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \stdClass $entity
+     * @param Checkout $entity
      * @param array $returnData
      * @param bool $isSupported
      * @return CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getProvider($entity, array $returnData, $isSupported = true)
+    protected function getProvider(Checkout $entity, array $returnData, $isSupported = true)
     {
         /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
         $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $provider->expects($this->once())
             ->method('isEntitySupported')
-            ->with(new \stdClass())
+            ->with($entity)
             ->willReturn($isSupported);
 
         if ($isSupported) {
@@ -248,20 +240,10 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \stdClass $entity
      * @return Checkout
      */
-    protected function getCheckout($entity)
+    protected function getCheckout()
     {
-        /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSource = $this->createMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource');
-        $checkoutSource->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($entity);
-
-        $checkout = new Checkout();
-        $checkout->setSource($checkoutSource);
-
-        return $checkout;
+        return new Checkout();
     }
 }

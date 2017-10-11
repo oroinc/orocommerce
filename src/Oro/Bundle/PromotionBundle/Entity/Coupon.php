@@ -89,6 +89,23 @@ class Coupon implements
     protected $code;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     *  )
+     */
+    protected $enabled = false;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="uses_per_coupon", type="integer", nullable=true, options={"default"=1})
@@ -232,6 +249,25 @@ class Coupon implements
     public function setCode($code)
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return Coupon
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }

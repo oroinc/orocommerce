@@ -64,11 +64,17 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     private $address;
 
     /**
+     * @var int
+     */
+    private $weight;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->address = new AddressStub();
+        $this->weight = 1;
         $this->pickupDate = \DateTime::createFromFormat('d.m.Y H:i', self::PICKUP_DATE);
         $this->upsTransport = $this->createMock(UPSTransport::class);
         $this->timeInTransitCacheProviderFactory = $this->createMock(TimeInTransitCacheProviderFactoryInterface::class);
@@ -104,7 +110,13 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
 
         $result = $this
             ->cacheableTimeInTransit
-            ->getTimeInTransitResult($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult(
+                $this->upsTransport,
+                $this->address,
+                $this->address,
+                $this->pickupDate,
+                $this->weight
+            );
 
         static::assertEquals($this->timeInTransitResult, $result);
     }
@@ -133,7 +145,13 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
 
         $result = $this
             ->cacheableTimeInTransit
-            ->getTimeInTransitResult($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult(
+                $this->upsTransport,
+                $this->address,
+                $this->address,
+                $this->pickupDate,
+                $this->weight
+            );
 
         static::assertEquals($this->timeInTransitResult, $result);
     }
