@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 
@@ -43,9 +41,6 @@ class CategoriesProductsProvider
      */
     public function getCountByCategories($categoriesIds)
     {
-        $categoriesIds[] = 33;
-
-        /** @var Category[] $categories */
         $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
 
         return $this->searchRepository->getCategoriesCounts($categories);
