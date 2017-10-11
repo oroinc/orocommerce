@@ -1,4 +1,10 @@
 layout:
+    imports:
+        -
+            id: oro_customer_toolbar_actions
+            root: rfp_request_view_page
+            namespace: rfp_request_view_toolbar
+
     actions:
         - '@setBlockTheme':
             themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_view/layout.html.twig'
@@ -24,22 +30,11 @@ layout:
             items:
                 rfp_request_view_page:
                     blockType: container
-                rfp_request_view_toolbar:
-                    blockType: container
                 rfp_request_view_toolbar_actions:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
                         buttons: '=data["buttons"].getAll(data["entity"])'
-                rfp_request_view_controls_list:
-                    blockType: block
-                    options:
-                        visible: false
-                rfp_request_view_customer_status:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"].getCustomerStatus()!=null'
-                        text: '=data["entity"].getCustomerStatus().getName()'
                 rfp_request_view_information:
                     blockType: rfp_request_information
                     options:
@@ -63,12 +58,27 @@ layout:
             tree:
                 page_content:
                     rfp_request_view_page:
-                        rfp_request_view_toolbar:
-                            rfp_request_view_customer_status: ~
-                            rfp_request_view_toolbar_actions: ~
-                        rfp_request_view_controls_list: ~
                         rfp_request_view_information: ~
                         rfp_request_view_additional_notes: ~
                         rfp_request_view_line_items: ~
                         rfp_request_view_bottom:
                             rfp_request_view_back_btn: ~
+        - '@add':
+            id: rfp_request_view_customer_status
+            parentId: rfp_request_view_toolbar_wrapper
+            blockType: text
+            prepend: true
+            options:
+                visible: '=data["entity"].getCustomerStatus()!=null'
+                text: '=data["entity"].getCustomerStatus().getName()'
+        - '@add':
+            id: rfp_request_view_toolbar_actions
+            parentId: rfp_request_view_toolbar_actions_container
+            blockType: line_buttons
+            options:
+                visible: '=data["entity"]!=null'
+                buttons: '=data["buttons"].getAll(data["entity"])'
+        - '@setOption':
+            id: rfp_request_view_toolbar_print_button
+            optionName: text
+            optionValue: 'oro.frontend.rfp.toolbar-actions.btn.print'

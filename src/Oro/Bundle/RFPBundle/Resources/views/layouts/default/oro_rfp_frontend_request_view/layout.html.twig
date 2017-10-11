@@ -1,25 +1,7 @@
-{% block _rfp_request_view_toolbar_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "box-toolbar box-toolbar--offset-none" }) %}
-    <div {{ block('block_attributes') }}>
+{% block _rfp_request_view_toolbar_actions_widget %}
+    <div class="controls-list">
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _rfp_request_view_toolbar_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " box-toolbar__actions" }) %}
-    <div {{ block('block_attributes') }}>
-        <div class="controls-list">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
-{% block _rfp_request_view_controls_list_widget %}
-    <ul class="controls-list">
-        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
-        <li><a href="#"><i class="fa-print"></i>Print</a></li>
-        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
-    </ul>
 {% endblock %}
 
 {% block _rfp_request_view_customer_status_widget %}

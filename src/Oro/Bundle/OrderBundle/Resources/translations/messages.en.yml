@@ -316,3 +316,6 @@ oro:
             method_type:
                 view:
                     label: '%translatedMethodType%'
+            toolbar-actions:
+                btn:
+                    print: 'Print Order'

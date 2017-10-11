@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: oro_customer_toolbar_actions
+            root: quote_view_page
+            namespace: quote_view_page_toolbar
     actions:
         - '@setBlockTheme':
             themes: 'OroSaleBundle:layouts:default/oro_sale_quote_frontend_view/layout.html.twig'
@@ -13,6 +18,11 @@ layout:
             id: page_title
             optionName: class_prefix
             optionValue: 'customer'
+
+        - '@setOption':
+            id: quote_view_page_toolbar_print_button
+            optionName: text
+            optionValue: 'oro.frontend.sale.quote.toolbar-actions.btn.print'
 
         - '@setOption':
             id: page_title
