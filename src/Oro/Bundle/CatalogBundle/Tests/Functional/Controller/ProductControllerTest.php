@@ -139,7 +139,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
-        $this->assertCount(16, $arr['data']);
+        $this->assertCount(8, $arr['data']);
     }
     
     /**
