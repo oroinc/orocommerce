@@ -21,6 +21,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'coupon-1'
         promotion: '@orderDiscountPromotion1'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     coupon2:
@@ -28,6 +29,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'coupon-2'
         promotion: '@orderDiscountPromotion2'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     flatRateCoupon:
@@ -35,6 +37,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'coupon-flat-rate'
         promotion: '@flatRateShippingPromotion'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
     flatRate2Coupon:
@@ -42,6 +45,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         organization: '@organization'
         code: 'coupon-flat-rate2'
         promotion: '@flatRate2ShippingPromotion'
+        enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
 

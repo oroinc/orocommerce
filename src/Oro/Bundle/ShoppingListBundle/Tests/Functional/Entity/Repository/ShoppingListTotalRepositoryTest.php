@@ -33,7 +33,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         );
     }
     
-    public function testInvalidateByCpl()
+    public function testInvalidateByCombinedPriceList()
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
@@ -48,7 +48,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
 
         $cpl = $this->getReference('1f');
         $manager->getRepository('OroShoppingListBundle:ShoppingListTotal')
-            ->invalidateByCpl([$cpl->getId()]);
+            ->invalidateByCombinedPriceList([$cpl->getId()]);
 
         $manager->refresh($invalidTotal);
         $this->assertFalse($invalidTotal->isValid());

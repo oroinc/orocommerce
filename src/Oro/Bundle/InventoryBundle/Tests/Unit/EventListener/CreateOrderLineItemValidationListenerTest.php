@@ -21,8 +21,6 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
-
 class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -181,13 +179,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
 
         $this->checkoutLineItemsManager->expects($this->once())->method('getData')->willReturn([$lineItem]);
 
-        $checkoutLineItemsHolder = $this->createMock(CheckoutLineItemsHolderInterface::class);
-
-        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $checkoutSource->expects($this->any())->method('getEntity')->willReturn($checkoutLineItemsHolder);
-
         $checkout = $this->createMock(Checkout::class);
-        $checkout->expects($this->any())->method('getSource')->willReturn($checkoutSource);
 
         $workflowItem = $this->createMock(WorkflowItem::class);
         $workflowItem->expects($this->any())->method('getEntity')->willReturn($checkout);

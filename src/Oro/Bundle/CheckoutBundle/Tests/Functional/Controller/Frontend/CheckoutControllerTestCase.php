@@ -20,6 +20,8 @@ use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethod
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -81,6 +83,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
+            LoadQuoteProductDemandData::class,
         ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -106,25 +109,18 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 
     /**
      * @param ShoppingList $shoppingList
-     * @throws \Oro\Component\Action\Exception\InvalidParameterException
      */
     protected function startCheckout(ShoppingList $shoppingList)
     {
-        $this->setCurrentWebsite('default');
-        $user = $this->registry
-            ->getRepository('OroCustomerBundle:CustomerUser')
-            ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
-        $user->setCustomer($this->getReference('customer.level_1'));
-        $organization = $this->registry
-            ->getRepository(Organization::class)
-            ->getFirst();
-        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getRoles());
-        $this->client->getContainer()->get('security.token_storage')->setToken($token);
-        $data = $this->getCheckoutData($shoppingList);
-        $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
-        $action->initialize($data['options']);
-        $action->execute($data['context']);
-        CheckoutControllerTestCase::$checkoutUrl = $data['context']['redirectUrl'];
+        $this->startCheckoutByData($this->getCheckoutData($shoppingList));
+    }
+
+    /**
+     * @param QuoteDemand $quoteDemand
+     */
+    protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
+    {
+        $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
     }
 
     /**
@@ -141,6 +137,28 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
                     'shoppingList' => $shoppingList,
                     'showErrors' => true,
                 ],
+                'results' => [
+                    'redirectUrl' => new PropertyPath('redirectUrl'),
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param QuoteDemand $quoteDemand
+     * @return array
+     */
+    protected function getCheckoutFromQuoteDemandData(QuoteDemand $quoteDemand)
+    {
+        return [
+            'context' => new ActionData([]),
+            'options' => [
+                'parameters_mapping' => [
+                    'sourceCriteria' => [
+                        'quoteDemand' => $quoteDemand,
+                    ],
+                ],
+                'action_group' => 'start_checkout',
                 'results' => [
                     'redirectUrl' => new PropertyPath('redirectUrl'),
                 ]
@@ -265,5 +283,26 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function startCheckoutByData(array $data)
+    {
+        $this->setCurrentWebsite('default');
+        $user = $this->registry
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
+        $user->setCustomer($this->getReference('customer.level_1'));
+        $organization = $this->registry
+            ->getRepository(Organization::class)
+            ->getFirst();
+        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getRoles());
+        $this->client->getContainer()->get('security.token_storage')->setToken($token);
+        $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
+        $action->initialize($data['options']);
+        $action->execute($data['context']);
+        self::$checkoutUrl = $data['context']['redirectUrl'];
     }
 }

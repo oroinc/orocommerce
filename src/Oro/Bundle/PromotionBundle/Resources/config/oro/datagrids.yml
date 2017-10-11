@@ -123,6 +123,7 @@ datagrids:
                     - coupon.id
                     - coupon.code
                     - rule.name as promotionName
+                    - coupon.enabled
                     - coupon.createdAt
                     - coupon.updatedAt
                     - coupon.usesPerCoupon
@@ -142,6 +143,9 @@ datagrids:
                 frontend_type: html
                 type:          twig
                 template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+            enabled:
+                label:         oro.promotion.coupon.enabled.label
+                frontend_type: boolean
             usesPerCoupon:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
@@ -161,6 +165,8 @@ datagrids:
                     data_name: coupon.code
                 promotionName:
                     data_name: rule.name
+                enabled:
+                    data_name: coupon.enabled
                 usesPerCoupon:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
@@ -181,6 +187,9 @@ datagrids:
                 promotionName:
                     type:      string
                     data_name: rule.name
+                enabled:
+                    type:      boolean
+                    data_name: coupon.enabled
                 usesPerCoupon:
                     type:      number
                     data_name: coupon.usesPerCoupon

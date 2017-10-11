@@ -47,7 +47,8 @@ class CouponRepositoryTest extends WebTestCase
         ];
         $couponCodes = [
             LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
-            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
+            LoadCouponData::COUPON_DISABLED,
         ];
 
         $result = $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);

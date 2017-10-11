@@ -18,6 +18,7 @@ class CouponTest extends \PHPUnit_Framework_TestCase
             new Coupon(),
             [
                 ['code', 'some string'],
+                ['enabled', true],
                 ['usesPerCoupon', 1],
                 ['usesPerPerson', 1],
                 ['owner', new BusinessUnit()],

@@ -13,6 +13,7 @@ interface TimeInTransitRequestFactoryInterface
      * @param AddressInterface $shipFromAddress
      * @param AddressInterface $shipToAddress
      * @param \DateTime        $pickupDate
+     * @param int              $weight
      *
      * @return UpsClientRequestInterface
      */
@@ -20,6 +21,7 @@ interface TimeInTransitRequestFactoryInterface
         UPSTransport $transport,
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
-        \DateTime $pickupDate
-    );
+        \DateTime $pickupDate,
+        int $weight
+    ): UpsClientRequestInterface;
 }
