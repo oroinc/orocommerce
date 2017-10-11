@@ -4,8 +4,13 @@ namespace Oro\Bundle\CatalogBundle\Search;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EwsBundle\Connector\Search\SearchQuery;
+use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\SearchBundle\Tests\Selenium\Pages\Search;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
 class ProductRepository extends WebsiteSearchRepository
@@ -22,6 +27,35 @@ class ProductRepository extends WebsiteSearchRepository
         $counts = $this->getCategoryCounts($searchQuery);
 
         return $this->normalizeCounts($counts, $category->getMaterializedPath());
+    }
+
+    /**
+     * @param Category[] $categories
+     *
+     * @return array ['<categoryId>' => <numberOfProducts>, ...]
+     */
+    public function getCategoriesCounts(array $categories)
+    {
+        $query = $this->createQuery()
+            ->setFrom('oro_product_'. WebsiteIdPlaceholder::NAME);
+
+        /** @var Category $category */
+        foreach ($categories as $category) {
+            $query->addWhere(
+                Criteria::expr()->exists(
+                    'integer.category_path_'. $category->getMaterializedPath()),
+                    AbstractSearchQuery::WHERE_OR
+            );
+        }
+
+        $counts = (array) $this->getCategoryCounts($query);
+
+        $data = [];
+        foreach ($categories as $category) {
+            $data[$category->getId()] = array_sum($this->normalizeCounts($counts, $category->getMaterializedPath()));
+        }
+
+        return $data;
     }
 
     /**
