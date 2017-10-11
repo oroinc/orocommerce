@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Search;
 
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -36,13 +37,13 @@ class ProductRepository extends WebsiteSearchRepository
             $query = clone $query;
         }
 
-        # reset query parts to make it work as fast as possible
+        // reset query parts to make it work as fast as possible
         $query->getQuery()->select([]);
         $query->getQuery()->getCriteria()->orderBy([]);
         $query->setFirstResult(0);
         $query->setMaxResults(1);
 
-        # calculate category counts
+        // calculate category counts
         $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
         $aggregatedData = $query->getResult()->getAggregatedData();
 

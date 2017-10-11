@@ -39,6 +39,18 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_7 = 'product-7';
     const PRODUCT_8 = 'product-8';
     const PRODUCT_9 = 'product-9';
+    const PRODUCT_10 = 'product-10';
+    const PRODUCT_11 = 'product-11';
+    const PRODUCT_12 = 'product-12';
+    const PRODUCT_13 = 'product-13';
+    const PRODUCT_14 = 'product-14';
+    const PRODUCT_15 = 'product-15';
+    const PRODUCT_16 = 'product-16';
+    const PRODUCT_17 = 'product-17';
+    const PRODUCT_18 = 'product-18';
+    const PRODUCT_19 = 'product-19';
+    const PRODUCT_20 = 'product-20';
+    const PRODUCT_21 = 'product-21';
 
     const PRODUCT_1_DEFAULT_NAME = 'product-1.names.default';
     const PRODUCT_2_DEFAULT_NAME = 'product-2.names.default';
@@ -49,6 +61,18 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_7_DEFAULT_NAME = 'product-7.names.default';
     const PRODUCT_8_DEFAULT_NAME = 'product-8.names.default';
     const PRODUCT_9_DEFAULT_NAME = 'product-9.names.default';
+    const PRODUCT_10_DEFAULT_NAME = 'product-10.names.default';
+    const PRODUCT_11_DEFAULT_NAME = 'product-11.names.default';
+    const PRODUCT_12_DEFAULT_NAME = 'product-12.names.default';
+    const PRODUCT_13_DEFAULT_NAME = 'product-13.names.default';
+    const PRODUCT_14_DEFAULT_NAME = 'product-14.names.default';
+    const PRODUCT_15_DEFAULT_NAME = 'product-15.names.default';
+    const PRODUCT_16_DEFAULT_NAME = 'product-16.names.default';
+    const PRODUCT_17_DEFAULT_NAME = 'product-17.names.default';
+    const PRODUCT_18_DEFAULT_NAME = 'product-18.names.default';
+    const PRODUCT_19_DEFAULT_NAME = 'product-19.names.default';
+    const PRODUCT_20_DEFAULT_NAME = 'product-20.names.default';
+    const PRODUCT_21_DEFAULT_NAME = 'product-21.names.default';
 
     const PRODUCT_1_DEFAULT_SLUG_PROTOTYPE = 'product-1.slugPrototypes.default';
     const PRODUCT_2_DEFAULT_SLUG_PROTOTYPE = 'product-2.slugPrototypes.default';

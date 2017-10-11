@@ -45,11 +45,15 @@ class ProductRepositoryTest extends WebTestCase
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $category1 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        $category3 = $this->getReference(LoadCategoryData::SECOND_LEVEL3);
+        $category4 = $this->getReference(LoadCategoryData::SECOND_LEVEL4);
 
         $this->assertEquals(
             [
                 $category1->getId() => 3,
                 $category2->getId() => 2,
+                $category3->getId() => 6,
+                $category4->getId() => 4,
             ],
             $this->getRepository()->getCategoryCountsByCategory($category)
         );

@@ -163,6 +163,30 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
                     LoadCategoryData::FOURTH_LEVEL2 => [
                         'parent' => LoadCategoryData::THIRD_LEVEL2
                     ],
+                    LoadCategoryData::SECOND_LEVEL3 => [
+                        'parent' => LoadCategoryData::FIRST_LEVEL
+                    ],
+                    LoadCategoryData::THIRD_LEVEL3 => [
+                        'parent' => LoadCategoryData::SECOND_LEVEL3
+                    ],
+                    LoadCategoryData::FOURTH_LEVEL3 => [
+                        'parent' => LoadCategoryData::THIRD_LEVEL3
+                    ],
+                    LoadCategoryData::SECOND_LEVEL4 => [
+                        'parent' => LoadCategoryData::FIRST_LEVEL
+                    ],
+                    LoadCategoryData::THIRD_LEVEL4 => [
+                        'parent' => LoadCategoryData::SECOND_LEVEL4
+                    ],
+                    LoadCategoryData::FOURTH_LEVEL4 => [
+                        'parent' => LoadCategoryData::THIRD_LEVEL3
+                    ],
+                    LoadCategoryData::FOURTH_LEVEL5 => [
+                        'parent' => LoadCategoryData::THIRD_LEVEL4
+                    ],
+                    LoadCategoryData::FOURTH_LEVEL6 => [
+                        'parent' => LoadCategoryData::THIRD_LEVEL4
+                    ],
                 ]
             ],
         ];

@@ -70,6 +70,23 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
         $this->websiteSearchQuery->execute();
     }
 
+    public function testAggregationAccessors()
+    {
+        $this->query->expects($this->once())
+            ->method('addAggregate')
+            ->with('test_name', 'test_field', 'test_function');
+
+        $this->websiteSearchQuery->addAggregate('test_name', 'test_field', 'test_function');
+
+        $aggregations = ['test_name' => ['field' => 'test_field', 'function' => 'test_function']];
+
+        $this->query->expects($this->once())
+            ->method('getAggregations')
+            ->willReturn($aggregations);
+
+        $this->assertEquals($aggregations, $this->websiteSearchQuery->getAggregations());
+    }
+
     public function testClone()
     {
         $result1 = new Result($this->query);

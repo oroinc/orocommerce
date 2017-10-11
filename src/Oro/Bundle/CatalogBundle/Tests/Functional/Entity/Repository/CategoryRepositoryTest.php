@@ -58,7 +58,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->registry->getManagerForClass('OroCatalogBundle:Category')->clear();
 
         $categories = $this->repository->getChildren();
-        $this->assertCount(8, $categories);
+        $this->assertCount(16, $categories);
 
         /** @var Category $category */
         $category = current($categories);
@@ -73,7 +73,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->registry->getManagerForClass('OroCatalogBundle:Category')->clear();
 
         $categories = $this->repository->getChildrenWithTitles();
-        $this->assertCount(8, $categories);
+        $this->assertCount(16, $categories);
 
         /** @var Category $category */
         $category = current($categories);
@@ -97,6 +97,14 @@ class CategoryRepositoryTest extends WebTestCase
         $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL2)->getId();
         $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL2)->getId();
         $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL2)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL3)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL3)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL3)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL4)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL4)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL4)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL5)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL6)->getId();
         $result = $this->repository->getChildrenIds($parent);
         $this->assertEquals($result, $childrenIds);
     }
