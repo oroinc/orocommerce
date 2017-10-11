@@ -1,6 +1,8 @@
 ## 1.5.0 (Unreleased)
 
 ### Added
+#### OrderBundle
+* Added Previously purchased products functionality. [Documentation](./src/Oro/Bundle/OrderBundle/Resources/doc/previously-purchased-products.md)
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
 ### Changed
