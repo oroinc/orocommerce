@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException;
@@ -50,10 +49,9 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
-
-        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
+        /** @var Checkout $checkout */
+        $checkout = $workflowItem->getEntity();
+        if (false === $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->setIsCheckoutRestartRequired(true);
         }
     }
@@ -71,7 +69,7 @@ class QuantityToOrderConditionListener
 
         /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
-        if (false == $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
+        if (false === $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->addError('oro.inventory.frontend.messages.quantity_limits_error');
         }
     }
@@ -86,7 +84,7 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
+        if (false === $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -131,8 +129,6 @@ class QuantityToOrderConditionListener
             || !$context->getEntity()->getSource() instanceof CheckoutSource
             // make sure checkout only done from shopping list
             || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
-            || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
-            || $context->getEntity()->getSource()->getQuoteDemand() instanceof QuoteDemand
         );
     }
 

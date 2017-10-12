@@ -130,11 +130,6 @@ services:
             - '%oro_customer.entity.customer.class%'
             - '%oro_customer.entity.customer_user.class%'
 
-    oro_sale.data_provider.checkout_line_item:
-        class: 'Oro\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider'
-        tags:
-             - { name: checkout.data_provider.line_item }
-
     oro_sale.manager.quote_demand_manager:
         class: 'Oro\Bundle\SaleBundle\Manager\QuoteDemandManager'
         public: true

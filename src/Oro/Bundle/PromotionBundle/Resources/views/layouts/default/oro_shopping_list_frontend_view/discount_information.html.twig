@@ -1,7 +1,7 @@
 {% block _promotion_line_items_list_discount_info_widget %}
     {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts.get(lineItem) : null %}
     {% if matchedDiscount is not null and matchedDiscount.total.value > 0 %}
-        <table class="table borderless paddingless mb0-md">
+        <table class="price-table">
             <tbody>
             <tr>
                 <td>{{ 'oro.frontend.shoppinglist.view.discount.label'|trans }}</td>

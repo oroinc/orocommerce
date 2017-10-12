@@ -1,11 +1,19 @@
 ## 1.5.0 (Unreleased)
 
 ### Added
+#### CheckoutBundle
+* Added `CheckoutLineItem` and `CheckoutSubtotal` entities. They will be used in `Checkout` entity to store data. Previously for these purposes used line items and subtotals of Checkout source entity (`ShoppingList` or `QuoteDemand` entities).
 #### OrderBundle
 * Added Previously purchased products functionality. [Documentation](./src/Oro/Bundle/OrderBundle/Resources/doc/previously-purchased-products.md)
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
+
 ### Changed
+#### CheckoutBundle
+* Entity `Oro\Bundle\CheckoutBundle\Entity\Checkout`:
+    * no longer implements `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface`;
+    * implements `Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface`.
+
 #### ProductBundle
 * Updated website search configuration file `Oro/Bundle/ProductBundle/Resources/config/oro/website_search.yml`:
     * removed configuration for next fields:
@@ -35,6 +43,8 @@
 * Implementation can decorate original implementation of interface `Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface` that as service with tag `oro_entity_config.attribute_type`.
 * Class `Oro\Bundle\SearchBundle\Engine\OrmIndexer`
     * The construction signature of was changed and the constructor was updated - `DbalStorer $dbalStorer` parameter removed.
+* Class `Oro\Bundle\CatalogBundle\EventListener\DatagridListener`:
+    * method `addCategoryRelation` flagged as deprecated.
 
 ## 1.4.0 (2017-09-29)
 [Show detailed list of changes](incompatibilities-1-4.md)

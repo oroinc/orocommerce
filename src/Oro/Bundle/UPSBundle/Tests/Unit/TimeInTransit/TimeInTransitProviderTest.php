@@ -49,6 +49,11 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     private $address;
 
     /**
+     * @var int
+     */
+    private $weight;
+
+    /**
      * @var TimeInTransitProvider
      */
     private $timeInTransit;
@@ -56,6 +61,7 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->address = new AddressStub();
+        $this->weight = 1;
         $this->pickupDate = new \DateTime();
         $this->requestFactory = $this->createMock(TimeInTransitRequestFactoryInterface::class);
         $this->clientFactory = $this->createMock(UpsClientFactoryInterface::class);
@@ -101,7 +107,7 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($result);
 
         $result = $this->timeInTransit
-            ->getTimeInTransitResult($transport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult($transport, $this->address, $this->address, $this->pickupDate, $this->weight);
 
         static::assertSame($result, $result);
     }
@@ -136,7 +142,7 @@ class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($result);
 
         $result = $this->timeInTransit
-            ->getTimeInTransitResult($transport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult($transport, $this->address, $this->address, $this->pickupDate, $this->weight);
 
         static::assertSame($result, $result);
     }

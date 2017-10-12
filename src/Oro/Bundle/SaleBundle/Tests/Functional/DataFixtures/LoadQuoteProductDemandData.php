@@ -17,9 +17,11 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
 {
     const SELECTED_OFFER_1 = 'selected.offer.1';
     const SELECTED_OFFER_2 = 'selected.offer.2';
+    const SELECTED_OFFER_3 = 'selected.offer.3';
 
     const QUOTE_DEMAND_1 = 'quote.demand.1';
     const QUOTE_DEMAND_2 = 'quote.demand.2';
+    const QUOTE_DEMAND_3 = 'quote.demand.3';
 
     /**
      * @var array
@@ -39,6 +41,17 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
         self::SELECTED_OFFER_2 => [
             'quoteDemandReference' => self::QUOTE_DEMAND_2,
             'quote' => LoadQuoteData::QUOTE1,
+            'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
+            'customer' => 'customer.level_1',
+            'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
+            'quantity' => 10,
+            'subtotal' => 321,
+            'total' => 321,
+            'currency' => 'UAH'
+        ],
+        self::SELECTED_OFFER_3 => [
+            'quoteDemandReference' => self::QUOTE_DEMAND_3,
+            'quote' => LoadQuoteData::QUOTE3,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
             'customer' => 'customer.level_1',
             'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,

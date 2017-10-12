@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 

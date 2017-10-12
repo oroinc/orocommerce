@@ -31,6 +31,14 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
     }
 
     /**
+     * @When /^I wait line items are initialized/
+     */
+    public function waitLineItemsInitialization()
+    {
+        $this->getSession()->getDriver()->wait(30000, "0 != $('input[name=product_qty]:enabled').length");
+    }
+
+    /**
      * @Given /^(?:|I )request a quote from shopping list "(?P<shoppingListLabel>[^"]+)" with data:$/
      *
      * @param string $shoppingListLabel

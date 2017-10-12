@@ -137,6 +137,7 @@ class CouponGenerator implements CouponGeneratorInterface
             'promotion_id',
             $options->getPromotion() ? $options->getPromotion()->getId() : null
         );
+        $statement->bindValue('enabled', $options->isEnabled(), Type::BOOLEAN);
         $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
         $statement->bindValue('uses_per_person', $options->getUsesPerPerson());
         $statement->bindValue(
@@ -207,6 +208,7 @@ class CouponGenerator implements CouponGeneratorInterface
               business_unit_owner_id,
               promotion_id,
               code,
+              enabled,
               uses_per_coupon,
               uses_per_person,
               created_at,
@@ -222,6 +224,7 @@ class CouponGenerator implements CouponGeneratorInterface
                   :business_unit_owner_id,
                   :promotion_id,
                   :code$i,
+                  :enabled,
                   :uses_per_coupon,
                   :uses_per_person,
                   :created_at,
