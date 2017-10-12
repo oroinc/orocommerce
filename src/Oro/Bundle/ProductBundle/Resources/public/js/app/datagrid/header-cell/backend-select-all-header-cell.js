@@ -4,6 +4,7 @@ define(function(require) {
     var BackendSelectAllHeaderCell;
     var _  = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var template = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     var additionalTpl = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
     var SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
@@ -60,6 +61,8 @@ define(function(require) {
 
         onCheckboxChange: function(event) {
             var checked = $(event.currentTarget).is(':checked');
+
+            mediator.trigger('popupGalleryWidget:toggle', !checked);
 
             if (!checked) {
                 this.collection.trigger('backgrid:selectNone');

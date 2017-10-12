@@ -75,7 +75,7 @@ layout:
         - '@setOption':
             id: product_datagrid
             optionName: grid_render_parameters.multiSelectRowEnabled
-            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
 
         - '@setOption':
             id: product_datagrid_row_product_sticker_new
@@ -124,7 +124,7 @@ layout:
         - '@setOption':
             id: product_mass_actions_container
             optionName: visible
-            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
 
         - '@add':
             id: product_mass_actions_sticky_container
@@ -135,7 +135,7 @@ layout:
         - '@setOption':
             id: product_mass_actions_sticky_container
             optionName: visible
-            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
 
         - '@add':
             id: product_item_select_row
@@ -145,4 +145,4 @@ layout:
         - '@setOption':
             id: product_item_select_row
             optionName: visible
-            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
+            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
