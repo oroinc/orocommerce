@@ -216,3 +216,15 @@ services:
             - '%oro_catalog.entity.category.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_catalog.category_path.placeholder:
+        class: 'Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_catalog.website_search.repository.product:
+        class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
+        parent: oro_website_search.repository.abstract
+        calls:
+            - [setEntityName, ['%oro_product.entity.product.class%']]
