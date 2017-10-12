@@ -10,10 +10,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * Class LowInventoryQuantityManager created to incapsulate Low Inventory flag logic.
+ * Class LowInventoryProvider created to encapsulate Low Inventory flag logic.
  * It should be used whenever we need to check if product or products in collection have low inventory
  */
-class LowInventoryQuantityManager
+class LowInventoryProvider
 {
     const LOW_INVENTORY_THRESHOLD_OPTION = 'lowInventoryThreshold';
     const HIGHLIGHT_LOW_INVENTORY_OPTION = 'highlightLowInventory';

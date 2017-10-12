@@ -6,13 +6,13 @@ use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
+class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
@@ -30,9 +30,9 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
     protected $inventoryLevelRepository;
 
     /**
-     * @var LowInventoryQuantityManager
+     * @var LowInventoryProvider
      */
-    protected $lowInventoryQuantityManager;
+    protected $lowInventoryProvider;
 
     /**
      * @inheritdoc
@@ -51,7 +51,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->lowInventoryQuantityManager = new LowInventoryQuantityManager(
+        $this->lowInventoryProvider = new LowInventoryProvider(
             $this->entityFallbackResolver,
             $this->doctrineHelper
         );
@@ -97,7 +97,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($inventoryLevel);
         }
 
-        $isLowInventoryProduct = $this->lowInventoryQuantityManager->isLowInventoryProduct($product, $productUnit);
+        $isLowInventoryProduct = $this->lowInventoryProvider->isLowInventoryProduct($product, $productUnit);
 
         $this->assertEquals($expectedIsLowInventoryProduct, $isLowInventoryProduct);
     }
@@ -186,7 +186,7 @@ class LowInventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getQuantityForProductCollection')
             ->willReturn($quantityForProductCollection);
 
-        $isLowInventoryProduct = $this->lowInventoryQuantityManager->isLowInventoryCollection($products);
+        $isLowInventoryProduct = $this->lowInventoryProvider->isLowInventoryCollection($products);
 
         $this->assertEquals($expectedResult, $isLowInventoryProduct);
     }

@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridListener;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -25,9 +25,9 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var LowInventoryQuantityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var LowInventoryProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $lowInventoryQuantityManager;
+    private $lowInventoryProvider;
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -41,14 +41,14 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->lowInventoryQuantityManager = $this->getMockBuilder(LowInventoryQuantityManager::class)
+        $this->lowInventoryProvider = $this->getMockBuilder(LowInventoryProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new ProductDatagridListener(
-            $this->lowInventoryQuantityManager,
+            $this->lowInventoryProvider,
             $this->doctrineHelper
         );
     }
@@ -99,7 +99,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->lowInventoryQuantityManager
+        $this->lowInventoryProvider
             ->expects($this->once())
             ->method('isLowInventoryCollection')
             ->with($products)
@@ -128,7 +128,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->lowInventoryQuantityManager
+        $this->lowInventoryProvider
             ->expects($this->once())
             ->method('isLowInventoryCollection')
             ->with([])
@@ -181,7 +181,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
             ->willReturn($productRepository);
 
-        $this->lowInventoryQuantityManager
+        $this->lowInventoryProvider
             ->expects($this->once())
             ->method('isLowInventoryCollection')
             ->with($preparedRecords)

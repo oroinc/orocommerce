@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductHighlightLowInventoryFormExtension extends AbstractTypeExtension
@@ -35,7 +35,7 @@ class ProductHighlightLowInventoryFormExtension extends AbstractTypeExtension
         }
 
         $builder->add(
-            LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION,
+            LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.highlight_low_inventory.label',

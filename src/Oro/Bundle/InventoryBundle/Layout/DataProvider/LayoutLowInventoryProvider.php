@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Twig;
+namespace Oro\Bundle\InventoryBundle\Layout\DataProvider;
 
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class LowInventoryExtension extends \Twig_Extension
+class LayoutLowInventoryProvider
 {
     /**
      * @var LowInventoryProvider
@@ -15,25 +15,15 @@ class LowInventoryExtension extends \Twig_Extension
     /**
      * @param LowInventoryProvider $lowInventoryProvider
      */
-    public function __construct(LowInventoryProvider $lowInventoryProvider)
-    {
+    public function __construct(
+        LowInventoryProvider $lowInventoryProvider
+    ) {
         $this->lowInventoryProvider = $lowInventoryProvider;
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getFunctions()
-    {
-        return [
-            new \Twig_SimpleFunction(
-                'oro_is_low_inventory_product',
-                [$this, 'isLowInventory']
-            )
-        ];
-    }
-
-    /**
+     * Get customer address form view
+     *
      * @param Product $product
      *
      * @return bool

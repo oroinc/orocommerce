@@ -10,7 +10,7 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -53,11 +53,11 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
             $schema,
             $this->extendExtension,
             'oro_product',
-            LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION,
+            LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION,
             'oro.inventory.highlight_low_inventory.label',
             [
                 CategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION
+                    'fieldName' => LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
             ]
@@ -77,11 +77,11 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
             $schema,
             $this->extendExtension,
             'oro_product',
-            LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION,
+            LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION,
             'oro.inventory.low_inventory_threshold.label',
             [
                 CategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION
+                    'fieldName' => LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.low_inventory_threshold'
@@ -103,11 +103,11 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION,
+            LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION,
             'oro.inventory.low_inventory_threshold.label',
             [
                 ParentCategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => LowInventoryQuantityManager::LOW_INVENTORY_THRESHOLD_OPTION
+                    'fieldName' => LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.low_inventory_threshold'
@@ -129,11 +129,11 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION,
+            LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION,
             'oro.inventory.highlight_low_inventory.label',
             [
                 ParentCategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => LowInventoryQuantityManager::HIGHLIGHT_LOW_INVENTORY_OPTION
+                    'fieldName' => LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
             ]

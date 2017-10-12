@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\LowInventoryQuantityManagerStub;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\LowInventoryProviderStub;
 use Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -23,10 +23,10 @@ class LowInventoryExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $lowInventoryQuantityManager = new LowInventoryQuantityManagerStub();
+        $lowInventoryProvider = new LowInventoryProviderStub();
 
         $this->lowInventoryExtension = new LowInventoryExtension(
-            $lowInventoryQuantityManager
+            $lowInventoryProvider
         );
     }
 
@@ -38,7 +38,7 @@ class LowInventoryExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 $this->getEntity(
                     Product::class,
-                    ['id' => LowInventoryQuantityManagerStub::PRODUCT_ID_WITH_ENABLED_LOW_INVENTORY]
+                    ['id' => LowInventoryProviderStub::PRODUCT_ID_WITH_ENABLED_LOW_INVENTORY]
                 )
             ]
         );
@@ -54,7 +54,7 @@ class LowInventoryExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 $this->getEntity(
                     Product::class,
-                    ['id' => LowInventoryQuantityManagerStub::PRODUCT_ID_WITH_DISABLED_LOW_INVENTORY]
+                    ['id' => LowInventoryProviderStub::PRODUCT_ID_WITH_DISABLED_LOW_INVENTORY]
                 )
             ]
         );

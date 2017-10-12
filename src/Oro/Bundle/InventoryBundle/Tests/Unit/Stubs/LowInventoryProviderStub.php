@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Stubs;
 
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class LowInventoryQuantityManagerStub extends LowInventoryQuantityManager
+class LowInventoryProviderStub extends LowInventoryProvider
 {
     const PRODUCT_ID_WITH_ENABLED_LOW_INVENTORY = 1;
     const PRODUCT_ID_WITH_DISABLED_LOW_INVENTORY = 2;

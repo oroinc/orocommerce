@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -18,21 +18,21 @@ class ProductDatagridListener
 {
     const COLUMN_LOW_INVENTORY = 'low_inventory';
 
-    /** @var LowInventoryQuantityManager */
-    private $lowInventoryQuantityManager;
+    /** @var LowInventoryProvider */
+    private $lowInventoryProvider;
 
     /** DoctrineHelper */
     private $doctrineHelper;
 
     /**
-     * @param LowInventoryQuantityManager $lowInventoryQuantityManager
-     * @param DoctrineHelper              $doctrineHelper
+     * @param LowInventoryProvider $lowInventoryProvider
+     * @param DoctrineHelper       $doctrineHelper
      */
     public function __construct(
-        LowInventoryQuantityManager $lowInventoryQuantityManager,
+        LowInventoryProvider $lowInventoryProvider,
         DoctrineHelper $doctrineHelper
     ) {
-        $this->lowInventoryQuantityManager = $lowInventoryQuantityManager;
+        $this->lowInventoryProvider = $lowInventoryProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -64,7 +64,7 @@ class ProductDatagridListener
 
         $products = $this->getProductsEntities($records);
         $data = $this->prepareDataForIsLowInventoryCollection($products);
-        $lowInventoryResponse = $this->lowInventoryQuantityManager->isLowInventoryCollection($data);
+        $lowInventoryResponse = $this->lowInventoryProvider->isLowInventoryCollection($data);
 
         if (empty($lowInventoryResponse)) {
             return;

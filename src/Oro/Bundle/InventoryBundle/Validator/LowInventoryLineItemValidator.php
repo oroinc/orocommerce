@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 
 class LowInventoryLineItemValidator
 {
@@ -15,19 +15,19 @@ class LowInventoryLineItemValidator
     protected $translator;
 
     /**
-     * @var LowInventoryQuantityManager
+     * @var LowInventoryProvider
      */
     protected $lowInventoryManager;
 
     /**
-     * @param LowInventoryQuantityManager $lowInventoryQuantityManager
-     * @param TranslatorInterface $translator
+     * @param LowInventoryProvider $lowInventoryProvider
+     * @param TranslatorInterface  $translator
      */
     public function __construct(
-        LowInventoryQuantityManager $lowInventoryQuantityManager,
+        LowInventoryProvider $lowInventoryProvider,
         TranslatorInterface $translator
     ) {
-        $this->lowInventoryManager = $lowInventoryQuantityManager;
+        $this->lowInventoryManager = $lowInventoryProvider;
         $this->translator = $translator;
     }
 
