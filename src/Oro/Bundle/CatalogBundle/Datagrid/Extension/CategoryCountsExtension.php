@@ -2,8 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Extension;
 
+use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
@@ -15,24 +20,35 @@ use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 class CategoryCountsExtension extends AbstractExtension
 {
     /** @var Manager */
-    private $datagridManager;
+    protected $datagridManager;
 
     /** @var RequestParameterBagFactory */
-    private $parametersFactory;
+    protected $parametersFactory;
+
+    /** @var CategoryRepository */
+    protected $categoryRepository;
 
     /** @var ProductRepository */
-    private $productSearchRepository;
+    protected $productSearchRepository;
 
     /** @var array */
-    private $applicableGrids = [];
+    protected $applicableGrids = [];
 
+    /**
+     * @param Manager $datagridManager
+     * @param RequestParameterBagFactory $parametersFactory
+     * @param CategoryRepository $categoryRepository
+     * @param ProductRepository $productSearchRepository
+     */
     public function __construct(
         Manager $datagridManager,
         RequestParameterBagFactory $parametersFactory,
+        CategoryRepository $categoryRepository,
         ProductRepository $productSearchRepository
     ) {
         $this->datagridManager = $datagridManager;
         $this->parametersFactory = $parametersFactory;
+        $this->categoryRepository = $categoryRepository;
         $this->productSearchRepository = $productSearchRepository;
     }
 
@@ -59,11 +75,61 @@ class CategoryCountsExtension extends AbstractExtension
      */
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
-        $categoryFilterName = 'category_filter';
+        $categoryCounts = $this->getCounts($config);
 
+        // add data to result
+        $result->offsetSetByPath(
+            sprintf('[metadata][filters][%s][counts]', SubcategoryFilter::FILTER_TYPE_NAME),
+            $categoryCounts
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @return array
+     */
+    protected function getCounts(DatagridConfiguration $config)
+    {
+        $category = $this->getCategory($config);
+        if (!$category) {
+            return [];
+        }
+
+        // build datagrid and extract search query from it
+        $datagrid = $this->getDatagrid($config->getName());
+
+        /** @var SearchDatasource $datasource */
+        $datasource = $datagrid->acceptDatasource()->getDatasource();
+        $searchQuery = $datasource->getSearchQuery();
+
+        // calculate counts of products per category
+        return $this->productSearchRepository->getCategoryCountsByCategory($category, $searchQuery);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @return null|Category
+     */
+    protected function getCategory(DatagridConfiguration $config)
+    {
+        $categoryId = $config->offsetGetByPath(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH);
+        if (!$categoryId) {
+            return null;
+        }
+
+        return $this->categoryRepository->find($categoryId);
+    }
+
+    /**
+     * @param string $datagridName
+     * @return DatagridInterface
+     */
+    protected function getDatagrid($datagridName)
+    {
         // get datagrid parameters
-        $datagridName = $config->getName();
         $datagridParameters = $this->parametersFactory->createParameters($datagridName);
+
+        $categoryFilterName = SubcategoryFilter::FILTER_TYPE_NAME;
 
         // remove filter by category to make sure that filter counts will not be affected by filter itself
         $filters = $datagridParameters->get(AbstractFilterExtension::FILTER_ROOT_PARAM);
@@ -77,18 +143,6 @@ class CategoryCountsExtension extends AbstractExtension
             $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedFilters);
         }
 
-        // build datagrid and extract search query from it
-        $datagrid = $this->datagridManager->getDatagrid($datagridName, $datagridParameters);
-        /** @var SearchDatasource $datasource */
-        $datasource = $datagrid->acceptDatasource()->getDatasource();
-        $searchQuery = $datasource->getSearchQuery();
-
-        // calculate counts of products per category
-        $categoryCounts = $this->productSearchRepository->getCategoryCounts($searchQuery);
-
-        // add data to result
-        $filterCounts = $result->offsetGetByPath('filterCounts', []);
-        $filterCounts[$categoryFilterName] = $categoryCounts;
-        $result->offsetSetByPath('filterCounts', $filterCounts);
+        return $this->datagridManager->getDatagrid($datagridName, $datagridParameters);
     }
 }

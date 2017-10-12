@@ -37,7 +37,7 @@ class SubcategoryProvider
             array_filter(
                 $this->categoryProvider->getCategories($this->tokenAccessor->getUser(), $category, false),
                 function (Category $item) use ($category) {
-                    return count($item->getProducts()) > 0 && $item->getParentCategory() === $category;
+                    return $item->getParentCategory() && $item->getParentCategory()->getId() === $category->getId();
                 }
             )
         );

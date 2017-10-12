@@ -236,6 +236,7 @@ services:
         arguments:
             - '@oro_datagrid.datagrid.manager'
             - '@oro_datagrid.datagrid.request_parameters_factory'
+            - '@oro_catalog.repository.category'
             - '@oro_catalog.website_search.repository.product'
         calls:
             - [addApplicableGrid, ['frontend-product-search-grid']]

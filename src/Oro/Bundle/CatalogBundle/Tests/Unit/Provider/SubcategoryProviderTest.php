@@ -52,6 +52,7 @@ class SubcategoryProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
+                $category2,
                 $category3
             ],
             $this->provider->getAvailableSubcategories($currentCategory)

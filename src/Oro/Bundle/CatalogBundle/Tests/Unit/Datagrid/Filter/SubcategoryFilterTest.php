@@ -12,6 +12,7 @@ use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -71,7 +72,9 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $typeFormView->vars['choices'] = [];
 
         $valueFormView = new FormView();
-        $valueFormView->vars['choices'] = [$category->getId() => $category];
+        $valueFormView->vars['choices'] = [
+            $category->getId() => new ChoiceView($category, $category->getId(), 'label'),
+        ];
 
         $formView = new FormView();
         $formView->children['type'] = $typeFormView;
@@ -97,13 +100,16 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
                 'name' => 'test',
                 'label' => 'Test',
                 'choices' => [
-                    $category->getId() => $category
+                    $category->getId() => new ChoiceView($category, $category->getId(), 'label'),
                 ],
                 'data_name' => 'field',
                 'options' => [
                     'categories' => [$category]
                 ],
                 'lazy' => false,
+                'counts' => [
+                    42 => 0,
+                ],
             ],
             $this->filter->getMetadata()
         );
