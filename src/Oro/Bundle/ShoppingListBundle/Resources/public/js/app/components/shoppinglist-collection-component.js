@@ -6,6 +6,7 @@ define(function(require) {
     var BaseCollection = require('oroui/js/app/models/base/collection');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
     ShoppingListCollectionComponent = BaseComponent.extend({
         /**
