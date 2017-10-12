@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
@@ -47,9 +48,13 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
             ['customer' => $this->customer]
         );
 
+        $productReindexManager = new ProductReindexManager(
+            $container->get('event_dispatcher')
+        );
+
         $indexScheduler = new ProductIndexScheduler(
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('oro_product.search.product_reindex_manager')
+            $productReindexManager
         );
 
         $this->builder = new CustomerCategoryResolvedCacheBuilder(
@@ -57,7 +62,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
             $this->scopeManager,
             $indexScheduler,
             $container->get('oro_entity.orm.insert_from_select_query_executor'),
-            $container->get('oro_product.search.product_reindex_manager')
+            $productReindexManager
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.customer_category_visibility_resolved.class')
