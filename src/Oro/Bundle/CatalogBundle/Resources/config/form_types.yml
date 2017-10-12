@@ -54,7 +54,5 @@ services:
 
     oro_catalog.form.type.filter.subcategory:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType'
-        arguments:
-            - '@translator'
         tags:
             - { name: form.type, alias: oro_type_subcategory_filter }

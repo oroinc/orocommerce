@@ -7,32 +7,19 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcategoryFilterType extends AbstractType
 {
-    const TYPE_INCLUDE = '';
-    const TYPE_NOT_INCLUDE = 1;
-
     const NAME = 'oro_type_subcategory_filter';
 
-    /** @var TranslatorInterface */
-    protected $translator;
-
-    /**
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
+    const DEFAULT_VALUE = [];
 
     /**
      * {@inheritDoc}
      */
     public function getParent()
     {
-         return FilterType::NAME;
+        return FilterType::NAME;
     }
 
     /**
@@ -40,14 +27,8 @@ class SubcategoryFilterType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $operatorChoices = [
-            self::TYPE_INCLUDE => $this->translator->trans('oro.catalog.filter.subcategory.type.include'),
-            self::TYPE_NOT_INCLUDE => $this->translator->trans('oro.catalog.filter.subcategory.type.not_include'),
-        ];
-
         $resolver->setDefaults(
             [
-                'operator_choices' => $operatorChoices,
                 'field_type' => 'entity',
                 'field_options' => [
                     'multiple' => true,

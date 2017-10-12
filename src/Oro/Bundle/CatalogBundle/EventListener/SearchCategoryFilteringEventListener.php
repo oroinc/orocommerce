@@ -86,7 +86,7 @@ class SearchCategoryFilteringEventListener
         ];
 
         $filters['default'][SubcategoryFilter::FILTER_TYPE_NAME] = [
-            'type' => SubcategoryFilterType::TYPE_INCLUDE,
+            'value' => SubcategoryFilterType::DEFAULT_VALUE,
         ];
 
         $config->offsetSetByPath('[filters]', $filters);

@@ -16,9 +16,6 @@ class SubcategoryFilterTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $translator;
-
     /** @var SubcategoryFilterType */
     protected $type;
 
@@ -32,30 +29,17 @@ class SubcategoryFilterTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->type = new SubcategoryFilterType($this->translator);
+        $this->type = new SubcategoryFilterType();
     }
 
     public function testConfigureOptions()
     {
-        $this->translator->expects($this->exactly(2))
-            ->method('trans')
-            ->willReturnMap([
-                ['oro.catalog.filter.subcategory.type.include', [], null, null, 'Include'],
-                ['oro.catalog.filter.subcategory.type.not_include', [], null, null, 'Do not include'],
-            ]);
-
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'operator_choices' => [
-                        SubcategoryFilterType::TYPE_INCLUDE => 'Include',
-                        SubcategoryFilterType::TYPE_NOT_INCLUDE => 'Do not include',
-                    ],
                     'field_type' => 'entity',
                     'field_options' => [
                         'multiple' => true,
@@ -74,11 +58,11 @@ class SubcategoryFilterTypeTest extends FormIntegrationTestCase
         $category2 = $this->getCategory(200);
 
         $form = $this->factory->create($this->type, null, ['categories' => [$category1, $category2]]);
-        $form->submit(['type' => SubcategoryFilterType::TYPE_NOT_INCLUDE, 'value' => [$category2->getId()]]);
+        $form->submit(['type' => null, 'value' => [$category2->getId()]]);
 
         $this->assertTrue($form->isValid());
         $this->assertEquals(
-            ['type' => SubcategoryFilterType::TYPE_NOT_INCLUDE, 'value' => [$category2]],
+            ['type' => null, 'value' => [$category2]],
             $form->getData()
         );
     }

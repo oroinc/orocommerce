@@ -33,7 +33,10 @@ class SubcategoryFilter extends AbstractFilter
         $formView = $this->getForm()->createView();
         $fieldView = $formView->children['value'];
 
-        $metadata['categories'] = $fieldView->vars['choices'];
+        $metadata['choices'] = $fieldView->vars['choices'];
+        foreach ($metadata['choices'] as $choiceView) {
+            $metadata['counts'][$choiceView->value] = count($choiceView->data->getProducts());
+        }
 
         return $metadata;
     }
@@ -59,68 +62,39 @@ class SubcategoryFilter extends AbstractFilter
     protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data)
     {
         $rootCategory = $this->get('rootCategory');
-        $type = $data['type'];
-        $builder = Criteria::expr();
+        $categories = $data['value']->toArray();
 
-        switch ($type) {
-            case SubcategoryFilterType::TYPE_NOT_INCLUDE:
-                $ds->addRestriction(
-                    $builder->eq(
-                        $this->getFieldName($type),
-                        $rootCategory->getMaterializedPath()
-                    ),
-                    FilterUtility::CONDITION_AND
-                );
-
-                return true;
-                break;
-            case SubcategoryFilterType::TYPE_INCLUDE:
-                $categories = $data['value']->toArray();
-
-                if (count($categories) === 0) {
-                    $categories = [$rootCategory];
-                }
-
-                $criteria = Criteria::create();
-
-                $placeholder = new CategoryPathPlaceholder();
-                foreach ($categories as $category) {
-                    $fieldName = $placeholder->replace(
-                        $this->getFieldName($type),
-                        [CategoryPathPlaceholder::NAME => $category->getMaterializedPath()]
-                    );
-
-                    $criteria->orWhere(
-                        $builder->eq($fieldName, 1)
-                    );
-                }
-
-                $ds->addRestriction($criteria->getWhereExpression(), FilterUtility::CONDITION_AND);
-
-                return true;
-                break;
-            default:
-                return false;
-                break;
+        if (!$categories) {
+            $categories = [$rootCategory];
         }
+
+        $builder = Criteria::expr();
+        $criteria = Criteria::create();
+
+        $placeholder = new CategoryPathPlaceholder();
+        foreach ($categories as $category) {
+            $fieldName = $placeholder->replace(
+                $this->getFieldName(),
+                [CategoryPathPlaceholder::NAME => $category->getMaterializedPath()]
+            );
+
+            $criteria->orWhere(
+                $builder->eq($fieldName, 1)
+            );
+        }
+
+        $ds->addRestriction($criteria->getWhereExpression(), FilterUtility::CONDITION_AND);
+
+        return true;
     }
 
     /**
-     * @param int $type
-     *
      * @return string
      */
-    protected function getFieldName($type)
+    protected function getFieldName()
     {
-        $source = Query::TYPE_TEXT;
         $dataName = $this->get(FilterUtility::DATA_NAME_KEY);
-        $postfix = '';
 
-        if ($type === SubcategoryFilterType::TYPE_INCLUDE) {
-            $source = Query::TYPE_INTEGER;
-            $postfix = '_' . CategoryPathPlaceholder::NAME;
-        }
-
-        return sprintf('%s.%s%s', $source, $dataName, $postfix);
+        return sprintf('%s.%s_%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
     }
 }

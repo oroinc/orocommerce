@@ -96,43 +96,20 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
             [
                 'name' => 'test',
                 'label' => 'Test',
-                'choices' => [],
+                'choices' => [
+                    $category->getId() => $category
+                ],
                 'data_name' => 'field',
                 'options' => [
                     'categories' => [$category]
                 ],
                 'lazy' => false,
-                'categories' => [$category->getId() => $category]
             ],
             $this->filter->getMetadata()
         );
     }
 
-    public function testApplyNotInclude()
-    {
-        $category = $this->getCategory(42, '1_42');
-        $fieldName = 'field';
-
-        /** @var SearchFilterDatasourceAdapter|\PHPUnit_Framework_MockObject_MockObject $ds */
-        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
-        $ds->expects($this->once())
-            ->method('addRestriction')
-            ->with(new Comparison('text.field', Comparison::EQ, $category->getMaterializedPath()));
-
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => $fieldName, 'rootCategory' => $category]);
-
-        $this->assertTrue(
-            $this->filter->apply(
-                $ds,
-                [
-                    'type' => SubcategoryFilterType::TYPE_NOT_INCLUDE,
-                    'value' => null,
-                ]
-            )
-        );
-    }
-
-    public function testApplyInclude()
+    public function testApply()
     {
         $rootCategory = $this->getCategory(42, '1_42');
         $category1 = $this->getCategory(100, '1_42_100');
@@ -161,7 +138,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
             $this->filter->apply(
                 $ds,
                 [
-                    'type' => SubcategoryFilterType::TYPE_INCLUDE,
+                    'type' => null,
                     'value' => $value,
                 ]
             )
