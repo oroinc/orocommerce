@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Search;
 
-use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -41,8 +40,9 @@ class ProductRepository extends WebsiteSearchRepository
         foreach ($categories as $category) {
             $query->addWhere(
                 Criteria::expr()->exists(
-                    'integer.category_path_'. $category->getMaterializedPath()),
-                    AbstractSearchQuery::WHERE_OR
+                    'integer.category_path_'. $category->getMaterializedPath()
+                ),
+                AbstractSearchQuery::WHERE_OR
             );
         }
 
@@ -50,7 +50,10 @@ class ProductRepository extends WebsiteSearchRepository
 
         $data = [];
         foreach ($categories as $category) {
-            $data[$category->getId()] = array_sum($this->normalizeCounts($counts, $category->getMaterializedPath()));
+            $categoryId = $category->getId();
+            $path = $category->getMaterializedPath();
+            $data[$categoryId] = $counts[$path] ?? 0;
+            $data[$categoryId] += array_sum($this->normalizeCounts($counts, $path));
         }
 
         return $data;

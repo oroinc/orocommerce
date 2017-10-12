@@ -41,7 +41,8 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCategoryCountsByCategory(Category $category, array $expected)
     {
-        $this->createIndex();
+        $query = new Query();
+        $this->createIndexer($query);
 
         $this->assertEquals($expected, $this->repository->getCategoryCountsByCategory($category));
     }
@@ -56,11 +57,13 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             2 => 20,
-            5 => 7,
+            5 => 0,
             8 => 20
         ];
 
-        $this->createIndex();
+        $query = new Query();
+        $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
+        $this->createIndexer($query);
 
         $this->assertEquals($expected, $this->repository->getCategoriesCounts($categories));
     }
@@ -103,10 +106,8 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
         return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
     }
 
-    protected function createIndex()
+    protected function createIndexer($query)
     {
-        $query = new Query();
-
         /** @var Indexer|\PHPUnit_Framework_MockObject_MockObject $indexer */
         $indexer = $this->createMock(Indexer::class);
         $indexer->expects($this->once())
