@@ -9,7 +9,7 @@ define(function(require) {
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
     var BackendSelectHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
-    var SelectState = require('orodatagrid/js/datagrid/select-state-model');
+    var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
 
     BackendGrid = Grid.extend({
         /** @property */
