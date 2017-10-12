@@ -124,7 +124,7 @@
         'class': ' product-item__preview-image'
     } %}
 
-    {% set image = product.image is defined ? product.image : Image.url(null, 'product_large') %}
+    {% set image = product.image is defined ? asset(product.image) : Image.url(null, 'product_large') %}
 
     <picture {{ block('block_attributes') }}>
         <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">

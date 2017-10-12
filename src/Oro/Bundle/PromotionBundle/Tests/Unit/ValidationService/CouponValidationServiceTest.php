@@ -32,6 +32,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetViolations()
     {
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setPromotion(new Promotion());
         $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
@@ -46,6 +47,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetViolationsExpiredCoupon()
     {
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setPromotion(new Promotion());
         $coupon->setValidUntil(new \DateTime('-3 days', new \DateTimeZone('UTC')));
 
@@ -55,9 +57,22 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('oro.promotion.coupon.violation.expired', $violations);
     }
 
+    public function testGetViolationsDisabled()
+    {
+        $coupon = new Coupon();
+        $coupon->setPromotion(new Promotion());
+        $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
+
+        $violations = $this->couponValidationService->getViolations($coupon);
+
+        $this->assertCount(1, $violations);
+        $this->assertContains('oro.promotion.coupon.violation.disabled', $violations);
+    }
+
     public function testGetViolationsCouponWithoutPromotion()
     {
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
 
@@ -75,6 +90,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetViolationsUsageLimitExceededCoupon()
     {
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setPromotion(new Promotion());
         $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
@@ -95,6 +111,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42, 'email' => 'test@example.com']);
 
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setPromotion(new Promotion());
         $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
@@ -114,6 +131,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetViolationsSeveralErrors()
     {
         $coupon = new Coupon();
+        $coupon->setEnabled(true);
         $coupon->setValidUntil(new \DateTime('-3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
 
@@ -151,6 +169,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
             ],
             'valid' => [
                 'coupon' => (new Coupon())
+                    ->setEnabled(true)
                     ->setPromotion(new Promotion())
                     ->setUsesPerCoupon(null)
                     ->setUsesPerPerson(null)

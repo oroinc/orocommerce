@@ -1,5 +1,5 @@
 {% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
-<h3 class="product-item__title product-item__title_in-cart mb1-md">
+<h3 class="product-item__title product-item__title--in-cart">
     {% if isFreeFormProduct %}
         {{ record.getValue('freeFormProduct') }}
     {% else %}

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -30,20 +29,14 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     const ENTITY_1 = 'Entity1';
     const ENTITY_2 = 'Entity2';
 
+    const SUBTOTAL = 20;
+    const SHIPPING_COST = 10;
+    const TOTAL = 30;
+
     /**
      * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $em;
-
-    /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $cache;
-
-    /**
-     * @var CheckoutGridHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $checkoutGridHelper;
 
     /**
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
@@ -94,95 +87,31 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
-        $this->cache = $this->getMockBuilder(Cache::class)->disableOriginalConstructor()->getMock();
-        $this->cache->method('contains')->willReturn(false);
-
         $this->checkoutRepository = $this->createMock(CheckoutRepository::class);
 
         $this->totalProcessor = $this->createMock(TotalProcessorProvider::class);
 
         $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
 
-        $this->checkoutGridHelper = $this->createMock(CheckoutGridHelper::class);
-
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
             $this->checkoutRepository,
             $this->totalProcessor,
-            $this->entityNameResolver,
-            $this->cache,
-            $this->checkoutGridHelper
+            $this->entityNameResolver
         );
     }
 
-    public function testGetMetadataNoRelations()
+    public function testOnBuildBefore()
     {
         $configuration = $this->getGridConfiguration();
-        /** @var DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event    = new BuildBefore($datagrid, $configuration);
-        $this->listener->onBuildBefore($event);
-
-        $expectedSelects = ['rootAlias.id as id'];
-        $expectedColumns = ['id' => ['label' => 'id']];
-        $expectedFilters = ['id' => ['data_name' => 'id']];
-        $expectedSorters = ['id' => ['data_name' => 'id']];
-
-        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
-        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
-        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
-        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
-    }
-
-    public function testGetMetadataNoTotalFields()
-    {
-        $configuration = $this->getGridConfiguration();
-        /** @var DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event    = new BuildBefore($datagrid, $configuration);
-        $this->listener->onBuildBefore($event);
-
-        $expectedSelects = ['rootAlias.id as id'];
-        $expectedColumns = ['id' => ['label' => 'id']];
-        $expectedFilters = ['id' => ['data_name' => 'id']];
-        $expectedSorters = ['id' => ['data_name' => 'id']];
-
-        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
-        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
-        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
-        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function testWithValidMetadata()
-    {
-        $data = [
-            'bindParameters' => [
-                'user_currency' => 'user_currency'
-            ],
-            'selects' => [],
-            'sorters' => [],
-            'columns' => [],
-            'filters' => [],
-            'joins' => [],
-        ];
-
-        $this->checkoutGridHelper->expects($this->once())->method('getUpdates')->willReturn($data);
+        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $parameters = $this->createMock(ParameterBag::class);
         $parameters->expects($this->once())->method('set')->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
+        $datagrid->expects($this->once())->method('getParameters')->willReturn($parameters);
 
-        $datagrid = $this->createMock(DatagridInterface::class);
-        $datagrid->method('getParameters')->willReturn($parameters);
-
-        $config = $this->getGridConfiguration();
-
-        $event = $this->getMockBuilder(BuildBefore::class)->disableOriginalConstructor()->getMock();
-        $event->method('getConfig')->willReturn($config);
-        $event->expects($this->once())->method('getDatagrid')->willReturn($datagrid);
-
+        $event = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
     }
 
@@ -254,15 +183,21 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $shoppingList = new ShoppingList();
         $shoppingList->setLabel('test');
+        $checkout1 = new Checkout();
+        $source1 = (new CheckoutSourceStub())->setShoppingList($shoppingList);
+        $checkout1->setSource($source1);
 
         $quoteDemand = new QuoteDemand();
         $quoteDemand->setQuote(new Quote());
+        $checkout2 = new Checkout();
+        $source2 = (new CheckoutSourceStub())->setQuoteDemand($quoteDemand);
+        $checkout2->setSource($source2);
 
         $this->checkoutRepository->expects($this->atLeastOnce())
-            ->method('getSourcePerCheckout')
+            ->method('getCheckoutsByIds')
             ->willReturn([
-                3 => $shoppingList,
-                2 => $quoteDemand
+                3 => $checkout1,
+                2 => $checkout2
             ]);
 
         $foundSources = [];
@@ -327,25 +262,33 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($found, $message);
     }
 
-    public function testBuildTotalColumn()
+    /**
+     * @dataProvider updateTotalsDataProvider
+     *
+     * @param array $recordData
+     * @param bool $withSource
+     * @param array $expectedData
+     */
+    public function testUpdateTotals(array $recordData, $withSource, array $expectedData)
     {
-        $this->totalProcessor->expects($this->at(0))->method('getTotal')->willReturn((new Subtotal())->setAmount(10));
+        $this->totalProcessor
+            ->expects($this->atMost(1))
+            ->method('getTotal')
+            ->willReturn((new Subtotal())->setAmount(self::SUBTOTAL)->setCurrency('EUR'));
 
+        $shoppingList = new ShoppingList();
         $checkout = new Checkout();
-        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::TOTAL, 42);
-        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::SUBTOTAL, 142);
+        $source = (new CheckoutSourceStub())->setShoppingList($shoppingList);
+        $checkout->setSource($source);
         $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::CURRENCY, 'USD');
 
-        $this->checkoutRepository->expects($this->any())->method('find')->willReturn($checkout);
-        $this->checkoutRepository->expects($this->any())
-            ->method('getSourcePerCheckout')
-            ->willReturn([2 => new ShoppingList()]);
+        $this->checkoutRepository->expects($this->once())->method('find')->willReturn($checkout);
+        $this->checkoutRepository->expects($this->once())
+            ->method('getCheckoutsByIds')
+            ->willReturn($withSource ? [1 => $checkout] : []);
 
-        $record1 = new ResultRecord(['id' => 1, 'total' => 10, 'completed' => false]);
-        $record2 = new ResultRecord(['id' => 2, 'completed' => false]);
-        $record3 = new ResultRecord(['id' => 3, 'completed' => true]);
-
-        $records = [$record1, $record2, $record3];
+        $record = new ResultRecord($recordData);
+        $records = [$record];
 
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
@@ -353,9 +296,91 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onResultAfter($event);
 
-        $this->assertSame(10, $record2->getValue('total'));
-        $this->assertSame(42, $record3->getValue('total'));
-        $this->assertSame(142, $record3->getValue('subtotal'));
-        $this->assertSame('USD', $record3->getValue('currency'));
+        foreach ($expectedData as $key => $value) {
+            $this->assertSame($value, $record->getValue($key));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function updateTotalsDataProvider()
+    {
+        return [
+            'with source and not valid totals' => [
+                'recordData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'isSubtotalValid' => false,
+                    'shippingEstimateAmount' => self::SHIPPING_COST,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                ],
+                true,
+                'expectedData' => [
+                    'id' => 1,
+                    'subtotal' => self::SUBTOTAL,
+                    'shippingEstimateAmount' => self::SHIPPING_COST,
+                    'total' => self::TOTAL,
+                    'currency' => 'EUR',
+                ],
+            ],
+            'without source and not valid totals' => [
+                'recordData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'isSubtotalValid' => false,
+                    'shippingEstimateAmount' => self::SHIPPING_COST,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                ],
+                false,
+                'expectedData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'shippingEstimateAmount' => 10,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                ],
+            ],
+            'with valid totals' => [
+                'recordData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'isSubtotalValid' => true,
+                    'shippingEstimateAmount' => self::SHIPPING_COST,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                ],
+                true,
+                'expectedData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'shippingEstimateAmount' => 10,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                ],
+            ],
+            'completed' => [
+                'recordData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'isSubtotalValid' => true,
+                    'shippingEstimateAmount' => self::SHIPPING_COST,
+                    'total' => 100,
+                    'currency' => 'EUR',
+                    'completed' => true,
+                ],
+                true,
+                'expectedData' => [
+                    'id' => 1,
+                    'subtotal' => 5,
+                    'shippingEstimateAmount' => 10,
+                    'total' => 100,
+                    'currency' => 'USD',
+                ],
+            ],
+
+        ];
     }
 }

@@ -31,6 +31,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          @ORM\Index(name="idx_oro_product_default_uppercase", columns={"name_uppercase"}),
  *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
  *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(name="idx_oro_product_status", columns={"status"}),
  *          @ORM\Index(
  *              name="idx_oro_product_created_at_id_organization",
  *              columns={"created_at", "id", "organization_id"}

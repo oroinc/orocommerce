@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -32,10 +33,20 @@ class CategoryListenerTest extends WebTestCase
         $this->messageProducer->clear();
     }
 
+    /**
+     * @return Category
+     */
+    private function getCategory()
+    {
+        $category = new Category();
+        $category->addTitle((new LocalizedFallbackValue())->setString('default title'));
+        return $category;
+    }
+
     public function testPreUpdateParentCategoryChange()
     {
-        $newCategory = new Category();
-        $parentCategory = new Category();
+        $newCategory = $this->getCategory();
+        $parentCategory = $this->getCategory();
         $this->categoryManager->persist($newCategory);
         $this->categoryManager->persist($parentCategory);
         $this->categoryManager->flush();
@@ -57,7 +68,7 @@ class CategoryListenerTest extends WebTestCase
 
     public function testPreRemove()
     {
-        $newCategory = new Category();
+        $newCategory = $this->getCategory();
         $this->categoryManager->persist($newCategory);
         $this->categoryManager->flush();
 

@@ -37,6 +37,7 @@ class CouponGeneratorTest extends WebTestCase
         $options->setOwner($businessUnit);
         $options->setValidUntil(new \DateTime('01-01-2020 12:00:00'));
         $options->setPromotion($promotion);
+        $options->setEnabled(true);
         $options->setUsesPerCoupon(22);
         $options->setUsesPerPerson(null);
 
@@ -69,6 +70,7 @@ class CouponGeneratorTest extends WebTestCase
         $coupon = reset($generatedCoupons);
         $this->assertRegExp('/^[0-9]{1,3}$/', $coupon->getCode());
         $this->assertEquals($options->getOwner(), $coupon->getOwner());
+        $this->assertEquals($options->isEnabled(), $coupon->isEnabled());
         $this->assertEquals($options->getPromotion(), $coupon->getPromotion());
         $this->assertEquals($options->getUsesPerCoupon(), $coupon->getUsesPerCoupon());
         $this->assertEquals($options->getUsesPerPerson(), $coupon->getUsesPerPerson());

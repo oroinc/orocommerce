@@ -96,6 +96,7 @@ class CouponTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('promotion'));
+        $this->assertTrue($form->has('enabled'));
         $this->assertTrue($form->has('usesPerPerson'));
         $this->assertTrue($form->has('usesPerCoupon'));
         $this->assertTrue($form->has('validUntil'));
@@ -113,28 +114,38 @@ class CouponTypeTest extends FormIntegrationTestCase
             'coupon with promotion' => [
                 'submittedData' => [
                     'code' => 'test1234',
+                    'enabled' => false,
                     'promotion' => 'promotion2',
                     'usesPerPerson' => 2,
                     'usesPerCoupon' => 3,
                     'validUntil' => $validUntilDate,
                 ],
-                'expectedData' => $this->createCoupon('test1234', 2, 3, $promotion2, new \DateTime($validUntilDate)),
+                'expectedData' => $this->createCoupon(
+                    'test1234',
+                    false,
+                    2,
+                    3,
+                    $promotion2,
+                    new \DateTime($validUntilDate)
+                ),
             ],
             'coupon without promotion' => [
                 'submittedData' => [
                     'code' => 'test1234',
+                    'enabled' => true,
                     'promotion' => null,
                     'usesPerPerson' => 2,
                     'usesPerCoupon' => 3,
                     'validUntil' => null,
                 ],
-                'expectedData' => $this->createCoupon('test1234', 2, 3),
+                'expectedData' => $this->createCoupon('test1234', true, 2, 3),
             ],
         ];
     }
 
     /**
      * @param string $couponCode
+     * @param bool $enabled
      * @param int|null $usesPerPerson
      * @param int|null $usesPerCoupon
      * @param Promotion|null $promotion
@@ -143,6 +154,7 @@ class CouponTypeTest extends FormIntegrationTestCase
      */
     public function createCoupon(
         $couponCode,
+        $enabled = false,
         $usesPerPerson = null,
         $usesPerCoupon = null,
         $promotion = null,
@@ -150,6 +162,7 @@ class CouponTypeTest extends FormIntegrationTestCase
     ) {
         return (new Coupon())
             ->setCode($couponCode)
+            ->setEnabled($enabled)
             ->setUsesPerPerson($usesPerPerson)
             ->setUsesPerCoupon($usesPerCoupon)
             ->setPromotion($promotion)

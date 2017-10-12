@@ -146,12 +146,6 @@ class ModifyTableStructure implements
     {
         $table = $schema->getTable('oro_promotion_applied_discount');
         $table->addColumn('applied_promotion_id', 'integer', ['notnull' => false]);
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion_applied'),
-            ['applied_promotion_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
     }
 
     /**

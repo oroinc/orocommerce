@@ -9,40 +9,34 @@ interface TimeInTransitRequestBuilderInterface
     /**
      * @return UpsClientRequestInterface
      */
-    public function createRequest();
+    public function createRequest(): UpsClientRequestInterface;
 
     /**
-     * @param string $weight
-     *
-     * @return $this
-     */
-    public function setWeight($weight);
-
-    /**
+     * @param int $weight
      * @param string $weightUnitCode
      *
      * @return $this
      */
-    public function setWeightUnitCode($weightUnitCode);
+    public function setWeight(int $weight, string $weightUnitCode);
 
     /**
      * @param string $maximumListSize
      *
      * @return $this
      */
-    public function setMaximumListSize($maximumListSize);
+    public function setMaximumListSize(string $maximumListSize);
 
     /**
      * @param string $transactionIdentifier
      *
      * @return $this
      */
-    public function setTransactionIdentifier($transactionIdentifier);
+    public function setTransactionIdentifier(string $transactionIdentifier);
 
     /**
      * @param string $customerContext
      *
      * @return $this
      */
-    public function setCustomerContext($customerContext);
+    public function setCustomerContext(string $customerContext);
 }

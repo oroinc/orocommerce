@@ -10,10 +10,14 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterface
+class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
+
+    use ContainerAwareTrait;
 
     /** {@inheritdoc} */
     public function getDependencies()
@@ -60,11 +64,28 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
             $entity->setShippingMethod($data['shippingMethod']);
             $entity->setShippingMethodType($data['shippingMethodType']);
 
+            $entity = $this->addCheckoutLineItems($entity);
+
             $this->setReference($reference, $entity);
 
             $manager->persist($entity);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * Checkout line items should be added manually to Checkout
+     *
+     * @param Checkout $checkout
+     *
+     * @return Checkout
+     */
+    protected function addCheckoutLineItems(Checkout $checkout)
+    {
+        $lineItemsFactory = $this->container->get('oro_checkout.line_items.factory');
+        $checkout->setLineItems($lineItemsFactory->create($checkout->getSourceEntity()));
+
+        return $checkout;
     }
 }

@@ -125,14 +125,14 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {%- spaceless -%}
-            {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{- product.sku -}}</span>
+            {{ 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value">{{- product.sku -}}</span>
         {%- endspaceless -%}
     </div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_mfg_widget %}
     <div>
-        {{ 'oro.product.frontend.index.mfg'|trans }} <span class="red">1ABC13656</span>
+        {{ 'oro.product.frontend.index.mfg'|trans }} <span class="product-item__sku-value">1ABC13656</span>
     </div>
 {% endblock %}
 

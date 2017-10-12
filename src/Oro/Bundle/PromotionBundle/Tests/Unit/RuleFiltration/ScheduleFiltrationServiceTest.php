@@ -9,7 +9,7 @@ use Oro\Bundle\CronBundle\Checker\ScheduleIntervalChecker;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScheduleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     use EntityTrait;
 
@@ -74,5 +74,10 @@ class ScheduleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn($expected);
 
         $this->assertEquals($expected, $this->scheduleFiltrationService->getFilteredRuleOwners($ruleOwners, []));
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->scheduleFiltrationService, $this->filtrationService);
     }
 }
