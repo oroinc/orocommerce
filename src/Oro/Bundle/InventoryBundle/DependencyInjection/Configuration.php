@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => true],
-                self::HIGHLIGHT_LOW_INVENTORY => ['type' => 'boolean', 'value' => true],
+                self::HIGHLIGHT_LOW_INVENTORY => ['type' => 'boolean', 'value' => false],
                 self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
                 self::LOW_INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
                 self::BACKORDERS => ['type' => 'boolean', 'value' => false],
