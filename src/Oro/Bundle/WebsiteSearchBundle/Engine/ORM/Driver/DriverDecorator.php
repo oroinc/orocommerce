@@ -135,8 +135,8 @@ class DriverDecorator implements DriverInterface
     }
 
     /** {@inheritdoc} */
-    public function getGroupedData(Query $query)
+    public function getAggregatedData(Query $query)
     {
-        return $this->getDriver()->getGroupedData($query);
+        return $this->getDriver()->getAggregatedData($query);
     }
 }

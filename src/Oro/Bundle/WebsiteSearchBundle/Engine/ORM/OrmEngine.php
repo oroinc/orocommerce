@@ -68,11 +68,11 @@ class OrmEngine extends AbstractEngine
             return $this->driver->getRecordsCount($query);
         };
 
-        $groupedDataCallback = function () use ($query) {
-            return $this->driver->getGroupedData($query);
+        $aggregatedDataCallback = function () use ($query) {
+            return $this->driver->getAggregatedData($query);
         };
 
         // LazyResult is used here to do not trigger additional requests if they are not required
-        return new LazyResult($query, $elementsCallback, $recordsCountCallback, $groupedDataCallback);
+        return new LazyResult($query, $elementsCallback, $recordsCountCallback, $aggregatedDataCallback);
     }
 }
