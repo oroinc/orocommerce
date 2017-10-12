@@ -100,7 +100,8 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
      */
     protected function getRequestWithCouponData(array $postData = [])
     {
-        $postData['couponId'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId();
+        $postData['couponId'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)
+            ->getId();
 
         return new Request([], $postData);
     }

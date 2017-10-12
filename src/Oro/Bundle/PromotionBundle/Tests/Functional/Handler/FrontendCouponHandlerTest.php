@@ -163,7 +163,8 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
      */
     protected function getRequestWithCouponData(array $postData = [])
     {
-        $postData['couponCode'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getCode();
+        $postData['couponCode'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)
+            ->getCode();
 
         return new Request([], $postData);
     }

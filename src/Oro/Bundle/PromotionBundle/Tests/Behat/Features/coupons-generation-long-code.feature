@@ -6,7 +6,7 @@ Feature: Generation of long coupon code
   Scenario: Trying to generate coupons exceeding max length
     Given I login as administrator
     And go to Marketing/Promotions/Coupons
-    And I click "Generate Coupon"
+    And I click "Generate Multiple Coupons"
     When I fill form with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
@@ -25,7 +25,7 @@ Feature: Generation of long coupon code
     And I should see "No records found"
 
   Scenario: Generate coupons with max length
-    And I click "Generate Coupon"
+    And I click "Generate Multiple Coupons"
     When I fill form with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
