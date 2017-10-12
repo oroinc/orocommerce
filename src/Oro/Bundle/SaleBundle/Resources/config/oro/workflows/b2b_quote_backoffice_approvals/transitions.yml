@@ -13,8 +13,9 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: oro_textarea
                             options:
+                                strip_tags: true
                                 required: true
                                 constraints:
                                   - NotBlank: ~
@@ -36,8 +37,9 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: oro_textarea
                             options:
+                                strip_tags: true
                                 required: true
                                 constraints:
                                   - NotBlank: ~
@@ -84,8 +86,9 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: oro_textarea
                             options:
+                                strip_tags: true
                                 required: true
                                 constraints:
                                   - NotBlank: ~
@@ -99,8 +102,9 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: oro_textarea
                             options:
+                                strip_tags: true
                                 required: true
                                 constraints:
                                   - NotBlank: ~
