@@ -1,5 +1,9 @@
 {% block _rfp_request_view_toolbar_actions_widget %}
-    <div class="controls-list">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " controls-list"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
