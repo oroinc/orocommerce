@@ -81,12 +81,13 @@ services:
             - "@oro_entity.fallback.resolver.entity_fallback_resolver"
             - '@oro_entity.doctrine_helper'
 
-    oro_inventory.layout.data_provider.low_inventory_provider:
-        class: Oro\Bundle\InventoryBundle\Layout\DataProvider\LowInventoryProvider
+    oro_inventory.twig.low_inventory_extension:
+        class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
+        public: false
         arguments:
-            - '@oro_inventory.manager.low_inventory_quantity_manager'
+            - "@oro_inventory.manager.low_inventory_quantity_manager"
         tags:
-            - { name: layout.data_provider, alias: low_inventory_provider }
+            - { name: twig.extension }
 
     oro_inventory.event_listener.frontend_product_datagrid:
         class: Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridListener

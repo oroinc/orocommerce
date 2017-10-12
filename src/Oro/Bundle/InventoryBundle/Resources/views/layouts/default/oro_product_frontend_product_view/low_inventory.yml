@@ -1,11 +1,12 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'product_view.html.twig'
+            themes: 'low_inventory.html.twig'
         - '@add':
             id: low_inventory_label
             parentId: product_view_specification_container
             blockType: block
             prepend: true
             options:
-                visible: '=data["low_inventory_provider"].isLowInventory(data["product"])'
+                vars:
+                    product: '=data["product"]'

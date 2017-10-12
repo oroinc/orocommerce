@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'product_index.html.twig'
+            themes: 'low_inventory.html.twig'
         - '@add':
-            id: low_inventory_label
+            id: product_datagrid_row__product_low_inventory_label
             parentId: product_datagrid_row_product_specification
             blockType: container
             prepend: true
