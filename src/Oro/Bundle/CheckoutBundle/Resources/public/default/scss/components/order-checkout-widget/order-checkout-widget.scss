@@ -92,3 +92,11 @@
         }
     }
 }
+
+@include breakpoint('print') {
+    .order-checkout-widget {
+        &__quote {
+            display: none !important;
+        }
+    }
+}
