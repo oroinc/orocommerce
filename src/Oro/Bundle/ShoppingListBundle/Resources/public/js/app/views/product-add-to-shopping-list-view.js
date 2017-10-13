@@ -352,7 +352,7 @@ define(function(require) {
          * @private
          */
         _saveToShoppingList: function(url, urlOptions, formData, action) {
-            switch(action) {
+            switch (action) {
                 case 'new':
                     this._createNewShoppingList(url, urlOptions, formData);
                     break;

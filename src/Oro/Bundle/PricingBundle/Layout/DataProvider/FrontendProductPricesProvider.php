@@ -109,6 +109,7 @@ class FrontendProductPricesProvider
     public function getSimpleByConfigurable($product)
     {
         $products = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
+
         return $this->getByProducts($products);
     }
 
@@ -120,14 +121,18 @@ class FrontendProductPricesProvider
         $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->productPrices);
         });
+
         if (!$products) {
             return;
         }
 
         $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
-        $productsIds = array_map(function (Product $product) {
-            return $product->getId();
-        }, $products);
+        $productsIds = array_map(
+            function (Product $product) {
+                return $product->getId();
+            },
+            $products
+        );
 
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');

@@ -27,6 +27,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
 class ShoppingListManager
 {

@@ -8,64 +8,62 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Doctrine\Common\Cache\CacheProvider;
 
 class ProductFormAvailabilityProvider
 {
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
+    /** @var ProductVariantAvailabilityProvider */
     private $variantAvailability;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @var array
-     */
-    private $matrixGridAvailable = [];
+    /** @var CacheProvider */
+    private $cache;
 
     /**
      * @param ProductVariantAvailabilityProvider $variantAvailability
      * @param ConfigManager $configManager
+     * @param CacheProvider $cache
      */
     public function __construct(
         ProductVariantAvailabilityProvider $variantAvailability,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        CacheProvider $cache
     ) {
         $this->variantAvailability = $variantAvailability;
         $this->configManager = $configManager;
+        $this->cache = $cache;
     }
 
     /**
      * @param Product $product
      * @return bool
      */
-    public function isInlineMatrixAvailable(Product $product)
+    public function isInlineMatrixFormAvailable(Product $product)
     {
-        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
-            && $this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
+            && $this->isMatrixFormAvailable($product);
     }
 
     /**
      * @param Product $product
      * @return bool
      */
-    public function isPopupMatrixAvailable(Product $product)
+    public function isPopupMatrixFormAvailable(Product $product)
     {
-        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_POPUP
-            && $this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_POPUP
+            && $this->isMatrixFormAvailable($product);
     }
 
     /**
      * @param Product $product
      * @return bool
      */
-    public function isSimpleAvailable(Product $product)
+    public function isSimpleFormAvailable(Product $product)
     {
-        return $this->getMatrixFormConfig() == Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_NONE
-            || !$this->isMatrixAvailable($product);
+        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_NONE
+            || !$this->isMatrixFormAvailable($product);
     }
 
     /**
@@ -81,14 +79,18 @@ class ProductFormAvailabilityProvider
      * @param Product $product
      * @return bool
      */
-    public function isMatrixAvailable(Product $product)
+    public function isMatrixFormAvailable(Product $product)
     {
-        if (isset($this->matrixGridAvailable[$product->getId()])) {
-            return $this->matrixGridAvailable[$product->getId()];
+        if ($product->isSimple()) {
+            return false;
+        }
+
+        if ($this->cache->contains($product->getId())) {
+            return $this->cache->fetch($product->getId());
         }
 
         $availability = $this->getMatrixAvailability($product);
-        $this->matrixGridAvailable[$product->getId()] = $availability;
+        $this->cache->save($product->getId(), $availability);
 
         return $availability;
     }
@@ -99,18 +101,19 @@ class ProductFormAvailabilityProvider
      */
     protected function getMatrixAvailability(Product $product)
     {
-        try {
-            $variants = $this->variantAvailability->getVariantFieldsAvailability($product);
-        } catch (\InvalidArgumentException $e) {
+        $variants = $this->variantAvailability->getVariantFieldsAvailability($product);
+
+        if (count($variants) !== 2) {
             return false;
         }
 
-        if (count($variants) > 2) {
+        $simpleProducts = $this->variantAvailability->getSimpleProductsByVariantFields($product);
+        if (!$simpleProducts) {
             return false;
         }
 
         $configurableUnit = $product->getPrimaryUnitPrecision()->getUnit();
-        $simpleProducts = $this->variantAvailability->getSimpleProductsByVariantFields($product);
+
         foreach ($simpleProducts as $simpleProduct) {
             if (!$this->isProductSupportsUnit($simpleProduct, $configurableUnit)) {
                 return false;

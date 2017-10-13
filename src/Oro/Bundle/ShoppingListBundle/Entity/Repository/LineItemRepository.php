@@ -42,7 +42,7 @@ class LineItemRepository extends EntityRepository
     /**
      * @param AclHelper $aclHelper
      * @param array|Product $products
-     * @return array|LineItem[]
+     * @return LineItem[]
      */
     public function getProductItemsWithShoppingListNames(AclHelper $aclHelper, $products)
     {
