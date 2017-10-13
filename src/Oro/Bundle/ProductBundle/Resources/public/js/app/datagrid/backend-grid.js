@@ -4,6 +4,7 @@ define(function(require) {
     var BackendGrid;
     var _ = require('underscore');
     var $ = require('jquery');
+    var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
@@ -45,6 +46,11 @@ define(function(require) {
             }, this);
 
             BackendGrid.__super__.initialize.apply(this, arguments);
+            this._listenToDocumentEvents();
+        },
+
+        _listenToDocumentEvents: function() {
+            $(window).on('beforeunload.' + this.cid, _.bind(this.onWindowUnload, this));
         },
 
         /**
@@ -80,9 +86,9 @@ define(function(require) {
                 'backgrid:selectNone': this.selectNone,
                 'backgrid:isSelected': this.isSelected,
                 'backgrid:getSelected': this.getSelected,
-                'backgrid:getVisibleState': this.getVisibleState
+                'backgrid:getVisibleState': this.getVisibleState,
+                'backgrid:checkUnsavedData': this.checkUnsavedData
             });
-
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
         },
 
@@ -180,6 +186,42 @@ define(function(require) {
             if ($.isEmptyObject(obj)) {
                 obj.visible = this.visibleState.visible;
             }
+        },
+
+        onWindowUnload: function() {
+            if (!this.selectState.isEmpty()) {
+                return __('oro.ui.leave_page_with_unsaved_data_confirm');
+            }
+        },
+
+        checkUnsavedData: function(obj) {
+            var live = true;
+            var self = this;
+
+            if (!this.selectState.isEmpty()) {
+                var confirm = function() {
+                    var answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
+                    if (answer) {
+                        // Clear Selected State
+                        self.collection.trigger('backgrid:selectNone');
+                    }
+                    return answer;
+                };
+
+                live = confirm();
+            }
+
+            if ($.isEmptyObject(obj)) {
+                obj.live = live;
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            BackendGrid.__super__.dispose.apply(this, arguments);
+            $(window).off('.' + this.cid);
         }
     });
 
