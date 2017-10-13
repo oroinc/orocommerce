@@ -44,7 +44,6 @@ layout:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
                         shoppingList: '=data["entity"]'
                         lineItemErrors: '=data["oro_line_item_violations"].getLineItemErrors(data["entity"].getLineItems())'
-                        lineItemWarnings: '=data["oro_line_item_violations"].getLineItemWarnings(data["entity"].getLineItems())'
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
@@ -91,8 +90,6 @@ layout:
                     blockType: block
 
                 shopping_list_line_items_list_errors:
-                    blockType: block
-                shopping_list_line_items_list_warnings:
                     blockType: block
                 shopping_list_line_items_list_notes:
                     blockType: block
@@ -159,7 +156,6 @@ layout:
                                         shopping_list_line_items_list_actions:
                                             shopping_list_line_items_list_actions_remove: ~
                                     shopping_list_line_items_list_errors: ~
-                                    shopping_list_line_items_list_warnings: ~
                                     shopping_list_line_items_list_notes: ~
                                 shopping_list_line_items_empty: ~
                             shopping_list_checkout_container:

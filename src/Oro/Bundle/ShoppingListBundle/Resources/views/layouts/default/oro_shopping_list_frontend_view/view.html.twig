@@ -286,6 +286,9 @@
 
 {% block _shopping_list_line_items_list_availability_inventory_status_widget %}
     <div>{{ mainProduct.InventoryStatus }}</div>
+    {% if (oro_is_low_inventory_product(mainProduct)) %}
+        <div class="low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _shopping_list_line_items_list_quantity_widget %}
@@ -452,25 +455,6 @@
         });
     </script>
     {% endfor %}
-    {% endif %}
-{% endblock %}
-
-{% block _shopping_list_line_items_list_warnings_widget %}
-    {% set warningPath = 'product.' ~ lineItem.productSku %}
-    {% if parent.lineItemWarnings is iterable and parent.lineItemWarnings[warningPath] is defined and parent.lineItemWarnings[warningPath] is iterable %}
-        {% for warning in parent.lineItemWarnings[warningPath] %}
-            <tr class="borderless t_paddingless">
-                <td id="product-warning-{{ lineItem.productSku }}" colspan="6"></td>
-            </tr>
-            <script>
-                require(['oroui/js/messenger'], function(messenger) {
-                    messenger.notificationFlashMessage('warning', '{{ warning.message }}', {
-                        style: 'validation',
-                        container: $('#product-warning-{{ lineItem.productSku }}')
-                    })
-                });
-            </script>
-        {% endfor %}
     {% endif %}
 {% endblock %}
 
