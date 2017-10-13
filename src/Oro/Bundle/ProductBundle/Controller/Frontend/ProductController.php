@@ -61,12 +61,11 @@ class ProductController extends Controller
         ];
 
         $ignoreProductVariants = $request->get('ignoreProductVariant', false);
-        if (!$ignoreProductVariants) {
-            $ignoreProductVariants = !$this->get('oro_product.layout.data_provider.product_form_availability')
-                ->isSimpleAvailable($product);
-        }
+        $isSimpleFormAvailable = $this
+            ->get('oro_product.layout.data_provider.product_form_availability')
+            ->isSimpleFormAvailable($product);
 
-        if (!$ignoreProductVariants && $product->isConfigurable()) {
+        if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
             $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
             if ($simpleProduct) {

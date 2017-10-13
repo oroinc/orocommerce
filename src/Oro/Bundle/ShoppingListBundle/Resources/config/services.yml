@@ -201,19 +201,11 @@ services:
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
 
-    oro_shopping_list.data_provider.checkout_line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
-        public: false
-        arguments:
-             - '@oro_shopping_list.data_provider.frontend_product_prices'
-             - '@doctrine'
-        tags:
-             - { name: checkout.data_provider.line_item }
-
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - "@oro_shopping_list.data_provider.product_shopping_lists"
+            - "@oro_entity.doctrine_helper"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }

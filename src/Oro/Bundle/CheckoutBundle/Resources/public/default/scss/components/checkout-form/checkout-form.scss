@@ -19,6 +19,12 @@
         }
     }
 
+    &__datepicker {
+        .datepicker-input {
+            max-width: none;
+        }
+    }
+
     &__datepicker,
     &__optional-ref-number,
     &__order-notes {
@@ -90,6 +96,12 @@
         margin: $checkout-form-req-text-margin;
 
         color: $checkout-form-req-text-color;
+    }
+
+    &__asterix {
+        margin: $checkout-form-asterix-offset;
+
+        color: $checkout-form-asterix-color;
     }
 
     &__back {

@@ -23,6 +23,8 @@ class CouponApplicabilityQueryBuilderModifier
                 $queryBuilder->expr()->gte($alias . '.validUntil', ':now'),
                 $queryBuilder->expr()->isNull($alias . '.validUntil')
             ))
-            ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')));
+            ->andWhere($queryBuilder->expr()->eq($alias . '.enabled', ':enabled'))
+            ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')))
+            ->setParameter('enabled', true);
     }
 }

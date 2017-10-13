@@ -133,13 +133,6 @@ services:
         arguments:
             - '%oro_checkout.entity.checkout.class%'
 
-    oro_checkout.datagrid.checkout_grid_helper:
-        class: Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper
-        arguments:
-            - '@doctrine'
-            - '@oro_query_designer.entity_field_provider'
-            - '@oro_entity_config.provider.entity'
-
     oro_checkout.datagrid.checkout_grid_listener:
         class: Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
@@ -147,8 +140,6 @@ services:
             - '@oro_checkout.repository.checkout'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
-            - '@oro_checkout.grid_totals_metadata.cache'
-            - '@oro_checkout.datagrid.checkout_grid_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-checkouts-grid, method: onBuildAfter }
@@ -403,6 +394,19 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: prePersist }
 
+    oro_checkout.listener.checkout_subtotal:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutSubtotalListener'
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.update, method: onPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.customer.combined_price_list.update, method: onCustomerPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.customer_group.combined_price_list.update, method: onCustomerGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }
+
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
         public: false
@@ -517,3 +521,61 @@ services:
            - '@oro_featuretoggle.checker.feature_checker'
            - '@security.token_storage'
         lazy: true
+
+    #Checkout Line Items Services
+    oro_checkout.line_item.converter_registry:
+        class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry'
+        arguments:
+            - '@logger'
+
+    oro_checkout.line_items.factory:
+        class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory'
+        arguments:
+            - '@oro_checkout.line_item.converter_registry'
+
+    oro_checkout.line_item.converter.shopping_list:
+        class: 'Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter'
+        public: false
+        tags:
+            - { name: oro.checkout.line_item.converter, alias: shopping_list }
+
+    oro_checkout.line_item.converter.quote_demand:
+        class: 'Oro\Bundle\CheckoutBundle\Converter\QuoteDemandLineItemConverter'
+        public: false
+        tags:
+            - { name: oro.checkout.line_item.converter, alias: quote_demand }
+
+    oro_checkout.data_provider.checkout_line_items:
+        class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
+        public: false
+        arguments:
+             - '@oro_shopping_list.data_provider.frontend_product_prices'
+             - '@doctrine'
+        tags:
+             - { name: checkout.data_provider.line_item }
+
+    oro_checkout.provider.checkout_subtotal:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider'
+        arguments:
+            - '@translator'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.model.price_list_tree_handler'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: oro_pricing.subtotal_provider, priority: 0 }
+
+    oro_checkout.model.checkout_subtotal_updater:
+        class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater'
+        arguments:
+            - '@doctrine'
+            - '@oro_checkout.provider.checkout_subtotal'
+            - '@oro_pricing.user_currency_manager'
+
+    oro_checkout.async.recalculate_checkout_subtotals_processor:
+        class: 'Oro\Bundle\CheckoutBundle\Async\RecalculateCheckoutSubtotalsProcessor'
+        arguments:
+            - '@oro_checkout.model.checkout_subtotal_updater'
+            - '@monolog.logger'
+        tags:
+            - { name: oro_message_queue.client.message_processor }

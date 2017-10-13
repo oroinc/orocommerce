@@ -3,6 +3,7 @@ oro_behat_extension:
     OroPromotionBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroCheckoutBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroDataGridBundle::GridContext
@@ -14,6 +15,7 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext
         - OroShippingBundle::FeatureContext
+        - OroShoppingListBundle::FeatureContext
         - OroImportExportBundle::ImportExportContext:
           - '@oro_entity.entity_alias_resolver'
           - '@oro_importexport.processor.registry'
@@ -162,4 +164,37 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//span[@class="ui-dialog-title" and text()[contains(.,"Line Item Discount Promotion")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    CouponCodeInput:
+      selector: 'input[data-role="coupon-code"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    IHaveACouponCode:
+      selector: 'div.collapse-view__trigger:contains("I have a Coupon Code")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    CouponsList:
+      selector: 'ul.coupons-list'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Coupon Delete Button:
+      selector: 'button[data-role="remove-coupon"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    FlatRateShippingMethod:
+      selector: 'label:contains("Flat Rate:")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    FlatRate2ShippingMethod:
+      selector: 'label:contains("Flat Rate 2:")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    BackendFlatRate2ShippingMethod:
+      selector: 'label:contains("Flat Rate 2")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Restrictions:
+      selector:
+        type: xpath
+        locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

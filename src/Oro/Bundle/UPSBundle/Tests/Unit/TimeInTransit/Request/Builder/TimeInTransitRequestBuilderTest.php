@@ -105,8 +105,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit_Framework_TestCase
 
         $builder
             ->setMaximumListSize(self::MAXIMUM_LIST_SIZE)
-            ->setWeight(self::WEIGHT)
-            ->setWeightUnitCode(self::WEIGHT_UNIT_CODE)
+            ->setWeight(self::WEIGHT, self::WEIGHT_UNIT_CODE)
             ->setCustomerContext(self::CUSTOMER_CONTEXT)
             ->setTransactionIdentifier(self::TRANSACTION_IDENTIFIER);
 

@@ -39,7 +39,7 @@ class ShoppingListTotalListener
     {
         $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroShoppingListBundle:ShoppingListTotal')
-            ->invalidateByCpl($event->getCombinedPriceListIds());
+            ->invalidateByCombinedPriceList($event->getCombinedPriceListIds());
     }
 
     /**
