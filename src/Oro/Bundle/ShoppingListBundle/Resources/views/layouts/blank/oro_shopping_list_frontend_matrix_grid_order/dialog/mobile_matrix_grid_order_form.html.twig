@@ -40,14 +40,16 @@
                 <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}: </span>
                 <span data-rows-quantity="{{ rowIndex }}">0</span>
             </div>
-            <span class="matrix-order-widget__item-seperator">|</span>
+            <span class="matrix-order-widget__item-separator">|</span>
             <div>
                 <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}: </span>
                 <span data-rows-price="{{ rowIndex }}">0</span>
             </div>
         </div>
-        <span class="fa-plus fa--large"></span>
-        <span class="fa-minus fa--large"></span>
+        <div class="matrix-order-widget__item-icon-wrapper">
+            <span class="matrix-order-widget__item-icon fa-plus fa--large"></span>
+            <span class="matrix-order-widget__item-icon fa-minus fa--large"></span>
+        </div>
     </div>
 {% endblock %}
 

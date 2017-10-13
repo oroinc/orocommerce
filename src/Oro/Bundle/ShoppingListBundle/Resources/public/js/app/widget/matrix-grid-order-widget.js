@@ -28,7 +28,7 @@ define(function(require) {
                 modal: true,
                 title: null,
                 resizable: false,
-                width: '480',
+                width: '500',
                 autoResize: true,
                 dialogClass: 'matrix-order-widget--dialog'
             };

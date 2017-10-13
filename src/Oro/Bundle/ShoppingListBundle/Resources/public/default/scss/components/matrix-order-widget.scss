@@ -1,57 +1,12 @@
 // @theme: default;
 
-/* Matrix Grid Order Widget */
-
-//Enable styled scroll only for desktop version
-@include only-desktop {
-  .matrix-order-widget {
-    &__grid-body {
-      @include styled-scrollbar();
-    }
-  }
-}
-
-@include breakpoint('tablet-small') {
-  .matrix-order-widget {
-    &--dialog {
-      padding-bottom: $offset-y-m;
-
-      .ui-widget-content {
-        padding: 40px 15px 5px 15px;
+//Enable styled scroll only for desktop version by default
+@if ($matrix-order-widget-grid-body-styled-scrollbar-enable) {
+  @include only-desktop($matrix-order-widget-grid-body-only-desktop-breakpoint) {
+    .matrix-order-widget {
+      &__grid-body {
+        @include styled-scrollbar();
       }
-    }
-
-    &__form__col {
-      .form-field-quantity {
-        padding: 11px;
-        text-align: center;
-      }
-    }
-  }
-}
-
-@include breakpoint('mobile-landscape') {
-  .matrix-order-widget {
-    &__form__col {
-      padding-right: 5px;
-
-      .form-field-quantity {
-        padding: 9px;
-      }
-    }
-
-    &__grid-body,
-    &__grid-footer {
-      padding-right: 5px;
-
-      &:first-child {
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-    }
-
-    &__summary-wrapper {
-      padding-right: 5px;
     }
   }
 }

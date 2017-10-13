@@ -15,7 +15,7 @@
     <div class="matrix-order-widget__grid-head">
         <div class="matrix-order-widget__grid-header-label"></div>
         <div class="matrix-order-widget__grid-head-wrapper">
-            <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+            <div class="matrix-order-widget__grid-scrollable-area" data-scroll-view-follow="x">
                 {% for cell in cells %}
                     {{ block('_matrix_collection_widget_head_cell') }}
                 {% endfor %}
@@ -110,7 +110,7 @@
     <div class="matrix-order-widget__grid-footer">
         <div class="matrix-order-widget__grid-footer-label">Qty</div>
         <div class="matrix-order-widget__grid-footer-wrapper">
-            <div class="matrix-order-widget__grid-footer-scrollable" data-scroll-view-follow="x">
+            <div class="matrix-order-widget__grid-scrollable-area" data-scroll-view-follow="x">
                 {% for cell in cells %}
                     {% set cellIndex = loop.index %}
                     {{ block('_matrix_collection_widget_footer_cell') }}

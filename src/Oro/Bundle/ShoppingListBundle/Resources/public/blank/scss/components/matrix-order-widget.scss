@@ -1,190 +1,185 @@
 // @theme: blank;
 
-//TODO: Should move all properties of the component to config with variables
 .matrix-order-widget {
-    max-width: 100%;
-    margin: 0;
+    max-width: $matrix-order-widget-max-width;
+    margin: $matrix-order-widget-offset;
 
     &__grid {
-        width: 100%;
-        margin-bottom: 15px;
+        width: $matrix-order-widget-grid-width;
+        margin-bottom: $matrix-order-widget-grid-offset-bottom;
 
-        font-family: $font-family-base;
+        font-family: $matrix-order-widget-grid-font-family;
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $matrix-order-widget-grid-border-bottom;
     }
 
-    &__grid-head {
-        border-top: 1px solid get-color('additional', 'light');
-        border-bottom: 1px solid get-color('additional', 'light');
-        background: get-color('additional', 'base');
+    &__grid--multi-rows & {
+        &__grid-head,
+        &__grid-body,
+        &__grid-footer {
+            &-wrapper {
+                margin-left: $matrix-order-widget-grid-multi-rows-items-wrapper-offset-left;
+            }
+        }
 
-        text-align: center;
-    }
-
-    &__grid-body {
-        display: block;
-
-        max-height: 310px;
-
-        overflow: auto;
-
-        .form-row {
-            width: 75px;
-            margin: 0 auto;
+        &__grid-head {
+            border-top: $matrix-order-widget-grid-multi-rows-grid-head-border-top;
+            border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-border-bottom;
+            background: $matrix-order-widget-grid-multi-rows-grid-head-background;
         }
     }
 
-    &__head-body-wrapper {
-        padding-bottom: 20px;
+    &__grid-body {
+        display: $matrix-order-widget-grid-body-display;
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        max-height: $matrix-order-widget-grid-body-max-height;
 
-        line-height: 60px;
-        white-space: nowrap;
-    }
+        overflow: $matrix-order-widget-grid-body-overflow;
 
-    &__grid--multi-rows {
-        .matrix-order-widget {
-            &__grid-head,
-            &__grid-body,
-            &__grid-footer {
-                &-wrapper {
-                    margin-left: 100px;
-                }
-            }
+        .form-row {
+            width: $matrix-order-widget-grid-body-form-row-width;
+            margin: $matrix-order-widget-grid-body-form-offset;
         }
     }
 
     &__grid-head,
     &__grid-footer {
         &-wrapper {
-            overflow: hidden;
+            overflow: $matrix-order-widget-grid-area-items-wrapper-overflow;
 
-            white-space: nowrap;
-            text-align: left;
+            white-space: $matrix-order-widget-grid-area-items-wrapper-white-space;
+            text-align: $matrix-order-widget-grid-area-items-wrapper-text-align;
         }
 
         &-label {
-            float: left;
+            float: $matrix-order-widget-grid-area-items-label-float;
 
-            width: 100px;
+            width: $matrix-order-widget-grid-area-items-label-width;
 
-            text-align: center;
+            text-align: $matrix-order-widget-grid-area-items-label-text-align;
         }
     }
 
     &__grid-footer {
-        background: get-color('additional', 'base');
+        background: $matrix-order-widget-grid-footer-background;
+        border-top: $matrix-order-widget-grid-footer-border-top;
 
         &-label {
-            height: 41px;
+            height: $matrix-order-widget-grid-footer-label-height;
 
-            line-height: 41px;
-            text-transform: uppercase;
+            line-height: $matrix-order-widget-grid-footer-label-line-height;
+            text-transform: $matrix-order-widget-grid-footer-label-text-transform;
         }
 
         &-total {
-            padding: 10px 0;
+            padding: $matrix-order-widget-grid-footer-total-offset-inner;
 
-            color: get-color('additional', 'middle');
+            color: $matrix-order-widget-grid-footer-total-color;
 
             &.valid {
-                color: get-color('additional', 'dark');
+                color: $matrix-order-widget-grid-footer-total-valid-color;
             }
         }
     }
 
-    &__form__row {
-        height: 49px;
-        margin: 10px 0;
-
-        white-space: nowrap;
-
-        &:not(:last-child) {
-            border-bottom: 1px solid get-color('additional', 'light');
-        }
-    }
-
-    &__form__col {
-        display: inline-block;
-        margin: 0;
-
-        width: 90px;
-        border: none;
-
-        line-height: 1.5;
-        text-align: center;
-        vertical-align: middle;
-
-        &-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin: 9px 0;
-
-            white-space: normal;
-            word-break: break-all;
-        }
-
-        .form-field-quantity {
-            font-family: $font-family-base;
-            text-align: center;
-        }
-    }
-
-    &__summary-wrapper {
-        padding-right: 26px;
-    }
-
     &__grid-side {
-        float: left;
+        float: $matrix-order-widget-grid-side-float;
 
-        width: 100px;
-        max-height: 310px;
+        width: $matrix-order-widget-grid-side-width;
+        max-height: $matrix-order-widget-grid-side-max-height;
 
-        overflow: hidden;
+        overflow: $matrix-order-widget-grid-side-overflow;
     }
 
     &__grid-side & {
         &__form__row {
-            height: 49px;
+            display: $matrix-order-widget-grid-side-form-row-display;
+            justify-content: $matrix-order-widget-grid-side-form-row-justify-content;
+            overflow: $matrix-order-widget-grid-side-form-row-overflow;
 
-            text-align: center;
-            line-height: 39px;
+            margin: $matrix-order-widget-grid-side-form-row-offset;
+
+            text-align: $matrix-order-widget-grid-side-form-row-text-align;
+            white-space: $matrix-order-widget-grid-side-form-row-white-space;
+            word-break: $matrix-order-widget-grid-side-form-row-word-break;
+            line-height: $matrix-order-widget-grid-side-form-row-line-height;
+        }
+    }
+
+    &__grid-scrollable-area {
+        display: $matrix-order-widget-grid-scrollable-area-display;
+    }
+
+    &__form__row {
+        display: $matrix-order-widget-form-row-display;
+        align-items: $matrix-order-widget-form-row-align-items;
+
+        height: $matrix-order-widget-form-row-height;
+
+        white-space: $matrix-order-widget-form-row-white-space;
+
+        &:not(:last-child) {
+            border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+        }
+    }
+
+    &__form__col {
+        display: $matrix-order-widget-form-col-display;
+        justify-content: $matrix-order-widget-form-col-justify-content;
+
+        margin: $matrix-order-widget-form-col-offset;
+        width: $matrix-order-widget-form-col-width;
+        border: $matrix-order-widget-form-col-border;
+
+        line-height: $matrix-order-widget-form-col-line-height;
+        text-align: $matrix-order-widget-form-col-text-align;
+        vertical-align: $matrix-order-widget-form-col-vertical-align;
+
+        &-wrapper {
+            display: $matrix-order-widget-form-col-wrapper-display;
+            align-items: $matrix-order-widget-form-col-wrapper-align-items;
+
+            margin: $matrix-order-widget-form-col-wrapper-offset;
+
+            white-space: $matrix-order-widget-form-col-wrapper-white-space;
+            word-break: $matrix-order-widget-form-col-wrapper-word-break;
+        }
+
+        .form-field-quantity {
+            font-family: $matrix-order-widget-form-col-form-field-quantity-font-family;
+            text-align: $matrix-order-widget-form-col-form-field-quantity-text-align;
         }
     }
 
     &__summary {
-        display: flex;
-        justify-content: flex-end;
+        display: $matrix-order-widget-summary-display;
+        justify-content: $matrix-order-widget-summary-justify-content;
 
         min-width: $matrix-order-widget-summary-min-width;
-        margin-left: auto;
+        margin-left: $matrix-order-widget-summary-offset-left;
 
-        font-family: $font-family-base;
-        text-align: right;
+        font-family: $matrix-order-widget-summary-font-family;
+        text-align: $matrix-order-widget-summary-text-align;
+    }
+
+    &__summary-wrapper {
+        padding-right: $matrix-order-widget-summary-wrapper-offset-inner-right;
     }
 
     &__summary-label {
-        display: inline-flex;
+        display: $matrix-order-widget-summary-label-display;
         min-width: $matrix-order-widget-summary-label-min-width;
         padding: $matrix-order-widget-summary-label-offset-inner;
     }
 
     &__total-quantity,
     &__total-price {
-        display: flex;
-        justify-content: space-between;
+        display: $matrix-order-widget-total-items-display;
+        justify-content: $matrix-order-widget-total-items-justify-content;
     }
 
     &__total-quantity {
-        margin-bottom: $offset-y-s;
-    }
-
-    &__total-quantity-vlaue {
-        float: right;
+        margin-bottom: $matrix-order-widget-total-quantity-offset-bottom;
     }
 
     &__total-price {
@@ -193,121 +188,129 @@
         font-size: $matrix-order-widget-total-price-font-size;
     }
 
-    .pinned-dropdown {
-        max-width: $matrix-order-widget-pinned-dropdown-max-width;
-    }
-
-    &--dialog {
-        .ui-dialog-titlebar {
-            padding: 0;
-        }
-
-        .ui-dialog-title {
-            display: none;
-        }
-
-        .ui-dialog-titlebar-close {
-            font-size: 0;
-        }
-
-        .ui-widget-content {
-            padding: $matrix-order-widget-dialog-content-offset-inner;
-        }
-    }
-
-    &--dialog-fullscreen {
-        position: static;
-
-        .ui-dialog-titlebar,
-        .ui-dialog-buttonpane {
-            display: none;
-        }
-
-        .ui-widget-content {
-            padding: 0;
-        }
-    }
-
     &__item {
-        position: relative;
-        overflow: hidden;
+        position: $matrix-order-widget-item-position;
+        overflow: $matrix-order-widget-item-overflow;
 
         &:not(:first-child) {
-            border-top: 1px solid get-color('additional', 'light');;
+            border-top: $matrix-order-widget-item-not-first-child-border-top;
         }
 
-        &.expanded {
-            .fa-minus {
-                display: block;
+        &.expanded & {
+            &-icon {
+                &:first-child {
+                    display: $matrix-order-widget-item-expanded-icon-first-child-display;
+                }
+
+                &:last-child {
+                    display: $matrix-order-widget-item-expanded-icon-last-child-display;
+                }
             }
+        }
 
-            .fa-plus {
-                display: none;
+        &-icon {
+            &:last-child {
+                display: $matrix-order-widget-item-icon-last-child-display;
             }
         }
 
-        .fa-minus,
-        .fa-plus {
-            position: absolute;
+        &-icon-wrapper {
+            position: $matrix-order-widget-item-icon-wrapper-position;
 
-            right: 12px;
-            top: 20px;
-        }
-
-        .fa-minus {
-            display: none;
+            right: $matrix-order-widget-item-icon-wrapper-right;
+            top: $matrix-order-widget-item-item-icon-wrapper-top;
         }
 
         &-label {
-            min-width: 45%;
-            margin: 0 10px;
-            word-wrap: break-word;
-            line-height: 1.4rem;
-            align-self: center;
+            min-width: $matrix-order-widget-item-label-min-width;
+            margin: $matrix-order-widget-item-label-offset;
+            word-break: $matrix-order-widget-item-label-word-break;
+            line-height: $matrix-order-widget-item-label-line-height;
+            align-self: $matrix-order-widget-item-label-align-self;
         }
 
         &-value {
-            min-width: 45%;
+            min-width: $matrix-order-widget-item-value-min-width;
 
             input {
-                text-align: center;
+                text-align: $matrix-order-widget-item-value-input-text-align;
             }
         }
 
-        &-seperator {
-            margin: 0 10px;
+        &-separator {
+            margin: $matrix-order-widget-item-separator-offset;
         }
 
         &-info {
-            display: inline-flex;
-            flex-direction: column;
-            justify-content: space-between;
+            display: $matrix-order-widget-item-info-display;
+            flex-direction: $matrix-order-widget-item-info-flex-direction;
+            justify-content: $matrix-order-widget-item-info-justify-content;
 
-            width: 100%;
-            padding: 10px 15px;
+            width: $matrix-order-widget-item-info-width;
+            padding: $matrix-order-widget-item-info-offset-inner;
 
             &-wrapper {
-                display: inline-flex;
+                display: $matrix-order-widget-item-info-wrapper-display;
             }
         }
 
         &-content {
-            display: inline-flex;
-            align-items: center;
-            flex-basis: 12%;
+            display: $matrix-order-widget-item-content-display;
+            align-items: $matrix-order-widget-item-content-align-items;
+            flex-basis: $matrix-order-widget-item-content-flex-basis;
 
-            box-sizing: border-box;
-            padding: 10px 30px 10px 5px;
+            box-sizing: $matrix-order-widget-item-content-box-sizing;
+            padding: $matrix-order-widget-item-content-offset-inner;
         }
 
         &-content-wrapper {
-            display: inline-flex;
-            flex-wrap: wrap;
-            overflow: hidden;
+            display: $matrix-order-widget-item-content-wrapper-display;
+            flex-wrap: $matrix-order-widget-item-content-wrapper-flex-wrap;
+            overflow: $matrix-order-widget-item-content-wrapper-overflow;
 
-            box-sizing: border-box;
-            padding: 10px;
-            width: 100%;
+            box-sizing: $matrix-order-widget-item-content-wrapper-box-sizing;
+            padding: $matrix-order-widget-item-content-wrapper-offset-inner;
+            width: $matrix-order-widget-item-content-wrapper-width;
+        }
+    }
+
+    .pinned-dropdown {
+        max-width: $matrix-order-widget-pinned-dropdown-max-width;
+    }
+
+    //Should reset default dialog widget classes
+    &--dialog {
+        .ui-dialog-titlebar {
+            padding: $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner;
+        }
+
+        .ui-dialog-title {
+            display: $matrix-order-widget-dialog-ui-dialog-title-display;
+        }
+
+        .ui-dialog-titlebar-close {
+            font-size: $matrix-order-widget-dialog-ui-dialog-titlebar-close-font-size;
+        }
+
+        .ui-widget-content {
+            padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
+        }
+
+        .ui-dialog-buttonpane {
+            padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
+        }
+    }
+
+    &--dialog-fullscreen {
+        position: $matrix-order-widget-dialog-fullscreen-position;
+
+        .ui-dialog-titlebar,
+        .ui-dialog-buttonpane {
+            display: $matrix-order-widget-dialog-fullscreen-position-ui-dialog-hidden-item;
+        }
+
+        .ui-widget-content {
+            padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
         }
     }
 }
@@ -315,7 +318,7 @@
 @include breakpoint('desktop') {
     .matrix-order-widget {
         &--dialog {
-            width: $matrix-order-widget-width !important;
+            width: $matrix-order-widget-dialog-width !important;
         }
     }
 }
@@ -324,8 +327,8 @@
     .matrix-order-widget {
         &__item {
             &-content {
-                flex-basis: 20%;
-                padding: 10px 45px 10px 15px;
+                flex-basis: $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis;
+                padding: $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner;
             }
         }
     }
@@ -333,9 +336,21 @@
 
 @include breakpoint('tablet-small') {
     .matrix-order-widget {
+        &--dialog {
+            padding-bottom: $matrix-order-widget-dialog-tablet-small-offset-bottom;
+
+            .ui-widget-content {
+                padding: $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset;
+            }
+
+            .ui-dialog-buttonpane {
+                padding: $matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset;
+            }
+        }
+
         &__item {
             &-content {
-                flex-basis: 25%;
+                flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
             }
         }
     }
@@ -345,7 +360,7 @@
     .matrix-order-widget {
         &__item {
             &-content {
-                flex-basis: 33%;
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis;
             }
         }
     }
@@ -355,9 +370,8 @@
     .matrix-order-widget {
         &__item {
             &-content {
-                flex-basis: 50%;
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-flex-basis;
             }
         }
     }
 }
-
