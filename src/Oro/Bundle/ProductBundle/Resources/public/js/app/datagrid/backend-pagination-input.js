@@ -34,9 +34,7 @@ define(function(require) {
          */
         onChangePage: function(e) {
             var obj = {};
-
             e.preventDefault();
-
             this.collection.trigger('backgrid:checkUnsavedData', obj);
 
             if (obj.live) {
