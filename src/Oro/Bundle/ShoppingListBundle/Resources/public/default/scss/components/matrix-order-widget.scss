@@ -2,11 +2,11 @@
 
 //Enable styled scroll only for desktop version by default
 @if ($matrix-order-widget-grid-body-styled-scrollbar-enable) {
-  @include only-desktop($matrix-order-widget-grid-body-only-desktop-breakpoint) {
-    .matrix-order-widget {
-      &__grid-body {
-        @include styled-scrollbar();
-      }
+    .desktop-version {
+        .matrix-order-widget {
+            &__grid-body {
+                @include styled-scrollbar();
+            }
+        }
     }
-  }
 }
