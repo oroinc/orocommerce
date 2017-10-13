@@ -43,6 +43,13 @@ oro:
         subcategory:
             entity_label:   'Subcategory'
 
+            form:
+                exclude_subcategories:
+                    label: 'Sub-Categories'
+                    include.label: 'Include, show as filter'
+                    exclude.label: 'Do not include'
+                    tooltip: 'Subcategories inclusion'
+
         menu:
             master_catalog.label:                  'Master Catalog'
             shortcut_master_catalog.description:   'Manage Master Catalog'
