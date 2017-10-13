@@ -424,6 +424,7 @@ services:
             - '@oro_order.provider.latest_ordered_products_info'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+            - { name: oro_featuretogle.feature, feature: previously_purchased_products }
 
     oro_order.previously_purchased.configuration:
         class: 'Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedConfigProvider'

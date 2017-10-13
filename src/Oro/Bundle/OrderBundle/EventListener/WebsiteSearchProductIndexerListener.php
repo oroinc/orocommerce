@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -10,6 +11,8 @@ use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var WebsiteContextManager
      */
@@ -37,10 +40,14 @@ class WebsiteSearchProductIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
-        if (!$websiteId) {
+        $website = $this->websiteContextManager->getWebsite($event->getContext());
+        if (!$website) {
             $event->stopPropagation();
 
+            return;
+        }
+
+        if (!$this->isFeaturesEnabled($website)) {
             return;
         }
 
@@ -55,7 +62,7 @@ class WebsiteSearchProductIndexerListener
         );
 
         $latestOrderedProductsInfo = $this->latestOrderedProductsInfoProvider
-            ->getLatestOrderedProductsInfo($productIds, $websiteId);
+            ->getLatestOrderedProductsInfo($productIds, $website->getId());
 
         foreach ($products as $product) {
             if (isset($latestOrderedProductsInfo[$product->getId()])) {

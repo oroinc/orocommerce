@@ -37,8 +37,11 @@ class LatestOrderedProductsInfoProvider
      * Returns information about who and when bought those products
      * [
      *      product id => [
-     *          'customer_id' => customer user who bought,
-     *          'created_at'  => order create \DateTime,
+     *          0 => [
+     *              'customer_id' => customer user who bought,
+     *              'created_at'  => order create \DateTime,
+     *          ],
+     *          ...
      *      ],
      *      ...
      * ]

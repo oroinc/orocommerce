@@ -7,6 +7,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
+use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
@@ -16,6 +17,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 class ProductControllerTest extends FrontendWebTestCase
 {
     use WebsiteSearchExtensionTrait;
+    use PreviouslyPurchasedFeatureTrait;
 
     const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
 
@@ -34,6 +36,8 @@ class ProductControllerTest extends FrontendWebTestCase
                 LoadOrderLineItemData::class,
             ]
         );
+
+        $this->enablePreviouslyPurchasedFeature($this->getReference('defaultWebsite'));
 
         $this->reindexProductData();
     }
@@ -99,7 +103,7 @@ class ProductControllerTest extends FrontendWebTestCase
             ],
             'With sort by name ask' => [
                 [
-                    self::FRONTEND_GRID_NAME . '[_sort_by][names]' => 'ASK'
+                    self::FRONTEND_GRID_NAME . '[_sort_by][names]' => 'ASC'
                 ],
                 [
                     LoadProductData::PRODUCT_1,
