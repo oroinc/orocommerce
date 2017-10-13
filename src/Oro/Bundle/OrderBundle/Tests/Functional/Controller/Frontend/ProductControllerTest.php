@@ -52,8 +52,9 @@ class ProductControllerTest extends FrontendWebTestCase
 
         $productData = $result['data'];
 
-        $this->assertEquals(LoadProductData::PRODUCT_1, $productData[0]['sku']);
-        $this->assertEquals(LoadProductData::PRODUCT_6, $productData[1]['sku']);
+        $skus = array_flip(array_column($productData, 'sku'));
+        $this->assertArrayHasKey(LoadProductData::PRODUCT_1, $skus);
+        $this->assertArrayHasKey(LoadProductData::PRODUCT_6, $skus);
     }
 
     public function testPreviouslyPurchasedGridIfUserNonAuth()

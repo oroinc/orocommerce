@@ -765,6 +765,7 @@ datagrids:
         sorters:
             toolbar_sorting: true
             disable_default_sorting: false
+            disable_not_selected_option: true
             columns:
                 recency:
                     type: datetime
