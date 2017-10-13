@@ -6,12 +6,14 @@ Feature: Generation of long coupon code
   Scenario: Trying to generate coupons exceeding max length
     Given I login as administrator
     And go to Marketing/Promotions/Coupons
+    And click "Coupons Actions"
     And I click "Generate Multiple Coupons"
     When I fill form with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |
       | Uses per Person  | 5                                |
+      | Valid From       | <DateTime:Jul 1, 2017, 12:00 AM> |
       | Valid Until      | <DateTime:Jul 1, 2018, 12:00 AM> |
       | Code Length      | 122                              |
       | Code Type        | Numeric                          |
@@ -25,12 +27,14 @@ Feature: Generation of long coupon code
     And I should see "No records found"
 
   Scenario: Generate coupons with max length
+    Given click "Coupons Actions"
     And I click "Generate Multiple Coupons"
     When I fill form with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |
       | Uses per Person  | 5                                |
+      | Valid From       | <DateTime:Jul 1, 2017, 12:00 AM> |
       | Valid Until      | <DateTime:Jul 1, 2018, 12:00 AM> |
       | Code Length      | 121                              |
       | Code Type        | Numeric                          |
