@@ -51,9 +51,7 @@ class LowInventoryProvider
      */
     public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null)
     {
-        $highlightLowInventory = $this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory');
-
-        if (!$highlightLowInventory) {
+        if (!$this->enabledHighlightLowInventory($product)) {
             return false;
         }
 
@@ -96,11 +94,11 @@ class LowInventoryProvider
      * Will be useful for all product listing (Catalog, Checkout, Shopping list)
      *
      * @param $data - [
-     *      [
-     *          'product' => Product Entity,
-     *          'product_unit' => ProductUnit entity
-     *      ]
-     * ]
+     *              [
+     *              'product' => Product Entity,
+     *              'product_unit' => ProductUnit entity
+     *              ]
+     *              ]
      *
      * @return array [
      *      'product id' => bool - has low inventory marker,
@@ -119,16 +117,14 @@ class LowInventoryProvider
             /** @var Product $product */
             $product = $item['product'];
 
-            $highlightLowInventory = $this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory');
-
-            if ($highlightLowInventory) {
+            if ($this->enabledHighlightLowInventory($product)) {
                 /** @var ProductUnit $productUnit */
                 $productUnit = $item['product_unit'];
                 $code = $productUnit->getCode();
 
                 $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
                     $product,
-                    'lowInventoryThreshold'
+                    LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION
                 );
 
                 $quantity = 0;
@@ -144,6 +140,20 @@ class LowInventoryProvider
 
         return $response;
     }
+
+    /**
+     * @param Product $product
+     *
+     * @return mixed
+     */
+    protected function enabledHighlightLowInventory(Product $product)
+    {
+        return $this->entityFallbackResolver->getFallbackValue(
+            $product,
+            static::HIGHLIGHT_LOW_INVENTORY_OPTION
+        );
+    }
+
 
     /**
      * @param Product[] $products

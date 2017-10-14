@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -396,7 +397,7 @@ class CategoryControllerTest extends WebTestCase
         $bigStringValue = str_repeat('a', 256);
         $formValues = $form->getPhpValues();
         $formValues['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
-        $formValues['oro_catalog_category']['lowInventoryThreshold']['scalarValue'] = 0;
+        $formValues['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
         $formValues['oro_catalog_category']['titles']['values']['default'] = $bigStringValue;
         $formValues['oro_catalog_category']['slugPrototypesWithRedirect']['slugPrototypes'] = [
             'values' => ['default' => $bigStringValue]
@@ -555,7 +556,7 @@ class CategoryControllerTest extends WebTestCase
         $parameters['oro_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['oro_catalog_category']['largeImage']['emptyFile'] = true;
         $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
-        $parameters['oro_catalog_category']['lowInventoryThreshold']['scalarValue'] = 0;
+        $parameters['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
         $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
             $newUnitPrecision['code']
         ;
