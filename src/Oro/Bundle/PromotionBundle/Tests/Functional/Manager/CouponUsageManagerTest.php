@@ -22,7 +22,7 @@ class CouponUsageManagerTest extends WebTestCase
 
     public function testGetCouponUsageCount()
     {
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
 
         $manager = $this->getContainer()->get('oro_promotion.coupon_usage_manager');
 
@@ -31,7 +31,7 @@ class CouponUsageManagerTest extends WebTestCase
 
     public function testGetCouponUsageCountByCustomerUser()
     {
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
 
         $manager = $this->getContainer()->get('oro_promotion.coupon_usage_manager');
@@ -41,7 +41,7 @@ class CouponUsageManagerTest extends WebTestCase
 
     public function testCreateCouponUsage()
     {
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         $customerUser = $this->getReference(LoadCustomerUserData::ANONYMOUS_EMAIL);
 
         $manager = $this->getContainer()->get('oro_promotion.coupon_usage_manager');

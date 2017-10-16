@@ -16,19 +16,19 @@ Feature: Managing promotions
       | Discount Value | This value should not be blank. |
     And I should see "Should be specified filters or added some products manually."
     When I fill "Promotion Form" with:
-      | Name                         | Promotion name        |
-      | Sort Order                   | 10                    |
-      | Enabled                      | 1                     |
-      | Stop Further Rule Processing | 1                     |
-      | Use Coupons                  | Yes                   |
-      | Discount Value               | 10.0                  |
-      | Activate At (first)            | <DateTime:today>      |
-      | Deactivate At (first)        | <DateTime:tomorrow>   |
-      | Website                      | Default               |
-      | Customer Group               | All Customers         |
+      | Name                         | Promotion name         |
+      | Sort Order                   | 10                     |
+      | Enabled                      | 1                      |
+      | Stop Further Rule Processing | 1                      |
+      | Triggered by                 | Coupons and Conditions |
+      | Discount Value               | 10.0                   |
+      | Activate At (first)          | <DateTime:today>       |
+      | Deactivate At (first)        | <DateTime:tomorrow>    |
+      | Website                      | Default                |
+      | Customer Group               | All Customers          |
       | Labels                       | Promotion label       |
-      | Descriptions                 | Promotion description |
-    And I press "Add" in "Matching Items" section
+#      | Descriptions                 | Promotion description |
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -60,7 +60,7 @@ Feature: Managing promotions
       | Discount Value | 10.0                |
       | Customer       | first customer      |
       | Customer Group | All Customers       |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -73,7 +73,7 @@ Feature: Managing promotions
       | Name           | Promotion for anyone |
       | Sort Order     | 10                  |
       | Discount Value | 10.0                |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save and close form

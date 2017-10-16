@@ -128,6 +128,7 @@ datagrids:
                     - coupon.updatedAt
                     - coupon.usesPerCoupon
                     - coupon.usesPerPerson
+                    - coupon.validFrom
                     - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
@@ -150,6 +151,9 @@ datagrids:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
                 label:         oro.promotion.coupon.uses_per_person.label
+            validFrom:
+                label:         oro.promotion.coupon.valid_from.label
+                frontend_type: datetime
             validUntil:
                 label:         oro.promotion.coupon.valid_until.label
                 frontend_type: datetime
@@ -171,6 +175,8 @@ datagrids:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    data_name: coupon.validFrom
                 validUntil:
                     data_name: coupon.validUntil
                 createdAt:
@@ -196,6 +202,9 @@ datagrids:
                 usesPerPerson:
                     type:      number
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    type:      datetime
+                    data_name: coupon.validFrom
                 validUntil:
                     type:      datetime
                     data_name: coupon.validUntil
@@ -350,6 +359,7 @@ datagrids:
                     - rule.name as promotionName
                     - coupon.usesPerCoupon
                     - coupon.usesPerPerson
+                    - coupon.validFrom
                     - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
@@ -371,6 +381,9 @@ datagrids:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
                 label:         oro.promotion.coupon.uses_per_person.label
+            validFrom:
+                label:         oro.promotion.coupon.valid_from.label
+                frontend_type: datetime
             validUntil:
                 label:         oro.promotion.coupon.valid_until.label
                 frontend_type: datetime
@@ -384,6 +397,8 @@ datagrids:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    data_name: coupon.validFrom
                 validUntil:
                     data_name: coupon.validUntil
         filters:
@@ -400,6 +415,9 @@ datagrids:
                 usesPerPerson:
                     type:      number
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    type:      datetime
+                    data_name: coupon.validFrom
                 validUntil:
                     type:      datetime
                     data_name: coupon.validUntil

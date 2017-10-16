@@ -162,7 +162,7 @@ class WebsiteSearchProductIndexerListener
 
         $attributeFamily = $product->getAttributeFamily();
 
-        return !$attributeFamily || $attributeFamilies[$attribute->getId()] === $attributeFamily->getId();
+        return !$attributeFamily || in_array($attributeFamily->getId(), $attributeFamilies[$attribute->getId()], true);
     }
 
     /**
