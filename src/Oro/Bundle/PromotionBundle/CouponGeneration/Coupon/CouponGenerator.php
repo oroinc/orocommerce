@@ -141,6 +141,10 @@ class CouponGenerator implements CouponGeneratorInterface
         $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
         $statement->bindValue('uses_per_person', $options->getUsesPerPerson());
         $statement->bindValue(
+            'valid_from',
+            $connection->convertToDatabaseValue($options->getValidFrom(), Type::DATETIME)
+        );
+        $statement->bindValue(
             'valid_until',
             $connection->convertToDatabaseValue($options->getValidUntil(), Type::DATETIME)
         );
@@ -213,6 +217,7 @@ class CouponGenerator implements CouponGeneratorInterface
               uses_per_person,
               created_at,
               updated_at,
+              valid_from,
               valid_until
             ) VALUES
         ';
@@ -229,6 +234,7 @@ class CouponGenerator implements CouponGeneratorInterface
                   :uses_per_person,
                   :created_at,
                   :updated_at,
+                  :valid_from,
                   :valid_until
                 )
             ";

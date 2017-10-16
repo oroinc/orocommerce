@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Tests\Functional\Manager;
+namespace Oro\Bundle\PromotionBundle\Tests\Functional\CouponGeneration\Coupon;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
@@ -35,6 +35,7 @@ class CouponGeneratorTest extends WebTestCase
 
         $options = new CouponGenerationOptions();
         $options->setOwner($businessUnit);
+        $options->setValidFrom(new \DateTime('01-01-2010 12:00:00'));
         $options->setValidUntil(new \DateTime('01-01-2020 12:00:00'));
         $options->setPromotion($promotion);
         $options->setEnabled(true);
@@ -74,6 +75,7 @@ class CouponGeneratorTest extends WebTestCase
         $this->assertEquals($options->getPromotion(), $coupon->getPromotion());
         $this->assertEquals($options->getUsesPerCoupon(), $coupon->getUsesPerCoupon());
         $this->assertEquals($options->getUsesPerPerson(), $coupon->getUsesPerPerson());
+        $this->assertEquals($options->getValidFrom(), $coupon->getValidFrom());
         $this->assertEquals($options->getValidUntil(), $coupon->getValidUntil());
         $this->assertInstanceOf(\DateTime::class, $coupon->getCreatedAt());
         $this->assertInstanceOf(\DateTime::class, $coupon->getUpdatedAt());

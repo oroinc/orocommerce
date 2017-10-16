@@ -38,6 +38,11 @@ class CouponGenerationOptions extends CodeGenerationOptions
     /**
      * @var \DateTime
      */
+    protected $validFrom;
+
+    /**
+     * @var \DateTime
+     */
     protected $validUntil;
 
     /**
@@ -123,6 +128,22 @@ class CouponGenerationOptions extends CodeGenerationOptions
     public function setUsesPerPerson($usersPerUser)
     {
         $this->usesPerPerson = $usersPerUser;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getValidFrom()
+    {
+        return $this->validFrom;
+    }
+
+    /**
+     * @param \DateTime $validFrom
+     */
+    public function setValidFrom($validFrom)
+    {
+        $this->validFrom = $validFrom;
     }
 
     /**

@@ -7,6 +7,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         enabled: true
         usesPerPerson: 2
         usesPerCoupon: 3
+        validFrom: '<(new DateTime("01-01-2010 00:00:00"))>'
         validUntil: '<(new DateTime("01-01-2020 00:00:00"))>'
     coupon2:
         owner: '@business_unit'
@@ -16,6 +17,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         enabled: true
         usesPerPerson: 3
         usesPerCoupon: 4
+        validFrom: '<(new DateTime("01-01-2000 00:00:00"))>'
         validUntil: '<(new DateTime("10-10-2010 10:00:00"))>'
     coupon3:
         owner: '@business_unit'

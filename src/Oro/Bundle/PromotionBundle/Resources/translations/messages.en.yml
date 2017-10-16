@@ -3,9 +3,9 @@ oro:
         type:
             label: Discount
             choices:
-                order: Order
-                line_item: Line Item
-                buy_x_get_y: Buy X Get Y
+                order: Order Total
+                line_item: Order Line Item
+                buy_x_get_y: Buy X Get Y (Same Product)
                 shipping: Shipping
     discount_options:
         general:
@@ -19,7 +19,7 @@ oro:
                 label: Discount Value
         line_item_type:
             product_unit:
-                label: Product Unit
+                label: Unit of Quantity
             apply_to:
                 label: Apply Discount To
                 choices:
@@ -29,10 +29,10 @@ oro:
                 label: Maximum Qty Discount is Applied To
                 tooltip: The quantity of products of the same type eligible for a discount in a line item/order. For example, when the limit is set to 10 and a buyer orders 100 items, they will be charged the discounted price for 10 items out of 100, and will pay the full price for the remaining 90 items.
         buy_x_get_y_type:
-            buy_x.label: Buy X
-            get_y.label: Get Y
+            buy_x.label: Buy X Quantity
+            get_y.label: Get Y Quantity
             product_unit:
-                label: Product Unit
+                label: Unit of Quantity
             apply_to:
                 label: Apply Discount To
                 choices:
@@ -63,9 +63,9 @@ oro:
         schedules.label: Schedules
         scopes.label: Scopes
         use_coupons:
-            label: Use Coupons
-            no: No
-            yes: Yes
+            label: Triggered by
+            no: Conditions only
+            yes: Coupons and Conditions
         rule:
             label: Rule
             name.label: Name
@@ -106,7 +106,7 @@ oro:
             discount_options: Discount Options
             schedules: Schedules
             conditions: Conditions
-            matching_items: Matching Items
+            matching_items: Items To Discount
             store_frontend: Store Frontend
 
         discount:
@@ -176,7 +176,7 @@ oro:
                     general_info.label: General Information
                     discount_options.label: Discount Options
             conditions.label: Conditions
-            matching_items.label: Matching Items
+            matching_items.label: Items To Discount
             assigned_coupons.label: Assigned Coupons
             promotion_and_discounts.label: Promotions and Discounts
 
@@ -205,6 +205,7 @@ oro:
                 inactive: Inactive
             uses_per_coupon.label: Uses per Coupon
             uses_per_person.label: Uses per Person
+            valid_from.label: Valid From
             valid_until.label: Valid Until
             menu:
                 coupon_list.description: List of existing coupons
@@ -227,7 +228,7 @@ oro:
             autocomplete:
                 placeholder: Choose a Coupon Code...
             generation:
-                label: Generate Coupons
+                label: Generate Multiple Coupons
                 action:
                     generate: Generate
                 couponQuantity.label: Coupon Quantity
@@ -244,6 +245,8 @@ oro:
                     suffix.label: Symbols
                 message:
                     save_success: Coupons have been generated successfully
+            create.label: Create Coupon
+            coupons_actions.label: Coupons Actions
             importexport:
                 promotion: Promotion Name
 

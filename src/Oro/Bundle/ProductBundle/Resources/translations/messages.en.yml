@@ -749,3 +749,7 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+
+    importexport:
+        export:
+            oro_product_product: Products
