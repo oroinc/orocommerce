@@ -6,12 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\UIBundle\Form\DataTransformer\StripTagsTransformer;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+
 class PaymentTermType extends AbstractType
 {
     const NAME = 'oro_payment_term';
 
     /** @var string */
     private $dataClass;
+
+    /**
+     * @var HtmlTagHelper $htmlTagHelper
+     */
+    private $htmlTagHelper;
 
     /**
      * @param string $dataClass
@@ -22,6 +30,14 @@ class PaymentTermType extends AbstractType
     }
 
     /**
+     * @param HtmlTagHelper $htmlTagHelper
+     */
+    public function setHtmlTagHelper(HtmlTagHelper $htmlTagHelper)
+    {
+        $this->htmlTagHelper = $htmlTagHelper;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -29,6 +45,10 @@ class PaymentTermType extends AbstractType
     {
         $builder
             ->add('label', 'text', ['required' => true, 'label' => 'oro.paymentterm.label.label']);
+
+        if ($this->htmlTagHelper instanceof HtmlTagHelper) {
+            $builder->get('label')->addModelTransformer(new StripTagsTransformer($this->htmlTagHelper));
+        }
     }
 
     /**
