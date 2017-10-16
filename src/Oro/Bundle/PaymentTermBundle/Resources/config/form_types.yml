@@ -1,7 +1,10 @@
 services:
     oro_payment_term.form.type.payment_term:
         class: 'Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType'
-        arguments: ['%oro_payment_term.entity.payment_term.class%']
+        arguments:
+            - '%oro_payment_term.entity.payment_term.class%'
+        calls:
+            - [setHtmlTagHelper, ['@oro_ui.html_tag_helper']]
         tags:
             - { name: form.type, alias: oro_payment_term }
 

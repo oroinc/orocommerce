@@ -6,7 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\FormBundle\Form\DataTransformer\SanitizeHTMLTransformer;
+use Oro\Bundle\UIBundle\Form\DataTransformer\StripTagsTransformer;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 class PaymentTermType extends AbstractType
 {
@@ -16,11 +17,24 @@ class PaymentTermType extends AbstractType
     private $dataClass;
 
     /**
+     * @var HtmlTagHelper $htmlTagHelper
+     */
+    private $htmlTagHelper;
+
+    /**
      * @param string $dataClass
      */
     public function __construct($dataClass)
     {
         $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param HtmlTagHelper $htmlTagHelper
+     */
+    public function setHtmlTagHelper(HtmlTagHelper $htmlTagHelper)
+    {
+        $this->htmlTagHelper = $htmlTagHelper;
     }
 
     /**
@@ -32,8 +46,9 @@ class PaymentTermType extends AbstractType
         $builder
             ->add('label', 'text', ['required' => true, 'label' => 'oro.paymentterm.label.label']);
 
-        // used for preventing XSS attacks
-        $builder->get('label')->addModelTransformer(new SanitizeHTMLTransformer());
+        if ($this->htmlTagHelper instanceof HtmlTagHelper) {
+            $builder->get('label')->addModelTransformer(new StripTagsTransformer($this->htmlTagHelper));
+        }
     }
 
     /**

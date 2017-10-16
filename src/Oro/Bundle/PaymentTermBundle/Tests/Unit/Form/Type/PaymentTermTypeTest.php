@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PaymentTermTypeTest extends FormIntegrationTestCase
 {
@@ -30,7 +32,10 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->newPaymentTerm = new PaymentTerm();
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
+
         $this->formType = new PaymentTermType(get_class($this->newPaymentTerm));
+        $this->formType->setHtmlTagHelper(new HtmlTagHelper($htmlTagProvider));
     }
 
     /**
@@ -74,22 +79,31 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
                     'label' => 'Test Payment Term',
                 ],
             ],
-            'new payment term_xss' => [
+            'new payment term_tag' => [
                 'defaultData' => null,
                 'submittedData' => [
                     'label' => '<script>alert(something)</script>',
                 ],
                 'expectedData' => [
-                    'label' => '',
+                    'label' => 'alert(something)',
                 ],
             ],
-            'new payment term_xss_and_valid' => [
+            'new payment term_tag_mixed' => [
+                'defaultData' => null,
+                'submittedData' => [
+                    'label' => '<body>alert(something)</html>',
+                ],
+                'expectedData' => [
+                    'label' => 'alert(something)',
+                ],
+            ],
+            'new payment term_tag_and_valid' => [
                 'defaultData' => null,
                 'submittedData' => [
                     'label' => '<script>alert(something)</script>Valid',
                 ],
                 'expectedData' => [
-                    'label' => 'Valid',
+                    'label' => 'alert(something) Valid',
                 ],
             ],
             'update payment term' => [
@@ -101,22 +115,22 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
                     'label' => 'Test Payment Term Update',
                 ],
             ],
-            'update payment term_xss' => [
+            'update payment term_tag' => [
                 'defaultData' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
                 'submittedData' => [
                     'label' => '<script>alert(something)</script>',
                 ],
                 'expectedData' => [
-                    'label' => '',
+                    'label' => 'alert(something)',
                 ],
             ],
-            'update payment term_xss_and_valid' => [
+            'update payment term_tag_and_valid' => [
                 'defaultData' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
                 'submittedData' => [
                     'label' => '<script>alert(something)</script>Valid',
                 ],
                 'expectedData' => [
-                    'label' => 'Valid',
+                    'label' => 'alert(something) Valid',
                 ],
             ],
         ];
