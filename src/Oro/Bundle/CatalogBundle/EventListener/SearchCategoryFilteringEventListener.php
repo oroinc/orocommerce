@@ -11,6 +11,7 @@ use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -64,24 +65,33 @@ class SearchCategoryFilteringEventListener
         $config = $event->getConfig();
         $config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
         $config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
+
+        $this->addSubcategoryFilter($config, $categoryId, $isIncludeSubcategories);
     }
 
     /**
      * @param DatagridConfiguration $config
      * @param int $categoryId
+     * @param bool $includeSubcategories
      */
-    protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId)
+    protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId, $includeSubcategories = false)
     {
-        $category = $this->repository->find($categoryId);
+        if (!$includeSubcategories) {
+            return;
+        }
 
-        $filters = $config->offsetGetByPath('[filters]', []);
+        /** @var Category $category */
+        $category = $this->repository->find($categoryId);
+        $subcategories = $this->categoryProvider->getAvailableSubcategories($category);
+
+        $filters = $config->offsetGetByPath(Configuration::FILTERS_PATH, []);
         $filters['columns'][SubcategoryFilter::FILTER_TYPE_NAME] = [
             'data_name' => 'category_path',
             'label' => 'oro.catalog.filter.subcategory.label',
             'type' => SubcategoryFilter::FILTER_TYPE_NAME,
             'rootCategory' => $category,
             'options' => [
-                'categories' => $this->categoryProvider->getAvailableSubcategories($category)
+                'categories' => $subcategories
             ]
         ];
 
@@ -133,9 +143,7 @@ class SearchCategoryFilteringEventListener
         /** @var Category $category */
         $category = $this->repository->find($categoryId);
 
-        if ($includeSubcategories) {
-            $query->addWhere(Criteria::expr()->startsWith('text.category_path', $category->getMaterializedPath()));
-        } else {
+        if (!$includeSubcategories) {
             $query->addWhere(Criteria::expr()->eq('text.category_path', $category->getMaterializedPath()));
         }
     }

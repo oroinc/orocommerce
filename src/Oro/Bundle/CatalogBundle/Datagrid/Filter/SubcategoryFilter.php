@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Filter;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
@@ -63,25 +64,30 @@ class SubcategoryFilter extends AbstractFilter
      */
     protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data)
     {
+        /** @var Category $rootCategory */
         $rootCategory = $this->get('rootCategory');
+
+        /** @var Category[] $categories */
         $categories = $data['value']->toArray();
 
         if (!$categories) {
             $categories = [$rootCategory];
         }
 
-        $builder = Criteria::expr();
-        $criteria = Criteria::create();
-
         $placeholder = new CategoryPathPlaceholder();
+        $fieldName = $this->getFieldName();
+
+        $criteria = Criteria::create();
+        $builder = Criteria::expr();
+
         foreach ($categories as $category) {
-            $fieldName = $placeholder->replace(
-                $this->getFieldName(),
+            $categoryFieldName = $placeholder->replace(
+                $fieldName,
                 [CategoryPathPlaceholder::NAME => $category->getMaterializedPath()]
             );
 
             $criteria->orWhere(
-                $builder->eq($fieldName, 1)
+                $builder->eq($categoryFieldName, 1)
             );
         }
 
