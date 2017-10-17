@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
+use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 
 class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterface
 {
@@ -82,7 +83,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
      * Required for international requests.
      * Required for US Domestic queries if non-document is indicated. Cannot exceed 150 LBS (70KGS)
      *
-     * @var string
+     * @var int
      */
     private $weight;
 
@@ -131,7 +132,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function createRequest()
+    public function createRequest(): UpsClientRequestInterface
     {
         $requestData = $this->getRequestData();
 
@@ -213,18 +214,9 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setWeight($weight)
+    public function setWeight(int $weight, string $weightUnitCode)
     {
         $this->weight = $weight;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setWeightUnitCode($weightUnitCode)
-    {
         $this->weightUnitCode = $weightUnitCode;
 
         return $this;
@@ -233,7 +225,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setMaximumListSize($maximumListSize)
+    public function setMaximumListSize(string $maximumListSize)
     {
         $this->maximumListSize = $maximumListSize;
 
@@ -243,7 +235,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setTransactionIdentifier($transactionIdentifier)
+    public function setTransactionIdentifier(string $transactionIdentifier)
     {
         $this->transactionIdentifier = $transactionIdentifier;
 
@@ -253,7 +245,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setCustomerContext($customerContext)
+    public function setCustomerContext(string $customerContext)
     {
         $this->customerContext = $customerContext;
 

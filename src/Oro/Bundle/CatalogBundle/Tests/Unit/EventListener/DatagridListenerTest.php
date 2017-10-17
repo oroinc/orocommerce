@@ -6,12 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
@@ -40,17 +39,16 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ],
                     ]
                 ],
+                'select' => [
+                    'productCategory.denormalizedDefaultTitle as ' . DatagridListener::CATEGORY_COLUMN
+                ]
             ],
         ],
         'columns' => [
             DatagridListener::CATEGORY_COLUMN => [
-                'label' => 'oro.catalog.category.entity_label'
-            ]
-        ],
-        'properties' => [
-            DatagridListener::CATEGORY_COLUMN => [
-                'type' => LocalizedValueProperty::NAME,
-                'data_name' => 'productCategory.titles',
+                'label' => 'oro.catalog.category.entity_label',
+                'data_name' => DatagridListener::CATEGORY_COLUMN
+
             ]
         ],
         'sorters' => [

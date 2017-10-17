@@ -48,13 +48,29 @@ operations:
                 route_parameters:
                     id: $.promotion_copy_id
 
+    oro_promotion_coupon_create:
+        label: oro.promotion.coupon.create.label
+        routes:
+            - oro_promotion_coupon_index
+        order: 20
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        actions:
+            - '@redirect': {route: oro_promotion_coupon_create}
+        button_options:
+            group: oro.promotion.coupon.coupons_actions.label
+        groups:
+            - create_coupon_buttons
+
     oro_promotion_coupon_generation:
         label: oro.promotion.coupon.generation.label
         routes:
             - oro_promotion_coupon_index
-        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        order: 50
         button_options:
-            icon: fa-list-alt
+            group: oro.promotion.coupon.coupons_actions.label
+        groups:
+            - create_coupon_buttons
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
         frontend_options:
             template: OroPromotionBundle:Coupon:generate.html.twig
             title: oro.promotion.coupon.generation.label

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 class QuantityToOrderValidatorService
 {
@@ -32,17 +33,19 @@ class QuantityToOrderValidatorService
     }
 
     /**
-     * @param LineItem[] $lineItems
+     * @param Collection|ProductLineItemInterface[] $lineItems
      * @return bool
      */
     public function isLineItemListValid($lineItems)
     {
         foreach ($lineItems as $item) {
-            if (!$item->getProduct() instanceof Product) {
+            $product = $item->getProduct();
+            $quantity = $item->getQuantity();
+            if (!$product instanceof Product) {
                 continue;
             }
-            if ($this->isHigherThanMaxLimit($this->getMaximumLimit($item->getProduct()), $item->getQuantity())
-                || $this->isLowerThenMinLimit($this->getMinimumLimit($item->getProduct()), $item->getQuantity())
+            if ($this->isHigherThanMaxLimit($this->getMaximumLimit($product), $quantity)
+                || $this->isLowerThenMinLimit($this->getMinimumLimit($product), $quantity)
             ) {
                 return false;
             }

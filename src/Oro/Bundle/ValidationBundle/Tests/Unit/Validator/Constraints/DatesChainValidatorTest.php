@@ -1,19 +1,19 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain;
-use Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
 
 class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
 {
     const FIRST_LABEL = 'First';
     const SECOND_LABEL = 'Second';
     const THIRD_LABEL = 'Third';
-    const MESSAGE = 'oro.pricing.validators.price_list.dates_chain.message';
+    const MESSAGE = '{{ later }} date should follow after {{ earlier }}';
 
     /**
      * @dataProvider validateDataProvider
@@ -80,14 +80,14 @@ class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
             'not valid' => [
                 'value' => $this->createTestObject($third, $second, $first),
                 'violations' => [
-                    ['invalid' => self::SECOND_LABEL, 'comparedWith' => self::FIRST_LABEL],
-                    ['invalid' => self::THIRD_LABEL, 'comparedWith' => self::SECOND_LABEL]
+                    ['later' => self::SECOND_LABEL, 'earlier' => self::FIRST_LABEL],
+                    ['later' => self::THIRD_LABEL, 'earlier' => self::SECOND_LABEL]
                 ]
             ],
             'not valid with null' => [
                 'value' => $this->createTestObject($second, null, $first),
                 'violations' => [
-                    ['invalid' => self::THIRD_LABEL, 'comparedWith' => self::FIRST_LABEL]
+                    ['later' => self::THIRD_LABEL, 'earlier' => self::FIRST_LABEL]
                 ]
             ]
         ];

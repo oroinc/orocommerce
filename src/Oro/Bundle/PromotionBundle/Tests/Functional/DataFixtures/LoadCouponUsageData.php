@@ -30,17 +30,17 @@ class LoadCouponUsageData extends AbstractFixture implements DependentFixtureInt
      */
     private $couponUsages = [
         [
-            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
+            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
             'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
             'customerUser' => LoadCustomerUserData::EMAIL
         ],
         [
-            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
+            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
             'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
             'customerUser' => LoadCustomerUserData::EMAIL
         ],
         [
-            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL,
+            'coupon' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
             'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
         ],
     ];
