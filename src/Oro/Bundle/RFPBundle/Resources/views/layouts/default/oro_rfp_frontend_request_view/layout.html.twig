@@ -210,11 +210,8 @@
 
 {% block _rfp_request_view_notes_container_widget %}
     {% if block.vars.visible %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ " mt4-md mbt-sm"
-        }) %}
         <div {{ block('block_attributes') }}>
-            <h3 class="customer-navigation-title mb2-md mb2-sm">
+            <h3 class="customer-navigation-title">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
             </h3>
             {{ block_widget(block) }}
