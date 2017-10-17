@@ -63,7 +63,7 @@ class ReindexProductOrderListener
      * @param Order $order
      * @param PreUpdateEventArgs $event
      */
-    protected function processIndexOnOrderStatusChange(Order $order, PreUpdateEventArgs $event)
+    protected function onStatusChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_INTERNAL_STATUS_FIELD)) {
             $oldStatus = $event->getOldValue(static::ORDER_INTERNAL_STATUS_FIELD);
@@ -78,7 +78,7 @@ class ReindexProductOrderListener
      * @param Order $order
      * @param PreUpdateEventArgs $event
      */
-    protected function processIndexOnOrderWebsiteChange(Order $order, PreUpdateEventArgs $event)
+    protected function onWebsiteChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_INTERNAL_WEBSITE_FIELD)) {
             $oldWebsite = $event->getOldValue(static::ORDER_INTERNAL_WEBSITE_FIELD);
@@ -92,10 +92,10 @@ class ReindexProductOrderListener
      * @param Order              $order
      * @param PreUpdateEventArgs $event
      */
-    protected function processIndexOnCustomerUserChange(Order $order, PreUpdateEventArgs $event)
+    protected function onCustomerUserChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_CUSTOMER_USER_FIELD)) {
-            $this->reindexProductsInOrder($order);
+            $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
         }
     }
 
@@ -103,10 +103,10 @@ class ReindexProductOrderListener
      * @param Order              $order
      * @param PreUpdateEventArgs $event
      */
-    protected function processIndexOnOrderCreatedAtChange(Order $order, PreUpdateEventArgs $event)
+    protected function onCreatedAtChange(Order $order, PreUpdateEventArgs $event)
     {
         if ($event->hasChangedField(static::ORDER_CREATED_AT_FIELD)) {
-            $this->reindexProductsInOrder($order);
+            $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
         }
     }
 
@@ -116,10 +116,10 @@ class ReindexProductOrderListener
      */
     public function processOrderUpdate(Order $order, PreUpdateEventArgs $event)
     {
-        $this->processIndexOnOrderStatusChange($order, $event);
-        $this->processIndexOnOrderCreatedAtChange($order, $event);
-        $this->processIndexOnOrderWebsiteChange($order, $event);
-        $this->processIndexOnCustomerUserChange($order, $event);
+        $this->onStatusChange($order, $event);
+        $this->onCreatedAtChange($order, $event);
+        $this->onWebsiteChange($order, $event);
+        $this->onCustomerUserChange($order, $event);
     }
 
     /**
@@ -127,16 +127,7 @@ class ReindexProductOrderListener
      */
     public function processOrderRemove(Order $order)
     {
-        $this->reindexProductsInOrder($order);
-    }
-
-    /**
-     * @param Order $order
-     */
-    protected function reindexProductsInOrder(Order $order)
-    {
-        $website = $order->getWebsite();
-        $this->reindexProductsInOrderWithinWebsite($order, $website);
+        $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
     }
 
     /**

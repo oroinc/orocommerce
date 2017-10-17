@@ -47,6 +47,7 @@ Feature: Previously purchased products
 
   Scenario: Time restriction changes are applicable
     Given I operate as the Admin
+    And there is a feature "previously_purchased_products" enabled
     And there is an order "OldOrder" created "-15 days"
     When I go to System / Configuration
     And I follow "Commerce/Orders/Purchase History" on configuration sidebar
@@ -66,13 +67,13 @@ Feature: Previously purchased products
     And click "Create Order"
     And click "Add Product"
     And fill "Order Form" with:
-      | Customer         | first customer                                            |
-      | Customer User    | Amanda Cole                                               |
-      | Billing Address  | 'OroCommerceCRM', 801 Scenic Hwy, HAINES CITY FL US 33844 |
-      | Shipping Address | 'OroCommerceCRM', 801 Scenic Hwy, HAINES CITY FL US 33844 |
-      | Product          | PSKU4                                                     |
-      | Quantity         | 5                                                         |
-      | Price            | 10                                                        |
+      | Customer         | first customer                               |
+      | Customer User    | Amanda Cole                                  |
+      | Billing Address  | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+      | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+      | Product          | PSKU4                                        |
+      | Quantity         | 5                                            |
+      | Price            | 10                                           |
     And click "Calculate Shipping Button"
     And I save and close form
     And I proceed as the Buyer
@@ -111,7 +112,7 @@ Feature: Previously purchased products
   Scenario: Order was cancelled by Admin in Management console and should not be displayed in "Previously purchased products"
     Given I proceed as the Admin
     And go to Sales / Orders
-    And click View SimpleOrder in grid
+    And click View "SimpleOrder" in grid
     And click "Cancel"
     And I proceed as the Buyer
     And I click "Account"

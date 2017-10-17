@@ -12,7 +12,6 @@ Previously Purchased Products
     * [PreviouslyPurchasedFeatureToggleListener](#previouslypurchasedfeaturetogglelistener)
 * [Managers](#managers)
     * [ProductReindexManager](#productreindexmanager)
-    * [DelayedProductReindexManager](#delayedproductreindexmanager)
 * [Providers](#providers)
     * [PreviouslyPurchasedConfigProvider](#previouslypurchasedconfigprovider)
     * [LatestOrderedProductsInfoProvider](#latestorderedproductsinfoprovider)
@@ -175,18 +174,6 @@ This method triggers reindex process for the current product. If websiteId is no
 public function triggerReindexationRequestEvent(array $productIds, $websiteId = null, $isScheduled = true)
 ```
 This method triggers reindex process for a collection of product ids. 
-
-#### DelayedProductReindexManager
-
-Class [Oro\Bundle\ProductBundle\Search\Reindex\DelayedProductReindexManager](../../Search/Reindex/DelayedProductReindexManager.php)
-
- To reindex products data in the search engine, this manager prepares and dispatches delayed events.
-
-##### flushReIndexEvents
-```php
-public function flushReIndexEvents()
-```
-Dispatch all collected events 
 
 ### Providers
 

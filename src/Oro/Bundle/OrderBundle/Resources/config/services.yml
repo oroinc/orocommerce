@@ -437,7 +437,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
         public: false
         arguments:
-            - '@oro_product.search.delayed_product_reindex_manager'
+            - '@oro_product.search.product_reindex_manager'
             - '@oro_order.provider.previously_purchased_order_statuses'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist, method: reindexProductOnLineItemCreateOrDelete}
@@ -449,7 +449,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener'
         public: false
         arguments:
-            - '@oro_product.search.delayed_product_reindex_manager'
+            - '@oro_product.search.product_reindex_manager'
             - '@oro_order.provider.previously_purchased_order_statuses'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preUpdate, method: processOrderUpdate}

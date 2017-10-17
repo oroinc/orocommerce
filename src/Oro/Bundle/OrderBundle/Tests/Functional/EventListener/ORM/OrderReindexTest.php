@@ -104,8 +104,6 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->remove($lineItem);
         $em->flush();
 
-        $this->getContainer()->get('oro_product.search.delayed_product_reindex_manager')->flushReIndexEvents();
-
         $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
 
         $this->assertContains($expectedMessage, $messages);
@@ -125,8 +123,6 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->persist($lineItem);
         $em->flush();
 
-        $this->getContainer()->get('oro_product.search.delayed_product_reindex_manager')->flushReIndexEvents();
-
         $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
 
         $this->assertContains($expectedMessage, $messages);
@@ -141,8 +137,6 @@ class OrderReindexTest extends FrontendWebTestCase
         $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
-
-        $this->getContainer()->get('oro_product.search.delayed_product_reindex_manager')->flushReIndexEvents();
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
         $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
@@ -194,7 +188,6 @@ class OrderReindexTest extends FrontendWebTestCase
         $em = $this->managerRegistry->getManagerForClass(Order::class);
         $em->persist($order);
         $em->flush();
-        $this->getContainer()->get('oro_product.search.delayed_product_reindex_manager')->flushReIndexEvents();
     }
 
     /**
@@ -239,7 +232,6 @@ class OrderReindexTest extends FrontendWebTestCase
         $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
-        $this->getContainer()->get('oro_product.search.delayed_product_reindex_manager')->flushReIndexEvents();
 
         return $lineItem;
     }

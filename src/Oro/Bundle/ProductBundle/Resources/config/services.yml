@@ -1277,13 +1277,6 @@ services:
         arguments:
             - '@event_dispatcher'
 
-    oro_product.search.delayed_product_reindex_manager:
-        class: 'Oro\Bundle\ProductBundle\Search\Reindex\DelayedProductReindexManager'
-        arguments:
-            - '@event_dispatcher'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: flushReIndexEvents }
-
     oro_product.layout.data_provider.row_view_theme:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\RowViewThemeProvider'
         arguments:
