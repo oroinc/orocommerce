@@ -54,7 +54,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
         - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection:
             message: oro.pricing.validators.price_list.schedules_intersection.message
-        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
             chain:
                 activeAt: 'Activate At'
                 deactivateAt: 'Deactivate At'

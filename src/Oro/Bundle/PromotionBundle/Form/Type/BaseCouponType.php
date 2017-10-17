@@ -58,6 +58,14 @@ class BaseCouponType extends AbstractType
                 ]
             )
             ->add(
+                'validFrom',
+                OroDateTimeType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.valid_from.label',
+                ]
+            )
+            ->add(
                 'validUntil',
                 OroDateTimeType::NAME,
                 [

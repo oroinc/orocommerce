@@ -129,4 +129,55 @@ class DriverDecoratorTest extends WebTestCase
         $this->assertCount(1, $itemResults);
         $this->assertEquals($expectedItem, $itemResult['item']);
     }
+
+    /**
+     * @dataProvider aggregationDataProvider
+     *
+     * @param string $function
+     * @param int|array $expected
+     */
+    public function testSearchDefaultWebsiteCountAggregate($function, $expected)
+    {
+        $field = 'test_value';
+        $websiteId = $this->getDefaultWebsiteId();
+
+        $query = new Query();
+        $query->from('oro_product_'.$websiteId);
+        $query->addAggregate($field, 'integer.for_count', $function);
+
+        $results = $this->getContainer()->get('oro_website_search.engine.orm.driver')->getAggregatedData($query);
+
+        $this->assertCount(1, $results);
+        $this->assertArrayHasKey($field, $results);
+        $this->assertEquals($expected, $results[$field]);
+    }
+
+    /**
+     * @return array
+     */
+    public function aggregationDataProvider()
+    {
+        return [
+            'count' => [
+                'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'expected' => [100 => 1, 200 => 1]
+            ],
+            'sum' => [
+                'function' => Query::AGGREGATE_FUNCTION_SUM,
+                'expected' => 300
+            ],
+            'min' => [
+                'function' => Query::AGGREGATE_FUNCTION_MIN,
+                'expected' => 100
+            ],
+            'max' => [
+                'function' => Query::AGGREGATE_FUNCTION_MAX,
+                'expected' => 200
+            ],
+            'avg' => [
+                'function' => Query::AGGREGATE_FUNCTION_AVG,
+                'expected' => 150
+            ],
+        ];
+    }
 }

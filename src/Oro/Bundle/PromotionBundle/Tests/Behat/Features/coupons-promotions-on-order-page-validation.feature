@@ -45,24 +45,34 @@ Feature: Coupons Promotions on Order page validation
     And click "Cancel" in modal window
     And click "Cancel"
 
-  Scenario: Not possible to apply expired coupon
+  Scenario: Not possible to apply expired and not started yet coupons
     Given I go to Marketing / Promotions / Coupons
     # test-3 coupon present but have expired date
+    # test-8 coupon present but not started yet
     And I should see following grid:
-      | Coupon Code | Valid Until           |
-      | test-1      | Jan 1, 5000, 12:00 AM |
-      | test-2      | Jan 1, 5000, 12:00 AM |
-      | test-3      | Jan 1, 1000, 12:00 AM |
+      | Coupon Code | Valid From            | Valid Until           |
+      | test-1      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-2      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-3      | Jan 1, 1000, 12:00 AM | Jan 2, 1000, 12:00 AM |
+      | test-4      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-5      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-6      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-7      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-8      | Jan 1, 3000, 12:00 AM | Jan 1, 5000, 12:00 AM |
     Then I go to Sales / Orders
     And click edit FirstOrder in grid
     And click "Promotions and Discounts"
     And click "Add Coupon Code"
     And click "Coupons Selection Button"
     # expired by date test-3, filtered out and not present for selection
+    # not started yet test-8, filtered out and not present for selection
     And I should see following "Coupons Selection" grid:
-      | Coupon Code | Valid Until           |
-      | test-1      | Jan 1, 5000, 12:00 AM |
-      | test-2      | Jan 1, 5000, 12:00 AM |
+      | Coupon Code | Valid From            | Valid Until           |
+      | test-1      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-2      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-4      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-5      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
+      | test-7      | Jan 1, 2017, 12:00 AM | Jan 1, 5000, 12:00 AM |
     And I click "Close Coupons Selection"
     And click "Cancel" in modal window
     And click "Cancel"
@@ -174,6 +184,8 @@ Feature: Coupons Promotions on Order page validation
       | test-4      | order Discount Promotion 2 |
       | test-5      | order Discount Promotion 3 |
       | test-6      | N/A                        |
+      | test-7      | order Discount Promotion 2 |
+      | test-8      | order Discount Promotion 3 |
     Then I go to Sales / Orders
     And click edit FirstOrder in grid
     And click "Promotions and Discounts"
@@ -186,3 +198,4 @@ Feature: Coupons Promotions on Order page validation
       | test-2      |
       | test-4      |
       | test-5      |
+      | test-7      |
