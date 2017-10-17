@@ -12,6 +12,8 @@ use Doctrine\Common\Cache\CacheProvider;
 
 class ProductFormAvailabilityProvider
 {
+    const MATRIX_AVAILABILITY_COUNT = 2;
+
     /** @var ProductVariantAvailabilityProvider */
     private $variantAvailability;
 
@@ -103,7 +105,8 @@ class ProductFormAvailabilityProvider
     {
         $variants = $this->variantAvailability->getVariantFieldsAvailability($product);
 
-        if (count($variants) !== 2) {
+        $variantsCount = count($variants);
+        if ($variantsCount === 0 || $variantsCount > self::MATRIX_AVAILABILITY_COUNT) {
             return false;
         }
 
