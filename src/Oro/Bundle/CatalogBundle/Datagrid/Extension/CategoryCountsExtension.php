@@ -7,7 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
@@ -73,15 +73,21 @@ class CategoryCountsExtension extends AbstractExtension
     /**
      * {@inheritDoc}
      */
-    public function visitResult(DatagridConfiguration $config, ResultsObject $result)
+    public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
         $categoryCounts = $this->getCounts($config);
 
-        // add data to result
-        $result->offsetSetByPath(
-            sprintf('[metadata][filters][%s][counts]', SubcategoryFilter::FILTER_TYPE_NAME),
-            $categoryCounts
-        );
+        $filters = $data->offsetGetByPath('[filters]', []);
+        foreach ($filters as &$filter) {
+            if ($filter['type'] !== SubcategoryFilter::FILTER_TYPE_NAME) {
+                continue;
+            }
+
+            $filter['counts'] = $categoryCounts;
+        }
+        unset($filter);
+
+        $data->offsetSetByPath('[filters]', $filters);
     }
 
     /**

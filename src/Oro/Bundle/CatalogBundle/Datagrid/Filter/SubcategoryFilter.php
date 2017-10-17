@@ -11,7 +11,6 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 
 class SubcategoryFilter extends AbstractFilter
 {
@@ -36,10 +35,6 @@ class SubcategoryFilter extends AbstractFilter
         $fieldView = $formView->children['value'];
 
         $metadata['choices'] = $fieldView->vars['choices'];
-        foreach ($metadata['choices'] as $choiceView) {
-            /* @var $choiceView ChoiceView */
-            $metadata['counts'][$choiceView->value] = count($choiceView->data->getProducts());
-        }
 
         return $metadata;
     }

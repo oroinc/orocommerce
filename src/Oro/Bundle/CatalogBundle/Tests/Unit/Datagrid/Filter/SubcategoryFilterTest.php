@@ -107,9 +107,6 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
                     'categories' => [$category]
                 ],
                 'lazy' => false,
-                'counts' => [
-                    42 => 0,
-                ],
             ],
             $this->filter->getMetadata()
         );

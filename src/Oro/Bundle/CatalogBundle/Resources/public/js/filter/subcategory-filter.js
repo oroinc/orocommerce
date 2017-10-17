@@ -42,6 +42,39 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        listen: {
+            'metadata-loaded': 'onMetadataLoaded'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function() {
+            SubcategoryFilter.__super__.initialize.apply(this, arguments);
+
+            this.updateVisibility();
+        },
+
+        /**
+         * @param {Object} metadata
+         */
+        onMetadataLoaded: function(metadata) {
+            this.counts = metadata.counts || {};
+
+            this.updateVisibility();
+
+            if (this.isRendered()) {
+                this.render();
+            }
+        },
+
+        updateVisibility: function() {
+            this.visible = !_.isEmpty(this.counts);
+        },
+
+        /**
+         * @inheritDoc
+         */
         getTemplateData: function() {
             var data = SubcategoryFilter.__super__.getTemplateData.apply(this, arguments);
 
