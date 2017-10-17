@@ -53,7 +53,7 @@ class ItemRepositoryTest extends WebTestCase
         $this->getItemRepository()->removeEntities([], TestProduct::class);
 
         $this->assertEntityCount(8, Item::class);
-        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(6, IndexInteger::class);
         $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
@@ -105,7 +105,7 @@ class ItemRepositoryTest extends WebTestCase
         $this->getItemRepository()->removeEntities([91, 92], \stdClass::class);
 
         $this->assertEntityCount(8, Item::class);
-        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(6, IndexInteger::class);
         $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);

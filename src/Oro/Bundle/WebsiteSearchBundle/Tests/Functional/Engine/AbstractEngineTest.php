@@ -172,6 +172,67 @@ abstract class AbstractEngineTest extends WebTestCase
     }
 
     /**
+     * @dataProvider aggregationDataProvider
+     *
+     * @param string $function
+     * @param int|array $expected
+     */
+    public function testAggregateWithCriteria($function, $expected)
+    {
+        $expr = new Comparison('integer.integerValue', '>', 5000);
+        $criteria = new Criteria($expr);
+
+        $field = 'aggregated_value';
+
+        $query = new Query();
+        $query->from('oro_test_item_WEBSITE_ID')
+            ->addAggregate($field, 'integer.integerValue', $function)
+            ->setCriteria($criteria);
+
+        $results = $this->engine->search($query);
+        $aggregatedData = $results->getAggregatedData();
+
+        $this->assertCount(1, $aggregatedData);
+        $this->assertArrayHasKey($field, $aggregatedData);
+        $this->assertSame($expected, $aggregatedData[$field]);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function aggregationDataProvider()
+    {
+        return [
+            'count' => [
+                'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'expected' => [
+                    6000 => 1,
+                    7000 => 1,
+                    8000 => 1,
+                    9000 => 1,
+                ]
+            ],
+            'sum' => [
+                'function' => Query::AGGREGATE_FUNCTION_SUM,
+                'expected' => 30000.0
+            ],
+            'min' => [
+                'function' => Query::AGGREGATE_FUNCTION_MIN,
+                'expected' => 6000.0
+            ],
+            'max' => [
+                'function' => Query::AGGREGATE_FUNCTION_MAX,
+                'expected' => 9000.0
+            ],
+            'avg' => [
+                'function' => Query::AGGREGATE_FUNCTION_AVG,
+                'expected' => 7500.0
+            ],
+        ];
+    }
+
+    /**
      * @param string $field
      * @param Item $item
      */
