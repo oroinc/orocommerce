@@ -36,14 +36,15 @@ class ProductRepository extends WebsiteSearchRepository
         $query = $this->createQuery()
             ->setFrom('oro_product_'. WebsiteIdPlaceholder::NAME);
 
-        /** @var Category $category */
-        foreach ($categories as $category) {
-            $query->addWhere(
-                Criteria::expr()->exists(
-                    'integer.category_path_'. $category->getMaterializedPath()
-                ),
-                AbstractSearchQuery::WHERE_OR
-            );
+        $criteria = array_map(
+            function ($category) {
+                return Criteria::expr()->exists('integer.category_path_'. $category->getMaterializedPath());
+            },
+            $categories
+        );
+
+        if ($criteria) {
+            $query->addWhere(Criteria::expr()->orX(...$criteria), AbstractSearchQuery::WHERE_OR);
         }
 
         $counts = (array) $this->getCategoryCounts($query);
