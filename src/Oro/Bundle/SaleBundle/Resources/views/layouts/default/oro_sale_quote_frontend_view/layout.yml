@@ -62,7 +62,7 @@ layout:
                         text: oro.frontend.sale.quote.sections.back.label
                         icon: angle-left
                         attr:
-                            class: 'link pull-left'
+                            class: 'link pull-left hide-on-print'
                 quote_view_accept_button:
                     blockType: combined_buttons
                     options:

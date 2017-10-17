@@ -206,7 +206,7 @@ oro:
                 sections:
                     general: 'Information'
                     notes.label: 'Notes'
-                    back.label: '< Back to List'
+                    back.label: 'Back to List'
                     request_products:
                         label: 'Line Items'
                         columns:
