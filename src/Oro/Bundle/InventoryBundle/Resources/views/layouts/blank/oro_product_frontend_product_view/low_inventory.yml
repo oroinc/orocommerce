@@ -5,8 +5,8 @@ layout:
         - '@add':
             id: low_inventory_label
             parentId: product_view_specification_container
+            siblingId: product_price_subtree_update
             blockType: block
-            prepend: true
             options:
                 vars:
                     product: '=data["product"]'
