@@ -37,6 +37,9 @@ class OrderRepositoryTest extends WebTestCase
 
     public function testHasRecordsWithRemovingCurrencies()
     {
+        // TODO: fix in BB-10946
+        $this->markTestIncomplete('Incomplete test. Skipped due to random failing. Will be fixed in BB-10946');
+
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);
 

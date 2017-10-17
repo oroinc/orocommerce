@@ -65,6 +65,12 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                     'value' => 'Long description',
                 ],
             ],
+            'integerFields' => [
+                [
+                    'field' => 'for_count',
+                    'value' => 100,
+                ],
+            ],
         ],
         self::REFERENCE_BETTER_PRODUCT => [
             'entity' => TestProduct::class,
@@ -81,6 +87,10 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 [
                     'field' => 'lucky_number',
                     'value' => 777,
+                ],
+                [
+                    'field' => 'for_count',
+                    'value' => 200,
                 ],
             ],
         ],

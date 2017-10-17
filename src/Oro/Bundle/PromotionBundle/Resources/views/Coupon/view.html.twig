@@ -37,6 +37,7 @@
                         'promotion': UI.renderHtmlProperty('oro.promotion.coupon.promotion.label'|trans, promotion|default('N/A'|trans)),
                         'usesPerCoupon': UI.renderProperty('oro.promotion.coupon.uses_per_coupon.label'|trans, entity.usesPerCoupon),
                         'usesPerPerson': UI.renderProperty('oro.promotion.coupon.uses_per_person.label'|trans, entity.usesPerPerson),
+                        'validFrom': UI.renderProperty('oro.promotion.coupon.valid_from.label'|trans, entity.validFrom|oro_format_datetime),
                         'validUntil': UI.renderProperty('oro.promotion.coupon.valid_until.label'|trans, entity.validUntil|oro_format_datetime),
                     }
                 },

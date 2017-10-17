@@ -44,6 +44,11 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
                 $coupon->setPromotion($promotion);
             }
 
+            if (!empty($couponData['validFrom'])) {
+                $validFrom = new \DateTime($couponData['validFrom']);
+                $coupon->setValidFrom($validFrom);
+            }
+
             if (!empty($couponData['validUntil'])) {
                 $validUntil = new \DateTime($couponData['validUntil']);
                 $coupon->setValidUntil($validUntil);

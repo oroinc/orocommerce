@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
@@ -37,8 +37,8 @@ class DatesChainValidator extends ConstraintValidator
 
             if ($current < $previous) {
                 $this->context->buildViolation($constraint->message, [
-                    'invalid' => $label,
-                    'comparedWith' => $previousLabel
+                    'later' => $label,
+                    'earlier' => $previousLabel
                 ])
                     ->atPath($property)
                     ->addViolation();

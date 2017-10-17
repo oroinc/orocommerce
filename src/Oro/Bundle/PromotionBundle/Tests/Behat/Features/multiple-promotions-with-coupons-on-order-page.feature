@@ -31,20 +31,20 @@ Feature: Multiple promotions with coupons on Order page
     When I click on "Highlighted Suggestion"
     And click "Add" in modal window
     Then I should see next rows in "Added Coupons" table
-      | Coupon Code | Promotion     | Type  | Discount Value |
-      | test-1      | Promotion 10  | Order | $1.00          |
-      | test-2      | Promotion -10 | Order | $1.00          |
-      | test-3      | Promotion 20  | Order | $1.00          |
-      | test-4      | Promotion 5   | Order | $1.00          |
+      | Coupon Code | Promotion     | Type        | Discount Value |
+      | test-1      | Promotion 10  | Order Total | $1.00          |
+      | test-2      | Promotion -10 | Order Total | $1.00          |
+      | test-3      | Promotion 20  | Order Total | $1.00          |
+      | test-4      | Promotion 5   | Order Total | $1.00          |
     When click "Apply" in modal window
     And I save form
     And agree that shipping cost may have changed
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion     | Type  | Status | Discount |
-      | test-2 | Promotion -10 | Order | Active | -$1.00   |
-      | test-4 | Promotion 5   | Order | Active | -$1.00   |
-      | test-1 | Promotion 10  | Order | Active | -$1.00   |
-      | test-3 | Promotion 20  | Order | Active | -$1.00   |
+      | Code   | Promotion     | Type        | Status | Discount |
+      | test-2 | Promotion -10 | Order Total | Active | -$1.00   |
+      | test-4 | Promotion 5   | Order Total | Active | -$1.00   |
+      | test-1 | Promotion 10  | Order Total | Active | -$1.00   |
+      | test-3 | Promotion 20  | Order Total | Active | -$1.00   |
 
     Scenario: Remove promotions and remove one of applied promotions in order
       When I click "Cancel"
@@ -58,7 +58,7 @@ Feature: Multiple promotions with coupons on Order page
       And click "Promotions and Discounts"
       And I click "Remove" on row "Promotion 5" in "Promotions"
       Then I should see next rows in "Promotions" table
-        | Code   | Promotion     | Type  | Status | Discount |
-        | test-2 | Promotion -10 | Order | Active | -$1.00   |
-        | test-1 | Promotion 10  | Order | Active | -$1.00   |
-        | test-3 | Promotion 20  | Order | Active | -$1.00   |
+        | Code   | Promotion     | Type        | Status | Discount |
+        | test-2 | Promotion -10 | Order Total | Active | -$1.00   |
+        | test-1 | Promotion 10  | Order Total | Active | -$1.00   |
+        | test-3 | Promotion 20  | Order Total | Active | -$1.00   |

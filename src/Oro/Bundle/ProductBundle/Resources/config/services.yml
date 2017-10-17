@@ -630,7 +630,7 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_product.provider.website_search_index_data'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
 
     oro_product.event_listener.restrict_index_products:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener'
