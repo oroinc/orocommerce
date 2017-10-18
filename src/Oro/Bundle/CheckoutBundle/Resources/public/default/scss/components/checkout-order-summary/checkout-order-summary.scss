@@ -218,8 +218,7 @@
             }
 
             &--qty {
-                padding-left: 0;
-                padding-right: 0;
+                padding: $checkout-order-summary-grid-th-qty-offset-mobile;
             }
 
             &--price {
@@ -228,40 +227,37 @@
         }
 
         &__grid-td {
-            padding-bottom: $offset-y-s;
+            padding: $checkout-order-summary-grid-td-offset-mobile;
 
             border-bottom: 0;
 
             &--info {
                 width: $checkout-order-summary-grid-info-width-mobile;
-                padding-left: 0;
-                padding-right: $offset-x-m;
+                padding: $checkout-order-summary-grid-td-info-offset-mobile;
             }
 
             &--sku {
                 width: $checkout-order-summary-grid-sku-width-mobile;
-                padding: 0;
+                padding: $checkout-order-summary-grid-td-sku-offset-mobile;
                 order: 4;
 
                 color: $checkout-order-summary-grid-sku-color-mobile;
             }
 
             &--qty {
-                padding-left: 0;
-                padding-right: 0;
+                padding: $checkout-order-summary-grid-td-qty-offset-mobile;
                 order: 2;
             }
 
-            &--price{
+            &--price {
                 width: $checkout-order-summary-grid-price-width-mobile;
-                padding-right: 0;
-                padding-left: $offset-x-m;
+                padding: $checkout-order-summary-grid-td-price-offset-mobile;
                 order: 3;
             }
 
             &--subtotal {
                 width: $checkout-order-summary-grid-subtotal-width-mobile;
-                padding: 0;
+                padding: $checkout-order-summary-grid-td-subtotal-offset-mobile;
                 order: 5;
 
                 color: $checkout-order-summary-grid-subtotal-color-mobile;
