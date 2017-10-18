@@ -44,6 +44,19 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($this->couponValidationService->getViolations($coupon));
     }
 
+    public function testGetViolationsNotStartedCoupon()
+    {
+        $coupon = new Coupon();
+        $coupon->setEnabled(true);
+        $coupon->setPromotion(new Promotion());
+        $coupon->setValidFrom(new \DateTime('+3 days', new \DateTimeZone('UTC')));
+
+        $violations = $this->couponValidationService->getViolations($coupon);
+
+        $this->assertCount(1, $violations);
+        $this->assertContains('oro.promotion.coupon.violation.not_started', $violations);
+    }
+
     public function testGetViolationsExpiredCoupon()
     {
         $coupon = new Coupon();

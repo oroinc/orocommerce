@@ -84,9 +84,9 @@ class ProductControllerTest extends WebTestCase
             sprintf('img.product-item__preview-image[alt="%s"]', LoadProductData::PRODUCT_1_DEFAULT_NAME)
         );
 
-        $this->assertEquals(
+        $this->assertContains(
             sprintf(
-                '/custom/base/url/media/cache/attachment/resize/%d/product_large/product-1',
+                '%d/product_large/product-1',
                 $images[0]->getImage()->getId()
             ),
             $firstProductImage->attr('src')

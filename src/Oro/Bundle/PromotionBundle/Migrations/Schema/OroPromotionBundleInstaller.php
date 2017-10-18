@@ -129,6 +129,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('uses_per_person', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('valid_from', 'datetime', ['notnull' => false]);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
         $table->addUniqueIndex(['code']);
         $table->setPrimaryKey(['id']);

@@ -39,6 +39,7 @@ Feature: Show Assigned Coupons in Promotion view page
       | Coupon Code     | test23                           |
       | Uses per Coupon | 3                                |
       | Uses per Person | 3                                |
+      | Valid From      | <DateTime:Jul 10, 2018, 10:00 AM>|
       | Valid Until     | <DateTime:Jul 10, 2018, 10:00 AM>|
     And click "Save"
     Then I should see following "Assigned Coupons Grid" grid:
