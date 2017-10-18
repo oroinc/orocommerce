@@ -115,7 +115,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
         $priceRepository = $this->createMock(ObjectRepository::class);
         $price1USD = (new PriceAttributeProductPrice())->setUnit($unit1)
-            ->setPrice(Price::create('100', 'USD'))
+            ->setPrice(Price::create('0', 'USD'))
             ->setQuantity(1)
             ->setPriceList($priceAttribute1)
             ->setProduct($product);
@@ -214,7 +214,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $em->expects($this->once())->method('persist')->with(
             (new PriceAttributeProductPrice())
                 ->setUnit($unit)
-                ->setPrice(Price::create('700', 'EUR'))
+                ->setPrice(Price::create('0', 'EUR'))
                 ->setQuantity(1)
                 ->setPriceList($priceAttribute)
                 ->setProduct($product)
@@ -223,8 +223,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $form->submit([
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => [
                 1 => [
-                    [ProductAttributePriceType::PRICE => '500'],
-                    [ProductAttributePriceType::PRICE => '700'],
+                    [ProductAttributePriceType::PRICE => '100'],
+                    [ProductAttributePriceType::PRICE => '0'],
                 ]
             ]
         ]);

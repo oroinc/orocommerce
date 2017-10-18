@@ -192,3 +192,9 @@ oro_behat_extension:
     BackendFlatRate2ShippingMethod:
       selector: 'label:contains("Flat Rate 2")'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Restrictions:
+      selector:
+        type: xpath
+        locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

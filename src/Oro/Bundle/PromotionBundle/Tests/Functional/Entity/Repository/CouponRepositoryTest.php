@@ -23,7 +23,7 @@ class CouponRepositoryTest extends WebTestCase
         $ids = [
             $this->getReference(LoadCouponData::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL)->getId(),
             $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL)->getId(),
-            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
+            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getId(),
             -1
         ];
         $result = $this->getCouponRepository()->getCouponsWithPromotionByIds($ids);
@@ -33,7 +33,7 @@ class CouponRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL),
-                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL),
+                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL),
             ],
             $result
         );
@@ -47,7 +47,8 @@ class CouponRepositoryTest extends WebTestCase
         ];
         $couponCodes = [
             LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
-            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
+            LoadCouponData::COUPON_DISABLED,
         ];
 
         $result = $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
