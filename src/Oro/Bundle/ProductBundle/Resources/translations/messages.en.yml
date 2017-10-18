@@ -307,7 +307,7 @@ oro:
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
                 configurable_products.title: 'Configurable Products'
-                configurable_products_matrix_form.title: 'Matrix form in product views'
+                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -423,10 +423,10 @@ oro:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
-                    label: 'Display matrix form (where applicable)'
-                    none.label: 'Do not display'
-                    inline.label: 'Inline matrix form'
-                    popup.label: 'Popup matrix form'
+                    label: 'Display Matrix Form (where applicable)'
+                    none.label: 'Do Not Display'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
