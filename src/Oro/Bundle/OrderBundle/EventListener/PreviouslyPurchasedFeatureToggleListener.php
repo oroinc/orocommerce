@@ -25,9 +25,7 @@ class PreviouslyPurchasedFeatureToggleListener
     public function reindexProducts(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(OrderConfig::getConfigKey(OrderConfig::CONFIG_KEY_ENABLE_PURCHASE_HISTORY))) {
-            $scope = $event->getScope();
-            $websiteId = $scope == 'website' ? $event->getScopeId() : null;
-            $this->productReindexManager->reindexAllProducts($websiteId);
+            $this->productReindexManager->reindexAllProducts(null);
         }
     }
 }

@@ -35,28 +35,6 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit_Framework_Te
         unset($this->reindexManager);
     }
 
-    public function testConfigOptionChangedWithinWebsiteScope()
-    {
-        $websiteId = 111;
-        $event = $this->getConfigUpdateEvent(
-            [
-                self::CONFIG_KEY => [
-                    'new' => true,
-                    'old' => false
-                ]
-            ],
-            'website',
-            $websiteId
-        );
-
-        $this->reindexManager
-            ->expects($this->once())
-            ->method('reindexAllProducts')
-            ->with($websiteId);
-
-        $this->listener->reindexProducts($event);
-    }
-
     public function testConfigOptionNotChanged()
     {
         $this->reindexManager
