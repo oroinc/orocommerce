@@ -40,18 +40,12 @@ define(function(require) {
 
             var optionsPagination = _.defaults({collection: this.collection}, options.pagination);
             var optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
-            var optionsSorting = _.defaults(
-                {collection: this.collection, columns: options.columns},
-                options.sortingDropdown
-            );
 
             options.columns.trigger('configureInitializeOptions', this.pagination, optionsPagination, this);
             options.columns.trigger('configureInitializeOptions', this.pageSize, optionsPageSize, this);
-            options.columns.trigger('configureInitializeOptions', this.sortingDropdown, optionsSorting, this);
 
             options.pagination = optionsPagination;
             options.pageSize = optionsPageSize;
-            options.addSorting = optionsSorting;
 
             BackendToolbar.__super__.initialize.call(this, options);
         },

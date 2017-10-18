@@ -22,9 +22,8 @@ class SearchMultiEnumFilter extends SearchEnumFilter
 
         foreach ($data['value'] as $value) {
             $criteria->orWhere(
-                $builder->eq(
-                    $placeholder->replace($fieldName, [EnumIdPlaceholder::NAME => $value]),
-                    1
+                $builder->exists(
+                    $placeholder->replace($fieldName, [EnumIdPlaceholder::NAME => $value])
                 )
             );
         }
