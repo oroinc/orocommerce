@@ -33,7 +33,8 @@ class AjaxCouponControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_promotion_frontend_add_coupon'),
             [
-                'couponCode' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getCode(),
+                'couponCode' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)
+                    ->getCode(),
                 'entityClass' => Checkout::class,
                 'entityId' => $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1)->getId(),
             ]

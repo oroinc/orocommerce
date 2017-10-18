@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\Routing\RequestContext;
 
 /**
  * @dbIsolationPerTest
@@ -61,6 +62,35 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(LoadProductData::PRODUCT_1, $content);
         $this->assertContains(LoadProductData::PRODUCT_2, $content);
         $this->assertContains(LoadProductData::PRODUCT_3, $content);
+    }
+
+    public function testIndexActionInSubfolder()
+    {
+        //Emulate subfolder request
+        /** @var RequestContext $requestContext */
+        $requestContext = static::getContainer()->get('router.request_context');
+        $requestContext->setBaseUrl('custom/base/url');
+
+        $this->client->request('GET', static::getUrl('oro_product_frontend_product_index'), [], [], [
+            'SCRIPT_NAME' => '/custom/base/url/app.php',
+            'SCRIPT_FILENAME' => 'app.php'
+        ]);
+
+        /** @var Product $firstProduct */
+        $firstProduct = $this->getReference(LoadProductData::PRODUCT_1);
+        $images = $firstProduct->getImages();
+
+        $firstProductImage = $this->client->getCrawler()->filter(
+            sprintf('img.product-item__preview-image[alt="%s"]', LoadProductData::PRODUCT_1_DEFAULT_NAME)
+        );
+
+        $this->assertContains(
+            sprintf(
+                '%d/product_large/product-1',
+                $images[0]->getImage()->getId()
+            ),
+            $firstProductImage->attr('src')
+        );
     }
 
     public function testIndexDatagridViews()

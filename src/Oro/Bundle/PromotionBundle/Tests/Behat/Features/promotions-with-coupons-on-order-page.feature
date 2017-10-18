@@ -15,12 +15,12 @@ Feature: Promotions with coupons on Order page
     When I click on "Highlighted Suggestion"
     And click "Add" in modal window
     Then I should see next rows in "Added Coupons" table
-      | Coupon Code | Promotion                    | Type      | Discount Value |
-      | test-1      | Line Item Discount Promotion | Line Item | $1.00          |
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active |  -$10.00 |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -65,12 +65,12 @@ Feature: Promotions with coupons on Order page
     When click on "Highlighted Suggestion"
     And click "Add" in modal window
     Then I should see next rows in "Added Coupons" table
-      | Coupon Code | Promotion                    | Type      | Discount Value |
-      | test-1      | Line Item Discount Promotion | Line Item | $1.00          |
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active |  -$10.00 |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -86,8 +86,8 @@ Feature: Promotions with coupons on Order page
     When click on "Highlighted Suggestion"
     And click "Add" in modal window
     Then I should see next rows in "Added Coupons" table
-      | Coupon Code | Promotion                    | Type      | Discount Value |
-      | test-1      | Line Item Discount Promotion | Line Item | $1.00          |
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
     And I click "Cancel"
     Then I should see no records in "Promotions" table
 
@@ -97,8 +97,8 @@ Feature: Promotions with coupons on Order page
     And click "Promotions and Discounts"
     And I click "Deactivate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status   | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Inactive | $0.00    |
+      | Code   | Promotion                    | Type            | Status   | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Inactive | $0.00    |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
       | Subtotal | $50.00 |
@@ -107,8 +107,8 @@ Feature: Promotions with coupons on Order page
   Scenario: Activate button in Promotions grid
     When I click "Activate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active | -$10.00  |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -126,8 +126,8 @@ Feature: Promotions with coupons on Order page
   Scenario: Product was changed in order
     Given I click edit SimpleOrder in grid
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active | -$10.00  |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -150,8 +150,8 @@ Feature: Promotions with coupons on Order page
     And fill "Order Form" with:
       | Quantity | 2 |
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active | -$2.00   |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |
     And see next subtotals for "Backend Order":
       | Subtotal | Amount |
       | Subtotal | $10.00 |
@@ -159,8 +159,8 @@ Feature: Promotions with coupons on Order page
       | Total    | $8.00  |
     When I save and close form
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Line Item | Active | -$2.00   |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |
     And see next subtotals for "Backend Order":
       | Subtotal | Amount |
       | Subtotal | $10.00 |

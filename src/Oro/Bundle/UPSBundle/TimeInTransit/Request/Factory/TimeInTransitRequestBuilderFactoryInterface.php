@@ -21,5 +21,5 @@ interface TimeInTransitRequestBuilderFactoryInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    );
+    ): TimeInTransitRequestBuilderInterface;
 }

@@ -165,7 +165,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         ]);
 
         $this->assertItemsCount(8);
-        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(6, IndexInteger::class);
         $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
@@ -181,7 +181,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->indexer->delete([], [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $this->assertItemsCount(8);
-        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(6, IndexInteger::class);
         $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
@@ -210,7 +210,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         );
 
         $this->assertItemsCount(6);
-        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(3, IndexInteger::class);
         $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
@@ -239,7 +239,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         );
 
         $this->assertItemsCount(6);
-        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(3, IndexInteger::class);
         $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
@@ -272,7 +272,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         );
 
         $this->assertItemsCount(6);
-        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(3, IndexInteger::class);
         $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);

@@ -60,6 +60,40 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
     const PRODUCT_9_DEFAULT_SLUG_PROTOTYPE = 'product-9.slugPrototypes.default';
 
+    const PRODUCTS_1_2_6_7 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+    ];
+
+    const PRODUCTS_1_2_3_6_7 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_3,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+    ];
+
+    const PRODUCTS_1_2_3_6_7_8_9 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_3,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+        LoadProductData::PRODUCT_8,
+        LoadProductData::PRODUCT_9
+    ];
+
+    const PRODUCTS_1_2_6_7_8_9 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+        LoadProductData::PRODUCT_8,
+        LoadProductData::PRODUCT_9,
+    ];
+
     /**
      * {@inheritdoc}
      */

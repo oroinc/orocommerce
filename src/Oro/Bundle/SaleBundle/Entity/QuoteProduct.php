@@ -618,4 +618,13 @@ class QuoteProduct implements ProductHolderInterface
 
         return false;
     }
+
+    /**
+     * @return null|Product
+     */
+    public function getParentProduct()
+    {
+        // QuoteProduct doesn't support configurable products
+        return null;
+    }
 }

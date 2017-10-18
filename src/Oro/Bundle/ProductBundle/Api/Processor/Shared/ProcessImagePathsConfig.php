@@ -28,6 +28,12 @@ class ProcessImagePathsConfig implements ProcessorInterface
         // add the filePath as a field config
         $fieldConfig = new EntityDefinitionFieldConfig();
         $fieldConfig->set('data_type', 'array');
+        $fieldConfig->setFormOptions(
+            [
+                'mapped' => false
+            ]
+        );
+
         $config->addField(self::CONFIG_FILE_PATH, $fieldConfig);
     }
 }

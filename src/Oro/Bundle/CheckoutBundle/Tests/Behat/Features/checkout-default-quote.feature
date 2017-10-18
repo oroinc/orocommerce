@@ -22,16 +22,43 @@ Feature: Default Checkout From Quote
     And click "Send"
     Then I should see "Quote #1 successfully sent to customer" flash message
 
-  Scenario: Create order from Quote PO1
+  Scenario: Create order from Quote PO1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "Account"
     And I click "Quotes"
     And I click view PO1 in grid
-
     When I click "Accept and Submit to Order"
     And I click "Submit"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 5 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $25.00 |
+      | Shipping | $3.00  |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step                | Started From | Items | Subtotal |
+      | Billing Information | Quote #1     | 1     | $25.00   |
+    And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
+
+    When I click "Edit Order"
+    And I type "10" in "First Product Quantity on Quote"
+    And I click "Submit"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 10 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $50.00 |
+      | Shipping | $3.00  |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step                | Started From | Items | Subtotal |
+      | Billing Information | Quote #1     | 1     | $50.00   |
+    And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
+
+  Scenario: Process checkout
+    Given I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue

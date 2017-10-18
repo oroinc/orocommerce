@@ -33,6 +33,33 @@ Feature: Single Page Checkout From Quote
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"
     And I click "Submit"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 5 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $25.00 |
+      | Shipping | $3.00  |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step     | Started From | Items | Subtotal |
+      | Checkout | Quote #1     | 1     | $25.00   |
+    And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
+
+    When I click "Edit Order"
+    And I type "10" in "First Product Quantity on Quote"
+    And I click "Submit"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 10 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $50.00 |
+      | Shipping | $3.00  |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step     | Started From | Items | Subtotal |
+      | Checkout | Quote #1     | 1     | $50.00   |
+    And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
+
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page

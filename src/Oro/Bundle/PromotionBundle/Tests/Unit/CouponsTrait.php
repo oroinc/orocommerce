@@ -22,7 +22,14 @@ trait CouponsTrait
         /** @var Coupon $coupon */
         $coupon = $this->getEntity(
             Coupon::class,
-            ['id' => $id, 'code' => $code, 'promotion' => $promotion, 'usesPerPerson' => null, 'usesPerCoupon' => null]
+            [
+                'id' => $id,
+                'code' => $code,
+                'enabled' => true,
+                'promotion' => $promotion,
+                'usesPerPerson' => null,
+                'usesPerCoupon' => null,
+            ]
         );
 
         return $coupon;

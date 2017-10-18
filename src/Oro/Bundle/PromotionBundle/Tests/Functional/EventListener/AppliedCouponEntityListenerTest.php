@@ -29,7 +29,7 @@ class AppliedCouponEntityListenerTest extends WebTestCase
         $this->assertEmpty($this->findAllCouponUsage());
 
         /** @var Coupon $coupon */
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
 
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);

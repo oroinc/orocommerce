@@ -3,6 +3,8 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         owner: '@business_unit'
         organization: '@organization'
         code: '<current()>'
+        enabled: true
         usesPerPerson: '<identity($code + 1)>'
         usesPerCoupon: '<identity($code + 2)>'
-        validUntil: '<dateTime("Jul 1, 2018, 12:00 AM")>'
+        validFrom: '<(new DateTime("Jul 1, 2017, 12:00 AM"))>'
+        validUntil: '<(new DateTime("Jul 1, 2018, 12:00 AM"))>'

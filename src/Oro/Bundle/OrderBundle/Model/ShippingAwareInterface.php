@@ -7,6 +7,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 interface ShippingAwareInterface
 {
     /**
+     * Get shipping estimate
+     *
      * @return Price|null
      */
     public function getShippingCost();

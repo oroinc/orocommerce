@@ -70,6 +70,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $website = $this->container->get('doctrine')
             ->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => 'Default']);
+        $currencies = $this->getCurrencies();
 
         for ($i = 0; $i < 20; $i++) {
             /* @var $customer Customer */
@@ -102,8 +103,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
             if (1 === mt_rand(1, 3)) {
                 $quote->setRequest($requests[mt_rand(1, count($requests) - 1)]);
             }
+            $currency = $currencies[random_int(0, count($currencies) - 1)];
 
-            $this->processQuoteProducts($quote, $manager);
+            $this->processQuoteProducts($quote, $currency, $manager);
 
             $manager->persist($quote);
         }
@@ -130,21 +132,19 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param Quote $quote
+     * @param string $currency
      * @param ObjectManager $manager
      */
-    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
+    protected function processQuoteProducts(Quote $quote, $currency, ObjectManager $manager)
     {
         $products = $this->getProducts($manager);
-        $currencies = $this->getCurrencies();
 
         $types = [
             QuoteProduct::TYPE_REQUESTED,
-            //QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
 
         $priceTypes = [
             QuoteProductOffer::PRICE_TYPE_UNIT,
-            //QuoteProductOffer::PRICE_TYPE_BUNDLED,
         ];
 
         if ($quote->getRequest()) {
@@ -175,7 +175,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
                 $productUnit = $units[mt_rand(0, count($units) - 1)];
 
-                $currency = $currencies[mt_rand(0, count($currencies) - 1)];
                 $priceType = $priceTypes[mt_rand(0, count($priceTypes) - 1)];
 
                 $quoteProductOffer = new QuoteProductOffer();
