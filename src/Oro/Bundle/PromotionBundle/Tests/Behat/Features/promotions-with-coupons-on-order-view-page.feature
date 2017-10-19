@@ -11,28 +11,28 @@ Feature: Promotions with coupons on Order view page
     And click edit SimpleOrder in grid
     And I save form
     Then I should see next rows in "Promotions" table
-      | Promotion       | Type  | Status | Discount |
-      | Order Promotion | Order | Active |   -$7.00 |
+      | Promotion       | Type        | Status | Discount |
+      | Order Promotion | Order Total | Active |   -$7.00 |
     And I click "Cancel"
 
   Scenario: Coupon applying on order view page with already applied promotion
     When click view SimpleOrder in grid
     Then I should see next rows in "Promotions" table
-      | Promotion       | Type  | Status | Discount |
-      | Order Promotion | Order | Active |   -$7.00 |
+      | Promotion       | Type        | Status | Discount |
+      | Order Promotion | Order Total | Active |   -$7.00 |
     When I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
     When click on "Highlighted Suggestion"
     And click "Add" in modal window
     Then I should see next rows in "Added Coupons" table
-      | Coupon Code | Promotion                    | Type      | Discount Value |
-      | test-1      | Line Item Discount Promotion | Line Item | $1.00          |
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
-      | Code   | Promotion                    | Type      | Status | Discount |
-      | N/A    | Order Promotion              | Order     | Active |   -$7.00 |
-      | test-1 | Line Item Discount Promotion | Line Item | Active |  -$10.00 |
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | N/A    | Order Promotion              | Order Total     | Active |   -$7.00 |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |

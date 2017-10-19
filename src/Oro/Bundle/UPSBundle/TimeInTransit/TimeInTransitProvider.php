@@ -58,9 +58,16 @@ class TimeInTransitProvider implements TimeInTransitProviderInterface
         UPSTransport $transport,
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
-        \DateTime $pickupDate
+        \DateTime $pickupDate,
+        int $weight
     ): TimeInTransitResultInterface {
-        $request = $this->requestFactory->createRequest($transport, $shipFromAddress, $shipToAddress, $pickupDate);
+        $request = $this->requestFactory->createRequest(
+            $transport,
+            $shipFromAddress,
+            $shipToAddress,
+            $pickupDate,
+            $weight
+        );
         $client = $this->clientFactory->createUpsClient($transport->isUpsTestMode());
 
         try {

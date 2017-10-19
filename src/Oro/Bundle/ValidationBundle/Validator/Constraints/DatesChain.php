@@ -1,17 +1,15 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
 class DatesChain extends Constraint implements \JsonSerializable
 {
-    const ALIAS = 'oro_pricing_dates_chain_validator';
-
     /**
      * @var string
      */
-    public $message = 'oro.pricing.validators.price_list.dates_chain.message';
+    public $message = '{{ later }} date should follow after {{ earlier }}';
 
     /**
      * @var array
@@ -24,14 +22,6 @@ class DatesChain extends Constraint implements \JsonSerializable
     public function getTargets()
     {
         return self::CLASS_CONSTRAINT;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return self::ALIAS;
     }
 
     /**

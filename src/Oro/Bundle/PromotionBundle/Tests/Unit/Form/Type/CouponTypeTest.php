@@ -108,6 +108,7 @@ class CouponTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $promotion2 = $this->getEntity(Promotion::class, ['id' => 2]);
+        $validFromDate = '01-01-2010 12:00:00';
         $validUntilDate = '01-01-2020 12:00:00';
 
         return [
@@ -118,6 +119,7 @@ class CouponTypeTest extends FormIntegrationTestCase
                     'promotion' => 'promotion2',
                     'usesPerPerson' => 2,
                     'usesPerCoupon' => 3,
+                    'validFrom' => $validFromDate,
                     'validUntil' => $validUntilDate,
                 ],
                 'expectedData' => $this->createCoupon(
@@ -126,6 +128,7 @@ class CouponTypeTest extends FormIntegrationTestCase
                     2,
                     3,
                     $promotion2,
+                    new \DateTime($validFromDate),
                     new \DateTime($validUntilDate)
                 ),
             ],
@@ -149,6 +152,7 @@ class CouponTypeTest extends FormIntegrationTestCase
      * @param int|null $usesPerPerson
      * @param int|null $usesPerCoupon
      * @param Promotion|null $promotion
+     * @param \DateTime|null $validFrom
      * @param \DateTime|null $validUntil
      * @return Coupon
      */
@@ -158,6 +162,7 @@ class CouponTypeTest extends FormIntegrationTestCase
         $usesPerPerson = null,
         $usesPerCoupon = null,
         $promotion = null,
+        \DateTime $validFrom = null,
         \DateTime $validUntil = null
     ) {
         return (new Coupon())
@@ -166,6 +171,7 @@ class CouponTypeTest extends FormIntegrationTestCase
             ->setUsesPerPerson($usesPerPerson)
             ->setUsesPerCoupon($usesPerCoupon)
             ->setPromotion($promotion)
+            ->setValidFrom($validFrom)
             ->setValidUntil($validUntil);
     }
 }

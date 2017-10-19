@@ -257,6 +257,7 @@ RedirectBundle
 SaleBundle
 ----------
 * The `QuoteAddressType::getDefaultAddressKey`<sup>[[?]](https://github.com/orocommerce/orocommerce/blob/1.3.0/src/Oro/Bundle/SaleBundle/Form/Type/QuoteAddressType.php#L235 "Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey")</sup> method was removed.
+* Removed twig template `Oro/Bundle/SaleBundle/Resources/views/Action/quoteToOrder.html.twig`
 
 ShippingBundle
 --------------

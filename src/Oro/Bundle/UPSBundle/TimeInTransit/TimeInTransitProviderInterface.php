@@ -13,6 +13,7 @@ interface TimeInTransitProviderInterface
      * @param AddressInterface $shipFromAddress
      * @param AddressInterface $shipToAddress
      * @param \DateTime        $pickupDate
+     * @param int              $weight
      *
      * @return TimeInTransitResultInterface
      */
@@ -20,6 +21,7 @@ interface TimeInTransitProviderInterface
         UPSTransport $transport,
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
-        \DateTime $pickupDate
+        \DateTime $pickupDate,
+        int $weight
     ): TimeInTransitResultInterface;
 }

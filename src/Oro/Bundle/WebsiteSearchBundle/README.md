@@ -10,3 +10,4 @@ related information and provides all required interfaces to interact with it.
 * [How to perform search](./Resources/doc/search.md)
 * [Indexation process](./Resources/doc/indexation.md)
 * [ORM search engine](./Resources/doc/orm_engine.md)
+* [Testing](./Resources/doc/testing.md)

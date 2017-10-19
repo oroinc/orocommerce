@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -50,17 +51,17 @@ class OrderStatusListenerTest extends WebTestCase
     {
         $this->configManager->reset('oro_order.order_creation_new_internal_order_status');
 
-        $this->assertOrderStatus(Order::INTERNAL_STATUS_OPEN);
+        $this->assertOrderStatus(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN);
     }
 
     public function testPrePersistOverriddenStatus()
     {
         $this->configManager->set(
             'oro_order.order_creation_new_internal_order_status',
-            Order::INTERNAL_STATUS_CANCELLED
+            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
         );
 
-        $this->assertOrderStatus(Order::INTERNAL_STATUS_CANCELLED);
+        $this->assertOrderStatus(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
     }
 
     /**

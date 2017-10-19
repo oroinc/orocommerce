@@ -29,7 +29,7 @@ class AjaxCouponControllerTest extends WebTestCase
     public function testGetAddedCouponsTableAction()
     {
         /** @var Coupon $coupon1 */
-        $coupon1 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon1 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         /** @var Coupon $coupon2 */
         $coupon2 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL);
 
@@ -68,7 +68,7 @@ class AjaxCouponControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_promotion_validate_coupon_applicability'),
             [
-                'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
+                'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getId(),
                 'entityClass' => Order::class,
                 'entityId' => $this->getReference(LoadOrders::ORDER_1)->getId(),
             ]
@@ -83,7 +83,7 @@ class AjaxCouponControllerTest extends WebTestCase
     public function testGetAppliedCouponsData()
     {
         /** @var Coupon $coupon1 */
-        $coupon1 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon1 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         /** @var Coupon $coupon2 */
         $coupon2 = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL);
 

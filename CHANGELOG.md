@@ -3,9 +3,11 @@
 ### Added
 #### CheckoutBundle
 * Added `CheckoutLineItem` and `CheckoutSubtotal` entities. They will be used in `Checkout` entity to store data. Previously for these purposes used line items and subtotals of Checkout source entity (`ShoppingList` or `QuoteDemand` entities).
-
+#### OrderBundle
+* Added Previously purchased products functionality. [Documentation](./src/Oro/Bundle/OrderBundle/Resources/doc/previously-purchased-products.md)
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
+
 ### Changed
 #### CheckoutBundle
 * Entity `Oro\Bundle\CheckoutBundle\Entity\Checkout`:

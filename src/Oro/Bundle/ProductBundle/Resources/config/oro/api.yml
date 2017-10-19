@@ -65,3 +65,5 @@ api:
         Oro\Bundle\ProductBundle\Entity\Brand: ~
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
+        Oro\Bundle\AttachmentBundle\Entity\File:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'
