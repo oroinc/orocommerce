@@ -33,7 +33,6 @@ define(function(require) {
             selectors: {
                 reset: null,
                 apply: null,
-                conditionBuilder: null,
                 included: null,
                 excluded: null
             }
@@ -86,11 +85,6 @@ define(function(require) {
         /**
          * @property {jQuery.Element}
          */
-        $conditionBuilder: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
         $form: null,
 
         /**
@@ -131,7 +125,6 @@ define(function(require) {
 
             this._checkOptions();
 
-            this.$conditionBuilder = this.options._sourceElement.find(this.options.selectors.conditionBuilder);
             this.$included = this.options._sourceElement.find(this.options.selectors.included);
             this.$excluded = this.options._sourceElement.find(this.options.selectors.excluded);
             this.$form = this.options._sourceElement.closest('form');
@@ -156,7 +149,6 @@ define(function(require) {
             this._initializeInclusionExclusionSubComponent();
             this._initializeSelectedProductGridsSubComponent();
 
-            mediator.on('condition-builder:options:prepare', this.onConditionBuilderOptionsPrepare, this);
             this._enableHiddenFieldValidation();
         },
 
@@ -216,7 +208,7 @@ define(function(require) {
 
         onReset: function(e) {
             var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
-            this.$conditionBuilder.conditionBuilder('setValue', filters);
+            this.updateSegmentDefinitionValue('filters', filters);
             this.currentDefinitionState = this.initialDefinitionState;
             this.$included.val(this.initialIncluded).trigger('change');
             this.$excluded.val(this.initialExcluded).trigger('change');
@@ -228,23 +220,10 @@ define(function(require) {
          * @param {Object} data
          */
         onFiltersValidate: function(e, data) {
-            if (this.$included.val()) {
+            var filters = this.fetchSegmentDefinitionValue('filters');
+            if (!_.isEmpty(filters) || this.$included.val()) {
                 data.result = true;
             }
-        },
-
-        /**
-         * @param {Object} options
-         */
-        onConditionBuilderOptionsPrepare: function(options) {
-            options.validation = {
-                'condition-item': {
-                    NotBlank: {message: 'oro.product.product_collection.blank_condition_item'}
-                },
-                'conditions-group': {
-                    NotBlank: {message: 'oro.product.product_collection.blank_condition_group'}
-                }
-            };
         },
 
         _checkOptions: function() {
@@ -288,9 +267,49 @@ define(function(require) {
          * @private
          */
         _getSegmentDefinition: function() {
-            return $(
-                this.options.segmentDefinitionSelectorTemplate.replace('%s', this.options.segmentDefinitionFieldName)
-            ).val();
+            return this._getSegmentDefinitionInput().val();
+        },
+
+        _getSegmentDefinitionInput: function() {
+            var name = this.options.segmentDefinitionFieldName;
+            return $(this.options.segmentDefinitionSelectorTemplate.replace('%s', name));
+        },
+
+        /**
+         * Loads data from the segment definition input
+         *
+         * @param {string=} key name of data branch
+         */
+        fetchSegmentDefinitionValue: function(key) {
+            var data = {};
+            var json = this._getSegmentDefinitionInput().val();
+            if (json) {
+                try {
+                    data = JSON.parse(json);
+                } catch (e) {
+                    return undefined;
+                }
+            }
+            return key ? data[key] : data;
+        },
+
+        /**
+         * Saves data to the segment definition input
+         *
+         * @param {Object|string} value data if single argument is passed or key name of data branch
+         * @param {Object=} value data for data branch
+         */
+        updateSegmentDefinitionValue: function(value) {
+            var key;
+            var data = this.fetchSegmentDefinitionValue();
+            if (arguments.length === 2) {
+                key = value;
+                value = arguments[1];
+                data[key] = value;
+            } else {
+                data = value;
+            }
+            this._getSegmentDefinitionInput().val(JSON.stringify(data)).trigger('change');
         },
 
         /**
@@ -376,7 +395,7 @@ define(function(require) {
          * @private
          */
         _isConditionBuilderValid: function() {
-            var $form = this.$conditionBuilder.closest('form');
+            var $form = this.$form;
             if (!$form.data('validator')) {
                 return true;
             }
@@ -388,22 +407,23 @@ define(function(require) {
                 return true;
             }
 
+            var $conditionBuilder = this.options._sourceElement.find('.condition-builder');
             var conditionBuilderInvalidElements = _.filter(invalidElements, _.bind(function(value) {
-                return $(value).parents(this.options.selectors.conditionBuilder).length;
+                return $.contains($conditionBuilder[0], value);
             }, this));
 
             return !conditionBuilderInvalidElements.length;
         },
 
         /**
-         * If conditionBuilder located in oro-tabs, change form's setting in order to validate hidden fields too.
+         * If conditionBuilderView located in oro-tabs, change form's setting in order to validate hidden fields too.
          * Because of it can be hidden.
          *
          * @private
          */
         _enableHiddenFieldValidation: function() {
-            var $form = this.$conditionBuilder.closest('form');
-            if ($form.data('validator') && this.$conditionBuilder.parents('.oro-tabs')) {
+            var $form = this.$form;
+            if ($form.data('validator')) {
                 $form.validate()
                     .settings
                     .ignore = ':hidden:not([type=hidden]):not(:parent.' + this.options.controlsBlockAlias + ')';
