@@ -8,6 +8,11 @@ define(function(require) {
     var $ = require('jquery');
 
     ProductVariantComponent = BaseComponent.extend({
+        relatedSiblingComponents: {
+            // grid is required to update variants columns
+            productVariantsGridComponent: 'product-product-variants-edit'
+        },
+
         /**
          * @property {Object}
          */
@@ -28,7 +33,12 @@ define(function(require) {
             this.options._sourceElement
                 .on('change', this.productVariantFieldsSelector, _.bind(this.onVariantFieldChange, this));
 
-            mediator.on('grid_load:complete', this.updateVisibilityChange, this);
+            this.updateVisibilityChange();
+            this.listenTo(mediator, 'grid_load:complete', function(collection) {
+                if (collection.inputName === this.options.datagridName) {
+                    this.updateVisibilityChange();
+                }
+            });
         },
 
         onVariantFieldChange: function() {
@@ -88,8 +98,6 @@ define(function(require) {
             }
 
             this.options._sourceElement.off('change');
-            mediator.off('grid_load:complete', this.updateVisibilityChange, this);
-
             ProductVariantComponent.__super__.dispose.call(this);
         }
     });

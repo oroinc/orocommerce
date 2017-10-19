@@ -60,6 +60,8 @@ oro:
 
         product_image_type:
             invalid_type: 'The provided product image type "%type%" is not valid'
+            already_exists: 'The provided product image type "%type%" already exists in product image collection'
+            type_restriction: 'You cannot choose multiple types with the same value "%type%"'
 
         product_collection:
             unique_segment_name.message: 'This name already in use'

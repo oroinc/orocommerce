@@ -29,4 +29,9 @@ class OrderStub extends Order
 
         return $this;
     }
+
+    public function unsetWebsite()
+    {
+        $this->website = null;
+    }
 }

@@ -42,4 +42,26 @@ class WebsiteContextManager
 
         return null;
     }
+
+    /**
+     * Returns website id from context if according website exists
+     * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
+     * @return Website|null
+     */
+    public function getWebsite(array $context)
+    {
+        /** @var WebsiteRepository $websiteRepository */
+        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
+        $websiteId = $this->getContextCurrentWebsiteId($context);
+
+        if ($websiteId === null) {
+            return null;
+        }
+
+        return $websiteRepository->find($websiteId);
+    }
 }

@@ -193,6 +193,54 @@ data:
                      id: '<toString(@simple_order4->customer->id)>'
     -
         type: orders
+        id: '<toString(@simple_order5->id)>'
+        attributes:
+            identifier: '@simple_order5->identifier'
+            poNumber: '@simple_order5->poNumber'
+            customerNotes: null
+            shipUntil: '@simple_order5->shipUntil->format("Y-m-d")'
+            currency: '@simple_order5->currency'
+            subtotalValue: '<toString(@simple_order5->subtotal)>'
+            totalValue: '<toString(@simple_order5->total)>'
+            shippingMethod: null
+            shippingMethodType: null
+            estimatedShippingCostAmount: null
+            overriddenShippingCostAmount: null
+            sourceEntityClass: null
+            sourceEntityId: null
+            sourceEntityIdentifier: null
+            totalDiscountsAmount: null
+            createdAt: '@simple_order5->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@simple_order5->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data: []
+            discounts:
+                data: []
+            shippingTrackings:
+                data: []
+            owner:
+                data:
+                    type: users
+                    id: '<toString(@simple_order5->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order5->organization->id)>'
+            customerUser:
+                data:
+                     type: customer_users
+                     id: '<toString(@simple_order5->customerUser->id)>'
+            customer:
+                data:
+                     type: customers
+                     id: '<toString(@simple_order5->customer->id)>'
+    -
+        type: orders
         id: '<toString(@my_order->id)>'
         attributes:
             identifier: '@my_order->identifier'
