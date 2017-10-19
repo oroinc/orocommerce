@@ -986,5 +986,4 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         return $filters;
     }
-
 }
