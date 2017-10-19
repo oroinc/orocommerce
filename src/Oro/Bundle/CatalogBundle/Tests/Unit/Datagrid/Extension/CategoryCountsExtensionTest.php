@@ -27,6 +27,11 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->datagridManager = $this->createMock(Manager::class);
+        $this->parametersFactory = $this->createMock(RequestParameterBagFactory::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->productSearchRepository = $this->createMock(ProductRepository::class);
+
         $this->extension = new CategoryCountsExtension(
             $this->datagridManager,
             $this->parametersFactory,

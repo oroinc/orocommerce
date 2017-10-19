@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Datagrid\Filter;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -11,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
+use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -129,8 +129,8 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
                 new CompositeExpression(
                     CompositeExpression::TYPE_OR,
                     [
-                        new Comparison('integer.field_1_42_100', Comparison::EQ, 1),
-                        new Comparison('integer.field_1_42_200', Comparison::EQ, 1),
+                        new Comparison('integer.field_1_42_100', Comparison::EXISTS, null),
+                        new Comparison('integer.field_1_42_200', Comparison::EXISTS, null),
                     ]
                 )
             );

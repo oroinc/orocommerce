@@ -82,7 +82,7 @@ class SubcategoryFilter extends AbstractFilter
             );
 
             $criteria->orWhere(
-                $builder->eq($categoryFieldName, 1)
+                $builder->exists($categoryFieldName)
             );
         }
 
