@@ -51,23 +51,21 @@ class LowInventoryProvider
      */
     public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null)
     {
-        if (!$this->enabledHighlightLowInventory($product)) {
-            return false;
+        if ($productUnit === null) {
+            $productUnit = $this->getDefaultProductUnit($product);
         }
 
-        if (!$productUnit) {
-            $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
-        }
+        if ($productUnit instanceof ProductUnit && $this->enabledHighlightLowInventory($product)) {
+            $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
+                $product,
+                static::LOW_INVENTORY_THRESHOLD_OPTION
+            );
 
-        $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
-            $product,
-            static::LOW_INVENTORY_THRESHOLD_OPTION
-        );
+            $quantity = $this->getQuantityByProductAndProductUnit($product, $productUnit);
 
-        $quantity = $this->getQuantityByProductAndProductUnit($product, $productUnit);
-
-        if ($quantity <= $lowInventoryThreshold) {
-            return true;
+            if ($quantity <= $lowInventoryThreshold) {
+                return true;
+            }
         }
 
         return false;
@@ -93,14 +91,17 @@ class LowInventoryProvider
      * Returns low inventory flags for product collection.
      * Will be useful for all product listing (Catalog, Checkout, Shopping list)
      *
-     * @param $data - [
-     *              [
-     *              'product' => Product Entity,
-     *              'product_unit' => ProductUnit entity
-     *              ]
-     *              ]
+     * @param array $data products collection with optional ProductUnit's
+     * [
+     *     [
+     *         'product' => Product Entity,
+     *         'product_unit' => ProductUnit entity (optional)
+     *     ],
+     *     ...
+     * ]
      *
-     * @return array [
+     * @return array
+     * [
      *      'product id' => bool - has low inventory marker,
      *       ...
      *      'product id' => bool
@@ -117,9 +118,13 @@ class LowInventoryProvider
             /** @var Product $product */
             $product = $item['product'];
 
-            if ($this->enabledHighlightLowInventory($product)) {
-                /** @var ProductUnit $productUnit */
+            if (isset($item['product_unit'])) {
                 $productUnit = $item['product_unit'];
+            } else {
+                $productUnit = $this->getDefaultProductUnit($product);
+            }
+
+            if ($productUnit instanceof ProductUnit && $this->enabledHighlightLowInventory($product)) {
                 $code = $productUnit->getCode();
 
                 $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
@@ -196,5 +201,24 @@ class LowInventoryProvider
     protected function extractProducts($data)
     {
         return array_column($data, 'product');
+    }
+
+    /**
+     * Returns default Product Unit
+     *
+     * @param Product $product
+     *
+     * @return null|ProductUnit returns ProductUnit or null in exceptional case
+     *
+     */
+    protected function getDefaultProductUnit(Product $product)
+    {
+        if ($product->getPrimaryUnitPrecision() !== null) {
+            $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
+        } else {
+            $productUnit = null;
+        }
+
+        return $productUnit;
     }
 }

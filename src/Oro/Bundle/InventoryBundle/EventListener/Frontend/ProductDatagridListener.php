@@ -72,9 +72,11 @@ class ProductDatagridListener
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
+            $lowInventoryValue = false;
             if (array_key_exists($productId, $lowInventoryResponse)) {
-                $record->addData([self::COLUMN_LOW_INVENTORY => $lowInventoryResponse[$productId]]);
+                $lowInventoryValue = $lowInventoryResponse[$productId];
             }
+            $record->addData([self::COLUMN_LOW_INVENTORY => $lowInventoryValue]);
         }
     }
 
@@ -89,7 +91,6 @@ class ProductDatagridListener
         foreach ($products as $product) {
             $data[] = [
                 'product' => $product,
-                'product_unit' => $product->getPrimaryUnitPrecision()->getUnit()
             ];
         }
 

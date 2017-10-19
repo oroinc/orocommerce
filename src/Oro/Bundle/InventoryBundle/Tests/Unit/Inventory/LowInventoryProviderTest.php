@@ -64,6 +64,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
      * @param bool             $lowInventoryThreshold
      * @param int              $inventoryLevelQuantity
      * @param bool             $expectedIsLowInventoryProduct
+     * @param bool             $highlightLowInventoryCalled
      *
      * @dataProvider providerTestIsLowInventoryProduct
      */
@@ -73,15 +74,16 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
         $highlightLowInventory,
         $lowInventoryThreshold,
         $inventoryLevelQuantity,
-        $expectedIsLowInventoryProduct
+        $expectedIsLowInventoryProduct,
+        $highlightLowInventoryCalled
     ) {
-        $this->entityFallbackResolver
-            ->expects($this->at(0))
-            ->method('getFallbackValue')
-            ->with($product, LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION)
-            ->willReturn($highlightLowInventory);
+        if ($highlightLowInventoryCalled) {
+            $this->entityFallbackResolver
+                ->expects($this->at(0))
+                ->method('getFallbackValue')
+                ->with($product, LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION)
+                ->willReturn($highlightLowInventory);
 
-        if ($highlightLowInventory) {
             $this->entityFallbackResolver
                 ->expects($this->at(1))
                 ->method('getFallbackValue')
@@ -89,7 +91,9 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($lowInventoryThreshold);
 
 
-            $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
+            $this->doctrineHelper
+                ->expects($this->once())
+                ->method('getEntityRepositoryForClass')
                 ->willReturn($this->inventoryLevelRepository);
 
             $inventoryLevel = $this->getInventoryLevel($inventoryLevelQuantity);
@@ -117,6 +121,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
                 'inventoryLevelQuantity' => 5,
                 'expectedIsLowInventoryProduct' => true,
+                'highlightLowInventoryCalled' => true
             ],
             'is not low inventory: product and product unit' => [
                 'product' => $this->getProductEntity(),
@@ -125,6 +130,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
                 'inventoryLevelQuantity' => 15,
                 'expectedIsLowInventoryProduct' => false,
+                'highlightLowInventoryCalled' => true
             ],
             'is low inventory: product' => [
                 'product' => $this->getProductEntity(),
@@ -133,6 +139,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
                 'inventoryLevelQuantity' => 5,
                 'expectedIsLowInventoryProduct' => true,
+                'highlightLowInventoryCalled' => true
             ],
             'is not low inventory: product ' => [
                 'product' => $this->getProductEntity(),
@@ -141,15 +148,17 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
                 'inventoryLevelQuantity' => 15,
                 'expectedIsLowInventoryProduct' => false,
+                'highlightLowInventoryCalled' => true
             ],
-            'highlightLowInventory disabled' => [
-                'product' => $this->getProductEntity(),
+            'is low inventory: product without primary unit' => [
+                'product' => $this->getProductEntity(55, false),
                 'productUnit' => null,
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => false,
+                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
                 LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
                 'inventoryLevelQuantity' => 15,
                 'expectedIsLowInventoryProduct' => false,
-            ],
+                'highlightLowInventoryCalled' => false
+            ]
         ];
     }
 
@@ -351,16 +360,23 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Product
+     * @param int|null $id
+     * @param bool $withPrimaryUnitPrecision
+     *
+     * @return ProductStub
      */
-    protected function getProductEntity($id = null)
+    protected function getProductEntity($id = null, $withPrimaryUnitPrecision = true)
     {
         $product = new ProductStub();
         $product->setId($id);
-        $primaryUnitPrecision = new ProductUnitPrecision();
+
+        $unitPrecision = new ProductUnitPrecision();
         $productUnit = $this->getProductUnitEntity('item');
-        $primaryUnitPrecision->setUnit($productUnit);
-        $product->setPrimaryUnitPrecision($primaryUnitPrecision);
+        $unitPrecision->setUnit($productUnit);
+
+        if ($withPrimaryUnitPrecision) {
+            $product->setPrimaryUnitPrecision($unitPrecision);
+        }
 
         return $product;
     }

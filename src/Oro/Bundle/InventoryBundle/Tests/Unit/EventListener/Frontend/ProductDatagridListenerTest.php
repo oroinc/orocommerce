@@ -86,7 +86,6 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $products = [
             [
                 'product' => $product1,
-                'product_unit' =>  $product1->getPrimaryUnitPrecision()->getUnit()
             ]
         ];
 
@@ -150,23 +149,25 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $product1 = $this->getProductEntity(777);
         $product2 = $this->getProductEntity(555);
         $product3 = $this->getProductEntity(444);
+        $productWithoutPrimaryUnitPrecision = $this->getProductEntity(333, false);
 
         $record1 = new ResultRecord(['id' => $product1->getId()]);
         $record2 = new ResultRecord(['id' => $product2->getId()]);
         $record3 = new ResultRecord(['id' => $product3->getId()]);
+        $recordWithoutPrimaryUnitPrecision = new ResultRecord(['id' => $productWithoutPrimaryUnitPrecision->getId()]);
 
         $preparedRecords = [
             [
                 'product' => $product1,
-                'product_unit' => $product1->getPrimaryUnitPrecision()->getUnit()
             ],
             [
                 'product' => $product2,
-                'product_unit' => $product2->getPrimaryUnitPrecision()->getUnit()
             ],
             [
                 'product' => $product3,
-                'product_unit' => $product3->getPrimaryUnitPrecision()->getUnit()
+            ],
+            [
+                'product' => $productWithoutPrimaryUnitPrecision,
             ]
         ];
 
@@ -175,7 +176,8 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([
                 $product1,
                 $product2,
-                $product3
+                $product3,
+                $productWithoutPrimaryUnitPrecision
             ]);
 
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')
@@ -194,13 +196,23 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $query = $this->createMock(SearchQueryInterface::class);
 
         /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new SearchResultAfter($datagrid, $query, [$record1, $record2, $record3]);
+        $event = new SearchResultAfter(
+            $datagrid,
+            $query,
+            [
+                $record1,
+                $record2,
+                $record3,
+                $recordWithoutPrimaryUnitPrecision
+            ]
+        );
 
         $this->listener->onResultAfter($event);
 
         $this->assertEquals(true, $record1->getValue('low_inventory'));
         $this->assertEquals(false, $record2->getValue('low_inventory'));
-        $this->assertNull($record3->getValue('low_inventory'));
+        $this->assertEquals(false, $record3->getValue('low_inventory'));
+        $this->assertEquals(false, $recordWithoutPrimaryUnitPrecision->getValue('low_inventory'));
     }
 
     /**
@@ -208,16 +220,18 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      *
      * @return ProductStub
      */
-    protected function getProductEntity($id)
+    protected function getProductEntity($id, $withPrimaryUnitPrecision = true)
     {
         $product = new ProductStub();
         $product->setId($id);
 
-        $primaryUnitPrecision = new ProductUnitPrecision();
+        $unitPrecision = new ProductUnitPrecision();
         $unit = new ProductUnit();
-        $primaryUnitPrecision->setUnit($unit);
+        $unitPrecision->setUnit($unit);
 
-        $product->setPrimaryUnitPrecision($primaryUnitPrecision);
+        if ($withPrimaryUnitPrecision) {
+            $product->setPrimaryUnitPrecision($unitPrecision);
+        }
 
         return $product;
     }
