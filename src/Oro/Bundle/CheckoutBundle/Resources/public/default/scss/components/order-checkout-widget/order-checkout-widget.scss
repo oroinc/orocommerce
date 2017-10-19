@@ -95,6 +95,8 @@
 
 @include breakpoint('print') {
     .order-checkout-widget {
+        page-break-after: always;
+
         &__quote {
             display: none !important;
         }
