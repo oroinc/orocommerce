@@ -2,24 +2,24 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Oro\Bundle\InventoryBundle\Validator\LowInventoryLineItemValidator;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
-class LowInventoryLineItemValidationListener
+class LowInventoryCheckoutLineItemValidationListener
 {
     /**
-     * @var LowInventoryLineItemValidator
+     * @var LowInventoryCheckoutLineItemValidator
      */
-    protected $lowInventoryValidator;
+    protected $validator;
 
     /**
-     * @param LowInventoryLineItemValidator $lowInventoryValidator
+     * @param LowInventoryCheckoutLineItemValidator $validator
      */
-    public function __construct(LowInventoryLineItemValidator $lowInventoryValidator)
+    public function __construct(LowInventoryCheckoutLineItemValidator $validator)
     {
-        $this->lowInventoryValidator = $lowInventoryValidator;
+        $this->validator = $validator;
     }
 
     /**
@@ -33,8 +33,7 @@ class LowInventoryLineItemValidationListener
         }
 
         foreach ($lineItems as $lineItem) {
-            // stop checking if list item is not LineItem
-            if (!$lineItem instanceof LineItem) {
+            if (!$lineItem instanceof CheckoutLineItem) {
                 return;
             }
 
@@ -42,7 +41,7 @@ class LowInventoryLineItemValidationListener
                 continue;
             }
 
-            if ($lowInventoryWarning = $this->lowInventoryValidator->getLowInventoryMessage($lineItem)) {
+            if ($lowInventoryWarning = $this->validator->getMessageIfLineItemRunningLow($lineItem)) {
                 $event->addWarning($lineItem->getProduct()->getSku(), $lowInventoryWarning);
             }
         }

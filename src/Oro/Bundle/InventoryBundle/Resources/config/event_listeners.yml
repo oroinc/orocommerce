@@ -115,10 +115,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
-    oro_inventory.event_listener.low_inventory_line_item_validation_listener:
-        class: Oro\Bundle\InventoryBundle\EventListener\LowInventoryLineItemValidationListener
+    oro_inventory.event_listener.low_inventory_checkout_line_item_validation_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\LowInventoryCheckoutLineItemValidationListener
         arguments:
-            - '@oro_inventory.validator.low_inventory_validator'
+            - '@oro_inventory.validator.low_inventory_checkout_line_item_validator'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }

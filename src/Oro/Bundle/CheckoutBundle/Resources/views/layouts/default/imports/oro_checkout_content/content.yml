@@ -103,10 +103,6 @@ layout:
                     blockType: block
                 __checkout_order_summary_line_item_edit:
                     blockType: block
-                __checkout_order_summary_line_item_errors:
-                    blockType: block
-                __checkout_order_summary_line_item_warnings:
-                    blockType: block
 
                 __checkout_order_summary_totals_container:
                     blockType: container
@@ -169,7 +165,5 @@ layout:
                                                     __checkout_order_summary_line_item_price_per_item: ~
                                                 __checkout_order_summary_line_item_price_total_column:
                                                     __checkout_order_summary_line_item_price_total: ~
-                                            __checkout_order_summary_line_item_errors: ~
-                                            __checkout_order_summary_line_item_warnings: ~
                                     __checkout_order_summary_totals_container:
                                         __checkout_order_summary_totals: ~

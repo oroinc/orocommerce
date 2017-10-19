@@ -29,8 +29,8 @@ services:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
             - '@translator'
 
-    oro_inventory.validator.low_inventory_validator:
-        class: Oro\Bundle\InventoryBundle\Validator\LowInventoryLineItemValidator
+    oro_inventory.validator.low_inventory_checkout_line_item_validator:
+        class: Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator
         arguments:
             - '@oro_inventory.inventory.low_inventory_provider'
             - '@translator'

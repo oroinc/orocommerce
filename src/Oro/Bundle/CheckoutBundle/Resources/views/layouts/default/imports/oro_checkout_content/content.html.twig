@@ -205,7 +205,6 @@
                 </th>
             </tr>
         </thead>
-        <tbody class="checkout-order-summary__grid-body">
         {% for lineItem in lineItemsWithTotals %}
             {% set mainProduct = null %}
             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
@@ -229,18 +228,34 @@
             }) %}
             {{ block('container_widget') }}
         {% endfor %}
-        </tbody>
     </table>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_row_widget %}
-    <tr class="checkout-order-summary__grid-tr">{{ block('container_widget') }}</tr>
+    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorMessage = '' %}
+    {% set errorClass = '' %}
+    {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
+        {% set errorMessage = (parent.lineItemErrors[errorPath]|first).message %}
+        {% set errorClass = 'validation-error' %}
+    {% elseif parent.lineItemWarnings is iterable and parent.lineItemWarnings[errorPath] is defined and parent.lineItemWarnings[errorPath] is iterable %}
+        {% set errorMessage = (parent.lineItemWarnings[errorPath]|first).message %}
+        {% set errorClass = 'validation-warning' %}
+    {% endif %}
+    <tbody class="checkout-order-summary__grid-body {% if errorClass != '' %}checkout-order-summary__grid-body--{{ errorClass }}{% endif %}">
+        <tr class="checkout-order-summary__grid-tr checkout-order-summary__grid-tr--info">{{ block('container_widget') }}</tr>
+        {% if errorMessage != '' %}
+            <tr class="checkout-order-summary__grid-tr checkout-order-summary__grid-tr--message">
+                <td colspan="5" class="checkout-order-summary__grid-td">
+                    <div class="{{ errorClass }}">{{ errorMessage }}</div>
+                </td>
+            </tr>
+        {% endif %}
+    </tbody>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_info_column_widget %}
-    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info"
-        data-checkout-order-summary-line-item-info_{{ productSku|lower }}
-    >
+    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info" data-checkout-order-summary-line-item-info_{{ productSku|lower }}>
         {% spaceless %}{{ block('container_widget') }}{% endspaceless %}
     </td>
 {% endblock %}
@@ -254,7 +269,9 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_sku_column_widget %}
-    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--sku">{% spaceless %}{{ block('container_widget') }}{% endspaceless %}</td>
+    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--sku">
+        {% spaceless %}{{ block('container_widget') }}{% endspaceless %}
+    </td>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_sku_widget %}
@@ -313,44 +330,6 @@
         '~class': " checkout-order-summary__lineitem-total"
     }) %}
     <div {{ block('block_attributes') }}>{{ lineItemInfo.total|oro_format_price }}</div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_order_summary_line_item_errors_widget %}
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
-    {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
-        {% for error in parent.lineItemErrors[errorPath] %}
-            <script>
-                require(['oroui/js/messenger'], function(messenger) {
-                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
-                        style: 'validation',
-                        container: $('#product-error-{{ lineItem.productSku }}')
-                    })
-                });
-            </script>
-            <tr>
-                <td id="product-error-{{ lineItem.productSku }}" colspan="5"></td>
-            </tr>
-        {% endfor %}
-    {% endif %}
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_order_summary_line_item_warnings_widget %}
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
-    {% if parent.lineItemWarnings is iterable and parent.lineItemWarnings[errorPath] is defined and parent.lineItemWarnings[errorPath] is iterable %}
-        {% for error in parent.lineItemWarnings[errorPath] %}
-            <script>
-                require(['oroui/js/messenger'], function(messenger) {
-                    messenger.notificationFlashMessage('warning', '{{ error.message }}', {
-                        style: 'validation',
-                        container: $('#product-error-{{ lineItem.productSku }}')
-                    })
-                });
-            </script>
-            <tr>
-                <td id="product-error-{{ lineItem.productSku }}" colspan="5"></td>
-            </tr>
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
