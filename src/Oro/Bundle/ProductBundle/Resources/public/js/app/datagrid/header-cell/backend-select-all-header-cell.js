@@ -4,7 +4,6 @@ define(function(require) {
     var BackendSelectAllHeaderCell;
     var _  = require('underscore');
     var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
     var template = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     var additionalTpl = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
     var SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
@@ -28,12 +27,10 @@ define(function(require) {
         initialize: function(options) {
             this.collection = options.collection;
             this.selectState = options.selectState;
-            this.visibleState = options.visibleState;
 
             if (options.additionalTpl) {
                 this.template = additionalTpl;
             }
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.updateState, 50), this));
         },
 
         /**
@@ -41,11 +38,12 @@ define(function(require) {
          */
         delegateEvents: function(events) {
             this.$('[data-checkbox-change-visible]')
-                .on('change' + this.eventNamespace(), _.bind(this.onCheckboxChange, this));
+                .on('change' + this.eventNamespace(), _.bind(_.debounce(this.onCheckboxChange, 50), this));
             this.$('[data-select-unbind]')
-                .on('click' + this.eventNamespace(), _.bind(this.onSelectUnbind, this));
+                .on('click' + this.eventNamespace(), _.bind(_.debounce(this.onSelectUnbind, 50), this));
 
             this.collection.on('backgrid:visible-changed', _.bind(_.debounce(this.unCheckCheckbox, 50), this));
+            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.updateState, 50), this));
 
             BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
         },
@@ -62,24 +60,23 @@ define(function(require) {
         onCheckboxChange: function(event) {
             var checked = $(event.currentTarget).is(':checked');
 
-            mediator.trigger('popupGalleryWidget:toggle', !checked);
-
             if (!checked) {
                 this.collection.trigger('backgrid:selectNone');
             }
 
-            this.visibleState.visible = !checked;
+            this.collection.trigger('backgrid:selectNone');
+            this.collection.trigger('backgrid:setVisibleState', checked);
 
-            this.canTSelect(!checked);
+            this.canSelect(checked);
         },
 
         onSelectUnbind: function() {
             this.collection.trigger('backgrid:selectNone');
             this.collection.trigger('backgrid:visible-changed');
-            this.canTSelect(true);
+            this.canSelect(false);
         },
 
-        canTSelect: function(flag) {
+        canSelect: function(flag) {
             this.collection.each(function(model) {
                 model.trigger('backgrid:canSelected', flag);
             });

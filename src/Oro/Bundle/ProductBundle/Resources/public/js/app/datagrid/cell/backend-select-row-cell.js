@@ -59,11 +59,15 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            var visibleState = {};
+            var o = {};
+            var hide = !_.isMobile();
             var state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
-            this.model.trigger('backgrid:getVisibleState', visibleState);
+            this.model.trigger('backgrid:getVisibleState', o);
+            if (!_.isEmpty(o)) {
+                hide = o.visible;
+            }
 
             this.$el.html(this.template({
                 checked: state.selected,
@@ -71,10 +75,8 @@ define(function(require) {
             }));
 
             this.$checkbox = this.$el.find(this.checkboxSelector);
-
             this.$container.append(this.$el);
-
-            this.hideView(visibleState.visible);
+            this.hideView(hide);
 
             return this;
         },
@@ -83,7 +85,7 @@ define(function(require) {
          * @param {Boolean} bool
          */
         hideView: function(bool) {
-            this.$el[bool ? 'addClass' : 'removeClass']('hidden');
+            this.$el.toggleClass('hidden', !bool);
         },
 
         dispose: function() {

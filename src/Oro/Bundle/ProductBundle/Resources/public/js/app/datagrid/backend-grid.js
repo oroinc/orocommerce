@@ -28,7 +28,7 @@ define(function(require) {
 
         /** @property */
         visibleState: {
-            visible: _.isMobile()
+            visible: null
         },
 
         /**
@@ -80,6 +80,7 @@ define(function(require) {
                 'backgrid:selectNone': this.selectNone,
                 'backgrid:isSelected': this.isSelected,
                 'backgrid:getSelected': this.getSelected,
+                'backgrid:setVisibleState': this.setVisibleState,
                 'backgrid:getVisibleState': this.getVisibleState
             });
 
@@ -147,8 +148,7 @@ define(function(require) {
         renderSelectAll: function() {
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
-                selectState: this.selectState,
-                visibleState: this.visibleState
+                selectState: this.selectState
             });
 
             this.selectHeaderCell = new BackendSelectHeaderCell({
@@ -176,8 +176,12 @@ define(function(require) {
             this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
         },
 
+        setVisibleState: function(state) {
+            this.visibleState.visible = state;
+        },
+
         getVisibleState: function(obj) {
-            if ($.isEmptyObject(obj)) {
+            if ($.isEmptyObject(obj) && _.isBoolean(this.visibleState.visible)) {
                 obj.visible = this.visibleState.visible;
             }
         }
