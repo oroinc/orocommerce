@@ -54,6 +54,10 @@ class DataGridThemeHelper
                 $viewName = $this->getDefaultView();
             }
             $this->session->set(self::SESSION_KEY, $viewName);
+        /**
+         * Value of option "Display view" is one for all frontend product grids
+         * In case when user won't change this option value, we get current state from session
+         */
         } elseif ($this->session->has(self::SESSION_KEY)) {
             $viewName = $this->session->get(self::SESSION_KEY);
         }

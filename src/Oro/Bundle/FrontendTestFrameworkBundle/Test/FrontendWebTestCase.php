@@ -74,4 +74,12 @@ abstract class FrontendWebTestCase extends WebTestCase
         $managerStub = new WebsiteManagerStub($website, $defaultWebsite);
         $this->client->getContainer()->set('oro_website.manager', $managerStub);
     }
+
+    /**
+     * @return int
+     */
+    protected function getDefaultWebsiteId()
+    {
+        return $this->storedWebsiteManager->getDefaultWebsite()->getId();
+    }
 }
