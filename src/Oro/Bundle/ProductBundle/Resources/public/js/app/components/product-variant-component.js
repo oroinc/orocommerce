@@ -8,7 +8,7 @@ define(function(require) {
     var $ = require('jquery');
 
     ProductVariantComponent = BaseComponent.extend({
-        requiredSiblingComponents: {
+        relatedSiblingComponents: {
             // grid is required to update variants columns
             productVariantsGridComponent: 'product-product-variants-edit'
         },
