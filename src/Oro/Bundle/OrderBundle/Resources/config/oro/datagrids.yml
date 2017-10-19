@@ -747,3 +747,28 @@ datagrids:
                         - payment_transaction.entityIdentifier = :order_id
             bind_parameters:
                 - order_id
+
+    order-products-previously-purchased-grid:
+        extends: frontend-product-search-grid
+        acl_resource: oro_order_frontend_view
+        source:
+            query:
+                select:
+                    - datetime.ordered_at_by_CUSTOMER_ID as recency
+                where:
+                    and:
+                        - datetime.ordered_at_by_CUSTOMER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+        columns:
+            recency:
+                label: oro.order.recency.label
+                frontend_type: datetime
+        sorters:
+            toolbar_sorting: true
+            disable_default_sorting: false
+            disable_not_selected_option: true
+            columns:
+                recency:
+                    type: datetime
+                    data_name: ordered_at_by_CUSTOMER_ID
+            default:
+                recency: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC

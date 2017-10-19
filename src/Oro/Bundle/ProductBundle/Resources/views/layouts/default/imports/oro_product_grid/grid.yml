@@ -49,11 +49,6 @@ layout:
 
         - '@setOption':
             id: product_datagrid
-            optionName: grid_name
-            optionValue: frontend-product-search-grid
-
-        - '@setOption':
-            id: product_datagrid
             optionName: grid_render_parameters.toolbarOptions.addResetAction
             optionValue: false
 
@@ -66,21 +61,6 @@ layout:
             id: product_datagrid
             optionName: grid_render_parameters.toolbarOptions.addColumnManager
             optionValue: false
-
-        - '@setOption':
-            id: product_datagrid
-            optionName: current_row_view
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
-
-        - '@setOption':
-            id: product_datagrid_row_product_sticker_new
-            optionName: visible
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()!="no-image-view"'
-
-        - '@setOption':
-            id: product_datagrid_row_product_sticker_new_text
-            optionName: visible
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()=="no-image-view"'
 
         - '@move':
             id: product_datagrid_cell_sku
@@ -106,5 +86,3 @@ layout:
             id: product_datagrid_toolbar_display_options
             parentId: product_datagrid_toolbar_rightside_container
             blockType: product_datagrid_options
-            options:
-                current_row_view: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
