@@ -92,8 +92,12 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCa
 
     public function testBuildFormWithNonEmptyFallbackProperties()
     {
-        $minQuantityToOrder = 5;
-        $maxQuantityToOrder = 11;
+        $minQuantityToOrder = new EntityFieldFallbackValue();
+        $minQuantityToOrder->setScalarValue(5);
+
+        $maxQuantityToOrder = new EntityFieldFallbackValue();
+        $maxQuantityToOrder->setScalarValue(11);
+
         $this->category
             ->setMinimumQuantityToOrder($minQuantityToOrder)
             ->setMaximumQuantityToOrder($maxQuantityToOrder);

@@ -45,11 +45,11 @@ abstract class AbstractFallbackCategoryTypeExtension extends AbstractTypeExtensi
     }
 
     /**
-     * @param Category $category
-     * @param string   $fallbackProperty
-     *
      * Use fallback object in case of the value of property equals to null.
      * (For specific properties that marked as property that have fallback value.)
+     *
+     * @param Category $category
+     * @param string   $fallbackProperty
      */
     private function processFallbackProperty(Category $category, $fallbackProperty)
     {

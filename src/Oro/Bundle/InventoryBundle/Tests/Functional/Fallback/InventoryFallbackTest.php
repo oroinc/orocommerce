@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Fallback;
 
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,6 +16,9 @@ abstract class InventoryFallbackTest extends WebTestCase
     const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Highlight Low Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());

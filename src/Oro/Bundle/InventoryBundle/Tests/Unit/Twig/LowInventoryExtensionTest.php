@@ -19,7 +19,7 @@ class LowInventoryExtensionTest extends \PHPUnit_Framework_TestCase
     protected $lowInventoryExtension;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {

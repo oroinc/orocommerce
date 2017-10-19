@@ -35,7 +35,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
     protected $lowInventoryProvider;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -89,7 +89,6 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
                 ->method('getFallbackValue')
                 ->with($product, LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION)
                 ->willReturn($lowInventoryThreshold);
-
 
             $this->doctrineHelper
                 ->expects($this->once())

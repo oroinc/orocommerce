@@ -2,34 +2,36 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+
 trait InventoryFallbackTrait
 {
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $minimumQuantityToOrder;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $maximumQuantityToOrder;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue  */
     protected $highlightLowInventory;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue  */
     protected $backOrder;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $decrementQuantity;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $inventoryThreshold;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $lowInventoryThreshold;
 
-    /** @var   */
+    /** @var EntityFieldFallbackValue */
     protected $manageInventory;
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getMinimumQuantityToOrder()
     {
@@ -37,10 +39,11 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param mixed $minimumQuantityToOrder
+     * @param EntityFieldFallbackValue $minimumQuantityToOrder
+     *
      * @return $this
      */
-    public function setMinimumQuantityToOrder($minimumQuantityToOrder)
+    public function setMinimumQuantityToOrder(EntityFieldFallbackValue $minimumQuantityToOrder)
     {
         $this->minimumQuantityToOrder = $minimumQuantityToOrder;
 
@@ -48,7 +51,7 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getMaximumQuantityToOrder()
     {
@@ -56,10 +59,11 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param mixed $maximumQuantityToOrder
+     * @param EntityFieldFallbackValue $maximumQuantityToOrder
+     *
      * @return $this
      */
-    public function setMaximumQuantityToOrder($maximumQuantityToOrder)
+    public function setMaximumQuantityToOrder(EntityFieldFallbackValue $maximumQuantityToOrder)
     {
         $this->maximumQuantityToOrder = $maximumQuantityToOrder;
 
@@ -67,15 +71,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $highlightLowInventory
+     * @param EntityFieldFallbackValue $highlightLowInventory
      */
-    public function setHighlightLowInventory($highlightLowInventory)
+    public function setHighlightLowInventory(EntityFieldFallbackValue $highlightLowInventory)
     {
         $this->highlightLowInventory = $highlightLowInventory;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getHighlightLowInventory()
     {
@@ -83,15 +87,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $backOrder
+     * @param EntityFieldFallbackValue $backOrder
      */
-    public function setBackOrder($backOrder)
+    public function setBackOrder(EntityFieldFallbackValue $backOrder)
     {
         $this->backOrder = $backOrder;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getBackOrder()
     {
@@ -99,15 +103,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $decrementQuantity
+     * @param EntityFieldFallbackValue $decrementQuantity
      */
-    public function setDecrementQuantity($decrementQuantity)
+    public function setDecrementQuantity(EntityFieldFallbackValue $decrementQuantity)
     {
         $this->decrementQuantity = $decrementQuantity;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getDecrementQuantity()
     {
@@ -115,15 +119,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $inventoryThreshold
+     * @param EntityFieldFallbackValue $inventoryThreshold
      */
-    public function setInventoryThreshold($inventoryThreshold)
+    public function setInventoryThreshold(EntityFieldFallbackValue $inventoryThreshold)
     {
         $this->inventoryThreshold = $inventoryThreshold;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getInventoryThreshold()
     {
@@ -131,15 +135,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $lowInventoryThreshold
+     * @param EntityFieldFallbackValue $lowInventoryThreshold
      */
-    public function setLowInventoryThreshold($lowInventoryThreshold)
+    public function setLowInventoryThreshold(EntityFieldFallbackValue $lowInventoryThreshold)
     {
         $this->lowInventoryThreshold = $lowInventoryThreshold;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getLowInventoryThreshold()
     {
@@ -147,15 +151,15 @@ trait InventoryFallbackTrait
     }
 
     /**
-     * @param $manageInventory
+     * @param EntityFieldFallbackValue $manageInventory
      */
-    public function setManageInventory($manageInventory)
+    public function setManageInventory(EntityFieldFallbackValue $manageInventory)
     {
         $this->manageInventory = $manageInventory;
     }
 
     /**
-     * @return mixed
+     * @return EntityFieldFallbackValue
      */
     public function getManageInventory()
     {

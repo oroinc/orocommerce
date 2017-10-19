@@ -155,11 +155,12 @@
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/jquery-widget-component',
             'data-page-component-options': {
-                 widgetModule: 'orofrontend/default/js/widgets/rows-collapse-widget',
-                 storageKey: id,
-                 keepState: keepState,
-                 visibleRows: visibleLineItemsCount,
-                 rowsCount: lineItemsWithTotals|length
+                widgetModule: 'orofrontend/default/js/widgets/rows-collapse-widget',
+                storageKey: id,
+                keepState: keepState,
+                visibleRows: visibleLineItemsCount,
+                rowsCount: lineItemsWithTotals|length,
+                rowSelector: 'tbody'
              }|json_encode,
             '~class': " checkout-order-summary__collapse collapse-view expanded"
         }) %}

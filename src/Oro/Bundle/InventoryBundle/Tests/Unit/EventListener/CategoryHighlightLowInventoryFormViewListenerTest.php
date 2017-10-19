@@ -10,6 +10,9 @@ class CategoryHighlightLowInventoryFormViewListenerTest extends AbstractFallback
     /** @var CategoryHighlightLowInventoryFormViewListener */
     protected $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -21,6 +24,9 @@ class CategoryHighlightLowInventoryFormViewListenerTest extends AbstractFallback
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->listener);
