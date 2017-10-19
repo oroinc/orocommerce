@@ -1169,15 +1169,15 @@ Replace the inventoryThreshold entity fallback value for a specific product reco
 
 #### get_subresource
 
-TBD
+Retrieve the fallback value for lowInventoryThreshold for a specific product.
 
 #### get_relationship
 
-TBD
+Retrieve an ID of the lowInventoryThreshold for a specific product.
 
 #### update_relationship
 
-TBD
+Replace the fallback value for lowInventoryThreshold for a specific product.
 
 ### inventory_status
 
@@ -1211,15 +1211,15 @@ Replace the manageInventory entity fallback value for a specific product record.
 
 #### get_subresource
 
-TBD
+Retrieve the fallback value for highlightLowInventory flag for a specific product.
 
 #### get_relationship
 
-TBD
+Retrieve an ID of the highlightLowInventory flag for a specific product.
 
 #### update_relationship
 
-TBD
+Replace the fallback value for highlightLowInventory for a specific product.
 
 ### maximumQuantityToOrder
 
