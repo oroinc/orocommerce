@@ -728,16 +728,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             stripos($productItem->getText(), $elementName),
             sprintf('text or element "%s" for product with SKU "%s" is not present or not visible', $elementName, $SKU)
         );
-
     }
 
     /**
      * Assert that embedded block does not contain specified product with specified element.
      * Example: Then should not see "Low Inventory" for "PSKU1" product in the "New Arrivals Block"
      *
-     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product in the "(?P<blockName>[^"]+)"$/
+     * @Then /^(?:|I )should not see "(?P<element>[^"]*)" for "(?P<SKU>[^"]*)" product in the "(?P<blockName>[^"]+)"$/
      */
-    public function iShouldNotSeeElementForTheFollowingProductsInEmbeddedBlock($elementName, $SKU, $blockName)
+    public function iShouldNotSeeElementForTheFollowingProductsInEmbeddedBlock($element, $SKU, $blockName)
     {
         $block = $this->createElement($blockName);
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
@@ -745,14 +744,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $productItem = $this->findElementContains('ProductItem', $SKU, $block);
         self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
 
-        $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
-            || stripos($productItem->getText(), $elementName);
+        $textAndElementPresentedOnPage = $this->isElementVisible($element, $productItem)
+            || stripos($productItem->getText(), $element);
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
-            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $elementName, $SKU)
+            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $element, $SKU)
         );
-
     }
 
     /**
@@ -769,7 +767,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         self::assertNotFalse(
             stripos($productItem->getText(), $elementName),
-            sprintf('text or element "%s" for line item with SKU "%s" is not present or not visible', $elementName, $SKU)
+            sprintf(
+                'text or element "%s" for line item with SKU "%s" is not present or not visible',
+                $elementName,
+                $SKU
+            )
         );
     }
 
