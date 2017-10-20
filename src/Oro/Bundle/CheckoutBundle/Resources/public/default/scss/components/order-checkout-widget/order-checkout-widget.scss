@@ -95,10 +95,14 @@
 
 @include breakpoint('print') {
     .order-checkout-widget {
-        page-break-after: always;
+        page-break-inside: avoid;
 
         &__quote {
             display: none !important;
+        }
+
+        &__container-wrapper {
+            margin-bottom: 0;
         }
     }
 }
