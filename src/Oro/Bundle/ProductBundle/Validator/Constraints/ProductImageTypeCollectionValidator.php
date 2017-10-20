@@ -9,13 +9,12 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
-class ProductImageCollectionValidator extends ConstraintValidator
+class ProductImageTypeCollectionValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_image_collection_validator';
+    const ALIAS = 'oro_product_image_type_collection_validator';
 
     /**
      * @var ImageTypeProvider $imageTypeProvider
@@ -33,45 +32,42 @@ class ProductImageCollectionValidator extends ConstraintValidator
     protected $context;
 
     /**
-     * @var ProductImageHelper $productImageHelper
-     */
-    protected $productImageHelper;
-
-    /**
      * @param ImageTypeProvider $imageTypeProvider
      * @param TranslatorInterface $translator
-     * @param ProductImageHelper $productImageHelper
      */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
-        TranslatorInterface $translator,
-        ProductImageHelper $productImageHelper
+        TranslatorInterface $translator
     ) {
         $this->imageTypeProvider = $imageTypeProvider;
         $this->translator = $translator;
-        $this->productImageHelper = $productImageHelper;
     }
 
     /**
-     * @param ProductImage[]|Collection $value
+     * @param ProductImageType[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
-     *
-     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
-        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
+        if ($value->isEmpty()) {
+            return;
+        }
 
-        foreach ($maxNumberByType as $name => $maxTypeValues) {
-            if (array_key_exists($name, $imagesByTypeCounter) &&
-                !is_null($maxTypeValues['max']) &&
-                $imagesByTypeCounter[$name] > $maxTypeValues['max']
-            ) {
+        $typeNames = [];
+        /** @var \Oro\Bundle\ProductBundle\Entity\ProductImageType $imageType */
+        foreach ($value as $imageType) {
+            $typeNames[] = $imageType->getType();
+        }
+
+        /** @var ThemeImageType[] $availableTypes */
+        $availableTypes = $this->imageTypeProvider->getImageTypes();
+        foreach (array_count_values($typeNames) as $typeName => $count) {
+            if ($count > 1) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $this->translator->trans($maxTypeValues['label']),
-                        '%maxNumber%' => $maxTypeValues['max']
+                        '%type%' => $this->translator->trans(
+                            $availableTypes[$typeName]->getLabel()
+                        ),
                     ])
                     ->addViolation();
             }

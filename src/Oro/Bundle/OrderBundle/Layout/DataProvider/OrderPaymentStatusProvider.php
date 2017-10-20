@@ -3,19 +3,19 @@
 namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 
 class OrderPaymentStatusProvider
 {
     /**
-     * @var PaymentStatusProvider
+     * @var PaymentStatusProviderInterface
      */
     protected $paymentStatusProvider;
 
     /**
-     * @param PaymentStatusProvider $paymentStatusProvider
+     * @param PaymentStatusProviderInterface $paymentStatusProvider
      */
-    public function __construct(PaymentStatusProvider $paymentStatusProvider)
+    public function __construct(PaymentStatusProviderInterface $paymentStatusProvider)
     {
         $this->paymentStatusProvider = $paymentStatusProvider;
     }
