@@ -14,6 +14,9 @@
     * no longer implements `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface`;
     * implements `Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface`.
 
+#### InventoryBundle
+* Added Low Inventory Highlights functionality.[Documentation](./src/Oro/Bundle/InventoryBundle/Resources/doc/low_inventory_highlights.md)
+
 #### ProductBundle
 * Updated website search configuration file `Oro/Bundle/ProductBundle/Resources/config/oro/website_search.yml`:
     * removed configuration for next fields:
