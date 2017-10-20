@@ -33,7 +33,7 @@ Feature: Previously purchased products visibility
     And click "More actions"
     And click "Manage Visibility"
     And I select "Hidden" from "Visibility to All"
-    And I fill "Product Form" with:
+    And I fill "Visibility Product Form" with:
       | Visibility To Customer First Group | Current Product |
       | Visibility To Customers First      | Current Product |
     And I save and close form
@@ -42,6 +42,8 @@ Feature: Previously purchased products visibility
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
+  # TODO: unskip after BB-12556
+  @skip
   Scenario: Product visibility: Visibility to All: Category
     Given I proceed as the Admin
     And go to Products / Products
@@ -54,7 +56,7 @@ Feature: Previously purchased products visibility
     And click "Lighting Products"
     And click "Visibility to All"
     And I select "Hidden" from "Visibility to All"
-    And I save form
+    And I save and close form
     And I proceed as the Customer
     And click "Account"
     And click "Previously Purchased"
@@ -89,7 +91,7 @@ Feature: Previously purchased products visibility
     And click "More actions"
     And click "Manage Visibility"
     And I select "Visible" from "Visibility to All"
-    And I fill "Product Form" with:
+    And I fill "Visibility Product Form" with:
       | Visibility To Customer First Group | Hidden          |
       | Visibility To Customers First      | Customer Group  |
     And I save and close form
@@ -104,7 +106,7 @@ Feature: Previously purchased products visibility
     And click "View" on row "PSKU1" in grid
     And click "More actions"
     And click "Manage Visibility"
-    And I fill "Product Form" with:
+    And I fill "Visibility Product Form" with:
       | Visibility To Customer First Group | Visible |
       | Visibility To Customers First      | Hidden  |
     And I save and close form
