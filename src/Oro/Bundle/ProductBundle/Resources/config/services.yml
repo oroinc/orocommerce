@@ -599,15 +599,8 @@ services:
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_config.manager'
-            - '@oro_product.product_form_availability_provider.cache'
         tags:
             - { name: layout.data_provider, alias: oro_product_form_availability }
-
-    oro_product.product_form_availability_provider.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [setNamespace, ['oro_product_availability_provider']]
 
     oro_product.layout.data_provider.product_variant:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider'
