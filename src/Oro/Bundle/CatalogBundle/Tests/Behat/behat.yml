@@ -3,17 +3,17 @@ oro_behat_extension:
     Printers:
       selector:
         type: xpath
-        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Products categories")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Printers")]'
+        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "All Products")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Printers")]'
 
     Lighting Products:
       selector:
         type: xpath
-        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Products categories")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Lighting Products")]'
+        locator: '//li[contains(@class, "jstree-node")]/a[contains(., "All Products")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Lighting Products")]'
 
-    Products categories:
+    All Products:
       selector:
         type: xpath
-        locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "Products categories")]'
+        locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "All Products")]'
 
     Search:
       selector:
