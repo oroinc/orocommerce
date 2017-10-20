@@ -19,11 +19,11 @@ class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implemen
         $params = [];
         $channel = $settings->getChannel();
 
-        $params[PayPalCreditCardConfig::PAYMENT_METHOD_IDENTIFIER_KEY] = $this->getPaymentMethodIdentifier($channel);
+        $params[PayPalCreditCardConfig::FIELD_PAYMENT_METHOD_IDENTIFIER] = $this->getPaymentMethodIdentifier($channel);
 
-        $params[PayPalCreditCardConfig::ADMIN_LABEL_KEY] = $channel->getName();
-        $params[PayPalCreditCardConfig::LABEL_KEY] = $this->getLocalizedValue($settings->getCreditCardLabels());
-        $params[PayPalCreditCardConfig::SHORT_LABEL_KEY] =
+        $params[PayPalCreditCardConfig::FIELD_ADMIN_LABEL] = $channel->getName();
+        $params[PayPalCreditCardConfig::FIELD_LABEL] = $this->getLocalizedValue($settings->getCreditCardLabels());
+        $params[PayPalCreditCardConfig::FIELD_SHORT_LABEL] =
             $this->getLocalizedValue($settings->getCreditCardShortLabels());
         $params[PayPalCreditCardConfig::ALLOWED_CREDIT_CARD_TYPES_KEY] = $settings->getAllowedCreditCardTypes();
 

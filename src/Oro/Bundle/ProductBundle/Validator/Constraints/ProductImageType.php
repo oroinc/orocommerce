@@ -9,7 +9,12 @@ class ProductImageType extends Constraint
     /**
      * @var string
      */
-    public $message = 'oro.product.product_image_type.invalid_type';
+    public $invalid_type_message = 'oro.product.product_image_type.invalid_type';
+
+    /**
+     * @var string
+     */
+    public $already_exists_message = 'oro.product.product_image_type.already_exists';
 
     /**
      * {@inheritDoc}
