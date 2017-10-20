@@ -44,7 +44,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetMatrixCollection()
     {
         /** @var Product $product */
-        $product = $this->getEntity(Product::class);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
         $productUnit = new ProductUnit();
         $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
@@ -73,9 +73,9 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             ->with('color')
             ->willReturn(['red' => 'Red', 'green' => 'Green']);
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
-        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
+        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
+        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
 
         $simpleProductSmallRed->addUnitPrecision($productUnitPrecision);
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecision);
