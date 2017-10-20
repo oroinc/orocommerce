@@ -25,6 +25,7 @@ system_configuration:
             data_type: boolean
             type: choice
             options:
+                tooltip: oro.inventory.system_configuration.fields.highlight_low_inventory.tooltip
                 label: oro.inventory.system_configuration.fields.highlight_low_inventory.label
                 choice_translation_domain: messages
                 choices:
@@ -63,6 +64,7 @@ system_configuration:
             data_type: decimal
             type: number
             options:
+                tooltip: oro.inventory.system_configuration.fields.low_inventory_threshold.tooltip
                 label: oro.inventory.system_configuration.fields.low_inventory_threshold.label
                 required: true
                 scale: 1

@@ -73,8 +73,12 @@ oro:
             fields:
                 manage_inventory.label: Managed Inventory
                 inventory_threshold.label: Inventory Threshold
-                highlight_low_inventory.label: Highlight Low Inventory
-                low_inventory_threshold.label: Low Inventory Threshold
+                highlight_low_inventory:
+                    label: Highlight Low Inventory
+                    tooltip: Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
+                low_inventory_threshold:
+                    label: Low Inventory Threshold
+                    tooltip: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
                 backorders.label: Backorders
                 decrement_inventory:
                     label: Decrement Inventory
@@ -117,11 +121,11 @@ oro:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not
         highlight_low_inventory:
-            description:  Option which defines if low inventory for products is highlighted or not
+            description:  Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
         inventory_threshold:
             description: The value that defines the limit of the inventory after which this product can not be ordered
         low_inventory_threshold:
-            description: The value that defines the limit of the low inventory after which warrning message is shown to inform about it
+            description: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
         decrement_quantity:
             description: Option that defines the strategy used for decrementing inventory for ordered products
         backOrder:
@@ -130,3 +134,9 @@ oro:
             description: The maximum quantity that the user must order for this product
         minimum_quantity_to_order:
             description: The minimum quantity that the user must order for this product
+    catalog:
+        category:
+            highlight_low_inventory:
+                description:  Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
+            low_inventory_threshold:
+                description: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
