@@ -13,6 +13,7 @@ class Configuration implements ConfigurationInterface
     const DEFAULT_GUEST_SHOPPING_LIST_OWNER = 'default_guest_shopping_list_owner';
     const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
     const MATRIX_FORM_ON_SHOPPING_LIST_INLINE = 'inline';
+    const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
 
     /**
      * {@inheritDoc}

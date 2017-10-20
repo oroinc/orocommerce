@@ -58,6 +58,7 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_ON_PRODUCT_VIEW_POPUP = 'popup';
     const MATRIX_FORM_IN_PRODUCT_LISTING = 'matrix_form_in_product_listing';
     const MATRIX_FORM_IN_PRODUCT_LISTING_VIEW_DETAILS = 'view_details';
+    const MATRIX_FORM_IN_PRODUCT_LISTING_ADD_TO_LIST = 'add_to_list';
 
     /**
      * {@inheritDoc}
