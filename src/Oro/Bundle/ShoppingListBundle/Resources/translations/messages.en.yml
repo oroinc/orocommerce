@@ -115,6 +115,7 @@ oro:
                 guest_shopping_list_owner.title: 'Guest Shopping List Owner Settings'
                 shopping_list.title: 'Shopping List'
                 shopping_list_limit.title: 'Shopping List Limit'
+                configurable_product_matrix_form_on_shopping_list.title: 'Configurable Products'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
@@ -123,6 +124,10 @@ oro:
                 availability_for_guests:
                     label: 'Enable guest shopping list'
                     tooltip: 'Allows guests to create a shopping list'
+                matrix_form_on_shopping_list:
+                    display_options.label: 'Display Options'
+                    group.label: 'Group Single Products'
+                    inline.label: 'Inline Matrix Form'
 
         privilege:
             category.shopping.label: 'Shopping'
