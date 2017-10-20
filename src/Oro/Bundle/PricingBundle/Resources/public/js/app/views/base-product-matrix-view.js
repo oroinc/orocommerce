@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    var ProductPricesMatrixView;
+    var BaseProductMatrixView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var NumberFormatter = require('orolocale/js/formatter/number');
@@ -10,7 +10,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    ProductPricesMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
+    BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
 
         elements: {
@@ -43,7 +43,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
+            BaseProductMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
             if (_.isDesktop()) {
@@ -64,7 +64,7 @@ define(function(require) {
             delete this.minValue;
 
             this.disposeElements();
-            ProductPricesMatrixView.__super__.dispose.apply(this, arguments);
+            BaseProductMatrixView.__super__.dispose.apply(this, arguments);
         },
 
         /**
@@ -208,5 +208,5 @@ define(function(require) {
             }, this);
         }
     }));
-    return ProductPricesMatrixView;
+    return BaseProductMatrixView;
 });
