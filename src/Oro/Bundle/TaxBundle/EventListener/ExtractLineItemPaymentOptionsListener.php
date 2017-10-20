@@ -14,6 +14,9 @@ class ExtractLineItemPaymentOptionsListener
     /** @var TaxManager */
     protected $taxManager;
 
+    /** @var TranslatorInterface */
+    protected $translator;
+
     /**
      * @param TranslatorInterface $translator
      * @param TaxManager $taxManager

@@ -7,10 +7,12 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -57,22 +59,29 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $insertExecutor;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     * @param ProductIndexScheduler $indexScheduler
+     * @var ProductReindexManager
+     */
+    protected $productReindexManager;
+
+    /**
+     * @param ManagerRegistry               $registry
+     * @param ScopeManager                  $scopeManager
+     * @param ProductIndexScheduler         $indexScheduler
      * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ScopeManager $scopeManager
+     * @param ProductReindexManager         $productReindexManager
      */
     public function __construct(
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
         ProductIndexScheduler $indexScheduler,
-        InsertFromSelectQueryExecutor $insertExecutor
+        InsertFromSelectQueryExecutor $insertExecutor,
+        ProductReindexManager $productReindexManager
     ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->indexScheduler = $indexScheduler;
         $this->insertExecutor = $insertExecutor;
+        $this->productReindexManager = $productReindexManager;
     }
 
     /**
@@ -192,8 +201,8 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function triggerProductReindexation(Product $product, Website $website = null)
     {
-        $this->indexScheduler->triggerReindexationRequestEvent(
-            [$product->getId()],
+        $this->productReindexManager->reindexProduct(
+            $product,
             $website ? $website->getId() : null,
             false
         );

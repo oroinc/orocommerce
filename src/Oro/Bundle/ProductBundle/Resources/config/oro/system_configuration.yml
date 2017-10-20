@@ -615,15 +615,3 @@ system_configuration:
                                     configurable_products_matrix_form:
                                         children:
                                             - oro_product.matrix_form_on_product_view
-
-        user_configuration:
-            commerce:
-                children:
-                    product:
-                        children:
-                            configurable_products:
-                                priority: 50
-                                children:
-                                    configurable_products_matrix_form:
-                                        children:
-                                            - oro_product.matrix_form_on_product_view

@@ -173,7 +173,7 @@ class WebsiteSearchProductIndexerListener
     /**
      * @var WebsiteContextManager
      */
-    private $websiteContextManger;
+    private $websiteContextManager;
 
     /**
      * @var WebsiteLocalizationProvider
@@ -189,7 +189,7 @@ class WebsiteSearchProductIndexerListener
         WebsiteContextManager $websiteContextManager
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->websiteContextManger = $websiteContextManager;
+        $this->websiteContextManager = $websiteContextManager;
     }
 
     /**
@@ -198,7 +198,7 @@ class WebsiteSearchProductIndexerListener
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         // get current website ID
-        $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
             return;

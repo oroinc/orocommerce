@@ -80,13 +80,12 @@ Feature: Check configurable product has attributes in the shopping list
     And I should not see text matching "size_attribute"
 
   Scenario: Pre-fill Matrix Order Form
+    Given I signed in as AmandaRCole@example.org on the store frontend
     Given I open product with sku "shirt_101" on the store frontend
-    And I should see "Order with Matrix Grid"
-    And I click "Order with Matrix Grid"
+    Then I should see an "Matrix Grid Form" element
     And I fill "Shirt_101 Matrix Grid Order Form" with:
       | Green Yes Quantity | 100 |
     And I click "Add to Shopping List" in matrix order window
-    And I should see "Product has been added to" flash message
-    When I click "Order with Matrix Grid"
-    Then "Shirt_101 Matrix Grid Order Form" must contains values:
+    Then I should see 'Shopping list "Shopping list" was updated successfully' flash message
+    And "Shirt_101 Matrix Grid Order Form" must contains values:
       | Green Yes Quantity | 100 |

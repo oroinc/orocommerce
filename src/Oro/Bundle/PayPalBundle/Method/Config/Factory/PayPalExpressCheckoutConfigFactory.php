@@ -16,13 +16,13 @@ class PayPalExpressCheckoutConfigFactory extends AbstractPayPalConfigFactory imp
         $params = [];
         $channel = $settings->getChannel();
 
-        $params[PayPalExpressCheckoutConfig::PAYMENT_METHOD_IDENTIFIER_KEY] =
+        $params[PayPalExpressCheckoutConfig::FIELD_PAYMENT_METHOD_IDENTIFIER] =
             $this->getPaymentMethodIdentifier($channel);
 
-        $params[PayPalExpressCheckoutConfig::ADMIN_LABEL_KEY] = $settings->getExpressCheckoutName();
-        $params[PayPalExpressCheckoutConfig::LABEL_KEY] =
+        $params[PayPalExpressCheckoutConfig::FIELD_ADMIN_LABEL] = $settings->getExpressCheckoutName();
+        $params[PayPalExpressCheckoutConfig::FIELD_LABEL] =
             $this->getLocalizedValue($settings->getExpressCheckoutLabels());
-        $params[PayPalExpressCheckoutConfig::SHORT_LABEL_KEY] =
+        $params[PayPalExpressCheckoutConfig::FIELD_SHORT_LABEL] =
             $this->getLocalizedValue($settings->getExpressCheckoutShortLabels());
 
         $params[PayPalExpressCheckoutConfig::CREDENTIALS_KEY] = $this->getCredentials($settings);
