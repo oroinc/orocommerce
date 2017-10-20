@@ -37,9 +37,8 @@ class SubcategoryProviderTest extends \PHPUnit_Framework_TestCase
         $currentCategory = new Category();
         $user = new User();
 
-        $category1 = $this->getCategory(); // without parent category
-        $category2 = $this->getCategory($currentCategory); // without products
-        $category3 = $this->getCategory($currentCategory, [new Product()]);
+        $category1 = $this->getCategory($currentCategory); // without products
+        $category2 = $this->getCategory($currentCategory, [new Product()]);
 
         $this->tokenAccessor->expects($this->once())
             ->method('getUser')
@@ -48,12 +47,12 @@ class SubcategoryProviderTest extends \PHPUnit_Framework_TestCase
         $this->categoryTreeProvider->expects($this->once())
             ->method('getCategories')
             ->with($user, $currentCategory, false)
-            ->willReturn([$category1, $category2, $category3]);
+            ->willReturn([$category1, $category2]);
 
         $this->assertEquals(
             [
-                $category2,
-                $category3
+                $category1,
+                $category2
             ],
             $this->provider->getAvailableSubcategories($currentCategory)
         );

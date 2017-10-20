@@ -2,31 +2,30 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
+use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
-use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
-use Oro\Bundle\DataGridBundle\Datagrid\Manager;
+use Oro\Component\DependencyInjection\ServiceLink;
 
 class CategoryCountsExtension extends AbstractExtension
 {
-    /** @var Manager */
-    protected $datagridManager;
+    const SKIP_PARAM = 'skipCategoryCountsExtension';
 
-    /** @var RequestParameterBagFactory */
-    protected $parametersFactory;
+    /** @var ServiceLink */
+    protected $datagridManagerLink;
 
-    /** @var CategoryRepository */
-    protected $categoryRepository;
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var ProductRepository */
     protected $productSearchRepository;
@@ -35,20 +34,17 @@ class CategoryCountsExtension extends AbstractExtension
     protected $applicableGrids = [];
 
     /**
-     * @param Manager $datagridManager
-     * @param RequestParameterBagFactory $parametersFactory
-     * @param CategoryRepository $categoryRepository
+     * @param ServiceLink $datagridManagerLink
+     * @param ManagerRegistry $registry
      * @param ProductRepository $productSearchRepository
      */
     public function __construct(
-        Manager $datagridManager,
-        RequestParameterBagFactory $parametersFactory,
-        CategoryRepository $categoryRepository,
+        ServiceLink $datagridManagerLink,
+        ManagerRegistry $registry,
         ProductRepository $productSearchRepository
     ) {
-        $this->datagridManager = $datagridManager;
-        $this->parametersFactory = $parametersFactory;
-        $this->categoryRepository = $categoryRepository;
+        $this->datagridManagerLink = $datagridManagerLink;
+        $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
     }
 
@@ -66,6 +62,7 @@ class CategoryCountsExtension extends AbstractExtension
     public function isApplicable(DatagridConfiguration $config)
     {
         return
+            !$this->parameters->get(self::SKIP_PARAM) &&
             SearchDatasource::TYPE === $config->getDatasourceType() &&
             in_array($config->getName(), $this->applicableGrids, true);
     }
@@ -96,44 +93,45 @@ class CategoryCountsExtension extends AbstractExtension
      */
     protected function getCounts(DatagridConfiguration $config)
     {
-        $category = $this->getCategory($config);
+        if (!filter_var($this->parameters->get('includeSubcategories'), FILTER_VALIDATE_BOOLEAN)) {
+            return [];
+        }
+
+        $category = $this->getCategory();
         if (!$category) {
             return [];
         }
 
         // build datagrid and extract search query from it
-        $datagrid = $this->getDatagrid($config->getName());
+        $datagrid = $this->getGrid($config);
 
         /** @var SearchDatasource $datasource */
         $datasource = $datagrid->acceptDatasource()->getDatasource();
-        $searchQuery = $datasource->getSearchQuery();
 
         // calculate counts of products per category
-        return $this->productSearchRepository->getCategoryCountsByCategory($category, $searchQuery);
+        return $this->productSearchRepository->getCategoryCountsByCategory($category, $datasource->getSearchQuery());
+    }
+
+    /**
+     * @return null|Category
+     */
+    protected function getCategory()
+    {
+        $categoryId = filter_var($this->parameters->get('categoryId'), FILTER_VALIDATE_INT);
+
+        return $categoryId && $categoryId > 0 ? $this->getCategoryRepository()->find($categoryId) : null;
     }
 
     /**
      * @param DatagridConfiguration $config
-     * @return null|Category
-     */
-    protected function getCategory(DatagridConfiguration $config)
-    {
-        $categoryId = $config->offsetGetByPath(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH);
-        if (!$categoryId) {
-            return null;
-        }
-
-        return $this->categoryRepository->find($categoryId);
-    }
-
-    /**
-     * @param string $datagridName
+     *
      * @return DatagridInterface
      */
-    protected function getDatagrid($datagridName)
+    protected function getGrid(DatagridConfiguration $config)
     {
         // get datagrid parameters
-        $datagridParameters = $this->parametersFactory->createParameters($datagridName);
+        $datagridParameters = clone $this->parameters;
+        $datagridParameters->set(self::SKIP_PARAM, true);
 
         $categoryFilterName = SubcategoryFilter::FILTER_TYPE_NAME;
 
@@ -149,6 +147,19 @@ class CategoryCountsExtension extends AbstractExtension
             $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedFilters);
         }
 
-        return $this->datagridManager->getDatagrid($datagridName, $datagridParameters);
+        /** @var Manager $datagridManager */
+        $datagridManager = $this->datagridManagerLink->getService();
+
+        return $datagridManager->getDatagrid($config->getName(), $datagridParameters);
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getCategoryRepository()
+    {
+        return $this->registry
+            ->getManagerForClass(Category::class)
+            ->getRepository(Category::class);
     }
 }

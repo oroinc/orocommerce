@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -14,7 +15,6 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ImapBundle\Connector\Search\SearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -25,6 +25,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+
+    const CATEGORY_ID = 42;
 
     /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestProductHandler;
@@ -53,10 +55,11 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $this->repository = $this->createMock(CategoryRepository::class);
 
-        $this->category = $this->getEntity(Category::class, ['id' => 42, 'materializedPath' => '1_42']);
+        $this->category = $this->getEntity(Category::class, ['id' => self::CATEGORY_ID, 'materializedPath' => '1_42']);
 
         $this->repository->expects($this->any())
             ->method('find')
+            ->with(self::CATEGORY_ID)
             ->willReturn($this->category);
 
         $this->categoryProvider = $this->createMock(SubcategoryProvider::class);
@@ -91,13 +94,28 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method($this->anything());
 
         $this->listener->onPreBuild($event);
+
+        $this->assertEquals([], $parameters->all());
     }
 
-    public function testPreBuildWithCategoryInParameters()
+    /**
+     * @dataProvider preBuildDataProvider
+     *
+     * @param array $parameters
+     * @param int $categoryId
+     * @param bool $includeSubcategories
+     */
+    public function testPreBuildWithCategoryId(array $parameters, $categoryId, $includeSubcategories)
     {
-        $categoryId = 42;
-        $includeSubcategories = true;
-        $parameters = new ParameterBag(['categoryId' => $categoryId, 'includeSubcategories' => $includeSubcategories]);
+        $parameters = new ParameterBag($parameters);
+
+        $this->requestProductHandler->expects($this->any())
+            ->method('getCategoryId')
+            ->willReturn($categoryId);
+
+        $this->requestProductHandler->expects($this->any())
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturn($includeSubcategories);
 
         /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->createMock(PreBuild::class);
@@ -114,14 +132,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->with($this->category)
             ->willReturn([$subcategory1, $subcategory2]);
 
-        $this->config->expects($this->at(0))
-            ->method('offsetSetByPath')
-            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH, $categoryId);
-
-        $this->config->expects($this->at(1))
-            ->method('offsetSetByPath')
-            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH, $includeSubcategories);
-
         $this->config->expects($this->once())
             ->method('offsetGetByPath')
             ->with(Configuration::FILTERS_PATH)
@@ -134,6 +144,20 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
                         'some_filter' => ['defaults']
                     ]
                 ]
+            );
+
+        $this->config->expects($this->at(0))
+            ->method('offsetSetByPath')
+            ->with(
+                SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH,
+                self::CATEGORY_ID
+            );
+
+        $this->config->expects($this->at(1))
+            ->method('offsetSetByPath')
+            ->with(
+                SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH,
+                true
             );
 
         $this->config->expects($this->at(3))
@@ -166,11 +190,41 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->willReturn($this->config);
 
         $this->listener->onPreBuild($event);
+
+        $this->assertEquals(
+            ['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => true],
+            $parameters->all()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function preBuildDataProvider()
+    {
+        return [
+            'incorrect categoryId in parameters' => [
+                'parameters' => [
+                    'categoryId' => -100,
+                    'includeSubcategories' => false,
+                ],
+                'categoryId' => self::CATEGORY_ID,
+                'includeSubcategories' => true
+            ],
+            'categoryId in parameters' => [
+                'parameters' => [
+                    'categoryId' => self::CATEGORY_ID,
+                    'includeSubcategories' => true,
+                ],
+                'categoryId' => false,
+                'includeSubcategories' => false
+            ]
+        ];
     }
 
     public function testPreBuildWithCategoryInRequest()
     {
-        $categoryId = 42;
+        $categoryId = self::CATEGORY_ID;
         $includeSubcategories = false;
         $parameters = new ParameterBag();
 
@@ -189,40 +243,22 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategories);
 
-        $this->config->expects($this->exactly(2))
-            ->method('offsetSetByPath');
-
-        $this->config->expects($this->at(0))
-            ->method('offsetSetByPath')
-            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH, $categoryId);
-
-        $this->config->expects($this->at(1))
-            ->method('offsetSetByPath')
-            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH, $includeSubcategories);
-
         $event->method('getConfig')
             ->willReturn($this->config);
 
         $this->listener->onPreBuild($event);
+
+        $this->assertEquals(
+            ['categoryId' => $categoryId, 'includeSubcategories' => $includeSubcategories],
+            $parameters->all()
+        );
     }
 
     public function testOnBuildAfterWithSingleCategory()
     {
-        $categoryId = 23;
+        $categoryId = self::CATEGORY_ID;
 
         $event = $this->createMock(BuildAfter::class);
-
-        $this->config
-            ->expects($this->at(0))
-            ->method('offsetGetByPath')
-            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH)
-            ->willReturn($categoryId);
-
-        $this->config
-            ->expects($this->at(1))
-            ->method('offsetGetByPath')
-            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
-            ->willReturn(null);
 
         $this->config->expects($this->once())
             ->method('offsetAddToArrayByPath')
@@ -256,39 +292,25 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('addWhere')
             ->with($expr);
 
-        $dataGrid = $this->createMock(DatagridInterface::class);
+        $parameters = new ParameterBag(['categoryId' => $categoryId]);
+
+        $dataGrid = new Datagrid('test', $this->config, $parameters);
+        $dataGrid->setDatasource($datasource);
 
         $event->method('getDatagrid')
             ->willReturn($dataGrid);
-
-        $dataGrid->method('getDatasource')
-            ->willReturn($datasource);
-
-        $dataGrid->method('getConfig')
-            ->willReturn($this->config);
 
         $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
 
         $this->listener->onBuildAfter($event);
+
+        $this->assertEquals(['categoryId' => $categoryId], $parameters->all());
     }
 
     public function testOnBuildAfterWithIncludeSubcategories()
     {
-        $categoryId     = 11;
-        $subcategoryIds = [1, 2, 6, 10];
-
-        $this->config
-            ->expects($this->at(0))
-            ->method('offsetGetByPath')
-            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH)
-            ->willReturn($categoryId);
-
-        $this->config
-            ->expects($this->at(1))
-            ->method('offsetGetByPath')
-            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
-            ->willReturn($subcategoryIds);
+        $categoryId = self::CATEGORY_ID;
 
         $this->config->expects($this->once())
             ->method('offsetAddToArrayByPath')
@@ -299,9 +321,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
                     SluggableUrlGenerator::CONTEXT_DATA => $categoryId
                 ]
             );
-
-        $this->repository->method('getChildrenIds')
-            ->with($this->category)->willReturn($subcategoryIds);
 
         /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->createMock(BuildAfter::class);
@@ -314,16 +333,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->expects($this->never())
             ->method($this->anything());
 
-        $dataGrid = $this->createMock(DatagridInterface::class);
+        $parameters = new ParameterBag(['categoryId' => $categoryId, 'includeSubcategories' => true]);
+
+        $dataGrid = new Datagrid('test', $this->config, $parameters);
+        $dataGrid->setDatasource($datasource);
 
         $event->method('getDatagrid')
             ->willReturn($dataGrid);
-
-        $dataGrid->method('getDatasource')
-            ->willReturn($datasource);
-
-        $dataGrid->method('getConfig')
-            ->willReturn($this->config);
 
         $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);

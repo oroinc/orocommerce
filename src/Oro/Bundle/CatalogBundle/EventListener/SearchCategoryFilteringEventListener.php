@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
@@ -52,12 +53,19 @@ class SearchCategoryFilteringEventListener
      */
     public function onPreBuild(PreBuild $event)
     {
-        $categoryId             = $event->getParameters()->get('categoryId');
-        $isIncludeSubcategories = $event->getParameters()->get('includeSubcategories');
+        $categoryId = $this->requestProductHandler->getCategoryId();
+        $isIncludeSubcategories = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+
+        $parameters = $event->getParameters();
+
         if (!$categoryId) {
-            $categoryId             = $this->requestProductHandler->getCategoryId();
-            $isIncludeSubcategories = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+            $categoryId = $this->getCategoryId($parameters);
+            $isIncludeSubcategories = $this->getIncludeSubcategories($parameters);
+        } else {
+            $parameters->set('categoryId', $categoryId);
+            $parameters->set('includeSubcategories', $isIncludeSubcategories);
         }
+
         if (!$categoryId) {
             return;
         }
@@ -74,12 +82,8 @@ class SearchCategoryFilteringEventListener
      * @param int $categoryId
      * @param bool $includeSubcategories
      */
-    protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId, $includeSubcategories = false)
+    protected function addSubcategoryFilter(DatagridConfiguration $config, $categoryId, $includeSubcategories)
     {
-        if (!$includeSubcategories) {
-            return;
-        }
-
         /** @var Category $category */
         $category = $this->repository->find($categoryId);
         $subcategories = $this->categoryProvider->getAvailableSubcategories($category);
@@ -95,9 +99,11 @@ class SearchCategoryFilteringEventListener
             ]
         ];
 
-        $filters['default'][SubcategoryFilter::FILTER_TYPE_NAME] = [
-            'value' => SubcategoryFilterType::DEFAULT_VALUE,
-        ];
+        if ($includeSubcategories) {
+            $filters['default'][SubcategoryFilter::FILTER_TYPE_NAME] = [
+                'value' => SubcategoryFilterType::DEFAULT_VALUE,
+            ];
+        }
 
         $config->offsetSetByPath('[filters]', $filters);
     }
@@ -108,20 +114,19 @@ class SearchCategoryFilteringEventListener
     public function onBuildAfter(BuildAfter $event)
     {
         $datasource = $event->getDatagrid()->getDatasource();
-
         if (!$datasource instanceof SearchDatasource) {
             return;
         }
 
-        $config = $event->getDatagrid()->getConfig();
+        $grid = $event->getDatagrid();
+        $parameters = $grid->getParameters();
 
-        $categoryId           = $config->offsetGetByPath(self::CATEGORY_ID_CONFIG_PATH);
-        $includeSubcategories = $config->offsetGetByPath(self::INCLUDE_CAT_CONFIG_PATH);
-
+        $categoryId = $this->getCategoryId($parameters);
         if (!$categoryId) {
             return;
         }
 
+        $config = $grid->getConfig();
         $config->offsetAddToArrayByPath(
             self::VIEW_LINK_PARAMS_CONFIG_PATH,
             [
@@ -130,7 +135,11 @@ class SearchCategoryFilteringEventListener
             ]
         );
 
-        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId, $includeSubcategories);
+        $this->applyCategoryToQuery(
+            $datasource->getSearchQuery(),
+            $categoryId,
+            $this->getIncludeSubcategories($parameters)
+        );
     }
 
     /**
@@ -146,5 +155,25 @@ class SearchCategoryFilteringEventListener
         if (!$includeSubcategories) {
             $query->addWhere(Criteria::expr()->eq('text.category_path', $category->getMaterializedPath()));
         }
+    }
+
+    /**
+     * @param ParameterBag $parameters
+     * @return int
+     */
+    private function getCategoryId(ParameterBag $parameters)
+    {
+        $categoryId = filter_var($parameters->get('categoryId', 0), FILTER_VALIDATE_INT);
+
+        return $categoryId && $categoryId > 0 ? $categoryId : 0;
+    }
+
+    /**
+     * @param ParameterBag $parameters
+     * @return bool
+     */
+    private function getIncludeSubcategories(ParameterBag $parameters)
+    {
+        return filter_var($parameters->get('includeSubcategories', false), FILTER_VALIDATE_BOOLEAN);
     }
 }

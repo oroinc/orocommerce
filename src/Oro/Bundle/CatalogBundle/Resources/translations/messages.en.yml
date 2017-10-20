@@ -48,7 +48,7 @@ oro:
                     label: 'Sub-Categories'
                     include.label: 'Include, show as filter'
                     exclude.label: 'Do not include'
-                    tooltip: 'Subcategories inclusion'
+                    tooltip: 'This option can be used to include all products assigned to sub-categories (all levels) of the current category in addition to the products that are assigned directly. The first level sub-categories that have (directly or in any of their sub-categories) at least one product visible to the current user will be shown as category filter options.'
 
         menu:
             master_catalog.label:                  'Master Catalog'
