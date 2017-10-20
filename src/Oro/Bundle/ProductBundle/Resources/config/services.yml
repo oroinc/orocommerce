@@ -187,8 +187,6 @@ services:
     oro_product.validator.product_image:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
-        arguments:
-            - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_validator }
 
@@ -196,6 +194,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator'
         arguments:
             - "@oro_layout.provider.image_type"
+            - "@translator"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_type_validator }
 
@@ -205,6 +204,7 @@ services:
         arguments:
             - "@oro_layout.provider.image_type"
             - "@translator"
+            - "@oro_product.helper.product_image_helper"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_collection_validator }
 
@@ -584,13 +584,6 @@ services:
             - '@logger'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
-
-    oro_product.layout.data_provider.frontend_datagrid_row_view:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
-        arguments:
-            - '@oro_product.datagrid_theme_helper'
-        tags:
-            - { name: layout.data_provider, alias: oro_product_frontend_datagrid_row_view }
 
     oro_product.layout.data_provider.product_form:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
@@ -1277,3 +1270,28 @@ services:
         public: false
         tags:
             - { name: oro_entity.alias_provider }
+
+    oro_product.helper.product_image_helper:
+        class: Oro\Bundle\ProductBundle\Helper\ProductImageHelper
+
+    oro_product.validator.product_image_type_collection:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeCollectionValidator'
+        public: true
+        arguments:
+            - "@oro_layout.provider.image_type"
+            - "@translator"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_image_type_collection_validator }
+
+    oro_product.search.product_reindex_manager:
+        class: 'Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+
+    oro_product.layout.data_provider.row_view_theme:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\RowViewThemeProvider'
+        arguments:
+            - '@oro_product.datagrid_theme_helper'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_datagrid_row_view }

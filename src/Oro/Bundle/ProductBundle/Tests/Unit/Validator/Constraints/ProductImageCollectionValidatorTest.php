@@ -4,99 +4,130 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Prophecy\Argument;
-
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator;
+use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 
-class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductImageCollectionValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
-     * @var ProductImageCollectionValidator
-     */
-    protected $validator;
-
-    /**
-     * @var ImageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var TranslatorInterface
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator
      */
     protected $translator;
 
     /**
-     * @var ExecutionContextInterface
+     * @var ProductImageHelper|\PHPUnit_Framework_MockObject_MockObject $productImageHelper
      */
-    protected $context;
-
-    /**
-     * @var ProductImageCollection
-     */
-    protected $constraint;
+    protected $productImageHelper;
 
     public function setUp()
     {
-        $this->translator = $this->prophesize('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->trans('Main')->willReturn('Main');
-
-        $this->imageTypeProvider = $this->prophesize('Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider');
-        $this->imageTypeProvider->getImageTypes()->willReturn(new ArrayCollection([
-            new ThemeImageType('main', 'Main', [], 1),
-            new ThemeImageType('listing', 'Listing', [], 2)
-        ]));
+        parent::setUp();
 
         $this->constraint = new ProductImageCollection();
+        $this->context = $this->createContext();
+        $this->validator = $this->createValidator();
+        $this->validator->initialize($this->context);
+    }
 
-        $this->context = $this->prophesize('Symfony\Component\Validator\Context\ExecutionContextInterface');
+    /**
+     * @return ProductImageCollectionValidator
+     */
+    protected function createValidator()
+    {
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->validator = new ProductImageCollectionValidator(
-            $this->imageTypeProvider->reveal(),
-            $this->translator->reveal()
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->imageTypeProvider->expects($this->any())
+            ->method('getMaxNumberByType')
+            ->willReturn(
+                [
+                    'main' => [
+                        'max' => 1,
+                        'label' => 'Main'
+                    ],
+                    'listing' => [
+                        'max' => 1,
+                        'label' => 'Listing'
+                    ]
+                ]
+            );
+
+        $this->productImageHelper = $this->createMock(ProductImageHelper::class);
+
+        return new ProductImageCollectionValidator(
+            $this->imageTypeProvider,
+            $this->translator,
+            $this->productImageHelper
         );
-        $this->validator->initialize($this->context->reveal());
     }
 
     public function testValidateValidCollection()
     {
-        $collection = new ArrayCollection([
-            $this->prepareProductImage(['main']),
-        ]);
+        $collection = new ArrayCollection(
+            [
+                $this->prepareProductImage(['main']),
+            ]
+        );
 
-        $this->context->buildViolation(Argument::cetera())->shouldNotBeCalled();
+        $this->productImageHelper->expects($this->once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 1
+                ]
+            );
 
         $this->validator->validate($collection, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalidCollection()
     {
-        $collection = new ArrayCollection([
-            $this->prepareProductImage(['main']),
-            $this->prepareProductImage(['main'])
-        ]);
-
-        $builder = $this->prophesize('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-
-        $this->context->buildViolation(
-            $this->constraint->message,
+        $collection = new ArrayCollection(
             [
-                '%type%' => 'Main',
-                '%maxNumber%' => 1
+                $this->prepareProductImage(['main']),
+                $this->prepareProductImage(['main'])
             ]
-        )->willReturn($builder->reveal());
+        );
+
+        $this->productImageHelper->expects($this->once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 2
+                ]
+            );
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Main');
 
         $this->validator->validate($collection, $this->constraint);
+
+        $this->buildViolation('oro.product.product_image.type_restriction')
+            ->setParameters(
+                [
+                    '%type%' => 'Main',
+                    '%maxNumber%' => 1
+                ]
+            )
+            ->assertRaised();
     }
 
     /**
-     * @param array $types
+     * @param $types
      * @return ProductImage
      */
     private function prepareProductImage($types)

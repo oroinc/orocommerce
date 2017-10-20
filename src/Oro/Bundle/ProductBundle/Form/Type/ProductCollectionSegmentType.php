@@ -130,7 +130,15 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
                 new NotBlankFilters(['message' => 'oro.product.product_collection.blank_filters_or_included']),
             ],
             'error_bubbling' => false,
-            'scope_value' => self::DEFAULT_SCOPE_VALUE
+            'scope_value' => self::DEFAULT_SCOPE_VALUE,
+            'condition_builder_validation' => [
+                'condition-item' =>  [
+                    'NotBlank' => ['message' => 'oro.product.product_collection.blank_condition_item'],
+                ],
+                'conditions-group' => [
+                    'NotBlank' => ['message' => 'oro.product.product_collection.blank_condition_group'],
+                ],
+            ],
         ]);
     }
 

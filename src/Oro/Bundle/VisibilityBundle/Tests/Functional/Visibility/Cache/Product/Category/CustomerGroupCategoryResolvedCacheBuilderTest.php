@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -53,9 +54,13 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
 
         $container = $this->client->getContainer();
 
+        $productReindexManager = new ProductReindexManager(
+            $container->get('event_dispatcher')
+        );
+
         $indexScheduler = new ProductIndexScheduler(
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('event_dispatcher')
+            $productReindexManager
         );
 
         $this->insertExecutor = $container->get('oro_entity.orm.insert_from_select_query_executor');
@@ -68,7 +73,8 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
             $container->get('doctrine'),
             $this->scopeManager,
             $indexScheduler,
-            $this->insertExecutor
+            $this->insertExecutor,
+            $productReindexManager
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.customer_group_category_visibility_resolved.class')

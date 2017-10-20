@@ -1,0 +1,9 @@
+features:
+    previously_purchased_products:
+        label: oro.order.feature.previously_purchased_products.label
+        description: oro.order.feature.previously_purchased_products.description
+        toggle: oro_order.enable_purchase_history
+        routes:
+            - 'oro_order_products_frontend_previously_purchased'
+        navigation_items:
+            - oro_customer_menu.oro_order_products_frontend_previously_purchased

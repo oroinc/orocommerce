@@ -5,12 +5,12 @@ namespace Oro\Bundle\PaymentBundle\Manager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentStatusManager
 {
-    /** @var PaymentStatusProvider */
+    /** @var PaymentStatusProviderInterface */
     protected $statusProvider;
 
     /** @var DoctrineHelper */
@@ -20,12 +20,12 @@ class PaymentStatusManager
     protected $paymentTransactionProvider;
 
     /**
-     * @param PaymentStatusProvider $provider
+     * @param PaymentStatusProviderInterface $provider
      * @param DoctrineHelper $doctrineHelper
      * @param PaymentTransactionProvider $transactionProvider
      */
     public function __construct(
-        PaymentStatusProvider $provider,
+        PaymentStatusProviderInterface $provider,
         DoctrineHelper $doctrineHelper,
         PaymentTransactionProvider $transactionProvider
     ) {

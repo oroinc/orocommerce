@@ -81,9 +81,30 @@ oro_behat_extension:
           Quantity:
             locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
             type: xpath
+          Price:
+            locator: '//input[@name="oro_order_type[lineItems][0][price][value]"]'
+            type: xpath
+          Product2:
+            locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_1_product-uid")]/input'
+            type: xpath
+          Quantity2:
+            locator: '//input[@name="oro_order_type[lineItems][1][quantity]"]'
+            type: xpath
+          Price2:
+            locator: '//input[@name="oro_order_type[lineItems][1][price][value]"]'
+            type: xpath
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
+    Purchase History Settings Form:
+      selector: 'form[name="purchase_history"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Purchase History: 'purchase_history[oro_order___enable_purchase_history][value]'
+          Enable Purchase History Use Default: 'purchase_history[oro_order___enable_purchase_history][use_parent_scope_value]'
+          Purchased Within: 'purchase_history[oro_order___order_previously_purchased_period][value]'
+          Purchased Within Use Default: 'purchase_history[oro_order___order_previously_purchased_period][use_parent_scope_value]'
 
     Discounts:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
@@ -124,6 +145,7 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroCustomerBundle::CustomerUserContext

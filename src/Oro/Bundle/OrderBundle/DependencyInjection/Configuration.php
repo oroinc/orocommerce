@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\DependencyInjection;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -18,6 +18,8 @@ class Configuration implements ConfigurationInterface
     const CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES = 'order_automation_applicable_statuses';
     const CONFIG_KEY_TARGET_INTERNAL_STATUS = 'order_automation_target_status';
     const CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS = 'order_creation_new_internal_order_status';
+    const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
+    const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
 
     /**
      * {@inheritDoc}
@@ -47,13 +49,19 @@ class Configuration implements ConfigurationInterface
                     'value' => false,
                 ],
                 static::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES => [
-                    'value' => [Order::INTERNAL_STATUS_OPEN],
+                    'value' => [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
                 ],
                 static::CONFIG_KEY_TARGET_INTERNAL_STATUS => [
-                    'value' => Order::INTERNAL_STATUS_CANCELLED,
+                    'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
                 ],
                 static::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS => [
-                    'value' => Order::INTERNAL_STATUS_OPEN,
+                    'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                ],
+                static::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD => [
+                    'value' => 90,
+                ],
+                static::CONFIG_KEY_ENABLE_PURCHASE_HISTORY => [
+                    'value' => false,
                 ],
             ]
         );
