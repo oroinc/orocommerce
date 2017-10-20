@@ -243,7 +243,7 @@
         {% set errorMessage = (parent.lineItemWarnings[errorPath]|first).message %}
         {% set errorClass = 'validation-warning' %}
     {% endif %}
-    <tbody class="checkout-order-summary__grid-body {% if errorClass != '' %}checkout-order-summary__grid-body--{{ errorClass }}{% endif %}">
+    <tbody class="checkout-order-summary__grid-body {% if errorClass != '' %}checkout-order-summary__grid-body--{{ errorClass }}{% endif %} line_item">
         <tr class="checkout-order-summary__grid-tr checkout-order-summary__grid-tr--info">{{ block('container_widget') }}</tr>
         {% if errorMessage != '' %}
             <tr class="checkout-order-summary__grid-tr checkout-order-summary__grid-tr--message">

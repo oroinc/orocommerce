@@ -381,7 +381,7 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return ProductUnit
      */
