@@ -13,7 +13,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: oro_textarea
+                            form_type: textarea
                             options:
                                 strip_tags: true
                                 required: true
@@ -37,7 +37,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: oro_textarea
+                            form_type: textarea
                             options:
                                 strip_tags: true
                                 required: true
@@ -86,7 +86,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: oro_textarea
+                            form_type: textarea
                             options:
                                 strip_tags: true
                                 required: true
@@ -102,7 +102,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: oro_textarea
+                            form_type: textarea
                             options:
                                 strip_tags: true
                                 required: true
