@@ -35,7 +35,7 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
         $this->executeOperation($predefinedRole, 'oro_customer_frontend_delete_role');
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        $this->assertJsonResponseStatusCodeEquals($result, 403);
 
         $this->assertNotNull($this->getReference(LoadCustomerUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL));
     }
@@ -75,27 +75,27 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
             'anonymous user' => [
                 'login' => '',
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'sibling user: LOCAL_VIEW_ONLY' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'parent customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'parent customer: DEEP_VIEW_ONLY' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'different customer: DEEP' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_DEEP,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'same customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
@@ -123,20 +123,52 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
      */
     protected function executeOperation(CustomerUserRole $customerUserRole, $operationName)
     {
+        $entityId = $customerUserRole->getId();
+        $entityClass = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole';
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_frontend_action_operation_execute',
                 [
                     'operationName' => $operationName,
                     'route' => 'oro_customer_frontend_customer_user_role_view',
-                    'entityId' => $customerUserRole->getId(),
-                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole'
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass
                 ]
             ),
-            [],
+            $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     * @param $datagrid
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass, $datagrid = null)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass,
+            'datagrid'    => $datagrid
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        // this is done because of unclear behaviour symfony mocked token session storage
+        // which do not save data before embedded request done and created data do not available in sub request
+        // in the test environment
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

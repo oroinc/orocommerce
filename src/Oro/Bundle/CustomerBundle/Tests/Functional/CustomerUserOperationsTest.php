@@ -143,17 +143,52 @@ class CustomerUserOperationsTest extends WebTestCase
      */
     protected function executeOperation(CustomerUser $customerUser, $operationName)
     {
+        $entityId = $customerUser->getId();
+        $entityClass = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
                     'route' => 'oro_customer_customer_user_view',
-                    'entityId' => $customerUser->getId(),
-                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass
                 ]
-            )
+            ),
+            $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     * @param $datagrid
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass, $datagrid = null)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass,
+            'datagrid'    => $datagrid
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        // this is done because of unclear behaviour symfony mocked token session storage
+        // which do not save data before embedded request done and created data do not available in sub request
+        // in the test environment
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

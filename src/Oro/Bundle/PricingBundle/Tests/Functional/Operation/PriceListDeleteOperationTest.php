@@ -44,16 +44,15 @@ class PriceListDeleteOperationTest extends ActionTestCase
             $this->getContainer()->getParameter('oro_pricing.entity.price_list.class'),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-            404
+            403
         );
 
         $this->assertEquals(
             [
                 'success' => false,
-                'message' => 'Operation with name "DELETE" not found',
+                'message' => 'Operation "DELETE" execution is forbidden!',
                 'messages' => [],
                 'refreshGrid' => null,
-                'flashMessages' => []
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

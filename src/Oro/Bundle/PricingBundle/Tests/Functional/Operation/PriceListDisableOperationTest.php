@@ -62,7 +62,7 @@ class PriceListDisableOperationTest extends ActionTestCase
             PriceList::class,
             [],
             [],
-            404
+            403
         );
     }
 
