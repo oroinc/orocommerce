@@ -24,18 +24,21 @@ class PaymentTermActionTest extends WebTestCase
             LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10
         );
         $termId = $paymentTerm->getId();
+        $operationName = 'oro_payment_term_delete';
+        $entityClass = PaymentTerm::class;
 
+        $params = $this->getOperationExecuteParams($operationName, $termId, $entityClass);
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'oro_payment_term_delete',
+                    'operationName' => $operationName,
                     'entityId' => $termId,
-                    'entityClass' => PaymentTerm::class,
+                    'entityClass' => $entityClass,
                 ]
             ),
-            [],
+            $params,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -49,5 +52,30 @@ class PaymentTermActionTest extends WebTestCase
             ->find($termId);
 
         static::assertNull($removedTerm);
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }
