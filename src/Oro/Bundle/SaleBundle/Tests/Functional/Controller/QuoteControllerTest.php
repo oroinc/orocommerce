@@ -282,17 +282,20 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
+        $operationName = 'DELETE';
+        $entityClass   = $this->getContainer()->getParameter('oro_sale.entity.quote.class');
+        $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'DELETE',
+                    'operationName' => $operationName,
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('oro_sale.entity.quote.class'),
+                    'entityClass' => $entityClass,
                 ]
             ),
-            [],
+            $operationExecuteParams,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -393,5 +396,30 @@ class QuoteControllerTest extends WebTestCase
     protected function getUser($username)
     {
         return $this->getReference($username);
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

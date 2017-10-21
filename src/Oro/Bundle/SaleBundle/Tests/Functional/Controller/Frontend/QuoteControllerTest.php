@@ -627,16 +627,26 @@ class QuoteControllerTest extends WebTestCase
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
         /* @var $quote Quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE13);
-
+        $operationName = 'oro_checkout_frontend_quote_submit_to_order';
+        $entityId = $quote->getId();
+        $entityClass = Quote::class;
+        $operationExecuteParams = $this->getOperationExecuteParams($operationName, $entityId, $entityClass);
         $url = $this->getUrl(
             'oro_frontend_action_operation_execute',
-            array_merge([
-                'operationName' => 'oro_checkout_frontend_quote_submit_to_order',
-                'entityId' => $quote->getId(),
-                'entityClass' => Quote::class,
-            ], ['route' => 'oro_sale_quote_frontend_view'])
+            [
+                'operationName' => $operationName,
+                'entityId' => $entityId,
+                'entityClass' => $entityClass,
+                'route' => 'oro_sale_quote_frontend_view'
+            ]
         );
-        $this->client->request('GET', $url, [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+        $this->client->request(
+            'POST',
+            $url,
+            $operationExecuteParams,
+            [],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
+        );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirectUrl', $data);
@@ -664,5 +674,30 @@ class QuoteControllerTest extends WebTestCase
                 '.validation-failed:contains("Quantity should be grater than or equal to offered quantity")'
             )
         );
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = static::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

@@ -36,17 +36,19 @@ class CustomerGroupChangesListenerTest extends WebTestCase
     {
         $groupId = $group->getId();
 
+        $operationName = 'oro_customer_groups_delete';
+        $entityClass = $this->getContainer()->getParameter('oro_customer.entity.customer_group.class');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'oro_customer_groups_delete',
+                    'operationName' => $operationName,
                     'entityId[id]' => $groupId,
-                    'entityClass' => $this->getContainer()->getParameter('oro_customer.entity.customer_group.class'),
+                    'entityClass' => $entityClass,
                 ]
             ),
-            [],
+            $this->getOperationExecuteParams($operationName, ['id' => $groupId], $entityClass),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -81,5 +83,30 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         $this->sendDeleteCustomerGroupRequest($this->getReference(LoadGroups::GROUP3));
 
         self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }
