@@ -11,6 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class Configuration implements ConfigurationInterface
 {
     const DEFAULT_GUEST_SHOPPING_LIST_OWNER = 'default_guest_shopping_list_owner';
+    const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
+    const MATRIX_FORM_ON_SHOPPING_LIST_INLINE = 'inline';
+    const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
 
     /**
      * {@inheritDoc}
@@ -32,7 +35,11 @@ class Configuration implements ConfigurationInterface
                 ],
                 'availability_for_guests' => ['type' => 'boolean', 'value' => false],
                 self::DEFAULT_GUEST_SHOPPING_LIST_OWNER => ['type' => 'string', 'value' => null],
-                'shopping_list_limit' => ['value' => 0, 'type' => 'integer']
+                'shopping_list_limit' => ['value' => 0, 'type' => 'integer'],
+                self::MATRIX_FORM_ON_SHOPPING_LIST => [
+                    'type' => 'string',
+                    'value' => static::MATRIX_FORM_ON_SHOPPING_LIST_INLINE
+                ],
             ]
         );
 
