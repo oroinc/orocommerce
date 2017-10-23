@@ -392,6 +392,7 @@ datagrids:
                     - productPrice.currency
                     - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
                     - IDENTITY(productPrice.priceList) as priceListId
+                    - product.denormalizedDefaultName
                 from:
                     - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -407,7 +408,7 @@ datagrids:
         columns:
             productSku:
                 label:         oro.pricing.productprice.product_sku.label
-            productName:
+            denormalizedDefaultName:
                 label:         oro.pricing.productprice.product_name.label
             quantity:
                 label:         oro.pricing.productprice.quantity.label
@@ -429,8 +430,8 @@ datagrids:
             columns:
                 productSku:
                     data_name: productPrice.productSku
-                productName:
-                    data_name: productName
+                denormalizedDefaultName:
+                    data_name: product.denormalizedDefaultName
                 quantity:
                     data_name: productPrice.quantity
                 unitCode:
@@ -446,9 +447,9 @@ datagrids:
                 productSku:
                     type:      string
                     data_name: productPrice.productSku
-                productName:
+                denormalizedDefaultName:
                     type:      string
-                    data_name: productName
+                    data_name: product.denormalizedDefaultName
                 quantity:
                     type:      number
                     data_name: productPrice.quantity
@@ -480,9 +481,6 @@ datagrids:
             id: ~
             productId: ~
             priceListId: ~
-            productName:
-                type: localized_value
-                data_name: product.names
             view_product_link:
                 type:  url
                 route: oro_product_view

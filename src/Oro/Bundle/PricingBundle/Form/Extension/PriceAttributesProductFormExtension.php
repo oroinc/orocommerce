@@ -110,7 +110,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             /** @var PriceAttributeProductPrice $price */
             foreach ($attributePrices as $price) {
                 //remove nullable prices
-                if (!$price->getPrice()->getValue()) {
+                if ($price->getPrice()->getValue() === null) {
                     if (null !== $price->getId()) {
                         $this->getManager()->remove($price);
                     }

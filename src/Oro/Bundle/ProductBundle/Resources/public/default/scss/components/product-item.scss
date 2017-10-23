@@ -56,6 +56,25 @@
         @include clearfix();
     }
 
+    &__box {
+        display: flex;
+        flex-direction: column;
+
+        @include clearfix();
+
+        &--no-image-view {
+            flex-direction: row;
+        }
+    }
+
+    &__content {
+        @include clearfix();
+
+        &--no-image-view {
+            flex-grow: 1;
+        }
+    }
+
     &__image-holder {
         @include element-state('hover') {
             .product-item__quick-view-btn {
@@ -401,11 +420,16 @@
     }
 
     &__select-row {
-        padding-top: $offset-x-s;
+        padding-right: $offset-x-s;
+
+        &--gallery-view {
+            padding-top: $offset-x-s;
+        }
 
         &--list-view {
             position: absolute;
             top: 100%;
+            padding-top: $offset-x-s;
         }
     }
 
@@ -456,6 +480,20 @@
         &__status {
             &--in-cart {
                 display: block;
+            }
+        }
+    }
+}
+
+
+@include breakpoint('tablet') {
+    .product-item {
+        &__image-holder {
+            .product-item__select-row {
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                right: 0;
             }
         }
     }

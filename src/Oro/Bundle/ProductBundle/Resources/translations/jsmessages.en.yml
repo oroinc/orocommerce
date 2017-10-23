@@ -150,6 +150,7 @@ oro:
                         default: '--'
                 copy_paste:
                     error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
+            choose_action: 'Choose Action'
         dialog:
             quick_add.confirm:
                 title: 'Create Order'

@@ -1,9 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes:
-                - 'grid_row-no-image-view.html.twig'
-
         - '@setOption':
             id: product_datagrid_row_product_sticker_new_text
             optionName: visible
@@ -12,16 +8,5 @@ layout:
         - '@move':
             id: product_item_select_row
             parentId: product_datagrid_row_product_price_container
-#
-#        - '@add':
-#            id: product_datagrid_row_product_select_row_container
-#            parentId: product_datagrid_row
-#            blockType: container
-#            prepend: true
-#
-#        - '@setOption':
-#            id: product_datagrid_row_product_select_row_container
-#            optionName: visible
-#            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled")'
 
     conditions: 'context["theme_name"] == "no-image-view"'

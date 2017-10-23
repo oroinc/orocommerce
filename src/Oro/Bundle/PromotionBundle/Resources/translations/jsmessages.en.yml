@@ -2,7 +2,9 @@ oro:
     promotion:
         coupon:
             violation:
+                disabled: Coupon is disabled
                 absent_promotion: There is no promotion for this coupon
+                not_started: Coupon start date has not begun
                 expired: Coupon is expired
                 usage_limit_exceeded: Coupon usage limit is exceeded
                 customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded

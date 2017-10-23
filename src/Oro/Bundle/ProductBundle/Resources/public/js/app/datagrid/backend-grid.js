@@ -10,7 +10,7 @@ define(function(require) {
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
     var BackendSelectHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
-    var SelectState = require('orodatagrid/js/datagrid/select-state-model');
+    var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
 
     BackendGrid = Grid.extend({
         /** @property */
@@ -29,7 +29,7 @@ define(function(require) {
 
         /** @property */
         visibleState: {
-            visible: _.isMobile()
+            visible: null
         },
 
         /**
@@ -86,6 +86,7 @@ define(function(require) {
                 'backgrid:selectNone': this.selectNone,
                 'backgrid:isSelected': this.isSelected,
                 'backgrid:getSelected': this.getSelected,
+                'backgrid:setVisibleState': this.setVisibleState,
                 'backgrid:getVisibleState': this.getVisibleState,
                 'backgrid:checkUnsavedData': this.checkUnsavedData
             });
@@ -153,8 +154,7 @@ define(function(require) {
         renderSelectAll: function() {
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
-                selectState: this.selectState,
-                visibleState: this.visibleState
+                selectState: this.selectState
             });
 
             this.selectHeaderCell = new BackendSelectHeaderCell({
@@ -182,8 +182,12 @@ define(function(require) {
             this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
         },
 
+        setVisibleState: function(state) {
+            this.visibleState.visible = state;
+        },
+
         getVisibleState: function(obj) {
-            if ($.isEmptyObject(obj)) {
+            if ($.isEmptyObject(obj) && _.isBoolean(this.visibleState.visible)) {
                 obj.visible = this.visibleState.visible;
             }
         },
