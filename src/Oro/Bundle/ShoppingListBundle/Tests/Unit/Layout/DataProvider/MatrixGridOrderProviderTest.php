@@ -148,6 +148,27 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->provider->isAvailable($product));
     }
 
+    public function testIsAvailableReturnsFalseOnNoSimpleProducts()
+    {
+        $unit = $this->getEntity(ProductUnit::class);
+        $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['primaryUnitPrecision' => $unitPrecision]);
+
+        $this->productVariantAvailability->expects($this->once())
+            ->method('getVariantFieldsAvailability')
+            ->with($product)
+            ->willReturn([1, 2]);
+
+        $this->productVariantAvailability->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([]);
+
+        $this->assertEquals(false, $this->provider->isAvailable($product));
+    }
+
     public function testCalculateTotalQuantity()
     {
         /** @var Product $product */

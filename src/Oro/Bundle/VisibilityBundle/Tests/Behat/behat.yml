@@ -1,0 +1,16 @@
+oro_behat_extension:
+  elements:
+    Product visibility form:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+  suites:
+    OroVisibilityBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroFormBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+      paths:
+        - '@OroVisibilityBundle/Tests/Behat/Features'

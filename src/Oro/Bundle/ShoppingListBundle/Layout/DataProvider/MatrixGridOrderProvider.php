@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -77,13 +76,17 @@ class MatrixGridOrderProvider
 
         $configurableProductPrimaryUnit = $product->getPrimaryUnitPrecision()->getUnit();
         $simpleProducts = $this->productVariantAvailability->getSimpleProductsByVariantFields($product);
-        foreach ($simpleProducts as $simpleProduct) {
-            if (!$this->doSimpleProductSupportsUnitPrecision($simpleProduct, $configurableProductPrimaryUnit)) {
-                return false;
+        if ($simpleProducts) {
+            foreach ($simpleProducts as $simpleProduct) {
+                if (!$this->doSimpleProductSupportsUnitPrecision($simpleProduct, $configurableProductPrimaryUnit)) {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
