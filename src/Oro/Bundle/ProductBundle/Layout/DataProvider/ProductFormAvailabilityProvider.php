@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Doctrine\Common\Cache\CacheProvider;
 
 class ProductFormAvailabilityProvider
 {
@@ -20,22 +19,19 @@ class ProductFormAvailabilityProvider
     /** @var ConfigManager */
     private $configManager;
 
-    /** @var CacheProvider */
+    /** @var array */
     private $cache;
 
     /**
      * @param ProductVariantAvailabilityProvider $variantAvailability
      * @param ConfigManager $configManager
-     * @param CacheProvider $cache
      */
     public function __construct(
         ProductVariantAvailabilityProvider $variantAvailability,
-        ConfigManager $configManager,
-        CacheProvider $cache
+        ConfigManager $configManager
     ) {
         $this->variantAvailability = $variantAvailability;
         $this->configManager = $configManager;
-        $this->cache = $cache;
     }
 
     /**
@@ -87,12 +83,12 @@ class ProductFormAvailabilityProvider
             return false;
         }
 
-        if ($this->cache->contains($product->getId())) {
-            return $this->cache->fetch($product->getId());
+        if (isset($this->cache[$product->getId()])) {
+            return $this->cache[$product->getId()];
         }
 
         $availability = $this->getMatrixAvailability($product);
-        $this->cache->save($product->getId(), $availability);
+        $this->cache[$product->getId()] = $availability;
 
         return $availability;
     }

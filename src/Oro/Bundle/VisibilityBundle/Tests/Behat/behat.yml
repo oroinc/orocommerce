@@ -12,7 +12,7 @@ oro_behat_extension:
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
-    Product Form:
+    Visibility Product Form:
       selector: 'form[name="oro_scoped_data_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
@@ -23,7 +23,6 @@ oro_behat_extension:
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
-          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
     Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
