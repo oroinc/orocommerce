@@ -71,10 +71,6 @@ oro_behat_extension:
     Add To Shopping List:
       selector: 'a.add-to-shopping-list-button'
 
-    Product visibility form:
-      selector: 'div#container'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-
   suites:
     OroShoppingListBundle:
       contexts:

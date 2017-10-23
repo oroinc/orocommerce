@@ -46,8 +46,8 @@ Feature: Visibility of product variants
     Then I should see "Product has been saved" flash message
     And click "More actions"
     And click "Manage Visibility"
-    And fill "Product visibility form" with:
-      |Visibility |hidden |
+    And fill "Visibility Product Form" with:
+      |Visibility To All |hidden |
     And I save form
     Then I should see "Product visibility has been saved" flash message
 
