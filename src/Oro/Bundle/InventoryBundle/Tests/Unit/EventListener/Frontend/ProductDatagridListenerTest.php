@@ -39,6 +39,9 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->lowInventoryProvider = $this->getMockBuilder(LowInventoryProvider::class)
