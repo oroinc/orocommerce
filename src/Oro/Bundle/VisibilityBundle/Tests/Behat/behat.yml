@@ -7,6 +7,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroUserBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroFormBundle::FeatureContext
         - OroApplicationBundle::CommerceMainContext
         - OroUIBundle::TypeaheadContext
       paths:
@@ -17,6 +18,9 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Visibility To All:
+            locator: '#product-visibility-all select'
+            type: css
           Visibility To Customers First:
             locator: '#product-visibility-customer tr:contains(first) .grid-body-cell-visibility select'
             type: css
