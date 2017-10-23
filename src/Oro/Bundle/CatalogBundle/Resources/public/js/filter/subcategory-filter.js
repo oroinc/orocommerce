@@ -10,7 +10,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        counts: [],
+        counts: {},
 
         /**
          * @inheritDoc
@@ -27,17 +27,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        templateSelector: '#subcategory-filter-template',
-
-        /**
-         * @inheritDoc
-         */
         populateDefault: false,
-
-        /**
-         * @inheritDoc
-         */
-        optionNames: MultiselectFilter.prototype.optionNames.concat(['counts']),
 
         /**
          * @inheritDoc
@@ -78,13 +68,11 @@ define(function(require) {
         getTemplateData: function() {
             var data = SubcategoryFilter.__super__.getTemplateData.apply(this, arguments);
 
-            _.map(data.options, function(category) {
-                category.count = this.counts[category.value] || 0;
-            }, this);
-
             data.options = _.filter(data.options, function(category) {
+                category.count = this.counts[category.value] || 0;
+
                 return category.count > 0;
-            });
+            }, this);
 
             return data;
         }
