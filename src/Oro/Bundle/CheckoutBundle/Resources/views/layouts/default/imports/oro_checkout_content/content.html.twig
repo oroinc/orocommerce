@@ -186,16 +186,26 @@
         '~class': " checkout-order-summary__grid"
     }) %}
     <table {{ block('block_attributes') }}>
-        <thead>
-            <tr>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--sku">{{ 'oro.checkout.order_summary.sku'|trans }}</th>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity_short'|trans }}</th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--price">{{ 'oro.checkout.order_summary.price'|trans }}</th>
-                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--subtotal">{{ 'oro.checkout.order_summary.subtotal'|trans }}</th>
+        <thead class="checkout-order-summary__grid-head">
+            <tr class="checkout-order-summary__grid-tr">
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--info">
+                    {{ 'oro.checkout.order_summary.item'|trans }}
+                </th>
+                <th class="checkout-order-summary__grid-th hide-on-mobile-landscape">
+                    {{ 'oro.checkout.order_summary.sku'|trans }}
+                </th>
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--qty">
+                    {{ 'oro.checkout.order_summary.quantity_short'|trans }}
+                </th>
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--price">
+                    {{ 'oro.checkout.order_summary.price'|trans }}
+                </th>
+                <th class="checkout-order-summary__grid-th checkout-order-summary__grid-th--subtotal hide-on-mobile-landscape">
+                    {{ 'oro.checkout.order_summary.subtotal'|trans }}
+                </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="checkout-order-summary__grid-body">
         {% for lineItem in lineItemsWithTotals %}
             {% set mainProduct = null %}
             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
@@ -230,7 +240,9 @@
 {% block __oro_checkout_content__checkout_order_summary_line_item_info_column_widget %}
     <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info"
         data-checkout-order-summary-line-item-info_{{ productSku|lower }}
-    >{% spaceless %}{{ block('container_widget') }}{% endspaceless %}</td>
+    >
+        {% spaceless %}{{ block('container_widget') }}{% endspaceless %}
+    </td>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_name_widget %}
@@ -247,17 +259,6 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_sku_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-dom-relocation': true,
-        'data-dom-relocation-options': {
-            responsive: [
-                {
-                    viewport: {
-                    maxScreenType: 'mobile-landscape'
-                    },
-                    moveTo: '[data-checkout-order-summary-line-item-info_' ~ productSku|lower ~ ']'
-                }
-            ]
-        }|json_encode,
         '~class': " checkout-order-summary__sku"
     }) %}
     <div {{ block('block_attributes') }}>{{ productSku }}</div>
@@ -309,17 +310,6 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_price_total_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-dom-relocation': true,
-        'data-dom-relocation-options': {
-            responsive: [
-                {
-                    viewport: {
-                    maxScreenType: 'mobile-landscape'
-                    },
-                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku|lower ~ ']'
-                }
-            ]
-        }|json_encode,
         '~class': " checkout-order-summary__lineitem-total"
     }) %}
     <div {{ block('block_attributes') }}>{{ lineItemInfo.total|oro_format_price }}</div>

@@ -47,7 +47,8 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}'
+        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',
+        'data-role': 'line-item-form-container'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -85,7 +86,7 @@
         '~options': {
             'truncateLength': 25,
             'appendToBody': true,
-            'decoreClass': 'btn--info' ~ ('list-view' in class_prefix ? ' btn--size-m')
+            'decoreClass': 'btn--info'
         }
     }) %}
     {{ block_widget(block, {attr: attr}) }}

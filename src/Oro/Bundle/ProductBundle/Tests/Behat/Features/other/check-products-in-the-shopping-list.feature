@@ -35,8 +35,7 @@ Feature: Check configurable product has attributes in the shopping list
       | Type       | Boolean |
     And I click "Continue"
     And I fill form with:
-      | Label      | Size Attribute  |
-      | Filterable | Yes  |
+      | Label | Size Attribute |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -79,3 +78,14 @@ Feature: Check configurable product has attributes in the shopping list
     And I should see text matching "Size Attribute: Yes"
     Then I should not see text matching "color_attribute"
     And I should not see text matching "size_attribute"
+
+  Scenario: Pre-fill Matrix Order Form
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I open product with sku "shirt_101" on the store frontend
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Shirt_101 Matrix Grid Order Form" with:
+      | Green Yes Quantity | 100 |
+    And I click "Add to Shopping List" in matrix order window
+    Then I should see 'Shopping list "Shopping list" was updated successfully' flash message
+    And "Shirt_101 Matrix Grid Order Form" must contains values:
+      | Green Yes Quantity | 100 |

@@ -19,7 +19,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
 Oro\Bundle\PromotionBundle\Entity\PromotionSchedule:
     constraints:
         - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
-        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
             chain:
                 activeAt: 'Activate At'
                 deactivateAt: 'Deactivate At'
@@ -28,6 +28,10 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [code]
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
+            chain:
+                validFrom: 'Valid From'
+                validUntil: 'Valid Until'
     properties:
         code:
             - NotBlank:
@@ -36,6 +40,10 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
                 min: 1
                 max: 255
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
+        validFrom:
+            - Date: ~
+        validUntil:
+            - Date: ~
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
@@ -51,6 +59,10 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
     constraints:
         - Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength:
             groups: ['generation']
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
+            chain:
+                validFrom: 'Valid From'
+                validUntil: 'Valid Until'
     properties:
         owner:
             - NotBlank:
@@ -72,8 +84,6 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
             - Range:
                 min: 0
                 max: 2147483647
-        validUntil:
-            - DateTime: ~
         codeLength:
             - NotBlank: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~

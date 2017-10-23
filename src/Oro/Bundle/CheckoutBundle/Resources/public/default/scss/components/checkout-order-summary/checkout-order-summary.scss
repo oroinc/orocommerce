@@ -1,5 +1,11 @@
 // @theme: default;
 
+@mixin update-checkout-blocks() {
+    .checkout-order-summary__totals {
+        float: none;
+    }
+}
+
 .checkout-order-summary {
     &__header {
         position: $checkout-order-summary-header-position;
@@ -144,7 +150,7 @@
     }
 
     &__totals {
-        clear: $checkout-order-summary-totals-clear;
+        float: $checkout-order-summary-totals-float;
 
         @include clearfix();
 
@@ -162,6 +168,8 @@
 
         border-top: $checkout-order-summary-totals-container-border-top;
 
+        @include clearfix();
+
         &.in-sticky {
             width: calc(#{$checkout-view-column-extra-width} - #{$offset-x-m});
             margin: $checkout-order-summary-totals-container-in-sticky-margin;
@@ -174,32 +182,85 @@
     &__lineitem-name {
         color: get-color('additional', 'dark');
     }
-
-    &__lineitem-name + &__sku {
-        color: get-color('primary', 'base');
-    }
-
-    &__lineitem-price + &__lineitem-total {
-        color: get-color('ui', 'normal');
-    }
 }
 
 @include breakpoint('mobile-landscape') {
     .checkout-order-summary {
-        &__grid-th,
-        &__grid-td {
-            &--sku,
-            &--subtotal {
-                display: none;
+        &__grid,
+        &__grid-head,
+        &__grid-body {
+            display: block;
+        }
+
+        &__grid-tr {
+            display: flex;
+        }
+
+        &__grid-body {
+            .checkout-order-summary__grid-tr {
+                flex-wrap: wrap;
+                padding-bottom: $checkout-order-summary-grid-tr-offset-inner-bottom-mobile;
+
+                &:not(:last-child) {
+                    border-bottom: $checkout-order-summary-grid-tr-border-bottom-mobile;
+                }
+            }
+        }
+
+        &__grid-td,
+        &__grid-th {
+            flex-grow: 1;
+        }
+
+        &__grid-th {
+            &--info {
+                width: $checkout-order-summary-grid-info-width-mobile;
+            }
+
+            &--qty {
+                padding: $checkout-order-summary-grid-th-qty-offset-mobile;
+            }
+
+            &--price {
+                width: $checkout-order-summary-grid-price-width-mobile;
             }
         }
 
         &__grid-td {
+            padding: $checkout-order-summary-grid-td-offset-mobile;
+
+            border-bottom: 0;
+
             &--info {
-                padding-left: 0;
+                width: $checkout-order-summary-grid-info-width-mobile;
+                padding: $checkout-order-summary-grid-td-info-offset-mobile;
             }
-            &--price{
-                padding-right: 0;
+
+            &--sku {
+                width: $checkout-order-summary-grid-sku-width-mobile;
+                padding: $checkout-order-summary-grid-td-sku-offset-mobile;
+                order: 4;
+
+                color: $checkout-order-summary-grid-sku-color-mobile;
+            }
+
+            &--qty {
+                padding: $checkout-order-summary-grid-td-qty-offset-mobile;
+                order: 2;
+            }
+
+            &--price {
+                width: $checkout-order-summary-grid-price-width-mobile;
+                padding: $checkout-order-summary-grid-td-price-offset-mobile;
+                order: 3;
+            }
+
+            &--subtotal {
+                width: $checkout-order-summary-grid-subtotal-width-mobile;
+                padding: $checkout-order-summary-grid-td-subtotal-offset-mobile;
+                order: 5;
+
+                color: $checkout-order-summary-grid-subtotal-color-mobile;
             }
         }
 

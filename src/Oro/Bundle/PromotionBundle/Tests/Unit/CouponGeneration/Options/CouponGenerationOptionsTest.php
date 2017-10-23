@@ -16,6 +16,7 @@ class CouponGenerationOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(new CouponGenerationOptions(), [
             ['couponQuantity', 42],
             ['promotion', new Promotion()],
+            ['enabled', true],
             ['usesPerCoupon', 42],
             ['usesPerPerson', 42],
             ['validUntil', new \DateTime()],

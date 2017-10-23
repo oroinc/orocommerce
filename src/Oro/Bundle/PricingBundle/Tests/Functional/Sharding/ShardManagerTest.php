@@ -158,6 +158,7 @@ class ShardManagerTest extends WebTestCase
     {
         /** @var Connection $connection */
         $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $productName = 'product 1';
         $connection->insert(
             "oro_product",
             [
@@ -166,6 +167,8 @@ class ShardManagerTest extends WebTestCase
                 "updated_at" => "2017-03-29",
                 "status" => "enabled",
                 "type" => "simple",
+                "name" => $productName,
+                "name_uppercase" => mb_strtoupper($productName)
             ]
         );
 

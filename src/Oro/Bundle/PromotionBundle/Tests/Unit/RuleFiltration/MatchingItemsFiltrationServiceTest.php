@@ -15,7 +15,7 @@ use Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     const UNIT_CODE_ITEM = 'item';
     const UNIT_CODE_SET = 'set';
@@ -230,5 +230,10 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->matchingItemsFiltrationService, $this->filtrationService);
     }
 }

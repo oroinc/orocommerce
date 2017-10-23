@@ -21,6 +21,11 @@ class CouponGenerationOptions extends CodeGenerationOptions
     protected $promotion;
 
     /**
+     * @var bool
+     */
+    protected $enabled = false;
+
+    /**
      * @var int
      */
     protected $usesPerCoupon = 1;
@@ -29,6 +34,11 @@ class CouponGenerationOptions extends CodeGenerationOptions
      * @var int
      */
     protected $usesPerPerson = 1;
+
+    /**
+     * @var \DateTime
+     */
+    protected $validFrom;
 
     /**
      * @var \DateTime
@@ -73,6 +83,22 @@ class CouponGenerationOptions extends CodeGenerationOptions
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+    /**
      * @return int
      */
     public function getUsesPerCoupon()
@@ -102,6 +128,22 @@ class CouponGenerationOptions extends CodeGenerationOptions
     public function setUsesPerPerson($usersPerUser)
     {
         $this->usesPerPerson = $usersPerUser;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getValidFrom()
+    {
+        return $this->validFrom;
+    }
+
+    /**
+     * @param \DateTime $validFrom
+     */
+    public function setValidFrom($validFrom)
+    {
+        $this->validFrom = $validFrom;
     }
 
     /**

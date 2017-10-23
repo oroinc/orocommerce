@@ -18,7 +18,7 @@ Feature: Managing promotions
     When I fill "Promotion Form" with:
       | Discount Value | 10.0 |
       | Currency       | €    |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -45,7 +45,7 @@ Feature: Managing promotions
       | Discount Value (%) | This value should be 100 or less. |
     When I fill "Promotion Form" with:
       | Discount Value (%) | 20 |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -69,11 +69,11 @@ Feature: Managing promotions
       | Discount Value | This value should not be blank. |
     When I fill "Promotion Form" with:
       | Discount Value                     | 10           |
-      | Product Unit                       | item         |
+      | Unit of Quantity                   | item         |
       | Apply Discount To                  | Each Item    |
       | Maximum Qty Discount is Applied To | 10           |
       | Currency                           | €            |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -83,7 +83,7 @@ Feature: Managing promotions
       | Discount                           | Line Item    |
       | Type                               | Fixed Amount |
       | Discount Value                     | €10.00       |
-      | Product Unit                       | item         |
+      | Unit of Quantity                   | item         |
       | Apply Discount To                  | Each Item    |
       | Maximum Qty Discount is Applied To | 10           |
 
@@ -100,10 +100,10 @@ Feature: Managing promotions
       | Discount Value (%) | This value should not be blank. |
     When I fill "Promotion Form" with:
       | Discount Value (%)                 | 20               |
-      | Product Unit                       | set              |
+      | Unit of Quantity                   | set              |
       | Apply Discount To                  | Line Items Total |
       | Maximum Qty Discount is Applied To | 10               |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -113,7 +113,7 @@ Feature: Managing promotions
       | Discount                           | Line Item        |
       | Type                               | Percent          |
       | Discount Value                     | 20%              |
-      | Product Unit                       | set              |
+      | Unit of Quantity                   | set              |
       | Apply Discount To                  | Line Items Total |
       | Maximum Qty Discount is Applied To | 10               |
 
@@ -121,66 +121,66 @@ Feature: Managing promotions
     When I go to Marketing / Promotions / Promotions
     And I click "Create Promotion"
     And I fill "Promotion Form" with:
-      | Name       | PR5          |
-      | Sort Order | 10           |
-      | Discount   | Buy X Get Y  |
-      | Type       | Fixed Amount |
+      | Name       | PR5                        |
+      | Sort Order | 10                         |
+      | Discount   | Buy X Get Y (Same Product) |
+      | Type       | Fixed Amount               |
     And I save form
     Then I should see "Promotion Form" validation errors:
       | Discount Value | This value should not be blank. |
     When I fill "Promotion Form" with:
-      | Buy X             | 5                      |
-      | Get Y             | 3                      |
+      | Buy X Quantity    | 5                      |
+      | Get Y Quantity    | 3                      |
       | Discount Value    | 10                     |
       | Apply Discount To | Each Y Item Separately |
     And I type "2" in "Limit, times"
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR5 in grid
     Then I should see promotion with:
-      | Discount          | Buy X Get Y            |
-      | Type              | Fixed Amount           |
-      | Discount Value    | $10.00                 |
-      | Buy X             | 5                      |
-      | Get Y             | 3                      |
-      | Apply Discount To | Each Y Item Separately |
-      | Limit, times      | 2                      |
+      | Discount          | Buy X Get Y (Same Product) |
+      | Type              | Fixed Amount               |
+      | Discount Value    | $10.00                     |
+      | Buy X Quantity    | 5                          |
+      | Get Y Quantity    | 3                          |
+      | Apply Discount To | Each Y Item Separately     |
+      | Limit, times      | 2                          |
 
   Scenario: Create promotion with Buy X Get Y discount, percent, product unit Piece, to X + Y Total
     When I go to Marketing / Promotions / Promotions
     And I click "Create Promotion"
     And I fill "Promotion Form" with:
-      | Name       | PR6         |
-      | Sort Order | 10          |
-      | Discount   | Buy X Get Y |
-      | Type       | Percent     |
+      | Name       | PR6                        |
+      | Sort Order | 10                         |
+      | Discount   | Buy X Get Y (Same Product) |
+      | Type       | Percent                    |
     And I save form
     Then I should see "Promotion Form" validation errors:
       | Discount Value (%) | This value should not be blank. |
     When I fill "Promotion Form" with:
-      | Buy X              | 5           |
-      | Get Y              | 3           |
+      | Buy X Quantity     | 5           |
+      | Get Y Quantity     | 3           |
       | Discount Value (%) | 20          |
-      | Product Unit       | piece       |
+      | Unit of Quantity   | piece       |
       | Apply Discount To  | X + Y Total |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
     And I go to Marketing / Promotions / Promotions
     And I click view PR6 in grid
     Then I should see promotion with:
-      | Discount          | Buy X Get Y |
-      | Type              | Percent     |
-      | Discount Value    | 20%         |
-      | Buy X             | 5           |
-      | Get Y             | 3           |
-      | Product Unit      | piece       |
-      | Apply Discount To | X + Y Total |
-      | Limit, times      | N/A         |
+      | Discount          | Buy X Get Y (Same Product) |
+      | Type              | Percent                    |
+      | Discount Value    | 20%                        |
+      | Buy X Quantity    | 5                          |
+      | Get Y Quantity    | 3                          |
+      | Unit of Quantity  | piece                      |
+      | Apply Discount To | X + Y Total                |
+      | Limit, times      | N/A                        |
 
   Scenario: Create promotion with Shipping discount, fixed amount, apply to matching items only, flat rate shipping method
     When I go to Marketing / Promotions / Promotions
@@ -196,7 +196,7 @@ Feature: Managing promotions
       | Discount Value | This value should not be blank. |
     When I fill "Promotion Form" with:
       | Discount Value    | 30 |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
@@ -222,7 +222,7 @@ Feature: Managing promotions
       | Discount Value (%) | This value should not be blank. |
     When I fill "Promotion Form" with:
       | Discount Value (%) | 50 |
-    And I press "Add" in "Matching Items" section
+    And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form

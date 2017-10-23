@@ -35,7 +35,7 @@
         '~class': ' product-item__number product-item__number_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        Item #: <span class="red">{{ block_widget(block) }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} {{ block_widget(block) }}
     </div>
 {% endblock %}
 

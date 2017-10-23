@@ -8,8 +8,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 class WebsiteContextManagerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
+    const WEBSITE_ID = 777;
+
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelperMock;
 
@@ -19,44 +25,76 @@ class WebsiteContextManagerTest extends \PHPUnit_Framework_TestCase
     /** @var WebsiteRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $websiteRepositoryMock;
 
+    /** @var Website */
+    private $website;
+
     protected function setUp()
     {
-        $this->doctrineHelperMock = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->websiteRepositoryMock = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->websiteRepositoryMock = $this->createMock(WebsiteRepository::class);
+        $this->doctrineHelperMock = $this->createMock(DoctrineHelper::class);
         $this->doctrineHelperMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntityRepository')
             ->with(Website::class)
             ->willReturn($this->websiteRepositoryMock);
 
+        $this->website = $this->getEntity(Website::class, [ 'id' => self::WEBSITE_ID ]);
         $this->websiteContextManager = new WebsiteContextManager($this->doctrineHelperMock);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->doctrineHelperMock);
+        unset($this->websiteRepositoryMock);
+        unset($this->website);
+        unset($this->websiteContextManager);
     }
 
     public function testGetWebsiteIdExists()
     {
-        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = 777;
+        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = self::WEBSITE_ID;
         $this->websiteRepositoryMock
             ->expects($this->once())
             ->method('checkWebsiteExists')
-            ->with(777)
-            ->willReturn([777]);
-        $this->assertEquals(777, $this->websiteContextManager->getWebsiteId($context));
+            ->with(self::WEBSITE_ID)
+            ->willReturn(true);
+
+        $this->assertEquals(self::WEBSITE_ID, $this->websiteContextManager->getWebsiteId($context));
     }
 
     public function testGetWebsiteIdNotExist()
     {
-        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = 777;
+        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = self::WEBSITE_ID;
         $this->websiteRepositoryMock
             ->expects($this->once())
             ->method('checkWebsiteExists')
-            ->with(777)
-            ->willReturn([]);
+            ->with(self::WEBSITE_ID)
+            ->willReturn(false);
+
         $this->assertNull($this->websiteContextManager->getWebsiteId($context));
+    }
+
+    public function testGetWebsiteExists()
+    {
+        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = self::WEBSITE_ID;
+        $this->websiteRepositoryMock
+            ->expects($this->once())
+            ->method('find')
+            ->with(self::WEBSITE_ID)
+            ->willReturn($this->website);
+
+        $this->assertEquals($this->website, $this->websiteContextManager->getWebsite($context));
+    }
+
+    public function testGetWebsiteNotExists()
+    {
+        $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY] = self::WEBSITE_ID;
+        $this->websiteRepositoryMock
+            ->expects($this->once())
+            ->method('find')
+            ->with(self::WEBSITE_ID)
+            ->willReturn(null);
+
+        $this->assertNull($this->websiteContextManager->getWebsite($context));
     }
 }

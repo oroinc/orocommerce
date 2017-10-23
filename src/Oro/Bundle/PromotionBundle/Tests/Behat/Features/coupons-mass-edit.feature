@@ -1,7 +1,6 @@
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 @fixture-OroPromotionBundle:coupons.yml
 @regression
-@skip #@todo remove @skip tag in scope of BB-12083
 Feature: Mass edit of Coupons codes
   As an Administrator
   I want to be able to mass edit coupon codes via Management Console UI
@@ -55,12 +54,12 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       |Uses per Coupon   |99        |
       |Uses per Person   |100       |
-    And I press "Today"
     And I fill form with:
-      |Valid Until       | <DateTime:Jul 10, 2010, 10:00 AM> |
+      | Valid From  | <DateTime:Jul 09, 2017, 10:00 AM> |
+      | Valid Until | <DateTime:Jul 10, 2017, 10:00 AM> |
     And I click "Apply"
     Then I should see "100 entities were edited" flash message
     And I filter Uses per Coupon as = "99"
     And I filter Uses per Person as = "100"
     And there are 100 records in grid
-    And I should see "Jul 10, 2010, 10:00 AM" in grid
+    And I should see "Jul 10, 2017, 10:00 AM" in grid

@@ -14,6 +14,7 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
+use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -169,7 +170,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->provider->isPromotionApplied($sourceEntity, $promotion));
     }
 
-    public function testIsPromotionAppliedWhenPromotionIsApplicable()
+    public function testIsPromotionApplicableWhenPromotionIsApplicable()
     {
         $sourceEntity = new \stdClass();
 
@@ -193,7 +194,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->provider->isPromotionApplicable($sourceEntity, $promotion));
     }
 
-    public function testIsPromotionAppliedWhenPromotionIsNotApplicable()
+    public function testIsPromotionApplicableWhenPromotionIsNotApplicable()
     {
         $sourceEntity = new \stdClass();
 
@@ -216,6 +217,37 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion));
+    }
+
+    public function testIsPromotionApplicableWithSkippedFilters()
+    {
+        $sourceEntity = new \stdClass();
+        $skippedFilters = ['SomeFilterClass'];
+
+        /** @var Promotion $promotion */
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(5);
+        $context = ['some context item'];
+
+        $this->contextDataConverter->expects($this->once())
+            ->method('getContextData')
+            ->with($sourceEntity)
+            ->willReturn($context);
+
+        $expectedContext = [
+            'some context item',
+            AbstractSkippableFiltrationService::SKIP_FILTERS_KEY => $skippedFilters
+        ];
+
+        $this->ruleFiltrationService->expects($this->once())
+            ->method('getFilteredRuleOwners')
+            ->with([$promotion], $expectedContext)
+            ->willReturn([]);
+
+        $this->assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion, $skippedFilters));
     }
 
     /**

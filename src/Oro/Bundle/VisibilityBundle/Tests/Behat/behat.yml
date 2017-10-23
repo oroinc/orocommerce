@@ -12,6 +12,17 @@ oro_behat_extension:
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
+    Visibility Product Form:
+      selector: 'form[name="oro_scoped_data_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Visibility To Customers First:
+            locator: '#product-visibility-customer tr:contains(first) .grid-body-cell-visibility select'
+            type: css
+          Visibility To Customer First Group:
+            locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
+            type: css
     Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -25,3 +36,12 @@ oro_behat_extension:
             locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
+    Visibility Settings Form:
+      selector: 'form[name="visibility_title"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product Visibility: 'visibility_title[oro_visibility___product_visibility][value]'
+          Product Visibility Use Default: 'visibility_title[oro_visibility___product_visibility][use_parent_scope_value]'
+          Category Visibility: 'visibility_title[oro_visibility___category_visibility][value]'
+          Category Visibility Use Default: 'visibility_title[oro_visibility___category_visibility][use_parent_scope_value]'

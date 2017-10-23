@@ -54,6 +54,7 @@ oro:
         base_subtotal_value.label: 'Subtotal In Base Currency'
         contact_information.label: 'Contact Information'
         internal_status.label: 'Internal Status'
+        recency.label: 'Recency'
 
         subtotal:
             label: Subtotal
@@ -202,6 +203,8 @@ oro:
             best_selling_list.label: Best Selling Products
             best_selling_list.description: List of best selling products
             static_reports_tab.label: Reports
+            product.previously_purchased.label: Previously Purchased
+
         widgets:
             order_discount_form: Special Discount Form
             order_discount_edit_form: Edit Speical Discount Form
@@ -266,6 +269,9 @@ oro:
                 order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
                 order_automation_target_status.title: 'Target Status'
                 order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
+                enable_purchase_history.title: 'Enable Purchase History'
+                order_previously_purchased_period.title: 'Display products purchased within (days)'
+                order_previously_purchased_period.tooltip: 'Enter the number of days that the purchase history should cover.'
                 order_creation_new_internal_order_status.title: 'New Internal Order Status'
                 order_creation_new_internal_order_status.tooltip: 'The selected status will be assigned to new orders upon creation.'
             groups:
@@ -273,6 +279,7 @@ oro:
                 orders_history.title: 'Orders History'
                 order_automation.title: 'Order Automation'
                 order_creation.title: 'Order Creation'
+                purchase_history.title: 'Purchase History'
 
         privilege:
             category.orders.label: 'Orders'

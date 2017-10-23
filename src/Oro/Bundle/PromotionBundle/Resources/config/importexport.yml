@@ -1,7 +1,10 @@
 services:
     oro_promotion.importexport.data_converter.coupon:
+        class: Oro\Bundle\PromotionBundle\ImportExport\DataConverter\CouponDataConverter
         parent: oro_importexport.data_converter.configurable
         public: false
+        arguments:
+            - '@translator'
 
     # Export processor
     oro_promotion.importexport.processor.export.coupon:
@@ -43,8 +46,11 @@ services:
             - { name: oro_importexport.template_fixture }
 
     oro_promotion.importexport.fixtures.data_converter:
+        class: Oro\Bundle\PromotionBundle\ImportExport\DataConverter\CouponDataConverter
         parent: oro_importexport.data_converter.template_fixture.configurable
         public: false
+        arguments:
+            - '@translator'
 
     # Template Export processor
     oro_promotion.importexport.processor.export_template.coupon:

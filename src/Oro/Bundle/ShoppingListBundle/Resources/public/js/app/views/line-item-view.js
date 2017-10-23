@@ -8,6 +8,11 @@ define(function(require) {
     var _ = require('underscore');
 
     LineItemView = BaseProductView.extend({
+        elements: _.extend({}, BaseProductView.prototype.elements, {
+            quantity: '[data-name="field__quantity"]',
+            unit: '[data-name="field__unit"]'
+        }),
+
         lineItemId: null,
 
         initialize: function(options) {

@@ -63,6 +63,7 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
             $promotion = new Promotion();
             $promotion->setOwner($user);
             $promotion->setRule($rule);
+            $promotion->setUseCoupons(!empty($promotionData['useCoupons']) ? $promotionData['useCoupons'] : false);
 
             if (array_key_exists('schedules', $promotionData)) {
                 foreach ($promotionData['schedules'] as $schedule) {

@@ -33,6 +33,9 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
         $this->indexer = new ProductVisibilityIndexer($this->visibilityProvider);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testAddIndexInfo()
     {
         $entityIds = [1, 2, 3];
@@ -93,34 +96,43 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 
         $expectedEntitiesData = [
             1 => [
-                'visibility_anonymous' =>
+                'visibility_anonymous' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
-                'visibility_new' =>
+                ],
+                'visibility_new' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'is_visible_by_default' =>
+                ],
+                'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                ],
                 'visibility_customer_CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 1]), 'all_text' => false],
                 ]
             ],
             2 => [
-                'visibility_anonymous' =>
+                'visibility_anonymous' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_new' =>
+                ],
+                'visibility_new' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'is_visible_by_default' =>
+                ],
+                'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
+                ],
                 'visibility_customer_CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 3]), 'all_text' => false]
                 ]
             ],
             3 => [
-                'visibility_anonymous' =>
+                'visibility_anonymous' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_new' =>
+                ],
+                'visibility_new' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
-                'is_visible_by_default' =>
+                ],
+                'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                ],
                 'visibility_customer_CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 2]), 'all_text' => false],
                 ]

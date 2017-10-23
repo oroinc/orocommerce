@@ -133,13 +133,21 @@ layout:
                 workflowItem: '=data["workflowItem"]'
 
         - '@add':
+            id: checkout_order_summary_totals_sticky_container
+            blockType: container
+            parentId: checkout_order_summary_totals_container
+        - '@move':
+            id: checkout_order_summary_totals
+            parentId: checkout_order_summary_totals_sticky_container
+        - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_order_summary_totals_container
+            parentId: checkout_order_summary_totals_sticky_container
             siblingId: checkout_order_summary_totals
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                 checkout: '=data["checkout"]'
+
         - '@add':
             id: checkout_summary_badge
             blockType: container
