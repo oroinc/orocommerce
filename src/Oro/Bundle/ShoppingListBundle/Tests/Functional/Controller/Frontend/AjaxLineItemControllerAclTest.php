@@ -4,12 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AjaxLineItemControllerAclTest extends WebTestCase
@@ -28,19 +29,19 @@ class AjaxLineItemControllerAclTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
-                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
+                LoadCustomerUserData::AUTH_USER,
+                LoadCustomerUserData::AUTH_PW
             )
         );
 
         $this->loadFixtures([
             LoadShoppingListACLData::class,
-            LoadProductData::class,
+            LoadFrontendProductVisibilityData::class,
         ]);
 
         $this->simulateAuthentication(
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            LoadCustomerUserData::AUTH_USER,
+            LoadCustomerUserData::AUTH_PW,
             'customer_identity',
             CustomerUser::class
         );
@@ -108,11 +109,12 @@ class AjaxLineItemControllerAclTest extends WebTestCase
     public function testAddProductsToNewMassAction()
     {
         $this->simulateAuthentication(
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            LoadCustomerUserData::AUTH_USER,
+            LoadCustomerUserData::AUTH_PW,
             'customer_identity',
             CustomerUser::class
         );
+
         $this->client->request(
             'GET',
             $this->getUrl(
