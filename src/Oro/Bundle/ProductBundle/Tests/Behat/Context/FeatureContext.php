@@ -953,8 +953,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Check checkboxes in multiple select filter
      * Example: When I check "Task, Email" in Activity Type filter in frontend product grid
+     * Example: When I check "Task, Email" in "Activity Type filter" in frontend product grid
      *
      * @When /^(?:|I )check "(?P<filterItems>.+)" in (?P<filterName>[\w\s]+) filter in frontend product grid$/
+     * @When /^(?:|I )check "(?P<filterItems>.+)" in "(?P<filterName>[^"]+)" filter in frontend product grid$/
      *
      * @param string $filterName
      * @param string $filterItems

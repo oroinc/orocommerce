@@ -73,6 +73,13 @@ oro_behat_extension:
     Include Not Categorized Products:
       selector: '.include-not-categorized-product-choice input[type="checkbox"]'
 
+    SubcategoriesFilter:
+      selector: 'div.filter-item[data-subcategory-filter-template]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice
+
+    SubcategoriesFilterSelect:
+      selector: 'div.filter-item[data-subcategory-filter-template] select'
+
   suites:
     OroCatalogBundle:
       contexts:

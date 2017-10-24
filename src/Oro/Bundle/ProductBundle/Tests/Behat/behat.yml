@@ -435,7 +435,16 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: '.product-list'
+      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    ProductFrontendGridFiltersButton:
+      selector: 'div.filter-container > button.select-filter-widget'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
+
+    ProductFrontendGridFilterManager:
+      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
 
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
