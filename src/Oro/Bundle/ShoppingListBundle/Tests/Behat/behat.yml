@@ -138,6 +138,12 @@ oro_behat_extension:
     Create Order:
       selector: 'a[title="Create Order"]'
 
+    ShoppingListEditTitleField:
+      selector: '#title-inline-editable input[name="value"]'
+
+    EditShopppingListLabel:
+      selector: '#title-inline-editable [data-role="start-editing"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
