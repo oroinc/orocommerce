@@ -173,20 +173,24 @@
                     <th><small>&nbsp;</small></th>
                 </tr>
                 </thead>
-                {% for lineItem in shoppingList.lineItems %}
-                {% set mainProduct = lineItem.product %}
-                {% if lineItem.parentProduct is not null %}
-                    {% set mainProduct = lineItem.parentProduct %}
-                {% endif %}
-                <tbody class="line_item">
+                {% for lineItem in lineItems %}
+                    <tbody class="line_item">
+                    {# TODO: Should be change in ticket BB-12007 #}
+
+                    {% set form = null %}
+                    {% if  lineItem.form is defined %}
+                        {% set form = lineItem.form %}
+                    {% endif %}
+
                     {% do block|merge_context({
-                        lineItem: lineItem,
-                        mainProduct: mainProduct,
-                        parent: block.vars,
-                        loop: loop
-                    }) %}
-                    {{ block('container_widget') }}
-                </tbody>
+                            lineItem: lineItem.lineItems|first,
+                            mainProduct: lineItem.product,
+                            parent: block.vars,
+                            loop: loop,
+                            form: form
+                        }) %}
+                        {{ block('container_widget') }}
+                    </tbody>
                 {% endfor %}
             </table>
         </div>
@@ -275,6 +279,14 @@
         {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}: {{ field.value }}</div>
         {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_inline_matrix_form_widget %}
+    {% if form is not null %}
+        {# TODO: Should be change in ticket BB-12007 #}
+        PLease show INLINE MATRIX FORM
+        {{ dump(form) }}
     {% endif %}
 {% endblock %}
 

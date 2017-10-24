@@ -124,10 +124,6 @@ oro:
                 availability_for_guests:
                     label: 'Enable guest shopping list'
                     tooltip: 'Allows guests to create a shopping list'
-                matrix_form_on_shopping_list:
-                    display_options.label: 'Display Options'
-                    group.label: 'Group Single Products'
-                    inline.label: 'Inline Matrix Form'
 
         privilege:
             category.shopping.label: 'Shopping'

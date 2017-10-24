@@ -45,10 +45,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 0,
                     'scope' => 'app'
                 ],
-                'matrix_form_on_shopping_list' => [
-                    'value' => 'inline',
-                    'scope'=> 'app'
-                ]
             ]
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
