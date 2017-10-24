@@ -16,6 +16,11 @@ Feature: Commerce smoke e2e
       |Backorders Default|false|
       |Backorders        |Yes  |
     And click "Save settings"
+    And go to Inventory/ Warehouses
+    And click "Create Warehouse"
+    And type "MainWarehouse" in "Name"
+    And save and close form
+    And I enable the existing warehouses
     And go to System/ Configuration
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
