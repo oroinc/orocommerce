@@ -729,7 +729,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given /^I should see "([^"]*)" product$/
+     * @Given /^(?:|I )should see "([^"]*)" product$/
      */
     public function iShouldSeeInSearchResults($productSku)
     {
@@ -738,7 +738,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^I should not see "([^"]*)" product$/
+     * @Then /^(?:|I )should not see "([^"]*)" product$/
      *
      * @param string $productSku
      */
@@ -985,23 +985,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $filters;
-    }
-
-    /**
-     * @param string $elementName
-     * @param NodeElement $productItem
-     * @return bool
-     */
-    protected function isElementVisible($elementName, $productItem)
-    {
-        if ($this->hasElement($elementName)) {
-            $element = $this->createElement($elementName, $productItem);
-            if ($element->isValid() && $element->isVisible()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
