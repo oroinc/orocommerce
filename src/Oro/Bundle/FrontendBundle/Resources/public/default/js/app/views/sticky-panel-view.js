@@ -172,7 +172,7 @@ define(function(require) {
 
             if (contentChanged) {
                 this.$el.toggleClass('has-content', this.$el.find('.' + this.options.elementClass).length > 0);
-                this.onScroll();
+                window.requestAnimationFrame(this.onScroll.bind(this));
             }
         },
 
