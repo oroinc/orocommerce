@@ -473,6 +473,7 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
       paths:
+        - '@OroProductBundle/Tests/Behat/Features/product-attributes'
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
     OroProductBundleRelatedItems:
