@@ -986,4 +986,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         return $filters;
     }
+
+    /**
+     * Select a value for product attribute on product update form
+     * Example: I fill in product attribute "Color" with "Red"
+     *
+     * @When /^(?:|I )fill in product attribute "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
+     */
+    public function fillProductAttribute($field, $value)
+    {
+        $field = $this->fixStepArgument($field);
+        $value = $this->fixStepArgument($value);
+        $form = $this->createElement('OroForm');
+        $value = $form->normalizeValue($value);
+
+        $form
+            ->find('css', sprintf('[name="oro_product[%s]"]', $field))
+            ->setValue($value);
+    }
 }

@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
@@ -40,7 +41,12 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->setMatrixOrderManager($this->matrixOrderManager);
     }
 
-    public function testGetMatrixOrderForm()
+    /**
+     * @param ShoppingList|null $shoppingList
+     *
+     * @dataProvider getLineItemsDataProvider
+     */
+    public function testGetMatrixOrderForm(ShoppingList $shoppingList = null)
     {
         /** @var Product $product **/
         $product = $this->getEntity(Product::class);
@@ -51,7 +57,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->matrixOrderManager->expects($this->once())
             ->method('getMatrixCollection')
-            ->with($product)
+            ->with($product, $shoppingList)
             ->willReturn($collection);
 
         $this->formFactory->expects($this->once())
@@ -59,10 +65,15 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
             ->with(MatrixCollectionType::class, $collection, [])
             ->willReturn($form);
 
-        $this->assertSame($form, $this->provider->getMatrixOrderForm($product));
+        $this->assertSame($form, $this->provider->getMatrixOrderForm($product, $shoppingList));
     }
 
-    public function testGetMatrixOrderFormView()
+    /**
+     * @param ShoppingList|null $shoppingList
+     *
+     * @dataProvider getLineItemsDataProvider
+     */
+    public function testGetMatrixOrderFormView(ShoppingList $shoppingList = null)
     {
         /** @var Product $product **/
         $product = $this->getEntity(Product::class);
@@ -74,7 +85,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->matrixOrderManager->expects($this->once())
             ->method('getMatrixCollection')
-            ->with($product)
+            ->with($product, $shoppingList)
             ->willReturn($collection);
 
         $this->formFactory->expects($this->once())
@@ -86,6 +97,21 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('createView')
             ->willReturn($formView);
 
-        $this->assertSame($formView, $this->provider->getMatrixOrderFormView($product));
+        $this->assertSame($formView, $this->provider->getMatrixOrderFormView($product, $shoppingList));
+    }
+
+    /**
+     * @return array
+     */
+    public function getLineItemsDataProvider()
+    {
+        return [
+            'without shopping list' => [
+                null
+            ],
+            'with shopping list' => [
+                $this->getEntity(ShoppingList::class)
+            ]
+        ];
     }
 }

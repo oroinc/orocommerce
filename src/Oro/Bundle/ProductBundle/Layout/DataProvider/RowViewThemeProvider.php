@@ -4,10 +4,8 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
-class FrontendDatagridRowViewProvider
+class RowViewThemeProvider
 {
-    const FRONTEND_DATAGRID_NAME = 'frontend-product-search-grid';
-
     /**
      * @var DataGridThemeHelper
      */
@@ -22,10 +20,12 @@ class FrontendDatagridRowViewProvider
     }
 
     /**
+     * @param string $dataGridName
+     *
      * @return null|string
      */
-    public function getDataGridTheme()
+    public function getThemeByGridName($dataGridName)
     {
-        return $this->themeHelper->getTheme(static::FRONTEND_DATAGRID_NAME);
+        return $this->themeHelper->getTheme($dataGridName);
     }
 }

@@ -2,68 +2,118 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType as ProductImageTypeConstraint;
+use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 
-class ProductImageTypeValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var ProductImageTypeValidator
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator
      */
-    protected $productImageTypeValidator;
+    protected $translator;
 
-    /**
-     * @var Constraint|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $constraint;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $context;
-
-    protected function setUp()
+    public function setUp()
     {
-        $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productImageTypeValidator = new ProductImageTypeValidator($this->imageTypeProvider);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->productImageTypeValidator->initialize($this->context);
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint * */
-        $this->constraint = $this->getMockBuilder(Constraint::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+
+        $this->constraint = new ProductImageTypeConstraint();
+        $this->context = $this->createContext();
+        $this->validator = $this->createValidator();
+        $this->validator->initialize($this->context);
+    }
+
+    /**
+     * @return ProductImageTypeValidator
+     */
+    protected function createValidator()
+    {
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+
+        return new ProductImageTypeValidator(
+            $this->imageTypeProvider,
+            $this->translator
+        );
     }
 
     public function testValidateShouldIgnore()
     {
         $value = new ProductImageType(null);
 
-        $this->productImageTypeValidator->validate($value, $this->constraint);
+        $this->validator->validate($value, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateShouldThrowError()
+    public function testValidateShouldThrowErrorInvalid()
     {
         $value = new ProductImageType('testType');
+
         $this->imageTypeProvider->expects($this->once())
             ->method('getImageTypes')
             ->willReturn(['otherType' => []]);
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
 
-        $this->productImageTypeValidator->validate($value, $this->constraint);
+        $this->validator->validate($value, $this->constraint);
+
+        $this->buildViolation('oro.product.product_image_type.invalid_type')
+            ->setParameters(
+                [
+                    '%type%' => 'testType',
+                ]
+            )
+            ->assertRaised();
+    }
+
+    public function testValidateShouldThrowErrorDuplicate()
+    {
+        $productImageTypesCollection = $this->createMock(ArrayCollection::class);
+        $productImageTypesCollection->expects($this->once())
+            ->method('containsKey')
+            ->willReturn(true);
+
+
+        $productImage = new ProductImage();
+        $productImage->setTypes($productImageTypesCollection);
+
+        $value = new ProductImageType('main');
+        $value->setProductImage($productImage);
+
+        $this->imageTypeProvider->expects($this->once())
+            ->method('getImageTypes')
+            ->willReturn(
+                [
+                    'main' => new ThemeImageType('main', 'Main', [])
+                ]
+            );
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Main');
+
+        $this->validator->validate($value, $this->constraint);
+
+
+        $this->buildViolation('oro.product.product_image_type.already_exists')
+            ->setParameters(
+                [
+                    '%type%' => 'Main',
+                ]
+            )
+            ->assertRaised();
     }
 
     public function testValidateShouldPass()
@@ -71,11 +121,14 @@ class ProductImageTypeValidatorTest extends \PHPUnit_Framework_TestCase
         $value = new ProductImageType('testType');
         $this->imageTypeProvider->expects($this->once())
             ->method('getImageTypes')
-            ->willReturn(['testType' => []]);
-        $this->context->expects($this->never())
-            ->method('buildViolation')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn(
+                [
+                    'testType' => []
+                ]
+            );
 
-        $this->productImageTypeValidator->validate($value, $this->constraint);
+        $this->validator->validate($value, $this->constraint);
+
+        $this->assertNoViolation();
     }
 }

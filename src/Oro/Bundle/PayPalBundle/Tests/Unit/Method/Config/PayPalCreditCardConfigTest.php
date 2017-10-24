@@ -22,10 +22,10 @@ class PayPalCreditCardConfigTest extends AbstractPayPalConfigTest
     protected function getPaymentConfig()
     {
         $params = [
-            PayPalCreditCardConfig::LABEL_KEY => 'test label',
-            PayPalCreditCardConfig::SHORT_LABEL_KEY => 'test short label',
-            PayPalCreditCardConfig::ADMIN_LABEL_KEY => 'test admin label',
-            PayPalCreditCardConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'test_payment_method_identifier',
+            PayPalCreditCardConfig::FIELD_LABEL => 'test label',
+            PayPalCreditCardConfig::FIELD_SHORT_LABEL => 'test short label',
+            PayPalCreditCardConfig::FIELD_ADMIN_LABEL => 'test admin label',
+            PayPalCreditCardConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'test_payment_method_identifier',
             PayPalCreditCardConfig::PROXY_PORT_KEY => '8099',
             PayPalCreditCardConfig::PROXY_HOST_KEY => 'proxy host',
             PayPalCreditCardConfig::USE_PROXY_KEY => true,

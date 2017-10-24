@@ -22,10 +22,10 @@ class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
     protected function getPaymentConfig()
     {
         $params = [
-            PayPalExpressCheckoutConfig::LABEL_KEY => 'test label',
-            PayPalExpressCheckoutConfig::SHORT_LABEL_KEY => 'test short label',
-            PayPalExpressCheckoutConfig::ADMIN_LABEL_KEY => 'test admin label',
-            PayPalExpressCheckoutConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'test_payment_method_identifier',
+            PayPalExpressCheckoutConfig::FIELD_LABEL => 'test label',
+            PayPalExpressCheckoutConfig::FIELD_SHORT_LABEL => 'test short label',
+            PayPalExpressCheckoutConfig::FIELD_ADMIN_LABEL => 'test admin label',
+            PayPalExpressCheckoutConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'test_payment_method_identifier',
             PayPalExpressCheckoutConfig::TEST_MODE_KEY => true,
             PayPalExpressCheckoutConfig::PURCHASE_ACTION_KEY => 'string',
             PayPalExpressCheckoutConfig::CREDENTIALS_KEY => [

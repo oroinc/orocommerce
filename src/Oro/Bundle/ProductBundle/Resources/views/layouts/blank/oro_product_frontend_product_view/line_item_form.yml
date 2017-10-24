@@ -12,9 +12,11 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['layout-subtree:update:product']
-                        visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple() && context["is_logged_in"]'
+                        visible: '=context["is_logged_in"]'
                 line_item_form:
                     blockType: container
+                    options:
+                        visible: '=context["is_mobile"] or data["oro_product_form_availability"].isSimpleFormAvailable(data["product"]) or data["oro_product_form_availability"].isPopupMatrixFormAvailable(data["product"])'
                 line_item_form_start:
                     blockType: form_start
                     options:
@@ -22,6 +24,7 @@ layout:
                 line_item_form_fields:
                     blockType: form_fields
                     options:
+                        visible: '=data["oro_product_form_availability"].isSimpleFormAvailable(data["product"])'
                         vars:
                             form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                             isProductUnitSelectionVisible: '=data.offsetExists("product")?data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
@@ -30,6 +33,7 @@ layout:
                 line_item_form_end:
                     blockType: form_end
                     options:
+                        render_rest: false
                         form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 product_line_item_form_buttons:
                     blockType: container
@@ -41,3 +45,8 @@ layout:
                             line_item_form_fields: ~
                             product_line_item_form_buttons: ~
                             line_item_form_end: ~
+
+        - '@setOption':
+            id: line_item_form_buttons_shopping_list
+            optionName: attr.componentModule
+            optionValue: '=context["is_mobile"] or data["oro_product_form_availability"].isPopupMatrixFormAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'

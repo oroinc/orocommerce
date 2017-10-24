@@ -17,8 +17,8 @@ define(function(require) {
         normalizeQuantityField: true,
 
         elements: {
-            quantity: '[data-name="field__quantity"]:first',
-            unit: '[data-name="field__unit"]:first',
+            quantity: ['lineItem', '[data-name="field__quantity"]:first'],
+            unit: ['lineItem', '[data-name="field__unit"]:first'],
             lineItem: '[data-role="line-item-form-container"]',
             lineItemFields: ['lineItem', ':input[data-name]']
         },

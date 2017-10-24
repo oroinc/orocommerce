@@ -599,18 +599,15 @@ Feature: Commerce smoke e2e
     And should see an "Product Image (view page)" element
     And should see "ConfigurableShirt"
     And should see "Item"
-    And should see "1 $8.00"
-    And should see "Order with Matrix Grid"
+    And should see an "Matrix Grid Form" element
     And should see an "Add to Shopping List" element
-    When click "Order with Matrix Grid"
-    Then I should see an "Matrix Grid Popup" element
     And fill "Matrix Grid Form" with:
       |Black L|2|
       |Black M|3|
       |White L|1|
       |White M|5|
-    And click "Add to Shopping List form Matrix Grid"
-    And should see an "Green Box" element
+    And click "Add to Shoppin..."
+    And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
     And click "Shopping list"
     And should see "Subtotal $175.20"

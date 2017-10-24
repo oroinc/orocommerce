@@ -1,39 +1,186 @@
 // @theme: blank;
 
 .matrix-order-widget {
+    max-width: $matrix-order-widget-max-width;
+    margin: $matrix-order-widget-offset;
+
     &__grid {
-        width: 100%;
+        width: $matrix-order-widget-grid-width;
+        margin-bottom: $matrix-order-widget-grid-offset-bottom;
+
+        font-family: $matrix-order-widget-grid-font-family;
+
+        border-bottom: $matrix-order-widget-grid-border-bottom;
+    }
+
+    &__grid--multi-rows & {
+        &__grid-head,
+        &__grid-body,
+        &__grid-footer {
+            &-wrapper {
+                margin-left: $matrix-order-widget-grid-multi-rows-items-wrapper-offset-left;
+            }
+        }
+
+        &__grid-head {
+            border-top: $matrix-order-widget-grid-multi-rows-grid-head-border-top;
+            border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-border-bottom;
+            background: $matrix-order-widget-grid-multi-rows-grid-head-background;
+        }
+    }
+
+    &__grid-body {
+        display: $matrix-order-widget-grid-body-display;
+
+        max-height: $matrix-order-widget-grid-body-max-height;
+
+        overflow: $matrix-order-widget-grid-body-overflow;
+
+        .form-row {
+            width: $matrix-order-widget-grid-body-form-row-width;
+            margin: $matrix-order-widget-grid-body-form-offset;
+        }
+    }
+
+    &__grid-head,
+    &__grid-footer {
+        &-wrapper {
+            overflow: $matrix-order-widget-grid-area-items-wrapper-overflow;
+
+            white-space: $matrix-order-widget-grid-area-items-wrapper-white-space;
+            text-align: $matrix-order-widget-grid-area-items-wrapper-text-align;
+        }
+
+        &-label {
+            float: $matrix-order-widget-grid-area-items-label-float;
+
+            width: $matrix-order-widget-grid-area-items-label-width;
+
+            text-align: $matrix-order-widget-grid-area-items-label-text-align;
+        }
+    }
+
+    &__grid-footer {
+        background: $matrix-order-widget-grid-footer-background;
+        border-top: $matrix-order-widget-grid-footer-border-top;
+
+        &-label {
+            height: $matrix-order-widget-grid-footer-label-height;
+
+            line-height: $matrix-order-widget-grid-footer-label-line-height;
+            text-transform: $matrix-order-widget-grid-footer-label-text-transform;
+        }
+
+        &-total {
+            padding: $matrix-order-widget-grid-footer-total-offset-inner;
+
+            color: $matrix-order-widget-grid-footer-total-color;
+
+            &.valid {
+                color: $matrix-order-widget-grid-footer-total-valid-color;
+            }
+        }
+    }
+
+    &__grid-side {
+        float: $matrix-order-widget-grid-side-float;
+
+        width: $matrix-order-widget-grid-side-width;
+        max-height: $matrix-order-widget-grid-side-max-height;
+
+        overflow: $matrix-order-widget-grid-side-overflow;
+    }
+
+    &__grid-side & {
+        &__form__row {
+            display: $matrix-order-widget-grid-side-form-row-display;
+            justify-content: $matrix-order-widget-grid-side-form-row-justify-content;
+            overflow: $matrix-order-widget-grid-side-form-row-overflow;
+
+            margin: $matrix-order-widget-grid-side-form-row-offset;
+
+            text-align: $matrix-order-widget-grid-side-form-row-text-align;
+            white-space: $matrix-order-widget-grid-side-form-row-white-space;
+            word-break: $matrix-order-widget-grid-side-form-row-word-break;
+            line-height: $matrix-order-widget-grid-side-form-row-line-height;
+        }
+    }
+
+    &__grid-scrollable-area {
+        display: $matrix-order-widget-grid-scrollable-area-display;
+    }
+
+    &__form__row {
+        display: $matrix-order-widget-form-row-display;
+        align-items: $matrix-order-widget-form-row-align-items;
+
+        height: $matrix-order-widget-form-row-height;
+        min-width: $matrix-order-widget-form-row-min-width;
+
+        white-space: $matrix-order-widget-form-row-white-space;
+
+        &:not(:last-child) {
+            border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+        }
+    }
+
+    &__form__col {
+        display: $matrix-order-widget-form-col-display;
+        justify-content: $matrix-order-widget-form-col-justify-content;
+
+        margin: $matrix-order-widget-form-col-offset;
+        width: $matrix-order-widget-form-col-width;
+        border: $matrix-order-widget-form-col-border;
+
+        line-height: $matrix-order-widget-form-col-line-height;
+        text-align: $matrix-order-widget-form-col-text-align;
+        vertical-align: $matrix-order-widget-form-col-vertical-align;
+
+        &-wrapper {
+            display: $matrix-order-widget-form-col-wrapper-display;
+            align-items: $matrix-order-widget-form-col-wrapper-align-items;
+
+            margin: $matrix-order-widget-form-col-wrapper-offset;
+
+            white-space: $matrix-order-widget-form-col-wrapper-white-space;
+            word-break: $matrix-order-widget-form-col-wrapper-word-break;
+        }
+
+        .form-field-quantity {
+            font-family: $matrix-order-widget-form-col-form-field-quantity-font-family;
+            text-align: $matrix-order-widget-form-col-form-field-quantity-text-align;
+        }
     }
 
     &__summary {
-        display: flex;
-        justify-content: flex-end;
+        display: $matrix-order-widget-summary-display;
+        justify-content: $matrix-order-widget-summary-justify-content;
 
         min-width: $matrix-order-widget-summary-min-width;
-        margin-left: auto;
+        margin-left: $matrix-order-widget-summary-offset-left;
 
-        font-family: $font-family-base;
-        text-align: right;
+        font-family: $matrix-order-widget-summary-font-family;
+        text-align: $matrix-order-widget-summary-text-align;
+    }
+
+    &__summary-wrapper {
+        padding-right: $matrix-order-widget-summary-wrapper-offset-inner-right;
     }
 
     &__summary-label {
-        display: inline-flex;
+        display: $matrix-order-widget-summary-label-display;
         min-width: $matrix-order-widget-summary-label-min-width;
         padding: $matrix-order-widget-summary-label-offset-inner;
     }
 
     &__total-quantity,
     &__total-price {
-        display: flex;
-        justify-content: space-between;
+        display: $matrix-order-widget-total-items-display;
+        justify-content: $matrix-order-widget-total-items-justify-content;
     }
 
     &__total-quantity {
-        margin-bottom: $offset-y-s;
-    }
-
-    &__total-quantity-vlaue {
-        float: right;
+        margin-bottom: $matrix-order-widget-total-quantity-offset-bottom;
     }
 
     &__total-price {
@@ -42,37 +189,129 @@
         font-size: $matrix-order-widget-total-price-font-size;
     }
 
-    .pinned-dropdown {
-        max-width: $matrix-order-widget-pinned-dropdown-max-width;
+    &__item {
+        position: $matrix-order-widget-item-position;
+        overflow: $matrix-order-widget-item-overflow;
 
-        .btn-group {
-            &.open .dropdown-menu {
-                bottom: 100%;
-                top: auto;
+        &:not(:first-child) {
+            border-top: $matrix-order-widget-item-not-first-child-border-top;
+        }
 
-                display: flex;
-                flex-direction: column-reverse;
-                margin-bottom: $offset-y-s;
+        &.expanded & {
+            &-icon {
+                &:first-child {
+                    display: $matrix-order-widget-item-expanded-icon-first-child-display;
+                }
 
+                &:last-child {
+                    display: $matrix-order-widget-item-expanded-icon-last-child-display;
+                }
             }
+        }
+
+        &-icon {
+            &:last-child {
+                display: $matrix-order-widget-item-icon-last-child-display;
+            }
+        }
+
+        &-icon-wrapper {
+            position: $matrix-order-widget-item-icon-wrapper-position;
+
+            right: $matrix-order-widget-item-icon-wrapper-right;
+            top: $matrix-order-widget-item-item-icon-wrapper-top;
+        }
+
+        &-label {
+            min-width: $matrix-order-widget-item-label-min-width;
+            margin: $matrix-order-widget-item-label-offset;
+            word-break: $matrix-order-widget-item-label-word-break;
+            line-height: $matrix-order-widget-item-label-line-height;
+            align-self: $matrix-order-widget-item-label-align-self;
+        }
+
+        &-value {
+            min-width: $matrix-order-widget-item-value-min-width;
+
+            input {
+                text-align: $matrix-order-widget-item-value-input-text-align;
+            }
+        }
+
+        &-separator {
+            margin: $matrix-order-widget-item-separator-offset;
+        }
+
+        &-info {
+            display: $matrix-order-widget-item-info-display;
+            flex-direction: $matrix-order-widget-item-info-flex-direction;
+            justify-content: $matrix-order-widget-item-info-justify-content;
+
+            width: $matrix-order-widget-item-info-width;
+            padding: $matrix-order-widget-item-info-offset-inner;
+
+            &-wrapper {
+                display: $matrix-order-widget-item-info-wrapper-display;
+            }
+        }
+
+        &-content {
+            display: $matrix-order-widget-item-content-display;
+            align-items: $matrix-order-widget-item-content-align-items;
+            flex-basis: $matrix-order-widget-item-content-flex-basis;
+
+            box-sizing: $matrix-order-widget-item-content-box-sizing;
+            padding: $matrix-order-widget-item-content-offset-inner;
+        }
+
+        &-content-wrapper {
+            display: $matrix-order-widget-item-content-wrapper-display;
+            flex-wrap: $matrix-order-widget-item-content-wrapper-flex-wrap;
+            overflow: $matrix-order-widget-item-content-wrapper-overflow;
+
+            box-sizing: $matrix-order-widget-item-content-wrapper-box-sizing;
+            padding: $matrix-order-widget-item-content-wrapper-offset-inner;
+            width: $matrix-order-widget-item-content-wrapper-width;
         }
     }
 
+    .pinned-dropdown {
+        max-width: $matrix-order-widget-pinned-dropdown-max-width;
+    }
+
+    //Should reset default dialog widget classes
     &--dialog {
         .ui-dialog-titlebar {
-            padding: 0;
+            padding: $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner;
         }
 
         .ui-dialog-title {
-            display: none;
+            display: $matrix-order-widget-dialog-ui-dialog-title-display;
         }
 
         .ui-dialog-titlebar-close {
-            font-size: 0;
+            font-size: $matrix-order-widget-dialog-ui-dialog-titlebar-close-font-size;
         }
 
         .ui-widget-content {
-            padding: $matrix-order-widget-dialog-content-offset-inner;
+            padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
+        }
+
+        .ui-dialog-buttonpane {
+            padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
+        }
+    }
+
+    &--dialog-fullscreen {
+        position: $matrix-order-widget-dialog-fullscreen-position;
+
+        .ui-dialog-titlebar,
+        .ui-dialog-buttonpane {
+            display: $matrix-order-widget-dialog-fullscreen-position-ui-dialog-hidden-item;
+        }
+
+        .ui-widget-content {
+            padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
         }
     }
 }
@@ -80,7 +319,60 @@
 @include breakpoint('desktop') {
     .matrix-order-widget {
         &--dialog {
-            width: $matrix-order-widget-width !important;
+            width: $matrix-order-widget-dialog-width !important;
+        }
+    }
+}
+
+@include breakpoint('strict-tablet') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis;
+                padding: $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .matrix-order-widget {
+        &--dialog {
+            padding-bottom: $matrix-order-widget-dialog-tablet-small-offset-bottom;
+
+            .ui-widget-content {
+                padding: $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset;
+            }
+
+            .ui-dialog-buttonpane {
+                padding: $matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset;
+            }
+        }
+
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-flex-basis;
+            }
         }
     }
 }
