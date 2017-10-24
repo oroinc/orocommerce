@@ -194,3 +194,10 @@
         text-align: left;
     }
 }
+
+
+@include breakpoint('print') {
+    .order-builder-clear-btn {
+        display: none !important;
+    }
+}

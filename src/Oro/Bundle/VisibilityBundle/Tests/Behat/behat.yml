@@ -7,23 +7,26 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroUserBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroFormBundle::FeatureContext
         - OroApplicationBundle::CommerceMainContext
         - OroUIBundle::TypeaheadContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
-    Product Form:
+    Visibility Product Form:
       selector: 'form[name="oro_scoped_data_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Visibility To All:
+            locator: '#product-visibility-all select'
+            type: css
           Visibility To Customers First:
             locator: '#product-visibility-customer tr:contains(first) .grid-body-cell-visibility select'
             type: css
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
-          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
     Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -36,6 +39,8 @@ oro_behat_extension:
           Visibility To Customer First Group:
             locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css
+          Title: 'oro_catalog_category[titles][values][default]'
+          Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
           Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
     Visibility Settings Form:

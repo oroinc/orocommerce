@@ -167,17 +167,15 @@ Feature: Product View Page Templates
   Scenario: Open, fill and submit Matrix Order Form
     Given I operate as the Buyer
     And I open product with sku "shirt_main" on the store frontend
-    And I should see "Order with Matrix Grid"
-    And I click "Order with Matrix Grid"
+    Then I should see an "Matrix Grid Form" element
     And I should see "Green"
     And I should see "Red"
     And I should see "Total QTY"
     And I type "1" in "matrix_collection[rows][0][columns][0][quantity]"
     And I type "2" in "matrix_collection[rows][1][columns][1][quantity]"
     And I should see "$24.00"
-    And I click "Add to Shopping List" in matrix order window
-    And I should see "Product has been added to" flash message
-    Then I should see "In shopping list"
+    And I click "Add to Shopping List"
+    And I should see 'Shopping list "Shopping list" was updated successfully' flash message
 
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
     Given I operate as the Admin
@@ -189,6 +187,11 @@ Feature: Product View Page Templates
     And save form
     Then I should see "Configuration saved" flash message
     Then I should see "Default template"
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Display Matrix Form (where applicable)" field
+    And I fill in "Display Matrix Form (where applicable)" with "Do Not Display"
+    And I save form
+    Then I should see "Configuration saved" flash message
 
     And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend

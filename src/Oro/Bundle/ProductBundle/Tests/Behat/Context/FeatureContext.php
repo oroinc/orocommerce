@@ -816,7 +816,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given /^I should see "([^"]*)" product$/
+     * @Given /^(?:|I )should see "([^"]*)" product$/
      */
     public function iShouldSeeInSearchResults($productSku)
     {
@@ -825,7 +825,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^I should not see "([^"]*)" product$/
+     * @Then /^(?:|I )should not see "([^"]*)" product$/
      *
      * @param string $productSku
      */
@@ -1075,19 +1075,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param string $elementName
-     * @param NodeElement $productItem
-     * @return bool
+     * Select a value for product attribute on product update form
+     * Example: I fill in product attribute "Color" with "Red"
+     *
+     * @When /^(?:|I )fill in product attribute "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
      */
-    protected function isElementVisible($elementName, $productItem)
+    public function fillProductAttribute($field, $value)
     {
-        if ($this->hasElement($elementName)) {
-            $element = $this->createElement($elementName, $productItem);
-            if ($element->isValid() && $element->isVisible()) {
-                return true;
-            }
-        }
+        $field = $this->fixStepArgument($field);
+        $value = $this->fixStepArgument($value);
+        $form = $this->createElement('OroForm');
+        $value = $form->normalizeValue($value);
 
-        return false;
+        $form
+            ->find('css', sprintf('[name="oro_product[%s]"]', $field))
+            ->setValue($value);
     }
 }

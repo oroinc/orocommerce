@@ -1,6 +1,17 @@
 {# Product view Layout START #}
 {% block _product_view_container_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
+    {% set productImageUrl = Image.url(productImage, 'product_small') %}
+
     {% set modelAttr = product.jsonSerialize() %}
+    {% set modelAttr = modelAttr|merge({
+        'imageUrl': productImageUrl,
+        'name': product.name.string,
+        'sku': product.sku
+    }) %}
+
     {% if parentProduct is not null %}
         {% set modelAttr = modelAttr|merge({parentProduct: parentProduct.id}) %}
     {% endif %}

@@ -60,6 +60,16 @@
                                 className: oro_class_name(shoppingList, true),
                                 id: shoppingList.id
                             }
+                        },
+                        editor: {
+                            view_options: {
+                                validationRules: {
+                                    NotBlank: true,
+                                    Length: {
+                                        max: 255
+                                    }
+                                }
+                            }
                         }
                     },
                     view_options: {

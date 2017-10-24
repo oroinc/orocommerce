@@ -392,6 +392,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation, priority: 100 }
 
+    oro_visibility.event_listener.restrict_product_variant_event:
+        class: 'Oro\Bundle\VisibilityBundle\EventListener\RestrictProductVariantEventVisibilityListener'
+        arguments:
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
+
     oro_visibility.product_raw_repository:
         class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository
         parent: oro_entity.abstract_repository

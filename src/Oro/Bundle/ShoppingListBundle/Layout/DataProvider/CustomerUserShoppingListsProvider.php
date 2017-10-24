@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -47,7 +48,15 @@ class CustomerUserShoppingListsProvider
     }
 
     /**
-     * @return array
+     * @return ShoppingList
+     */
+    public function getCurrent()
+    {
+        return $this->shoppingListManager->getForCurrentUser();
+    }
+
+    /**
+     * @return ShoppingList[]
      */
     public function getShoppingLists()
     {

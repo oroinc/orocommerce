@@ -51,7 +51,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->categoryRepository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->searchRepository = $this->getContainer()->get('oro_product.website_search.repository.product');
+        $this->searchRepository = $this->getContainer()->get('oro_catalog.website_search.repository.product');
     }
 
     public function testGetCountByCategories()
