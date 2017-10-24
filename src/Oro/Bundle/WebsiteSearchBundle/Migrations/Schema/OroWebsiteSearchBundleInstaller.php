@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Schema;
 
-use Oro\Bundle\WebsiteSearchBundle\Migrations\Schema\v1_1\OroWebsiteSearchBundleUseInnoDbQuery;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql;
+use Oro\Bundle\SearchBundle\Migration\MysqlVersionCheckTrait;
+use Oro\Bundle\SearchBundle\Migration\UseMyIsamEngineQuery;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -23,6 +23,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 {
     use ContainerAwareTrait;
     use DatabasePlatformAwareTrait;
+    use MysqlVersionCheckTrait;
 
     /**
      * {@inheritdoc}
@@ -42,18 +43,13 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $this->createOroWebsiteSearchIntegerTable($schema);
         $this->createOroWebsiteSearchDatetimeTable($schema);
         $this->createOroWebsiteSearchItemTable($schema);
-        $this->createOroWebsiteSearchTextTable($schema);
+        $this->createOroWebsiteSearchTextTable($schema, $queries);
 
         /** Foreign keys generation **/
         $this->addOroWebsiteSearchDecimalForeignKeys($schema);
         $this->addOroWebsiteSearchIntegerForeignKeys($schema);
         $this->addOroWebsiteSearchDatetimeForeignKeys($schema);
         $this->addOroWebsiteSearchTextForeignKeys($schema);
-
-        $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
-        $queries->addQuery($query);
-        // switch oro_website_search_text table to InnoDB in case of MySQL >= 5.6
-        $queries->addPostQuery(new OroWebsiteSearchBundleUseInnoDbQuery());
     }
 
     /**
@@ -124,9 +120,11 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_text table
+     *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function createOroWebsiteSearchTextTable(Schema $schema)
+    protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_website_search_text');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -136,9 +134,13 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
 
-        if ($this->platform->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
+        if ($this->isMysqlPlatform() && !$this->isInnoDBFulltextIndexSupported()) {
             $table->addOption('engine', PdoMysql::ENGINE_MYISAM);
+            $queries->addPostQuery(new UseMyIsamEngineQuery('oro_website_search_text'));
         }
+
+        $createFulltextIndexQuery = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
+        $queries->addPostQuery($createFulltextIndexQuery);
     }
 
     /**
@@ -192,12 +194,14 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     protected function addOroWebsiteSearchTextForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_website_search_text');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_website_search_item'),
-            ['item_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
-        );
+        if (!$this->isMysqlPlatform() || $this->isInnoDBFulltextIndexSupported()) {
+            $table = $schema->getTable('oro_website_search_text');
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_website_search_item'),
+                ['item_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => null]
+            );
+        }
     }
 }
