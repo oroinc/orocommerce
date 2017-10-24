@@ -1,4 +1,4 @@
-{% block _matrix_order_wrapper_widget %}
+{% block __matrix_grid_order__wrapper_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " matrix-order-widget"
     }) %}
@@ -41,15 +41,7 @@
     </div>
 {% endblock %}
 
-{% block __line_item_buttons__line_item_form_buttons_shopping_list_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'componentModule': 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view'
-    }) %}
-    {{ block_widget(block, {attr: attr}) }}
-{% endblock %}
-
-{% block _form_actions_widget %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+{% block __matrix_grid_order__form_fields_widget %}
+    {{ block_widget(block) }}
+    <input type="hidden" name="updateQuantity" value="true"/>
 {% endblock %}

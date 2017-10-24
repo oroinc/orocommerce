@@ -2,13 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
@@ -19,11 +15,6 @@ class MatrixGridOrderProvider
      * @var MatrixGridOrderManager
      */
     private $matrixGridManager;
-
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
-    private $productVariantAvailability;
 
     /**
      * @var TotalProcessorProvider
@@ -37,53 +28,17 @@ class MatrixGridOrderProvider
 
     /**
      * @param MatrixGridOrderManager $matrixGridManager
-     * @param ProductVariantAvailabilityProvider $productVariantAvailability
      * @param TotalProcessorProvider $totalProvider
      * @param NumberFormatter $numberFormatter
      */
     public function __construct(
         MatrixGridOrderManager $matrixGridManager,
-        ProductVariantAvailabilityProvider $productVariantAvailability,
         TotalProcessorProvider $totalProvider,
         NumberFormatter $numberFormatter
     ) {
         $this->matrixGridManager = $matrixGridManager;
-        $this->productVariantAvailability = $productVariantAvailability;
         $this->totalProvider = $totalProvider;
         $this->numberFormatter = $numberFormatter;
-    }
-
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isAvailable(Product $product)
-    {
-        try {
-            $variants = $this->productVariantAvailability->getVariantFieldsAvailability($product);
-        } catch (\InvalidArgumentException $e) {
-            return false;
-        }
-
-        reset($variants);
-        $variantsCount = count($variants);
-        if ($variantsCount > 2 || count(end($variants)) > 5) {
-            return false;
-        }
-
-        if ($variantsCount === 1 && count(reset($variants)) < 2) {
-            return false;
-        }
-
-        $configurableProductPrimaryUnit = $product->getPrimaryUnitPrecision()->getUnit();
-        $simpleProducts = $this->productVariantAvailability->getSimpleProductsByVariantFields($product);
-        foreach ($simpleProducts as $simpleProduct) {
-            if (!$this->doSimpleProductSupportsUnitPrecision($simpleProduct, $configurableProductPrimaryUnit)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -98,7 +53,7 @@ class MatrixGridOrderProvider
 
         $totalQuantity = 0;
         foreach ($collection->rows as $row) {
-            foreach ($row->columns as $i => $column) {
+            foreach ($row->columns as $column) {
                 $totalQuantity += $column->quantity;
             }
         }
@@ -137,21 +92,5 @@ class MatrixGridOrderProvider
             $price->getValue(),
             $price->getCurrency()
         );
-    }
-
-    /**
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @return bool
-     */
-    private function doSimpleProductSupportsUnitPrecision(Product $product, ProductUnit $unit)
-    {
-        $productUnits = $product->getUnitPrecisions()->map(
-            function (ProductUnitPrecision $unitPrecision) {
-                return $unitPrecision->getUnit();
-            }
-        );
-
-        return $productUnits->contains($unit);
     }
 }

@@ -6,6 +6,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var PricesHelper = require('oropricing/js/app/prices-helper');
+    var ScrollView = require('orofrontend/js/app/views/scroll-view');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -16,20 +17,20 @@ define(function(require) {
             fields: '[data-name="field__quantity"]:enabled',
             fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
-            totalRowQty: '[data-footer-row-index]',
             totalPrice: '[data-role="total-price"]',
             submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
 
         elementsEvents: {
-            'fields': ['input', 'updateTotals']
+            'fields': ['input', '_onQuantityChange']
         },
 
         total: {
             price: 0,
-            commonQuantity: 0,
-            rowQuantity: 0,
-            rowQuantityIndex: 0
+            quantity: 0,
+            rows: {},
+            columns: {},
+            cells: {}
         },
 
         prices: null,
@@ -45,6 +46,12 @@ define(function(require) {
             ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
             this.setPrices(options);
             this.initializeElements(options);
+            if (_.isDesktop()) {
+                this.subview('scrollView', new ScrollView({
+                    el: this.el
+                }));
+            }
+            this.updateTotals();
         },
 
         /**
@@ -73,49 +80,100 @@ define(function(require) {
         },
 
         /**
-         * Listen input event, calculate total values of quantity and price
-         * Prevent enter string
-
-         * @param event
+         * Listen input event
+         *
+         * @param {Event} event
          */
-        updateTotals: _.debounce(function(event) {
-            var self = this;
-            var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
-
-            this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                var $this = $(field);
-                var $parent = $this.closest('[data-row-index]');
-                var productId = $parent.data('product-id');
-                var validValue = self.getValidValue(field.value);
-
-                if ($parent.data('row-index') === currentRowId) {
-                    total.rowQuantity += validValue;
-                }
-
-                if (_.isEmpty(field.value)) {
-                    return total;
-                }
-
-                $this.val(validValue);
-
-                total.commonQuantity += validValue;
-                total.price += PricesHelper.calcTotalPrice(self.prices[productId], self.unit, field.value);
-
-                return total;
-            }, {
-                price: 0,
-                commonQuantity: 0,
-                rowQuantity: 0,
-                rowQuantityIndex: currentRowId
-            }, this);
-
+        _onQuantityChange: _.debounce(function(event) {
+            this.updateTotal($(event.currentTarget));
             this.render();
         }, 150),
 
-        getValidValue: function(value) {
-            var val = parseInt(value, 10) || 0;
+        /**
+         * Update all totals
+         */
+        updateTotals: function() {
+            _.each(this.getElement('fields'), function(element) {
+                this.updateTotal($(element));
+            }, this);
+        },
 
-            if (_.isEmpty(value)) {
+        /**
+         * Calculate totals for individual field
+         *
+         * @param {jQuery} $element
+         */
+        updateTotal: function($element) {
+            var $cell = $element.closest('[data-index]');
+            var index = $cell.data('index');
+            var productId = $cell.data('product-id');
+            var indexKey = index.row + '.' + index.column;
+
+            var cells = this.total.cells;
+            var columns = this.total.columns;
+            var rows = this.total.rows;
+
+            var cell = cells[indexKey] = this.getTotal(cells, indexKey);
+            var column = columns[index.column] = this.getTotal(columns, index.column);
+            var row = rows[index.row] = this.getTotal(rows, index.row);
+
+            //remove old values
+            this.changeTotal(this.total, cell, -1);
+            this.changeTotal(column, cell, -1);
+            this.changeTotal(row, cell, -1);
+
+            //recalculate cell total
+            cell.quantity = this.getValidQuantity($element.val());
+            var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
+            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, quantity);
+            $element.val(quantity);
+
+            //add new values
+            this.changeTotal(this.total, cell);
+            this.changeTotal(column, cell);
+            this.changeTotal(row, cell);
+        },
+
+        /**
+         * Get total by key
+         *
+         * @param {Object} totals
+         * @param {String} key
+         * @return {Object}
+         */
+        getTotal: function(totals, key) {
+            return totals[key] || {
+                quantity: 0,
+                price: 0
+            };
+        },
+
+        /**
+         * Change totals by subtotals using modifier
+         *
+         * @param {Object} totals
+         * @param {Object} subtotals
+         * @param {Number|null} modifier
+         */
+        changeTotal: function(totals, subtotals, modifier) {
+            modifier = modifier || 1;
+            totals.quantity += subtotals.quantity * modifier;
+            totals.price += subtotals.price * modifier;
+            if (NumberFormatter.formatDecimal(totals.price) === 'NaN') {
+                totals.price = 0;
+            }
+        },
+
+        /**
+         * Validate quantity value
+         *
+         * @param {String} quantity
+         * @return {Number}
+         */
+        getValidQuantity: function(quantity) {
+            var val = parseInt(quantity, 10) || 0;
+
+            if (_.isEmpty(quantity)) {
                 return 0;
             } else {
                 return val < this.minValue ? this.minValue : val;
@@ -123,22 +181,31 @@ define(function(require) {
         },
 
         /**
-         * Render actual view
+         * Update totals
          */
         render: function() {
-            this.getElement('submitButtons')
-                .toggleClass('disabled', this.total.commonQuantity === 0)
-                .data('disabled', this.total.commonQuantity === 0);
-
-            this.getElement('totalQty').text(this.total.commonQuantity);
+            this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
 
-            this.getElement('totalRowQty')
-                .filter('[data-footer-row-index=' + this.total.rowQuantityIndex + ']')
-                .toggleClass('valid', this.total.rowQuantity > 0)
-                .html(this.total.rowQuantity);
+            _.each(_.pick(this.total, 'rows', 'columns'), this.renderSubTotals, this);
+        },
+
+        /**
+         * Update subtotals
+         *
+         * @param {Object} totals
+         * @param {String} key
+         */
+        renderSubTotals: function(totals, key) {
+            _.each(totals, function(total, index) {
+                var $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
+                var $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
+
+                $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
+                $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
+            }, this);
         }
     }));
     return ProductPricesMatrixView;

@@ -43,13 +43,16 @@ class MatrixGridOrderManager
     }
 
     /**
-     * @param Product $product
+     * @param Product           $product
+     * @param ShoppingList|null $shoppingList
+     *
      * @return MatrixCollection
      */
-    public function getMatrixCollection(Product $product)
+    public function getMatrixCollection(Product $product, ShoppingList $shoppingList = null)
     {
-        if (isset($this->collectionCache[$product->getId()])) {
-            return $this->collectionCache[$product->getId()];
+        $shoppingListId = $shoppingList ? $shoppingList->getId() : null;
+        if (isset($this->collectionCache[$product->getId()][$shoppingListId])) {
+            return $this->collectionCache[$product->getId()][$shoppingListId];
         }
 
         $variantFields = $this->getVariantFields($product);
@@ -66,6 +69,7 @@ class MatrixGridOrderManager
                 $column = new MatrixCollectionColumn();
                 if (isset($availableVariants[$firstValue['value']]['_product'])) {
                     $column->product = $availableVariants[$firstValue['value']]['_product'];
+                    $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
                 }
 
                 $row->columns = [$column];
@@ -76,6 +80,7 @@ class MatrixGridOrderManager
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
+                        $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
                     }
 
                     $row->columns[] = $column;
@@ -85,7 +90,7 @@ class MatrixGridOrderManager
             $collection->rows[] = $row;
         }
 
-        return $this->collectionCache[$product->getId()] = $collection;
+        return $this->collectionCache[$product->getId()][$shoppingListId] = $collection;
     }
 
     /**
@@ -171,32 +176,72 @@ class MatrixGridOrderManager
     /**
      * @param MatrixCollection $collection
      * @param Product          $product
+     * @param array            $requiredCollection Matrix collection from a request
      *
      * @return array|LineItem[]
      */
-    public function convertMatrixIntoLineItems(MatrixCollection $collection, Product $product)
+    public function convertMatrixIntoLineItems(MatrixCollection $collection, Product $product, $requiredCollection)
     {
         $lineItems = [];
+        $rowIds    = [];
+
+        // For partial operations, we must use required rows only
+        if (isset($requiredCollection['rows'])) {
+            $rowIds = array_keys($requiredCollection['rows']);
+        }
 
         /** @var MatrixCollectionRow $row */
-        foreach ($collection->rows as $row) {
-            /** @var MatrixCollectionColumn $column */
-            foreach ($row->columns as $column) {
-                if ($column->product && $column->quantity) {
-                    $lineItem = new LineItem();
-                    $lineItem->setProduct($column->product);
-                    $lineItem->setQuantity($column->quantity);
-                    $lineItem->setUnit($collection->unit);
+        foreach ($collection->rows as $rowIndex => $row) {
+            if (in_array($rowIndex, $rowIds, true)) {
+                /** @var MatrixCollectionColumn $column */
+                foreach ($row->columns as $column) {
+                    if ($column->product) {
+                        $lineItem = new LineItem();
+                        $lineItem->setProduct($column->product);
+                        $lineItem->setQuantity((float) $column->quantity);
+                        $lineItem->setUnit($collection->unit);
 
-                    if ($product->isConfigurable()) {
-                        $lineItem->setParentProduct($product);
+                        if ($product->isConfigurable()) {
+                            $lineItem->setParentProduct($product);
+                        }
+
+                        $lineItems[] = $lineItem;
                     }
-
-                    $lineItems[] = $lineItem;
                 }
             }
         }
 
         return $lineItems;
+    }
+
+    /**
+     * Get MatrixCollectionColumn's quantity by shopping list line items
+     *
+     * @param Product           $parentProduct
+     * @param Product           $cellProduct
+     * @param ShoppingList|null $shoppingList
+     *
+     * @return float|null
+     */
+    private function getQuantity(Product $parentProduct, Product $cellProduct, ShoppingList $shoppingList = null)
+    {
+        if (!$shoppingList) {
+            return null;
+        }
+        $lineItems = $shoppingList->getLineItems();
+        if ($lineItems->isEmpty()) {
+            return null;
+        }
+
+        /** @var LineItem $lineItem */
+        foreach ($lineItems->getIterator() as $lineItem) {
+            if ($lineItem->getParentProduct() && $lineItem->getParentProduct()->getId() === $parentProduct->getId()
+                && $cellProduct->getId() === $lineItem->getProduct()->getId()
+            ) {
+                return $lineItem->getQuantity();
+            }
+        }
+
+        return null;
     }
 }

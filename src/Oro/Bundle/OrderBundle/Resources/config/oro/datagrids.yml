@@ -531,6 +531,7 @@ datagrids:
                     - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
+                    - product.denormalizedDefaultName as productName
                 from:
                     - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
                 join:
@@ -544,10 +545,6 @@ datagrids:
                       dir: ASC
             bind_parameters:
                 - order_id
-        properties:
-            productName:
-                type: localized_value
-                data_name: product.names
 
     order-line-items-grid:
         extends: base-order-line-items-grid
@@ -649,6 +646,9 @@ datagrids:
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
+                    - product.skuUppercase as skuUppercase
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
                     - { table: %oro_report.calendar_date.entity.class%, alias: calendarDate }
                 join:
@@ -670,11 +670,6 @@ datagrids:
                             condition: lineitem.product = product.id
 
                 groupBy: cDate, sku, product.id, unitCode
-        properties:
-            productName:
-                type: localized_value
-                data_name: product.names
-                allow_empty: true
         columns:
             cDate:
                 frontend_type: date
@@ -713,10 +708,14 @@ datagrids:
                     data_name: calendarDate.date
                 sku:
                     type:      string
-                    data_name: sku
+                    data_name: skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 skip_empty_periods:
                     type:      skip_empty_periods
                     data_name: calendarDate.date

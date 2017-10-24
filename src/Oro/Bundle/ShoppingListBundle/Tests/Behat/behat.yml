@@ -25,6 +25,9 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    NewShoppingListNameField:
+      selector: '[name="oro_shopping_list_type[label]"]'
+
     ItemAdd:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="add-form-accept"]'
@@ -83,6 +86,12 @@ oro_behat_extension:
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
 
+    Update Product B Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Update Product B Shopping List"]'
+
+    Remove From Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
+
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
@@ -131,6 +140,12 @@ oro_behat_extension:
 
     Create Order:
       selector: 'a[title="Create Order"]'
+
+    ShoppingListEditTitleField:
+      selector: '#title-inline-editable input[name="value"]'
+
+    EditShopppingListLabel:
+      selector: '#title-inline-editable [data-role="start-editing"]'
 
   suites:
     OroShoppingListBundle:

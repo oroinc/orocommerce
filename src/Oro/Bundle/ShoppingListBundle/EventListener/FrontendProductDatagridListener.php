@@ -5,6 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 
@@ -18,13 +20,20 @@ class FrontendProductDatagridListener
     /** @var ProductShoppingListsDataProvider */
     private $productShoppingListsDataProvider;
 
+    /** @var DoctrineHelper */
+    private $doctrineHelper;
+
     /**
      * FrontendProductDatagridListener constructor.
      * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ProductShoppingListsDataProvider $productShoppingListsDataProvider)
-    {
+    public function __construct(
+        ProductShoppingListsDataProvider $productShoppingListsDataProvider,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -52,13 +61,16 @@ class FrontendProductDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $productIds = [];
+        $products = [];
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Product::class);
 
         foreach ($records as $record) {
-            $productIds[] = $record->getValue('id');
+            if ($product = $entityManager->getReference(Product::class, $record->getValue('id'))) {
+                $products[] = $product;
+            }
         }
 
-        $groupedShoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($productIds);
+        $groupedShoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
 
         if (!$groupedShoppingLists) {
             return;
