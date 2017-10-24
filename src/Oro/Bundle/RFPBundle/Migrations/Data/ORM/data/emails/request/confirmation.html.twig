@@ -4,11 +4,11 @@
 @isSystem = 1
 @isEditable = 1
 
-<h1>Hello, {{ entity|oro_format_name }}!</h1>
+<h1>Hello {{ entity.customerUser|oro_format_name }}!</h1>
 
-<p>Thank you for request.</p>
+<p>Thank you for your request.</p>
 
-<h3>Please see your request details below.</h3>
+<h3>Please see the details of your quote request below.</h3>
 
 <div>
     <p><i>Date:</i> {{ entity.createdAt|date('F j, Y, g:i A') }}</p>
