@@ -46,5 +46,14 @@ class LineItemCollectionValidator extends ConstraintValidator
                     ->addViolation();
             }
         }
+
+        if ($event->hasWarnings()) {
+            foreach ($event->getWarnings() as $warning) {
+                $this->context->buildViolation($warning['message'])
+                    ->atPath(sprintf('product.%s', $warning['sku']))
+                    ->setCause('warning')
+                    ->addViolation();
+            }
+        }
     }
 }

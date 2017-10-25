@@ -21,6 +21,7 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Parent Category |
       | Inventory Threshold                | 1000            |
+      | Low Inventory Threshold            | 0               |
     And I submit form
     Then I should see "Category has been saved" flash message
 
@@ -31,6 +32,7 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Hidden |
       | Inventory Threshold                | 1000   |
+      | Low Inventory Threshold            | 0      |
     And I submit form
     Then I should see "Category has been saved" flash message
     When I continue as the Buyer

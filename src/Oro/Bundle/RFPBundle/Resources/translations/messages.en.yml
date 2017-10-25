@@ -206,7 +206,7 @@ oro:
                 sections:
                     general: 'Information'
                     notes.label: 'Notes'
-                    back.label: '< Back to List'
+                    back.label: 'Back to List'
                     request_products:
                         label: 'Line Items'
                         columns:
@@ -228,5 +228,8 @@ oro:
             data_storage:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'
+            toolbar-actions:
+                btn:
+                    print: 'Print RFQ'
 
 oro.order.orderlineitem.offers.label: 'Requested QTY and price'

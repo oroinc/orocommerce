@@ -52,6 +52,7 @@ class ProductVisibilityTest extends FrontendWebTestCase
                 $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
             );
             $response = $this->client->getResponse();
+
             $this->assertSame($response->getStatusCode(), $resultCode, $productSKU);
         }
     }

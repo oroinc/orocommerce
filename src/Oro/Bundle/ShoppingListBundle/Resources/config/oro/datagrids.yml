@@ -121,6 +121,9 @@ datagrids:
                 select:
                     - product.id as productId
                     - product.sku as productSku
+                    - product.skuUppercase as productSkuUppercase
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - lineItem.id
                     - lineItem.quantity
                     - lineItem.notes
@@ -165,10 +168,14 @@ datagrids:
             columns:
                 productSku:
                     type:      string
-                    data_name: productSku
+                    data_name: productSkuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 quantity:
                     type:      number
                     data_name: lineItem.quantity
@@ -180,9 +187,6 @@ datagrids:
         properties:
             id: ~
             productId: ~
-            productName:
-                type: localized_value
-                data_name: product.names
             view_product_link:
                 type:  url
                 route: oro_product_view

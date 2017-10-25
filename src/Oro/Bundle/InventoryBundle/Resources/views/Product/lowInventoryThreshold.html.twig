@@ -1,0 +1,4 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set lowInventoryThresholdValue = oro_entity_fallback_value(entity, 'lowInventoryThreshold') %}
+{{ UI.renderProperty('oro.inventory.low_inventory_threshold.label'|trans, lowInventoryThresholdValue) }}

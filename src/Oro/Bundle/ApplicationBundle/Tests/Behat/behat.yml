@@ -5,6 +5,7 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroConfigBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroWarehouseBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
@@ -234,7 +235,7 @@ oro_behat_extension:
         type: xpath
 
     Matrix Grid Form:
-      selector: 'div[class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front matrix-order-widget--dialog ui-draggable ui-dialog-normal"]'
+      selector: 'form[name="matrix_collection"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -242,6 +243,22 @@ oro_behat_extension:
           Black M: 'matrix_collection[rows][0][columns][1][quantity]'
           White L: 'matrix_collection[rows][1][columns][0][quantity]'
           White M: 'matrix_collection[rows][1][columns][1][quantity]'
+          Value 11: 'matrix_collection[rows][0][columns][0][quantity]'
+          Value 12: 'matrix_collection[rows][1][columns][0][quantity]'
+          Value 13: 'matrix_collection[rows][2][columns][0][quantity]'
+          Value 14: 'matrix_collection[rows][3][columns][0][quantity]'
+          Value 21: 'matrix_collection[rows][0][columns][1][quantity]'
+          Value 22: 'matrix_collection[rows][1][columns][1][quantity]'
+          Value 23: 'matrix_collection[rows][2][columns][1][quantity]'
+          Value 24: 'matrix_collection[rows][3][columns][1][quantity]'
+          Value 31: 'matrix_collection[rows][0][columns][2][quantity]'
+          Value 32: 'matrix_collection[rows][1][columns][2][quantity]'
+          Value 33: 'matrix_collection[rows][2][columns][2][quantity]'
+          Value 34: 'matrix_collection[rows][3][columns][2][quantity]'
+
+    Configurable Product Shopping List Form:
+      selector: 'form[name="oro_product_product_variant_frontend_variant_field"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
 
     Add to Shopping List form Matrix Grid:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

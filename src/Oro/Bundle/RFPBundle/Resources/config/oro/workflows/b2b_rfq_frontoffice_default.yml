@@ -62,7 +62,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         notes:
-                            form_type: oro_textarea
+                            form_type: textarea
                             options:
                                 strip_tags: true
                                 required: true

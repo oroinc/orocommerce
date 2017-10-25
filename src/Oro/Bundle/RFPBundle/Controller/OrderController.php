@@ -30,7 +30,7 @@ class OrderController extends Controller
         $offers = [];
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
+                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
                 'comment' => $lineItem->getComment(),
             ];
 

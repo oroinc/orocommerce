@@ -11,6 +11,17 @@ Feature: Commerce smoke e2e
     Given I proceed as the Admin
     And I login as administrator
     And go to System/ Configuration
+    And follow "Commerce/Inventory/Product Options" on configuration sidebar
+    And fill "Product Option Form" with:
+      |Backorders Default|false|
+      |Backorders        |Yes  |
+    And click "Save settings"
+    And go to Inventory/ Warehouses
+    And click "Create Warehouse"
+    And type "MainWarehouse" in "Name"
+    And save and close form
+    And I enable the existing warehouses
+    And go to System/ Configuration
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
       |Enable Guest Shopping List Default|false|
@@ -599,18 +610,15 @@ Feature: Commerce smoke e2e
     And should see an "Product Image (view page)" element
     And should see "ConfigurableShirt"
     And should see "Item"
-    And should see "1 $8.00"
-    And should see "Order with Matrix Grid"
+    And should see an "Matrix Grid Form" element
     And should see an "Add to Shopping List" element
-    When click "Order with Matrix Grid"
-    Then I should see an "Matrix Grid Popup" element
     And fill "Matrix Grid Form" with:
       |Black L|2|
       |Black M|3|
       |White L|1|
       |White M|5|
-    And click "Add to Shopping List form Matrix Grid"
-    And should see an "Green Box" element
+    And click "Add to Shoppin..."
+    And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
     And click "Shopping list"
     And should see "Subtotal $175.20"
