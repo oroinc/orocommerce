@@ -22,8 +22,6 @@ class ProductController extends Controller
      */
     public function allProductsAction()
     {
-        // TODO for BB-12602, check added in BB-12410 changes in this file, maybe during layout refactoring
-        // this also should be adjusted
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
             'grid_config' => [

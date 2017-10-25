@@ -15,6 +15,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
@@ -159,6 +160,7 @@ class AjaxLineItemController extends AbstractLineItemController
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
         $form = $this->createForm(ShoppingListType::NAME);
+        /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $manager->create();
 
@@ -173,12 +175,11 @@ class AjaxLineItemController extends AbstractLineItemController
             $response['message'] = $result->getMessage();
         }
 
-        // TODO for BB-12602, check "createOnly" variable and others returned too, remove not needed, and this TODO
         return [
             'data' => [
-                'savedId' => null,
+                'savedId' => $shoppingList->getId(),
                 'shoppingList' => $shoppingList,
-                'createOnly' => true,
+                'createOnly' => false,
                 'routeParameters' => [
                     'data' => array_merge($request->query->all(), [
                         'gridName' => $gridName,
