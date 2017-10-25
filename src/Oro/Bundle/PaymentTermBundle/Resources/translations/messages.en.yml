@@ -45,3 +45,13 @@ oro:
     payment:
         admin:
             payment_term.label: 'Payment Terms'
+
+    customer:
+        customer:
+            payment_term_7c4f1e8e:
+                label: 'Payment term'
+                description: 'Payment term'
+        customergroup:
+            payment_term_7c4f1e8e:
+                label: 'Payment term'
+                description: 'Payment term'
