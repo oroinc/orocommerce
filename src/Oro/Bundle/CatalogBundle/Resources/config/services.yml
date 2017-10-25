@@ -231,12 +231,26 @@ services:
         tags:
             - { name: website_search.placeholder }
 
+    oro_catalog.category_counts.cache_provider:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_catalog_category_counts' ] ]
+
+    oro_catalog.category_counts.cache:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache'
+        public: false
+        arguments:
+            - '@oro_catalog.category_counts.cache_provider'
+            - '@oro_security.token_accessor'
+
     oro_catalog.datagrid.extension.category_counts:
         class: 'Oro\Bundle\CatalogBundle\Datagrid\Extension\CategoryCountsExtension'
         arguments:
             - '@oro_datagrid.datagrid.manager.link'
             - '@doctrine'
             - '@oro_catalog.website_search.repository.product'
+            - '@oro_catalog.category_counts.cache'
         calls:
             - [addApplicableGrid, ['frontend-product-search-grid']]
         tags:

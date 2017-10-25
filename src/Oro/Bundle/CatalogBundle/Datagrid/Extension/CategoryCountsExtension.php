@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Datagrid\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -30,6 +31,9 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var ProductRepository */
     protected $productSearchRepository;
 
+    /** @var CategoryCountsCache */
+    protected $cache;
+
     /** @var array */
     protected $applicableGrids = [];
 
@@ -37,15 +41,18 @@ class CategoryCountsExtension extends AbstractExtension
      * @param ServiceLink $datagridManagerLink
      * @param ManagerRegistry $registry
      * @param ProductRepository $productSearchRepository
+     * @param CategoryCountsCache $cache
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
         ManagerRegistry $registry,
-        ProductRepository $productSearchRepository
+        ProductRepository $productSearchRepository,
+        CategoryCountsCache $cache
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
+        $this->cache = $cache;
     }
 
     /**
@@ -102,14 +109,28 @@ class CategoryCountsExtension extends AbstractExtension
             return [];
         }
 
-        // build datagrid and extract search query from it
-        $datagrid = $this->getGrid($config);
+        $parameters = $this->buildParameters();
+        $cacheKey = $this->getDataKey($config->getName(), $parameters->all());
 
-        /** @var SearchDatasource $datasource */
-        $datasource = $datagrid->acceptDatasource()->getDatasource();
+        $counts = $this->cache->getCounts($cacheKey);
+        if ($counts === null) {
+            // build datagrid and extract search query from it
+            $datagrid = $this->getGrid($config, $parameters);
 
-        // calculate counts of products per category
-        return $this->productSearchRepository->getCategoryCountsByCategory($category, $datasource->getSearchQuery());
+            /** @var SearchDatasource $datasource */
+            $datasource = $datagrid->acceptDatasource()->getDatasource();
+
+            // calculate counts of products per category
+            $counts = $this->productSearchRepository->getCategoryCountsByCategory(
+                $category,
+                $datasource->getSearchQuery()
+            );
+
+            // store cache for 5 minutes to prevent overload of search index
+            $this->cache->setCounts($cacheKey, $counts, 300);
+        }
+
+        return $counts;
     }
 
     /**
@@ -123,11 +144,9 @@ class CategoryCountsExtension extends AbstractExtension
     }
 
     /**
-     * @param DatagridConfiguration $config
-     *
-     * @return DatagridInterface
+     * @return ParameterBag
      */
-    protected function getGrid(DatagridConfiguration $config)
+    protected function buildParameters()
     {
         // get datagrid parameters
         $datagridParameters = clone $this->parameters;
@@ -147,6 +166,17 @@ class CategoryCountsExtension extends AbstractExtension
             $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedFilters);
         }
 
+        return $datagridParameters;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param ParameterBag $datagridParameters
+     *
+     * @return DatagridInterface
+     */
+    protected function getGrid(DatagridConfiguration $config, ParameterBag $datagridParameters)
+    {
         /** @var Manager $datagridManager */
         $datagridManager = $this->datagridManagerLink->getService();
 
@@ -161,5 +191,28 @@ class CategoryCountsExtension extends AbstractExtension
         return $this->registry
             ->getManagerForClass(Category::class)
             ->getRepository(Category::class);
+    }
+
+    /**
+     * @param string $gridName
+     * @param array $parameters
+     * @return string
+     */
+    private function getDataKey($gridName, array $parameters)
+    {
+        $this->sort($parameters);
+
+        return sprintf('%s|%s', $gridName, json_encode($parameters));
+    }
+
+    /**
+     * @param mixed $parameters
+     */
+    private function sort(&$parameters)
+    {
+        if (is_array($parameters)) {
+            ksort($parameters);
+            array_walk($parameters, [$this, 'sort']);
+        }
     }
 }

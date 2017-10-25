@@ -21,7 +21,7 @@
             defaultSlugPrototype: products
             contentVariants:
                 -
-                    type: category_page
+                    type: product_collection
                     params:
                         title: "All Products"
                     isDefault: true
@@ -144,7 +144,7 @@
                     defaultSlugPrototype: "by-brand"
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
                                 title: "All Products"
                             isDefault: true
