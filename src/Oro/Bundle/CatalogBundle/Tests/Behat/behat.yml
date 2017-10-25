@@ -77,11 +77,15 @@ oro_behat_extension:
       selector: 'div.featured-categories div.embedded-list__item'
 
     SubcategoriesFilter:
-      selector: 'div.filter-item[data-subcategory-filter-template]'
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/..'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice
 
     SubcategoriesFilterSelect:
-      selector: 'div.filter-item[data-subcategory-filter-template] select'
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/select'
 
   suites:
     OroCatalogBundle:
