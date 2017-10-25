@@ -15,7 +15,7 @@ class ProductsController extends AbstractOrderController
     /**
      * @Route("/previously-purchased", name="oro_order_products_frontend_previously_purchased")
      * @AclAncestor("oro_order_frontend_view")
-     * @Layout(vars={"entity_class", "product_grid_name", "grid_config"})
+     * @Layout(vars={"entity_class", "product_grid_name", "grid_config", "theme_name"})
      *
      * @return array
      */
@@ -27,6 +27,9 @@ class ProductsController extends AbstractOrderController
             'grid_config' => [
                 self::PRODUCT_GRID_NAME
             ],
+            'theme_name' => $this->container
+                ->get('oro_product.datagrid_theme_helper')
+                ->getTheme('frontend-product-search-grid')
         ];
     }
 }
