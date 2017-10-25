@@ -333,7 +333,9 @@ oro_behat_extension:
       selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
 
     Field Condition:
-      selector: 'li[data-widget="fieldCondition"]'
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
     Drop condition here:
       selector: ".right-area"
@@ -480,6 +482,9 @@ oro_behat_extension:
 
     ProductItem:
       selector: 'div.product-item'
+
+    ProductLineItem:
+      selector: 'tbody.line_item'
 
     Product Shopping List Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
@@ -630,6 +635,12 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Featured Products"]/../../div'
 
+    Related Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Related Products"]/../../div'
+
     EmbeddedProduct:
       selector: 'div.embedded-product'
 
@@ -690,6 +701,13 @@ oro_behat_extension:
 
     Frontend Product Grid Sorter:
       selector: 'div.datagrid-tool div.sorting select'
+
+    Shirt_101 Matrix Grid Order Form:
+      selector: 'form[name="matrix_collection"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
   suites:
     # Revert by OPI-52

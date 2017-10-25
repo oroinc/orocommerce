@@ -17,6 +17,11 @@ class LineItemValidateEvent extends Event
     protected $errors;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $warnings;
+
+    /**
      * @var
      */
     protected $lineItems;
@@ -35,6 +40,7 @@ class LineItemValidateEvent extends Event
         $this->lineItems = $lineItems;
         $this->context = $context;
         $this->errors = new ArrayCollection();
+        $this->warnings = new ArrayCollection();
     }
 
     /**
@@ -46,8 +52,17 @@ class LineItemValidateEvent extends Event
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
+
+    /**
      * @param string $sku
      * @param string $message
+     *
      * @return $this
      */
     public function addError($sku, $message)
@@ -58,11 +73,32 @@ class LineItemValidateEvent extends Event
     }
 
     /**
+     * @param string $sku
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function addWarning($sku, $message)
+    {
+        $this->warnings->add(['sku' => $sku, 'message' => $message]);
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function hasErrors()
     {
         return count($this->errors) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasWarnings()
+    {
+        return count($this->warnings) > 0;
     }
 
     /**
@@ -95,6 +131,7 @@ class LineItemValidateEvent extends Event
 
     /**
      * @param mixed $context
+     *
      * @return $this
      */
     public function setContext($context)

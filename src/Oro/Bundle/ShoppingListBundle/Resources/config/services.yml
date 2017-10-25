@@ -45,6 +45,7 @@ services:
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_security.acl_helper"
             - '@oro_shopping_list.shopping_list_provider.cache'
+            - "@oro_product.provider.product_variant_availability_provider"
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
@@ -170,7 +171,6 @@ services:
           class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider'
           arguments:
               - '@oro_shopping_list.provider.matrix_grid_order_manager'
-              - '@oro_product.provider.product_variant_availability_provider'
               - '@oro_pricing.subtotal_processor.total_processor_provider'
               - '@oro_currency.formatter.number'
           tags:
@@ -206,6 +206,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - "@oro_shopping_list.data_provider.product_shopping_lists"
+            - "@oro_entity.doctrine_helper"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -281,17 +282,16 @@ services:
             - [ setNamespace, [ 'shopping_list' ] ]
 
     oro_shopping_list.validator_service.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
         arguments:
             - '@validator'
         tags:
-            - { name: layout.data_provider, alias: oro_line_item_errors }
+            - { name: layout.data_provider, alias: oro_line_item_violations }
 
     oro_shopping_list.validator.matrix_collection:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
         tags:
             - { name: validator.constraint_validator }
-
 
     oro_shopping_list.action.duplicate_title:
         class: 'Oro\Bundle\ShoppingListBundle\Action\AddStringSuffixAction'

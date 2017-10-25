@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'low_inventory.html.twig'
+        - '@add':
+            id: low_inventory_label
+            parentId: product_view_specification_container
+            siblingId: product_price_subtree_update
+            blockType: block
+            options:
+                vars:
+                    product: '=data["product"]'

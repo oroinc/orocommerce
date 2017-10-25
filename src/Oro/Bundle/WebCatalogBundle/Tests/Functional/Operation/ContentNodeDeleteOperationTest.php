@@ -11,7 +11,7 @@ class ContentNodeDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([LoadContentNodesData::class]);
@@ -29,7 +29,7 @@ class ContentNodeDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $contentNodeId,
-            $this->getContainer()->getParameter('oro_web_catalog.entity.content_node.class'),
+            self::getContainer()->getParameter('oro_web_catalog.entity.content_node.class'),
             ['datagrid' => 'web-catalog-grid']
         );
 

@@ -18,6 +18,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -89,6 +90,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $cache;
 
+    /**
+     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productVariantProvider;
+
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
@@ -106,6 +112,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getManagerRegistry();
         $this->cache = $this->createMock(Cache::class);
         $this->totalManager = $this->getShoppingListTotalManager();
+        $this->productVariantProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
 
         $this->manager = new ShoppingListManager(
             $this->registry,
@@ -116,7 +123,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getWebsiteManager(),
             $this->totalManager,
             $this->aclHelper,
-            $this->cache
+            $this->cache,
+            $this->productVariantProvider
         );
     }
 
@@ -334,6 +342,71 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @param array           $simpleProducts
+     * @param ArrayCollection $lineItems
+     *
+     * @dataProvider getSimpleProductsProvider
+     */
+    public function testRemoveConfigurableProduct($simpleProducts, ArrayCollection $lineItems)
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(
+            Product::class,
+            ['id' => 43, 'type' => Product::TYPE_CONFIGURABLE]
+        );
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
+
+        $this->productVariantProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn($simpleProducts);
+
+        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
+        $manager->expects($this->exactly(count($lineItems)))
+            ->method('remove');
+
+        /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
+        $repository->expects($this->exactly($simpleProducts ? 1 : 0))
+            ->method('getItemsByShoppingListAndProducts')
+            ->with($shoppingList, $simpleProducts)
+            ->willReturn($lineItems);
+
+        $result = $this->manager->removeProduct($shoppingList, $product, true);
+        $this->assertEquals(count($lineItems), $result);
+        $this->assertTrue($shoppingList->getLineItems()->isEmpty());
+    }
+
+    /**
+     * @return array
+     */
+    public function getSimpleProductsProvider()
+    {
+        return [
+            [
+                [],
+                new ArrayCollection()
+            ],
+            [
+                [
+                    $this->getEntity(Product::class, ['id' => 44, 'type' => Product::TYPE_SIMPLE]),
+                    $this->getEntity(Product::class, ['id' => 45, 'type' => Product::TYPE_SIMPLE]),
+                    $this->getEntity(Product::class, ['id' => 46, 'type' => Product::TYPE_SIMPLE])
+                ],
+                new ArrayCollection(
+                    [
+                        $this->getEntity(LineItem::class, ['id' => 38]),
+                        $this->getEntity(LineItem::class, ['id' => 39]),
+                        $this->getEntity(LineItem::class, ['id' => 40])
+                    ]
+                )
+            ]
+        ];
+    }
+
     public function testGetForCurrentUser()
     {
         $shoppingList = $this->manager->getForCurrentUser();
@@ -393,7 +466,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getWebsiteManager(),
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
-            $this->cache
+            $this->cache,
+            $this->productVariantProvider
         );
 
         $this->assertEquals(
@@ -611,5 +685,54 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->removeLineItems($shoppingList);
         $this->assertEquals(0, $shoppingList->getLineItems()->count());
+    }
+
+    public function testUpdateLineItem()
+    {
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setQuantity(10);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 1,
+            'lineItems' => [$lineItem]
+        ]);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(5);
+        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
+
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getLineItems()->first();
+        $this->assertEquals(5, $resultingItem->getQuantity());
+    }
+
+    public function testUpdateAndRemoveLineItem()
+    {
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setQuantity(10);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 1,
+            'lineItems' => [$lineItem]
+        ]);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(0);
+        $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
+
+        $this->assertEmpty($shoppingList->getLineItems());
     }
 }

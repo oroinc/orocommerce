@@ -2,24 +2,25 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class CategoryInventoryThresholdFormExtension extends AbstractTypeExtension
+use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+
+class CategoryInventoryThresholdFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public function getFallbackProperties()
     {
-        return CategoryType::class;
+        return [
+            'inventoryThreshold'
+        ];
     }
 
     /**
@@ -27,6 +28,8 @@ class CategoryInventoryThresholdFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder->add(
             'inventoryThreshold',
             EntityFieldFallbackValueType::NAME,

@@ -49,11 +49,6 @@ layout:
 
         - '@setOption':
             id: product_datagrid
-            optionName: grid_name
-            optionValue: frontend-product-search-grid
-
-        - '@setOption':
-            id: product_datagrid
             optionName: grid_render_parameters.toolbarOptions.addResetAction
             optionValue: false
 
@@ -69,23 +64,8 @@ layout:
 
         - '@setOption':
             id: product_datagrid
-            optionName: current_row_view
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
-
-        - '@setOption':
-            id: product_datagrid
             optionName: grid_render_parameters.multiSelectRowEnabled
             optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
-
-        - '@setOption':
-            id: product_datagrid_row_product_sticker_new
-            optionName: visible
-            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()!="no-image-view"'
-
-        - '@setOption':
-            id: product_datagrid_row_product_sticker_new_text
-            optionName: visible
-            optionValue: false
 
         - '@move':
             id: product_datagrid_cell_sku
@@ -111,8 +91,6 @@ layout:
             id: product_datagrid_toolbar_display_options
             parentId: product_datagrid_toolbar_rightside_container
             blockType: product_datagrid_options
-            options:
-                current_row_view: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
 
         - '@add':
             id: product_mass_actions_container

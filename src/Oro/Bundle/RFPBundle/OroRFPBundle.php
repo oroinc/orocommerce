@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\OrderBundlePass;
+use Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Bundle\RFPBundle\DependencyInjection\OroRFPExtension;
 
 class OroRFPBundle extends Bundle
@@ -17,6 +18,7 @@ class OroRFPBundle extends Bundle
     {
         parent::build($container);
 
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
         $container->addCompilerPass(new OrderBundlePass());
     }
 

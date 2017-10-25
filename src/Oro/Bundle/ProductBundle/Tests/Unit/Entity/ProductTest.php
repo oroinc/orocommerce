@@ -93,7 +93,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->setPrimaryUnitPrecision($unitPrecision);
         $product->addName((new LocalizedFallbackValue())->setString('1234'));
 
-        $this->assertEquals('{"id":123,"product_units":{"kg":3},"name":"1234"}', json_encode($product));
+        $this->assertEquals('{"id":123,"product_units":{"kg":3},"unit":"kg","name":"1234"}', json_encode($product));
     }
 
     public function testPrePersist()

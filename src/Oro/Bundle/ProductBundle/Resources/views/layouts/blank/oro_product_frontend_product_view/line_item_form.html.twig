@@ -43,3 +43,8 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block _line_item_form_end_widget %}
+    {{ form_widget(form._token) }}
+    {{ block_widget(block) }}
+{% endblock %}

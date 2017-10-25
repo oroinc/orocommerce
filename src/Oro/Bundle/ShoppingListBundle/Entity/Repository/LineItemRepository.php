@@ -42,7 +42,7 @@ class LineItemRepository extends EntityRepository
     /**
      * @param AclHelper $aclHelper
      * @param array|Product $products
-     * @return array|LineItem[]
+     * @return LineItem[]
      */
     public function getProductItemsWithShoppingListNames(AclHelper $aclHelper, $products)
     {
@@ -50,6 +50,7 @@ class LineItemRepository extends EntityRepository
         $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->andWhere('li.product IN (:products)')
+            ->orWhere('li.parentProduct IN (:products)')
             ->setParameter('products', $products)
             ->addOrderBy($qb->expr()->asc('li.id'));
 

@@ -106,7 +106,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@event_dispatcher'
+            - '@oro_product.search.product_reindex_manager'
 
     oro_catalog.event_listener.orm.category_listener:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\CategoryListener'

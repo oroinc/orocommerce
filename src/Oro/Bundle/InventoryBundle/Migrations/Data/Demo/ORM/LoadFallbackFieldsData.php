@@ -14,6 +14,7 @@ use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadProductCategoryDemoDat
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
@@ -22,7 +23,9 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         'minimumQuantityToOrder',
         'maximumQuantityToOrder',
         'manageInventory',
+        LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION,
         'inventoryThreshold',
+        LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION,
         'decrementQuantity',
         'backOrder',
     ];

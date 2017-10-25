@@ -28,6 +28,7 @@ class AjaxLineItemController extends AbstractLineItemController
      *      name="oro_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
+     * @AclAncestor("oro_product_frontend_view")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
