@@ -49,7 +49,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => 1]);
+            ->willReturn(['shoppingList' => 1, 'values' => 3]);
         $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
             ->willReturn(new ShoppingList());
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')
@@ -65,7 +65,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => 1]);
+            ->willReturn(['shoppingList' => 1, 'values' => 3]);
         $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
             ->willReturn($this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1));
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
@@ -73,6 +73,28 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
+        $this->assertEquals(self::MESSAGE, $response->getMessage());
+    }
+
+    public function testHandleWhenAllProductsSelected()
+    {
+        $args = $this->getMassActionArgs();
+        $args->expects($this->any())
+            ->method('getData')
+            ->willReturn(['shoppingList' => 1]);
+
+        $this->shoppingListItemHandler
+            ->expects($this->once())
+            ->method('getShoppingList')
+            ->willReturn($this->getEntity(ShoppingList::class, 1));
+
+        $this->shoppingListItemHandler
+            ->expects($this->never())
+            ->method('createForShoppingList');
+
+        $response = $this->handler->handle($args);
+        $this->assertFalse($response->isSuccessful());
+        $this->assertEquals(0, $response->getOptions()['count']);
         $this->assertEquals(self::MESSAGE, $response->getMessage());
     }
 

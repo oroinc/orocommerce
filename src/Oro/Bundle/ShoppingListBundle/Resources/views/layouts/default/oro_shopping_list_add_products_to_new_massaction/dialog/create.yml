@@ -21,6 +21,8 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["oro_shopping_list_shopping_list_form"].getShoppingListFormView(data["shoppingList"])'
+                        form_route_name: 'oro_shopping_list_add_products_to_new_massaction'
+                        form_route_parameters: '=data["routeParameters"]'
                 form_fields:
                     blockType: form_fields
                     options:

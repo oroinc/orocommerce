@@ -44,13 +44,22 @@ define([
             var selectionState = this.datagrid.getSelectionState();
             var collection = this.datagrid.collection;
             var stateKey = collection.stateHashKey();
-            var attributes = ['id', 'unit', 'quantity'];
-            var selectedIds  = _.map(selectionState.selectedIds, function(productModel) {
-                return _.pick(productModel.toJSON(), attributes);
+
+            var unitsAndQuantities = {};
+            _.each(selectionState.selectedIds, function(productModel) {
+                var attributes = productModel.attributes;
+                unitsAndQuantities[attributes.sku] = {};
+                unitsAndQuantities[attributes.sku][attributes.unit] = attributes.quantity;
             });
+
+            var selectedIds = _.map(selectionState.selectedIds, function(productModel) {
+                return productModel.id;
+            });
+
             var params = {
                 inset: selectionState.inset ? 1 : 0,
-                values: JSON.stringify(selectedIds)
+                values: selectedIds.join(','),
+                units_and_quantities: JSON.stringify(unitsAndQuantities)
             };
 
             params[stateKey] = collection.stateHashValue();

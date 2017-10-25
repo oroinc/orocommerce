@@ -37,14 +37,17 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     {
         $argsParser = new AddProductsMassActionArgsParser($args);
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($argsParser->getShoppingListId());
-        if (!$shoppingList) {
+
+        // Don't allow to add all products
+        if (!$shoppingList || !$argsParser->getProductIds()) {
             return $this->generateResponse($args);
         }
 
         try {
             $addedCnt = $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
-                $argsParser->getProductIds()
+                $argsParser->getProductIds(),
+                $argsParser->getUnitsAndQuantities()
             );
 
             return $this->generateResponse($args, $addedCnt, $shoppingList->getId());

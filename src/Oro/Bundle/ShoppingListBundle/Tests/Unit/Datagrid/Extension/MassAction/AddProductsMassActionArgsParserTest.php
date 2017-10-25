@@ -25,6 +25,35 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($parser->getShoppingListId());
     }
 
+    public function testGetUnitsAndQuantitiesWhenEmpty()
+    {
+        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        $args = $this->createMock(MassActionHandlerArgs::class);
+        $args
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn([]);
+
+        $parser = new AddProductsMassActionArgsParser($args);
+        $this->assertEmpty($parser->getUnitsAndQuantities());
+    }
+
+    public function testGetUnitsAndQuantities()
+    {
+        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        $args = $this->createMock(MassActionHandlerArgs::class);
+        $args
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn([
+                'units_and_quantities' => '{"SKU2":{"set":2},"SKU3":{"item":4}}'
+            ]);
+
+        $expectedUnitsAndQuantities = ['SKU2' => ['set' => 2], 'SKU3' => ['item' => 4]];
+        $parser = new AddProductsMassActionArgsParser($args);
+        $this->assertEquals($expectedUnitsAndQuantities, $parser->getUnitsAndQuantities());
+    }
+
     /**
      * @param int      $inset
      * @param string   $values

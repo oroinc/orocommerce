@@ -5,14 +5,13 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
@@ -72,57 +71,7 @@ class AjaxLineItemController extends AbstractLineItemController
         }
 
         return new JsonResponse(
-            $this->getProductSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
-        );
-    }
-
-    /**
-     * Add Several Products to Shopping List (product view form)
-     *
-     * @Route("/add-products-from-view/", name="oro_shopping_list_frontend_add_products")
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function addSeveralProductsFromViewAction(Request $request)
-    {
-        $configManager = $this->get('oro_config.manager');
-        if (!($this->getUser() || $configManager->get('oro_shopping_list.availability_for_guests'))) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
-
-        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $aclGroupProvider = $this->get('oro_security.acl.group_provider.chain');
-        if (!$this->get('security.authorization_checker')
-            ->isGranted('CREATE', 'entity:' . sprintf('%s@%s', $aclGroupProvider->getGroup(), LineItem::class))
-        ) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createForm(LineItemCollectionType::NAME, $shoppingList);
-
-        $handler = new LineItemCollectionHandler(
-            $form,
-            $request,
-            $this->getDoctrine(),
-            $shoppingListManager
-        );
-        $isFormHandled = $handler->process();
-
-        if (!$isFormHandled) {
-            return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
-        }
-
-        return new JsonResponse(
-            $this->getSuccessResponse($shoppingList, 'oro.shoppinglist.products.added.label')
+            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
         );
     }
 
@@ -223,12 +172,18 @@ class AjaxLineItemController extends AbstractLineItemController
             $response['message'] = $result->getMessage();
         }
 
-        // TODO: Remove Hard code
+        // TODO for BB-12602, check "createOnly" variable and others returned too, remove not needed, and this TODO
         return [
             'data' => [
                 'savedId' => null,
                 'shoppingList' => $shoppingList,
-                'createOnly' => true
+                'createOnly' => true,
+                'routeParameters' => [
+                    'data' => array_merge($request->query->all(), [
+                        'gridName' => $gridName,
+                        'actionName' => $actionName,
+                    ])
+                ]
             ]
         ];
     }

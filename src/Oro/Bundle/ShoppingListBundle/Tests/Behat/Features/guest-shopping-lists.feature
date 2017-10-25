@@ -132,7 +132,7 @@ Feature: Guest Shopping Lists
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
-    When I click "Add to Shopping list"
+    When I click "Add to Shopping List button"
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List

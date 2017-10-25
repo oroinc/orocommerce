@@ -22,6 +22,19 @@ class AddProductsMassActionArgsParser
     /**
      * @return array
      */
+    public function getUnitsAndQuantities()
+    {
+        $unitsAndQuantities = [];
+        if (isset($this->args['units_and_quantities'])) {
+            $unitsAndQuantities = json_decode($this->args['units_and_quantities'], true);
+        }
+
+        return $unitsAndQuantities;
+    }
+
+    /**
+     * @return array
+     */
     public function getProductIds()
     {
         $productIds = [];
