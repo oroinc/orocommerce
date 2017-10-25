@@ -175,19 +175,18 @@
                 </thead>
                 {% for lineItem in lineItems %}
                     <tbody class="line_item">
-                    {# TODO: Should be change in ticket BB-12007 #}
+                        {% set form = null %}
+                        {% if  lineItem.form is defined %}
+                            {% set form = lineItem.form %}
+                        {% endif %}
 
-                    {% set form = null %}
-                    {% if  lineItem.form is defined %}
-                        {% set form = lineItem.form %}
-                    {% endif %}
-
-                    {% do block|merge_context({
+                        {% do block|merge_context({
                             lineItem: lineItem.lineItems|first,
                             mainProduct: lineItem.product,
                             parent: block.vars,
                             loop: loop,
-                            form: form
+                            form: form,
+                            productsAllPrices: productsAllPrices
                         }) %}
                         {{ block('container_widget') }}
                     </tbody>
@@ -198,6 +197,26 @@
         <div class="cart-list-empty">
             <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
             <span class="fs24">{{ 'oro.frontend.shoppinglist.view.not_products_available'|trans }}</span>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_inline_matrix_form_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if form is not null %}
+        {% do block|merge_context({
+            productPrices: productsAllPrices,
+            totalQuantity: 1,
+            totalPrice: 1,
+        }) %}
+        <div {{ UI.renderPageComponentAttributes({
+            view: 'oroshoppinglist/js/app/views/shopping-list-matrix-view',
+            options: {
+                productId: mainProduct.id,
+                shoppingListId: lineItem.id
+            }
+        }) }}>
+            {{ block('container_widget') }}
         </div>
     {% endif %}
 {% endblock %}
@@ -279,14 +298,6 @@
         {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}: {{ field.value }}</div>
         {% endfor %}
-    {% endif %}
-{% endblock %}
-
-{% block _shopping_list_line_items_list_item_inline_matrix_form_widget %}
-    {% if form is not null %}
-        {# TODO: Should be change in ticket BB-12007 #}
-        PLease show INLINE MATRIX FORM
-        {{ dump(form) }}
     {% endif %}
 {% endblock %}
 

@@ -44,6 +44,7 @@ define(function(require) {
          */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.apply(this, arguments);
+            this.initModel(options);
             this.setPrices(options);
             this.initializeElements(options);
             if (_.isDesktop()) {
@@ -52,6 +53,12 @@ define(function(require) {
                 }));
             }
             this.updateTotals();
+        },
+
+        initModel: function(options) {
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
         },
 
         /**
@@ -71,7 +78,7 @@ define(function(require) {
          * Refactoring prices object model
          */
         setPrices: function(options) {
-            this.unit = options.unit;
+            this.unit = options.unit || this.model.get('unit');
             this.prices = {};
 
             _.each(options.prices, function(unitPrices, productId) {

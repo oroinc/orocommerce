@@ -1,13 +1,20 @@
 {% block __matrix_grid_order__wrapper_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " matrix-order-widget"
+    {% set attr = layout_attr_defaults(attr, {
+        class: attr.class|default('') ~ " matrix-order-widget",
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/base-product-matrix-view',
+            prices: productPrices,
+            unit: unit|default(null)
+        }
     }) %}
+
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block matrix_order_form_summary_widget %}
+{% block __matrix_grid_order__form_summary_widget %}
     <div class="matrix-order-widget__summary">
         <div class="matrix-order-widget__summary-wrapper">
             <div class="matrix-order-widget__total-quantity">
@@ -23,21 +30,6 @@
                 <span class="matrix-order-widget__total-price-value" data-role="total-price">{{ totalPrice }}</span>
             </div>
         </div>
-    </div>
-{% endblock %}
-
-{% block matrix_grid_prices_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oropricing/js/app/views/base-product-matrix-view',
-            prices: productPrices,
-            unit: unit
-        }
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

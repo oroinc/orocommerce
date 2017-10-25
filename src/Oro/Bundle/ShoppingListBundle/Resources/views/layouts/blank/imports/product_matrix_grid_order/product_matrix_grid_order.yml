@@ -1,0 +1,74 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order
+            root: __product_matrix_grid_order
+    actions:
+        - '@add':
+            id: __product_matrix_grid_order
+            blockType: container
+            parentId: __root
+        - '@setOption':
+            id: matrix_grid_order_wrapper
+            optionName: visible
+            optionValue: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_wrapper
+            optionName: vars.productPrices
+            optionValue: '=data["frontend_product_prices"].getSimpleByConfigurable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_wrapper
+            optionName: vars.unit
+            optionValue: '=data["product"].getPrimaryUnitPrecision().getProductUnitCode()'
+
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: visible
+            optionValue: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: form
+            optionValue: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: form_route_name
+            optionValue: 'oro_shopping_list_frontend_matrix_grid_order'
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: form_route_parameters.productId
+            optionValue: '=data["product"].getId()'
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: form_route_parameters.shoppingListId
+            optionValue: '=data.offsetExists("shoppingList") ? data["shoppingList"].getId() : ""'
+
+        - '@setOption':
+            id: matrix_grid_order_form_fields
+            optionName: visible
+            optionValue: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_form_fields
+            optionName: form
+            optionValue: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
+
+        - '@setOption':
+            id: matrix_grid_order_form_end
+            optionName: visible
+            optionValue: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_form_end
+            optionName: form
+            optionValue: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
+
+        - '@setOption':
+            id: matrix_grid_order_form_summary
+            optionName: visible
+            optionValue: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_form_summary
+            optionName: vars.totalQuantity
+            optionValue: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'
+        - '@setOption':
+            id: matrix_grid_order_form_summary
+            optionName: vars.totalPrice
+            optionValue: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'

@@ -1,7 +1,7 @@
 layout:
     imports:
         -
-            id: matrix_grid_order
+            id: product_matrix_grid_order
             root: matrix_grid_order_inline
             namespace: matrix_grid_order
         -
