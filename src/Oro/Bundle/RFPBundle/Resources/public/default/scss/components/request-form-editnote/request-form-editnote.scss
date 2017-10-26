@@ -6,6 +6,8 @@
 
     &__body {
         display: none;
+
+        margin-top: $offset-y-m;
     }
 
     &__toggle:checked ~ &__body,
