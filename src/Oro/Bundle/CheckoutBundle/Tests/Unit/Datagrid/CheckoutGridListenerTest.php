@@ -197,14 +197,16 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getCheckoutsByIds')
             ->willReturn([
                 3 => $checkout1,
-                2 => $checkout2
+                2 => $checkout2,
+                5 => (new Checkout())->setSource(new CheckoutSourceStub())
             ]);
 
         $foundSources = [];
         $records = [
             new ResultRecord(['id' => 3, 'completed' => false]),
             new ResultRecord(['id' => 2, 'completed' => false]),
-            new ResultRecord(['id' => 4, 'completed' => true])
+            new ResultRecord(['id' => 4, 'completed' => true]),
+            new ResultRecord(['id' => 5, 'completed' => false])
         ];
 
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -238,10 +240,24 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         foreach ($records as $record) {
             $foundSources[] = $record->getValue('startedFrom');
         }
-
-        $this->assertCheckoutSource($foundSources, $shoppingList->getLabel(), 'Did not found any ShoppingList entity');
-        $this->assertCheckoutSource($foundSources, 'Quote', 'Did not found any Quote entity');
-        $this->assertCheckoutSource($foundSources, 'started test', 'Did not found any data from completed checkout');
+        $this->assertCheckoutSource(
+            $foundSources,
+            $shoppingList->getLabel(),
+            'shopping_list',
+            'Did not found any ShoppingList entity'
+        );
+        $this->assertCheckoutSource(
+            $foundSources,
+            'Quote',
+            'quote',
+            'Did not found any Quote entity'
+        );
+        $this->assertCheckoutSource(
+            $foundSources,
+            'started test',
+            'shopping_list',
+            'Did not found any data from completed checkout'
+        );
     }
 
     /**
@@ -249,13 +265,16 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      * @param string $expectedLabel
      * @param string $message
      */
-    protected function assertCheckoutSource(array $sources, $expectedLabel, $message)
+    protected function assertCheckoutSource(array $sources, $expectedLabel, $expectedType, $message)
     {
         $found = false;
 
         foreach ($sources as $source) {
-            if ($source === $expectedLabel || (isset($source['label']) && $source['label'] === $expectedLabel)) {
+            $typeFound = isset($source['type']) && ($expectedType === $source['type']);
+            $labelFound = isset($source['label']) && ($expectedLabel === $source['label']);
+            if (($source === $expectedLabel) || ($typeFound && $labelFound)) {
                 $found = true;
+                break;
             }
         }
 

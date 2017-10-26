@@ -3,15 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
@@ -33,13 +29,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->quantityValidator = $this->getMockBuilder(QuantityToOrderValidatorService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quantityValidator = $this->createMock(QuantityToOrderValidatorService::class);
         $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator);
-        $this->event = $this->getMockBuilder(LineItemValidateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->event = $this->createMock(LineItemValidateEvent::class);
     }
 
     public function testOnLineItemValidateDoesNotValidate()
@@ -64,51 +56,26 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
-    /**
-     * @dataProvider sourceEntityDataProvider
-     *
-     * @param string $sourceEntityClass
-     * @param bool $expected
-     */
-    public function testOnLineItemValidateForCheckoutLineItem($sourceEntityClass, $expected)
+    public function testOnLineItemValidateForCheckoutLineItem()
     {
-        $sourceEntity = $this->createMock($sourceEntityClass);
-        $checkout = $this->createMock(Checkout::class);
-        $checkout->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn($sourceEntity);
-        $lineItem = $this->createMock(CheckoutLineItem::class);
-        $lineItem->expects($this->once())
-            ->method('getCheckout')
-            ->willReturn($checkout);
+        $lineItem1 = $this->createMock(CheckoutLineItem::class);
+        $lineItem1->expects($this->once())
+            ->method('isPriceFixed')
+            ->willReturn(false);
+        $lineItem2 = $this->createMock(CheckoutLineItem::class);
+        $lineItem2->expects($this->once())
+            ->method('isPriceFixed')
+            ->willReturn(true);
+        $lineItem3 = $this->createMock(LineItem::class);
+
         $this->event->expects($this->once())
             ->method('getLineItems')
-            ->willReturn(new ArrayCollection([$lineItem]));
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
 
-        $lineItem->expects($this->exactly((int) $expected))
-            ->method('getProduct');
+        $lineItem1->expects($this->once())->method('getProduct');
+        $lineItem2->expects($this->never())->method('getProduct');
+        $lineItem3->expects($this->once())->method('getProduct');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
-    }
-
-    /**
-     * @return array
-     */
-    public function sourceEntityDataProvider()
-    {
-        return [
-            'quoteDemand' => [
-                'sourceEntityClass' => QuoteDemand::class,
-                'expected' => false,
-            ],
-            'shoppingList' => [
-                'sourceEntityClass' => ShoppingList::class,
-                'expected' => true,
-            ],
-            'some other source entity' => [
-                'sourceEntityClass' => Checkout::class,
-                'expected' => false,
-            ],
-        ];
     }
 
     public function testOnLineItemValidateAddsMaxErrorToEvent()

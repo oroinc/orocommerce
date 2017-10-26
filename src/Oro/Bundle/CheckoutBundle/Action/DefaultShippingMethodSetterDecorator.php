@@ -3,8 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 
 class DefaultShippingMethodSetterDecorator
 {
@@ -23,29 +22,16 @@ class DefaultShippingMethodSetterDecorator
 
     /**
      * @param Checkout $checkout
-     *
-     * @return null|Quote
-     */
-    private function extractQuoteFromCheckout(Checkout $checkout)
-    {
-        $sourceEntity = $checkout->getSourceEntity();
-
-        return $sourceEntity instanceof QuoteDemand ? $sourceEntity->getQuote() : null;
-    }
-
-    /**
-     * @param Checkout $checkout
      */
     public function setDefaultShippingMethod(Checkout $checkout)
     {
         if ($checkout->getShippingMethod()) {
             return;
         }
+        $sourceEntity = $checkout->getSourceEntity();
 
-        $quote = $this->extractQuoteFromCheckout($checkout);
-
-        if ($quote) {
-            $checkout->setShippingMethod($quote->getShippingMethod());
+        if ($sourceEntity instanceof PreConfiguredShippingMethodConfigurationInterface) {
+            $checkout->setShippingMethod($sourceEntity->getShippingMethod());
         } else {
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }

@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -49,17 +48,10 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCa
             ->getMockBuilder(QuoteDemand::class)
             ->getMock();
 
-        $quote = $this
-            ->getMockBuilder(Quote::class)
-            ->getMock();
-
-        $quoteDemand->expects(static::once())->method('getQuote')->willReturn($quote);
-        $quote->expects(static::once())->method('getShippingMethod')->willReturn($shippingMethod);
+        $quoteDemand->expects(static::once())->method('getShippingMethod')->willReturn($shippingMethod);
 
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this
-            ->getMockBuilder(Checkout::class)
-            ->getMock();
+        $checkout = $this->createMock(Checkout::class);
 
         $checkout->expects(static::once())->method('getSourceEntity')->willReturn($quoteDemand);
         $checkout->expects(static::once())->method('setShippingMethod')->with($shippingMethod);
