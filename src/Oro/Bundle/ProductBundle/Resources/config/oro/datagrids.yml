@@ -263,18 +263,17 @@ datagrids:
             enable: true
             behaviour: enable_selected
         columns:
-#            @todo BB-12511
-#            productName:
-#                inline_editing:
-#                    enable: true
-#                    editor:
-#                        component: oroproduct/js/app/components/product-name-popup-editor-component
-#                    save_api_accessor:
-#                        route: oro_api_patch_product_inline_edit_name
-#                        query_parameter_names:
-#                            - id
-#                    validation_rules:
-#                        NotBlank: true
+            productName:
+                inline_editing:
+                    enable: true
+                    editor:
+                        component: oroproduct/js/app/components/product-name-popup-editor-component
+                    save_api_accessor:
+                        route: oro_api_patch_product_inline_edit_name
+                        query_parameter_names:
+                            - id
+                    validation_rules:
+                        NotBlank: true
             inventoryStatusId:
                 inline_editing:
                     enable: true

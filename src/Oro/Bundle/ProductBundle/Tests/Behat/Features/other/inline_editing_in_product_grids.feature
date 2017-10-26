@@ -1,5 +1,3 @@
-# TODO: unskip after BB-12511
-@skip
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
 Feature: Inline Editing in Products Grids
