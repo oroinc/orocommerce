@@ -44,6 +44,7 @@ define(function(require) {
          */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.apply(this, arguments);
+            this.total = _.extend({}, this.total);
             this.initModel(options);
             this.setPrices(options);
             this.initializeElements(options);
@@ -92,6 +93,11 @@ define(function(require) {
          * @param {Event} event
          */
         _onQuantityChange: _.debounce(function(event) {
+            if (!this._isSafeNumber(event.currentTarget.value)) {
+                event.preventDefault();
+                return false;
+            }
+
             this.updateTotal($(event.currentTarget));
             this.render();
         }, 150),
@@ -213,6 +219,17 @@ define(function(require) {
                 $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
                 $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
             }, this);
+        },
+
+        /**
+         * Check JS max number value
+         *
+         * @param {Number} value
+         * @returns {Boolean}
+         * @private
+         */
+        _isSafeNumber: function(value) {
+            return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
         }
     }));
     return BaseProductMatrixView;
