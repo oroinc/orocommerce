@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BackendSortingDropdown;
-    var __ = require('orotranslation/js/translator');
     var SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
 
     BackendSortingDropdown = SortingDropdown.extend({
