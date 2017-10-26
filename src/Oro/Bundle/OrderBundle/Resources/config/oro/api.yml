@@ -57,7 +57,18 @@ api:
                         productUnitCode:
                             exclude: true
 
-        Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
+        Oro\Bundle\OrderBundle\Entity\OrderAddress:
+            subresources:
+                country:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                region:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             form_event_subscriber: oro_order.api.form_listener.discount
