@@ -111,6 +111,37 @@ operations:
                  route: 'oro_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}
 
+    oro_checkout_frontend_start_from_order:
+        label: oro.checkout.frontend.start_from_order
+        applications: [commerce]
+        routes:
+            - oro_order_frontend_view
+        datagrids:
+            - frontend-orders-grid
+        acl_resource: [CHECKOUT_CREATE, $.data]
+        button_options:
+            icon: fa-shopping-cart
+        preconditions:
+            '@and':
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@run_action_group':
+                action_group: start_checkout
+                parameters_mapping:
+                    sourceCriteria:
+                        order: $.data
+                    settings:
+                        allow_manual_source_remove: false
+                        remove_source: false
+                    showErrors: true
+                    validateOnStartCheckout: true
+                results:
+                    redirectUrl: $.redirectUrl
+                    checkout: $.checkout
+                    errors: $.errors
+
 action_groups:
     oro_update_shipping_price:
         parameters:
@@ -178,6 +209,9 @@ action_groups:
             showErrors:
                 type: bool
                 default: false
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             - '@run_action_group':
                 action_group: find_checkout
@@ -185,6 +219,7 @@ action_groups:
                     sourceCriteria: $.sourceCriteria
                     checkoutData: $.data
                     updateData: $.force
+                    forceStartCheckout: $.forceStartCheckout
                 results:
                     checkout: $.checkout
                     force: $.updateData
@@ -218,6 +253,9 @@ action_groups:
             updateData:
                 type: bool
                 default: false
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             # find or create checkout and checkout source
             - '@get_available_workflow_by_record_group':
@@ -227,72 +265,113 @@ action_groups:
 
             - '@get_active_user_or_null': $.currentUser
 
-            - '@tree':
-                conditions:
-                    '@not_empty': $.currentUser
-                actions:
-                    - '@call_service_method':
-                        attribute: $.checkout
-                        service: 'oro_checkout.repository.checkout'
-                        method: findCheckoutByCustomerUserAndSourceCriteria
-                        method_parameters:
-                            - $.currentUser
-                            - $.sourceCriteria
-                            - $.currentWorkflow.name
+            - '@assign_value': [$.checkout, null]
 
-            - '@tree':
+            - '@run_action_group':
                 conditions:
-                    '@empty': $.currentUser
-                actions:
-                    - '@call_service_method':
-                        attribute: $.checkout
-                        service: 'oro_checkout.repository.checkout'
-                        method: findCheckoutBySourceCriteria
-                        method_parameters:
-                            - $.sourceCriteria
-                            - $.currentWorkflow.name
+                    '@empty': $.forceStartCheckout
+                parameters:
+                    action_group: find_existing_checkout
+                    parameters_mapping:
+                        sourceCriteria: $.sourceCriteria
+                        workflowName: $.currentWorkflow.name
+                        customerUser: $.currentUser
+                    results:
+                        checkout: $.checkout
 
             - '@call_service_method':
                 attribute: $.currentWebsite
                 service: oro_website.manager
                 method: getCurrentWebsite
 
-            - '@tree':
+            - '@run_action_group':
                 conditions:
                     '@empty': $.checkout.id
-                actions:
-                    - '@create_entity':
-                        attribute: $.source
-                        class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
-                        data: $.sourceCriteria
-                    - '@create_entity':
-                        attribute: $.checkout
-                        class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
-                        data:
-                            source: $.source
-                            customerUser: $.currentUser
-                            website: $.currentWebsite
-                    - '@create_datetime': {attribute: $.checkout.createdAt}
-                    - '@create_datetime': {attribute: $.checkout.updatedAt}
-                    - '@assign_value': [$.updateData, true]
+                parameters:
+                    action_group: create_checkout
+                    parameters_mapping:
+                        sourceCriteria: $.sourceCriteria
+                        workflowName: $.currentWorkflow.name
+                        checkout: $.checkout
+                        updateData: $.updateData
+                        customerUser: $.currentUser
+                        website: $.currentWebsite
+                    results:
+                        checkout: $.checkout
 
-                    - '@start_workflow':
-                        attribute: $.workflowItem
-                        name: $.currentWorkflow.name
-                        entity: $.checkout
+            - '@run_action_group':
+                action_group: update_checkout_data
+                parameters_mapping:
+                    checkout: $.checkout
+                    updateData: $.updateData
+                    customData: $.checkoutData
+                    customerUser: $.currentUser
+                    website: $.currentWebsite
+                results:
+                    checkout: $.checkout
 
-            # update checkout data
+            - '@flush_entity': $.checkout
+
+    create_checkout:
+        parameters:
+            sourceCriteria:
+                type: array
+            updateData:
+                type: bool
+                default: false
+            workflowName:
+                type: string
+            customerUser:
+                type: object
+            website:
+                type: object
+        actions:
+            - '@create_entity':
+                attribute: $.source
+                class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                data: $.sourceCriteria
+            - '@create_entity':
+                attribute: $.checkout
+                class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                data:
+                    source: $.source
+                    customerUser: $.customerUser
+                    website: $.website
+            - '@create_datetime': {attribute: $.checkout.createdAt}
+            - '@create_datetime': {attribute: $.checkout.updatedAt}
+            - '@assign_value': [$.updateData, true]
+
+            - '@start_workflow':
+                attribute: $.workflowItem
+                name: $.workflowName
+                entity: $.checkout
+
+    update_checkout_data:
+        parameters:
+            checkout:
+                type: object
+            customData:
+                type: array
+                default: []
+            updateData:
+                type: bool
+                default: false
+            customerUser:
+                type: object
+            website:
+                type: object
+        actions:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@not_empty': $.currentUser
+                        - '@not_empty': $.customerUser
                         - '@equal': [true, $.updateData]
                 actions:
-                    - '@assign_value': [$.checkout.customer, $.currentUser.customer]
-                    - '@assign_value': [$.checkout.organization, $.currentUser.customer.organization]
-                    - '@assign_value': [$.checkout.website, $.currentWebsite]
+                    - '@assign_value': [$.checkout.customer, $.customerUser.customer]
+                    - '@assign_value': [$.checkout.organization, $.customerUser.customer.organization]
+                    - '@assign_value': [$.checkout.website, $.website]
                     # update custom data
-                    - '@copy_values': [$.checkout, $.checkoutData]
+                    - '@copy_values': [$.checkout, $.customData]
 
             # actualize user currency
             - '@call_service_method':
@@ -313,7 +392,37 @@ action_groups:
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
 
-            - '@flush_entity': $.checkout
+    find_existing_checkout:
+        parameters:
+            sourceCriteria:
+                type: array
+            workflowName:
+                type: string
+            customerUser:
+                type: object
+        actions:
+            - '@call_service_method':
+                conditions:
+                    '@not_empty': $.customerUser
+                parameters:
+                    attribute: $.checkout
+                    service: 'oro_checkout.repository.checkout'
+                    method: findCheckoutByCustomerUserAndSourceCriteria
+                    method_parameters:
+                        - $.customerUser
+                        - $.sourceCriteria
+                        - $.workflowName
+
+            - '@call_service_method':
+                conditions:
+                    '@empty': $.customerUser
+                parameters:
+                    attribute: $.checkout
+                    service: 'oro_checkout.repository.checkout'
+                    method: findCheckoutBySourceCriteria
+                    method_parameters:
+                        - $.sourceCriteria
+                        - $.workflowName
 
     update_workflow_item:
         parameters:
