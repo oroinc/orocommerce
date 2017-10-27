@@ -5,11 +5,11 @@
         <a href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">{{ shoppingList.label }}</a>
     {% endset %}
 
-    {% set shoppinglistCreatedMessge =  'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)}) %}
+    {% set shoppinglistCreatedMessage =  'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)}) %}
     {% set pageComponentOptions = {
         savedId: savedId|default(null),
         shoppingListCreateEnabled: shoppingListCreateEnabled,
-        messages: [shoppinglistCreatedMessge]|merge(messages)
+        messages: [shoppinglistCreatedMessage]|merge(messages)
     } %}
     {% set attr = {
         'data-page-component-module': 'oroshoppinglist/js/app/components/shopping-list-create-component',
