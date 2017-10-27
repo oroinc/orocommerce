@@ -54,13 +54,26 @@ class RequestRepresentativesNotifier
     }
 
     /**
+     * Send confirmation email to guest customer user if request is created
+     *
+     * @param Request $request
+     */
+    public function sendConfirmationEmail(Request $request)
+    {
+        $customerUser = $request->getCustomerUser();
+        if ($customerUser !== null && $customerUser->isGuest() && $request->getId()) {
+            $this->processor->sendConfirmation($request, $customerUser);
+        }
+    }
+
+    /**
      * @param Request $request
      * @return bool
      */
     protected function shouldNotifySalesRepsOfCustomer(Request $request)
     {
         return ($request->getCustomer()->hasSalesRepresentatives()
-            && ('always' == $this->configManager->get('oro_rfp.notify_assigned_sales_reps_of_the_customer')
+            && ('always' === $this->configManager->get('oro_rfp.notify_assigned_sales_reps_of_the_customer')
                 || !$request->getCustomerUser()->hasSalesRepresentatives()));
     }
 
@@ -70,7 +83,7 @@ class RequestRepresentativesNotifier
      */
     protected function shouldNotifyOwnerOfCustomerUser(Request $request)
     {
-        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_customer_user_record')
+        return ('always' === $this->configManager->get('oro_rfp.notify_owner_of_customer_user_record')
             || !$request->getCustomerUser()->hasSalesRepresentatives());
     }
 
@@ -80,7 +93,7 @@ class RequestRepresentativesNotifier
      */
     protected function shouldNotifyOwnerOfCustomer(Request $request)
     {
-        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_customer')
+        return ('always' === $this->configManager->get('oro_rfp.notify_owner_of_customer')
             || !$request->getCustomer()->hasSalesRepresentatives());
     }
 }

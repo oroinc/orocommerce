@@ -14,6 +14,11 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
+     * @internal
+     */
+    const PROCESSING_TIME_ERROR_VALUE = 3;
+
+    /**
      * @var ShippingPriceCache
      */
     protected $cache;
@@ -34,9 +39,11 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     public function testFetchPrice()
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
-        $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]), new PriceRequest(), 'method_id', 'type_id');
+
+        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
+
+        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
+
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
         $this->cacheProvider->expects(static::once())
@@ -57,9 +64,11 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     public function testFetchPriceFalse()
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
-        $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]), new PriceRequest(), 'method_id', 'type_id');
+
+        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
+
+        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
+
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
         $this->cacheProvider->expects(static::once())
@@ -76,9 +85,11 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     public function testContainsPrice()
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
-        $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]), new PriceRequest(), 'method_id', 'type_id');
+
+        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
+
+        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
+
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
         $this->cacheProvider->expects(static::once())
@@ -92,9 +103,11 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     public function testContainsPriceFalse()
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
-        $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]), new PriceRequest(), 'method_id', 'type_id');
+
+        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
+
+        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
+
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
         $this->cacheProvider->expects(static::once())
@@ -108,21 +121,26 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider savePriceDataProvider
      *
-     * @param string $invalidateCacheAt
+     * @param string $invalidateCacheAtString
      * @param string $expectedLifetime
      */
-    public function testSavePrice($invalidateCacheAt, $expectedLifetime)
+    public function testSavePrice($invalidateCacheAtString, $expectedLifetime)
     {
-        $invalidateCacheAt = new \DateTime($invalidateCacheAt);
-        $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]), new PriceRequest(), 'method_id', 'type_id');
+        $invalidateCacheAt = new \DateTime($invalidateCacheAtString);
+
+        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
+
+        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
+
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
         $price = Price::create(10, 'USD');
         $this->cacheProvider->expects(static::once())
             ->method('save')
-            ->with($stringKey, $price, $expectedLifetime);
+            ->with($stringKey, $price)
+            ->will($this->returnCallback(function ($actualKey, $price, $actualLifetime) use ($expectedLifetime) {
+                static::assertLessThan(self::PROCESSING_TIME_ERROR_VALUE, abs($expectedLifetime - $actualLifetime));
+            }));
 
         static::assertEquals($this->cache, $this->cache->savePrice($key, $price));
     }
@@ -134,8 +152,8 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'earlier than lifetime' => [
-                'invalidateCacheAt' => '+1second',
-                'expectedLifetime' => 1,
+                'invalidateCacheAt' => '+3second',
+                'expectedLifetime' => 3,
             ],
             'in past' => [
                 'invalidateCacheAt' => '-1second',
@@ -146,5 +164,17 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
                 'expectedLifetime' => ShippingPriceCache::LIFETIME + 10,
             ],
         ];
+    }
+
+    /**
+     * @param \DateTime $invalidateCacheAt
+     *
+     * @return UPSTransport|object
+     */
+    private function getUPSSettingsMock(\DateTime $invalidateCacheAt): UPSTransport
+    {
+        return $this->getEntity(UPSTransport::class, [
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
+        ]);
     }
 }

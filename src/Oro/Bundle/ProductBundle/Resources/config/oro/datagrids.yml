@@ -9,11 +9,14 @@ datagrids:
                 select:
                     - product.id
                     - product.sku
+                    - product.skuUppercase
                     - product.createdAt
                     - product.updatedAt
                     - product.status
                     - product.type
                     - product.newArrival
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
@@ -50,9 +53,6 @@ datagrids:
                 frontend_type: datetime
         properties:
             id: ~
-            productName:
-                type: localized_value
-                data_name: names
         sorters:
             columns:
                 sku:
@@ -73,10 +73,14 @@ datagrids:
             columns:
                 sku:
                     type:      string
-                    data_name: product.sku
+                    data_name: product.skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 inventoryStatusId:
                     type:      enum
                     data_name: inventoryStatusId
@@ -120,9 +124,58 @@ datagrids:
 
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view
-        extends: products-select-grid-base
+        options:
+            entityHint:        products
         source:
+            type: search
+            search_index: website
             skip_acl_apply: true
+            query:
+                select:
+                    - text.sku as sku
+                    - text.names_LOCALIZATION_ID as productName
+                    - text.status as status
+                    - text.type as type
+                    - datetime.created_at as createdAt
+                    - datetime.updated_at as updatedAt
+                    - text.inventory_status as inventoryStatus
+                from:
+                    - oro_product_WEBSITE_ID
+        columns:
+            sku:
+                label:         oro.product.sku.label
+            productName:
+                label:         oro.product.names.label
+            inventoryStatus:
+                label:         oro.product.inventory_status.label
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                frontend_type: select
+        filters:
+            columns:
+                sku:
+                    type:      string
+                    data_name: sku
+                productName:
+                    type:      string
+                    data_name: productName
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatus
+                    enum_code: prod_inventory_status
+        properties:
+            id: ~
+        sorters:
+            columns:
+                sku:
+                    data_name: sku
+                productName:
+                    data_name: productName
+                inventoryStatus:
+                    data_name: inventoryStatus
+
+            toolbar_sorting: true
+            disable_default_sorting: true
+
 
     product-collection-base-grid:
         extends: products-select-grid-base
@@ -297,7 +350,10 @@ datagrids:
                 select:
                     - product.id
                     - product.sku
+                    - product.skuUppercase
                     - product.status
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) AS inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
@@ -306,10 +362,6 @@ datagrids:
                         - product.id <> :parentProduct
             bind_parameters:
                 - parentProduct
-        properties:
-            productName:
-                type: localized_value
-                data_name: product.names
         sorters:
             columns:
                 id:
@@ -327,10 +379,14 @@ datagrids:
                     data_name: product.id
                 sku:
                     type:      string
-                    data_name: product.sku
+                    data_name: product.skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 status:
                     data_name: product.status
                     type: choice
@@ -457,10 +513,13 @@ datagrids:
                 select:
                     - product.id
                     - product.sku
+                    - product.skuUppercase
                     - product.createdAt
                     - product.updatedAt
                     - product.status
                     - product.type
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
@@ -490,9 +549,6 @@ datagrids:
                 frontend_type: datetime
         properties:
             id: ~
-            productName:
-                type: localized_value
-                data_name: product.names
         sorters:
             columns:
                 sku:
@@ -513,10 +569,14 @@ datagrids:
             columns:
                 sku:
                     type:      string
-                    data_name: product.sku
+                    data_name: product.skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 inventoryStatusId:
                     type:      enum
                     data_name: inventoryStatusId

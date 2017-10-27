@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 
-class CategoryInventoryDecrementFormExtension extends AbstractTypeExtension
+class CategoryInventoryDecrementFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public function getFallbackProperties()
     {
-        return CategoryType::class;
+        return [
+            'decrementQuantity'
+        ];
     }
 
     /**
@@ -23,6 +24,8 @@ class CategoryInventoryDecrementFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder->add(
             'decrementQuantity',
             EntityFieldFallbackValueType::NAME,

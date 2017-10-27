@@ -1,5 +1,6 @@
 @regression
 @smoke
+@community-edition-only
 Feature: Commerce smoke e2e
 
   Scenario: Create different window session
@@ -10,6 +11,12 @@ Feature: Commerce smoke e2e
   Scenario: Create Product Tax Code, Customer Tax Code, Create Tax, Create Tax Jurisdiction, Create Tax Rule
     Given I proceed as the Admin
     And I login as administrator
+    And go to System/ Configuration
+    And follow "Commerce/Inventory/Product Options" on configuration sidebar
+    And fill "Product Option Form" with:
+      |Backorders Default|false|
+      |Backorders        |Yes  |
+    And click "Save settings"
     And go to System/ Configuration
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
