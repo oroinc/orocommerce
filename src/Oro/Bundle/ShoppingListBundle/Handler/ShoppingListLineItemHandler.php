@@ -17,6 +17,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ShoppingListLineItemHandler
 {
@@ -43,25 +44,31 @@ class ShoppingListLineItemHandler
     /** @var string */
     protected $productUnitClass;
 
+    /** @var  ProductVisibilityQueryBuilderModifier */
+    protected $queryBuilderModifier;
+
     /**
      * @param ManagerRegistry $managerRegistry
      * @param ShoppingListManager $shoppingListManager
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface $tokenAccessor
      * @param FeatureChecker $featureChecker
+     * @param ProductVisibilityQueryBuilderModifier $queryBuilderModifier
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
-        FeatureChecker $featureChecker
+        FeatureChecker $featureChecker,
+        ProductVisibilityQueryBuilderModifier $queryBuilderModifier
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
         $this->featureChecker = $featureChecker;
+        $this->queryBuilderModifier = $queryBuilderModifier;
     }
 
     /**
@@ -83,7 +90,9 @@ class ShoppingListLineItemHandler
         $productsRepo = $this->managerRegistry->getManagerForClass($this->productClass)
             ->getRepository($this->productClass);
 
-        $iterableResult = $productsRepo->getProductsQueryBuilder($productIds)->getQuery()->iterate();
+        $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
+        $this->queryBuilderModifier->modify($queryBuilder);
+        $iterableResult = $queryBuilder->getQuery()->iterate();
         $lineItems = [];
 
         foreach ($iterableResult as $entityArray) {

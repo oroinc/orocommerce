@@ -23,6 +23,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,6 +45,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
     protected $featureChecker;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier */
+    protected $queryBuilderModifier;
+
     protected function setUp()
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
@@ -52,6 +56,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->queryBuilderModifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
 
         $this->managerRegistry = $this->getManagerRegistry();
 
@@ -64,7 +70,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->shoppingListManager,
             $this->authorizationChecker,
             $this->tokenAccessor,
-            $this->featureChecker
+            $this->featureChecker,
+            $this->queryBuilderModifier
         );
         $this->handler->setProductClass(Product::class);
         $this->handler->setShoppingListClass(ShoppingList::class);
@@ -219,6 +226,11 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->willReturn(true);
+
+        $this->queryBuilderModifier
+            ->expects($this->once())
+            ->method('modify')
+            ->with($this->isInstanceOf(QueryBuilder::class));
 
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(

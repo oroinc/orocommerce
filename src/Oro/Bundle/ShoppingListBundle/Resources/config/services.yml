@@ -68,6 +68,7 @@ services:
             - "@security.authorization_checker"
             - "@oro_security.token_accessor"
             - "@oro_featuretoggle.checker.feature_checker"
+            - "@oro_visibility.model.product_visibility_query_builder_modifier"
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
