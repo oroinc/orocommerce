@@ -159,3 +159,11 @@
 {% block __oro_product_grid__product_price_container_widget %}
     {{ block("product_price_container") }}
 {% endblock %}
+
+{% block _product_datagrid_cell_matrixForm_widget %}
+    {{- block('container_widget') -}}
+{% endblock %}
+
+{% block _product_datagrid_cell_matrixForm_value_widget %}
+    {{ datagrid_row[column_name]|raw }}
+{% endblock %}
