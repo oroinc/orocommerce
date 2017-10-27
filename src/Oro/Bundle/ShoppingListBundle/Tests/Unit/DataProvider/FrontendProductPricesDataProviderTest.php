@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -40,24 +41,23 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceListRequestHandler;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemsDataProvider
+     */
+    protected $shoppingListLineItemsDataProvider;
+
     public function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceListRequestHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->shoppingListLineItemsDataProvider = $this->createMock(ShoppingListLineItemsDataProvider::class);
 
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
             $this->userCurrencyManager,
-            $this->priceListRequestHandler
+            $this->priceListRequestHandler,
+            $this->shoppingListLineItemsDataProvider
         );
     }
 
@@ -79,7 +79,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(self::TEST_CURRENCY);
 
         /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+        $priceList = $this->getEntity(BasePriceList::class, ['id' => 1]);
         $this->priceListRequestHandler->expects($this->once())
             ->method('getPriceListByCustomer')
             ->willReturn($priceList);
@@ -103,7 +103,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     public function getDataDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
+        $product = $this->getEntity(Product::class, ['id' => 42]);
         $productUnit = new ProductUnit();
         $productUnit->setCode('test');
         $quantity = 100;
