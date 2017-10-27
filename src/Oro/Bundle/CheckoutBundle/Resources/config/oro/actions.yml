@@ -127,20 +127,37 @@ operations:
                     group_name: b2b_checkout_flow
                     entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
-            - '@run_action_group':
-                action_group: start_checkout
-                parameters_mapping:
-                    sourceCriteria:
-                        order: $.data
-                    settings:
-                        allow_manual_source_remove: false
-                        remove_source: false
-                    showErrors: true
-                    validateOnStartCheckout: true
-                results:
-                    redirectUrl: $.redirectUrl
-                    checkout: $.checkout
-                    errors: $.errors
+            - '@call_service_method':
+                attribute: $.checkoutlineItems
+                service: oro_checkout.line_items.factory
+                method: create
+                method_parameters: [$.data]
+
+            - '@flash_message':
+                conditions:
+                    '@not':
+                        - '@has_elements': $.checkoutlineItems
+                message: oro.checkout.frontend.checkout.cannot_create_order_no_line_items
+                type: 'warning'
+
+            - '@tree':
+                conditions:
+                    '@has_elements': $.checkoutlineItems
+                actions:
+                    - '@run_action_group':
+                        action_group: start_checkout
+                        parameters_mapping:
+                            sourceCriteria:
+                                order: $.data
+                            settings:
+                                allow_manual_source_remove: false
+                                remove_source: false
+                            showErrors: true
+                            validateOnStartCheckout: true
+                        results:
+                            redirectUrl: $.redirectUrl
+                            checkout: $.checkout
+                            errors: $.errors
 
 action_groups:
     oro_update_shipping_price:

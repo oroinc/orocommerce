@@ -260,6 +260,7 @@ oro:
                 view.label: 'View Order'
             checkout:
                 cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
+                cannot_create_order_no_line_items: 'Unable to create order because there are no applicable products'
             start_from_order: 'Re-Order'
 
         errors:
