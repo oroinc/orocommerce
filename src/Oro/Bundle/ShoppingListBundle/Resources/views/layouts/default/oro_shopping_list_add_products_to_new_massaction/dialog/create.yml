@@ -8,5 +8,9 @@ layout:
             id: form_start
             optionName: form_route_parameters
             optionValue: '=data["routeParameters"]'
+        - '@setOption':
+            id: widget_content
+            optionName: messages
+            optionValue: '=data["messages"]'
     imports:
         - 'oro_shopping_list_create'

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -163,31 +164,32 @@ class AjaxLineItemController extends AbstractLineItemController
         /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $manager->create();
-
         $response = $this->get('oro_form.model.update_handler')->handleUpdate($shoppingList, $form, [], [], null);
 
         if ($form->isValid()) {
             $manager->setCurrent($this->getUser(), $form->getData());
 
+            /** @var MassActionResponseInterface $result */
             $result = $this->get('oro_datagrid.mass_action.dispatcher')
                 ->dispatchByRequest($gridName, $actionName, $request);
 
-            $response['message'] = $result->getMessage();
+            $response['messages']['data'][] = $result->getMessage();
         }
 
-        return [
-            'data' => [
-                'savedId' => $shoppingList->getId(),
-                'shoppingList' => $shoppingList,
-                'createOnly' => false,
-                'routeParameters' => [
-                    'data' => array_merge($request->query->all(), [
-                        'gridName' => $gridName,
-                        'actionName' => $actionName,
-                    ])
-                ]
+        $defaultResponse = [
+            'savedId' => null,
+            'messages' => ['data'=>[]],
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly'),
+            'routeParameters' => [
+                'data' => array_merge($request->query->all(), [
+                    'gridName' => $gridName,
+                    'actionName' => $actionName,
+                ])
             ]
         ];
+
+        return ['data' => array_merge($defaultResponse, $response)];
     }
 
     /**
