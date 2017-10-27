@@ -426,7 +426,6 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
     oro_product.event_listener.command.platform_update:
         class: 'Oro\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener'

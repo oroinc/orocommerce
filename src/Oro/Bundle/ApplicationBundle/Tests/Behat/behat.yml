@@ -5,7 +5,6 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroConfigBundle::FeatureContext
         - OroFormBundle::FormContext
-        - OroWarehouseBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
@@ -426,4 +425,3 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
-
