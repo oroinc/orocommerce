@@ -35,8 +35,6 @@ define(function(require) {
 
         prices: null,
 
-        unit: null,
-
         minValue: 1,
 
         /**
@@ -68,7 +66,6 @@ define(function(require) {
         dispose: function() {
             delete this.prices;
             delete this.total;
-            delete this.unit;
             delete this.minValue;
 
             this.disposeElements();
@@ -79,9 +76,7 @@ define(function(require) {
          * Refactoring prices object model
          */
         setPrices: function(options) {
-            this.unit = options.unit || this.model.get('unit');
             this.prices = {};
-
             _.each(options.prices, function(unitPrices, productId) {
                 this.prices[productId] = PricesHelper.preparePrices(unitPrices);
             }, this);
@@ -138,7 +133,7 @@ define(function(require) {
             //recalculate cell total
             cell.quantity = this.getValidQuantity($element.val());
             var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
-            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, quantity);
+            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
             $element.val(quantity);
 
             //add new values

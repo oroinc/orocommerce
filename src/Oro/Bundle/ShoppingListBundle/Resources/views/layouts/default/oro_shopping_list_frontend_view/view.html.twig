@@ -181,6 +181,7 @@
                         {% endif %}
 
                         {% do block|merge_context({
+                            shoppingList: shoppingList,
                             lineItem: lineItem.lineItems|first,
                             mainProduct: lineItem.product,
                             parent: block.vars,
@@ -205,16 +206,16 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if form is not null %}
         {% do block|merge_context({
-            productPrices: productsAllPrices,
-            totalQuantity: 1,
-            totalPrice: 1,
+            product: mainProduct,
+            shoppingList: shoppingList,
+            prices: productsAllPrices,
+            totals: {
+                quantity: 1,
+                price: 1
+            }
         }) %}
         <div {{ UI.renderPageComponentAttributes({
-            view: 'oroshoppinglist/js/app/views/shopping-list-matrix-view',
-            options: {
-                productId: mainProduct.id,
-                shoppingListId: lineItem.id
-            }
+            view: 'oroshoppinglist/js/app/views/line-item-form-submit-view',
         }) }}>
             {{ block('container_widget') }}
         </div>

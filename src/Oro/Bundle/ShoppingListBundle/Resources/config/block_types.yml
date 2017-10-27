@@ -93,3 +93,19 @@ services:
             - [setName, ['shopping_list_dropdown_create']]
         tags:
              - { name: layout.block_type, alias: shopping_list_dropdown_create }
+
+    oro_shopping_list.layout.block.type.matrix_grid_order:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        product: {required: true}
+                        shoppingList: {required: true}
+                        form: {required: true}
+                        prices: {required: true}
+                        totals: {required: true}
+            - [setName, ['matrix_grid_order']]
+        tags:
+             - { name: layout.block_type, alias: matrix_grid_order }

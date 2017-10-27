@@ -3,15 +3,15 @@ layout:
         -
             id: matrix_grid_order
             root: __root
-            namespace: shopping_list
+            namespace: matrix
     actions:
         - '@setBlockTheme':
             themes: 'shopping_list_matrix_grid_order.html.twig'
         - '@add':
-            id: form_actions_submit
+            id: __matrix_form_actions_submit
             blockType: button
-            parentId: matrix_shopping_list_wrapper
-            siblingId: matrix_shopping_list_form_end
+            parentId: __matrix_wrapper
+            siblingId: __matrix_form_end
             prepend: true
             options:
                 action: submit

@@ -32,6 +32,9 @@ define(function(require) {
                 autoResize: true,
                 dialogClass: 'matrix-order-widget--dialog'
             };
+            options.initLayoutOptions = {
+                productModel: this.model
+            };
 
             this.fullscreenViewOptions = {
                 popupLabel: null,

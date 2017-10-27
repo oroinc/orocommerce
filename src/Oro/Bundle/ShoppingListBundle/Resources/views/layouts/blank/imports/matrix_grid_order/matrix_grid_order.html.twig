@@ -1,39 +1,65 @@
 {% block __matrix_grid_order__wrapper_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% do block|merge_context({
+        class_prefix: class_prefix,
+        form: form,
+        product: product,
+        shoppingList: shoppingList,
+        totals: totals,
+        prices: prices,
+    }) %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
+
     {% set attr = layout_attr_defaults(attr, {
-        class: attr.class|default('') ~ " matrix-order-widget",
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
+        '~class': ' {{ class_prefix }}',
+        '~data-page-component-view': {
             view: 'oropricing/js/app/views/base-product-matrix-view',
-            prices: productPrices,
-            unit: unit|default(null)
+            prices: prices
         }
     }) %}
 
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {{ parent_block_widget(block) }}
     </div>
 {% endblock %}
 
+{% block __matrix_grid_order__form_start_widget %}
+    {% set form_route_name = 'oro_shopping_list_frontend_matrix_grid_order' %}
+    {% set form_route_parameters = form_route_parameters|merge({
+        productId: product.id,
+        shoppingListId: shoppingList.id
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block __matrix_grid_order__form_summary_widget %}
-    <div class="matrix-order-widget__summary">
-        <div class="matrix-order-widget__summary-wrapper">
-            <div class="matrix-order-widget__total-quantity">
-                <span class="matrix-order-widget__summary-label">
-                    {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
-                </span>
-                <span class="matrix-order-widget__total-quantity-value" data-role="total-quantity">{{ totalQuantity }}</span>
-            </div>
-            <div class="matrix-order-widget__total-price">
-                <span class="matrix-order-widget__summary-label">
-                    {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}
-                </span>
-                <span class="matrix-order-widget__total-price-value" data-role="total-price">{{ totalPrice }}</span>
-            </div>
+    <div class="{{ class_prefix }}__summary">
+        <div class="{{ class_prefix }}__summary-wrapper">
+            {{ parent_block_widget(block) }}
         </div>
     </div>
 {% endblock %}
 
+{% block __matrix_grid_order__form_summary_quantity_widget %}
+    <div class="{{ class_prefix }}__total-quantity">
+        <span class="{{ class_prefix }}__summary-label">
+            {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
+        </span>
+        <span class="{{ class_prefix }}__total-quantity-value" data-role="total-quantity">{{ totals.quantity }}</span>
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__form_summary_total_widget %}
+    <div class="{{ class_prefix }}__total-price">
+        <span class="{{ class_prefix }}__summary-label">
+            {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}
+        </span>
+        <span class="{{ class_prefix }}__total-price-value" data-role="total-price">{{ totals.price }}</span>
+    </div>
+{% endblock %}
+
 {% block __matrix_grid_order__form_fields_widget %}
+    {# TODO: should be replaced to {{ parent_block_widget(block) }} in BB-12666 #}
     {{ block_widget(block) }}
     <input type="hidden" name="updateQuantity" value="true"/>
 {% endblock %}

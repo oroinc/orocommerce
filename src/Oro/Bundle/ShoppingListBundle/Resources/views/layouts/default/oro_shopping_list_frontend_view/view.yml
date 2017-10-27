@@ -3,7 +3,7 @@ layout:
         -
             id: shopping_list_matrix_grid_order
             root: shopping_list_line_items_list_item_inline_matrix_form
-            namespace: matrix
+            namespace: shopping_list
     actions:
         - '@setBlockTheme':
             themes: 'view.html.twig'

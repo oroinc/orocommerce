@@ -5,7 +5,7 @@ layout:
         - '@remove':
             id: matrix_grid_order_form_summary
         - '@add':
-            id: form_actions_close
+            id: matrix_grid_order_form_actions_close
             blockType: button
             parentId: widget_actions
             options:
@@ -15,7 +15,7 @@ layout:
                 style: 'btn btn--action btn--size-s'
             prepend: true
         - '@setOption':
-            id: form_actions_submit
+            id: matrix_grid_order_form_actions_submit
             optionName: style
             optionValue: 'btn btn--info btn--size-s'
     conditions: 'context["is_mobile"]'

@@ -125,8 +125,12 @@ $matrix-order-widget-item-expanded-icon-last-child-display: block !default;
 $matrix-order-widget-item-icon-last-child-display: none !default;
 
 $matrix-order-widget-item-icon-wrapper-position: absolute !default;
-$matrix-order-widget-item-icon-wrapper-right: 12px !default;
-$matrix-order-widget-item-item-icon-wrapper-top: 20px !default;
+$matrix-order-widget-item-icon-wrapper-display: inline-flex !default;
+$matrix-order-widget-item-icon-wrapper-align-items: center !default;
+
+$matrix-order-widget-item-icon-wrapper-right: 15px !default;
+$matrix-order-widget-item-item-icon-wrapper-top: 50% !default;
+$matrix-order-widget-item-item-icon-wrapper-offset-top: -7px !default;
 
 $matrix-order-widget-item-label-min-width: 45% !default;
 $matrix-order-widget-item-label-offset: 0 10px !default;
@@ -140,11 +144,15 @@ $matrix-order-widget-item-value-input-text-align: center !default;
 $matrix-order-widget-item-separator-offset: 0 10px !default;
 
 $matrix-order-widget-item-info-display: inline-flex !default;
+$matrix-order-widget-item-info-position: relative !default;
 $matrix-order-widget-item-info-flex-direction: column !default;
 $matrix-order-widget-item-info-justify-content: space-between !default;
 $matrix-order-widget-item-info-width: 100% !default;
-$matrix-order-widget-item-info-offset-inner: 10px 15px !default;
+$matrix-order-widget-item-info-offset-inner: 15px 35px 15px 15px !default;
+
 $matrix-order-widget-item-info-wrapper-display: inline-flex !default;
+$matrix-order-widget-item-info-wrapper-align-items: center !default;
+$matrix-order-widget-item-info-wrapper-word-break: break-word !default;
 
 $matrix-order-widget-item-content-display: inline-flex !default;
 $matrix-order-widget-item-content-align-items: center !default;

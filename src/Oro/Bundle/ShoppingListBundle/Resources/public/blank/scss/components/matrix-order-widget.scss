@@ -217,7 +217,10 @@
 
         &-icon-wrapper {
             position: $matrix-order-widget-item-icon-wrapper-position;
+            display: $matrix-order-widget-item-icon-wrapper-display;
+            align-items: $matrix-order-widget-item-icon-wrapper-align-items;
 
+            margin-top: $matrix-order-widget-item-item-icon-wrapper-offset-top;
             right: $matrix-order-widget-item-icon-wrapper-right;
             top: $matrix-order-widget-item-item-icon-wrapper-top;
         }
@@ -225,6 +228,7 @@
         &-label {
             min-width: $matrix-order-widget-item-label-min-width;
             margin: $matrix-order-widget-item-label-offset;
+
             word-break: $matrix-order-widget-item-label-word-break;
             line-height: $matrix-order-widget-item-label-line-height;
             align-self: $matrix-order-widget-item-label-align-self;
@@ -244,6 +248,7 @@
 
         &-info {
             display: $matrix-order-widget-item-info-display;
+            position: $matrix-order-widget-item-info-position;
             flex-direction: $matrix-order-widget-item-info-flex-direction;
             justify-content: $matrix-order-widget-item-info-justify-content;
 
@@ -252,6 +257,8 @@
 
             &-wrapper {
                 display: $matrix-order-widget-item-info-wrapper-display;
+                align-items: $matrix-order-widget-item-info-wrapper-align-items;
+                word-break: $matrix-order-widget-item-info-wrapper-word-break;
             }
         }
 
