@@ -545,6 +545,13 @@ services:
         tags:
             - { name: oro.checkout.line_item.converter, alias: quote_demand }
 
+    oro_checkout.line_item.converter.order:
+        class: 'Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter'
+        arguments:
+            - '@oro_inventory.provider.inventory_quantity'
+        tags:
+            - { name: oro.checkout.line_item.converter, alias: order }
+
     oro_checkout.data_provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
         public: false

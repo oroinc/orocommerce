@@ -61,6 +61,12 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
+    oro_inventory.provider.inventory_quantity:
+        class: 'Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_inventory.manager.inventory_quantity_manager'
+
     oro_inventory.product_manage_inventory.widget_provider.actions:
         parent: oro_ui.widget_provider.action_button.abstract
         arguments:
