@@ -42,13 +42,24 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         addTitle: ['@localValueLightingProducts']
         setParentCategory: [1]
         addProduct: ['@product1']
+        setInventoryThreshold: ['@treshhold100']
 
     categoryRetailSupplies:
         addTitle: ['@localValueRetailSupplies']
         setParentCategory: [1]
         addProduct: ['@product2']
+        setInventoryThreshold: ['@treshhold200']
 
     categoryPrinters:
         addTitle: ['@localValuePrinters']
         setParentCategory: ['@categoryRetailSupplies']
         addProduct: ['@product3']
+        setInventoryThreshold: ['@treshhold300']
+
+Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
+    treshhold100:
+        scalarValue: 100
+    treshhold200:
+        scalarValue: 200
+    treshhold300:
+        scalarValue: 300

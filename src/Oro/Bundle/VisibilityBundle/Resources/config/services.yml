@@ -132,6 +132,7 @@ services:
             - "@oro_scope.scope_manager"
             - "@oro_catalog.manager.product_index_scheduler"
             - "@oro_entity.orm.insert_from_select_query_executor"
+            - "@oro_product.search.product_reindex_manager"
 
     oro_visibility.visibility.cache.product.customer_group_product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerGroupProductResolvedCacheBuilder'
@@ -391,6 +392,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation, priority: 100 }
 
+    oro_visibility.event_listener.restrict_product_variant_event:
+        class: 'Oro\Bundle\VisibilityBundle\EventListener\RestrictProductVariantEventVisibilityListener'
+        arguments:
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
+
     oro_visibility.product_raw_repository:
         class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository
         parent: oro_entity.abstract_repository
@@ -515,7 +523,7 @@ services:
             - '@oro_visibility.indexer.product_visibility_indexer'
             - '@oro_website_search.manager.website_context_manager'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
     oro_visibility.provider.visibility_scope_provider:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider'

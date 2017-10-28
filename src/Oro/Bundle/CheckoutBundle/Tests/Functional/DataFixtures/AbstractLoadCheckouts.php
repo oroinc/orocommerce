@@ -9,9 +9,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
@@ -98,6 +99,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             );
             $checkout->setPaymentMethod($checkoutData['checkout']['payment_method']);
             $checkout->setSource($source);
+            $checkout->setCustomerNotes($name);
             $checkout->setCompleted(!empty($checkoutData['completed']));
             if (!empty($checkoutData['completedData'])) {
                 $completedData = $checkout->getCompletedData();
@@ -109,12 +111,20 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             if (!empty($checkoutData['checkout']['currency'])) {
                 $checkout->setCurrency($checkoutData['checkout']['currency']);
             }
+            if (!empty($checkoutData['checkout']['shippingCostAmount'])) {
+                $checkout->setShippingCost(Price::create($checkoutData['checkout']['shippingCostAmount'], 'USD'));
+            }
+
+            if (!empty($checkoutData['lineItems'])) {
+                $checkout->setLineItems($checkoutData['lineItems']);
+            }
+
             $manager->persist($checkout);
-            $manager->flush();
             $this->setReference($name, $checkout);
 
             $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
         }
+        $manager->flush();
     }
 
     protected function clearPreconditions()

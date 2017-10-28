@@ -10,7 +10,8 @@ interface MapperInterface
     /**
      * @param Checkout $checkout
      * @param array $data
+     * @param array $skipped
      * @return Order
      */
-    public function map(Checkout $checkout, array $data = []);
+    public function map(Checkout $checkout, array $data = [], array $skipped = []);
 }

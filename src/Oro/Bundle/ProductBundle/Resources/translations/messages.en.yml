@@ -56,7 +56,9 @@ oro:
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
-        variant_links.label: Product Variant Links
+        variant_links:
+            label: Product Variant Links
+            description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images.label: Images
@@ -304,6 +306,8 @@ oro:
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
+                configurable_products.title: 'Configurable Products'
+                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -418,6 +422,11 @@ oro:
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
+                matrix_form_on_product_view:
+                    label: 'Display Matrix Form (where applicable)'
+                    none.label: 'Do Not Display'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -488,6 +497,9 @@ oro:
                     invalid_request: Invalid request submitted
             titles:
                 catalog: Catalog
+            grid:
+                toolbar:
+                    display.label: Display
 
         export:
             inventory_status_only: "Inventory statuses only"
@@ -737,3 +749,7 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+
+    importexport:
+        export:
+            oro_product_product: Products

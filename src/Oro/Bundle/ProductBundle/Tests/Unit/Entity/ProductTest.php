@@ -93,15 +93,23 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->setPrimaryUnitPrecision($unitPrecision);
         $product->addName((new LocalizedFallbackValue())->setString('1234'));
 
-        $this->assertEquals('{"id":123,"product_units":{"kg":3},"name":"1234"}', json_encode($product));
+        $this->assertEquals('{"id":123,"product_units":{"kg":3},"unit":"kg","name":"1234"}', json_encode($product));
     }
 
     public function testPrePersist()
     {
         $product = new Product();
+        $this->addDefaultName($product, 'default');
         $product->prePersist();
         $this->assertInstanceOf('\DateTime', $product->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
+    }
+
+    public function testPrePersistWithoutDefaultName()
+    {
+        $product = new Product();
+        $this->expectException(\RuntimeException::class);
+        $product->prePersist();
     }
 
     public function testPreUpdate()
@@ -110,11 +118,23 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->setType(Product::TYPE_SIMPLE);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
+        $this->addDefaultName($product, 'default');
 
         $product->preUpdate();
 
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
         $this->assertCount(0, $product->getVariantFields());
+    }
+
+    public function testPreUpdateWithoutDefaultName()
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_SIMPLE);
+        $product->setVariantFields(['field']);
+        $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
+
+        $this->expectException(\RuntimeException::class);
+        $product->preUpdate();
     }
 
     public function testUnitRelation()
@@ -296,18 +316,17 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefaultName()
     {
-        $defaultName = new LocalizedFallbackValue();
-        $defaultName->setString('default');
+        $defaultName = 'default';
+        $product = new Product();
+        $this->addDefaultName($product, $defaultName);
 
         $localizedName = new LocalizedFallbackValue();
         $localizedName->setString('localized')
             ->setLocalization(new Localization());
 
-        $category = new Product();
-        $category->addName($defaultName)
-            ->addName($localizedName);
+        $product->addName($localizedName);
 
-        $this->assertEquals($defaultName, $category->getDefaultName());
+        $this->assertEquals($defaultName, $product->getDefaultName());
     }
 
     public function testNoDefaultName()
@@ -470,5 +489,17 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function testGetTypes()
     {
         $this->assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
+    }
+
+    /**
+     * @param Product $product
+     * @param string $name
+     */
+    protected function addDefaultName(Product $product, $name)
+    {
+        $defaultName = new LocalizedFallbackValue();
+        $defaultName->setString($name);
+
+        $product->addName($defaultName);
     }
 }

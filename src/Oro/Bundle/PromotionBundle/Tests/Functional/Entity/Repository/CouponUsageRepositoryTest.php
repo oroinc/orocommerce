@@ -20,7 +20,7 @@ class CouponUsageRepositoryTest extends WebTestCase
 
     public function testGetCouponUsageCount()
     {
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
 
         $actualCount = $this->getContainer()->get('doctrine')->getRepository(CouponUsage::class)
             ->getCouponUsageCount($coupon);
@@ -35,7 +35,7 @@ class CouponUsageRepositoryTest extends WebTestCase
      */
     public function testGetCouponUsageByCustomerUserCount($customerUser, $expectedCouponUsageCount)
     {
-        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         $customerUser = $this->getReference($customerUser);
 
         $actualCount = $this->getContainer()->get('doctrine')->getRepository(CouponUsage::class)

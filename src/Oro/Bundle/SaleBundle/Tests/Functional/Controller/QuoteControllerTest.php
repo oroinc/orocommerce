@@ -93,7 +93,7 @@ class QuoteControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_create'));
-        $owner      = $this->getUser(LoadUserData::USER1);
+        $owner      = $this->getReferencedUser(LoadUserData::USER1);
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -121,7 +121,7 @@ class QuoteControllerTest extends WebTestCase
     public function testIndex()
     {
         $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_index'));
-        $owner      = $this->getUser(LoadUserData::USER1);
+        $owner      = $this->getReferencedUser(LoadUserData::USER1);
 
         $result = $this->client->getResponse();
 
@@ -157,7 +157,7 @@ class QuoteControllerTest extends WebTestCase
     public function testUpdate($id)
     {
         $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
-        $owner      = $this->getUser(LoadUserData::USER2);
+        $owner      = $this->getReferencedUser(LoadUserData::USER2);
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this
             ->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10);
@@ -282,17 +282,20 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
+        $operationName = 'DELETE';
+        $entityClass   = $this->getContainer()->getParameter('oro_sale.entity.quote.class');
+        $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'DELETE',
+                    'operationName' => $operationName,
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('oro_sale.entity.quote.class'),
+                    'entityClass' => $entityClass,
                 ]
             ),
-            [],
+            $operationExecuteParams,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -363,7 +366,7 @@ class QuoteControllerTest extends WebTestCase
             'valid owner' => [
                 'submittedData' => [
                     '[owner]' => function () {
-                        return $this->getUser(LoadUserData::USER1)->getId();
+                        return $this->getReferencedUser(LoadUserData::USER1)->getId();
                     },
                 ],
                 'expectedData'  => [
@@ -390,8 +393,33 @@ class QuoteControllerTest extends WebTestCase
      * @param string $username
      * @return User
      */
-    protected function getUser($username)
+    protected function getReferencedUser($username)
     {
         return $this->getReference($username);
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

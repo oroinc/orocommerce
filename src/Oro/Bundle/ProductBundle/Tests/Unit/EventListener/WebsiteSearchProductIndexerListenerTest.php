@@ -171,11 +171,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->with([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6])
             ->willReturn(
                 [
-                    $attributeId1 => $attributeFamilyId,
-                    $attributeId2 => $attributeFamilyId,
-                    $attributeId3 => $attributeFamilyId,
-                    $attributeId4 => $attributeFamilyId,
-                    $attributeId5 => 500,
+                    $attributeId1 => [$attributeFamilyId],
+                    $attributeId2 => [$attributeFamilyId],
+                    $attributeId3 => [$attributeFamilyId],
+                    $attributeId4 => [$attributeFamilyId],
+                    $attributeId5 => [500],
                 ]
             );
 

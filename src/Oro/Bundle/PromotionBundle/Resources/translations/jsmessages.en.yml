@@ -2,10 +2,18 @@ oro:
     promotion:
         coupon:
             violation:
+                disabled: Coupon is disabled
                 absent_promotion: There is no promotion for this coupon
+                not_started: Coupon start date has not begun
                 expired: Coupon is expired
                 usage_limit_exceeded: Coupon usage limit is exceeded
                 customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded
                 coupon_already_added: This coupon has been already added
                 coupon_promotion_already_applied: This coupon's discount has been already applied
                 coupon_promotion_not_applicable: This coupon's discount is not applicable
+                invalid_coupon_code: Invalid coupon code, please try another one
+            messages:
+                coupon_code_applied_successfully: Coupon code has been applied successfully, please review discounts
+                removed: Coupon code has been removed
+        ui:
+            unassign_coupon.confirmation.message: Are you sure you want to Remove a Coupon from the current Promotion?

@@ -10,7 +10,9 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 class Configuration implements ConfigurationInterface
 {
     const MANAGE_INVENTORY = 'manage_inventory';
+    const HIGHLIGHT_LOW_INVENTORY = 'highlight_low_inventory';
     const INVENTORY_THRESHOLD = 'inventory_threshold';
+    const LOW_INVENTORY_THRESHOLD = 'low_inventory_threshold';
     const BACKORDERS = 'backorders';
     const DECREMENT_INVENTORY = 'decrement_inventory';
     const MINIMUM_QUANTITY_TO_ORDER = 'minimum_quantity_to_order';
@@ -44,7 +46,9 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => true],
+                self::HIGHLIGHT_LOW_INVENTORY => ['type' => 'boolean', 'value' => false],
                 self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
+                self::LOW_INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
                 self::BACKORDERS => ['type' => 'boolean', 'value' => false],
                 self::DECREMENT_INVENTORY => ['type' => 'boolean', 'value' => true],
                 self::MINIMUM_QUANTITY_TO_ORDER => ['type' => 'decimal', 'value' => null],

@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -13,6 +15,7 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
@@ -49,6 +52,11 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $productPriceFormatter;
 
+    /**
+     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productVariantAvailabilityProvider;
+
     public function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -66,11 +74,14 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
             $this->priceListRequestHandler,
+            $this->productVariantAvailabilityProvider,
             $this->userCurrencyManager,
             $this->productPriceFormatter,
             $this->shardManager
@@ -79,28 +90,13 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetByProduct()
     {
-        $priceListId = 23;
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
-        $productId = 24;
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
-        $product = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn($productId);
+        $priceList = $this->getEntity(PriceList::class, ['id' => 23]);
 
         $unitPrecisions[] = $this->createUnitPrecision('each', true);
         $unitPrecisions[] = $this->createUnitPrecision('set', false);
 
-        $product->expects($this->once())
-            ->method('getUnitPrecisions')
-            ->willReturn($unitPrecisions);
-
-        $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->getEntity(Product::class, ['id' => 24, 'unitPrecisions' => $unitPrecisions]);
+        $price = $this->getEntity(Price::class);
 
         $productPrice1 = $this->createProductPrice('each', $product, $price);
         $productPrice2 = $this->createProductPrice('set', $product, $price);
@@ -108,13 +104,13 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
         $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
 
-        $repo = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $repo = $this->getMockBuilder(ProductPriceRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $repo->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($this->shardManager, $priceListId, [$productId], true, 'EUR', null, $priceSorting)
+            ->with($this->shardManager, $priceList->getId(), [$product->getId()], true, 'EUR', null, $priceSorting)
             ->willReturn($prices);
 
         $this->doctrineHelper->expects($this->once())
@@ -125,7 +121,6 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $this->priceListRequestHandler->expects($this->once())
             ->method('getPriceListByCustomer')
             ->willReturn($priceList);
-
 
         $productPrices = [ '24' => [
             'each' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'each'],
@@ -142,8 +137,75 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn('EUR');
 
         $actual = $this->provider->getByProduct($product);
+
+        $this->assertInternalType('array', $actual);
         $this->assertCount(1, $actual);
         $this->assertEquals('each', current($actual)['unit']);
+    }
+
+    public function testGetSimpleByConfigurable()
+    {
+        $priceList = $this->getEntity(PriceList::class, ['id' => 23]);
+        $unitPrecisions[] = $this->createUnitPrecision('each', true);
+        $unitPrecisions[] = $this->createUnitPrecision('set', false);
+
+        $simpleProduct = $this->getEntity(Product::class, ['id' => 24, 'unitPrecisions' => $unitPrecisions]);
+        $price = $this->getEntity(Price::class);
+
+        $productPrice1 = $this->createProductPrice('each', $simpleProduct, $price);
+        $productPrice2 = $this->createProductPrice('set', $simpleProduct, $price);
+        $prices = [$productPrice1, $productPrice2];
+
+        $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
+
+        $repo = $this->getMockBuilder(ProductPriceRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo->expects($this->once())
+            ->method('findByPriceListIdAndProductIds')
+            ->with(
+                $this->shardManager,
+                $priceList->getId(),
+                [$simpleProduct->getId()],
+                true,
+                'EUR',
+                null,
+                $priceSorting
+            )
+            ->willReturn($prices);
+
+        $productPrices = [ '24' => [
+            'each' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'each'],
+            'set' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'set'],
+        ]
+        ];
+
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getPriceListByCustomer')
+            ->willReturn($priceList);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with('OroPricingBundle:CombinedProductPrice')
+            ->willReturn($repo);
+
+        $this->productPriceFormatter->expects($this->once())
+            ->method('formatProducts')
+            ->willReturn($productPrices);
+
+        $this->userCurrencyManager->expects($this->once())
+            ->method('getUserCurrency')
+            ->willReturn('EUR');
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with(new Product())
+            ->willReturn([$simpleProduct]);
+
+        $actual = $this->provider->getSimpleByConfigurable(new Product());
+        $this->assertCount(1, $actual[$simpleProduct->getId()]);
+        $this->assertEquals('each', $actual[$simpleProduct->getId()]['each']['unit']);
     }
 
     /**
@@ -153,11 +215,11 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createUnitPrecision($unitCode, $sell)
     {
-        $p = new ProductUnitPrecision();
-        $p->setSell($sell);
-        $p->setUnit($this->getUnit($unitCode));
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setSell($sell);
+        $productUnitPrecision->setUnit($this->getUnit($unitCode));
 
-        return $p;
+        return $productUnitPrecision;
     }
 
     /**
@@ -168,12 +230,12 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createProductPrice($unit, $product, $price)
     {
-        $p = new CombinedProductPrice();
-        $p->setProduct($product);
-        $p->setUnit($this->getUnit($unit));
-        $p->setPrice($price);
+        $combinedProductPrice = new CombinedProductPrice();
+        $combinedProductPrice->setProduct($product);
+        $combinedProductPrice->setUnit($this->getUnit($unit));
+        $combinedProductPrice->setPrice($price);
 
-        return $p;
+        return $combinedProductPrice;
     }
 
     /**

@@ -18,6 +18,8 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
     const ORDER_LINEITEM_2 = 'order_lineitem_2';
     const ORDER_LINEITEM_3 = 'order_lineitem_3';
     const ORDER_LINEITEM_4 = 'order_lineitem_4';
+    const ORDER_LINEITEM_5 = 'order_lineitem_5';
+    const ORDER_LINEITEM_6 = 'order_lineitem_6';
 
     /**
      * @var array
@@ -52,6 +54,28 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
             'productUnit' => LoadProductUnits::LITER,
             'price' => [
                 'value' => 100,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_5 => [
+            'order' => LoadOrders::ORDER_5,
+            'product' => LoadProductData::PRODUCT_5,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 100,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_6 => [
+            'order' => LoadOrders::ORDER_5,
+            'product' => LoadProductData::PRODUCT_6,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 200,
                 'currency' => 'USD'
             ],
             'priceType' => OrderLineItem::PRICE_TYPE_UNIT,

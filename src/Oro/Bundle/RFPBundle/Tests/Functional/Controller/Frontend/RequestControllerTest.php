@@ -198,7 +198,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['columnsCount'])) {
-            $controls = $crawler->filter('.customer-oq__order-info__control')->count();
+            $controls = $crawler->filter('.customer-info-grid__row')->count();
             static::assertEquals($expectedData['columnsCount'], $controls);
         }
 

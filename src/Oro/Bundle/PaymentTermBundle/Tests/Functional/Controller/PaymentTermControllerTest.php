@@ -12,9 +12,12 @@ class PaymentTermControllerTest extends WebTestCase
 {
     const TERM_LABEL_NEW = 'net 100';
     const TERM_LABEL_UPDATED = 'net 142';
+    const TERM_LABEL_TAG = '<script>alert(something)</script>';
+    const TERM_LABEL_TAG_REMOVED = 'alert(something)';
 
     const SAVE_AND_CLOSE_BUTTON = 'Save and Close';
     const CREATE_UPDATE_SUCCESS_MESSAGE = 'Payment term has been saved';
+    const BLANK_MESSAGE = 'This value should not be blank.';
 
     protected function setUp()
     {
@@ -59,6 +62,45 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertNotEmpty($paymentTerm);
 
         return $paymentTerm->getId();
+    }
+
+    public function testCreateWithTag()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_payment_term_create'));
+
+        /** @var Form $form */
+        $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
+        $createForm['oro_payment_term[label]'] = self::TERM_LABEL_TAG;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($createForm);
+
+        $html = $crawler->html();
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        $this->assertContains(self::TERM_LABEL_TAG_REMOVED, $html);
+    }
+
+    public function testCreateWithTagAndValid()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_payment_term_create'));
+
+        /** @var Form $form */
+        $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
+        $createForm['oro_payment_term[label]'] = self::TERM_LABEL_TAG . self::TERM_LABEL_NEW;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($createForm);
+
+        $html = $crawler->html();
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
+        $this->assertContains(self::TERM_LABEL_TAG_REMOVED, $html);
+        $this->assertContains(self::TERM_LABEL_NEW, $html);
     }
 
     /**

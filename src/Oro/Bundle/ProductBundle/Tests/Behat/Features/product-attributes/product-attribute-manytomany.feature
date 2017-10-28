@@ -46,8 +46,9 @@ Feature: Product attribute many-to-many
     And I select following records in grid:
       | Marlene Bradley |
     And I click "Select"
-    And I save and close form
+    And I save form
     Then I should see "Product has been saved" flash message
+    And I should see "Marlene Bradley"
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer

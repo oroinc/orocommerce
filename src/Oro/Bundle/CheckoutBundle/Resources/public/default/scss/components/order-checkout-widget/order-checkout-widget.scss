@@ -45,6 +45,10 @@
         font-weight: 700;
     }
 
+    &__total-price {
+        color: get-color('ui', 'normal');
+    }
+
     &__col {
         float: right;
 
@@ -85,6 +89,20 @@
         &__container {
             width: 100%;
             clear: both;
+        }
+    }
+}
+
+@include breakpoint('print') {
+    .order-checkout-widget {
+        page-break-inside: avoid;
+
+        &__quote {
+            display: none !important;
+        }
+
+        &__container-wrapper {
+            margin-bottom: 0;
         }
     }
 }

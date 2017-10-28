@@ -40,7 +40,7 @@
         $slick-arrow-prev-icon: $product-view-media-slider-arrow-icon-prev,
         $slick-arrow-next-icon: $product-view-media-slider-arrow-icon-next,
         $slick-arrow-next-right: $product-view-media-slider-arrow-side-position,
-        $slick-arrow-prev-left: $product-view-media-slider-arrow-side-position,
+        $slick-arrow-prev-left: $product-view-media-slider-arrow-side-position
     );
 
     @include slick-dots();

@@ -311,6 +311,9 @@ oro:
                 submit_to_order:
                     submit: 'Submit'
                     cancel: 'Cancel'
+                toolbar-actions:
+                    btn:
+                        print: 'Print Quote'
 
             quoteproduct:
                 product_sku.label: 'SKU #:'

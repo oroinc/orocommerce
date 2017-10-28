@@ -29,6 +29,12 @@ services:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
             - '@translator'
 
+    oro_inventory.validator.low_inventory_checkout_line_item_validator:
+        class: Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator
+        arguments:
+            - '@oro_inventory.inventory.low_inventory_provider'
+            - '@translator'
+
     oro_inventory.validator.product_row_quantity_validator:
         class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantityValidator'
         arguments:
@@ -68,3 +74,26 @@ services:
             - oro_product_manage_inventory_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity, priority: -100 }
+
+    oro_inventory.inventory.low_inventory_provider:
+        class: Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider
+        arguments:
+            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+            - '@oro_entity.doctrine_helper'
+
+    oro_inventory.twig.low_inventory_extension:
+        class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
+        public: false
+        arguments:
+            - '@oro_inventory.inventory.low_inventory_provider'
+        tags:
+            - { name: twig.extension }
+
+    oro_inventory.event_listener.frontend_product_datagrid:
+        class: Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridListener
+        arguments:
+            - "@oro_inventory.inventory.low_inventory_provider"
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }

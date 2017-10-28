@@ -6,7 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\OrderBundle\Entity\Order;
+
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 
 class UpdateDefaultOrderStatuses extends AbstractFixture implements DependentFixtureInterface
 {
@@ -27,7 +28,7 @@ class UpdateDefaultOrderStatuses extends AbstractFixture implements DependentFix
         $qb = $manager->getConnection()->createQueryBuilder();
         $qb->update('oro_order')
             ->set('internal_status_id', ':status')
-            ->setParameter('status', Order::INTERNAL_STATUS_OPEN)
+            ->setParameter('status', OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
             ->where($qb->expr()->isNull('internal_status_id'))
             ->execute();
     }

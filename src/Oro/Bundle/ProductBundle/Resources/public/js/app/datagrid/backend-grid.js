@@ -44,7 +44,7 @@ define(function(require) {
             this.collection.reset(params.responseJSON.data.data);
 
             this.initLayout({collection: this.collection});
-            this._afterRequest(params.responseJSON);
+            this._afterRequest(params);
         },
 
         /**

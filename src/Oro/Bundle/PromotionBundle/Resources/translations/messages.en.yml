@@ -3,9 +3,9 @@ oro:
         type:
             label: Discount
             choices:
-                order: Order
-                line_item: Line Item
-                buy_x_get_y: Buy X Get Y
+                order: Order Total
+                line_item: Order Line Item
+                buy_x_get_y: Buy X Get Y (Same Product)
                 shipping: Shipping
     discount_options:
         general:
@@ -19,7 +19,7 @@ oro:
                 label: Discount Value
         line_item_type:
             product_unit:
-                label: Product Unit
+                label: Unit of Quantity
             apply_to:
                 label: Apply Discount To
                 choices:
@@ -29,10 +29,10 @@ oro:
                 label: Maximum Qty Discount is Applied To
                 tooltip: The quantity of products of the same type eligible for a discount in a line item/order. For example, when the limit is set to 10 and a buyer orders 100 items, they will be charged the discounted price for 10 items out of 100, and will pay the full price for the remaining 90 items.
         buy_x_get_y_type:
-            buy_x.label: Buy X
-            get_y.label: Get Y
+            buy_x.label: Buy X Quantity
+            get_y.label: Get Y Quantity
             product_unit:
-                label: Product Unit
+                label: Unit of Quantity
             apply_to:
                 label: Apply Discount To
                 choices:
@@ -63,9 +63,9 @@ oro:
         schedules.label: Schedules
         scopes.label: Scopes
         use_coupons:
-            label: Use Coupons
-            no: No
-            yes: Yes
+            label: Triggered by
+            no: Conditions only
+            yes: Coupons and Conditions
         rule:
             label: Rule
             name.label: Name
@@ -91,17 +91,22 @@ oro:
             order_add_coupon.added.message: Coupons were added to order
             order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
+            unassign_coupon:
+                label: Unassign
+                success.message: Coupon was Unassigned from the current Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'
                 label: Duplicate
                 success_message: Promotion has been duplicated
+        mass_action:
+            unassign.success_message: "{0} No entities were Unassigned|{1} One entity was Unassigned|]1,Inf[ %count% entities were removed"
 
         blocks:
             general: General
             discount_options: Discount Options
             schedules: Schedules
             conditions: Conditions
-            matching_items: Matching Items
+            matching_items: Items To Discount
             store_frontend: Store Frontend
 
         discount:
@@ -152,10 +157,10 @@ oro:
 
         system_configuration:
             groups:
-                promotion.title: Promotion
-                promotion_general.title: Promotion General
+                promotion.title: Promotions
+                promotion_general.title: General Options
             fields:
-                feature_enabled.label: Enable Promotion
+                feature_enabled.label: Enable Promotions
                 discount_strategy.label: Discount Strategy
 
         controller:
@@ -171,7 +176,8 @@ oro:
                     general_info.label: General Information
                     discount_options.label: Discount Options
             conditions.label: Conditions
-            matching_items.label: Matching Items
+            matching_items.label: Items To Discount
+            assigned_coupons.label: Assigned Coupons
             promotion_and_discounts.label: Promotions and Discounts
 
         applieddiscount:
@@ -193,8 +199,13 @@ oro:
             id.label: Id
             code.label: Coupon Code
             promotion.label: Promotion
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
             uses_per_coupon.label: Uses per Coupon
             uses_per_person.label: Uses per Person
+            valid_from.label: Valid From
             valid_until.label: Valid Until
             menu:
                 coupon_list.description: List of existing coupons
@@ -217,7 +228,7 @@ oro:
             autocomplete:
                 placeholder: Choose a Coupon Code...
             generation:
-                label: Generate Coupons
+                label: Generate Multiple Coupons
                 action:
                     generate: Generate
                 couponQuantity.label: Coupon Quantity
@@ -234,6 +245,10 @@ oro:
                     suffix.label: Symbols
                 message:
                     save_success: Coupons have been generated successfully
+            create.label: Create Coupon
+            coupons_actions.label: Coupons Actions
+            importexport:
+                promotion: Promotion Name
 
         appliedpromotion:
             entity_label: Applied Promotion
@@ -264,6 +279,7 @@ oro:
                 deactivate: Deactivate
                 activate: Activate
                 remove: Remove
+                view: View
             no_entities: No records found
 
         appliedcoupon:
@@ -275,12 +291,20 @@ oro:
             source_promotion_id.label: Source Promotion ID
             source_coupon_id.label: Source Coupon ID
             order.label: Order
+            checkout.label: Checkout
 
     applied_discount:
         name: Name
         amount: Amount
 
     frontend:
+        coupon:
+            expand_link.label: 'I have a Coupon Code'
+            widget:
+                header.label: 'Coupon'
+                coupon_input.placeholder: 'Enter Coupon Code here'
+                apply_button.label: 'Apply'
+                applied_coupons_header.label: 'Applied Code'
         shoppinglist:
             view:
                 discount.label: 'Row Discount:'
@@ -312,3 +336,6 @@ oro:
                     row_total_after_discount.label: After Disc.
                     includingTax.label: After Disc. Incl. Tax
                     excludingTax.label:  After Disc. Excl. Tax
+
+    checkout:
+        applied_coupons.label: Applied Coupons

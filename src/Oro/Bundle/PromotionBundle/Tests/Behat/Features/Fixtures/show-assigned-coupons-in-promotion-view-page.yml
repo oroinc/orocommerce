@@ -1,0 +1,145 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon1:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test1'
+        promotion: '@orderDiscountPromotion'
+        usesPerPerson: 2
+        usesPerCoupon: 3
+        validUntil: '<(new DateTime("01-01-2020 00:00:00"))>'
+    coupon2:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test2'
+        promotion: '@lineItemDiscountPromotion'
+        usesPerPerson: 3
+        usesPerCoupon: 4
+        validUntil: '<(new DateTime("10-10-2010 10:00:00"))>'
+    coupon3:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test3'
+        usesPerPerson: 4
+        usesPerCoupon: 5
+    coupon4:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test4'
+        usesPerPerson: 5
+        usesPerCoupon: 6
+    coupon5:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test5'
+        usesPerPerson: 6
+        usesPerCoupon: 7
+    coupon6:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test6'
+        usesPerPerson: 6
+        usesPerCoupon: 7
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    lineItemDiscountPromotionLabel:
+        string: 'Line Item Discount Promotion'
+    lineItemDiscountPromotionDesc:
+        string: 'Line Item Discount Promotion Description'
+    orderDiscountPromotionLabel:
+        string: 'Order Discount Promotion'
+    orderDiscountPromotionDesc:
+        string: 'Order Discount Promotion Description'
+    shippingDiscountPromotionLabel:
+        string: 'Shipping Discount Promotion'
+    shippingDiscountPromotionDesc:
+        string: 'Shipping Discount Promotion Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    lineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Products #1'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@businessUnit'
+    orderDiscountPromotionSegment:
+        name: 'Promotion Matching Products #2'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@businessUnit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.5
+            apply_to: 'line_items_total'
+    orderDiscountPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+    shippingDiscountPromotionDiscountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+            shipping_options:
+                shipping_method: 'flat_rate_1'
+                shipping_method_type: 'primary'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'line Item Discount Promotion'
+    orderDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion'
+    shippingDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'shipping Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion:
+        addLabel: ['@lineItemDiscountPromotionLabel']
+        addDescription: ['@lineItemDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@lineItemDiscountPromotionSegment'
+        rule: '@lineItemDiscountPromotionRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    orderDiscountPromotion:
+        addLabel: ['@orderDiscountPromotionLabel']
+        addDescription: ['@orderDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionRule'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    shippingDiscountPromotion:
+        addLabel: ['@shippingDiscountPromotionLabel']
+        addDescription: ['@shippingDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@shippingDiscountPromotionRule'
+        discountConfiguration: '@shippingDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true

@@ -10,6 +10,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -65,11 +66,11 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
         $this->configurationProvider->expects($this->exactly((int)$expected))
             ->method('getNewOrderInternalStatus')
             ->with($order)
-            ->willReturn(Order::INTERNAL_STATUS_OPEN);
+            ->willReturn(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN);
         $status = new StubEnumValue('open', 'open');
         $this->entityRepository->expects($this->exactly((int)$expected))
             ->method('find')
-            ->with(Order::INTERNAL_STATUS_OPEN)
+            ->with(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
             ->willReturn($status);
 
         $this->listener->prePersist($order);

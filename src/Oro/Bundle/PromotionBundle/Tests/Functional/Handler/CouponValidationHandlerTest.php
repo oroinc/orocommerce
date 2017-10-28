@@ -2,24 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
-use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
-use Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
-use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Symfony\Component\HttpFoundation\Request;
 
-class CouponValidationHandlerTest extends WebTestCase
+class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
 {
-    /**
-     * @var CouponValidationHandler
-     */
-    private $handler;
-
     /**
      * {@inheritdoc}
      */
@@ -28,13 +21,42 @@ class CouponValidationHandlerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadCouponData::class,
-                LoadOrderLineItemData::class,
-            ]
+
+        parent::setUp();
+        $this->loadFixtures([]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getToken()
+    {
+        $organization = static::getContainer()->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
+
+        return new UsernamePasswordOrganizationToken(
+            'admin',
+            'admin',
+            'main',
+            $organization
         );
-        $this->handler = static::getContainer()->get('oro_promotion.handler.coupon_validation_handler');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRole()
+    {
+        return 'ROLE_ADMINISTRATOR';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getHandlerServiceName()
+    {
+        return 'oro_promotion.handler.coupon_validation_handler';
     }
 
     public function testHandleWhenNoCouponId()
@@ -42,82 +64,45 @@ class CouponValidationHandlerTest extends WebTestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Coupon id is not specified in request parameters');
 
-        $request = $this->getRequest();
+        $request = new Request();
         $this->handler->handle($request);
     }
 
-    public function testHandleWhenNoEntityClass()
+    public function testHandleWhenCouponDoesNotExistById()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Entity class is not specified in request parameters');
+        $couponId = PHP_INT_MAX;
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(
+            'Cannot find "%s" entity with id "%s"',
+            Coupon::class,
+            $couponId
+        ));
 
-        $request = $this->getRequest([
-            'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
-        ]);
+        $request = new Request([], ['couponId' => $couponId]);
         $this->handler->handle($request);
-    }
-
-    public function testHandleWhenUnknownEntityClass()
-    {
-        $this->expectException(EntityNotFoundException::class);
-        $this->expectExceptionMessage('Cannot resolve entity class "SomeBundle\SomeUnknownClass"');
-
-        $request = $this->getRequest([
-            'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
-            'entityClass' => 'SomeBundle\SomeUnknownClass',
-        ]);
-        $this->handler->handle($request);
-    }
-
-    public function testHandleWhenNoEntityId()
-    {
-        $request = $this->getRequest([
-            'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
-            'entityClass' => Order::class,
-        ]);
-        $response = $this->handler->handle($request);
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
-        $jsonContent = json_decode($response->getContent(), true);
-        $this->assertFalse($jsonContent['success']);
-    }
-
-    public function testHandleWhenNoApplicableEntity()
-    {
-        $request = $this->getRequest([
-            'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
-            'entityClass' => Order::class,
-            'entityId' => $this->getReference(LoadOrders::ORDER_1)->getId(),
-        ]);
-        $response = $this->handler->handle($request);
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
-        $jsonContent = json_decode($response->getContent(), true);
-        $this->assertFalse($jsonContent['success']);
-        $this->assertEquals(
-            [CouponApplicabilityValidationService::MESSAGE_PROMOTION_NOT_APPLICABLE],
-            $jsonContent['errors']
-        );
     }
 
     public function testHandle()
     {
-        $request = $this->getRequest([
-            'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
+        $request = $this->getRequestWithCouponData([
             'entityClass' => Order::class,
             'entityId' => $this->getReference(LoadOrders::ORDER_2)->getId(),
         ]);
         $response = $this->handler->handle($request);
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
         $jsonContent = json_decode($response->getContent(), true);
-        $this->assertTrue($jsonContent['success']);
-        $this->assertEmpty($jsonContent['errors']);
+        self::assertTrue($jsonContent['success']);
+        self::assertEmpty($jsonContent['errors']);
     }
 
     /**
-     * @param array $postData
-     * @return Request
+     * {@inheritdoc}
      */
-    private function getRequest(array $postData = [])
+    protected function getRequestWithCouponData(array $postData = [])
     {
+        $postData['couponId'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)
+            ->getId();
+
         return new Request([], $postData);
     }
 }

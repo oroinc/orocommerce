@@ -100,10 +100,8 @@ Feature: Guest Shopping Lists
   Scenario: Configurable product variants and matrix button should be available on front store
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
-    Then I should see Line Item Form with data:
-      | Color  | Black |
-      | Size   | L     |
-    And I should see "Order with Matrix Grid"
+    Then I should see an "Matrix Grid Form" element
+    And I should see "Add to Shopping list"
 
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I am on homepage
@@ -125,7 +123,7 @@ Feature: Guest Shopping Lists
       | Unit | each |
     And I click "Update Shoppin..."
     Then I should see "Record has been successfully updated" flash message
-    When I click "NewCategory"
+    And I click "NewCategory"
     Then I should see "In shopping list"
 
   Scenario: Add more products to shopping list from list page (search)

@@ -168,6 +168,7 @@ define(function(require) {
                 });
 
                 mediator.trigger('checkout-content:updated');
+                mediator.trigger('layout:reposition');
             }
 
             mediator.execute('hideLoading');
