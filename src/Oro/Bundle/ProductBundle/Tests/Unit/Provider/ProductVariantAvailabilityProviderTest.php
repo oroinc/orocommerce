@@ -6,6 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -96,8 +97,10 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
         $logger = $this->createMock(LoggerInterface::class);
 
+        $configManager = $this->createMock(ConfigManager::class);
+
         $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
-            ->setConstructorArgs([$doctrineHelper, $enumValueProvider, $logger])
+            ->setConstructorArgs([$doctrineHelper, $enumValueProvider, $logger, $configManager])
             ->setMethods(['getPossibleValues'])
             ->getMock();
 

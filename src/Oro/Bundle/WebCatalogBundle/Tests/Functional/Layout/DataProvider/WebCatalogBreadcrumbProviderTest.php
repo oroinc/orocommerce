@@ -75,14 +75,14 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 LoadContentNodesData::CATALOG_1_ROOT,
                 1,
                 [
-                    'Products categories'
+                    'All Products'
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
                 2,
                 [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL
                 ]
             ],
@@ -90,7 +90,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 3,
                 [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                 ]
@@ -99,7 +99,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2,
                 3,
                 [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL2,
                 ]

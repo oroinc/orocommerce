@@ -16,7 +16,7 @@ class LoadMasterCatalogRoot extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         $title = new LocalizedFallbackValue();
-        $title->setString('Products categories');
+        $title->setString('All Products');
 
         $category = new Category();
         $category->addTitle($title);

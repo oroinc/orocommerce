@@ -1,5 +1,6 @@
 @regression
 @smoke
+@community-edition-only
 Feature: Commerce smoke e2e
 
   Scenario: Create different window session
@@ -16,11 +17,6 @@ Feature: Commerce smoke e2e
       |Backorders Default|false|
       |Backorders        |Yes  |
     And click "Save settings"
-    And go to Inventory/ Warehouses
-    And click "Create Warehouse"
-    And type "MainWarehouse" in "Name"
-    And save and close form
-    And I enable the existing warehouses
     And go to System/ Configuration
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
@@ -544,7 +540,7 @@ Feature: Commerce smoke e2e
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
-    Then should see "Products categories / Phones"
+    Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
@@ -584,7 +580,7 @@ Feature: Commerce smoke e2e
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
-    Then should see "Products categories / Phones"
+    Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product

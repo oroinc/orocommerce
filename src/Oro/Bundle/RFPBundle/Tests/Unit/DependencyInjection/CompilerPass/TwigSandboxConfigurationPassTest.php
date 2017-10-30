@@ -79,6 +79,10 @@ class TwigSandboxConfigurationPassTest extends \PHPUnit_Framework_TestCase
         $securityPolicyDef = $this->createMock(Definition::class);
         $securityPolicyDef->expects($this->once())
             ->method('replaceArgument');
+        $securityPolicyDef->expects($this->once())
+            ->method('getArgument')
+            ->with(4)
+            ->willReturn([]);
 
         $this->containerBuilder
             ->expects($this->at(2))

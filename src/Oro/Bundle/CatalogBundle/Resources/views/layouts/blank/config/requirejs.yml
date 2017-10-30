@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oro/filter/subcategory-filter': 'bundles/orocatalog/js/filter/subcategory-filter.js'
