@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 
-class CategoryManageInventoryFormExtension extends AbstractTypeExtension
+class CategoryManageInventoryFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public function getFallbackProperties()
     {
-        return CategoryType::class;
+        return [
+            'manageInventory'
+        ];
     }
 
     /**
@@ -23,6 +24,8 @@ class CategoryManageInventoryFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder->add(
             'manageInventory',
             EntityFieldFallbackValueType::NAME,

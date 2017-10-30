@@ -65,7 +65,7 @@ services:
         public: true
         arguments:
             - "@oro_catalog.repository.category"
-            - "@oro_product.website_search.repository.product"
+            - "@oro_catalog.website_search.repository.product"
         tags:
             - { name: layout.data_provider, alias: categories_products }
 

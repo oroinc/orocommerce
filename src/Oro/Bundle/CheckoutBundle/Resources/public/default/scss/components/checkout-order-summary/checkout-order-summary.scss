@@ -112,9 +112,6 @@
     &__grid-th {
         padding: $checkout-order-summary-grid-th-offset;
 
-        border-top: $checkout-order-summary-grid-th-border-top;
-        border-bottom: $checkout-order-summary-grid-th-border-bottom;
-
         background: $checkout-order-summary-grid-th-background-color;
 
         font-weight: $checkout-order-summary-grid-th-font-weight;
@@ -129,8 +126,6 @@
     &__grid-td {
         padding: $checkout-order-summary-grid-td-offset;
 
-        border-bottom: $checkout-order-summary-grid-td-border-bottom;
-
         &--qty {
             white-space: nowrap;
         }
@@ -142,10 +137,66 @@
     }
 
     &__grid-tr {
-        &:last-child {
+        &--message {
             .checkout-order-summary__grid-td {
-                border: $checkout-order-summary-grid-last-row-td-border-bottom;
+                padding-top: 0;
             }
+        }
+    }
+
+    &__grid-body {
+        border-bottom: $checkout-order-summary-grid-line-item-border-bottom;
+
+        &:last-child {
+            border-bottom: $checkout-order-summary-grid-last-line-item-border-bottom;
+        }
+
+        &--validation-error,
+        &--validation-warning {
+            .checkout-order-summary__grid-tr--info {
+                .checkout-order-summary__grid-td {
+                    padding-bottom: $offset-y-s;
+                }
+            }
+        }
+
+        &--validation-error {
+            background: $checkout-order-summary-grid-line-item-validation-error-background-color;
+
+            .checkout-order-summary__grid-tr--info {
+                .checkout-order-summary__grid-td {
+                    border-top: 1px solid $checkout-order-summary-grid-line-item-validation-error-border-color;
+                }
+            }
+
+            .checkout-order-summary__grid-tr--message {
+                .checkout-order-summary__grid-td {
+                    border-bottom: 1px solid $checkout-order-summary-grid-line-item-validation-error-border-color;
+                }
+            }
+        }
+
+        &--validation-warning {
+            background: $checkout-order-summary-grid-line-item-validation-warning-background-color;
+
+            .checkout-order-summary__grid-tr--info {
+                .checkout-order-summary__grid-td {
+                    border-top: 1px solid $checkout-order-summary-grid-line-item-validation-warning-border-color;
+                }
+            }
+
+            .checkout-order-summary__grid-tr--message {
+                .checkout-order-summary__grid-td {
+                    border-bottom: 1px solid $checkout-order-summary-grid-line-item-validation-warning-border-color;
+                }
+            }
+        }
+
+        .validation-error,
+        .validation-warning {
+            padding: 0;
+
+            background: none;
         }
     }
 
@@ -200,9 +251,30 @@
             .checkout-order-summary__grid-tr {
                 flex-wrap: wrap;
                 padding-bottom: $checkout-order-summary-grid-tr-offset-inner-bottom-mobile;
+            }
 
-                &:not(:last-child) {
-                    border-bottom: $checkout-order-summary-grid-tr-border-bottom-mobile;
+            &--validation-error,
+            &--validation-warning {
+                margin-top: $checkout-order-summary-grid-line-item-validation-message-offset-top;
+
+                .checkout-order-summary__grid-tr {
+                    padding-bottom: 0;
+
+                    &--info {
+                        .checkout-order-summary__grid-td {
+                            &--sku,
+                            &--subtotal {
+                                border-top: 0;
+                            }
+                        }
+                    }
+
+                    &--message {
+                        .checkout-order-summary__grid-td {
+                            margin-bottom: $checkout-order-summary-grid-line-item-validation-message-offset-bottom;
+                            padding: $checkout-order-summary-grid-line-item-validation-message-offset-inner;
+                        }
+                    }
                 }
             }
         }
@@ -213,6 +285,8 @@
         }
 
         &__grid-th {
+            padding: $checkout-order-summary-grid-th-offset-inner-mobile;
+
             &--info {
                 width: $checkout-order-summary-grid-info-width-mobile;
             }

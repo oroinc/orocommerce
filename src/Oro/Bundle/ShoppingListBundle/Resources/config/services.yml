@@ -291,17 +291,16 @@ services:
             - [ setNamespace, [ 'shopping_list' ] ]
 
     oro_shopping_list.validator_service.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
         arguments:
             - '@validator'
         tags:
-            - { name: layout.data_provider, alias: oro_line_item_errors }
+            - { name: layout.data_provider, alias: oro_line_item_violations }
 
     oro_shopping_list.validator.matrix_collection:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
         tags:
             - { name: validator.constraint_validator }
-
 
     oro_shopping_list.action.duplicate_title:
         class: 'Oro\Bundle\ShoppingListBundle\Action\AddStringSuffixAction'

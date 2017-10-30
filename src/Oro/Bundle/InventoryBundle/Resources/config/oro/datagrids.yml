@@ -68,12 +68,15 @@ datagrids:
                     - inventory.id
                     - product.id as productId
                     - product.sku as sku
+                    - product.skuUppercase as productSkuUppercase
                     - productInventoryStatus.name as inventoryStatusName
                     - productInventoryStatus.id as inventoryStatusId
                     - inventory.quantity as quantity
                     - precisionUnit.code as unit
                     - productPrecision.precision as inventoryLevelPrecision
                     - IDENTITY(productPrecision.unit) as unitCode
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
                     - { table: %oro_inventory.entity.inventory_level.class%, alias: inventory}
                 join:
@@ -86,9 +89,6 @@ datagrids:
             id: ~
             productId: ~
             inventoryLevelPrecision: ~
-            productName:
-                type: localized_value
-                data_name: product.names
         inline_editing:
             enable: true
         save_api_accessor:
@@ -147,11 +147,15 @@ datagrids:
         filters:
             columns:
                 sku:
-                    data_name:       sku
-                    type:            string
+                    type:             string
+                    data_name:        productSkuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
-                    data_name:       productName
-                    type:            string
+                    type:             string
+                    data_name:        productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 inventory_status:
                     type:            enum
                     data_name:       inventoryStatusId

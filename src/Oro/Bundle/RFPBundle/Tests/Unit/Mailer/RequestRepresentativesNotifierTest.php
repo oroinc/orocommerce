@@ -11,9 +11,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var Processor|\PHPUnit_Framework_MockObject_MockObject */
     protected $processor;
 
@@ -176,6 +179,62 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
             ->method('sendRFPNotification');
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
+    }
+
+    public function sendConfirmationEmail()
+    {
+        $customerUser = (new CustomerUser())->setIsGuest(true);
+        $request = $this->getEntity(Request::class, ['id' => 1, 'customerUser' => $customerUser]);
+
+        $this->processor
+            ->expects($this->once())
+            ->method('sendConfirmation')
+            ->with($request, $customerUser);
+
+        $this->requestToQuoteRepresentativesNotifier->sendConfirmationEmail($request);
+    }
+
+    /**
+     * @dataProvider confirmationEmailIncorrectRequestDataProvider
+     *
+     * @param array $requestData
+     */
+    public function sendConfirmationEmailIncorrectRequest(array $requestData)
+    {
+        $request = $this->getEntity(Request::class, $requestData);
+
+        $this->processor
+            ->expects($this->never())
+            ->method('sendConfirmation');
+
+        $this->requestToQuoteRepresentativesNotifier->sendConfirmationEmail($request);
+    }
+
+    /**
+     * @return array
+     */
+    public function confirmationEmailIncorrectRequestDataProvider()
+    {
+        return [
+            'without customer user' => [
+                'requestData' => [
+                    'id' => 1,
+                    'customerUser' => null
+                ]
+            ],
+            'customer user is not guest' => [
+                'requestData' => [
+                    'id' => 1,
+                    'customerUser' => new CustomerUser()
+                ]
+            ],
+            'request is not created' => [
+                'requestData' => [
+                    'id' => null,
+                    'customerUser' => (new CustomerUser())->setIsGuest(true)
+                ]
+            ]
+        ];
     }
 
     protected function configureRequestMock()

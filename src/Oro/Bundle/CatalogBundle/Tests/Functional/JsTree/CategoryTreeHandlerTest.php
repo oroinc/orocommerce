@@ -141,9 +141,9 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
                 'position' => 1,
                 'expectedStatus' => ['status' => AbstractTreeHandler::SUCCESS_STATUS],
                 'expectedData' => [
-                    'Products categories' => [],
+                    'All Products' => [],
                     LoadCategoryData::FIRST_LEVEL => [
-                        'parent' => 'Products categories'
+                        'parent' => 'All Products'
                     ],
                     LoadCategoryData::SECOND_LEVEL1 => [
                         'parent' => LoadCategoryData::FIRST_LEVEL

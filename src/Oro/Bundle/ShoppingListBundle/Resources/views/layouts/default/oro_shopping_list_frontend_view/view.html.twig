@@ -60,6 +60,16 @@
                                 className: oro_class_name(shoppingList, true),
                                 id: shoppingList.id
                             }
+                        },
+                        editor: {
+                            view_options: {
+                                validationRules: {
+                                    NotBlank: true,
+                                    Length: {
+                                        max: 255
+                                    }
+                                }
+                            }
                         }
                     },
                     view_options: {
@@ -310,6 +320,9 @@
 
 {% block _shopping_list_line_items_list_availability_inventory_status_widget %}
     <div>{{ mainProduct.InventoryStatus }}</div>
+    {% if (oro_is_low_inventory_product(mainProduct)) %}
+        <div class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _shopping_list_line_items_list_quantity_widget %}

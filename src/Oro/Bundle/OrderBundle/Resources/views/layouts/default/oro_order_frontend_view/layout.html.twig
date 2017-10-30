@@ -77,12 +77,6 @@
     </h2>
 {% endblock %}
 
-{% block _order_list_link_widget %}
-    <div class="order-builder-clear-btn">
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _order_po_number_widget %}
     {% set text = text|default('oro.ui.empty'|trans) %}
 
