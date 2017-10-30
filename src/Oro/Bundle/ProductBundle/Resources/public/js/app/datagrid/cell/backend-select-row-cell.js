@@ -20,9 +20,6 @@ define(function(require) {
         autoRender: true,
 
         /** @property */
-        keepElement: true,
-
-        /** @property */
         tagName: 'div',
 
         /** @property */
@@ -38,12 +35,20 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.$container = $(options._sourceElement);
-
+            var o = {};
             if (options.productModel) {
                 this.model = options.productModel;
             }
 
+            this.model.trigger('backgrid:hasMassActions', o);
+
+            if (!o.hasMassActions) {
+                this.dispose();
+
+                return;
+            }
+
+            this.$container = $(options._sourceElement);
             this.template = this.getTemplateFunction();
 
             this.model.on('backgrid:select', _.bind(function(model, checked) {
@@ -59,14 +64,14 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            var o = {};
+            var visibleState = {};
             var hide = !_.isMobile();
             var state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
-            this.model.trigger('backgrid:getVisibleState', o);
-            if (!_.isEmpty(o)) {
-                hide = o.visible;
+            this.model.trigger('backgrid:getVisibleState', visibleState);
+            if (!_.isEmpty(visibleState)) {
+                hide = visibleState.visible;
             }
 
             this.$el.html(this.template({

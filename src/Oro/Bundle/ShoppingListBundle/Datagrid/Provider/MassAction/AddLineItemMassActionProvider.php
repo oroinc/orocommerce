@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -44,7 +45,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         $shoppingLists = [];
 
         if (!$this->isGuestCustomerUser()) {
-            $shoppingLists = $this->manager->getShoppingLists();
+            $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
 
             /** @var ShoppingList $shoppingList */
             foreach ($shoppingLists as $shoppingList) {

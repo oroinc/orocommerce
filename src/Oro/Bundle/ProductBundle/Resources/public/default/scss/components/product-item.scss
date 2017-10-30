@@ -485,20 +485,6 @@
     }
 }
 
-
-@include breakpoint('tablet') {
-    .product-item {
-        &__image-holder {
-            .product-item__select-row {
-                position: absolute;
-                top: auto;
-                bottom: 0;
-                right: 0;
-            }
-        }
-    }
-}
-
 @include breakpoint('mobile-landscape') {
     .product-item {
         &__image-holder {
@@ -655,6 +641,28 @@
         &--gallery-view {
             width: 100%;
             margin: 0;
+        }
+    }
+}
+
+@include only-mobile() {
+    .product-item {
+        &__image-holder {
+            .product-item__select-row {
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                right: 0;
+
+                padding: $offset-x-m;
+            }
+        }
+
+        &--no-image-view {
+            .select-row-cell {
+                padding-left: $offset-x-s;
+                padding-right: $offset-x-m;
+            }
         }
     }
 }

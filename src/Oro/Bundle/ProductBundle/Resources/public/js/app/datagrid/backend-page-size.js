@@ -21,7 +21,7 @@ define(function(require) {
 
         onChangePageSize: function(e) {
             var obj = {};
-            this.collection.trigger('backgrid:checkUnsavedData', obj);
+            this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
                 BackendPageSize.__super__.onChangePageSize.apply(this, arguments);

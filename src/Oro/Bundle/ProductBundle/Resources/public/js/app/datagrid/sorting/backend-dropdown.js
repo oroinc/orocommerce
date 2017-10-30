@@ -28,7 +28,7 @@ define(function(require) {
          */
         onChangeSorting: function() {
             var obj = {};
-            this.collection.trigger('backgrid:checkUnsavedData', obj);
+            this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
                 BackendSortingDropdown.__super__.onChangeSorting.call(this);

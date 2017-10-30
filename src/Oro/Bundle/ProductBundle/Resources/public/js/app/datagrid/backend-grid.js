@@ -9,8 +9,15 @@ define(function(require) {
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
-    var BackendSelectHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
+    var BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
     var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
+
+    var config = require('module').config();
+    config = _.extend({
+        massActionsOnSticky: _.isMobile(),
+        massActionsContainer: $('[data-mass-actions-container]'),
+        massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
+    }, config);
 
     BackendGrid = Grid.extend({
         /** @property */
@@ -22,15 +29,18 @@ define(function(require) {
         },
 
         /** @property */
-        massActionsContainer: $('[data-mass-actions-container]'),
+        massActionsContainer: config.massActionsContainer,
 
         /** @property */
-        massActionsStickyContainer: $('[data-mass-actions-sticky-container]'),
+        massActionsStickyContainer: config.massActionsStickyContainer,
 
         /** @property */
         visibleState: {
             visible: null
         },
+
+        /** @property */
+        massActionsOnSticky: config.massActionsOnSticky,
 
         /**
          * @inheritDoc
@@ -66,7 +76,7 @@ define(function(require) {
             this.collection.reset(params.responseJSON.data.data);
 
             this.initLayout({collection: this.collection});
-            this._afterRequest(params.responseJSON);
+            this._afterRequest(params);
         },
 
         /**
@@ -88,7 +98,8 @@ define(function(require) {
                 'backgrid:getSelected': this.getSelected,
                 'backgrid:setVisibleState': this.setVisibleState,
                 'backgrid:getVisibleState': this.getVisibleState,
-                'backgrid:checkUnsavedData': this.checkUnsavedData
+                'backgrid:checkUnSavedData': this.checkUnSavedData,
+                'backgrid:hasMassActions': this.hasMassActions
             });
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
         },
@@ -103,7 +114,7 @@ define(function(require) {
             this.renderNoDataBlock();
             this.renderLoadingMask();
             if (this.multiSelectRowEnabled) {
-                this.renderSelectAll();
+                this.renderActionsArea();
             }
 
             this.listenTo(this.collection, 'reset', this.renderNoDataBlock);
@@ -151,20 +162,26 @@ define(function(require) {
             BackendGrid.__super__.undelegateEvents.apply(this, arguments);
         },
 
-        renderSelectAll: function() {
+        renderActionsArea: function() {
+            // Don't render Actions without data
+            if (!this.massActions.length) {
+                return ;
+            }
+
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
                 selectState: this.selectState
             });
 
-            this.selectHeaderCell = new BackendSelectHeaderCell({
+            this.selectHeaderActionCell = new BackendActionHeaderCell({
                 collection: this.collection,
                 column: this.columns.findWhere('massActions'),
-                selectState: this.selectState
+                selectState: this.selectState,
+                massActionsOnSticky: this.massActionsOnSticky
             });
 
             this.massActionsContainer.append(this.selectAllHeaderCell.$el);
-            if (_.isMobile()) {
+            if (this.massActionsOnSticky) {
                 this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
                     collection: this.collection,
                     selectState: this.selectState,
@@ -172,9 +189,9 @@ define(function(require) {
                 });
 
                 this.massActionsStickyContainer.append(this.additionalSelectAllHeaderCell.$el);
-                this.massActionsStickyContainer.append(this.selectHeaderCell.$el);
+                this.massActionsStickyContainer.append(this.selectHeaderActionCell.$el);
             } else {
-                this.massActionsContainer.append(this.selectHeaderCell.$el);
+                this.massActionsContainer.append(this.selectHeaderActionCell.$el);
             }
         },
 
@@ -186,9 +203,21 @@ define(function(require) {
             this.visibleState.visible = state;
         },
 
+        /**
+         * @param {Object} obj
+         */
         getVisibleState: function(obj) {
             if ($.isEmptyObject(obj) && _.isBoolean(this.visibleState.visible)) {
                 obj.visible = this.visibleState.visible;
+            }
+        },
+
+        /**
+         * @param {Object} obj
+         */
+        hasMassActions: function(obj) {
+            if ($.isEmptyObject(obj)) {
+                obj.hasMassActions = !!this.massActions.length;
             }
         },
 
@@ -198,7 +227,7 @@ define(function(require) {
             }
         },
 
-        checkUnsavedData: function(obj) {
+        checkUnSavedData: function(obj) {
             var live = true;
             var self = this;
 

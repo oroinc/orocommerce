@@ -1,11 +1,12 @@
-define([
-    'oro/datagrid/action/mass-action',
-    'oroui/js/mediator',
-    'underscore'
-], function(MassAction, mediator, _) {
+define(function(require) {
     'use strict';
 
     var AddProductsAction;
+    var MassAction = require('oro/datagrid/action/mass-action');
+    var mediator = require('oroui/js/mediator');
+    var ShoppingListCreate = require('oro/shopping-list-create-widget');
+    var  _ = require('underscore');
+    var $  = require('jquery');
 
     /**
      * Add products to shopping list
@@ -15,23 +16,40 @@ define([
      * @extends oro.datagrid.action.MassAction
      */
     AddProductsAction = MassAction.extend({
+        shoppingLists: null,
 
         /**
          * @inheritdoc
          */
-        initialize: function() {
+        initialize: function(options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
 
-            this.listenTo(
-                mediator,
-                'widget_success:add_products_to_new_shopping_list_mass_action',
-                this._onSuccess,
-                this
-            );
+            if (this.route_parameters.actionName === 'oro_shoppinglist_frontend_addlineitemnew') {
+                this.listenTo(
+                    mediator,
+                    'widget_success:add_products_to_new_shopping_list_mass_action',
+                    _.bind(this.onAddProductsToNewShoppingListMassActionSuccess, this),
+                    this
+                );
+            }
         },
 
-        _onSuccess: function() {
-            mediator.trigger('datagrid:doRefresh:' + this.datagrid.name);
+        /**
+         * @param {object} data
+         */
+        onAddProductsToNewShoppingListMassActionSuccess: function(data) {
+            data.label = $(data._sourceElement).find('.form-field-label').val();
+            this._updateShoppingListsData(data);
+        },
+
+        /**
+         * @param {object} data
+         * @private
+         */
+        _updateShoppingListsData: function(data) {
+            var widget = new ShoppingListCreate({});
+            widget.onFormSave(data);
+            widget.dispose();
         },
 
         /**
@@ -66,27 +84,6 @@ define([
             params = collection.processFiltersParams(params, null, 'filters');
 
             return params;
-        },
-
-        /**
-         * @private
-         */
-        _checkSelectionState: function() {
-            var selectionState = this.datagrid.getSelectionState();
-            var models = selectionState.selectedModels;
-            var length = 0;
-            var reason;
-
-            for (var key in models) {
-                if (models.hasOwnProperty(key)) {
-                    length++;
-                }
-            }
-            if (!length) {
-                reason = AddProductsAction.__super__.defaultMessages.empty_selection;
-            }
-
-            mediator.trigger('frontend:shoppinglist:add-widget-requested-response', {cnt: length, reason: reason});
         }
     });
 

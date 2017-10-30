@@ -25,6 +25,7 @@ config:
         'oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder.js'
         'oroproduct/js/app/datagrid/backend-datagrid-component': 'bundles/oroproduct/js/app/datagrid/backend-datagrid-component.js'
         'oroproduct/js/app/datagrid/backend-grid': 'bundles/oroproduct/js/app/datagrid/backend-grid.js'
+        'oroproduct/js/app/datagrid/backend-actions-panel': 'bundles/oroproduct/js/app/datagrid/backend-actions-panel.js'
         'oroproduct/js/app/datagrid/backend-toolbar': 'bundles/oroproduct/js/app/datagrid/backend-toolbar.js'
         'oroproduct/js/app/datagrid/backend-page-size': 'bundles/oroproduct/js/app/datagrid/backend-page-size.js'
         'oroproduct/js/app/datagrid/products-select-state-model': 'bundles/oroproduct/js/app/datagrid/products-select-state-model.js'
