@@ -147,6 +147,7 @@ operations:
                     - '@run_action_group':
                         action_group: start_checkout
                         parameters_mapping:
+                            force: true
                             sourceCriteria:
                                 order: $.data
                             settings:

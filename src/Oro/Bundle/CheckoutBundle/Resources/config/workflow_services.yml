@@ -1,0 +1,18 @@
+services:
+    oro_checkout.workflow_data.address_updater:
+        class: 'Oro\Bundle\CheckoutBundle\Model\Updater\CheckoutAddressUpdater'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_action.factory.duplicator_factory'
+            -
+                - [[setNull], [propertyName, [id]]]
+                - [[keep], [propertyName, [customerAddress]]]
+                - [[keep], [propertyName, [customerUserAddress]]]
+                - [[keep], [propertyName, [city]]]
+                - [[keep], [propertyName, [country]]]
+                - [[keep], [propertyName, [region]]]
+                - [[keep], [propertyName, [organization]]]
+                - [[shallowCopy], [propertyType, ['\DateTime']]]
+        tags:
+            - { name: oro_workflow.data_updater }
