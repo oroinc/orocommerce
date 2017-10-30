@@ -461,6 +461,11 @@ action_groups:
 
             - '@copy_values': [$.workflowItem.data, $.data]
 
+            - '@call_service_method':
+                service: oro_workflow.data_updater.chain
+                method: update
+                method_parameters: [$.workflowItem.definition, $.workflowItem.data, $.entity.sourceEntity]
+
             - '@call_method':
                 object: $.workflowItem
                 method: setUpdated
