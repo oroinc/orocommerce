@@ -2,38 +2,34 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
 
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
+use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Component\ChainProcessor\ContextInterface;
-use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Adds the file path(or paths) of a file if it's an image type to the File API endpoints
+ * Adds the file paths to the File entity if it is an image type.
  */
 class ProcessImagePaths implements ProcessorInterface
 {
     const CONFIG_FILE_PATH = 'filePath';
+    const CONFIG_MIME_TYPE = 'mimeType';
 
-    /**
-     * @var AttachmentManager
-     */
+    /** @var AttachmentManager */
     protected $attachmentManager;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ImageTypeProvider
-     */
+    /** @var ImageTypeProvider */
     protected $typeProvider;
 
     /**
      * @param AttachmentManager $attachmentManager
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper    $doctrineHelper
      * @param ImageTypeProvider $typeProvider
      */
     public function __construct(
@@ -48,56 +44,84 @@ class ProcessImagePaths implements ProcessorInterface
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function process(ContextInterface $context)
     {
-        $result = $context->getResult();
-        $filePathField = $context->getConfig()->getField(self::CONFIG_FILE_PATH);
+        /** @var CustomizeLoadedDataContext $context */
 
-        if (!is_array($result) || !$filePathField || $filePathField->isExcluded()) {
+        $data = $context->getResult();
+        if (!is_array($data)) {
             return;
         }
 
-        //update result with computed file path
-        $result = $this->addPathToResult($result);
+        $config = $context->getConfig();
 
-        $context->setResult($result);
+        $filePathFieldName = $config->findFieldNameByPropertyPath('filePath');
+        if (!$filePathFieldName
+            || $config->getField($filePathFieldName)->isExcluded()
+            || array_key_exists($filePathFieldName, $data)
+        ) {
+            // the file path field is undefined, excluded or already added
+            return;
+        }
+
+        $mimeTypeFieldName = $config->findFieldNameByPropertyPath('mimeType');
+        if (!$mimeTypeFieldName || empty($data[$mimeTypeFieldName])) {
+            // the mime type field is undefined or its value is unknown
+            return;
+        }
+
+        $fileIdFieldName = $config->findFieldNameByPropertyPath('id');
+        if (!$fileIdFieldName || empty($data[$fileIdFieldName])) {
+            // the file id field is undefined or its value is unknown
+            return;
+        }
+
+        $filePaths = $this->getFilePaths($data[$mimeTypeFieldName], $data[$fileIdFieldName]);
+        if (null !== $filePaths) {
+            $data[$filePathFieldName] = $filePaths;
+            $context->setResult($data);
+        }
     }
 
     /**
-     * @param array $result
-     * @return array
+     * @param string $mimeType
+     * @param int    $fileId
+     *
+     * @return array|null
      */
-    protected function addPathToResult(array $result)
+    protected function getFilePaths($mimeType, $fileId)
     {
-        if (!$this->attachmentManager->isImageType($result['mimeType'])) {
-            return $result;
+        if (!$this->attachmentManager->isImageType($mimeType)) {
+            return null;
         }
 
         /** @var ProductImage $productImage */
-        $productImage = $this->doctrineHelper->getEntityRepository(ProductImage::class)->findOneBy(
-            ['image' => $result['id']]
-        );
-
-        if (!$productImage || empty($types = $productImage->getTypes())) {
-            return $result;
+        $productImage = $this->doctrineHelper->getEntityRepository(ProductImage::class)
+            ->findOneBy(['image' => $fileId]);
+        if (null === $productImage) {
+            return null;
+        }
+        $imageTypes = $productImage->getTypes();
+        if (empty($imageTypes)) {
+            return null;
         }
 
         $allTypes = $this->typeProvider->getImageTypes();
 
         $dimensions = [];
-        foreach ($productImage->getTypes() as $imageType) {
+        foreach ($imageTypes as $imageType) {
             $dimensions = array_merge($dimensions, $allTypes[$imageType->getType()]->getDimensions());
         }
 
-        $urls = [];
+        $result = [];
         foreach (array_keys($dimensions) as $dimension) {
-            $urls[$dimension] = $this->attachmentManager->getFilteredImageUrl(
+            $result[$dimension] = $this->attachmentManager->getFilteredImageUrl(
                 $productImage->getImage(),
                 $dimension
             );
         }
-        $result[self::CONFIG_FILE_PATH] = $urls;
 
         return $result;
     }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
-use Psr\Log\LoggerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
 {
@@ -23,18 +23,26 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     protected $logger;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param EnumValueProvider $enumValueProvider
      * @param LoggerInterface $logger
+     * @param ConfigManager $configManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EnumValueProvider $enumValueProvider,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ConfigManager $configManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->enumValueProvider = $enumValueProvider;
         $this->logger = $logger;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -42,9 +50,10 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
      */
     public function getPossibleValues($fieldName)
     {
-        $enumCode = ExtendHelper::generateEnumCode(Product::class, $fieldName);
+        $config = $this->configManager->getConfigFieldModel(Product::class, $fieldName);
+        $extendConfig = $config->toArray('extend');
 
-        return $this->enumValueProvider->getEnumChoicesByCode($enumCode);
+        return $this->enumValueProvider->getEnumChoices($extendConfig['target_entity']);
     }
 
     /**

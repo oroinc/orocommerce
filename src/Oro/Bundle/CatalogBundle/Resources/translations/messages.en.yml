@@ -43,6 +43,13 @@ oro:
         subcategory:
             entity_label:   'Subcategory'
 
+            form:
+                exclude_subcategories:
+                    label: 'Sub-Categories'
+                    include.label: 'Include, show as filter'
+                    exclude.label: 'Do not include'
+                    tooltip: 'This option can be used to include all products assigned to sub-categories (all levels) of the current category in addition to the products that are assigned directly. The first level sub-categories that have (directly or in any of their sub-categories) at least one product visible to the current user will be shown as category filter options.'
+
         menu:
             master_catalog.label:                  'Master Catalog'
             shortcut_master_catalog.description:   'Manage Master Catalog'
@@ -92,3 +99,7 @@ oro:
             all_products_page:
                 label: All products page
                 description: This feature enables a page where all products are shown on one page grouped by category
+
+        filter:
+            subcategory:
+                label: 'Sub-Categories'

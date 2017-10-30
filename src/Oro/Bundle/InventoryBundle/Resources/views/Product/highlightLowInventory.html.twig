@@ -1,0 +1,8 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set highlightLowInventory = oro_entity_fallback_value(entity, 'highlightLowInventory') %}
+{% if highlightLowInventory is not null %}
+    {% set highlightLowInventory = (highlightLowInventory == true) ? 'true' : 'false' %}
+{% endif %}
+{% set highlightLowInventoryValue = highlightLowInventory is not null ? 'oro.inventory.highlight_low_inventory.choice.' ~ highlightLowInventory : null %}
+{{ UI.renderProperty('oro.inventory.highlight_low_inventory.label'|trans, highlightLowInventoryValue|trans) }}

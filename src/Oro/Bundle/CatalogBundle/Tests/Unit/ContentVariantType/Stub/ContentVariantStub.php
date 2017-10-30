@@ -13,6 +13,11 @@ class ContentVariantStub extends AbstractContentVariantStub
     protected $categoryPageCategory;
 
     /**
+     * @var bool
+     */
+    protected $excludeSubcategories;
+
+    /**
      * @return Category
      */
     public function getCategoryPageCategory()
@@ -27,6 +32,25 @@ class ContentVariantStub extends AbstractContentVariantStub
     public function setCategoryPageCategory(Category $category)
     {
         $this->categoryPageCategory = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExcludeSubcategories()
+    {
+        return $this->excludeSubcategories;
+    }
+
+    /**
+     * @param bool $excludeSubcategories
+     * @return ContentVariantStub
+     */
+    public function setExcludeSubcategories($excludeSubcategories)
+    {
+        $this->excludeSubcategories = $excludeSubcategories;
 
         return $this;
     }

@@ -10,7 +10,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
-    const ROOT_CATEGORY = 'Products categories';
+    const ROOT_CATEGORY = 'All Products';
 
     /**
      * @var CategoryVisibilityRepository

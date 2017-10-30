@@ -6,7 +6,7 @@ Feature: Product Visibility
     And I login as administrator and use in "second_session" as "Admin"
     When I continue as the Buyer
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should see "PSKU2"
     Then I should see "PSKU3"
@@ -21,6 +21,7 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Parent Category |
       | Inventory Threshold                | 1000            |
+      | Low Inventory Threshold            | 0               |
     And I submit form
     Then I should see "Category has been saved" flash message
 
@@ -31,11 +32,12 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Hidden |
       | Inventory Threshold                | 1000   |
+      | Low Inventory Threshold            | 0      |
     And I submit form
     Then I should see "Category has been saved" flash message
     When I continue as the Buyer
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should not see "PSKU2"
     Then I should not see "PSKU3"
@@ -67,7 +69,7 @@ Feature: Product Visibility
     When I continue as the Buyer
     And I click "Sign Out"
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should not see "PSKU2"
     Then I should not see "PSKU3"

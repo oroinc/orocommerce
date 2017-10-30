@@ -124,9 +124,58 @@ datagrids:
 
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view
-        extends: products-select-grid-base
+        options:
+            entityHint:        products
         source:
+            type: search
+            search_index: website
             skip_acl_apply: true
+            query:
+                select:
+                    - text.sku as sku
+                    - text.names_LOCALIZATION_ID as productName
+                    - text.status as status
+                    - text.type as type
+                    - datetime.created_at as createdAt
+                    - datetime.updated_at as updatedAt
+                    - text.inventory_status as inventoryStatus
+                from:
+                    - oro_product_WEBSITE_ID
+        columns:
+            sku:
+                label:         oro.product.sku.label
+            productName:
+                label:         oro.product.names.label
+            inventoryStatus:
+                label:         oro.product.inventory_status.label
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                frontend_type: select
+        filters:
+            columns:
+                sku:
+                    type:      string
+                    data_name: sku
+                productName:
+                    type:      string
+                    data_name: productName
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatus
+                    enum_code: prod_inventory_status
+        properties:
+            id: ~
+        sorters:
+            columns:
+                sku:
+                    data_name: sku
+                productName:
+                    data_name: productName
+                inventoryStatus:
+                    data_name: inventoryStatus
+
+            toolbar_sorting: true
+            disable_default_sorting: true
+
 
     product-collection-base-grid:
         extends: products-select-grid-base
@@ -263,18 +312,17 @@ datagrids:
             enable: true
             behaviour: enable_selected
         columns:
-#            @todo BB-12511
-#            productName:
-#                inline_editing:
-#                    enable: true
-#                    editor:
-#                        component: oroproduct/js/app/components/product-name-popup-editor-component
-#                    save_api_accessor:
-#                        route: oro_api_patch_product_inline_edit_name
-#                        query_parameter_names:
-#                            - id
-#                    validation_rules:
-#                        NotBlank: true
+            productName:
+                inline_editing:
+                    enable: true
+                    editor:
+                        component: oroproduct/js/app/components/product-name-popup-editor-component
+                    save_api_accessor:
+                        route: oro_api_patch_product_inline_edit_name
+                        query_parameter_names:
+                            - id
+                    validation_rules:
+                        NotBlank: true
             inventoryStatusId:
                 inline_editing:
                     enable: true

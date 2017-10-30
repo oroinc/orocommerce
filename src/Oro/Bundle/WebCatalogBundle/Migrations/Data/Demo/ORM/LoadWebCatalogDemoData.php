@@ -55,7 +55,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
     {
         return [
             LoadCategoryDemoData::class,
-            LoadNewArrivalsSegmentsForWebCatalogDemoData::class,
+            LoadSegmentsForWebCatalogDemoData::class,
         ];
     }
     
@@ -208,6 +208,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
                 ->getRepository(Category::class)
                 ->findOneByDefaultTitle($params['title']);
             $variant->setCategoryPageCategory($category);
+            $variant->setExcludeSubcategories($params['excludeSubcategories'] ?? true);
         } elseif ($type === CmsPageContentVariantType::TYPE && method_exists($variant, 'setCmsPage')) {
             $page = $this->container->get('doctrine')
                 ->getRepository(Page::class)

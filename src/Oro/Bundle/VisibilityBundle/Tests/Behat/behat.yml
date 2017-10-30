@@ -42,6 +42,7 @@ oro_behat_extension:
           Title: 'oro_catalog_category[titles][values][default]'
           Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
+          Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
     Visibility Settings Form:
       selector: 'form[name="visibility_title"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
