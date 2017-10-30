@@ -53,4 +53,39 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             )
         );
     }
+
+    /**
+     * @Then /^(?:|I )should see "(?P<text>[^"]*)" for "(?P<Name>[^"]*)" category$/
+     */
+    public function shouldSeeForCategory($text, $Name)
+    {
+        $categoryItem = $this->findElementContains('CategoryItem', $Name);
+        self::assertNotNull($categoryItem, sprintf('product with SKU "%s" not found', $Name));
+
+        if ($this->isElementVisible($text, $categoryItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($categoryItem->getText(), $text),
+            sprintf('text or element "%s" for product with SKU "%s" is not present or not visible', $text, $Name)
+        );
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "(?P<text>[^"]*)" for "(?P<Name>[^"]*)" category$/
+     */
+    public function shouldNotSeeForCategory($text, $Name)
+    {
+        $categoryItem = $this->findElementContains('CategoryItem', $Name);
+        self::assertNotNull($categoryItem, sprintf('product with SKU "%s" not found', $Name));
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($text, $categoryItem)
+            || stripos($categoryItem->getText(), $text);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $text, $Name)
+        );
+    }
 }

@@ -40,21 +40,31 @@ class LoadCategoryForProduct implements ProcessorInterface
         /** @var CustomizeLoadedDataContext $context */
 
         $data = $context->getResult();
-        if (!is_array($data) || array_key_exists('category', $data) || !array_key_exists('id', $data)) {
+        if (!is_array($data)) {
             return;
         }
 
         $config = $context->getConfig();
-        if (null === $config) {
+
+        $categoryFieldName = $config->findFieldNameByPropertyPath('category');
+        if (!$categoryFieldName
+            || $config->getField($categoryFieldName)->isExcluded()
+            || array_key_exists($categoryFieldName, $data)
+        ) {
+            // the category field is undefined, excluded or already added
             return;
         }
 
-        $categoryField = $config->findField('category');
-        if (null === $categoryField || $categoryField->isExcluded()) {
+        $productIdFieldName = $config->findFieldNameByPropertyPath('id');
+        if (!$productIdFieldName || empty($data[$productIdFieldName])) {
+            // the product id field is undefined or its value is unknown
             return;
         }
 
-        $data['category'] = $this->loadCategoryData($categoryField, $data['id']);
+        $data[$categoryFieldName] = $this->loadCategoryData(
+            $config->getField($categoryFieldName),
+            $data[$productIdFieldName]
+        );
         $context->setResult($data);
     }
 

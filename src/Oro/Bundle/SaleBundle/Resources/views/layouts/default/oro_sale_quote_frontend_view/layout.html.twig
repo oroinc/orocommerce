@@ -81,7 +81,7 @@
             {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
         </h2>
         <table class="oro-grid-table customer-line-items__table">
-            <thead class="grid-header hide-on-tablet-small">
+            <thead class="grid-header hide-on-mobile-landscape">
                 <tr class="grid-header-row">
                     <th class="grid-cell" colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
                     <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
@@ -152,12 +152,6 @@
                 </tbody>
             {% endfor %}
         </table>
-
-        <div class="order-checkout-widget text-right">
-            <div class="order-builder-clear-btn">
-                <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
-            </div>
-        </div>
     </div>
 {% endblock %}
 
@@ -171,9 +165,7 @@
 {% block _quote_view_accept_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
     <div{{ block('block_attributes') }}>
-        <div class="order-checkout-widget__col">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

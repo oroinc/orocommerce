@@ -142,10 +142,10 @@ datagrids:
                     type: date
                     data_name: checkout.shipUntil
                 subtotal:
-                    type: number
+                    type: currency
                     data_name: subtotal
                 total:
-                    type: number
+                    type: currency
                     data_name: total
         properties:
             id: ~

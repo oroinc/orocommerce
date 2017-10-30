@@ -5,21 +5,22 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
-use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryControllerTest extends WebTestCase
 {
@@ -255,6 +256,7 @@ class CategoryControllerTest extends WebTestCase
         $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
         $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
+        $parameters['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
             [

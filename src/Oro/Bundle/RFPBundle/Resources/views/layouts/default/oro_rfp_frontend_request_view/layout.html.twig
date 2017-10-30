@@ -1,25 +1,11 @@
-{% block _rfp_request_view_toolbar_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "box-toolbar box-toolbar--offset-none" }) %}
+{% block _rfp_request_view_toolbar_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " controls-list"
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _rfp_request_view_toolbar_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " box-toolbar__actions" }) %}
-    <div {{ block('block_attributes') }}>
-        <div class="controls-list">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
-{% block _rfp_request_view_controls_list_widget %}
-    <ul class="controls-list">
-        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
-        <li><a href="#"><i class="fa-print"></i>Print</a></li>
-        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
-    </ul>
 {% endblock %}
 
 {% block _rfp_request_view_customer_status_widget %}
@@ -157,7 +143,7 @@
             {{ 'oro.frontend.rfp.request.sections.request_products.label'|trans }}
         </h2>
         <table class="oro-grid-table customer-line-items__table">
-            <thead class="grid-header hide-on-tablet-small">
+            <thead class="grid-header hide-on-mobile-landscape">
                 <tr class="grid-header-row">
                     <th class="grid-cell" colspan="2">{{ 'oro.frontend.rfp.request.sections.request_products.columns.item.label'|trans }}</th>
                     <th class="grid-cell">{{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}</th>
@@ -224,11 +210,8 @@
 
 {% block _rfp_request_view_notes_container_widget %}
     {% if block.vars.visible %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ " mt4-md mbt-sm"
-        }) %}
         <div {{ block('block_attributes') }}>
-            <h3 class="customer-navigation-title mb2-md mb2-sm">
+            <h3 class="customer-navigation-title">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
             </h3>
             {{ block_widget(block) }}
@@ -242,11 +225,9 @@
 
 {% block _rfp_request_view_bottom_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " order-checkout-widget mt4-md mbt-sm"
+        class: attr.class|default('') ~ " order-checkout-widget"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="order-builder-clear-btn">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}

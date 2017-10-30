@@ -3,26 +3,31 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         addTitle: ['@localValueLightingProducts']
         setParentCategory: [1]
         setInventoryThreshold: ['@treshhold100']
+        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryRetailSupplies:
         addTitle: ['@localValueRetailSupplies']
         setParentCategory: [1]
         setInventoryThreshold: ['@treshhold200']
+        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryMedicalApparel:
         addTitle: ['@localValueMedicalApparel']
         setParentCategory: [1]
         setInventoryThreshold: ['@treshhold300']
+        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryPrinters:
         addTitle: ['@localValuePrinters']
         setParentCategory: ['@categoryRetailSupplies']
         setInventoryThreshold: ['@treshhold400']
+        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
     categoryFax:
         addTitle: ['@localValueFax']
         setParentCategory: ['@categoryRetailSupplies']
         setInventoryThreshold: ['@treshhold500']
+        setLowInventoryThreshold: ['@lowInventoryTreshhold0']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueRetailSupplies:
@@ -51,3 +56,5 @@ Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
         scalarValue: 400
     treshhold500:
         scalarValue: 500
+    lowInventoryTreshhold0:
+            scalarValue: 0

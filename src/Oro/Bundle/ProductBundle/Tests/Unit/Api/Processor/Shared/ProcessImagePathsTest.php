@@ -5,50 +5,38 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
-use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
-use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
+use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
-use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
-class ProcessImagePathsTest extends GetProcessorTestCase
+class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $attachmentManager;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $typeProvider;
 
-    /**
-     * @var ProcessImagePaths
-     */
-    protected $processor;
-
-    /**
-     * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repo;
+
+    /** @var CustomizeLoadedDataContext */
+    protected $context;
+
+    /** @var ProcessImagePaths */
+    protected $processor;
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->typeProvider = $this->createMock(ImageTypeProvider::class);
@@ -58,6 +46,7 @@ class ProcessImagePathsTest extends GetProcessorTestCase
             ->method('getEntityRepository')
             ->willReturn($this->repo);
 
+        $this->context = new CustomizeLoadedDataContext();
         $this->processor = new ProcessImagePaths(
             $this->attachmentManager,
             $this->doctrineHelper,
@@ -99,12 +88,12 @@ class ProcessImagePathsTest extends GetProcessorTestCase
             ->with(['image' => $initialResults['id']])
             ->willReturn($productImage);
 
-        $fieldConfig = $this->createMock(EntityDefinitionFieldConfig::class);
         $entityConfig  = new EntityDefinitionConfig();
-        $entityConfig->addField(ProcessImagePathsConfig::CONFIG_FILE_PATH, $fieldConfig);
+        $entityConfig->addField('filePath');
+        $entityConfig->addField('mimeType');
+        $entityConfig->addField('id');
 
         $this->context->setConfig($entityConfig);
-        $this->context->setMetadata(new EntityMetadata());
         $this->context->setResult($initialResults);
         $this->processor->process($this->context);
 

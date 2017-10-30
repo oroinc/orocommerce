@@ -51,3 +51,8 @@ services:
         class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
         tags:
             - { name: form.type, alias: oro_catalog_category_page_variant }
+
+    oro_catalog.form.type.filter.subcategory:
+        class: 'Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType'
+        tags:
+            - { name: form.type, alias: oro_type_subcategory_filter }

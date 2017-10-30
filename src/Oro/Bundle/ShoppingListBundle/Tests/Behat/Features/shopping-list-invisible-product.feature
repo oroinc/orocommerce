@@ -22,8 +22,8 @@ Feature: Unable to add hidden product to shopping list
     And I click View PSKU1 in grid
     And click "More actions"
     And click "Manage Visibility"
-    And fill "Product visibility form" with:
-      |Visibility |hidden |
+    And fill "Visibility Product Form" with:
+      |Visibility To All |hidden |
     And I save form
     Then I should see "Product visibility has been saved" flash message
 
@@ -34,8 +34,8 @@ Feature: Unable to add hidden product to shopping list
 
   Scenario: Set product visible
     Given I proceed as the Admin
-    And fill "Product visibility form" with:
-      |Visibility |visible |
+    And fill "Visibility Product Form" with:
+      |Visibility To All |visible |
     And I save form
     Then I should see "Product visibility has been saved" flash message
 
