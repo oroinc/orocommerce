@@ -435,24 +435,7 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: 'div.oro-datagrid'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
-
-    ProductFrontendGridTable:
-      selector: 'div.grid.table'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-
-    ProductFrontendMassActionHeadCheckbox:
-      selector: 'div.datagrid-massaction button'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-
-    ProductFrontendMassActionButton:
-      selector: '.datagrid-massaction button.dropdown-toggle'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-
-    ProductFrontendGridFloatingMenu:
-      selector: '.datagrid-massaction__dropdown-menu'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.product-list'
 
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
