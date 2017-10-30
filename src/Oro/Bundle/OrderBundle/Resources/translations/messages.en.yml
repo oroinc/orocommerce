@@ -98,6 +98,20 @@ oro:
             flash:
                 save_success: shipping tracking numbers have been updated
 
+        ordershippingtracking:
+            entity_label: 'Shipping Tracking'
+            entity_plural_label: 'Shipping Tracking Numbers'
+            id.label: 'ID'
+            method:
+                label: 'Method'
+                description: 'The name of the shipping Method'
+            number:
+                label: 'Number'
+                description: 'The Shipping Tracking number'
+            order:
+                label: 'Order'
+                description: 'The Order related to current shipping tracking entity'
+
         orderdiscount:
             flash.save_success: Order Discount successfully added
             add_discount.label: Add Special Discount

@@ -162,16 +162,26 @@ oro:
             removed: '{title} - removed'
 
         productunitprecision:
-            entity_label: Product Unit Precision
-            entity_plural_label: Product Unit Precisions
-            id.label: Id
-            product.label: Product
-            unit.label: Unit
-            precision.label: Precision
-            conversion_rate.label: Conversion Rate
-            sell.label: Sell
-            sell_yes.label: Yes
-            sell_not.label: No
+            entity_label: 'Product Unit Precision'
+            entity_plural_label: 'Product Unit Precisions'
+            id.label: 'Id'
+            product:
+                label: 'Product'
+                description: 'The Product related to the entity'
+            unit:
+                label: 'Unit'
+                description: 'The Unit of the product'
+            precision:
+                label: 'Precision'
+                description: 'The price precision'
+            conversion_rate:
+                label: 'Conversion Rate'
+                description: 'The Price Conversion Rate'
+            sell:
+                label: 'Sell'
+                description: 'Is in sale'
+            sell_yes.label: 'Yes'
+            sell_not.label: 'No'
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"
