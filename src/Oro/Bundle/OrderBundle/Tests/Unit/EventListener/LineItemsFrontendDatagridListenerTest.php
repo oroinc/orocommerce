@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\OrderBundle\EventListener\LineItemsFrontendDatagridListener;
-use Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 
 class LineItemsFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {

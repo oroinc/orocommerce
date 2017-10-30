@@ -185,3 +185,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_rfp.default_guest_rfp_owner, method: onSettingsSaveBefore }
+
+    oro_rfp.twig.request_products:
+        class: 'Oro\Bundle\RFPBundle\Twig\RequestProductsExtension'
+        public: false
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: twig.extension }

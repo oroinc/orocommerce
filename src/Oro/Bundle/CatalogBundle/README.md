@@ -32,5 +32,5 @@ With this simple category tree for ```category-1-1-1```
 ```
 **Will look like:**
 ```
-Products categories \ category-1 \ category-1-1 \ category-1-1-1
+All Products \ category-1 \ category-1-1 \ category-1-1-1
 ```

@@ -405,6 +405,18 @@ Example:
           "id": "2abcd"
         }
       },
+      "highlightLowInventory": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "low1abcd"
+        }
+      },
+      "lowInventoryThreshold": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "low2abcd"
+        }
+      },
       "minimumQuantityToOrder": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -462,6 +474,24 @@ Example:
       "attributes": {
         "fallback": null,
         "scalarValue": "31",
+        "arrayValue": null
+      }
+    },
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "low1abcd",
+      "attributes": {
+        "fallback": "systemConfig",
+        "scalarValue": null,
+        "arrayValue": null
+      }
+    },
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "low2abcd",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "41",
         "arrayValue": null
       }
     },
@@ -961,6 +991,8 @@ Example:
 
 ### inventoryThreshold
 
+### lowInventoryThreshold
+
 #### create
 
 {@inheritdoc}
@@ -976,6 +1008,8 @@ Example:
 **Required field**
 
 ### manageInventory
+
+### highlightLowInventory
 
 #### create
 
@@ -1131,6 +1165,20 @@ Retrieve an ID of the inventoryThreshold for a specific product
 
 Replace the inventoryThreshold entity fallback value for a specific product record.
 
+### lowInventoryThreshold
+
+#### get_subresource
+
+Retrieve the fallback value for lowInventoryThreshold for a specific product.
+
+#### get_relationship
+
+Retrieve an ID of the lowInventoryThreshold for a specific product.
+
+#### update_relationship
+
+Replace the fallback value for lowInventoryThreshold for a specific product.
+
 ### inventory_status
 
 #### get_subresource
@@ -1158,6 +1206,20 @@ Retrieve an ID of the manageInventory flag for a specific product
 #### update_relationship
 
 Replace the manageInventory entity fallback value for a specific product record.
+
+### highlightLowInventory
+
+#### get_subresource
+
+Retrieve the fallback value for highlightLowInventory flag for a specific product.
+
+#### get_relationship
+
+Retrieve an ID of the highlightLowInventory flag for a specific product.
+
+#### update_relationship
+
+Replace the fallback value for highlightLowInventory for a specific product.
 
 ### maximumQuantityToOrder
 

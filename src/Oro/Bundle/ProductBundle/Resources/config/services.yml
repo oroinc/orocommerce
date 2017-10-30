@@ -426,7 +426,6 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
     oro_product.event_listener.command.platform_update:
         class: 'Oro\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener'
@@ -833,6 +832,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_extend.enum_value_provider'
             - '@logger'
+            - '@oro_entity_config.config_manager'
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
@@ -845,6 +845,7 @@ services:
         arguments:
             - '@form.factory'
             - '%oro_product.entity.product.class%'
+            - '@oro_entity_config.config_manager'
 
     oro_product.product_variant.type_handler.boolean_type_handler:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\BooleanTypeHandler'
@@ -894,7 +895,7 @@ services:
             - { name: oro_user.privilege_category }
 
     oro_product.layout.data_provider.configurable_products:
-        class: 'Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider'
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider'
         arguments:
             - '@oro_product.provider.custom_field_provider'
             - '@oro_product.provider.product_variant_availability_provider'

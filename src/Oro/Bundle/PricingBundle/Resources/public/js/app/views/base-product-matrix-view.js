@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    var ProductPricesMatrixView;
+    var BaseProductMatrixView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var NumberFormatter = require('orolocale/js/formatter/number');
@@ -10,7 +10,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    ProductPricesMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
+    BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
 
         elements: {
@@ -35,15 +35,15 @@ define(function(require) {
 
         prices: null,
 
-        unit: null,
-
         minValue: 1,
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            ProductPricesMatrixView.__super__.initialize.apply(this, arguments);
+            BaseProductMatrixView.__super__.initialize.apply(this, arguments);
+            this.total = _.extend({}, this.total);
+            this.initModel(options);
             this.setPrices(options);
             this.initializeElements(options);
             if (_.isDesktop()) {
@@ -54,26 +54,29 @@ define(function(require) {
             this.updateTotals();
         },
 
+        initModel: function(options) {
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
+        },
+
         /**
          * @inheritDoc
          */
         dispose: function() {
             delete this.prices;
             delete this.total;
-            delete this.unit;
             delete this.minValue;
 
             this.disposeElements();
-            ProductPricesMatrixView.__super__.dispose.apply(this, arguments);
+            BaseProductMatrixView.__super__.dispose.apply(this, arguments);
         },
 
         /**
          * Refactoring prices object model
          */
         setPrices: function(options) {
-            this.unit = options.unit;
             this.prices = {};
-
             _.each(options.prices, function(unitPrices, productId) {
                 this.prices[productId] = PricesHelper.preparePrices(unitPrices);
             }, this);
@@ -85,6 +88,11 @@ define(function(require) {
          * @param {Event} event
          */
         _onQuantityChange: _.debounce(function(event) {
+            if (!this._isSafeNumber(event.currentTarget.value)) {
+                event.preventDefault();
+                return false;
+            }
+
             this.updateTotal($(event.currentTarget));
             this.render();
         }, 150),
@@ -125,7 +133,7 @@ define(function(require) {
             //recalculate cell total
             cell.quantity = this.getValidQuantity($element.val());
             var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
-            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.unit, quantity);
+            cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
             $element.val(quantity);
 
             //add new values
@@ -206,7 +214,18 @@ define(function(require) {
                 $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
                 $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
             }, this);
+        },
+
+        /**
+         * Check JS max number value
+         *
+         * @param {Number} value
+         * @returns {Boolean}
+         * @private
+         */
+        _isSafeNumber: function(value) {
+            return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
         }
     }));
-    return ProductPricesMatrixView;
+    return BaseProductMatrixView;
 });

@@ -56,6 +56,9 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_ON_PRODUCT_VIEW_NONE = 'none';
     const MATRIX_FORM_ON_PRODUCT_VIEW_INLINE = 'inline';
     const MATRIX_FORM_ON_PRODUCT_VIEW_POPUP = 'popup';
+    const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
+    const MATRIX_FORM_ON_SHOPPING_LIST_INLINE = 'inline';
+    const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
 
     /**
      * {@inheritDoc}
@@ -129,6 +132,10 @@ class Configuration implements ConfigurationInterface
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
                     'type' => 'string',
                     'value' => static::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
+                ],
+                self::MATRIX_FORM_ON_SHOPPING_LIST => [
+                    'type' => 'string',
+                    'value' => static::MATRIX_FORM_ON_SHOPPING_LIST_INLINE
                 ],
             ]
         );

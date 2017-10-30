@@ -75,29 +75,65 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetMatrixOrderFormView(ShoppingList $shoppingList = null)
     {
-        /** @var Product $product **/
-        $product = $this->getEntity(Product::class);
+        /** @var Product $product1 **/
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
 
-        $collection = new MatrixCollection();
+        /** @var Product $product1 **/
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
+        $collection1 = new MatrixCollection();
+        $collection1->rows = [
+            'row1',
+        ];
 
-        $this->matrixOrderManager->expects($this->once())
+        $collection2 = new MatrixCollection();
+        $collection2->rows = [
+            'row1',
+            'row2',
+        ];
+
+        $form1 = $this->createMock(FormInterface::class);
+        $formView1 = $this->createMock(FormView::class);
+
+        $form2 = $this->createMock(FormInterface::class);
+        $formView2 = $this->createMock(FormView::class);
+
+        $this->matrixOrderManager->expects($this->exactly(2))
             ->method('getMatrixCollection')
-            ->with($product, $shoppingList)
-            ->willReturn($collection);
+            ->withConsecutive(
+                [$product1, $shoppingList],
+                [$product2, $shoppingList]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $collection1,
+                $collection2
+            );
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects($this->exactly(2))
             ->method('create')
-            ->with(MatrixCollectionType::class, $collection, [])
-            ->willReturn($form);
+            ->withConsecutive(
+                [MatrixCollectionType::class, $collection1, []],
+                [MatrixCollectionType::class, $collection2, []]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $form1,
+                $form2
+            );
 
-        $form->expects($this->once())
+        $form1->expects($this->once())
             ->method('createView')
-            ->willReturn($formView);
+            ->willReturn($formView1);
 
-        $this->assertSame($formView, $this->provider->getMatrixOrderFormView($product, $shoppingList));
+        $form2->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView2);
+
+        $actualFormView1 = $this->provider->getMatrixOrderFormView($product1, $shoppingList);
+        $actualFormView2 = $this->provider->getMatrixOrderFormView($product2, $shoppingList);
+        // Assert that different collections don't return the same cached form view
+        $this->assertNotSame($actualFormView1, $actualFormView2);
+        $this->assertSame($formView1, $actualFormView1);
+        $this->assertSame($formView2, $actualFormView2);
     }
 
     /**

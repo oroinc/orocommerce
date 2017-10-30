@@ -308,6 +308,7 @@ oro:
                 image_gallery.title: 'Image Gallery Options'
                 configurable_products.title: 'Configurable Products'
                 configurable_products_matrix_form.title: 'Matrix Form In Product Views'
+                catalog_configurable_products.title: 'Configurable Products'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -427,6 +428,10 @@ oro:
                     none.label: 'Do Not Display'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
+                matrix_form_on_shopping_list:
+                    display_options.label: 'Display Options in Shopping Lists'
+                    group.label: 'Group Single Products'
+                    inline.label: 'Inline Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

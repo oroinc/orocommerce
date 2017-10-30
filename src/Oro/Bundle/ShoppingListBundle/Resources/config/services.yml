@@ -176,6 +176,15 @@ services:
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
 
+    oro_shopping_list.layout.data_provider.matrix_grid_shopping_list:
+          class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixFormShoppingListProvider'
+          arguments:
+              - '@oro_shopping_list.layout.data_provider.matrix_order_form'
+              - '@oro_product.layout.data_provider.product_form_availability'
+              - '@oro_config.manager'
+          tags:
+              - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
+
     oro_shopping_list.data_provider.frontend_product_prices:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
         public: false
@@ -183,6 +192,7 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_shopping_list.data_provider.shopping_list_line_items'
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
@@ -281,17 +291,16 @@ services:
             - [ setNamespace, [ 'shopping_list' ] ]
 
     oro_shopping_list.validator_service.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
         arguments:
             - '@validator'
         tags:
-            - { name: layout.data_provider, alias: oro_line_item_errors }
+            - { name: layout.data_provider, alias: oro_line_item_violations }
 
     oro_shopping_list.validator.matrix_collection:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
         tags:
             - { name: validator.constraint_validator }
-
 
     oro_shopping_list.action.duplicate_title:
         class: 'Oro\Bundle\ShoppingListBundle\Action\AddStringSuffixAction'

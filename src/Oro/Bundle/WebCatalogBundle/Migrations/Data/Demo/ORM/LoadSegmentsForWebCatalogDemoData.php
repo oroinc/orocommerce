@@ -15,7 +15,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 
-class LoadNewArrivalsSegmentsForWebCatalogDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadSegmentsForWebCatalogDemoData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * @internal
@@ -39,6 +39,16 @@ class LoadNewArrivalsSegmentsForWebCatalogDemoData extends AbstractFixture imple
      */
     public function load(ObjectManager $manager)
     {
+        // add segment for all products
+        $segment = $this->createNewArrivalSegment(
+            $this->getOrganization($manager),
+            $this->getSegmentType($manager, SegmentType::TYPE_DYNAMIC),
+            'All Products',
+            $this->getDefaultSegmentDefinition()
+        );
+
+        $manager->persist($segment);
+
         $categoryNames = $this->getNewArrivalCategoryNames();
         foreach ($categoryNames as $categoryName) {
             $segment = $this->createNewArrivalSegment(
@@ -101,14 +111,10 @@ class LoadNewArrivalsSegmentsForWebCatalogDemoData extends AbstractFixture imple
     }
 
     /**
-     * @param string $categoryName
-     *
      * @return array
      */
-    private function getSegmentDefinitionForCategoryName($categoryName)
+    private function getDefaultSegmentDefinition()
     {
-        $columnName = sprintf('category+%s::titles+%s::string', Category::class, LocalizedFallbackValue::class);
-
         return [
             'columns' => [
                 [
@@ -124,31 +130,46 @@ class LoadNewArrivalsSegmentsForWebCatalogDemoData extends AbstractFixture imple
                     'func' => null,
                 ],
             ],
-            'filters' => [
+            'filters' => []
+        ];
+    }
+
+    /**
+     * @param string $categoryName
+     *
+     * @return array
+     */
+    private function getSegmentDefinitionForCategoryName($categoryName)
+    {
+        $columnName = sprintf('category+%s::titles+%s::string', Category::class, LocalizedFallbackValue::class);
+
+        $definition = $this->getDefaultSegmentDefinition();
+        $definition['filters'] = [
+            [
                 [
-                    [
-                        'columnName' => $columnName,
-                        'criterion' => [
-                            'filter' => 'string',
-                            'data' => [
-                                'value' => $categoryName,
-                                'type' => '1',
-                            ],
+                    'columnName' => $columnName,
+                    'criterion' => [
+                        'filter' => 'string',
+                        'data' => [
+                            'value' => $categoryName,
+                            'type' => '1',
                         ],
                     ],
-                    'AND',
-                    [
-                        'columnName' => 'newArrival',
-                        'criterion' => [
-                            'filter' => 'boolean',
-                            'data' => [
-                                'value' => '1',
-                            ],
+                ],
+                'AND',
+                [
+                    'columnName' => 'newArrival',
+                    'criterion' => [
+                        'filter' => 'boolean',
+                        'data' => [
+                            'value' => '1',
                         ],
                     ],
                 ],
             ],
         ];
+
+        return $definition;
     }
 
     /**

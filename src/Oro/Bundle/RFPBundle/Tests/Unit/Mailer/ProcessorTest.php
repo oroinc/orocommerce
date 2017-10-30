@@ -59,4 +59,15 @@ class ProcessorTest extends AbstractProcessorTest
 
         $this->mailProcessor->sendRFPNotification($this->request, $this->user);
     }
+
+    public function testSendConfirmation()
+    {
+        $this->assertSendCalled(
+            Processor::CONFIRM_REQUEST_TEMPLATE_NAME,
+            ['entity' => $this->request],
+            $this->buildMessage($this->user->getEmail())
+        );
+
+        $this->mailProcessor->sendConfirmation($this->request, $this->user);
+    }
 }

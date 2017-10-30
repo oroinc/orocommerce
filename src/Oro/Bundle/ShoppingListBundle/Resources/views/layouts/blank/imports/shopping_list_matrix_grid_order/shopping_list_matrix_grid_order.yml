@@ -1,0 +1,18 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order
+            root: __root
+            namespace: matrix
+    actions:
+        - '@setBlockTheme':
+            themes: 'shopping_list_matrix_grid_order.html.twig'
+        - '@add':
+            id: __matrix_form_actions_submit
+            blockType: button
+            parentId: __matrix_form_summary
+            options:
+                action: submit
+                text:
+                    label: Update
+                style: auto
