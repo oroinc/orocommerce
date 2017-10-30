@@ -2,6 +2,7 @@
     {% set defaultColumns = form.rows[0].columns %}
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}
+
     <div class="{{ class_prefix }}__grid {{ columnsCount > 1 ? class_prefix ~ '__grid--multi-rows' }}">
         {{ block('_matrix_collection_widget_head') }}
         {{ block('_matrix_collection_widget_side') }}

@@ -10,9 +10,7 @@ layout:
         - '@add':
             id: __matrix_form_actions_submit
             blockType: button
-            parentId: __matrix_wrapper
-            siblingId: __matrix_form_end
-            prepend: true
+            parentId: __matrix_form_summary
             options:
                 action: submit
                 text:

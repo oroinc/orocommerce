@@ -1,5 +1,9 @@
 {% block __matrix_grid_order__wrapper_widget %}
     {% set class_prefix = 'matrix-order-widget' %}
+    {% set defaultColumns = form.rows[0].columns %}
+    {% set rowsCount = form.rows|length %}
+    {% set columnsCount = defaultColumns|length %}
+
     {% do block|merge_context({
         class_prefix: class_prefix,
         form: form,
@@ -7,6 +11,7 @@
         shoppingList: shoppingList,
         totals: totals,
         prices: prices,
+        columnsCount: columnsCount
     }) %}
     {% do set_class_prefix_to_form(form, class_prefix) %}
 
@@ -29,14 +34,21 @@
         productId: product.id,
         shoppingListId: shoppingList.id
     }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__form'
+    }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __matrix_grid_order__form_summary_widget %}
     <div class="{{ class_prefix }}__summary">
-        <div class="{{ class_prefix }}__summary-wrapper">
-            {{ parent_block_widget(block) }}
-        </div>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__form_summary_wrapper_widget %}
+    <div class="{{ class_prefix }}__summary-wrapper">
+        {{ parent_block_widget(block) }}
     </div>
 {% endblock %}
 

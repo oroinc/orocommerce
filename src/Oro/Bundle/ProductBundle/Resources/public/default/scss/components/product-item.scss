@@ -52,7 +52,12 @@
         }
     }
 
+    //TODO: Should remove all --in-cart modifiers from the component
     &--in-cart {
+        align-self: center;
+
+        margin-right: auto;
+
         @include clearfix();
     }
 
@@ -392,20 +397,6 @@
             }
         }
     }
-
-    &__desctiption {
-        position: relative;
-
-        &--in-cart {
-            padding: 0 0 0 104px;
-        }
-    }
-
-    &__status {
-        &--in-cart {
-            display: none;
-        }
-    }
 }
 
 @include breakpoint('tablet-small') {
@@ -443,12 +434,6 @@
 
         &__quick-view-btn {
             display: none !important;
-        }
-
-        &__status {
-            &--in-cart {
-                display: block;
-            }
         }
     }
 }

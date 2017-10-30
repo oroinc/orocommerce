@@ -25,6 +25,8 @@ layout:
                     blockType: form_end
                 __form_summary:
                     blockType: container
+                __form_summary_wrapper:
+                    blockType: container
                 __form_summary_quantity:
                     blockType: block
                 __form_summary_total:
@@ -35,6 +37,7 @@ layout:
                         __form_start: ~
                         __form_fields: ~
                         __form_summary:
-                            __form_summary_quantity: ~
-                            __form_summary_total: ~
+                            __form_summary_wrapper:
+                                __form_summary_quantity: ~
+                                __form_summary_total: ~
                         __form_end: ~

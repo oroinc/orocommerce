@@ -32,8 +32,6 @@
     &__grid-body {
         display: $matrix-order-widget-grid-body-display;
 
-        max-height: $matrix-order-widget-grid-body-max-height;
-
         overflow: $matrix-order-widget-grid-body-overflow;
 
         .form-row {
@@ -86,7 +84,6 @@
         float: $matrix-order-widget-grid-side-float;
 
         width: $matrix-order-widget-grid-side-width;
-        max-height: $matrix-order-widget-grid-side-max-height;
 
         overflow: $matrix-order-widget-grid-side-overflow;
     }
@@ -161,16 +158,40 @@
 
         font-family: $matrix-order-widget-summary-font-family;
         text-align: $matrix-order-widget-summary-text-align;
+
+        &--inline {
+            display: $matrix-order-widget-summary-inline-display;
+            align-items: $matrix-order-widget-summary-inline-align-items;
+            justify-content: $matrix-order-widget-summary-inline-justify-content;
+
+            width: $matrix-order-widget-summary-inline-width;
+            margin-bottom: $matrix-order-widget-summary-inline-offset-bottom;
+
+            .btn {
+                padding: $matrix-order-widget-summary-inline--btn-offset-inner;
+            }
+        }
     }
 
     &__summary-wrapper {
         padding-right: $matrix-order-widget-summary-wrapper-offset-inner-right;
+
+        &--inline {
+            background: $matrix-order-widget-summary-inline-wrapper-background;
+            padding: $matrix-order-widget-summary-inline-wrapper-offset-inner;
+            border-radius: $matrix-order-widget-summary-inline-wrapper-border-radius;
+            margin-right: $matrix-order-widget-summary-inline-wrapper-offset-right;
+        }
     }
 
     &__summary-label {
         display: $matrix-order-widget-summary-label-display;
         min-width: $matrix-order-widget-summary-label-min-width;
         padding: $matrix-order-widget-summary-label-offset-inner;
+
+        &--inline {
+            min-width: $matrix-order-widget-summary-label-inline-min-width;
+        }
     }
 
     &__total-quantity,
@@ -187,6 +208,10 @@
         margin: $matrix-order-widget-total-price-offset-inner;
 
         font-size: $matrix-order-widget-total-price-font-size;
+    }
+
+    &__total-separator {
+        margin: $matrix-order-widget-total-separator-offset;
     }
 
     &__item {
@@ -309,6 +334,18 @@
         }
     }
 
+    &--dialog & {
+        max-width: $matrix-order-widget-dialog-max-width;
+
+        &__grid-body {
+            max-height: $matrix-order-widget-dialog-grid-body-max-height;
+        }
+
+        &__grid-side {
+            max-height: $matrix-order-widget-dialog-grid-side-max-height;
+        }
+    }
+
     &--dialog-fullscreen {
         position: $matrix-order-widget-dialog-fullscreen-position;
 
@@ -323,10 +360,24 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('strict-desktop') {
     .matrix-order-widget {
-        &--dialog {
-            width: $matrix-order-widget-dialog-width !important;
+        &__form {
+            &--inline {
+                display: $matrix-order-widget-form-inline-strict-desktop-display;
+                width: $matrix-order-widget-form-inline-strict-desktop-width;
+            }
+        }
+
+        &__form--inline & {
+            &__grid {
+                max-width: $matrix-order-widget-form-inline-grid-strict-desktop-max-width;
+            }
+
+            &__summary--inline {
+                max-width: $matrix-order-widget-form-inline-summary-inline-strict-desktop-max-width;
+                margin-top: $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top;
+            }
         }
     }
 }

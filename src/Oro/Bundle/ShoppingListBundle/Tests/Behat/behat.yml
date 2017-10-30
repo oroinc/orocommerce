@@ -50,11 +50,11 @@ oro_behat_extension:
 
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: '#shopping_list_view_container_content > div.cart-table > table'
+      selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
-      selector: 'tbody.line_item'
+      selector: '.shopping-list-line-items__item-wrapper'
 
     Shopping List Line Item 1 Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
@@ -76,7 +76,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//div[text()[contains(.,"SKU #:")]]/span'
+          locator: '//div[text()[contains(.,"Item #:")]]/span'
 
     Shopping List Dropdown:
       selector:
