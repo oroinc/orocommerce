@@ -48,6 +48,25 @@ define(function(require) {
         _onShoppingListsRefresh: function() {
             this.collection.trigger('backgrid:selectNone');
             mediator.trigger('datagrid:doRefresh:' + this.collection.inputName);
+
+            this.render();
+        },
+
+        render: function() {
+            this.$el.empty();
+            this.renderActionsPanel();
+            return this;
+        },
+
+        renderActionsPanel: function() {
+            var panel = this.subview('actionsPanel');
+
+            panel.massActionsOnSticky = this.massActionsOnSticky;
+            if (panel.haveActions()) {
+                this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
+                panel.setElement(this.$('[data-action-panel]'));
+                panel.render();
+            }
         }
     });
 
