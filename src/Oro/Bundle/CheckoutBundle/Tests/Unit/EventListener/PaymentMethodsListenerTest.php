@@ -11,12 +11,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 {
     /**
-     * @var PaymentMethodsConfigsRulesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configsRuleProvider;
 
@@ -29,7 +29,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
     {
         parent::setUp();
 
-        $this->configsRuleProvider = $this->createMock(PaymentMethodsConfigsRulesProviderInterface::class);
+        $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
         $this->contextFactory = $this->getMockBuilder(CheckoutPaymentContextFactory::class)
             ->disableOriginalConstructor()
@@ -134,7 +134,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      */
     protected function getConfigRuleProviderMethod()
     {
-        return 'getFilteredPaymentMethodsConfigsRegardlessDestination';
+        return 'getPaymentMethodsConfigsRules';
     }
 
     /**

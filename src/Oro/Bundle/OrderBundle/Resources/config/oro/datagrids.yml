@@ -107,13 +107,6 @@ datagrids:
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
                 renderable:    false
-            poNumber:
-                label:         oro.order.po_number.label
-                renderable:    false
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
-                renderable:    false
             updatedAt:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
@@ -130,10 +123,6 @@ datagrids:
                     data_name: order1.updatedAt
                 identifier:
                     data_name: order1.identifier
-                poNumber:
-                    data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
                 currency:
                     data_name: order1.currency
                 subtotal:
@@ -165,12 +154,6 @@ datagrids:
                 identifier:
                     type:      string
                     data_name: order1.identifier
-                poNumber:
-                    type:      string
-                    data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -205,11 +188,14 @@ datagrids:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - internalStatus.name as internalStatusName
+                    - internalStatus.id as internalStatusId
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
+                        - { join: order1.internal_status, alias: internalStatus }
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -239,6 +225,8 @@ datagrids:
                 label:         oro.order.customer.label
             customerUserName:
                 label:         oro.order.customer_user.label
+            internalStatusName:
+                label: oro.order.internal_status.label
             owner:
                 label:         oro.order.owner.label
             paymentStatus:
@@ -257,11 +245,6 @@ datagrids:
                 type:          twig
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
-            poNumber:
-                label:         oro.order.po_number.label
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
             sourceEntityClass:
                 label:         oro.order.source_document.label
                 type:          twig
@@ -297,12 +280,10 @@ datagrids:
                     data_name: customerName
                 customerUserName:
                     data_name: customerUserName
+                internalStatusName:
+                    data_name: internalStatusName
                 owner:
                     data_name: owner
-                poNumber:
-                    data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
                 totalDiscountsAmount:
                     data_name: order1.totalDiscountsAmount
                 createdAt:
@@ -341,6 +322,10 @@ datagrids:
                 customerUserName:
                     type:      string
                     data_name: customerUserName
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: order_internal_status
                 owner:
                     type:      string
                     data_name: owner
@@ -350,13 +335,6 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
-
-                poNumber:
-                    type:      string
-                    data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount
@@ -373,6 +351,8 @@ datagrids:
         actions:
             view:
                 acl_resource:  oro_order_view
+
+        views_list: '@oro_order.datagrid.orders_view_list'
 
     embed-orders-grid:
         acl_resource: oro_order_view
@@ -551,6 +531,7 @@ datagrids:
                     - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
+                    - product.denormalizedDefaultName as productName
                 from:
                     - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
                 join:
@@ -564,10 +545,6 @@ datagrids:
                       dir: ASC
             bind_parameters:
                 - order_id
-        properties:
-            productName:
-                type: localized_value
-                data_name: product.names
 
     order-line-items-grid:
         extends: base-order-line-items-grid
@@ -669,6 +646,9 @@ datagrids:
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
+                    - product.skuUppercase as skuUppercase
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
                     - { table: %oro_report.calendar_date.entity.class%, alias: calendarDate }
                 join:
@@ -690,11 +670,6 @@ datagrids:
                             condition: lineitem.product = product.id
 
                 groupBy: cDate, sku, product.id, unitCode
-        properties:
-            productName:
-                type: localized_value
-                data_name: product.names
-                allow_empty: true
         columns:
             cDate:
                 frontend_type: date
@@ -733,10 +708,14 @@ datagrids:
                     data_name: calendarDate.date
                 sku:
                     type:      string
-                    data_name: sku
+                    data_name: skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 skip_empty_periods:
                     type:      skip_empty_periods
                     data_name: calendarDate.date
@@ -767,3 +746,28 @@ datagrids:
                         - payment_transaction.entityIdentifier = :order_id
             bind_parameters:
                 - order_id
+
+    order-products-previously-purchased-grid:
+        extends: frontend-product-search-grid
+        acl_resource: oro_order_frontend_view
+        source:
+            query:
+                select:
+                    - datetime.ordered_at_by_CUSTOMER_ID as recency
+                where:
+                    and:
+                        - datetime.ordered_at_by_CUSTOMER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+        columns:
+            recency:
+                label: oro.order.recency.label
+                frontend_type: datetime
+        sorters:
+            toolbar_sorting: true
+            disable_default_sorting: false
+            disable_not_selected_option: true
+            columns:
+                recency:
+                    type: datetime
+                    data_name: ordered_at_by_CUSTOMER_ID
+            default:
+                recency: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC

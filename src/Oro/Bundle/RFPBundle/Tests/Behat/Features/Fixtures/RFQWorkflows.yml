@@ -1,5 +1,6 @@
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locValue: ~
+    locValue:
+        string: 'product1'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm:

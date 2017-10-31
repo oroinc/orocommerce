@@ -3,9 +3,9 @@
 .sidebar__menu {
   .collapse-view {
     &__trigger {
-      vertical-align: baseline;
       margin-right: 5px;
       margin-left: 5px;
+      line-height: 1;
     }
 
     &__text {

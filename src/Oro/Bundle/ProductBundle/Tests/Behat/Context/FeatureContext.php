@@ -13,24 +13,37 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
+
+    const PRODUCT_SKU = 'SKU123';
+    const PRODUCT_INVENTORY_QUANTITY = 100;
 
     /**
      * @var OroMainContext
@@ -70,6 +83,61 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given There are products in the system available for order
+     */
+    public function thereAreProductsAvailableForOrder()
+    {
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+
+        /** @var Product $product */
+        $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
+            ->findOneBy(['sku' => self::PRODUCT_SKU]);
+
+        $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
+
+        /** @var InventoryLevel $inventoryLevel */
+        $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
+        if (!$inventoryLevel) {
+            /** @var InventoryManager $inventoryManager */
+            $inventoryManager = $this->getContainer()->get('oro_inventory.manager.inventory_manager');
+            $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
+        }
+        $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
+
+        // package commerce-ee available
+        if (method_exists($inventoryLevel, 'setWarehouse')) {
+            $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
+            $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
+
+            $warehouse = $warehouseRepository->findOneBy([]);
+
+            if (!$warehouse) {
+                $warehouse = new Warehouse();
+                $warehouse
+                    ->setName('Test Warehouse 222')
+                    ->setOwner($product->getOwner())
+                    ->setOrganization($product->getOrganization());
+                $warehouseEntityManager->persist($warehouse);
+                $warehouseEntityManager->flush();
+            }
+
+            $inventoryLevel->setWarehouse($warehouse);
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+
+            $warehouseConfig = new WarehouseConfig($warehouse, 1);
+            $configManager = $this->getContainer()->get('oro_config.global');
+            $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
+            $configManager->flush();
+        } else {
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+        }
+    }
+
+    /**
      * @When I fill product name field with :productName value
      *
      * @param string $productName
@@ -81,52 +149,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $productNameField->setValue($productName);
         $productNameField->blur();
         $this->waitForAjax();
-    }
-
-    /**
-     * @When I am on quick order form page
-     */
-    public function amOnQuickOrderFormPage()
-    {
-        $this->visitPath('customer/product/quick-add/');
-    }
-
-    /**
-     * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
-     */
-    public function productShouldHasValueInPriceField($sku, $price)
-    {
-        $priceField = $this->createElement('Quick Add Price Field', $this->findProductRow($sku));
-
-        static::assertEquals($price, trim($priceField->getValue()));
-    }
-
-    /**
-     * @param string $sku
-     *
-     * @return NodeElement|null
-     */
-    private function findProductRow($sku)
-    {
-        /** @var NodeElement[] $productRows */
-        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
-
-        foreach ($productRows as $skuField) {
-            if ($skuField->getValue() === $sku) {
-                return $skuField->getParent()->getParent();
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @When click create order button
-     */
-    public function clickCreateOrderButton()
-    {
-        $createOrderButton = $this->createElement('CreateOrderButton');
-        $createOrderButton->click();
     }
 
     /**
@@ -501,7 +523,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
+        $this->configContext->followLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
         $this->waitForAjax();
     }
 
@@ -651,11 +673,62 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product$/
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product$/
      */
-    public function shouldSeeForProduct($elementName, $SKU)
+    public function shouldSeeForProduct($elementNameOrText, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementNameOrText),
+            sprintf(
+                '%s "%s" for product with SKU "%s" is not present or not visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product$/
+     */
+    public function shouldNotSeeForProduct($elementNameOrText, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
+            || stripos($productItem->getText(), $elementNameOrText);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf(
+                '%s "%s" for product with SKU "%s" is present or visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    /**
+     * Assert that embedded block contains specified product with specified element.
+     * Example: Then should see "Low Inventory" for "PSKU1" product in the "New Arrivals Block"
+     *
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product in the "(?P<blockName>[^"]+)"$/
+     */
+    public function iShouldSeeElementForTheFollowingProductsInEmbeddedBlock($elementName, $SKU, $blockName)
+    {
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        $productItem = $this->findElementContains('ProductItem', $SKU, $block);
         self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
 
         if ($this->isElementVisible($elementName, $productItem)) {
@@ -669,19 +742,64 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should not see "([^"]*)" for "([^"]*)" product$/
+     * Assert that embedded block does not contain specified product with specified element.
+     * Example: Then should not see "Low Inventory" for "PSKU1" product in the "New Arrivals Block"
+     *
+     * @Then /^(?:|I )should not see "(?P<element>[^"]*)" for "(?P<SKU>[^"]*)" product in the "(?P<blockName>[^"]+)"$/
      */
-    public function shouldNotSeeForProduct($elementName, $SKU)
+    public function iShouldNotSeeElementForTheFollowingProductsInEmbeddedBlock($element, $SKU, $blockName)
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU);
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        $productItem = $this->findElementContains('ProductItem', $SKU, $block);
         self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($element, $productItem)
+            || stripos($productItem->getText(), $element);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $element, $SKU)
+        );
+    }
+
+    /**
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     */
+    public function shouldSeeForLineItem($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementName, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementName),
+            sprintf(
+                'text or element "%s" for line item with SKU "%s" is not present or not visible',
+                $elementName,
+                $SKU
+            )
+        );
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     */
+    public function shouldNotSeeForLineItem($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
             || stripos($productItem->getText(), $elementName);
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
-            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $elementName, $SKU)
+            sprintf('text or element "%s" for line item with SKU "%s" is present or visible', $elementName, $SKU)
         );
     }
 
@@ -697,12 +815,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given /^I should see "([^"]*)" in search results$/
+     * @When /^grid sorter should have "(?P<field>.*)" options$/
+     */
+    public function sorterShouldHave($field)
+    {
+        $sorter = $this->createElement('Frontend Product Grid Sorter');
+        $options = $sorter->find('xpath', sprintf('//option[contains(., "%s")]', $field));
+
+        self::assertNotEmpty($options, sprintf('No sorter options found for field "%s"', $field));
+    }
+
+    /**
+     * @Given /^(?:|I )should see "([^"]*)" product$/
      */
     public function iShouldSeeInSearchResults($productSku)
     {
         $this->oroMainContext
             ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "([^"]*)" product$/
+     *
+     * @param string $productSku
+     */
+    public function iShouldNotSeeInSearchResults($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldNotSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
     }
 
     /**
@@ -908,19 +1048,59 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param string $elementName
-     * @param NodeElement $productItem
-     * @return bool
+     * Check checkboxes in multiple select filter
+     * Example: When I check "Task, Email" in Activity Type filter in frontend product grid
+     * Example: When I check "Task, Email" in "Activity Type filter" in frontend product grid
+     *
+     * @When /^(?:|I )check "(?P<filterItems>.+)" in (?P<filterName>[\w\s]+) filter in frontend product grid$/
+     * @When /^(?:|I )check "(?P<filterItems>.+)" in "(?P<filterName>[^"]+)" filter in frontend product grid$/
+     *
+     * @param string $filterName
+     * @param string $filterItems
      */
-    protected function isElementVisible($elementName, $productItem)
+    public function iCheckCheckboxesInFilter($filterName, $filterItems)
     {
-        if ($this->hasElement($elementName)) {
-            $element = $this->createElement($elementName, $productItem);
-            if ($element->isValid() && $element->isVisible()) {
-                return true;
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem('Frontend Product Grid MultipleChoice', $filterName);
+        $filterItem->checkItemsInFilter($filterItems);
+    }
+
+    /**
+     * @return GridFilters|Element
+     */
+    private function getGridFilters()
+    {
+        $filters = $this->elementFactory->createElement('GridFilters');
+        if (!$filters->isVisible()) {
+            $gridToolbarActions = $this->elementFactory->createElement('GridToolbarActions');
+            if ($gridToolbarActions->isVisible()) {
+                $gridToolbarActions->getActionByTitle('Filters')->click();
+            }
+
+            $filterState = $this->elementFactory->createElement('GridFiltersState');
+            if ($filterState->isValid()) {
+                $filterState->click();
             }
         }
 
-        return false;
+        return $filters;
+    }
+
+    /**
+     * Select a value for product attribute on product update form
+     * Example: I fill in product attribute "Color" with "Red"
+     *
+     * @When /^(?:|I )fill in product attribute "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
+     */
+    public function fillProductAttribute($field, $value)
+    {
+        $field = $this->fixStepArgument($field);
+        $value = $this->fixStepArgument($value);
+        $form = $this->createElement('OroForm');
+        $value = $form->normalizeValue($value);
+
+        $form
+            ->find('css', sprintf('[name="oro_product[%s]"]', $field))
+            ->setValue($value);
     }
 }

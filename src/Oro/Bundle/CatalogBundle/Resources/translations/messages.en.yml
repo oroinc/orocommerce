@@ -1,35 +1,39 @@
 oro:
     catalog:
         category:
-            entity_label:                'Category'
-            entity_plural_label:         'Categories'
-            id.label:                    'ID'
-            titles.label:                'Title'
-            short_descriptions.label:    'Short Description'
-            long_descriptions.label:     'Long Description'
-            small_image.label:           'Small Image'
-            large_image.label:           'Large Image'
-            left.label:                  'Tree left index'
-            level.label:                 'Tree level'
-            right.label:                 'Tree right index'
-            root.label:                  'Tree root'
-            child_categories.label:      'Child categories'
-            parent_category.label:       'Parent category'
-            products.label:              'Products'
-            categories.label:            'Product categories'
-            include_subcategories.label: 'Include Sub-Categories'
-            unit.empty.value:            'Parent Category'
-            unit_precision.label:        'Unit Precision'
-            unit.label:                  'Unit of Quantity'
-            precision.label:             'Precision'
-            content_variant_type.label:  'Category Page'
-            materialized_path.label:     'Materialized path'
+            entity_label:                           'Category'
+            entity_plural_label:                    'Categories'
+            id.label:                               'ID'
+            titles.label:                           'Title'
+            short_descriptions.label:               'Short Description'
+            long_descriptions.label:                'Long Description'
+            small_image.label:                      'Small Image'
+            large_image.label:                      'Large Image'
+            left.label:                             'Tree left index'
+            level.label:                            'Tree level'
+            right.label:                            'Tree right index'
+            root.label:                             'Tree root'
+            child_categories.label:                 'Child categories'
+            parent_category.label:                  'Parent category'
+            products.label:                         'Products'
+            categories.label:                       'Product categories'
+            include_subcategories.label:            'Include Sub-Categories'
+            include_not_categorized_products.label: 'Include Not Categorized Products'
+            unit.empty.value:                       'Parent Category'
+            unit_precision.label:                   'Unit Precision'
+            unit.label:                             'Unit of Quantity'
+            precision.label:                        'Precision'
+            content_variant_type.label:             'Category Page'
+            materialized_path.label:                'Materialized path'
             slugs:
                 label:              'Slugs'
                 singular_label:     'Slug'
             slug_prototypes:
                 label:              'URL Slug'
                 singular_label:     'Slug Prototype'
+
+        all_products:
+            label: All Products
 
         sections:
             general: 'General'
@@ -38,6 +42,13 @@ oro:
 
         subcategory:
             entity_label:   'Subcategory'
+
+            form:
+                exclude_subcategories:
+                    label: 'Sub-Categories'
+                    include.label: 'Include, show as filter'
+                    exclude.label: 'Do not include'
+                    tooltip: 'This option can be used to include all products assigned to sub-categories (all levels) of the current category in addition to the products that are assigned directly. The first level sub-categories that have (directly or in any of their sub-categories) at least one product visible to the current user will be shown as category filter options.'
 
         menu:
             master_catalog.label:                  'Master Catalog'
@@ -58,14 +69,22 @@ oro:
         frontend:
             category.master_category.label: 'Master catalog'
             root.title: 'Welcome'
+            all_products:
+                title: All products page
 
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+                all_products.title: 'All Products'
+                special_pages.title: 'Special Pages'
             fields:
                 category_direct_url_prefix.label: 'Category URL prefix'
+                all_products_page_enabled:
+                    label: 'Enable all products page'
+                    tooltip: 'Once you enable All Products page, add it as a part of your web catalog (Marketing>Web Catalogs) or a frontend menu (System>Frontend Menus). To add All Products Page to the frontend menu, use the /catalog/allproducts URL. If you add All Products Page to a web catalog, the URL slug will be autogenerated or provided manually.'
 
         featured_categories:
+            label: 'Featured Categories'
             view:
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
@@ -77,3 +96,10 @@ oro:
             frontend_master_catalog:
                 label: Frontend Master Catalog
                 description: Frontend Master Catalog functionality allows to show categories structure on frontend page
+            all_products_page:
+                label: All products page
+                description: This feature enables a page where all products are shown on one page grouped by category
+
+        filter:
+            subcategory:
+                label: 'Sub-Categories'

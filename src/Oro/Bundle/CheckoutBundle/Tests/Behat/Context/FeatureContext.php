@@ -13,6 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -32,6 +35,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
         'Save shipping address' => 'oro_workflow_transition[save_shipping_address]'
     ];
+
+    /** @var string */
+    protected $currentPath;
 
     /**
      * @When /^I select "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
@@ -131,24 +137,72 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function checkoutStepContainsProducts($step, $element, TableNode $table)
     {
         $this->assertTitle($step);
+        $this->assertCheckoutGridContainsProducts($element, $table);
+    }
 
-        $requestAQuote = $this->createElement($element);
+    /**
+     * Checks if Checkout summary table contains following products with quantity and product unit
+     * Example:
+     * Then Checkout "Order Summary Products Grid" should contain products:
+     *      | 400-Watt Bulb Work Light | 5 | items |
+     *
+     * @Given /^Checkout "(?P<element>[\w\s]+)" should contain products:$/
+     *
+     * @param string $element
+     * @param TableNode $table
+     */
+    public function checkoutGridContainsProducts($element, TableNode $table)
+    {
+        $this->assertCheckoutGridContainsProducts($element, $table);
+    }
 
-        self::assertNotNull($requestAQuote);
+    /**
+     * Checks if Checkout summary table not contains following products with quantity and product unit
+     * Example:
+     * Then Checkout "Order Summary Products Grid" should not contain products:
+     *      | 400-Watt Bulb Work Light | 5 | items |
+     *
+     * @Given /^Checkout "(?P<element>[\w\s]+)" should not contain products:$/
+     *
+     * @param string $element
+     * @param TableNode $table
+     */
+    public function checkoutGridNotContainsProducts($element, TableNode $table)
+    {
+        $this->assertCheckoutGridContainsProducts($element, $table, false);
+    }
+
+    /**
+     * @param string $gridName
+     * @param TableNode $table
+     * @param bool $contains
+     */
+    protected function assertCheckoutGridContainsProducts($gridName, TableNode $table, $contains = true)
+    {
+        $grid = $this->createElement($gridName);
+
+        self::assertNotNull($grid);
 
         foreach ($table->getRows() as $row) {
             $productFound = false;
-            foreach ($requestAQuote->getElements($element.'ProductLine') as $productLine) {
-                if ($this->matchProductLine($productLine, $row, $element)) {
+            foreach ($grid->getElements($gridName . 'ProductLine') as $productLine) {
+                if ($this->matchProductLine($productLine, $row, $gridName)) {
                     $productFound = true;
                     break;
                 }
             }
 
-            self::assertTrue($productFound, sprintf(
-                'Product %s, QTY: %s %s has not been found',
-                ...$row
-            ));
+            if ($contains) {
+                self::assertTrue($productFound, sprintf(
+                    'Product %s, QTY: %s %s has not been found',
+                    ...$row
+                ));
+            } else {
+                self::assertFalse($productFound, sprintf(
+                    'Product %s, QTY: %s %s has been found',
+                    ...$row
+                ));
+            }
         }
     }
 
@@ -207,5 +261,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return true;
+    }
+
+    /**
+     * This step used for compare urls after some actions
+     *
+     * @Given /^(?:|I )keep in mind current path$/
+     */
+    public function iKeepInMindCurrentPath()
+    {
+        $parsedUrl = parse_url($this->getSession()->getCurrentUrl());
+        $this->currentPath = $parsedUrl['path'];
+    }
+
+    /**
+     * @Then path remained the same
+     */
+    public function urlRemainedTheSame()
+    {
+        $parsedUrl = parse_url($this->getSession()->getCurrentUrl());
+        self::assertEquals(
+            $this->currentPath,
+            $parsedUrl['path']
+        );
     }
 }

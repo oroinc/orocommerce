@@ -19,6 +19,13 @@ services:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
 
+    oro_catalog.provider.subcategory_provider:
+        class: 'Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider'
+        public: false
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_catalog.provider.category_tree_provider'
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository
@@ -97,6 +104,7 @@ services:
         arguments:
             - "@oro_catalog.handler.request_product"
             - "@oro_catalog.repository.category"
+            - '@oro_catalog.provider.subcategory_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
@@ -106,7 +114,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@event_dispatcher'
+            - '@oro_product.search.product_reindex_manager'
 
     oro_catalog.event_listener.orm.category_listener:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\CategoryListener'
@@ -121,7 +129,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_commerce_entity.extra_insert_entity_storage'
+            - '@oro_entity.doctrine_helper'
 
     oro_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener'
@@ -137,6 +145,7 @@ services:
         public: false
         arguments:
             - '@oro_catalog.manager.product_index_scheduler'
+            - '@oro_catalog.layout.data_provider.category.cache_cleaner'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preRemove }
@@ -173,6 +182,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_storage_cache'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
 
@@ -189,7 +199,7 @@ services:
             - '@oro_entity.doctrine.field_updates_checker'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'
@@ -214,3 +224,40 @@ services:
             - '%oro_catalog.entity.category.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_catalog.category_path.placeholder:
+        class: 'Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_catalog.category_counts.cache_provider:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_catalog_category_counts' ] ]
+
+    oro_catalog.category_counts.cache:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache'
+        public: false
+        arguments:
+            - '@oro_catalog.category_counts.cache_provider'
+            - '@oro_security.token_accessor'
+
+    oro_catalog.datagrid.extension.category_counts:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Extension\CategoryCountsExtension'
+        arguments:
+            - '@oro_datagrid.datagrid.manager.link'
+            - '@doctrine'
+            - '@oro_catalog.website_search.repository.product'
+            - '@oro_catalog.category_counts.cache'
+        calls:
+            - [addApplicableGrid, ['frontend-product-search-grid']]
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_catalog.website_search.repository.product:
+        class: 'Oro\Bundle\CatalogBundle\Search\ProductRepository'
+        parent: oro_website_search.repository.abstract
+        calls:
+            - [setEntityName, ['%oro_product.entity.product.class%']]

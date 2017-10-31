@@ -4,6 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 
 interface MessageFactoryInterface
 {
+    const ID = 'id';
+    const ENTITY_CLASS_NAME = 'entity_class_name';
+
     /**
      * @param object $visibility
      */

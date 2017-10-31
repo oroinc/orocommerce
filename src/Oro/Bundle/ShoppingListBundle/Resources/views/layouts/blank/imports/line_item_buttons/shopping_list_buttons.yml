@@ -12,4 +12,4 @@ layout:
            parentId: __root
            siblingId: ~
            options:
-              visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+              visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp") || context["is_logged_in"]'

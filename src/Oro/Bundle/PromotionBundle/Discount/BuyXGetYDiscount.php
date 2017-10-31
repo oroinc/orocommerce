@@ -58,7 +58,7 @@ class BuyXGetYDiscount extends AbstractDiscount implements DiscountProductUnitCo
     /**
      * {@inheritdoc}
      */
-    public function apply(DiscountContext $discountContext)
+    public function apply(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {

@@ -1,0 +1,47 @@
+services:
+    oro_ups.time_in_transit.request.builder_factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuilderFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+
+    oro_ups.time_in_transit.request.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\BasicTimeInTransitRequestFactory'
+        public: false
+        arguments:
+            - '@oro_ups.time_in_transit.request.builder_factory'
+
+    oro_ups.time_in_transit.result.factory.estimated_arrival:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\EstimatedArrivalFactory'
+        public: false
+
+    oro_ups.time_in_transit.result.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactory'
+        public: false
+        arguments:
+            - '@oro_ups.time_in_transit.result.factory.estimated_arrival'
+
+    oro_ups.provider.time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider'
+        arguments:
+            - '@oro_ups.time_in_transit.request.factory'
+            - '@oro_ups.client.factory_basic'
+            - '@oro_ups.time_in_transit.result.factory'
+            - '@logger'
+
+    oro_ups.cache.time_in_transit:
+        public: false
+        parent: oro.cache.abstract
+
+    oro_ups.time_in_transit.cache_provider.factory:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory'
+        arguments:
+            - '@oro_ups.cache.time_in_transit'
+        lazy: true
+
+    oro_ups.provider.cacheable_time_in_transit:
+        class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider'
+        decorates: oro_ups.provider.time_in_transit
+        arguments:
+            - '@oro_ups.provider.cacheable_time_in_transit.inner'
+            - '@oro_ups.time_in_transit.cache_provider.factory'

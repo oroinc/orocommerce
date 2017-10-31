@@ -54,10 +54,9 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $this->assertEquals(
             [
                 'success' => false,
-                'message' => '',
+                'message' => 'Operation "DELETE" execution is forbidden!',
                 'messages' => [],
                 'refreshGrid' => null,
-                'flashMessages' => [],
                 'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)

@@ -7,8 +7,22 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
+    oro_inventory.event_listener.product_highlight_low_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductHighlightLowInventoryFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
     oro_inventory.event_listener.category_manage_inventory_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.category_highlight_low_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryHighlightLowInventoryFormViewListener'
         parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
@@ -21,8 +35,22 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
+    oro_inventory.event_listener.product_low_inventory_threshold_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductLowInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
     oro_inventory.event_listener.category_inventory_threshold_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.category_low_inventory_threshold_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryLowInventoryThresholdFormViewListener'
         parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
@@ -87,6 +115,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
+    oro_inventory.event_listener.low_inventory_checkout_line_item_validation_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\LowInventoryCheckoutLineItemValidationListener
+        arguments:
+            - '@oro_inventory.validator.low_inventory_checkout_line_item_validator'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
+
     oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
         arguments:
@@ -101,6 +137,7 @@ services:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_inventory.handler.inventory_decrement_status_handler'
             - '@oro_entity.doctrine_helper'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
             - { name: kernel.event_listener, event: extendable_condition.before_order_create, method: onBeforeOrderCreate, priority: 10 }
@@ -111,6 +148,7 @@ services:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_entity.doctrine_helper'
             - '@translator'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate, priority: 10 }
 

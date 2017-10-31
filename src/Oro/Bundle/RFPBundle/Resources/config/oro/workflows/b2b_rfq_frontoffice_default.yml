@@ -64,6 +64,7 @@ workflows:
                         notes:
                             form_type: textarea
                             options:
+                                strip_tags: true
                                 required: true
                                 constraints:
                                   - NotBlank: ~

@@ -43,4 +43,4 @@ Feature: Product view page breadcrumbs
     When I follow "Lighting Products"
     And I click on "Headlamps category"
     And I click "View Details" for "PSKU1" product
-    Then I should see "Products categories / Headlamps / 220 Lumen Rechargeable Headlamp"
+    Then I should see "All Products / Headlamps / 220 Lumen Rechargeable Headlamp"

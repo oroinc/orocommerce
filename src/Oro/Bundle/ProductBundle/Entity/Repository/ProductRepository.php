@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -65,7 +66,8 @@ class ProductRepository extends EntityRepository
 
         if (count($productIds) > 0) {
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p.id', $productIds));
+                ->where($productsQueryBuilder->expr()->in('p.id', ':productIds'))
+                ->setParameter('productIds', $productIds);
         }
 
         return $productsQueryBuilder;
@@ -106,12 +108,44 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * This method is searching for products, not using any joined
+     * tables for fast performance.
+     *
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
      * @return QueryBuilder
      */
     public function getSearchQueryBuilder($search, $firstResult, $maxResults)
+    {
+        $productsQueryBuilder = $this
+            ->createQueryBuilder('p');
+
+        $productsQueryBuilder
+            ->where(
+                $productsQueryBuilder->expr()->orX(
+                    $productsQueryBuilder->expr()->like('p.skuUppercase', ':search'),
+                    $productsQueryBuilder->expr()->like('p.denormalizedDefaultNameUppercase', ':search')
+                )
+            )
+            ->setParameter('search', '%' . mb_strtoupper($search) . '%')
+            ->addOrderBy('p.id')
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+
+        return $productsQueryBuilder;
+    }
+
+    /**
+     * This method is searching for products
+     * through skus and localized product names.
+     *
+     * @param $search
+     * @param $firstResult
+     * @param $maxResults
+     * @return QueryBuilder
+     */
+    public function getLocalizedSearchQueryBuilder($search, $firstResult, $maxResults)
     {
         $productsQueryBuilder = $this
             ->createQueryBuilder('p');
@@ -134,6 +168,8 @@ class ProductRepository extends EntityRepository
 
     /**
      * @return QueryBuilder
+     *
+     * @deprecated Since 1.5 "name" is available as a column in product table
      */
     public function getProductWithNamesQueryBuilder()
     {
@@ -146,6 +182,8 @@ class ProductRepository extends EntityRepository
     /**
      * @param QueryBuilder $queryBuilder
      * @return $this
+     *
+     * @deprecated Since 1.5 "name" is available as a column in product table
      */
     public function selectNames(QueryBuilder $queryBuilder)
     {
@@ -170,7 +208,8 @@ class ProductRepository extends EntityRepository
         // Convert to uppercase for insensitive search in all DB
         $upperCaseSkus = array_map("strtoupper", $skus);
 
-        $qb = $this->getProductWithNamesQueryBuilder();
+        $qb = $this->createQueryBuilder('product')
+            ->select('product');
         $qb->where($qb->expr()->in('product.skuUppercase', ':product_skus'))
             ->setParameter('product_skus', $upperCaseSkus);
 
@@ -369,7 +408,8 @@ class ProductRepository extends EntityRepository
      */
     public function getFeaturedProductsQueryBuilder($quantity)
     {
-        $queryBuilder = $this->getProductWithNamesQueryBuilder()
+        $queryBuilder = $this->createQueryBuilder('product')
+            ->select('product')
             ->setMaxResults($quantity)
             ->orderBy('product.id', 'ASC');
         $this->filterByImageType($queryBuilder);
@@ -402,5 +442,52 @@ class ProductRepository extends EntityRepository
                 $fieldName => $fieldValue
             ]);
         }
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param FieldConfigModel $attribute
+     * @return array
+     */
+    public function getProductIdsByAttribute(FieldConfigModel $attribute)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->resetDQLPart('select')
+            ->select('p.id')
+            ->innerJoin('p.attributeFamily', 'f')
+            ->innerJoin('f.attributeGroups', 'g')
+            ->innerJoin('g.attributeRelations', 'r')
+            ->where('r.entityConfigFieldId = :id')
+            ->setParameter('id', $attribute->getId())
+            ->orderBy('p.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'id');
+    }
+
+    /**
+     * Returns array of product ids that have required attribute families
+     *
+     * @param array $attributeFamilies
+     * @return array
+     */
+    public function getProductIdsByAttributeFamilies(array $attributeFamilies)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->resetDQLPart('select')
+            ->select('p.id')
+            ->where('IDENTITY(p.attributeFamily) IN (:families)')
+            ->setParameter('families', $attributeFamilies)
+            ->orderBy('p.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($result, 'id');
     }
 }

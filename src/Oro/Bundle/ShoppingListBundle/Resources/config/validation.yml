@@ -25,6 +25,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
         label:
             - NotBlank: ~
+            - Length:
+                max: 255
 
 Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     constraints:

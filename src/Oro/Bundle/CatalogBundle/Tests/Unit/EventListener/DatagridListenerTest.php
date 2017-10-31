@@ -6,20 +6,21 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
     const QUERY_AND_PATH = '[source][query][where][and]';
+    const QUERY_OR_PATH = '[source][query][where][or]';
     const OPTIONS_CATEGORY = '[options][urlParams][categoryId]';
     const OPTIONS_SUBCATEGORY = '[options][urlParams][includeSubcategories]';
+    const OPTIONS_NOT_CATEGORIZED = '[options][urlParams][includeNotCategorizedProducts]';
     const CATEGORY_ID_ALIAS = 'productCategoryIds';
 
     /**
@@ -38,17 +39,16 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ],
                     ]
                 ],
+                'select' => [
+                    'productCategory.denormalizedDefaultTitle as ' . DatagridListener::CATEGORY_COLUMN
+                ]
             ],
         ],
         'columns' => [
             DatagridListener::CATEGORY_COLUMN => [
-                'label' => 'oro.catalog.category.entity_label'
-            ]
-        ],
-        'properties' => [
-            DatagridListener::CATEGORY_COLUMN => [
-                'type' => LocalizedValueProperty::NAME,
-                'data_name' => 'productCategory.titles',
+                'label' => 'oro.catalog.category.entity_label',
+                'data_name' => DatagridListener::CATEGORY_COLUMN
+
             ]
         ],
         'sorters' => [
@@ -163,6 +163,112 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             $includeSubcategoriesChoice,
             $event->getConfig()->offsetGetByPath(self::OPTIONS_SUBCATEGORY)
         );
+
+        $this->listener->onPreBuildProducts($event);
+        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
+    }
+
+    public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithoutCategoryIdUserRequest()
+    {
+        $this->requestProductHandler->expects($this->atLeastOnce())
+            ->method('getIncludeNotCategorizedProductsChoice')
+            ->willReturn(true);
+
+        $event = $this->createPreBuildEvent();
+        $this->listener->onPreBuildProducts($event);
+
+        $this->assertEquals(
+            ['productCategory.id IS NULL'],
+            $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
+        );
+
+        $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
+
+        $this->listener->onPreBuildProducts($event);
+        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
+    }
+
+    public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithoutCategoryId()
+    {
+        $event = $this->createPreBuildEvent();
+        $event->getParameters()->set('includeNotCategorizedProducts', true);
+
+        $this->requestProductHandler->expects($this->never())
+            ->method('getIncludeNotCategorizedProductsChoice');
+
+        $this->listener->onPreBuildProducts($event);
+
+        $this->assertEquals(
+            ['productCategory.id IS NULL'],
+            $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
+        );
+
+        $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
+
+        $this->listener->onPreBuildProducts($event);
+        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
+    }
+
+    public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithCategoryId()
+    {
+        $category = new Category();
+        $event = $this->createPreBuildEvent();
+        $event->getParameters()->set('includeNotCategorizedProducts', true);
+        $event->getParameters()->set('categoryId', 1);
+        $event->getParameters()->set('includeSubcategories', true);
+
+        $this->requestProductHandler->expects($this->never())
+            ->method('getIncludeNotCategorizedProductsChoice');
+        $this->requestProductHandler->expects($this->never())
+            ->method('getCategoryId');
+        $this->requestProductHandler->expects($this->never())
+            ->method('getIncludeSubcategoriesChoice');
+
+
+        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->atLeastOnce())->method('find')->with(1)->willReturn($category);
+        $repo->expects($this->atLeastOnce())
+            ->method('getChildrenIds')
+            ->with($category)
+            ->willReturn([2, 3]);
+
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with(self::DATA_CLASS)
+            ->willReturn($repo);
+
+        $this->listener->onPreBuildProducts($event);
+
+        $this->assertEquals(
+            [
+                'productCategoryIds' => [2, 3, 1],
+                'categoryId' => 1,
+                'includeSubcategories' => true,
+                'includeNotCategorizedProducts' => true
+            ],
+            $event->getParameters()->all()
+        );
+
+        $this->assertEquals(
+            [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)],
+            $event->getConfig()->offsetGetByPath(self::QUERY_AND_PATH)
+        );
+        $this->assertEquals(
+            [self::CATEGORY_ID_ALIAS],
+            $event->getConfig()->offsetGetByPath(DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH)
+        );
+
+        $this->assertEquals(1, $event->getConfig()->offsetGetByPath(self::OPTIONS_CATEGORY));
+        $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_SUBCATEGORY));
+
+        $this->assertEquals(
+            ['productCategory.id IS NULL'],
+            $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
+        );
+
+        $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
 
         $this->listener->onPreBuildProducts($event);
         $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));

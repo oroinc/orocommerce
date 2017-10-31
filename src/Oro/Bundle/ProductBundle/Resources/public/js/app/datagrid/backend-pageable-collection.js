@@ -8,6 +8,7 @@ define(function(require) {
     var PageableCollection = require('orodatagrid/js/pageable-collection');
     var LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
     var tools = require('oroui/js/tools');
+    var error = require('oroui/js/error');
 
     BackendPageableCollection = PageableCollection.extend({
         /**
@@ -46,14 +47,23 @@ define(function(require) {
 
             LayoutSubtreeManager.get('product_datagrid', options.data, function(content) {
                 var $data = $('<div/>').append(content);
-                var options = $data.find('[data-page-component-name=frontend-product-search-grid]')
-                                   .data('page-component-options');
-                var params = {
-                    responseJSON: options,
-                    gridContent: $data.find('.grid-body')
-                };
 
-                mediator.trigger('grid-content-loaded', params);
+                if ($data.find('[data-server-render]').length) {
+                    var options = $data.find('[data-server-render]').data('page-component-options');
+
+                    if (options) {
+                        var params = {
+                            responseJSON: options,
+                            gridContent: $data.find('.grid-body')
+                        };
+
+                        mediator.trigger('grid-content-loaded', params);
+                    } else {
+                        error.showError(_.__('oro_frontend.datagrid.requires.options'));
+                    }
+                } else {
+                    error.showError(_.__('oro_frontend.datagrid.requires.data'));
+                }
             });
         }
     });

@@ -1,0 +1,9 @@
+data:
+    type: 'pricelistcustomerfallbacks'
+    attributes:
+        fallback: 0
+    relationships:
+        customer:
+            data:
+                id: '<toString(@customer.level_1.1->id)>'
+                type: 'customers'

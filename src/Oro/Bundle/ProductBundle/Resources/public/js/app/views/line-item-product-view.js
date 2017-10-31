@@ -8,6 +8,7 @@ define(function(require) {
     LineItemProductView = BaseProductView.extend({
         elements: _.extend({}, BaseProductView.prototype.elements, {
             id: '[data-name="field__product"]',
+            quantity: '[data-name="field__quantity"]:first',
             unit: '[data-name="field__product-unit"]'
         }),
 

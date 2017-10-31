@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
@@ -13,10 +13,10 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -26,22 +26,15 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait, EntityTrait;
 
-    const PRODUCT_UNIT_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductUnit';
-
     /**
      * @var InvoiceLineItemType
      */
     protected $formType;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
      */
-    protected $registry;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
-     */
-    protected $productUnitLabelFormatter;
+    protected $productUnitsProvider;
 
     /**
      * {@inheritdoc}
@@ -50,43 +43,21 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('findBy')
-            ->will(
-                $this->returnValue(
-                    [
-                        'item' => 'item',
-                        'kg' => 'kilogram',
-                    ]
-                )
-            );
-
-        $this->registry->expects($this->any())
-            ->method('getRepository')
-            ->with(self::PRODUCT_UNIT_CLASS)
-            ->will($this->returnValue($repository));
-
         /** @var PriceRoundingService $roundingService */
         $roundingService = $this->getMockBuilder('Oro\Bundle\PricingBundle\Rounding\PriceRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new InvoiceLineItemType($this->registry, $this->productUnitLabelFormatter, $roundingService);
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->productUnitsProvider->expects($this->any())
+            ->method('getAvailableProductUnitsWithPrecision')
+            ->willReturn([
+                'item' => 0,
+                'kg' => 3,
+            ]);
+
+        $this->formType = new InvoiceLineItemType($roundingService, $this->productUnitsProvider);
         $this->formType->setDataClass('Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem');
-        $this->formType->setProductUnitClass(self::PRODUCT_UNIT_CLASS);
     }
 
     /**
@@ -215,5 +186,99 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
                     ->setPriceType(InvoiceLineItem::PRICE_TYPE_UNIT)
             ],
         ];
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider finishViewProvider
+     */
+    public function testFinishView(array $inputData, array $expectedData)
+    {
+        $view = new FormView();
+
+        $view->vars = $inputData['vars'];
+
+        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+
+        $this->formType->finishView($view, $form, []);
+
+        $this->assertEquals($expectedData, $view->vars);
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function finishViewProvider()
+    {
+        return [
+            'empty request product' => [
+                'input' => [
+                    'vars' => [
+                        'value' => null,
+                    ],
+                ],
+                'expected' => [
+                    'value' => null,
+                ],
+            ],
+            'empty product' => [
+                'input' => [
+                    'vars' => [
+                        'value' => new InvoiceLineItem(),
+                    ],
+                ],
+                'expected' => [
+                    'value' => new InvoiceLineItem(),
+                ],
+            ],
+            'existing product' => [
+                'input' => [
+                    'vars' => [
+                        'value' => (new InvoiceLineItem())
+                            ->setProduct($this->createProduct([
+                                'kg' => 3,
+                                'each' => 0,
+                                'item' => 1,
+                            ]))
+                    ],
+                ],
+                'expected' => [
+                    'value' => (new InvoiceLineItem())
+                        ->setProduct($this->createProduct([
+                            'kg' => 3,
+                            'each' => 0,
+                            'item' => 1,
+                        ])),
+                    'page_component_options' => [
+                        'modelAttr' => [
+                            'product_units' => [
+                                'kg' => 3,
+                                'each' => 0,
+                                'item' => 1,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $units
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createProduct(array $units = [])
+    {
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())
+            ->method('getAvailableUnitsPrecision')
+            ->willReturn($units);
+
+        return $product;
     }
 }

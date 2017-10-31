@@ -71,7 +71,8 @@ layout:
                     blockType: checkout_order_summary_line_items
                     options:
                         checkout: '=data["checkout"]'
-                        lineItemErrors: '=data["oro_line_item_errors"].getLineItemErrors(data["checkout"].getLineItems(), data["workflowItem"])'
+                        lineItemErrors: '=data["oro_line_item_violations"].getLineItemErrors(data["checkout"].getLineItems(), data["workflowItem"])'
+                        lineItemWarnings: '=data["oro_line_item_violations"].getLineItemWarnings(data["checkout"].getLineItems(), data["workflowItem"])'
                         lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
                         workflowItem: '=data["workflowItem"]'
                         configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["checkout"].getLineItems())'
@@ -101,8 +102,6 @@ layout:
                 __checkout_order_summary_line_item_price_total:
                     blockType: block
                 __checkout_order_summary_line_item_edit:
-                    blockType: block
-                __checkout_order_summary_line_item_errors:
                     blockType: block
 
                 __checkout_order_summary_totals_container:
@@ -148,8 +147,8 @@ layout:
                             __checkout_order_summary:
                                 __checkout_order_summary_header:
                                     __checkout_order_summary_title:
-                                        __checkout_order_summary_title_text: ~
-                                        __checkout_order_summary_subtitle: ~
+                                        __checkout_order_summary_title_text:
+                                            __checkout_order_summary_subtitle: ~
                                     __checkout_order_summary_edit_link: ~
                                 __checkout_order_summary_content:
                                     __checkout_order_summary_line_items_container:
@@ -166,6 +165,5 @@ layout:
                                                     __checkout_order_summary_line_item_price_per_item: ~
                                                 __checkout_order_summary_line_item_price_total_column:
                                                     __checkout_order_summary_line_item_price_total: ~
-                                            __checkout_order_summary_line_item_errors: ~
                                     __checkout_order_summary_totals_container:
                                         __checkout_order_summary_totals: ~

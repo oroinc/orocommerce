@@ -82,7 +82,8 @@ class SlugEntityGenerator
                     $slug->getRouteName(),
                     $slug->getRouteParameters(),
                     $slug->getUrl(),
-                    $slug->getSlugPrototype()
+                    $slug->getSlugPrototype(),
+                    $this->getLocalizationId($slug->getLocalization())
                 );
             } else {
                 $toRemove[] = $slug;
@@ -95,7 +96,8 @@ class SlugEntityGenerator
 
             $this->urlStorageCache->removeUrl(
                 $slugToRemove->getRouteName(),
-                $slugToRemove->getRouteParameters()
+                $slugToRemove->getRouteParameters(),
+                $this->getLocalizationId($slugToRemove->getLocalization())
             );
         }
 
@@ -110,7 +112,8 @@ class SlugEntityGenerator
                     $slug->getRouteName(),
                     $slug->getRouteParameters(),
                     $slug->getUrl(),
-                    $slug->getSlugPrototype()
+                    $slug->getSlugPrototype(),
+                    $this->getLocalizationId($slug->getLocalization())
                 );
             }
         }
@@ -214,7 +217,7 @@ class SlugEntityGenerator
     {
         $slugUrls = $this->prepareSlugUrls($entity);
 
-        foreach ($slugUrls as $localizationId => $slugUrl) {
+        foreach ($slugUrls as $slugUrl) {
             $url = $this->slugResolver->resolve($slugUrl, $entity);
 
             $slugPrototype = substr($url, strrpos($url, Slug::DELIMITER) + 1);

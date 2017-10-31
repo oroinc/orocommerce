@@ -240,6 +240,18 @@ action_groups:
                             - $.sourceCriteria
                             - $.currentWorkflow.name
 
+            - '@tree':
+                conditions:
+                    '@empty': $.currentUser
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout
+                        service: 'oro_checkout.repository.checkout'
+                        method: findCheckoutBySourceCriteria
+                        method_parameters:
+                            - $.sourceCriteria
+                            - $.currentWorkflow.name
+
             - '@call_service_method':
                 attribute: $.currentWebsite
                 service: oro_website.manager
@@ -287,6 +299,19 @@ action_groups:
                 attribute: $.checkout.currency
                 service: oro_pricing.user_currency_manager
                 method: getUserCurrency
+
+            # actualize line items
+            - '@call_service_method':
+                attribute: $.checkout.lineItems
+                service: oro_checkout.line_items.factory
+                method: create
+                method_parameters: [$.checkout.source.entity]
+
+            # calculate subtotal
+            - '@call_service_method':
+                service: oro_checkout.model.checkout_subtotal_updater
+                method: recalculateCheckoutSubtotals
+                method_parameters: [$.checkout]
 
             - '@flush_entity': $.checkout
 

@@ -48,13 +48,29 @@ operations:
                 route_parameters:
                     id: $.promotion_copy_id
 
+    oro_promotion_coupon_create:
+        label: oro.promotion.coupon.create.label
+        routes:
+            - oro_promotion_coupon_index
+        order: 20
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        actions:
+            - '@redirect': {route: oro_promotion_coupon_create}
+        button_options:
+            group: oro.promotion.coupon.coupons_actions.label
+        groups:
+            - create_coupon_buttons
+
     oro_promotion_coupon_generation:
         label: oro.promotion.coupon.generation.label
         routes:
             - oro_promotion_coupon_index
-        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
+        order: 50
         button_options:
-            icon: fa-list-alt
+            group: oro.promotion.coupon.coupons_actions.label
+        groups:
+            - create_coupon_buttons
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
         frontend_options:
             template: OroPromotionBundle:Coupon:generate.html.twig
             title: oro.promotion.coupon.generation.label
@@ -93,6 +109,125 @@ operations:
                 type: 'success'
             - '@refresh_grid': promotion-coupons-grid
 
+    oro_promotion_add_coupon_form:
+        label: oro.promotion.ui.add_coupon_code.label
+        frontend_options:
+            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+            options:
+                okText: oro.promotion.ui.apply_button.label
+        attributes:
+            addedCoupons:
+                label: ' '
+                type: array
+        form_options:
+            attribute_fields:
+                addedCoupons:
+                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+                    options:
+                        entity: $.data
+
+    oro_promotion_add_coupon:
+        label: oro.promotion.ui.add_coupon_code.label
+        extends: oro_promotion_add_coupon_form
+        button_options:
+            icon: fa-ticket
+        frontend_options:
+            title: oro.promotion.ui.add_coupon_codes.title
+            options:
+                okText: oro.promotion.ui.apply_button.label
+                width: 600
+                autoResize: true
+                modal: true
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+        routes:
+            - oro_order_view
+        acl_resource: oro_order_update
+        order: 20
+        actions:
+            - '@count':
+                attribute: $.addedCouponsCount
+                value: $.addedCoupons
+            - '@tree':
+                conditions:
+                    '@gt': [$.addedCouponsCount, 0]
+                actions:
+                    - '@foreach':
+                        array: $.addedCoupons
+                        value: $.coupon
+                        actions:
+                            - '@call_service_method':
+                                service: oro_promotion.provider.entity_coupons_provider
+                                method: createAppliedCouponByCoupon
+                                attribute: $.appliedCoupon
+                                method_parameters: [$.coupon]
+                            - '@call_method':
+                                object: $.data
+                                method: addAppliedCoupon
+                                method_parameters:
+                                    - $.appliedCoupon
+                    - '@call_service_method':
+                        service: oro_promotion.applied_promotion_manager
+                        method: createAppliedPromotions
+                        method_parameters: [$.data]
+                    - '@flush_entity': $.data
+                    - '@flash_message':
+                        message: oro.promotion.ui.order_add_coupon.added.message
+                        type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@eq': [$.addedCouponsCount, 0]
+                message: oro.promotion.ui.order_add_coupon.not_added.message
+                type: 'success'
+
+    oro_promotion_coupon_unassign:
+        label: oro.promotion.ui.unassign_coupon.label
+        page_reload: false
+        button_options:
+            icon: fa-times
+        acl_resource: [EDIT, $.data]
+        frontend_options:
+            confirmation: oro.promotion.ui.unassign_coupon.confirmation.message
+        datagrids:
+            - 'promotion-coupons-assigned-to-promotion-grid'
+        order: 50
+        actions:
+            - '@assign_value': [$.data.promotion, null]
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.promotion.ui.unassign_coupon.success.message
+                type: 'success'
+            - '@refresh_grid': $.gridName
+
+    oro_promotion_assigned_coupon_delete:
+        extends: DELETE
+        replace:
+            - exclude_entities
+            - exclude_datagrids
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+            - datagrid_options
+            - preconditions
+        page_reload: false
+        preconditions:
+            '@not_blank': $.data
+        actions:
+            - '@refresh_grid': $.gridName
+        datagrids:
+            - promotion-coupons-assigned-to-promotion-grid
+        datagrid_options:
+            mass_action:
+                entity_name: Oro\Bundle\PromotionBundle\Entity\Coupon
+                data_identifier: coupon.id
+                type: delete
+                label: oro.grid.action.delete
+                link: delete_link
+                icon: trash-o
+
 action_groups:
     oro_promotion_duplicate:
         parameters:
@@ -129,6 +264,7 @@ action_groups:
                 target: $.promotion
                 attribute: $.promotionCopy
                 settings:
+                    - [[emptyCollection], [propertyName, [coupons]]]
                     - [[keep], [propertyName, [organization]]]
                     - [[keep], [propertyName, [owner]]]
                     - [[setNull], [propertyName, [id]]]

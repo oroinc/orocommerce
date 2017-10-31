@@ -3,17 +3,14 @@
 @regression
 Feature: Default RFQ Workflows
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    Given I login as administrator and use in "second_session" as "Manager"
-
   Scenario: Create RFQ from Quick Order Form and Check Internal status: Open and Customer status: Submitted
-    Given I operate as the Buyer
+    Given I login as administrator and use in "first_session" as "Admin"
+    And I login as AmandaRCole@example.org the "Buyer" at "second_session" session
     When I click "Account"
     And I click "Requests For Quote"
     And I click view 0110 in grid
     Then I should see RFQ status is "Submitted"
-    When I continue as the Manager
+    When I continue as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0110 in grid
     Then I should see RFQ with:
@@ -28,7 +25,7 @@ Feature: Default RFQ Workflows
     And I click view 0110 in grid
     When I click "Cancel"
     Then I should see RFQ status is "Cancelled"
-    When I continue as the Manager
+    When I continue as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0110 in grid
     Then I should see RFQ with:
@@ -47,7 +44,7 @@ Feature: Default RFQ Workflows
     Then I follow "Request For Quote"
     And I should see RFQ status is "Submitted"
     And I remember Request id as "Submitted request Id"
-    Then I continue as the Manager
+    Then I continue as the Admin
     When I go to Sales/Requests For Quote
     And I click view 0110 in grid
     And I should see Resubmitted RFQ with:
@@ -68,7 +65,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Cancelled             |
 
   Scenario: Delete RFQ and Check Internal status: Deleted and Customer status: Cancelled
-    Given I proceed as the Manager
+    Given I proceed as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0110 in grid
     When I click "Delete"
@@ -82,7 +79,7 @@ Feature: Default RFQ Workflows
     Then I should see "404 Not Found"
 
   Scenario: Undelete RFQ and Check Internal status: Deleted and Customer status: Cancelled
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0110 in grid
     When I click "Undelete"
@@ -97,7 +94,7 @@ Feature: Default RFQ Workflows
     Then I should see RFQ status is "Cancelled"
 
   Scenario: Undelete RFQ and Check previous internal status after undelete
-    Given I proceed as the Manager
+    Given I proceed as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0111 in grid
     And I should see RFQ with:
@@ -113,7 +110,7 @@ Feature: Default RFQ Workflows
     Then I continue as the Buyer
     When I open RFQ view page on frontend with id "Deleted RFQ"
     Then I should see "404 Not Found"
-    When I switch to the "Manager" session
+    When I switch to the "Admin" session
     And I open RFQ view page on backend with id "Deleted RFQ"
     And I click "Undelete"
     Then I should see RFQ with:
@@ -122,7 +119,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
 
   Scenario: Create RFQ and Check Internal status: Processed and Customer status: Submitted
-    Given I act like a Manager
+    Given I act like a Admin
     And I go to Sales/Requests For Quote
     And I click view 0112 in grid
     And I should see RFQ with:
@@ -146,7 +143,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
 
   Scenario: Create RFQ and Check Internal status: More Info Requested and Customer status: Requires Attention
-    Given I act like a Manager
+    Given I act like a Admin
     And I go to Sales/Requests For Quote
     And I click view 0112 in grid
     And I should see RFQ with:
@@ -155,35 +152,37 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
     When I click "Request More Information"
     And I fill "Request More Information Popup Form" with:
-      | Notes | Message for customer |
+      | Notes | Message for customer <script>alert(1)</script> |
     And I click "Submit"
     Then I should see RFQ with:
       | PO Number       | 0112                |
       | Internal Status | More Info Requested |
       | Customer Status | Requires Attention  |
+    And I should see "Message for customer alert(1)"
     Then I continue as the Buyer
     And I click "Account"
     And I click "Requests For Quote"
     And I click view 0112 in grid
     Then I should see RFQ status is "Requires Attention"
-    And I should see that "Request Notes Block" contains "Message for customer"
+    And I should see that "Request Notes Block" contains "Message for customer alert(1)"
     When I click "Provide More Information"
     And I fill "Request More Information Popup Form" with:
-      | Notes | Answer for manager |
+      | Notes | Answer for manager <script>alert(1)</script> |
     And I click "Submit"
     And I reload the page
-    Then I should see that "Request Notes Block" contains "Answer for manager"
+    Then I should see that "Request Notes Block" contains "Answer for manager alert(1)"
     And I should see RFQ status is "Submitted"
-    When I continue as the Manager
+    When I continue as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0112 in grid
     Then I should see RFQ with:
       | PO Number       | 0112      |
       | Internal Status | Open      |
       | Customer Status | Submitted |
+    And I should see "Answer for manager alert(1)"
 
   Scenario: Cancel RFQ after Customer status: Requires Attention
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0113 in grid
     And I should see RFQ with:
@@ -205,7 +204,7 @@ Feature: Default RFQ Workflows
     Then I should see RFQ status is "Requires Attention"
     When I click "Cancel"
     Then I should see RFQ status is "Cancelled"
-    Then I proceed as the Manager
+    Then I proceed as the Admin
     When I go to Sales/Requests For Quote
     And I click view 0113 in grid
     Then I should see RFQ with:
@@ -214,7 +213,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Cancelled             |
 
   Scenario: Reprocess RFQ after Customer status: Cancelled By Customer
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0113 in grid
     And I should see RFQ with:
@@ -228,7 +227,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
 
   Scenario: Delete RFQ with Customer status: Requires Attention and Check status after Undelete
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0113 in grid
     And I should see RFQ with:
@@ -248,7 +247,7 @@ Feature: Default RFQ Workflows
     When I proceed as the Buyer
     And I open RFQ view page on frontend with id "Deleted RFQ"
     Then I should see "404 Not Found"
-    When I continue as the Manager
+    When I continue as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0113 in grid
     Then I click "Undelete"
@@ -263,7 +262,7 @@ Feature: Default RFQ Workflows
     Then I should see RFQ status is "Requires Attention"
 
   Scenario: Decline RFQ and Check Internal status: Declined and Customer status: Cancelled
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0114 in grid
     And I should see RFQ with:
@@ -282,7 +281,7 @@ Feature: Default RFQ Workflows
     Then I should see RFQ status is "Cancelled"
 
   Scenario: Reprocess RFQ after Internal Status: Declined
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0114 in grid
     And I should see RFQ with:
@@ -296,7 +295,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Submitted |
 
   Scenario: Delete RFQ after Internal Status: Declined
-    Given I operate as the Manager
+    Given I operate as the Admin
     And I go to Sales/Requests For Quote
     And I click view 0114 in grid
     And I should see RFQ with:

@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
-
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
@@ -33,14 +30,14 @@ class CreateOrderLineItemValidationListener
     protected $translator;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
+    /**
+     * @var CheckoutLineItemsManager
+     */
+    protected $checkoutLineItemsManager;
 
     /**
      * @var array
@@ -51,15 +48,18 @@ class CreateOrderLineItemValidationListener
      * @param InventoryQuantityManager $inventoryQuantityManager
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
      */
     public function __construct(
         InventoryQuantityManager $inventoryQuantityManager,
         DoctrineHelper $doctrineHelper,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
         $this->inventoryQuantityManager = $inventoryQuantityManager;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
     /**
@@ -72,8 +72,8 @@ class CreateOrderLineItemValidationListener
             return;
         }
 
-        $lineItems = $event->getContext()->getEntity()->getSource()->getEntity()->getLineItems();
-        /** @var CheckoutLineItemInterface $lineItem */
+        $lineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
+        /** @var OrderLineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             if (!$this->inventoryQuantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
@@ -102,8 +102,6 @@ class CreateOrderLineItemValidationListener
         return ($context instanceof WorkflowItem
             && in_array($context->getCurrentStep()->getName(), self::$allowedValidationSteps)
             && $context->getEntity() instanceof Checkout
-            && $context->getEntity()->getSource() instanceof CheckoutSource
-            && $context->getEntity()->getSource()->getEntity() instanceof CheckoutLineItemsHolderInterface
         );
     }
 

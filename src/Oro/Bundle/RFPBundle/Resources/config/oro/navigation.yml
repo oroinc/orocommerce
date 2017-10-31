@@ -59,7 +59,10 @@ navigation:
 
             oro_customer_menu:
                 children:
-                    oro_rfp_frontend_request_index: ~
+                    oro_rfp_frontend_request_index:
+                        children:
+                            oro_rfp_frontend_request_create: ~
+                            oro_rfp_frontend_request_view: ~
 
     titles:
         oro_rfp_request_index:           ~
@@ -70,3 +73,4 @@ navigation:
         oro_rfp_frontend_request_update: 'RFQ #%id% - oro.ui.edit'
         oro_rfp_frontend_request_index:  'oro.frontend.rfp.request.entity_plural_label'
         oro_rfp_frontend_request_view:   'RFQ #%id%: %firstName% %lastName%'
+        oro_rfp_frontend_request_success: 'Thank You For Your Request!'

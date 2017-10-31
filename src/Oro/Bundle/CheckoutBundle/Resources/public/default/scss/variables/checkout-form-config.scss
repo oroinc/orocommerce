@@ -29,6 +29,9 @@ $checkout-form-payment-methods-form-margin: $offset-y 0 0 !default;
 $checkout-form-req-text-margin: $offset-y 0 0 !default;
 $checkout-form-req-text-color: get-color('primary', 'dark') !default;
 
+$checkout-form-asterix-offset: 0 $offset-x-s !default;
+$checkout-form-asterix-color: $checkout-form-req-text-color !default;
+
 $checkout-form-back-padding: 0 $offset-x-m !default;
 
 // Tablet

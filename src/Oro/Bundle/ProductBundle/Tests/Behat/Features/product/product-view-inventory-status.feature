@@ -10,7 +10,6 @@ Feature: Product admin view page inventory status color
     Then I should see that "InStockInventoryStatus" contains "In Stock"
 
   Scenario: Checking "out of stock" status color
-    Given I login as administrator
-    And I go to Products/ Products
+    Given I go to Products/ Products
     And I click View "PSKU2" in grid
     Then I should see that "OutOfStockInventoryStatus" contains "Out of Stock"

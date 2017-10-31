@@ -1,0 +1,49 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision2:
+        unit: '@item'
+        precision: '0'
+    precision_configurable:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValue2:
+        string: 'Product 2'
+    locValueFamily:
+        string: 'Product Attribute Family'
+    locValueConfigurable:
+        string: 'Product Configurable'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@locValueFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product2:
+        sku: 'SKU2'
+        primaryUnitPrecision: '@precision2'
+        addName: ['@locValue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product_configurable:
+        sku: 'SKU_CONFIGURABLE'
+        type: 'configurable'
+        primaryUnitPrecision: '@precision_configurable'
+        addName: ['@locValueConfigurable']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    productVariant1:
+        parentProduct: '@product_configurable'
+        product: '@product2'
+        visible: true
+

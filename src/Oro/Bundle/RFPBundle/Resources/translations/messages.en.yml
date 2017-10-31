@@ -94,6 +94,8 @@ oro:
                 sales.title: 'Sales'
                 rfq.title: 'Request For Quote'
                 notifications.title: 'Notifications'
+                guest_rfp.title: 'Guest RFQ'
+                guest_rfp_owner.title: 'Guest RFQ Owner Settings'
             fields:
                 feature_enabled.label: 'Enable RFQ'
                 frontend_feature_enabled.label: 'Enable RFQ (Store Front)'
@@ -112,7 +114,12 @@ oro:
                         label: 'Notify the owner of the customer'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
-
+                guest_rfp:
+                    title: 'Enable Guest RFQ'
+                    tooltip: 'Enable Guest RFQ'
+                default_guest_rfp_owner:
+                    title: 'Default guest RFQ owner'
+                    tooltip: 'Default guest RFQ owner'
         message:
             requestproductitem.unit.removed: '{title} - removed'
 
@@ -199,7 +206,7 @@ oro:
                 sections:
                     general: 'Information'
                     notes.label: 'Notes'
-                    back.label: '< Back to List'
+                    back.label: 'Back to List'
                     request_products:
                         label: 'Line Items'
                         columns:
@@ -207,6 +214,12 @@ oro:
                             quantity.label: 'Requested Quantity'
                             price.label: 'Target Price'
                 resubmitted.message: 'Your <a href="%viewLink%">Request For Quote</a> has been successfully resubmitted.'
+                success:
+                    thank_you.label: 'Thank You For Your Request!'
+                    request_number.label: 'Your request number is'
+                    click_to_review.label: 'click here to review'
+                    receive_email.label: 'You will receive a confirmation email with your request details.'
+                    done.label: 'Done'
             requestproduct:
                 product_sku.label: 'Item #:'
                 comment.label: 'Notes'
@@ -215,5 +228,8 @@ oro:
             data_storage:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'
+            toolbar-actions:
+                btn:
+                    print: 'Print RFQ'
 
 oro.order.orderlineitem.offers.label: 'Requested QTY and price'

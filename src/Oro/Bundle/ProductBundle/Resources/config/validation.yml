@@ -99,6 +99,13 @@ Oro\Bundle\ProductBundle\Entity\ProductImage:
     properties:
         product:
             - NotBlank: ~
+        types:
+            - Valid: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeCollection: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductImageType:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType: ~
 
 Oro\Bundle\ProductBundle\Model\ProductRow:
     properties:

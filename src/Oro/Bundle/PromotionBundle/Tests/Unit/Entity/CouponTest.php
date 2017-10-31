@@ -14,11 +14,11 @@ class CouponTest extends \PHPUnit_Framework_TestCase
     public function testPropertyAccessors()
     {
         $now = new \DateTime('now');
-        $this->assertPropertyAccessors(
+        static::assertPropertyAccessors(
             new Coupon(),
             [
                 ['code', 'some string'],
-                ['totalUses', 1],
+                ['enabled', true],
                 ['usesPerCoupon', 1],
                 ['usesPerPerson', 1],
                 ['owner', new BusinessUnit()],

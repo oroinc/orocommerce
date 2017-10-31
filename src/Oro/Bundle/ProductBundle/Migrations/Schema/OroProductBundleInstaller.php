@@ -89,7 +89,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**
@@ -155,6 +155,8 @@ class OroProductBundleInstaller implements
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('sku_uppercase', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('name', 'string', ['length' => 255, 'notnull' => true]);
+        $table->addColumn('name_uppercase', 'string', ['length' => 255, 'notnull' => true]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -169,6 +171,16 @@ class OroProductBundleInstaller implements
         $table->addIndex(['updated_at'], 'idx_oro_product_updated_at', []);
         $table->addIndex(['sku'], 'idx_oro_product_sku', []);
         $table->addIndex(['sku_uppercase'], 'idx_oro_product_sku_uppercase', []);
+        $table->addIndex(['name'], 'idx_oro_product_default_name', []);
+        $table->addIndex(['name_uppercase'], 'idx_oro_product_default_name_uppercase', []);
+        $table->addIndex(['created_at', 'id', 'organization_id'], 'idx_oro_product_created_at_id_organization');
+        $table->addIndex(['updated_at', 'id', 'organization_id'], 'idx_oro_product_updated_at_id_organization');
+        $table->addIndex(['sku', 'id', 'organization_id'], 'idx_oro_product_sku_id_organization');
+        $table->addIndex(['status', 'id', 'organization_id'], 'idx_oro_product_status_id_organization');
+        $table->addIndex(['is_featured'], 'idx_oro_product_featured', [], ['where' => '(is_featured = true)']);
+        $table->addIndex(['id', 'updated_at'], 'idx_oro_product_id_updated_at');
+        $table->addIndex(['is_new_arrival'], 'idx_oro_product_new_arrival', [], ['where' => '(is_new_arrival = true)']);
+        $table->addIndex(['status'], 'idx_oro_product_status');
         $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_oro_product_primary_unit_precision_id');
     }
 
@@ -483,6 +495,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_image_id', 'integer');
         $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addIndex(['type'], 'idx_oro_product_image_type_type');
         $table->setPrimaryKey(['id']);
     }
 

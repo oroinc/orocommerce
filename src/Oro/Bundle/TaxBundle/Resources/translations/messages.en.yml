@@ -102,7 +102,7 @@ oro.tax:
             tax_matcher.title: 'Matcher'
             tax_digital_products.title: 'Digital Products'
             us_sales_tax.title: 'US Sales Tax'
-            eu_vat_tax.title: 'EU VAT tax'
+            eu_vat_tax.title: 'EU VAT Tax'
             origin_address.title: 'Origin'
             shipping.title: 'Shipping'
             shipping_tax.title: 'Shipping Tax'

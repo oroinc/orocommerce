@@ -4,12 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
@@ -18,11 +20,6 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
      * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $quantityValidator;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
 
     /**
      * @var LineItemValidationListener
@@ -39,8 +36,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityValidator = $this->getMockBuilder(QuantityToOrderValidatorService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator, $this->translator);
+        $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator);
         $this->event = $this->getMockBuilder(LineItemValidateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,6 +62,53 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->never())
             ->method('addError');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
+    }
+
+    /**
+     * @dataProvider sourceEntityDataProvider
+     *
+     * @param string $sourceEntityClass
+     * @param bool $expected
+     */
+    public function testOnLineItemValidateForCheckoutLineItem($sourceEntityClass, $expected)
+    {
+        $sourceEntity = $this->createMock($sourceEntityClass);
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+        $lineItem = $this->createMock(CheckoutLineItem::class);
+        $lineItem->expects($this->once())
+            ->method('getCheckout')
+            ->willReturn($checkout);
+        $this->event->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection([$lineItem]));
+
+        $lineItem->expects($this->exactly((int) $expected))
+            ->method('getProduct');
+        $this->lineItemValidationListener->onLineItemValidate($this->event);
+    }
+
+    /**
+     * @return array
+     */
+    public function sourceEntityDataProvider()
+    {
+        return [
+            'quoteDemand' => [
+                'sourceEntityClass' => QuoteDemand::class,
+                'expected' => false,
+            ],
+            'shoppingList' => [
+                'sourceEntityClass' => ShoppingList::class,
+                'expected' => true,
+            ],
+            'some other source entity' => [
+                'sourceEntityClass' => Checkout::class,
+                'expected' => false,
+            ],
+        ];
     }
 
     public function testOnLineItemValidateAddsMaxErrorToEvent()

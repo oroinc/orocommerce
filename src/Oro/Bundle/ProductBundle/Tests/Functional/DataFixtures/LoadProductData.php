@@ -7,21 +7,24 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -35,6 +38,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6 = 'product-6';
     const PRODUCT_7 = 'product-7';
     const PRODUCT_8 = 'product-8';
+    const PRODUCT_9 = 'product-9';
 
     const PRODUCT_1_DEFAULT_NAME = 'product-1.names.default';
     const PRODUCT_2_DEFAULT_NAME = 'product-2.names.default';
@@ -44,6 +48,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6_DEFAULT_NAME = 'product-6.names.default';
     const PRODUCT_7_DEFAULT_NAME = 'product-7.names.default';
     const PRODUCT_8_DEFAULT_NAME = 'product-8.names.default';
+    const PRODUCT_9_DEFAULT_NAME = 'product-9.names.default';
 
     const PRODUCT_1_DEFAULT_SLUG_PROTOTYPE = 'product-1.slugPrototypes.default';
     const PRODUCT_2_DEFAULT_SLUG_PROTOTYPE = 'product-2.slugPrototypes.default';
@@ -53,6 +58,41 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6_DEFAULT_SLUG_PROTOTYPE = 'product-6.slugPrototypes.default';
     const PRODUCT_7_DEFAULT_SLUG_PROTOTYPE = 'product-7.slugPrototypes.default';
     const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
+    const PRODUCT_9_DEFAULT_SLUG_PROTOTYPE = 'product-9.slugPrototypes.default';
+
+    const PRODUCTS_1_2_6_7 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+    ];
+
+    const PRODUCTS_1_2_3_6_7 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_3,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+    ];
+
+    const PRODUCTS_1_2_3_6_7_8_9 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_3,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+        LoadProductData::PRODUCT_8,
+        LoadProductData::PRODUCT_9
+    ];
+
+    const PRODUCTS_1_2_6_7_8_9 = [
+        LoadProductData::PRODUCT_1,
+        LoadProductData::PRODUCT_2,
+        LoadProductData::PRODUCT_6,
+        LoadProductData::PRODUCT_7,
+        LoadProductData::PRODUCT_8,
+        LoadProductData::PRODUCT_9,
+    ];
 
     /**
      * {@inheritdoc}
@@ -60,8 +100,9 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
+            LoadLocalizationData::class,
+            LoadProductUnits::class,
+            LoadAttributeFamilyData::class,
         ];
     }
 
@@ -110,8 +151,13 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setType($item['type'])
                 ->setFeatured($item['featured']);
 
+            if (isset($item['attributeFamily'])) {
+                $product->setAttributeFamily($this->getReference($item['attributeFamily']));
+            }
+
             $this->addAdvancedValue($item, $product);
             $this->addEntityFieldFallbackValue($item, $product);
+            $this->addProductImages($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -232,6 +278,31 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             foreach ($item['shortDescriptions'] as $slugPrototype) {
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
+        }
+    }
+
+    /**
+     * @param array $item
+     * @param Product $product
+     */
+    public function addProductImages(array $item, Product $product)
+    {
+        if (empty($item['images'])) {
+            return;
+        }
+
+        foreach ($item['images'] as $image) {
+            $imageFile = new File();
+            $imageFile->setFilename($item['productCode']);
+            $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
+
+            $productImage = new ProductImage();
+            $productImage->setImage($imageFile);
+
+            $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
+            $productImage->addType($productType);
+
+            $product->addImage($productImage);
         }
     }
 

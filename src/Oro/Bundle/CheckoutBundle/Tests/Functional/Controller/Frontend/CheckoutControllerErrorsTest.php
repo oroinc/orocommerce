@@ -98,8 +98,9 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
+        // because checkout line items updating on start checkout, removed product will still in the Checkout
         $noProductsError = $translator->trans(
-            'oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message'
+            'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
         );
         static::assertContains($noProductsError, $crawler->html());
     }
@@ -213,7 +214,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         $this->disableAllPaymentRules();
 
-        //Order Review step with error for no shipping rules
+        //Order Review step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
         static::assertContains('The selected payment method is not available.', $crawler->html());

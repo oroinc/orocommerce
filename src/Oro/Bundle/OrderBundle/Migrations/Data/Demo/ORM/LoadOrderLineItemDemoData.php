@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -52,8 +52,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData',
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData'
+            LoadOrderDemoData::class,
+            LoadProductPriceDemoData::class,
         ];
     }
 
