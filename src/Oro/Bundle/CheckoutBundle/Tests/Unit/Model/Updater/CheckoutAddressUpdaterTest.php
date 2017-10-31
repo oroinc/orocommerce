@@ -13,7 +13,7 @@ use Oro\Component\Duplicator\DuplicatorFactory;
 use Oro\Component\Duplicator\DuplicatorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutAddressUpdaterTest extends \PHPUnit_Framework_TestCase
+class CheckoutAddressUpdaterTest extends CheckoutUpdaterTestCase
 {
     use EntityTrait;
 
@@ -30,9 +30,6 @@ class CheckoutAddressUpdaterTest extends \PHPUnit_Framework_TestCase
     protected static $duplicatorSettings = [
         [['setNull'], ['propertyName', ['label']]]
     ];
-
-    /** @var CheckoutAddressUpdater */
-    protected $updater;
 
     protected function setUp()
     {
@@ -140,26 +137,5 @@ class CheckoutAddressUpdaterTest extends \PHPUnit_Framework_TestCase
         $expectedData->set(CheckoutAddressUpdater::SHIPPING_ADDRESS_ATTRIBUTE, $newShippingAddress);
 
         $this->assertEquals($expectedData, $data);
-    }
-
-    public function testIsApplicableUnsupportedWorkflow()
-    {
-        $this->assertFalse($this->updater->isApplicable(new WorkflowDefinition(), new Order()));
-    }
-
-    public function testIsApplicableUnsupportedSource()
-    {
-        $workflow = new WorkflowDefinition();
-        $workflow->setExclusiveRecordGroups(['b2b_checkout_flow']);
-
-        $this->assertFalse($this->updater->isApplicable($workflow, new \stdClass()));
-    }
-
-    public function testIsApplicable()
-    {
-        $workflow = new WorkflowDefinition();
-        $workflow->setExclusiveRecordGroups(['b2b_checkout_flow']);
-
-        $this->assertTrue($this->updater->isApplicable($workflow, new Order()));
     }
 }

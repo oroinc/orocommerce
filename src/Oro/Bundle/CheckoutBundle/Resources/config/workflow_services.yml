@@ -16,3 +16,9 @@ services:
                 - [[shallowCopy], [propertyType, ['\DateTime']]]
         tags:
             - { name: oro_workflow.data_updater }
+
+    oro_checkout.workflow_data.shipping_method_updater:
+        class: 'Oro\Bundle\CheckoutBundle\Model\Updater\CheckoutShippingMethodUpdater'
+        public: false
+        tags:
+            - { name: oro_workflow.data_updater, priority: 10 }

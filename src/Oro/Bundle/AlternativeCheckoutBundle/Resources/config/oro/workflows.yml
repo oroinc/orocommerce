@@ -639,7 +639,6 @@ workflows:
                                     state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - '@assign_value': [$shipping_method, null]
                     - '@call_method':
                         conditions:
                             '@not_empty': $checkout.billingAddress.customerAddress

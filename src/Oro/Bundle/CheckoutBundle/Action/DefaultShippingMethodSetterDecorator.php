@@ -30,8 +30,12 @@ class DefaultShippingMethodSetterDecorator
         }
         $sourceEntity = $checkout->getSourceEntity();
 
-        if ($sourceEntity instanceof PreConfiguredShippingMethodConfigurationInterface) {
+        if ($sourceEntity instanceof PreConfiguredShippingMethodConfigurationInterface
+            && $sourceEntity->getShippingMethod()
+            && $sourceEntity->getShippingMethodType()
+        ) {
             $checkout->setShippingMethod($sourceEntity->getShippingMethod());
+            $checkout->setShippingMethodType($sourceEntity->getShippingMethodType());
         } else {
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }

@@ -7,11 +7,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Bundle\WorkflowBundle\WorkflowData\WorkflowDataUpdaterInterface;
 use Oro\Component\Duplicator\DuplicatorFactory;
 use Oro\Component\Duplicator\DuplicatorInterface;
 
-class CheckoutAddressUpdater implements WorkflowDataUpdaterInterface
+class CheckoutAddressUpdater extends AbstractCheckoutUpdater
 {
     const BILLING_ADDRESS_ATTRIBUTE = 'billing_address';
     const SHIPPING_ADDRESS_ATTRIBUTE = 'shipping_address';
@@ -95,14 +94,5 @@ class CheckoutAddressUpdater implements WorkflowDataUpdaterInterface
         }
 
         return $this->duplicator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isApplicable(WorkflowDefinition $workflow, $source)
-    {
-        return in_array('b2b_checkout_flow', $workflow->getExclusiveRecordGroups(), true) &&
-            $source instanceof Order;
     }
 }
