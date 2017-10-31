@@ -20,7 +20,7 @@ Supports all magnetic stripe cards
 Color: Purple","Width: 6”
 Height: 3”
 Weight: .6 lb.",95,85,90,item,0,simple,1,1,short,1
-1GB82,Women’s Slip-On Clog,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Medical Apparel,"Catalog Page: 5235
+1GB82,Women’s Slip-On Clog,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Footwear,"Catalog Page: 5235
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant
@@ -430,7 +430,7 @@ Shoulder strap included","Length: 6”
 Width: 9”
 Height: 5”
 Weight: 8 lb. each",200,190,195,set,0,simple,0,0,,1
-7NM98,Men’s Slip On Clogs,"These clogs are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels and in the insole allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Medical Apparel,"Catalog Page: 0826
+7NM98,Men’s Slip On Clogs,"These clogs are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels and in the insole allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Footwear,"Catalog Page: 0826
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant
@@ -486,7 +486,7 @@ Includes keyboard drawer
 Locks with 2 keys each","Height: 42”
 Width: 71”
 Depth: 83”",425.59,415.59,420.59,item,0,simple,0,0,,1
-8NN54,Women’s Nursing Shoe,"These shoes are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Medical Apparel,"Catalog Page: 5437
+8NN54,Women’s Nursing Shoe,"These shoes are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Footwear,"Catalog Page: 5437
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant
@@ -543,7 +543,7 @@ Weight: .3 lb.",250,240,245,item,0,simple,0,0,,2
 65% polyester / 35% cotton
 One chest pocket with pencil slot
 V-neck top",,18.99,8.99,13.99,piece,0,simple,0,0,,2
-9OL25,Women’s White Slip-On Clogs,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Medical Apparel,"Catalog Page: 3583
+9OL25,Women’s White Slip-On Clogs,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Footwear,"Catalog Page: 3583
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant
@@ -561,7 +561,7 @@ Color: Blue","Length: 7.2”
 Width: 5.6”
 Height: 3”
 Weight: 1 lb.",95.99,85.99,90.99,item,0,simple,0,0,,2
-WLCH1,Foldable Wheelchair,Foldable Wheelchair features a powder coated steel frame with durable nylon upholstery and padded removable armrests. Composite magnesium alloy wheels with maintenance-free bearings and composite handrims make for a smooth ride.,Hospital Wheelchairs,"Powder coated steel frame
+WLCH1,Foldable Wheelchair,Foldable Wheelchair features a powder coated steel frame with durable nylon upholstery and padded removable armrests. Composite magnesium alloy wheels with maintenance-free bearings and composite handrims make for a smooth ride.,Patient Transportation Equipment,"Powder coated steel frame
 Durable nylon upholstery
 Composite magnesium alloy wheels with maintenance-free bearings
 Composite footplates
@@ -570,6 +570,6 @@ Composite handrims
 220lb. weight capacity
 Removable armrests
 Warranty: 3 years on welds, 2 years on upholstery and wheel locks",,245,235,240,item,0,simple,0,0,,2
-TAG1,"Medical Tag, Stainless Steel","This medical identifications tag is a convenient and practical way to wear your medical information. Measuring 1"" x 3/4"", the stainless steel tag can be engraved on the back.",Medical Identification Tags,,,8.45,,,item,0,simple,0,0,,1
-TAG2,"Medical Tag, Sterling Silver","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag can be engraved on the back.",Medical Identification Tags,,,,,,item,0,simple,0,0,,2
-TAG3,"Medical Tag, Sterling Silver, Rhodium Plated","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag is coated with a fine, Rhodium finish, helping the tag stay shiny and resistant to tarnish. The tag can be engraved on the back.",Medical Identification Tags,,,,,,item,0,simple,0,0,,1
+TAG1,"Medical Tag, Stainless Steel","This medical identifications tag is a convenient and practical way to wear your medical information. Measuring 1"" x 3/4"", the stainless steel tag can be engraved on the back.",Patient Identification,,,8.45,,,item,0,simple,0,0,,1
+TAG2,"Medical Tag, Sterling Silver","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag can be engraved on the back.",Patient Identification,,,,,,item,0,simple,0,0,,2
+TAG3,"Medical Tag, Sterling Silver, Rhodium Plated","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag is coated with a fine, Rhodium finish, helping the tag stay shiny and resistant to tarnish. The tag can be engraved on the back.",Patient Identification,,,,,,item,0,simple,0,0,,1

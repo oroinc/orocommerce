@@ -36,7 +36,7 @@ class ProductTestHelper
 
     const CATEGORY_ID = 1;
     const CATEGORY_MENU_NAME = 'Master Catalog';
-    const CATEGORY_NAME = 'Products Categories';
+    const CATEGORY_NAME = 'All Products';
 
     const FIRST_IMAGE_FILENAME = 'image1.gif';
     const SECOND_IMAGE_FILENAME = 'image2.gif';

@@ -58,6 +58,22 @@ class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        unset(
+            $this->entityFallbackResolver,
+            $this->doctrineHelper,
+            $this->inventoryLevelRepository,
+            $this->warehouseConfigConverter,
+            $this->lowInventoryProvider
+        );
+
+        parent::tearDown();
+    }
+
+    /**
      * @param Product          $product
      * @param ProductUnit|null $productUnit
      * @param bool             $highlightLowInventory
