@@ -601,6 +601,15 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_form_availability }
 
+    oro_product.layout.data_provider.product_list_matrix_form_availability:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListMatrixFormAvailabilityProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_product.layout.data_provider.product_form_availability'
+            - '@oro_ui.user_agent_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_list_matrix_form_availability }
+
     oro_product.layout.data_provider.product_variant:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider'
         arguments:

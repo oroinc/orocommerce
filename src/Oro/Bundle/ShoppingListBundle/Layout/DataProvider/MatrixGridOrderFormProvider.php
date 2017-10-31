@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -21,11 +22,24 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     private $matrixOrderManager;
 
     /**
+     * @var TwigRenderer
+     */
+    private $twigRenderer;
+
+    /**
      * @param MatrixGridOrderManager $matrixOrderManager
      */
     public function setMatrixOrderManager($matrixOrderManager)
     {
         $this->matrixOrderManager = $matrixOrderManager;
+    }
+
+    /**
+     * @param TwigRenderer $twigRenderer
+     */
+    public function setTwigRenderer(TwigRenderer $twigRenderer)
+    {
+        $this->twigRenderer = $twigRenderer;
     }
 
     /**
@@ -55,5 +69,17 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
             [],
             ['cacheKey' => md5(serialize($collection))]
         );
+    }
+
+    /**
+     * @param Product $product
+     * @param ShoppingList|null $shoppingList
+     * @return string
+     */
+    public function getMatrixOrderFormHtml(Product $product, ShoppingList $shoppingList = null)
+    {
+        $formView = $this->getMatrixOrderFormView($product, $shoppingList);
+
+        return $this->twigRenderer->searchAndRenderBlock($formView, 'widget');
     }
 }

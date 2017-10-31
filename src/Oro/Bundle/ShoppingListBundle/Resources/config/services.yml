@@ -137,6 +137,7 @@ services:
                 - '@router'
             calls:
                 - [setMatrixOrderManager, ['@oro_shopping_list.provider.matrix_grid_order_manager']]
+                - [setTwigRenderer, ['@twig.form.renderer']]
             tags:
                 - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
 
@@ -388,3 +389,16 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.shopping_list.manager'
+
+    oro_shopping_list.datagrid.extension.frontend_product_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.shopping_list.manager'
+            - '@oro_shopping_list.layout.data_provider.matrix_order_form'
+            - '@oro_product.layout.data_provider.product_list_matrix_form_availability'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '@oro_pricing.layout.data_provider.frontend_product_prices'
+        tags:
+            - { name: oro_datagrid.extension }

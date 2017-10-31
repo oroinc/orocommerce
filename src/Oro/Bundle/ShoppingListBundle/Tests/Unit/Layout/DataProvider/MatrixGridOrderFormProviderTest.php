@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
+use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -134,6 +135,45 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($actualFormView1, $actualFormView2);
         $this->assertSame($formView1, $actualFormView1);
         $this->assertSame($formView2, $actualFormView2);
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     *
+     * @dataProvider getLineItemsDataProvider
+     */
+    public function testGetMatrixOrderFormHtml(ShoppingList $shoppingList = null)
+    {
+        $collection = new MatrixCollection();
+
+        /** @var Product $product **/
+        $product = $this->getEntity(Product::class);
+
+        $this->matrixOrderManager->expects($this->once())
+            ->method('getMatrixCollection')
+            ->with($product, $shoppingList)
+            ->willReturn($collection);
+
+        $form = $this->createMock(FormInterface::class);
+        $formView = $this->createMock(FormView::class);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(MatrixCollectionType::class, $collection, [])
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $twigRenderer = $this->createMock(TwigRenderer::class);
+        $this->provider->setTwigRenderer($twigRenderer);
+
+        $twigRenderer->expects($this->once())
+            ->method('searchAndRenderBlock')
+            ->with($formView, 'widget');
+
+        $this->provider->getMatrixOrderFormHtml($product, $shoppingList);
     }
 
     /**
