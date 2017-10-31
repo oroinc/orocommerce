@@ -22,3 +22,11 @@ services:
         public: false
         tags:
             - { name: oro_workflow.data_updater, priority: 10 }
+
+    oro_checkout.workflow_data.payment_method_updater:
+        class: 'Oro\Bundle\CheckoutBundle\Model\Updater\CheckoutPaymentMethodUpdater'
+        public: false
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_workflow.data_updater, priority: 20 }
