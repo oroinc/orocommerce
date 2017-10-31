@@ -84,6 +84,11 @@ define(function(require) {
             params = collection.processFiltersParams(params, null, 'filters');
 
             return params;
+        },
+
+        _onAjaxSuccess: function(data, textStatus, jqXHR) {
+            mediator.trigger('shopping-list:refresh');
+            AddProductsAction.__super__._onAjaxSuccess.apply(this, arguments);
         }
     });
 
