@@ -4,7 +4,6 @@ Oro\Bundle\ProductBundle\OroProductBundle
 Table of Contents
 -----------------
  - [Description](#description)
- - [Bundle responsibilities](#bundle-responsibilities)
  - [Expected dependencies](#expected-dependencies)
  - Formatting
     - [Product Unit Value Formatting](./Resources/doc/product-unit-value-formatting.md)
@@ -19,7 +18,9 @@ Table of Contents
 Description:
 ------------
 
-The OroProductBundle introduces the notion of products, which is the foundation of most commerce business cases and functionality, into the system. This bundle will also provide a UI for product management by utilizing functionality of other bundles. Or, with the exception of the OroPricingBundle dependency (which ideally should be a replaceable dependency), it would be better to say that other feature bundles will be providing their pieces of product management functionality and corresponding UI pieces for the product management UI, once installed in the system.
+OroProductBundle introduces the notion of products into the system. Products are the foundation of most commerce business cases and functionality. 
+
+This bundle will provide a UI for product management by utilizing the functionality of other bundles. In other words, bundles of other features will be providing their pieces of product management functionality and the corresponding UI pieces for the product management UI (once installed in the system), with the exception of OroPricingBundle dependency (which should ideally be a replaceable dependency). 
 
 The OroProductBundle is expected to be admin-heavy, so a matching bundle for non-admin applications will be introduced as well.
 

@@ -5,8 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedDiscountException;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedTypeException;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
-
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DiscountFactory
@@ -40,11 +39,13 @@ class DiscountFactory
 
     /**
      * @param DiscountConfiguration $configuration
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @return DiscountInterface
      */
-    public function create(DiscountConfiguration $configuration, Promotion $promotion = null): DiscountInterface
-    {
+    public function create(
+        DiscountConfiguration $configuration,
+        PromotionDataInterface $promotion = null
+    ): DiscountInterface {
         $type = $configuration->getType();
         if (!array_key_exists($type, $this->typeToServiceMap)) {
             throw new UnsupportedTypeException(sprintf('Unknown discount type %s', $type));

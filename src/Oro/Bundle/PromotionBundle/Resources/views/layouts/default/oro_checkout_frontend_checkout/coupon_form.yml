@@ -1,0 +1,49 @@
+layout:
+    imports:
+        -
+            id: oro_promotion_coupon_form
+            namespace: coupon_form
+            root: checkout_order_summary_totals_container
+    actions:
+        - '@move':
+            id: coupon_form_container
+            parentId: checkout_order_summary_totals_container
+            siblingId: checkout_order_summary_totals
+            prepend: true
+
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_rows_container
+            optionName: appliedCoupons
+            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"])'
+
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_rows_container
+            optionName: appliedCouponsPromotions
+            optionValue: '=data["oro_promotion_applied_coupons"].getPromotionsForAppliedCoupons(data["checkout"])'
+
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_container
+            optionName: visible
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"])'
+
+        - '@setOption':
+            id: coupon_form_expand_link
+            optionName: visible
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"]) != true'
+
+        - '@setOption':
+            id: coupon_form_widget_container
+            optionName: opened
+            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"])'
+
+        - '@setOption':
+            id: coupon_form_container
+            optionName: entity
+            optionValue: '=data["checkout"]'
+
+        - '@setOption':
+            id: coupon_form_applied_coupons_list_row_delete_button
+            optionName: attr.class
+            optionValue: 'btn btn--link btn--baseline'
+
+    conditions: 'context["isAppliedCouponsAware"] == true'

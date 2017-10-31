@@ -79,4 +79,16 @@ class ProductWithSizeAndColor extends Product
 
         return $this;
     }
+
+    /**
+     * @param int $id
+     *
+     * @return ProductWithSizeAndColor
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 }

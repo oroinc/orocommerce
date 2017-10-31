@@ -9,12 +9,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class ShippingMethodsListener extends AbstractMethodsListener
 {
     /**
-     * @var ShippingMethodsConfigsRulesProviderInterface
+     * @var MethodsConfigsRulesByContextProviderInterface
      */
     private $shippingProvider;
 
@@ -34,17 +34,17 @@ class ShippingMethodsListener extends AbstractMethodsListener
     private $orderAddressSecurityProvider;
 
     /**
-     * @param OrderAddressProvider $addressProvider
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderAddressManager $orderAddressManager
-     * @param ShippingMethodsConfigsRulesProviderInterface $shippingProvider
-     * @param CheckoutShippingContextFactory $contextFactory
+     * @param OrderAddressProvider                          $addressProvider
+     * @param OrderAddressSecurityProvider                  $orderAddressSecurityProvider
+     * @param OrderAddressManager                           $orderAddressManager
+     * @param MethodsConfigsRulesByContextProviderInterface $shippingProvider
+     * @param CheckoutShippingContextFactory                $contextFactory
      */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
-        ShippingMethodsConfigsRulesProviderInterface $shippingProvider,
+        MethodsConfigsRulesByContextProviderInterface $shippingProvider,
         CheckoutShippingContextFactory $contextFactory
     ) {
         parent::__construct($orderAddressManager);
@@ -62,8 +62,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
     {
         $checkout->setShippingAddress($address);
         $shippingContext = $this->contextFactory->create($checkout);
-        $shippingMethodsConfigs = $this->shippingProvider
-            ->getFilteredShippingMethodsConfigsRegardlessDestination($shippingContext);
+        $shippingMethodsConfigs = $this->shippingProvider->getShippingMethodsConfigsRules($shippingContext);
 
         return count($shippingMethodsConfigs) > 0;
     }

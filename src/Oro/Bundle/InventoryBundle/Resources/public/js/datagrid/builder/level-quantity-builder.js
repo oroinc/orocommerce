@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/formatter/number-formatter'
+define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/number'
 ], function($, _, mediator, NumberFormatter) {
     'use strict';
 
@@ -11,11 +11,6 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
          * @property {Grid}
          */
         grid: null,
-
-        /**
-         * @property {NumberFormatter}
-         */
-        numberFormatter: null,
 
         /**
          * @property {Object}
@@ -48,8 +43,6 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
             var quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
             this.options = _.defaults(quantityValidationOptions || {}, this.options);
 
-            this.numberFormatter = new NumberFormatter();
-
             this._formatInitialQuantity();
             this._applyValidationToGrid();
 
@@ -63,17 +56,17 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
          */
         _formatInitialQuantity: function() {
             var quantityColumn = this.options.quantityColumnName;
-            var numberFormatter = this.numberFormatter;
-
             // apply rounding
             _.each(this.grid.collection.fullCollection.models, function(model) {
                 model.on('change:' + quantityColumn, function(model, value) {
                     // convert to numeric value to support correct grid sorting
                     if (!isNaN(value)) {
-                        model.set(quantityColumn, numberFormatter.toRaw(value), {silent: true});
+                        model.set(quantityColumn, NumberFormatter.unformat(value), {silent: true});
                     }
                 });
-                model.set(quantityColumn, numberFormatter.fromRaw(model.get(quantityColumn)));
+                model.set(quantityColumn, NumberFormatter.formatDecimal(model.get(quantityColumn), {
+                    grouping_used: false
+                }));
             }, this);
 
             // render editable cells again to refresh data

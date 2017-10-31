@@ -58,6 +58,11 @@ oro:
             not_blank: 'The file cannot be blank'
             type_restriction: 'You cannot choose more than %maxNumber% images with type "%type%"'
 
+        product_image_type:
+            invalid_type: 'The provided product image type "%type%" is not valid'
+            already_exists: 'The provided product image type "%type%" already exists in product image collection'
+            type_restriction: 'You cannot choose multiple types with the same value "%type%"'
+
         product_collection:
             unique_segment_name.message: 'This name already in use'
             blank_filters_or_included: "Should be specified filters or added some products manually."

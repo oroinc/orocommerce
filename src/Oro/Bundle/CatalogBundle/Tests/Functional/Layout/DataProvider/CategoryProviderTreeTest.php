@@ -81,7 +81,7 @@ class CategoryProviderTreeTest extends WebTestCase
         $level1 = array_pop($parents);
         $this->assertEquals('category_1', $level1->getTitle());
         $level0 = array_pop($parents);
-        $this->assertEquals('Products categories', $level0->getTitle());
+        $this->assertEquals('All Products', $level0->getTitle());
 
         $this->assertCount(0, $parents);
     }

@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +32,14 @@ class BaseCouponType extends AbstractType
                 ]
             )
             ->add(
+                'enabled',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.enabled.label',
+                ]
+            )
+            ->add(
                 'usesPerCoupon',
                 IntegerType::class,
                 [
@@ -46,6 +55,14 @@ class BaseCouponType extends AbstractType
                     'required' => false,
                     'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_person',
                     'label' => 'oro.promotion.coupon.uses_per_person.label',
+                ]
+            )
+            ->add(
+                'validFrom',
+                OroDateTimeType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.valid_from.label',
                 ]
             )
             ->add(

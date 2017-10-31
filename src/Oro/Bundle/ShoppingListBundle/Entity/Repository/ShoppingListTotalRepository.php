@@ -12,13 +12,16 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 class ShoppingListTotalRepository extends EntityRepository
 {
     /**
-     * @param array $cplIds
+     * Invalidate ShoppingList subtotals by given Combined Price List ids
+     *
+     * @param array $combinedPriceListIds
      */
-    public function invalidateByCpl(array $cplIds)
+    public function invalidateByCombinedPriceList(array $combinedPriceListIds)
     {
-        if (empty($cplIds)) {
+        if (!$combinedPriceListIds) {
             return;
         }
+
         $qb = $this->createQueryBuilder('total');
         $qb->select('DISTINCT total.id')
             ->join(
@@ -36,7 +39,7 @@ class ShoppingListTotalRepository extends EntityRepository
             ->where($qb->expr()->in('productPrice.priceList', ':priceLists'))
             ->andWhere('total.valid = :isValid')
             ->setParameter(':isValid', true)
-            ->setParameter('priceLists', $cplIds);
+            ->setParameter('priceLists', $combinedPriceListIds);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
@@ -84,8 +87,9 @@ class ShoppingListTotalRepository extends EntityRepository
     protected function invalidateTotals(\Iterator $iterator)
     {
         $ids = [];
-        $qbUpdate = $this->_em->createQueryBuilder()
-            ->update($this->_entityName, 'total')
+        $qbUpdate = $this->_em->createQueryBuilder();
+        $qbUpdate->update($this->_entityName, 'total')
+            ->where($qbUpdate->expr()->in('total.id', ':totalIds'))
             ->set('total.valid', ':valid')
             ->setParameter('valid', false);
         $i = 0;
@@ -93,14 +97,14 @@ class ShoppingListTotalRepository extends EntityRepository
             $ids[] = $total['id'];
             $i++;
             if ($i % 500 === 0) {
-                $qbUpdate->where($qbUpdate->expr()->in('total.id', $ids))
+                $qbUpdate->setParameter('totalIds', $ids)
                     ->getQuery()
                     ->execute();
                 $ids = [];
             }
         }
         if (!empty($ids)) {
-            $qbUpdate->where($qbUpdate->expr()->in('total.id', $ids))
+            $qbUpdate->setParameter('totalIds', $ids)
                 ->getQuery()
                 ->execute();
         }

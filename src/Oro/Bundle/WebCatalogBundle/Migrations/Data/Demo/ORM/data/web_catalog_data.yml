@@ -20,10 +20,10 @@
             defaultTitle: Products
             defaultSlugPrototype: products
             contentVariants:
-                -    
-                    type: cms_page
+                -
+                    type: product_collection
                     params:
-                        title: "Bonum negas esse divitias"
+                        title: "All Products"
                     isDefault: true
             parentScopeUsed: true
             children:
@@ -32,9 +32,10 @@
                     defaultSlugPrototype: "by-category"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: category_page
                             params:
-                                title: "Ita fit cum gravior"
+                                title: "All Products"
+                                excludeSubcategories: false
                             isDefault: true
                     parentScopeUsed: true
                     children:
@@ -42,7 +43,7 @@
                             defaultTitle: Industrial
                             defaultSlugPrototype: industrial
                             contentVariants:
-                                -    
+                                -
                                     type: cms_page
                                     params:
                                         title: "Haec quo modo conveniant"
@@ -54,7 +55,7 @@
                                     defaultSlugPrototype: "lighting-products"
                                     parentScopeUsed: true
                                     contentVariants:
-                                        -    
+                                        -
                                             type: category_page
                                             params:
                                                 title: "Lighting Products"
@@ -76,31 +77,76 @@
                             defaultSlugPrototype: Medical
                             contentVariants:
                                 -
-                                    type: cms_page
+                                    type: category_page
                                     params:
-                                        title: "Haec quo modo conveniant"
+                                        title: "Medical"
+                                        excludeSubcategories: false
                                     isDefault: true
                             parentScopeUsed: true
                             children:
-                                "Medical Apparel":
-                                    defaultTitle: "Medical Apparel"
-                                    defaultSlugPrototype: "medical-apparel"
+                                "Uniforms":
+                                    defaultTitle: "Uniforms"
+                                    defaultSlugPrototype: "uniforms"
                                     parentScopeUsed: true
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
-                                                title: "Medical Apparel"
+                                                title: "Medical Uniforms"
                                             isDefault: true
                                     children: ~
+                                "Footwear":
+                                    defaultTitle: "Footwear"
+                                    defaultSlugPrototype: "footwear"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Footwear"
+                                            isDefault: true
+                                    children: ~
+                                "Identification":
+                                    defaultTitle: "Identification"
+                                    defaultSlugPrototype: "identification"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Patient Identification"
+                                            isDefault: true
+                                    children: ~
+                                "Transportation":
+                                    defaultTitle: "Transportation"
+                                    defaultSlugPrototype: "transportation"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Patient Transportation Equipment"
+                                            isDefault: true
+                                    children: ~
+                        "All products":
+                            defaultTitle: "All Products"
+                            defaultSlugPrototype: "all-products"
+                            parentScopeUsed: true
+                            contentVariants:
+                                -
+                                    type: system_page
+                                    params:
+                                        route: "oro_catalog_frontend_product_allproducts"
+                                    isDefault: true
+                            children: ~
                 "By Brand":
                     defaultTitle: "By Brand"
                     defaultSlugPrototype: "by-brand"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: product_collection
                             params:
-                                title: "Ita fit cum gravior"
+                                title: "All Products"
                             isDefault: true
                     parentScopeUsed: true
                     children:

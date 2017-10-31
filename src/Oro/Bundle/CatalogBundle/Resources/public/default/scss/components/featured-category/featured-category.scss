@@ -10,6 +10,8 @@
         max-width: 100%;
         max-height: 260px;
 
+        margin: 0 auto;
+
         border: 1px solid get-color('additional', 'light');
     }
 
@@ -52,6 +54,10 @@
 
         &__name {
             font-size: $base-font-size--m;
+        }
+
+        &__image {
+            display: inline-block;
         }
     }
 }

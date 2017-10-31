@@ -5,10 +5,10 @@ namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class CurrencyFiltrationService implements RuleFiltrationServiceInterface
+class CurrencyFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -26,13 +26,13 @@ class CurrencyFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $currentCurrency = $context[ContextDataConverterInterface::CURRENCY] ?? null;
         $filteredOwners = array_values(array_filter(
             $ruleOwners,
             function ($ruleOwner) use ($currentCurrency) {
-                return $ruleOwner instanceof Promotion
+                return $ruleOwner instanceof PromotionDataInterface
                     && $this->isPromotionForCurrentCurrency($ruleOwner, $currentCurrency);
             }
         ));
@@ -41,12 +41,12 @@ class CurrencyFiltrationService implements RuleFiltrationServiceInterface
     }
 
     /**
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @param string $currentCurrency
      *
      * @return bool
      */
-    private function isPromotionForCurrentCurrency(Promotion $promotion, $currentCurrency): bool
+    private function isPromotionForCurrentCurrency(PromotionDataInterface $promotion, $currentCurrency): bool
     {
         $discountConfiguration = $promotion->getDiscountConfiguration();
         $options = $discountConfiguration->getOptions();

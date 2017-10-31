@@ -1,20 +1,18 @@
-@skip
-@regression
 @fixture-OroVisibilityBundle:category_tree_with_product_visibility.yml
 Feature: Product Visibility
 
   Scenario: Create two session
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    And I login as administrator and use in "second_session" as "Manager"
+    And I login as administrator and use in "second_session" as "Admin"
     When I continue as the Buyer
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should see "PSKU2"
     Then I should see "PSKU3"
 
   Scenario: Hide product for customer group
-    Given I operate as the Manager
+    Given I operate as the Admin
     When I go to Products/Master Catalog
     When I expand "Retail Supplies" in tree
     And I click "Printers"
@@ -23,6 +21,7 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Parent Category |
       | Inventory Threshold                | 1000            |
+      | Low Inventory Threshold            | 0               |
     And I submit form
     Then I should see "Category has been saved" flash message
 
@@ -33,17 +32,18 @@ Feature: Product Visibility
     And I fill "Category Form" with:
       | Visibility To Customer First Group | Hidden |
       | Inventory Threshold                | 1000   |
+      | Low Inventory Threshold            | 0      |
     And I submit form
     Then I should see "Category has been saved" flash message
     When I continue as the Buyer
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should not see "PSKU2"
     Then I should not see "PSKU3"
 
   Scenario: Show product for customer
-    Given I operate as the Manager
+    Given I operate as the Admin
     And click "Visibility"
     And click "Visibility to Customers"
     And I fill "Category Form" with:
@@ -57,7 +57,7 @@ Feature: Product Visibility
     Then I should not see "PSKU3"
 
   Scenario: Show product for All
-    Given I operate as the Manager
+    Given I operate as the Admin
     When I go to Products/Master Catalog
     And click "Retail Supplies"
     And click "Visibility"
@@ -69,7 +69,7 @@ Feature: Product Visibility
     When I continue as the Buyer
     And I click "Sign Out"
     And I click "Lighting Products"
-    And I click "Products categories"
+    And I click "All Products"
     Then I should see "PSKU1"
     Then I should not see "PSKU2"
     Then I should not see "PSKU3"

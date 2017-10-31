@@ -12,6 +12,7 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
@@ -64,7 +65,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -137,9 +138,10 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('title', 'string', ['length' => 255, 'notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-
+        $table->addIndex(['title'], 'idx_oro_category_default_title', []);
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::ORO_CATALOG_CATEGORY_TABLE_NAME);
     }
 
@@ -391,6 +393,29 @@ class OroCatalogBundleInstaller implements
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
             $table = $schema->getTable('oro_web_catalog_variant');
+            $table->addColumn(
+                'exclude_subcategories',
+                'boolean',
+                [
+                    OroOptions::KEY => [
+                        ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                        'entity' => ['label' => 'oro.catalog.category.include_subcategories.label'],
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                        ],
+                        'datagrid' => [
+                            'is_visible' => false
+                        ],
+                        'form' => [
+                            'is_enabled' => false,
+                        ],
+                        'view' => ['is_displayable' => false],
+                        'merge' => ['display' => false],
+                        'dataaudit' => ['auditable' => true],
+                    ],
+                ]
+            );
 
             $this->extendExtension->addManyToOneRelation(
                 $schema,

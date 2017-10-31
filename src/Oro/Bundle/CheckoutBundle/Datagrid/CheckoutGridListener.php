@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -36,11 +35,6 @@ class CheckoutGridListener
     const USER_CURRENCY_PARAMETER = 'user_currency';
 
     /**
-     * @var Cache
-     */
-    protected $cache;
-
-    /**
      * @var UserCurrencyManager
      */
     protected $currencyManager;
@@ -56,11 +50,6 @@ class CheckoutGridListener
     protected $totalProcessor;
 
     /**
-     * @var CheckoutGridHelper
-     */
-    protected $checkoutGridHelper;
-
-    /**
      * @var EntityNameResolver
      */
     private $entityNameResolver;
@@ -70,23 +59,17 @@ class CheckoutGridListener
      * @param CheckoutRepository $checkoutRepository
      * @param TotalProcessorProvider $totalProcessor
      * @param EntityNameResolver $entityNameResolver
-     * @param Cache $cache
-     * @param CheckoutGridHelper $checkoutGridHelper
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
         CheckoutRepository $checkoutRepository,
         TotalProcessorProvider $totalProcessor,
-        EntityNameResolver $entityNameResolver,
-        Cache $cache,
-        CheckoutGridHelper $checkoutGridHelper
+        EntityNameResolver $entityNameResolver
     ) {
         $this->currencyManager = $currencyManager;
         $this->checkoutRepository = $checkoutRepository;
         $this->totalProcessor = $totalProcessor;
         $this->entityNameResolver = $entityNameResolver;
-        $this->cache = $cache;
-        $this->checkoutGridHelper = $checkoutGridHelper;
     }
 
     /**
@@ -95,33 +78,13 @@ class CheckoutGridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $key    = $config->getName();
-
-        if ($this->cache->contains($key)) {
-            $updates = $this->cache->fetch($key);
-        } else {
-            $updates = $this->checkoutGridHelper->getUpdates($config);
-            $this->cache->save($key, $updates);
-        }
-
-        if ($updates) {
-            $query = $config->getOrmQuery();
-            $query->addSelect($updates['selects']);
-            $query->setLeftJoins(array_merge($query->getLeftJoins(), $updates['joins']));
-            $config->offsetAddToArrayByPath('[columns]', $updates['columns']);
-            $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
-            $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
-            $config->offsetAddToArrayByPath(
-                DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
-                $updates['bindParameters']
-            );
-
-            if (in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
-                $event->getDatagrid()
-                      ->getParameters()
-                      ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
-            }
-        }
+        $config->offsetSetByPath(
+            DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
+            [self::USER_CURRENCY_PARAMETER]
+        );
+        $event->getDatagrid()
+              ->getParameters()
+              ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
     }
 
     /**
@@ -165,7 +128,7 @@ class CheckoutGridListener
         );
 
         $counts = $this->checkoutRepository->countItemsPerCheckout($ids);
-        $sources = $this->checkoutRepository->getSourcePerCheckout($ids);
+        $checkouts = $this->checkoutRepository->getCheckoutsByIds($ids);
 
         foreach ($records as $record) {
             $id = $record->getValue('id');
@@ -174,8 +137,8 @@ class CheckoutGridListener
             $ch = $this->checkoutRepository->find($id);
             $data = $ch->getCompletedData();
 
-            if (isset($sources[$id])) {
-                $record->addData(['startedFrom' => $this->getStartedFrom($sources[$id])]);
+            if (isset($checkouts[$id])) {
+                $record->addData(['startedFrom' => $this->getStartedFrom($checkouts[$id]->getSource()->getEntity())]);
             }
 
             if ($record->getValue('completed')) {
@@ -183,7 +146,7 @@ class CheckoutGridListener
                     $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
                 }
 
-                $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'total', 'subtotal', 'currency']);
+                $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'currency']);
                 continue;
             }
 
@@ -191,24 +154,22 @@ class CheckoutGridListener
                 $record->addData(['itemsCount' => $counts[$id]]);
             }
 
-            if (isset($sources[$id])) {
-                $this->updateTotal($sources[$id], $record);
+            if (isset($checkouts[$id]) && !$record->getValue('isSubtotalValid')) {
+                $this->updateTotal($checkouts[$id], $record);
             }
         }
     }
 
     /**
-     * @param object $entity
+     * @param object $checkout
      * @param ResultRecord $record
      */
-    protected function updateTotal($entity, ResultRecord $record)
+    protected function updateTotal($checkout, ResultRecord $record)
     {
-        if ($entity instanceof QuoteDemand) {
-            $record->addData(['total' => $record->getValue('total') + $record->getValue('shippingEstimateAmount')]);
-        } elseif (!$record->getValue('total')) {
-            $total = $this->totalProcessor->getTotal($entity);
-            $record->addData(['total' => $total->getAmount() + $record->getValue('shippingEstimateAmount')]);
-        }
+        $subtotal = $this->totalProcessor->getTotal($checkout);
+        $record->setValue('subtotal', $subtotal->getAmount());
+        $record->setValue('total', $record->getValue('subtotal') + $record->getValue('shippingEstimateAmount'));
+        $record->setValue('currency', $subtotal->getCurrency());
     }
 
     /**

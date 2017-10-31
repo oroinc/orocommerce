@@ -7,7 +7,7 @@ system_configuration:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
         limitations:
             title: oro.inventory.system_configuration.groups.limitations.title
-            icon: 'icon-minus'
+            icon: 'fa-minus'
         product_quantity_limitations:
             title: oro.inventory.system_configuration.groups.product_quantity_limitations.title
 
@@ -21,6 +21,16 @@ system_configuration:
                 choices:
                     false: oro.inventory.manage_inventory.choice.false
                     true: oro.inventory.manage_inventory.choice.true
+        oro_inventory.highlight_low_inventory:
+            data_type: boolean
+            type: choice
+            options:
+                tooltip: oro.inventory.system_configuration.fields.highlight_low_inventory.tooltip
+                label: oro.inventory.system_configuration.fields.highlight_low_inventory.label
+                choice_translation_domain: messages
+                choices:
+                    false: oro.inventory.highlight_low_inventory.choice.false
+                    true: oro.inventory.highlight_low_inventory.choice.true
         oro_inventory.backorders:
             data_type: boolean
             type: choice
@@ -45,6 +55,17 @@ system_configuration:
             type: number
             options:
                 label: oro.inventory.system_configuration.fields.inventory_threshold.label
+                required: true
+                scale: 1
+                constraints:
+                    - NotBlank: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+        oro_inventory.low_inventory_threshold:
+            data_type: decimal
+            type: number
+            options:
+                tooltip: oro.inventory.system_configuration.fields.low_inventory_threshold.tooltip
+                label: oro.inventory.system_configuration.fields.low_inventory_threshold.label
                 required: true
                 scale: 1
                 constraints:
@@ -87,6 +108,8 @@ system_configuration:
                                             - oro_inventory.inventory_threshold
                                             - oro_inventory.backorders
                                             - oro_inventory.decrement_inventory
+                                            - oro_inventory.highlight_low_inventory
+                                            - oro_inventory.low_inventory_threshold
                             limitations:
                                 priority: 80
                                 children:

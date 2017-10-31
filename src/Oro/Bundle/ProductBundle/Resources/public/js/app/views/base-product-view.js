@@ -5,21 +5,26 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var $ = require('jquery');
     var _ = require('underscore');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
+        optionNames: BaseView.prototype.optionNames.concat(['normalizeQuantityField']),
+
+        normalizeQuantityField: true,
+
         elements: {
-            quantity: '[data-name="field__quantity"]:first',
-            unit: '[data-name="field__unit"]:first',
+            quantity: ['lineItem', '[data-name="field__quantity"]:first'],
+            unit: ['lineItem', '[data-name="field__unit"]:first'],
             lineItem: '[data-role="line-item-form-container"]',
             lineItemFields: ['lineItem', ':input[data-name]']
         },
 
         elementsEvents: {
-            'quantity': ['keyup', 'onQuantityChange']
+            'quantity input': ['input', 'onQuantityChange']
         },
 
         modelElements: {
@@ -31,6 +36,7 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: '',
+            product_units: {},
             line_item_form_enable: true
         },
 
@@ -54,6 +60,10 @@ define(function(require) {
             this.initializeSubviews({
                 productModel: this.model
             });
+
+            if (this.normalizeQuantityField) {
+                ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
+            }
         },
 
         initModel: function(options) {

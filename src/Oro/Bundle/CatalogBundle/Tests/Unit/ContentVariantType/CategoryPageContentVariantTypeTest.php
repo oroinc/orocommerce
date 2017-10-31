@@ -59,18 +59,41 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->type->isAllowed());
     }
 
-    public function testGetRouteData()
+    /**
+     * @dataProvider getRouteDataProvider
+     *
+     * @param ContentVariantStub $contentVariant
+     * @param bool $expectedIncludeSubcategories
+     */
+    public function testGetRouteData(ContentVariantStub $contentVariant, $expectedIncludeSubcategories)
     {
-        /** @var ContentVariantStub **/
-        $contentVariant = new ContentVariantStub();
-
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 42]);
         $contentVariant->setCategoryPageCategory($category);
 
         $this->assertEquals(
-            new RouteData('oro_product_frontend_product_index', ['categoryId' => 42, 'includeSubcategories' => true]),
+            new RouteData(
+                'oro_product_frontend_product_index',
+                ['categoryId' => 42, 'includeSubcategories' => $expectedIncludeSubcategories]
+            ),
             $this->type->getRouteData($contentVariant)
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getRouteDataProvider()
+    {
+        return [
+            'include subcategories' => [
+                'contentVariant' => (new ContentVariantStub())->setExcludeSubcategories(false),
+                'expectedIncludeSubcategories' => true
+            ],
+            'exclude subcategories' => [
+                'contentVariant' => (new ContentVariantStub())->setExcludeSubcategories(true),
+                'expectedIncludeSubcategories' => false
+            ]
+        ];
     }
 }

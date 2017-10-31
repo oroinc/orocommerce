@@ -15,14 +15,12 @@
         'id': 'shopping_list_view_container_content',
         '~class': "shopping-list-wrapper",
         'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
+        '~data-page-component-options': {
             'view': 'oroui/js/app/views/layout-subtree-view',
             'blockId' : block.vars.id,
             'reloadEvents': ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure']
-        }|json_encode,
-        'data-layout': 'separate'
-        })
-    %}
+        }
+    }) %}
 
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}

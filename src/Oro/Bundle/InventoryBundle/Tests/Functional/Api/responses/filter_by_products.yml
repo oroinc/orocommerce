@@ -1,6 +1,34 @@
 data:
     -
         type: inventorylevels
+        id: '<toString(@inventory_level.product_unit_precision.product-1.primary_unit->id)>'
+        attributes:
+            quantity: '10.0000000000'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+    -
+        type: inventorylevels
+        id: '<toString(@inventory_level.product_unit_precision.product-2.milliliter->id)>'
+        attributes:
+            quantity: '10.0000000000'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+    -
+        type: inventorylevels
         id: '<toString(@inventory_level.product_unit_precision.product-1.liter->id)>'
         attributes:
             quantity: '10.0000000000'
@@ -69,20 +97,6 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-2.box->id)>'
-    -
-        type: inventorylevels
-        id: '<toString(@inventory_level.product_unit_precision.product-1.primary_unit->id)>'
-        attributes:
-            quantity: '10.0000000000'
-        relationships:
-            product:
-                data:
-                    type: products
-                    id: '<toString(@product-1->id)>'
-            productUnitPrecision:
-                data:
-                    type: productunitprecisions
-                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
 included:
     -
         type: products

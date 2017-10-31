@@ -3,48 +3,61 @@ define(function(require) {
 
     var MatrixGridOrderWidget;
     var routing = require('routing');
-    var DialogWidget = require('oro/dialog-widget');
+    var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
-    MatrixGridOrderWidget = DialogWidget.extend({
+    MatrixGridOrderWidget = FrontendDialogWidget.extend({
+        optionNames: FrontendDialogWidget.prototype.optionNames.concat([
+            'shoppingListId'
+        ]),
+
+        shoppingListId: null,
+
         initialize: function(options) {
             var urlOptions = {
-                productId: options.productId
+                productId: this.model.get('id'),
+                shoppingListId: this.shoppingListId
             };
 
             options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
-            this.options.url = options.url;
-            this.options.regionEnabled = false;
-            this.options.incrementalPosition = false;
-
+            options.preventModelRemoval = true;
+            options.regionEnabled = false;
+            options.incrementalPosition = false;
             options.dialogOptions = {
-                'modal': true,
-                'title': null,
-                'resizable': false,
-                'width': '480',
-                'autoResize': true,
-                'dialogClass': 'matrix-order-widget--dialog'
+                modal: true,
+                title: null,
+                resizable: false,
+                width: '500',
+                autoResize: true,
+                dialogClass: 'matrix-order-widget--dialog'
+            };
+
+            this.fullscreenViewOptions = {
+                popupLabel: null,
+                headerContent: true,
+                footerContentOptions: {},
+                headerContentOptions: {
+                    imageUrl: this.model.get('imageUrl'),
+                    title: this.model.get('name'),
+                    subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
+                        ': ' + this.model.get('sku')
+                }
+            };
+            this.options.fullscreenViewport = {
+                isMobile: true
             };
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },
 
-        _adoptWidgetActions: function() {
-            var result = MatrixGridOrderWidget.__super__._adoptWidgetActions.apply(this, arguments);
-            if (!this.form) {
-                this.form = this.$el.find('form:first');
-            }
-            return result;
-        },
-
         _onContentLoad: function(content) {
-            if (_.has(content, 'redirectUrl')) {
-                mediator.execute('redirectTo', {url: content.redirectUrl}, {redirect: true});
-                return;
+            if (_.isObject(content)) {
+                mediator.trigger('shopping-list:line-items:update-response', this.model, content);
+                this.remove();
+            } else {
+                return MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
             }
-
-            return MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
         }
     });
 

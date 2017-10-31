@@ -41,8 +41,11 @@ system_configuration:
         quick_order:
             title: oro.product.system_configuration.groups.quick_order.title
             icon: 'fa-shopping-cart'
+            page_reload: true
         quick_order_form:
             title: oro.product.system_configuration.groups.quick_order_form.title
+        guest_quick_order_form:
+            title: oro.product.system_configuration.groups.guest_quick_order_form.title
         product_collections:
             title: oro.product.system_configuration.groups.product_collections.title
             icon: 'fa-list'
@@ -57,6 +60,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.new_arrivals.title
         image_gallery:
             title: oro.product.system_configuration.groups.image_gallery.title
+        configurable_products:
+            title: oro.product.system_configuration.groups.configurable_products.title
+            icon: 'fa-cog'
+        configurable_products_matrix_form:
+            title: oro.product.system_configuration.groups.configurable_products_matrix_form.title
 
     fields:
         oro_product.related_products_enabled:
@@ -297,6 +305,13 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.enable_quick_order_form.title
 
+        oro_product.guest_quick_order_form:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.product.system_configuration.fields.guest_quick_order_form.title
+                tooltip: oro.product.system_configuration.fields.guest_quick_order_form.tooltip
+
         oro_product.product_direct_url_prefix:
             data_type: string
             type: oro_redirect_sluggable_prefix
@@ -414,6 +429,17 @@ system_configuration:
                 label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
                 tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
 
+        oro_product.matrix_form_on_product_view:
+            data_type: string
+            type: choice
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.matrix_form_on_product_view.label
+                choices:
+                    none: oro.product.system_configuration.fields.matrix_form_on_product_view.none.label
+                    inline: oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label
+                    popup: oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label
+
     tree:
         system_configuration:
             platform:
@@ -497,6 +523,12 @@ system_configuration:
                                             - oro_product.new_arrivals_max_items
                                             - oro_product.new_arrivals_min_items
                                             - oro_product.new_arrivals_use_slider_on_mobile
+                            configurable_products:
+                                priority: 50
+                                children:
+                                    configurable_products_matrix_form:
+                                        children:
+                                            - oro_product.matrix_form_on_product_view
                             product_collections:
                                 priority: 0
                                 children:
@@ -521,6 +553,9 @@ system_configuration:
                                     quick_order_form:
                                         children:
                                             - oro_product.enable_quick_order_form
+                                    guest_quick_order_form:
+                                        children:
+                                            - oro_product.guest_quick_order_form
 
         organization_configuration:
             commerce:
@@ -546,3 +581,11 @@ system_configuration:
                                             - oro_product.upsell_products_min_items
                                             - oro_product.upsell_products_show_add_button
                                             - oro_product.upsell_products_use_slider_on_mobile
+                    product:
+                        children:
+                            configurable_products:
+                                priority: 50
+                                children:
+                                    configurable_products_matrix_form:
+                                        children:
+                                            - oro_product.matrix_form_on_product_view

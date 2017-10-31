@@ -18,16 +18,47 @@ Feature: Single Page Checkout From Shopping List
     And I click "Activate"
     Then I should see "Workflow activated" flash message
 
-  Scenario: Create order from Shopping List 1
+  Scenario: Create order from Shopping List 1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
+    And I scroll to top
+    And I wait line items are initialized
     And I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 5 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $10.00 |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step     | Started From | Items | Subtotal |
+      | Checkout | List 1       | 1     | $10.00   |
+    And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
+
+    When I click "Edit Order"
+    And I wait line items are initialized
+    And I type "10" in "Shopping List Line Item 1 Quantity"
+    And I should see "Record has been successfully updated" flash message
+    And I scroll to top
+    And I click "Create Order"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | 400-Watt Bulb Work Light | 10 | items |
+    And I should see Checkout Totals with data:
+      | Subtotal | $20.00 |
+
+    When I open Order History page on the store frontend
+    Then I should see following grid:
+      | Step     | Started From | Items | Subtotal |
+      | Checkout | List 1       | 1     | $20.00   |
+    And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
+
+  Scenario: Process checkout
+    Given I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
-    And I click "Submit Order"
+    When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     When I follow "click here to review"

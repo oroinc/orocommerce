@@ -70,7 +70,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'name_LOCALIZATION_ID',
+                    'name' => 'names_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],
@@ -80,7 +80,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'name_LOCALIZATION_ID',
+                    'name' => 'names_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],
@@ -152,7 +152,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             foreach ($entities as $entity) {
                 $event->addPlaceholderField(
                     $entity->getId(),
-                    'name_LOCALIZATION_ID',
+                    'names_LOCALIZATION_ID',
                     sprintf('Reindexed product %s', $entity->getId()),
                     [LocalizationIdPlaceholder::NAME => $this->getDefaultLocalizationId()]
                 );

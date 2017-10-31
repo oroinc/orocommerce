@@ -1,6 +1,6 @@
 <tr>
     <td class="order-checkout-widget__total">
-        <span class="text-uppercase"><%= item.label %></span>
+        <span class="text-uppercase"><%= _.escape(item.label) %></span>
     </td>
     <td class="order-checkout-widget__total">
         <span class="blue"><%= item.formattedAmount %></span>

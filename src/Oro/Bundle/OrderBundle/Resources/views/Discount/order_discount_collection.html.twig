@@ -1,0 +1,117 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set addAndEditLinkSettings = {
+    'widget': {
+        'type': 'dialog',
+        'options': {
+            'stateEnabled': false,
+            'dialogOptions': {
+                'allowMaximize': false,
+                'allowMinimize': false,
+                'dblclick': false,
+                'maximizedHeightDecreaseBy': 'minimize-bar',
+                'width': 550
+            }
+        }
+    }
+} %}
+
+<div class="oro-collection-table-heading">
+    <h5>{{ 'oro.order.order_discount.all_label'|trans }}</h5>
+
+    {% if editable is defined and editable %}
+        {{ UI.clientLink({
+            'dataUrl': path('oro_action_widget_form', {
+                operationName: 'oro_order_discount_add_form',
+                entityClass: oro_class_name(form.vars.order),
+                entityId: {id: form.vars.order.id}
+            }),
+            'aCss': 'btn',
+            'dataAttributes': {
+                'role': 'add'
+            },
+            'label': 'oro.order.widgets.add_order_discount'|trans,
+            'widget': {
+                'multiple': false,
+                'options': {
+                    'alias': 'add-order-discount-dialog',
+                    'dialogOptions': {
+                        'title': 'oro.order.widgets.add_order_discount'|trans,
+                        'modal': true
+                    }
+                }
+            }
+        }|merge_recursive(addAndEditLinkSettings)) }}
+    {% endif %}
+</div>
+
+{% if collection|length %}
+    <table class="grid table-hover table table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th class="order-discount-item-description">
+                    <span>{{ 'oro.order.order_discount.columns.description'|trans }}</span>
+                </th>
+                <th class="discount">
+                    <span>{{ 'oro.order.order_discount.columns.title'|trans }}</span>
+                </th>
+                {% if editable is defined and editable %}
+                    <th colspan="2"></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for discount in collection %}
+                <tr class="order-discount-item">
+                    <td>
+                        {% if discount.description %}
+                            {{ discount.description }}
+                        {% else %}
+                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="discount">
+                        {% if discount.order is not empty %}
+                            -{{ discount.amountPrice|oro_format_price }}
+                        {% endif %}
+                    </td>
+                    {% if editable is defined and editable %}
+                        <td class="action">
+                            {{ UI.clientLink({
+                                'dataUrl': path('oro_action_widget_form', {
+                                    operationName: 'oro_order_discount_edit_form',
+                                    entityClass: oro_class_name(form.vars.order),
+                                    entityId: {id: form.vars.order.id}
+                                }),
+                                'title': 'oro.order.order_discount.actions.edit'|trans,
+                                'iCss': 'fa-edit hide-text',
+                                'dataAttributes': {
+                                    'role': 'edit'
+                                },
+                                'widget': {
+                                    'multiple': false,
+                                    'options': {
+                                        'alias': 'edit-order-discount-dialog',
+                                        'dialogOptions': {
+                                            'title': 'oro.order.widgets.edit_order_discount'|trans,
+                                            'collectionElementIndex': loop.index0
+                                        }
+                                    }
+                                }
+                            }|merge_recursive(addAndEditLinkSettings)) }}
+                        </td>
+                        <td class="action">
+                            <a data-role="remove" href="javascript:void(0);" title="{{ 'oro.order.order_discount.actions.remove'|trans }}">
+                                <i data-element-index="{{ loop.index0 }}" class="fa-trash hide-text">
+                                    {{ 'oro.order.order_discount.actions.remove'|trans }}
+                                </i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elseif editable is not defined or not editable %}
+    <div class="no-data"><span>{{ 'oro.order.order_discount.no_entities'|trans }}<span></span></span></div>
+{% endif %}

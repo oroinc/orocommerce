@@ -57,12 +57,12 @@
                         UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name),
                         UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder),
                         UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans),
-                        UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans),
-                        UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock)
+                        UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock),
+                        UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans)
                     ]
                 },
                 {
-                    'title': 'oro.promotion.sections.general.subsection.discount_optins.label'|trans,
+                    'title': 'oro.promotion.sections.general.subsection.discount_options.label'|trans,
                     'useSpan': false,
                     'data': [discountBlock]
                 }
@@ -78,7 +78,7 @@
                     'title' : '',
                     'useSpan': false,
                     'data' : [
-                        UI.renderHtmlProperty('oro.promotion.restrictions.label'|trans, scopeMacros.renderRestrictionsViewGrid(scopeEntities, entity.scopes)),
+                        UI.renderHtmlProperty('oro.promotion.restrictions.label'|trans, scopeMacros.renderRestrictionsView(scopeEntities, entity.scopes)),
                         UI.renderProperty('oro.promotion.advanced_conditions.label'|trans, entity.rule.expression)
                     ]
                 }
@@ -103,6 +103,27 @@
                                     'includedProducts': includedProducts,
                                     'excludedProducts': excludedProducts
                                 }
+                            }
+                        )
+                    ]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.promotion.sections.assigned_coupons.label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [
+                        dataGrid.renderGrid(
+                            'promotion-coupons-assigned-to-promotion-grid',
+                            {
+                                '_grid_view': {'_disabled': true},
+                                'promotion_id': entity.id
                             }
                         )
                     ]

@@ -56,7 +56,9 @@ oro:
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
-        variant_links.label: Product Variant Links
+        variant_links:
+            label: Product Variant Links
+            description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images.label: Images
@@ -111,6 +113,18 @@ oro:
             label: Product Family
             description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
             plural_label: Product Families
+
+        entity_config:
+            block_titles:
+                backend.label: Backoffice options
+                frontend.label: Frontend options
+            field.items:
+                attribute:
+                    searchable.tooltip: 'If enabled, attribute content can be found in the front store'
+                    sortable.tooltip: 'Defines whether sorting is available for the attribute in the front store'
+                    filterable.tooltip: 'Defines whether filter is available for the attribute in the front store'
+                    enabled.tooltip: 'Defines whether the attribute is enabled in the front store'
+                    visible.tooltip: 'Defines whether the attribute is visible or hidden'
 
         status:
             enabled: Enabled
@@ -220,6 +234,7 @@ oro:
                 edit.label: '[Related Products] Edit related products'
             upsell_products:
                 edit.label: '[Up-sell Products] Edit up-sell products'
+            quick_add.label: Quick order form
 
         rounding:
             type:
@@ -238,7 +253,9 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
-            relatedItems: Related Items
+            related_items: Related Items
+            upsell_products: Up-sell Products
+            related_products: Related Products
             upsellItems: Up-sell items
 
         tabs:
@@ -284,11 +301,15 @@ oro:
                 featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
+                guest_quick_order_form.title: Guest Quick Order Form
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
+                configurable_products.title: 'Configurable Products'
+                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
             fields:
+                brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
                     label: 'Assign in Both Directions'
@@ -325,6 +346,11 @@ oro:
                     label: 'Use Slider On Mobile'
                     tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
+                guest_quick_order_form.title: Enable Guest Quick Order Form
+                guest_quick_order_form.tooltip: >
+                  Allows guests to use the quick order form. By default, this option is disabled.
+                  For the quick order form to be displayed, at least one of the following options should be enabled:
+                  guest RFQ, guest shopping list or guest checkout.
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'
@@ -396,6 +422,11 @@ oro:
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
+                matrix_form_on_product_view:
+                    label: 'Display Matrix Form (where applicable)'
+                    none.label: 'Do Not Display'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -466,6 +497,9 @@ oro:
                     invalid_request: Invalid request submitted
             titles:
                 catalog: Catalog
+            grid:
+                toolbar:
+                    display.label: Display
 
         export:
             inventory_status_only: "Inventory statuses only"
@@ -516,8 +550,8 @@ oro:
                 label:    Meta description
                 description: The meta description for the brand
             meta_keywords:
-                label:    Meta keyword
-                description: The meta kewords for the brand
+                label:    Meta keywords
+                description: The meta keywords for the brand, separated by commas.
             names:
                 label:    Name
                 description: The name of the brand
@@ -705,6 +739,9 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
+        guest_quick_order_form:
+            label: Guest Quick Order Form
+            description: Enable Quick Order Form for guests
         quick_add_import_help_widget:
             important: Important
             invalid_records: We have not been able to identify some of the product references in the uploaded file. Please review the data below and make necessary corrections to upload again.
@@ -720,3 +757,7 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+
+    importexport:
+        export:
+            oro_product_product: Products

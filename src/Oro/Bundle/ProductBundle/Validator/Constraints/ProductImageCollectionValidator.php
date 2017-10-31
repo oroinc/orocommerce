@@ -10,97 +10,71 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
 class ProductImageCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_collection_validator';
 
     /**
-     * @var ImageTypeProvider
+     * @var ImageTypeProvider $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var TranslatorInterface
+     * @var TranslatorInterface $translator
      */
     protected $translator;
 
     /**
-     * @var ExecutionContextInterface
+     * @var ExecutionContextInterface $context
      */
     protected $context;
 
     /**
+     * @var ProductImageHelper $productImageHelper
+     */
+    protected $productImageHelper;
+
+    /**
      * @param ImageTypeProvider $imageTypeProvider
      * @param TranslatorInterface $translator
+     * @param ProductImageHelper $productImageHelper
      */
-    public function __construct(ImageTypeProvider $imageTypeProvider, TranslatorInterface $translator)
-    {
+    public function __construct(
+        ImageTypeProvider $imageTypeProvider,
+        TranslatorInterface $translator,
+        ProductImageHelper $productImageHelper
+    ) {
         $this->imageTypeProvider = $imageTypeProvider;
         $this->translator = $translator;
+        $this->productImageHelper = $productImageHelper;
     }
 
     /**
-     * @param ProductImageEntity[]|Collection $value
+     * @param ProductImage[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
      *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        $maxNumberByType = $this->getMaxNumberByType();
-        $imagesByTypeCounter = $this->countImagesByType($value);
+        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
+        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
 
-        foreach ($this->imageTypeProvider->getImageTypes() as $imageType) {
-            $imageTypeName = $imageType->getName();
-
-            if ($maxNumberByType[$imageTypeName] > 0 &&
-                isset($imagesByTypeCounter[$imageTypeName]) &&
-                $imagesByTypeCounter[$imageTypeName] > $maxNumberByType[$imageTypeName]
+        foreach ($maxNumberByType as $name => $maxTypeValues) {
+            if (array_key_exists($name, $imagesByTypeCounter) &&
+                !is_null($maxTypeValues['max']) &&
+                $imagesByTypeCounter[$name] > $maxTypeValues['max']
             ) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $this->translator->trans($imageType->getLabel()),
-                        '%maxNumber%' => $maxNumberByType[$imageTypeName]
+                        '%type%' => $this->translator->trans($maxTypeValues['label']),
+                        '%maxNumber%' => $maxTypeValues['max']
                     ])
                     ->addViolation();
             }
         }
-    }
-
-    /**
-     * @param ProductImageEntity[]|Collection $productImages
-     * @return array
-     */
-    private function countImagesByType(Collection $productImages)
-    {
-        $imagesByTypeCounter = [];
-
-        foreach ($productImages as $productImage) {
-            foreach ($productImage->getTypes() as $type) {
-                if (isset($imagesByTypeCounter[$type])) {
-                    $imagesByTypeCounter[$type]++;
-                } else {
-                    $imagesByTypeCounter[$type] = 1;
-                }
-            }
-        }
-
-        return $imagesByTypeCounter;
-    }
-
-    /**
-     * @return array
-     */
-    private function getMaxNumberByType()
-    {
-        $maxNumbers = [];
-
-        foreach ($this->imageTypeProvider->getImageTypes() as $imageType) {
-            $maxNumbers[$imageType->getName()] = $imageType->getMaxNumber();
-        }
-
-        return $maxNumbers;
     }
 }

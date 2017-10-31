@@ -6,3 +6,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: category_path
             type: text
+        -
+            name: category_title_LOCALIZATION_ID
+            type: text
+        -
+            name: category_path_CATEGORY_PATH
+            type: integer

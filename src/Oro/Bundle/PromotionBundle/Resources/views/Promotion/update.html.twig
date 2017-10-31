@@ -128,16 +128,15 @@
         }
     ] %}
 
-    {#{% set dataBlocks = dataBlocks|merge([{#}
-        {#'title': 'oro.promotion.blocks.store_frontend'|trans,#}
-        {#'subblocks': [{#}
-            {#'title': '',#}
-            {#'data': [#}
-                {#form_row(form.labels),#}
-                {#form_row(form.descriptions)#}
-            {#]#}
-        {#}]#}
-    {#}]) %}#}
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.promotion.blocks.store_frontend'|trans,
+        'subblocks': [{
+            'title': '',
+            'data': [
+                form_row(form.labels)
+            ]
+        }]
+    }]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

@@ -1,6 +1,8 @@
 // @theme: default
 
 .shopping-lists {
+    display: $shopping-lists-display;
+
     &__content {
         position: $shopping-lists-content-position;
         display: $shopping-lists-content-display;

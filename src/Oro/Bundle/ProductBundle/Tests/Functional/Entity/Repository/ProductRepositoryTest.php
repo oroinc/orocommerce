@@ -2,17 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeData;
+use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductRepositoryTest extends WebTestCase
 {
+    use EntityTrait;
+
     /**
      * @var ProductRepository
      */
@@ -23,10 +28,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([
-            ProductFixture::class,
-            LoadProductImageData::class,
-        ]);
+        $this->loadFixtures([ProductFixture::class]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('oro_product.entity.product.class')
@@ -82,6 +84,7 @@ class ProductRepositoryTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ],
             ],
             'product, 1, 1' => [
@@ -133,6 +136,7 @@ class ProductRepositoryTest extends WebTestCase
             ProductFixture::PRODUCT_6,
             ProductFixture::PRODUCT_7,
             ProductFixture::PRODUCT_8,
+            ProductFixture::PRODUCT_9,
         ];
 
         return [
@@ -485,5 +489,44 @@ class ProductRepositoryTest extends WebTestCase
         $result2 = $this->getRepository()->findOneBySku($uppercaseSkus[0]);
 
         $this->assertEquals($result1, $result2);
+    }
+
+    public function testGetProductIdsByAttribute()
+    {
+        /** @var FieldConfigModel $attribute */
+        $attribute = $this->getEntity(
+            FieldConfigModel::class,
+            ['id' => LoadAttributeData::getAttributeIdByName(LoadAttributeData::REGULAR_ATTRIBUTE_2)]
+        );
+
+        /** @var Product $product */
+        $product = $this->getReference(ProductFixture::PRODUCT_4);
+
+        $this->assertEquals(
+            [
+                $product->getId(),
+            ],
+            $this->getRepository()->getProductIdsByAttribute($attribute)
+        );
+    }
+
+    public function testGetProductIdsByAttributeFamilies()
+    {
+        /** @var Product $product5 */
+        $product5 = $this->getReference(ProductFixture::PRODUCT_5);
+        /** @var Product $product9 */
+        $product9 = $this->getReference(ProductFixture::PRODUCT_9);
+
+        $this->assertEquals(
+            [
+                $product5->getId(),
+                $product9->getId(),
+            ],
+            $this->getRepository()->getProductIdsByAttributeFamilies(
+                [
+                    $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1)
+                ]
+            )
+        );
     }
 }

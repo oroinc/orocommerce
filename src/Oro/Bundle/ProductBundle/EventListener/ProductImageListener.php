@@ -69,13 +69,13 @@ class ProductImageListener
      */
     protected function dispatchEvent(ProductImage $productImage)
     {
-        if (!$productImage->getTypes()) {
+        if ($productImage->getTypes()->isEmpty()) {
             return;
         }
 
         $this->eventDispatcher->dispatch(
             ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption = true)
+            new ProductImageResizeEvent($productImage, true)
         );
     }
 }

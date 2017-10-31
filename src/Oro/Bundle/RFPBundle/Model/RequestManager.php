@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\RFPBundle\Model;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class RequestManager
@@ -20,14 +22,22 @@ class RequestManager
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var GuestCustomerUserManager */
+    protected $guestCustomerUserManager;
+
     /**
      * @param TokenAccessorInterface $tokenAccessor
-     * @param DoctrineHelper         $doctrineHelper
+     * @param DoctrineHelper $doctrineHelper
+     * @param GuestCustomerUserManager $guestCustomerUserManager
      */
-    public function __construct(TokenAccessorInterface $tokenAccessor, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        TokenAccessorInterface $tokenAccessor,
+        DoctrineHelper $doctrineHelper,
+        GuestCustomerUserManager $guestCustomerUserManager
+    ) {
         $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
+        $this->guestCustomerUserManager = $guestCustomerUserManager;
     }
 
     /**

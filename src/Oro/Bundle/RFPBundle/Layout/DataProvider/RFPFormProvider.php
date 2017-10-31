@@ -23,7 +23,7 @@ class RFPFormProvider extends AbstractFormProvider
     {
         $options = $this->getFormOptions($request);
 
-        return $this->getFormView(RequestType::NAME, $request, $options);
+        return $this->getFormView(RequestType::class, $request, $options);
     }
 
     /**
@@ -35,7 +35,7 @@ class RFPFormProvider extends AbstractFormProvider
     {
         $options = $this->getFormOptions($request);
 
-        return $this->getForm(RequestType::NAME, $request, $options);
+        return $this->getForm(RequestType::class, $request, $options);
     }
 
     /**

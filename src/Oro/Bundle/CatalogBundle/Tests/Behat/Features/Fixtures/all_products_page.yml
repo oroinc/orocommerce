@@ -1,0 +1,4 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroProductBundle:product_check_category.yml'
+    - '@OroCatalogBundle:add_default_web_catalog.yml'

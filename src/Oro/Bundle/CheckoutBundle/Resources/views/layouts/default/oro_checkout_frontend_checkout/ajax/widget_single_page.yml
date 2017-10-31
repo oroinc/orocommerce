@@ -152,6 +152,18 @@ layout:
             blockType: container
             parentId: single_page_checkout_sticky_panel
         - '@add':
+            id: single_page_checkout_sticky_billing
+            blockType: container
+            parentId: single_page_checkout_sticky_titles
+        - '@add':
+            id: single_page_checkout_sticky_shipping
+            blockType: container
+            parentId: single_page_checkout_sticky_titles
+        - '@add':
+            id: single_page_checkout_sticky_summary
+            blockType: container
+            parentId: single_page_checkout_sticky_titles
+        - '@add':
             id: single_page_checkout_sticky_totals
             blockType: container
             parentId: single_page_checkout_sticky_panel

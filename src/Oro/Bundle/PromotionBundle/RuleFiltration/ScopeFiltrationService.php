@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
-class ScopeFiltrationService implements RuleFiltrationServiceInterface
+class ScopeFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -35,7 +35,7 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $criteria = $context[ContextDataConverterInterface::CRITERIA] ?? null;
 
@@ -57,8 +57,12 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
      */
     private function hasMatchingScope(RuleOwnerInterface $ruleOwner, $criteria): bool
     {
-        if (!$ruleOwner instanceof Promotion || !$criteria instanceof ScopeCriteria) {
+        if (!$ruleOwner instanceof PromotionDataInterface || !$criteria instanceof ScopeCriteria) {
             return false;
+        }
+
+        if ($ruleOwner->getScopes()->isEmpty()) {
+            return true;
         }
 
         foreach ($ruleOwner->getScopes() as $scope) {

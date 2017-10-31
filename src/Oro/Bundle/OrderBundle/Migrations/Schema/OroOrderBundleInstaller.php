@@ -8,8 +8,13 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Migrations\Data\ORM\LoadOrderInternalStatuses;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
@@ -17,13 +22,17 @@ class OroOrderBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
-    PaymentTermExtensionAwareInterface
+    PaymentTermExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
 
     /** @var  ActivityExtension */
     protected $activityExtension;
+
+    /** @var ExtendExtension */
+    protected $extendExtension;
 
     /**
      * {@inheritdoc}
@@ -36,9 +45,17 @@ class OroOrderBundleInstaller implements
     /**
      * {@inheritdoc}
      */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -62,6 +79,8 @@ class OroOrderBundleInstaller implements
         $this->addOroOrderDiscountForeignKeys($schema);
 
         $this->addOroOrderShippingTrackingForeignKeys($schema);
+
+        $this->addOrderInternalStatusField($schema);
 
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
     }
@@ -416,5 +435,25 @@ class OroOrderBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOrderInternalStatusField(Schema $schema)
+    {
+        $internalStatusOptions = new OroOptions();
+        $internalStatusOptions->set('enum', 'immutable_codes', LoadOrderInternalStatuses::getDataKeys());
+
+        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+            $schema,
+            'oro_order',
+            'internal_status',
+            Order::INTERNAL_STATUS_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
 }

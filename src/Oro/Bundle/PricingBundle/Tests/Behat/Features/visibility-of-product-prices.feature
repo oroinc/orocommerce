@@ -7,7 +7,7 @@ Feature: Visibility of product prices in different cases
     And I should not see a "Product Price Main" element
 
   Scenario: Empty product prices for authorized user
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And I am on "/product"
     Then I should see that "Product Price Hint" contains "Price not available"
     And I should not see a "Product Price Main" element
@@ -25,8 +25,8 @@ Feature: Visibility of product prices in different cases
       | Value          | 100                |
       | Currency       | $                  |
     And I submit form
-    When I continue as the Buyer
-    And I am on "/product"
+
+    Then I am on "/product"
     And I should see that "Product Price Listed" contains "$100.00"
     When I hover on "Product Price Hint"
     Then I should see a "Product Price Popover" element

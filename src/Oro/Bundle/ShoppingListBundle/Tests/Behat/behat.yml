@@ -25,6 +25,9 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    NewShoppingListNameField:
+      selector: '[name="oro_shopping_list_type[label]"]'
+
     ItemAdd:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="add-form-accept"]'
@@ -63,6 +66,12 @@ oro_behat_extension:
           Quantity: 'product_qty'
           Unit: 'product_unit'
 
+    Shopping List Line Item 1 Quantity:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: css
+        locator: 'form.product__qty-container:first-child input[name=product_qty]'
+
     ShoppingListLineItemProductSku:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
@@ -72,10 +81,16 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//div[contains(@class, "mass-action-controls")]//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
+        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
 
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+
+    Update Product B Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Update Product B Shopping List"]'
+
+    Remove From Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
 
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
@@ -84,6 +99,16 @@ oro_behat_extension:
         mapping:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
+
+    LineItemQuantity:
+      selector:
+        type: 'xpath'
+        locator: '//input[@name="oro_product_frontend_line_item[quantity]"]'
+
+    FrontendLineItemForm > Quantity:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_frontend_line_item[quantity]']"
 
     ShoppingListWidget:
       selector: '.shopping-list-widget'
@@ -113,6 +138,15 @@ oro_behat_extension:
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
 
+    Create Order:
+      selector: 'a[title="Create Order"]'
+
+    ShoppingListEditTitleField:
+      selector: '#title-inline-editable input[name="value"]'
+
+    EditShopppingListLabel:
+      selector: '#title-inline-editable [data-role="start-editing"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -126,7 +160,6 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext

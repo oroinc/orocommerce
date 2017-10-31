@@ -214,7 +214,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $form = $button->form(['oro_workflow_transition[notes]' => 'test notes']);
         $this->client->followRedirects(true);
         $this->client->submit($form);
-        $this->assertContains('transitionSuccess = true', $this->client->getResponse()->getContent());
+        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
 
         // check that notes added and status changed
         $this->assertBackofficeTransition(null, 'more_info_requested', 'submitted', ['Delete']);

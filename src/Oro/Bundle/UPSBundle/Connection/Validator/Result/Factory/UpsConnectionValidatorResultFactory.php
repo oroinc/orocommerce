@@ -4,10 +4,13 @@ namespace Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory;
 
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
+use Oro\Bundle\UPSBundle\Client\Result\UpsErrorResultTrait;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 
 class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResultFactoryInterface
 {
+    use UpsErrorResultTrait;
+
     const AUTHENTICATION_ERROR_SEVERITY_CODE = 'Authentication';
     const WRONG_MEASUREMENT_SYSTEM_ERROR_CODE = '111057';
     const UNAVAILABLE_SERVICE_BETWEEN_LOCATIONS_ERROR_CODE = '111210';
@@ -65,82 +68,5 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
             UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => self::SERVER_SEVERITY,
             UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $exception->getMessage(),
         ]);
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     * @throws \LogicException
-     */
-    private function getErrorDetails(array $data)
-    {
-        return $this->getValueByKeyRecursively($data, 'ErrorDetail');
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
-     */
-    private function getErrorSeverity(array $data)
-    {
-        return $this->getValueByKeyRecursively($this->getErrorDetails($data), 'Severity');
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     * @throws \LogicException
-     */
-    private function getPrimaryError(array $data)
-    {
-        return $this->getValueByKeyRecursively($this->getErrorDetails($data), 'PrimaryErrorCode');
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
-     */
-    private function getErrorCode(array $data)
-    {
-        return $this->getValueByKeyRecursively($this->getPrimaryError($data), 'Code');
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
-     */
-    private function getErrorMessage(array $data)
-    {
-        return $this->getValueByKeyRecursively($this->getPrimaryError($data), 'Description');
-    }
-
-    /**
-     * @param array  $arr
-     * @param string $key
-     *
-     * @return array
-     * @throws \LogicException
-     */
-    private function getValueByKeyRecursively(array $arr, $key)
-    {
-        if (array_key_exists($key, $arr)) {
-            return $arr[$key];
-        }
-
-        foreach ($arr as $element) {
-            if (is_array($element)) {
-                return $this->getValueByKeyRecursively($element, $key);
-            }
-        }
-
-        throw new \LogicException('UPS Error Response format has been changed');
     }
 }

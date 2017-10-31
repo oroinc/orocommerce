@@ -73,7 +73,7 @@ define(function(require) {
             var $buttons = this.getElement('buttons');
             var $container = this.getElement('container');
 
-            this.getElement('clear').removeClass('hide');
+            this.getElement('clear').removeClass('hidden');
             this.$buttonsCopy = this.$buttonsCopy ? this.$buttonsCopy : $($buttons, $container).clone(true, true);
             this.$buttonsCopy.prependTo($container);
         },
@@ -83,7 +83,7 @@ define(function(require) {
                 return;
             }
             this.$buttonsCopy.detach();
-            this.getElement('clear').addClass('hide');
+            this.getElement('clear').addClass('hidden');
         },
 
         clearRows: function() {

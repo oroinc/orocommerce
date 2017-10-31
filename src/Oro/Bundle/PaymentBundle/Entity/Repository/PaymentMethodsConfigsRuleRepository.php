@@ -5,19 +5,38 @@ namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PaymentMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
+     * @param AclHelper $aclHelper
+     */
+    public function setAclHelper(AclHelper $aclHelper)
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
+    /**
      * @param AddressInterface $billingAddress
-     * @param string $currency
+     * @param string           $currency
+     * @param Website|null     $website
      *
      * @return PaymentMethodsConfigsRule[]
      */
-    public function getByDestinationAndCurrency(AddressInterface $billingAddress, $currency)
-    {
-        return $this->getByCurrencyQuery($currency)
+    public function getByDestinationAndCurrencyAndWebsite(
+        AddressInterface $billingAddress,
+        string $currency,
+        Website $website = null
+    ): array {
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
@@ -26,8 +45,37 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             ->andWhere('postalCode.name in (:postalCodes) or postalCode.name is null')
             ->setParameter('country', $billingAddress->getCountryIso2())
             ->setParameter('regionCode', $billingAddress->getRegionCode())
-            ->setParameter('postalCodes', explode(',', $billingAddress->getPostalCode()))
-            ->getQuery()->getResult();
+            ->setParameter('postalCodes', explode(',', $billingAddress->getPostalCode()));
+
+        return $this->aclHelper->apply($queryBuilder)->getResult();
+    }
+
+    /**
+     * @param string       $currency
+     * @param Website|null $website
+     *
+     * @return PaymentMethodsConfigsRule[]
+     */
+    public function getByCurrencyAndWebsite(string $currency, Website $website = null): array
+    {
+        $query = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website);
+
+        return $this->aclHelper->apply($query)->getResult();
+    }
+
+    /**
+     * @param string       $currency
+     * @param Website|null $website
+     *
+     * @return PaymentMethodsConfigsRule[]
+     */
+    public function getByCurrencyAndWebsiteWithoutDestination(string $currency, Website $website = null): array
+    {
+        $query = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->andWhere('destination.id is null');
+
+        return $this->aclHelper->apply($query)->getResult();
     }
 
     /**
@@ -35,7 +83,7 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
      *
      * @return QueryBuilder
      */
-    private function getByCurrencyQuery($currency)
+    private function getByCurrencyQueryBuilder($currency): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('methodsConfigsRule');
 
@@ -47,25 +95,23 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
     }
 
     /**
-     * @param string $currency
-     * @return PaymentMethodsConfigsRule[]
+     * @param string       $currency
+     * @param Website|null $website
+     *
+     * @return QueryBuilder
      */
-    public function getByCurrency($currency)
+    private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
     {
-        return $this->getByCurrencyQuery($currency)
-            ->getQuery()
-            ->getResult();
-    }
+        $queryBuilder = $this->getByCurrencyQueryBuilder($currency);
 
-    /**
-     * @param string $currency
-     * @return PaymentMethodsConfigsRule[]
-     */
-    public function getByCurrencyWithoutDestination($currency)
-    {
-        return $this->getByCurrencyQuery($currency)
-            ->leftJoin('methodsConfigsRule.destinations', 'destination')
-            ->andWhere('destination.id is null')
-            ->getQuery()->getResult();
+        if ($website === null) {
+            return $queryBuilder;
+        }
+
+        return $queryBuilder
+            ->addSelect('websites')
+            ->leftJoin('methodsConfigsRule.websites', 'websites')
+            ->andWhere('websites.id is null or websites = :website')
+            ->setParameter('website', $website);
     }
 }

@@ -2,6 +2,12 @@ system_configuration:
     groups:
         catalog:
             title: oro.catalog.system_configuration.groups.catalog.title
+        special_pages:
+            title: oro.catalog.system_configuration.groups.special_pages.title
+            icon: fa-file-excel-o
+        all_products:
+            title: oro.catalog.system_configuration.groups.all_products.title
+
     fields:
         oro_catalog.category_direct_url_prefix:
             data_type: string
@@ -12,6 +18,14 @@ system_configuration:
                 required: false
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
+
+        oro_catalog.all_products_page_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.catalog.system_configuration.fields.all_products_page_enabled.label
+                tooltip: oro.catalog.system_configuration.fields.all_products_page_enabled.tooltip
 
     tree:
         system_configuration:
@@ -28,3 +42,9 @@ system_configuration:
                 children:
                     catalog:
                         priority: 900
+                        children:
+                          special_pages:
+                              children:
+                                  all_products:
+                                      children:
+                                          - oro_catalog.all_products_page_enabled

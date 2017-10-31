@@ -2,49 +2,46 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
-use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 
-class LoadDiscountConfigurationData extends AbstractFixture
+class LoadDiscountConfigurationData extends AbstractLoadDiscountConfigurationData
 {
     const DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'discount_configuration_order_percent';
     const DISCOUNT_CONFIGURATION_ORDER_AMOUNT = 'discount_configuration_order_amount';
-
-    /** @var array */
-    protected static $configurations = [
-        self::DISCOUNT_CONFIGURATION_ORDER_PERCENT => [
-            'type' => 'order',
-            'options' => [
-                AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-                AbstractDiscount::DISCOUNT_VALUE => 0.1,
-            ],
-        ],
-        self::DISCOUNT_CONFIGURATION_ORDER_AMOUNT => [
-            'type' => 'order',
-            'options' => [
-                AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-                AbstractDiscount::DISCOUNT_VALUE => 10,
-                AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
-            ],
-        ],
-    ];
+    const DISCOUNT_CONFIGURATION_SHIPPING_AMOUNT = 'discount_configuration_shipping_amount';
 
     /**
-     * @param ObjectManager $manager
+     * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDiscountConfiguration()
     {
-        foreach (static::$configurations as $reference => $configurationData) {
-            $discountConfiguration = new DiscountConfiguration();
-
-            $discountConfiguration->setType($configurationData['type']);
-            $discountConfiguration->setOptions($configurationData['options']);
-
-            $manager->persist($discountConfiguration);
-            $this->setReference($reference, $discountConfiguration);
-        }
-        $manager->flush();
+        return [
+            self::DISCOUNT_CONFIGURATION_ORDER_PERCENT => [
+                'type' => 'order',
+                'options' => [
+                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
+                    AbstractDiscount::DISCOUNT_VALUE => 0.1,
+                ],
+            ],
+            self::DISCOUNT_CONFIGURATION_ORDER_AMOUNT => [
+                'type' => 'order',
+                'options' => [
+                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
+                    AbstractDiscount::DISCOUNT_VALUE => 10,
+                    AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
+                ],
+            ],
+            self::DISCOUNT_CONFIGURATION_SHIPPING_AMOUNT => [
+                'type' => 'shipping',
+                'options' => [
+                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
+                    AbstractDiscount::DISCOUNT_VALUE => 10,
+                    AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
+                    ShippingDiscount::SHIPPING_METHOD => 'flat_rate',
+                    ShippingDiscount::SHIPPING_METHOD_TYPE => 'primary'
+                ],
+            ]
+        ];
     }
 }

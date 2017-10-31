@@ -123,8 +123,7 @@ class CategoryRepository extends NestedTreeRepository
 
         return $qb
             ->select('partial category.{id}')
-            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'))
-            ->andWhere('title.string = :title')
+            ->andWhere('category.denormalizedDefaultTitle = :title')
             ->setParameter('title', $title)
             ->setMaxResults(1)
             ->getQuery()
@@ -248,5 +247,20 @@ class CategoryRepository extends NestedTreeRepository
         }
 
         return $productCategoryMap;
+    }
+
+    /**
+     * @param Category $category
+     */
+    public function updateMaterializedPath(Category $category)
+    {
+        $this->_em->createQueryBuilder()
+            ->update($this->_entityName, 'category')
+            ->set('category.materializedPath', ':newPath')
+            ->where('category.id = :category')
+            ->setParameter('category', $category)
+            ->setParameter('newPath', $category->getMaterializedPath())
+            ->getQuery()
+            ->execute();
     }
 }

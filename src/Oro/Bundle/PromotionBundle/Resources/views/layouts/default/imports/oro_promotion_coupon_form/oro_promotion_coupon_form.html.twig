@@ -1,0 +1,162 @@
+{% block __oro_promotion_coupon_form__container_widget %}
+    {% set options = {
+        view: 'oropromotion/js/app/views/frontend-coupon-add-view',
+        entityClass: oro_class_name(entity),
+        entityId: entity.id,
+        selectors: {
+            couponCodeSelector: '[data-role="coupon-code"]',
+            couponApplySelector: '[data-role="apply-coupon"]',
+            couponRemoveSelector: '[data-role="remove-coupon"]',
+            messagesContainer: '.coupon-container'
+        }
+    } %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupon-container',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': options
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__widget_container_widget %}
+    <div class="collapse-view" data-page-component-collapse="{{ { open: opened }|json_encode() }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__expand_link_widget %}
+    <div class="collapse-view__trigger hide-on-expand" data-collapse-trigger>
+        <i class="fa fa-file-text-o"></i> {{ 'oro.frontend.coupon.expand_link.label'|trans }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__expandable_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupon-container__content'
+    }) %}
+
+    <div class="collapse-view__container" data-collapse-container>
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__widget_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'page-title'
+    }) %}
+
+    <h3 {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.header.label'|trans }}</h3>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__form_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupon-container__form'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__coupon_input_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupon-container__input-wrap'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <input data-role="coupon-code" placeholder="{{ 'oro.frontend.coupon.widget.coupon_input.placeholder'|trans }}" class="input input--full">
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__apply_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'btn btn--action',
+        'data-role': 'apply-coupon'
+    }) %}
+
+    <button {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.apply_button.label'|trans }}</button>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_container_widget %}
+    <div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'bold'
+    }) %}
+
+    <h4 {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.applied_coupons_header.label'|trans }}</h4>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_rows_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' coupons-list'
+    }) %}
+
+    <ul {{ block('block_attributes') }}>
+        {% for appliedCoupon in appliedCoupons %}
+            {% set promotion = appliedCouponsPromotions[appliedCoupon.sourcePromotionId] is defined ? appliedCouponsPromotions[appliedCoupon.sourcePromotionId] : null %}
+            {% do block|merge_context({
+                appliedCoupon: appliedCoupon,
+                promotion: promotion,
+                parent: block.vars,
+                loop: loop
+            }) %}
+            {{ block('container_widget') }}
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupons-list__item'
+    }) %}
+
+    {% if promotion is empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': 'coupons-list__item',
+            'data-item-can-remove-promotion': ''
+        }) %}
+
+    {% endif %}
+
+    <li {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </li>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_text_container_widget %}
+    <span>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_coupon_code_widget %}
+    <span>{{ appliedCoupon.couponCode }}</span>
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_promotion_name_widget %}
+    {% if promotion is not null %}
+        <span>{{ promotion.labels|localized_value~'' ? promotion.labels|localized_value : promotion.rule.name  }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'btn btn--plain btn--baseline',
+        'data-object-id': appliedCoupon.id,
+        'data-role': 'remove-coupon'
+    }) %}
+
+    <button {{ block('block_attributes') }}>
+        <i class="fa-trash-o fa--x-large fa--no-offset"></i>
+    </button>
+{% endblock %}

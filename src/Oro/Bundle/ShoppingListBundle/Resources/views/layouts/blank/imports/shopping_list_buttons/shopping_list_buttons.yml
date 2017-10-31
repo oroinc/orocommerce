@@ -11,4 +11,4 @@ layout:
             options:
                 visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") || data["feature"].isFeatureEnabled("guest_shopping_list")'
                 shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
-
+                productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'

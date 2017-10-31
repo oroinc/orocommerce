@@ -108,4 +108,13 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($billingAddressField, $eventData);
         $this->assertEquals('view1', $eventData[$billingAddressField]);
     }
+
+    public function testDoNothingIfNoSubmission()
+    {
+        /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = static::createMock(OrderEvent::class);
+        $event->expects(static::never())
+            ->method('getForm');
+        $this->listener->onOrderEvent($event);
+    }
 }

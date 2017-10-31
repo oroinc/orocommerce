@@ -54,7 +54,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
         - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection:
             message: oro.pricing.validators.price_list.schedules_intersection.message
-        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
             chain:
                 activeAt: 'Activate At'
                 deactivateAt: 'Deactivate At'
@@ -131,6 +131,85 @@ Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
         currency:
             - NotBlank: ~
             - Currency: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website]
+    properties:
+        sortOrder:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: website
+    properties:
+        fallback:
+            - NotBlank: ~
+        website:
+            - NotBlank: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customerGroup]
+    properties:
+        sortOrder:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+        customerGroup:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customerGroup]
+    properties:
+        fallback:
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 1
+        website:
+            - NotBlank: ~
+        customerGroup:
+            - NotBlank: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customer]
+    properties:
+        sortOrder:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+        customer:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customer]
+    properties:
+        fallback:
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 1
+        website:
+            - NotBlank: ~
+        customer:
+            - NotBlank: ~
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:

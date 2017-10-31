@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as BaseRouter;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,9 +24,9 @@ class Router extends BaseRouter implements ContainerAwareInterface
     private $slugUrlMatcher;
 
     /**
-     * @var FrontendHelper
+     * @var MatchedUrlDecisionMaker
      */
-    private $frontendHelper;
+    private $urlDecisionMaker;
 
     /**
      * @param ContainerInterface $container
@@ -38,11 +37,11 @@ class Router extends BaseRouter implements ContainerAwareInterface
     }
 
     /**
-     * @param FrontendHelper $frontendHelper
+     * @param MatchedUrlDecisionMaker $urlDecisionMaker
      */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
+    public function setMatchedUrlDecisionMaker(MatchedUrlDecisionMaker $urlDecisionMaker)
     {
-        $this->frontendHelper = $frontendHelper;
+        $this->urlDecisionMaker = $urlDecisionMaker;
     }
 
     /**
@@ -50,7 +49,7 @@ class Router extends BaseRouter implements ContainerAwareInterface
      */
     public function getGenerator()
     {
-        if ($this->frontendHelper->isFrontendRequest()) {
+        if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->generator instanceof SluggableUrlGenerator) {
                 $this->sluggableUrlGenerator = $this->container->get('oro_redirect.routing.sluggable_url_generator');
                 $this->sluggableUrlGenerator->setBaseGenerator(parent::getGenerator());
@@ -68,7 +67,7 @@ class Router extends BaseRouter implements ContainerAwareInterface
      */
     public function getMatcher()
     {
-        if ($this->frontendHelper->isFrontendRequest()) {
+        if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->matcher instanceof SlugUrlMatcher) {
                 $this->slugUrlMatcher = $this->container->get('oro_redirect.routing.slug_url_matcher');
                 $this->slugUrlMatcher->setBaseMatcher(parent::getMatcher());
