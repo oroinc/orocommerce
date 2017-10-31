@@ -436,18 +436,31 @@ system_configuration:
             type: choice
             priority: 10
             options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_product_view.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_product_view.label
                 choices:
                     none: oro.product.system_configuration.fields.matrix_form_on_product_view.none.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label
                     popup: oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label
 
+        oro_product.matrix_form_on_product_listing:
+            data_type: string
+            type: choice
+            priority: 10
+            options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_product_listing.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_on_product_listing.label
+                choices:
+                    none: oro.product.system_configuration.fields.matrix_form_on_product_listing.none.label
+                    inline: oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label
+
         oro_product.matrix_form_on_shopping_list:
             data_type: string
             type: choice
             priority: 10
             options:
-                label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.display_options.label
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
                 choices:
                     group: oro.product.system_configuration.fields.matrix_form_on_shopping_list.group.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label
@@ -541,7 +554,9 @@ system_configuration:
                                     configurable_products_matrix_form:
                                         children:
                                             - oro_product.matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_listing
                                             - oro_product.matrix_form_on_shopping_list
+
                             product_collections:
                                 priority: 0
                                 children:
@@ -602,3 +617,5 @@ system_configuration:
                                     configurable_products_matrix_form:
                                         children:
                                             - oro_product.matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_listing
+                                            - oro_product.matrix_form_on_shopping_list

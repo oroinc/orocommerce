@@ -307,8 +307,7 @@ oro:
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
                 configurable_products.title: 'Configurable Products'
-                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
-                catalog_configurable_products.title: 'Configurable Products'
+                configurable_products_matrix_form.title: 'Configurable Product Display Options'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -424,13 +423,20 @@ oro:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
-                    label: 'Display Matrix Form (where applicable)'
-                    none.label: 'Do Not Display'
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms at product view pages.'
+                    label: 'Product Views'
+                    none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_on_shopping_list:
-                    display_options.label: 'Display Options in Shopping Lists'
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes in shopping lists.'
+                    label: 'Shopping Lists'
                     group.label: 'Group Single Products'
+                    inline.label: 'Inline Matrix Form'
+                matrix_form_on_product_listing:
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms on product listings. Applies only to list views; inline matrix is not supported in gallery view.'
+                    label: 'Product Listings'
+                    none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
             notice:
                 product_image_watermark: >
