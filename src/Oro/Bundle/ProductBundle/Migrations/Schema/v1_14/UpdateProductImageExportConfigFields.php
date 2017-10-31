@@ -35,5 +35,25 @@ class UpdateProductImageExportConfigFields implements Migration
                 false
             )
         );
+
+        $queries->addQuery(
+            new UpdateEntityConfigFieldValueQuery(
+                ProductImage::class,
+                'types',
+                'importexport',
+                'full',
+                true
+            )
+        );
+
+        $queries->addQuery(
+            new UpdateEntityConfigFieldValueQuery(
+                ProductImage::class,
+                'types',
+                'importexport',
+                'excluded',
+                false
+            )
+        );
     }
 }

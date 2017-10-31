@@ -2,123 +2,179 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Prophecy\Prophecy\ObjectProphecy;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImageTypesCollection;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
 class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductImageListener
+     * @var ProductImageListener $listener
      */
     protected $listener;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher
      */
     protected $eventDispatcher;
 
+    /**
+     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     */
+    protected $imageTypeProvider;
+
+    /**
+     * @var ProductImageHelper|\PHPUnit_Framework_MockObject_MockObject $productImageHelper
+     */
+    protected $productImageHelper;
+
+    /**
+     * @var ProcessImageTypesCollection $processImageTypesCollection
+     */
+    protected $processImageTypesCollection;
+
+    /**
+     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $productImageEntityManager
+     */
+    protected $productImageEntityManager;
+
+    /**
+     * @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $lifecycleArgs
+     */
+    protected $lifecycleArgs;
+
+    /**
+     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository
+     */
+    protected $productRepository;
+
     public function setUp()
     {
-        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->listener = new ProductImageListener($this->eventDispatcher->reveal());
+        $this->productImageEntityManager = $this->createMock(EntityManagerInterface::class);
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->productImageHelper = $this->createMock(ProductImageHelper::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->lifecycleArgs = $this->createMock(LifecycleEventArgs::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+
+        $this->listener = new ProductImageListener(
+            $this->eventDispatcher,
+            $this->imageTypeProvider,
+            $this->productImageHelper
+        );
     }
 
     public function testPostPersist()
     {
+        $this->imageTypeProvider->expects($this->once())
+            ->method('getMaxNumberByType')
+            ->willReturn(
+                [
+                    'main' => [
+                        'max' => 1,
+                        'label' => 'Main'
+                    ],
+                    'listing' => [
+                        'max' => 1,
+                        'label' => 'Listing'
+                    ]
+                ]
+            );
+
+        $this->productImageHelper->expects($this->once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 1,
+                    'listing' => 1,
+                ]
+            );
+
+        $this->productImageEntityManager->expects($this->once())
+            ->method('remove')
+            ->willReturn(true);
+
         $productImage = $this->prepareProductImage();
-        $productImageNoTypes = $this->prepareProductImage($withTypes = false);
 
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption = true)
-        )->shouldBeCalledTimes(1);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->willReturn(true);
 
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImageNoTypes, $forceOption = true)
-        )->shouldNotBeCalled();
+        $this->lifecycleArgs->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->productImageEntityManager);
 
-        $this->listener->postPersist($productImage, $this->prepareArgs()->reveal());
-        $this->listener->postPersist($productImageNoTypes, $this->prepareArgs()->reveal());
+        $this->listener->postPersist($productImage, $this->lifecycleArgs);
     }
 
     public function testPostUpdate()
     {
         $productImage = $this->prepareProductImage();
-        $productImageNoTypes = $this->prepareProductImage($withTypes = false);
 
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption = true)
-        )->shouldBeCalledTimes(1);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->willReturn(true);
 
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImageNoTypes, $forceOption = true)
-        )->shouldNotBeCalled();
-
-        //update product image multiple times will dispatch event only once
-        $this->listener->postUpdate($productImage, $this->prepareArgs()->reveal());
-        $this->listener->postUpdate($productImage, $this->prepareArgs()->reveal());
-        //update product image without types will not dispatch event
-        $this->listener->postUpdate($productImageNoTypes, $this->prepareArgs()->reveal());
+        $this->listener->postUpdate($productImage, $this->lifecycleArgs);
     }
 
     public function testFilePostUpdate()
     {
+        $this->lifecycleArgs->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->productImageEntityManager);
+
         $productImage = $this->prepareProductImage();
 
-        $image = new File();
-        $em = $this->prophesize(EntityManager::class);
-        $repository = $this->prophesize(ProductRepository::class);
+        $this->productRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($productImage);
 
-        $repository->findOneBy(['image' => $image])->willReturn($productImage);
-        $em->getRepository(ProductImage::class)->willReturn($repository->reveal());
+        $this->productImageEntityManager->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($this->productRepository);
 
-        $args = $this->prepareArgs();
-        $args->getEntityManager()->willReturn($em->reveal());
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->willReturn(true);
 
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption = true)
-        )->shouldBeCalledTimes(1);
-
-        //update image file multiple times will dispatch event only once
-        $this->listener->filePostUpdate($image, $args->reveal());
-        $this->listener->filePostUpdate($image, $args->reveal());
+        $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
     /**
-     * @return ObjectProphecy
+     * @return ProductImage
      */
-    private function prepareArgs()
+    private function prepareProductImage()
     {
-        return $this->prophesize(LifecycleEventArgs::class);
-    }
+        $parentProductImage = new ProductImage();
+        $parentProductImage->setTypes(
+            new ArrayCollection(
+                [
+                    new ProductImageType('main'),
+                    new ProductImageType('listing')
+                ]
+            )
+        );
 
-    /**
-     * @param bool $withTypes
-     * @return StubProductImage
-     */
-    private function prepareProductImage($withTypes = true)
-    {
-        $productImage = new StubProductImage();
-        $productImage->setId(1);
+        $parentProduct = new Product();
+        $parentProduct->addImage($parentProductImage);
 
-        if ($withTypes) {
-            $productImage->addType('type');
-        }
+        $productImage = new ProductImage();
+        $productImage->addType(new ProductImageType('main'));
+        $productImage->setProduct($parentProduct);
 
         return $productImage;
     }

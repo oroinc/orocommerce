@@ -26,9 +26,9 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     protected $fileLocator;
 
     /**
-     * @var  string $rootDir
+     * @var  string $productImageDir
      */
-    protected $rootDir;
+    protected $productImageDir;
 
     /**
      * @param ImageTypeProvider $imageTypeProvider
@@ -55,11 +55,11 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
-     * @param string $rootDir
+     * @param string $productImageDir
      */
-    public function setRootDir($rootDir)
+    public function setProductImageDir($productImageDir)
     {
-        $this->rootDir = $rootDir;
+        $this->productImageDir = $productImageDir;
     }
 
     /**
@@ -75,7 +75,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
             $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
         }
 
-        if (!array_key_exists('types', $data)){
+        if (!array_key_exists('types', $data)) {
             return $data;
         }
 
@@ -100,7 +100,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     public function denormalize($productImageData, $class, $format = null, array $context = [])
     {
         try {
-            $imagePath = $this->fileLocator->locate(sprintf('%s/import_export/product_images/%s', $this->rootDir, $productImageData['image']['name']));
+            $imagePath = $this->fileLocator->locate(
+                sprintf(
+                    '%s%s',
+                    $this->productImageDir,
+                    $productImageData['image']['name']
+                )
+            );
         } catch (\Exception $e) {
             $imagePath = null;
         }

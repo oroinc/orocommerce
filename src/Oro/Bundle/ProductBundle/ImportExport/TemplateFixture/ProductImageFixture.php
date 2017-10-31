@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
-class ProductImageFixture  implements TemplateFixtureInterface
+class ProductImageFixture implements TemplateFixtureInterface
 {
     /**
      * {@inheritdoc}
@@ -54,5 +54,6 @@ class ProductImageFixture  implements TemplateFixtureInterface
      * {@inheritdoc}
      */
     public function fillEntityData($key, $entity)
-    {}
+    {
+    }
 }

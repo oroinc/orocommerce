@@ -57,7 +57,6 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
         $this->imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn(
@@ -78,7 +77,7 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->productImageNormalizer = new ProductImageNormalizer($this->fieldHelper);
         $this->productImageNormalizer->setProductImageClass(ProductImage::class);
-        $this->productImageNormalizer->setRootDir('');
+        $this->productImageNormalizer->setProductImageDir('');
         $this->productImageNormalizer->setImageTypeProvider($this->imageTypeProvider);
         $this->productImageNormalizer->setFileLocator($this->fileLocator);
     }
@@ -101,7 +100,6 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
         $result = $this->productImageNormalizer->normalize(
             $productImage,
             null
-            , []
         );
 
         $this->assertArrayHasKey('types', $result);
@@ -138,8 +136,7 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
         $productImage = $this->productImageNormalizer->denormalize(
             $productImageData,
             ProductImage::class,
-            null,
-            []
+            null
         );
 
         $this->assertArrayHasKey(ProductImageType::TYPE_MAIN, $productImage->getTypes());
@@ -149,8 +146,7 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->productImageNormalizer->supportsNormalization(
             new StubProductImage(),
-            null,
-            []
+            null
         );
 
         $this->assertTrue($result);
@@ -161,8 +157,7 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
         $result = $this->productImageNormalizer->supportsDenormalization(
             [],
             new StubProductImage(),
-            null,
-            []
+            null
         );
 
         $this->assertTrue($result);
