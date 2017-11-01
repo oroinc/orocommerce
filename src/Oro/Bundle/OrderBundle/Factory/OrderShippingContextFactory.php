@@ -92,7 +92,7 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
             $shippingContextBuilder->setCustomerUser($order->getCustomerUser());
         }
 
-        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+        if (null !== $convertedLineItems) {
             $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 

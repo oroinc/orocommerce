@@ -73,9 +73,6 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function testCreateShippingLineItemCollection()
     {
         $lineItem1 = $this->createLineItemWithoutShippingOptions();
@@ -99,7 +96,8 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->with($lineItem2)
             ->willReturn($builder2);
 
-        $this->repository->method('findByProductsAndUnits')
+        $this->repository
+            ->method('findByProductsAndUnits')
             ->willReturn([
                 $this->createShippingOptionsMock($this->productMock, $this->weightMock, $this->dimensionsMock),
                 $this->createShippingOptionsMock($this->productMock, $this->weightMock, $this->dimensionsMock),
@@ -118,6 +116,27 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->willReturn($lineItemCollection);
 
         static::assertSame($lineItemCollection, $this->decorator->createShippingLineItemCollection($shippingLineItems));
+    }
+
+    public function testCreateShippingLineItemCollectionEmpty()
+    {
+        $array = [];
+        $collection = $this->createShippingLineItemCollectionMock();
+
+        $this->repository
+            ->method('findByProductsAndUnits')
+            ->willReturn($array);
+
+        $this->builderByLineItemFactory
+            ->expects(static::never())
+            ->method('createBuilder');
+
+        $this->decoratedFactory
+            ->method('createShippingLineItemCollection')
+            ->with($array)
+            ->willReturn($collection);
+
+        static::assertSame($collection, $this->decorator->createShippingLineItemCollection($array));
     }
 
     /**

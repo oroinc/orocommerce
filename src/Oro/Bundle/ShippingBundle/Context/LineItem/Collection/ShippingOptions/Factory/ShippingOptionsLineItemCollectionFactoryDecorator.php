@@ -50,6 +50,10 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
     {
         $shippingOptionsByProductId = $this->getShippingOptionsIndexedByProductId($shippingLineItems);
 
+        if (count($shippingOptionsByProductId) === 0) {
+            return $this->decoratedFactory->createShippingLineItemCollection($shippingLineItems);
+        }
+
         $newShippingLineItems = [];
 
         foreach ($shippingLineItems as $lineItem) {

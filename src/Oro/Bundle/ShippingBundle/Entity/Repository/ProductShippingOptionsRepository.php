@@ -14,6 +14,10 @@ class ProductShippingOptionsRepository extends EntityRepository
      */
     public function findByProductsAndUnits(array $unitsByProductIds): array
     {
+        if (count($unitsByProductIds) === 0) {
+            return [];
+        }
+
         $qb = $this->createQueryBuilder('options');
         $qb
             ->join('options.product', 'product');
