@@ -138,8 +138,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
      */
     public function submitWithPermissionAndCustomFieldsAndCustomerAddressProvider()
     {
-        $country = new Country('US');
-        $region = (new Region('US-AL'))->setCountry($country);
+        list ($country, $region) = $this->getValidCountryAndRegion();
 
         $savedCustomerAddress = (new CustomerAddress())
             ->setLabel('Label')

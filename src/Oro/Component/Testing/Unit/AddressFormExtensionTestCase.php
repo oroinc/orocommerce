@@ -51,10 +51,11 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $country = new Country('US');
+        list ($country, $region) = $this->getValidCountryAndRegion();
+
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
+            'OroAddressBundle:Country' => ['US' => $country->addRegion($region)],
+            'OroAddressBundle:Region' => ['US-AL' => $region],
         ];
 
         $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
@@ -86,6 +87,21 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                 }
             )
         );
+
         return $translatableEntity;
+    }
+
+
+    /**
+     * @return array
+     */
+    protected function getValidCountryAndRegion()
+    {
+        $country = new Country('US');
+        $region = new Region('US-AL');
+        $region->setCountry($country);
+        $country->addRegion($region);
+
+        return [$country, $region];
     }
 }
