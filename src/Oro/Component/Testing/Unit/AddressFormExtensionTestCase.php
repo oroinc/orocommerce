@@ -54,7 +54,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         list ($country, $region) = $this->getValidCountryAndRegion();
 
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $country->addRegion($region)],
+            'OroAddressBundle:Country' => ['US' => $country],
             'OroAddressBundle:Region' => ['US-AL' => $region],
         ];
 
