@@ -6,6 +6,8 @@ layout:
             namespace: grid_container
 
     actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
         - '@addTree':
             items:
                 __grid_container:
@@ -15,6 +17,8 @@ layout:
                     options:
                         additional_block_prefixes: ['order_head_block_container']
                 __grid_container_head_title:
+                    blockType: container
+                __grid_container_head_title_text:
                     blockType: text
                     options:
                         text: 'oro.order.frontend.ordered_items.title'
@@ -26,7 +30,8 @@ layout:
                 __root:
                     __grid_container:
                         __grid_container_head:
-                            __grid_container_head_title: ~
+                            __grid_container_head_title:
+                                __grid_container_head_title_text: ~
                         __grid_container_body: ~
 
         - '@move':

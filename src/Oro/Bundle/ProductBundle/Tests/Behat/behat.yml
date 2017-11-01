@@ -143,6 +143,19 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "responsive-section")]//h4[contains(., "Frontend options")]/..'
 
+    Product Option Form:
+      selector: 'form[name="product_options"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Manage Inventory  Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
+          Inventory Threshold Default: 'product_options[oro_inventory___inventory_threshold][use_parent_scope_value]'
+          Backorders Default: 'product_options[oro_inventory___backorders][use_parent_scope_value]'
+          Decrement Inventory Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
+          Low Inventory Threshold Default: 'product_options[oro_inventory___low_inventory_threshold][use_parent_scope_value]'
+          Highlight Low Inventory: 'product_options[oro_inventory___highlight_low_inventory][value]'
+          Highlight Low Inventory Default: 'product_options[oro_inventory___highlight_low_inventory][use_parent_scope_value]'
+
     ProductForm:
       selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -435,7 +448,16 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: '.product-list'
+      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    ProductFrontendGridFiltersButton:
+      selector: 'div.filter-container > button.select-filter-widget'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
+
+    ProductFrontendGridFilterManager:
+      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
 
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
@@ -482,6 +504,9 @@ oro_behat_extension:
 
     ProductItem:
       selector: 'div.product-item'
+
+    ProductLineItem:
+      selector: 'tbody.line_item'
 
     Product Shopping List Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
@@ -631,6 +656,12 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Featured Products"]/../../div'
+
+    Related Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Related Products"]/../../div'
 
     EmbeddedProduct:
       selector: 'div.embedded-product'

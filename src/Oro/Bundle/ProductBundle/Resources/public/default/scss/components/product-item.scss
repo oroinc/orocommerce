@@ -612,3 +612,15 @@
         }
     }
 }
+
+@include breakpoint('print') {
+    .product-item {
+        &__title {
+            &--in-cart {
+                a {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}

@@ -69,7 +69,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
             [
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'urlParts' => [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                 ]
@@ -77,7 +77,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
             [
                 'categoryId' => LoadCategoryData::THIRD_LEVEL1,
                 'urlParts'   => [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                     LoadCategoryData::THIRD_LEVEL1
@@ -86,7 +86,7 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
             [
                 'categoryId' => LoadCategoryData::SECOND_LEVEL1,
                 'urlParts'   => [
-                    'Products categories',
+                    'All Products',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                 ]
