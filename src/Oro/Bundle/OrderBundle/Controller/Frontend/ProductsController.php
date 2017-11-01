@@ -29,7 +29,7 @@ class ProductsController extends AbstractOrderController
             ],
             'theme_name' => $this->container
                 ->get('oro_product.datagrid_theme_helper')
-                ->getTheme('frontend-product-search-grid')
+                ->getTheme('order-products-previously-purchased-grid')
         ];
     }
 }

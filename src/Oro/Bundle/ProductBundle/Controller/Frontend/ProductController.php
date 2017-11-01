@@ -30,7 +30,7 @@ class ProductController extends Controller
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
             'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
-                                            ->getTheme('frontend-product-search-grid'),
+                ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
             ],

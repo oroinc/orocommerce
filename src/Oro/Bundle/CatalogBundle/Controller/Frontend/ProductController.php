@@ -29,7 +29,7 @@ class ProductController extends Controller
             ],
             'theme_name' => $this->container
                 ->get('oro_product.datagrid_theme_helper')
-                ->getTheme('frontend-product-search-grid')
+                ->getTheme('frontend-catalog-allproducts-grid')
         ];
     }
 }
