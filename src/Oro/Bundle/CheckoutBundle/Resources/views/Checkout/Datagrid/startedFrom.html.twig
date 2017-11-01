@@ -6,6 +6,12 @@
             <a href="{{ path('oro_shopping_list_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
         {% elseif data.type == 'quote' %}
             <a href="{{ path('oro_sale_quote_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
+        {% elseif data.type == 'order' %}
+            <a href="{{ path('oro_order_frontend_view', {id: data.id}) }}">
+                {{ 'oro.order.navigation.view'|trans({
+                    '%identifier%': data.entity.identifier|default('N/A'|trans)
+                }) }}
+            </a>
         {% else %}
             {{ data.label }}
         {% endif %}
