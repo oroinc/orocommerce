@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class AddProductsMassActionArgsParser
 {
@@ -51,12 +52,12 @@ class AddProductsMassActionArgsParser
     }
 
     /**
-     * @return int|null
+     * @return ShoppingList|null
      */
-    public function getShoppingListId()
+    public function getShoppingList()
     {
-        return array_key_exists('shoppingList', $this->args) && is_numeric($this->args['shoppingList'])
-            ? (int) $this->args['shoppingList']
+        return array_key_exists('shoppingList', $this->args)
+            ? $this->args['shoppingList']
             : null;
     }
 

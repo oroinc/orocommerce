@@ -56,6 +56,11 @@ define(function(require) {
             }, this);
 
             BackendGrid.__super__.initialize.apply(this, arguments);
+
+            mediator.on('widget:notFound', function () {
+                $(window).off('beforeunload');
+            })
+
             this._listenToDocumentEvents();
         },
 

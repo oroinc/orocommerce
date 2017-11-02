@@ -160,23 +160,35 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
-        $form = $this->createForm(ShoppingListType::NAME);
         /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $manager->create();
-        $response = $this->get('oro_form.model.update_handler')->handleUpdate($shoppingList, $form, [], [], null);
 
+        $form = $this->createForm(ShoppingListType::NAME, $shoppingList);
+        $form->handleRequest($request);
+
+        $response = [];
         if ($form->isValid()) {
-            $manager->setCurrent($this->getUser(), $form->getData());
+            $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+            $requestData = array_merge($request->query->all(), $request->request->all());
 
             /** @var MassActionResponseInterface $result */
             $result = $this->get('oro_datagrid.mass_action.dispatcher')
-                ->dispatchByRequest($gridName, $actionName, $request);
+                ->dispatch(
+                    $gridName,
+                    $actionName,
+                    $parameters,
+                    array_merge($requestData, ['shoppingList' => $shoppingList])
+                );
+
+            $manager->setCurrent($this->getUser(), $shoppingList);
 
             $response['messages']['data'][] = $result->getMessage();
+            $response['savedId'] = $shoppingList->getId();
         }
 
         $defaultResponse = [
+            'form' => $form->createView(),
             'savedId' => null,
             'messages' => ['data'=>[]],
             'shoppingList' => $shoppingList,

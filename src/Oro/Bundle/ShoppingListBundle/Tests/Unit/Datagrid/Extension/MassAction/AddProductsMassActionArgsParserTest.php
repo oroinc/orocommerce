@@ -4,9 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionArgsParser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     public function testGetProductIds()
     {
         $parser = new AddProductsMassActionArgsParser($this->getArgs(0, '', '1'));
@@ -15,14 +19,13 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $parser->getProductIds());
     }
 
-    public function testGetShoppingListId()
+    public function testGetShoppingList()
     {
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2', '1'));
-        $this->assertEquals(1, $parser->getShoppingListId());
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2', 'current'));
-        $this->assertNull($parser->getShoppingListId());
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2', $shoppingList));
+        $this->assertEquals($shoppingList, $parser->getShoppingList());
         $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2'));
-        $this->assertNull($parser->getShoppingListId());
+        $this->assertNull($parser->getShoppingList());
     }
 
     public function testGetUnitsAndQuantitiesWhenEmpty()
@@ -57,7 +60,7 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int      $inset
      * @param string   $values
-     * @param int|null $shoppingList
+     * @param ShoppingList|null $shoppingList
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
      */

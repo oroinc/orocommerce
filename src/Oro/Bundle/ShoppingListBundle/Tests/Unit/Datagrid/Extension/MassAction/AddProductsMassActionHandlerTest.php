@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
@@ -14,6 +16,8 @@ use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const MESSAGE = 'test message';
 
     /** @var AddProductsMassActionHandler */
@@ -25,11 +29,19 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemHandler */
     protected $shoppingListItemHandler;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    protected $managerRegistry;
+
     protected function setUp()
     {
         $this->shoppingListItemHandler = $this->getShoppingListItemHandler();
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
 
-        $this->handler = new AddProductsMassActionHandler($this->shoppingListItemHandler, $this->getMessageGenerator());
+        $this->handler = new AddProductsMassActionHandler(
+            $this->shoppingListItemHandler,
+            $this->getMessageGenerator(),
+            $this->managerRegistry
+        );
     }
 
     public function testHandleMissingShoppingList()
@@ -39,36 +51,153 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn(['shoppingList' => null]);
         $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')->willReturn(null);
+
+        $response = $this->handler->handle($args);
+
+        $this->assertFalse($response->isSuccessful());
+        $this->assertEquals(0, $response->getOptions()['count']);
+    }
+
+    public function testHandleNotAllowed()
+    {
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+
+        $args = $this->getMassActionArgs();
+        $args->expects($this->any())
+            ->method('getData')
+            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
+        $this->shoppingListItemHandler->expects($this->never())
+            ->method('getShoppingList');
+
         $response = $this->handler->handle($args);
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals(0, $response->getOptions()['count']);
     }
 
-    public function testHandleAccessDenied()
+    public function testHandleException()
     {
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => 1, 'values' => 3]);
-        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
-            ->willReturn(new ShoppingList());
-        $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')
-            ->willThrowException(new AccessDeniedException());
+            ->willReturn([
+                'shoppingList' => null,
+                'values' => 3
+            ]);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('getShoppingList')
+            ->willReturn($shoppingList);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects($this->never())
+            ->method('persist');
+
+        $em->expects($this->once())
+            ->method('rollback');
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($em);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('createForShoppingList')
+            ->willThrowException(new \Exception());
+
+        $this->expectException(\Exception::class);
+
+        $this->handler->handle($args);
+    }
+
+    public function testHandleExistingShoppingList()
+    {
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+
+        $args = $this->getMassActionArgs();
+        $args->expects($this->any())
+            ->method('getData')
+            ->willReturn([
+                'shoppingList' => null,
+                'values' => 3
+            ]);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('getShoppingList')
+            ->willReturn($shoppingList);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('createForShoppingList')
+            ->willReturn(2);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects($this->never())
+            ->method('persist');
+
+        $em->expects($this->once())
+            ->method('commit');
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($em);
 
         $response = $this->handler->handle($args);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertEquals(0, $response->getOptions()['count']);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals(2, $response->getOptions()['count']);
+        $this->assertEquals(self::MESSAGE, $response->getMessage());
     }
 
     public function testHandle()
     {
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => 1, 'values' => 3]);
-        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
-            ->willReturn($this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1));
+            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
+
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
+
+        $this->shoppingListItemHandler->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects($this->once())
+            ->method('persist')
+            ->with($shoppingList);
+        $em->expects($this->once())
+            ->method('flush');
+
+        $em->expects($this->once())
+            ->method('commit');
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($em);
 
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
@@ -78,15 +207,12 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWhenAllProductsSelected()
     {
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => 1]);
-
-        $this->shoppingListItemHandler
-            ->expects($this->once())
-            ->method('getShoppingList')
-            ->willReturn($this->getEntity(ShoppingList::class, 1));
+            ->willReturn(['shoppingList' => $shoppingList]);
 
         $this->shoppingListItemHandler
             ->expects($this->never())
@@ -149,22 +275,5 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         return $shoppingListItemHandler;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
@@ -18,16 +20,22 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     /**  @var ShoppingListLineItemHandler */
     protected $shoppingListLineItemHandler;
 
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
+
     /**
      * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
      * @param MessageGenerator $messageGenerator
+     * @param ManagerRegistry $managerRegistry
      */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
-        MessageGenerator $messageGenerator
+        MessageGenerator $messageGenerator,
+        ManagerRegistry $managerRegistry
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
         $this->messageGenerator = $messageGenerator;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -36,23 +44,39 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     public function handle(MassActionHandlerArgs $args)
     {
         $argsParser = new AddProductsMassActionArgsParser($args);
-        $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($argsParser->getShoppingListId());
+        $shoppingList = $argsParser->getShoppingList();
+        $productIds = $argsParser->getProductIds();
 
-        // Don't allow to add all products
-        if (!$shoppingList || !$argsParser->getProductIds()) {
+        if (!$shoppingList) {
+            $shoppingList = $this->shoppingListLineItemHandler->getShoppingList();
+        }
+
+        if (!$this->isAllowed($shoppingList, $productIds)) {
             return $this->generateResponse($args);
         }
 
+        /** @var EntityManagerInterface $em */
+        $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
+        $em->beginTransaction();
+
         try {
+            if ($argsParser->getShoppingList()) {
+                $em->persist($shoppingList);
+                $em->flush();
+            }
+
             $addedCnt = $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
-                $argsParser->getProductIds(),
+                $productIds,
                 $argsParser->getUnitsAndQuantities()
             );
 
+            $em->commit();
             return $this->generateResponse($args, $addedCnt, $shoppingList->getId());
-        } catch (AccessDeniedException $e) {
-            return $this->generateResponse($args);
+
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
         }
     }
 
@@ -75,5 +99,15 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             $this->messageGenerator->getSuccessMessage($shoppingListId, $entitiesCount, $transChoiceKey),
             ['count' => $entitiesCount]
         );
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @param array $productIds
+     * @return bool
+     */
+    private function isAllowed($shoppingList, array $productIds): bool
+    {
+        return $shoppingList && $productIds && $this->shoppingListLineItemHandler->isAllowed();
     }
 }

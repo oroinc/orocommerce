@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -12,6 +13,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /** @var ShoppingListManager */
     protected $manager;
 
@@ -67,7 +70,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             ]);
         }
 
-        if (!$this->isGuestCustomerUser()) {
+        if ($this->isFeaturesEnabled()) {
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
@@ -90,14 +93,6 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         }
 
         return $actions;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isGuestCustomerUser(): bool
-    {
-        return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
     }
 
     /**
@@ -128,5 +123,13 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                 '{{ shoppingList }}' => $shoppingList->getLabel()
             ]
         );
+    }
+
+    /**
+     * @return bool
+     */
+    private function isGuestCustomerUser(): bool
+    {
+        return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
     }
 }
