@@ -85,8 +85,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         foreach ($rows as $rowElement) {
             self::assertTrue(
                 $this->currentLineItemRowAppearsInExpectedLineItems($rowElement, $table),
-                sprintf(
-                    'Row "$s" isn\'t expected',
+                vsprintf(
+                    'Row "%s, %s, %s" isn\'t expected',
                     [
                         $this->getLineItemSKU($rowElement),
                         $this->getLineItemUnit($rowElement),
