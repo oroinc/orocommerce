@@ -14,7 +14,6 @@ config:
         'oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent.js'
         'oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action': 'bundles/oroproduct/js/datagrid/action/trigger-event-for-selected-product-ids-mass-action.js'
         'oroproduct/js/app/views/variant-fields-view': 'bundles/oroproduct/js/app/views/variant-fields-view.js'
-        'oroform/js/app/views/form-loading-view': 'bundles/oroform/js/app/views/form-loading-view.js'
         'oroproduct/js/app/components/related-items-tabs-component': 'bundles/oroproduct/js/app/components/related-items-tabs-component.js'
         'oroproduct/js/app/components/product-variant-component': 'bundles/oroproduct/js/app/components/product-variant-component.js'
     shim:
