@@ -21,7 +21,7 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue:
-                label: 'oro.order.navigation.view'
+                label: 'oro.frontend.order.identifier.label'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':

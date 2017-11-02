@@ -163,7 +163,7 @@ operations:
 action_groups:
     oro_update_shipping_price:
         parameters:
-          checkout:
+            checkout:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@call_service_method':
@@ -211,6 +211,56 @@ action_groups:
                     checkout: $.checkout
                     errors: $.errors
 
+    prepare_checkout_settings:
+        parameters:
+            source:
+                type: Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface
+        actions:
+            - '@tree':
+                conditions:
+                    '@not_blank': $.source.billingAddress
+                actions:
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_duplicate_address
+                        parameters_mapping:
+                            address: $.source.billingAddress
+                        results:
+                            'settings.billing_address': $.newAddress
+
+            - '@tree':
+                conditions:
+                    '@not_blank': $.source.shippingAddress
+                actions:
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_duplicate_address
+                        parameters_mapping:
+                            address: $.source.shippingAddress
+                        results:
+                            'settings.shipping_address': $.newAddress
+
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_blank': $.source.shippingMethod
+                        - '@not_blank': $.source.shippingMethodType
+                actions:
+                    - '@assign_value': [$.settings.shipping_method, $.source.shippingMethod]
+                    - '@assign_value': [$.settings.shipping_method_type, $.source.shippingMethodType]
+
+            - '@call_service_method':
+                service: oro_payment.provider.payment_transaction
+                method: getPaymentMethods
+                method_parameters: [$.source]
+                attribute: $.paymentMethods
+
+            - '@tree':
+                conditions:
+                    '@not_blank': $.paymentMethods
+                actions:
+                    - '@assign_value':
+                        - $.settings.payment_method
+                        - $.paymentMethods[0]
+
     start_checkout:
         parameters:
             sourceCriteria:
@@ -241,6 +291,19 @@ action_groups:
                 results:
                     checkout: $.checkout
                     force: $.updateData
+
+            - '@tree':
+                conditions:
+                    '@not_blank': $.checkout.sourceEntity
+                actions:
+                    - '@run_action_group':
+                        action_group: prepare_checkout_settings
+                        parameters_mapping:
+                            source: $.checkout.sourceEntity
+                        results:
+                            preparedSettings: $.settings
+
+                    - '@copy_values': [$.settings, $.preparedSettings]
 
             - '@tree':
                 conditions:
@@ -461,11 +524,6 @@ action_groups:
                 method_parameters: [$.entity, $.currentWorkflow.name]
 
             - '@copy_values': [$.workflowItem.data, $.data]
-
-            - '@call_service_method':
-                service: oro_workflow.data_updater.chain
-                method: update
-                method_parameters: [$.workflowItem.definition, $.workflowItem.data, $.entity.sourceEntity]
 
             - '@call_method':
                 object: $.workflowItem
