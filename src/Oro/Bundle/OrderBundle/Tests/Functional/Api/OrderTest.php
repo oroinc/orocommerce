@@ -113,6 +113,14 @@ class OrderTest extends RestJsonApiTestCase
                     'attributes' => [
                         'customerNotes' => $newNotes,
                     ],
+                    'relationships' => [
+                        'payment_term_7c4f1e8e' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
+                        ]
+                    ]
                 ],
             ]
         );
@@ -128,7 +136,10 @@ class OrderTest extends RestJsonApiTestCase
             ->getRepository(Order::class)
             ->find($order->getId());
 
+        $paymentTermProvider = $this->getContainer()->get('oro_payment_term.provider.payment_term');
+
         self::assertEquals($newNotes, $updatedOrder->getCustomerNotes());
+        self::assertEquals('net 20', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
         self::assertLessThanOrEqual($oldSubtotalValue, $updatedOrder->getSubtotal());
         self::assertLessThanOrEqual($oldTotalValue, $updatedOrder->getTotal());
     }

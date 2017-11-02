@@ -4,6 +4,10 @@ layout:
             id: oro_line_items_grid
             root: order_container
             namespace: line_items
+        -
+            id: oro_customer_toolbar_actions
+            root: order_view_page
+            namespace: order_view_page_toolbar
 
     actions:
         - '@setBlockTheme':
@@ -24,6 +28,10 @@ layout:
             id: page_content
             optionName: class_prefix
             optionValue: 'customer'
+        - '@setOption':
+            id: order_view_page_toolbar_print_button
+            optionName: text
+            optionValue: 'oro.frontend.order.toolbar-actions.btn.print'
         - '@addTree':
             items:
                 order_view_page:
@@ -55,6 +63,9 @@ layout:
                     options:
                         route_name: oro_order_frontend_index
                         text: 'oro.order.frontend.order_list_link.text'
+                        icon: angle-left
+                        attr:
+                            class: 'link pull-left hide-on-print'
                 order_identifier:
                     blockType: text
                     options:

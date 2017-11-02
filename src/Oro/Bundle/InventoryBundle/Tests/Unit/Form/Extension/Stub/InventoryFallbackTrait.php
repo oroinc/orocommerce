@@ -1,0 +1,168 @@
+<?php
+
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub;
+
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+
+trait InventoryFallbackTrait
+{
+    /** @var EntityFieldFallbackValue */
+    protected $minimumQuantityToOrder;
+
+    /** @var EntityFieldFallbackValue */
+    protected $maximumQuantityToOrder;
+
+    /** @var EntityFieldFallbackValue  */
+    protected $highlightLowInventory;
+
+    /** @var EntityFieldFallbackValue  */
+    protected $backOrder;
+
+    /** @var EntityFieldFallbackValue */
+    protected $decrementQuantity;
+
+    /** @var EntityFieldFallbackValue */
+    protected $inventoryThreshold;
+
+    /** @var EntityFieldFallbackValue */
+    protected $lowInventoryThreshold;
+
+    /** @var EntityFieldFallbackValue */
+    protected $manageInventory;
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getMinimumQuantityToOrder()
+    {
+        return $this->minimumQuantityToOrder;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $minimumQuantityToOrder
+     *
+     * @return $this
+     */
+    public function setMinimumQuantityToOrder(EntityFieldFallbackValue $minimumQuantityToOrder)
+    {
+        $this->minimumQuantityToOrder = $minimumQuantityToOrder;
+
+        return $this;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getMaximumQuantityToOrder()
+    {
+        return $this->maximumQuantityToOrder;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $maximumQuantityToOrder
+     *
+     * @return $this
+     */
+    public function setMaximumQuantityToOrder(EntityFieldFallbackValue $maximumQuantityToOrder)
+    {
+        $this->maximumQuantityToOrder = $maximumQuantityToOrder;
+
+        return $this;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $highlightLowInventory
+     */
+    public function setHighlightLowInventory(EntityFieldFallbackValue $highlightLowInventory)
+    {
+        $this->highlightLowInventory = $highlightLowInventory;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getHighlightLowInventory()
+    {
+        return $this->highlightLowInventory;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $backOrder
+     */
+    public function setBackOrder(EntityFieldFallbackValue $backOrder)
+    {
+        $this->backOrder = $backOrder;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getBackOrder()
+    {
+        return $this->backOrder;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $decrementQuantity
+     */
+    public function setDecrementQuantity(EntityFieldFallbackValue $decrementQuantity)
+    {
+        $this->decrementQuantity = $decrementQuantity;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getDecrementQuantity()
+    {
+        return $this->decrementQuantity;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $inventoryThreshold
+     */
+    public function setInventoryThreshold(EntityFieldFallbackValue $inventoryThreshold)
+    {
+        $this->inventoryThreshold = $inventoryThreshold;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getInventoryThreshold()
+    {
+        return $this->inventoryThreshold;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $lowInventoryThreshold
+     */
+    public function setLowInventoryThreshold(EntityFieldFallbackValue $lowInventoryThreshold)
+    {
+        $this->lowInventoryThreshold = $lowInventoryThreshold;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getLowInventoryThreshold()
+    {
+        return $this->lowInventoryThreshold;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $manageInventory
+     */
+    public function setManageInventory(EntityFieldFallbackValue $manageInventory)
+    {
+        $this->manageInventory = $manageInventory;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getManageInventory()
+    {
+        return $this->manageInventory;
+    }
+}

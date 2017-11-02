@@ -79,13 +79,17 @@ oro:
         payment.label: Payment
         frontend.order_information.title: 'Order Information'
         frontend.ordered_items.title: 'Items Ordered'
-        frontend.order_list_link.text: '< Back to Orders List'
+        frontend.order_list_link.text: 'Back to Orders List'
         discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
         frontend_index_title: Order History - My Account - Home page
+
+        payment_term_7c4f1e8e:
+            label: 'Payment term'
+            description: 'Payment term'
 
         shipping_tracking:
             entity_label: Shipping Tracking
@@ -323,3 +327,6 @@ oro:
             method_type:
                 view:
                     label: '%translatedMethodType%'
+            toolbar-actions:
+                btn:
+                    print: 'Print Order'

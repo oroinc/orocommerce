@@ -392,7 +392,8 @@ datagrids:
                     - productPrice.currency
                     - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
                     - IDENTITY(productPrice.priceList) as priceListId
-                    - product.denormalizedDefaultName
+                    - product.denormalizedDefaultName as productName
+                    - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
                     - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -408,7 +409,7 @@ datagrids:
         columns:
             productSku:
                 label:         oro.pricing.productprice.product_sku.label
-            denormalizedDefaultName:
+            productName:
                 label:         oro.pricing.productprice.product_name.label
             quantity:
                 label:         oro.pricing.productprice.quantity.label
@@ -430,8 +431,8 @@ datagrids:
             columns:
                 productSku:
                     data_name: productPrice.productSku
-                denormalizedDefaultName:
-                    data_name: product.denormalizedDefaultName
+                productName:
+                    data_name: productName
                 quantity:
                     data_name: productPrice.quantity
                 unitCode:
@@ -447,9 +448,11 @@ datagrids:
                 productSku:
                     type:      string
                     data_name: productPrice.productSku
-                denormalizedDefaultName:
-                    type:      string
-                    data_name: product.denormalizedDefaultName
+                productName:
+                    type:             string
+                    data_name:        productNameUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
                 quantity:
                     type:      number
                     data_name: productPrice.quantity
