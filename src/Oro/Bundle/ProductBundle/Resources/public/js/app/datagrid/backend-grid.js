@@ -14,7 +14,7 @@ define(function(require) {
 
     var config = require('module').config();
     config = _.extend({
-        massActionsOnSticky: _.isMobile(),
+        massActionsInSticky: _.isMobile(),
         massActionsContainer: $('[data-mass-actions-container]'),
         massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
     }, config);
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         /** @property */
-        massActionsOnSticky: config.massActionsOnSticky,
+        massActionsInSticky: config.massActionsInSticky,
 
         /**
          * @inheritDoc
@@ -177,11 +177,11 @@ define(function(require) {
                 collection: this.collection,
                 column: this.columns.findWhere('massActions'),
                 selectState: this.selectState,
-                massActionsOnSticky: this.massActionsOnSticky
+                massActionsInSticky: this.massActionsInSticky
             });
 
             this.massActionsContainer.append(this.selectAllHeaderCell.$el);
-            if (this.massActionsOnSticky) {
+            if (this.massActionsInSticky) {
                 this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
                     collection: this.collection,
                     selectState: this.selectState,

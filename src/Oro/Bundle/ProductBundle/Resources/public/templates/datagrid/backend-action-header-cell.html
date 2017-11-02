@@ -1,15 +1,19 @@
-<% if (_.isMobile()) { %>
+<% if (massActionsInSticky) { %>
     <div class="datagrid-massaction" data-action-panel>
-        <div class="btn-group full dropup">
-            <span class="btn bnt--full btn--info btn--size-s" data-toggle data-action-extra-panel></span>
-            <button class="btn btn--info btn--size-s dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
-                data-action-main-panel
+        <% if (actionsLength > 1) { %>
+            <div class="btn-group full dropup">
+                <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-toggle data-action-extra-panel></span>
+                <button class="btn btn--info btn--size-s dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
+                    data-action-main-panel
                 >
-            </ul>
-        </div>
+                </div>
+            </div>
+        <% } else { %>
+            <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-action-extra-panel></span>
+        <% } %>
     </div>
 <% } else { %>
     <div class="datagrid-massaction">
@@ -20,10 +24,10 @@
                 <%- _.__('oro.product.frontend.choose_action') %>
                 <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu datagrid-massaction__dropdown-menu"
+            <div class="dropdown-menu datagrid-massaction__dropdown-menu"
                 data-action-panel
                 data-options="{&quot;container&quot;: true}">
-            </ul>
+            </div>
         </div>
     </div>
 <% } %>

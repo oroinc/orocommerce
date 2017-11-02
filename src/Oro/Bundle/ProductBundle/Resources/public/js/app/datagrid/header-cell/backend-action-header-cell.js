@@ -33,7 +33,7 @@ define(function(require) {
         initialize: function(options) {
             BackendSelectHeaderCell.__super__.initialize.apply(this, arguments);
             this.selectState = options.selectState;
-            this.massActionsOnSticky = options.massActionsOnSticky;
+            this.massActionsInSticky = options.massActionsInSticky;
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.canUse, 50), this));
 
             ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
@@ -52,6 +52,14 @@ define(function(require) {
             this.render();
         },
 
+        getTemplateData: function() {
+            var data = BackendSelectHeaderCell.__super__.getTemplateData.call(this);
+
+            data.massActionsInSticky = this.massActionsInSticky;
+            data.actionsLength = this.subview('actionsPanel').actions.length;
+            return data;
+        },
+
         render: function() {
             this.$el.empty();
             this.renderActionsPanel();
@@ -61,7 +69,7 @@ define(function(require) {
         renderActionsPanel: function() {
             var panel = this.subview('actionsPanel');
 
-            panel.massActionsOnSticky = this.massActionsOnSticky;
+            panel.massActionsInSticky =  this.massActionsInSticky;
             if (panel.haveActions()) {
                 this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
                 panel.setElement(this.$('[data-action-panel]'));

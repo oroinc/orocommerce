@@ -12,47 +12,41 @@ define(function(require) {
          * @return {*}
          */
         render: function() {
+            var currentLauncherIsPresent = !!_.filter(this.launchers, function(launcher) {
+                return launcher.action.is_current === true;
+            }).length;
+
             _.each(this.launchers, function(launcher) {
-                var $el = this.findContainer(launcher);
-                this.addExtraClass(launcher);
+                var $el = null;
+
+                if (currentLauncherIsPresent) {
+                    $el = this.findContainer(launcher, launcher.action.is_current);
+                } else {
+                    $el = this.findContainer(launcher, true);
+                }
+
                 $el.append(launcher.render().$el);
-                this.wrapLauncher(launcher);
             }, this);
             return this;
         },
 
         /**
          * @param {Object} launcher
+         * @param {Boolean} pasteToExtraPanel
          */
-        findContainer: function(launcher) {
+        findContainer: function(launcher, pasteToExtraPanel) {
             var $el = this.$el;
 
-            if (this.massActionsOnSticky && _.isObject(launcher)) {
-                $el = this.$el.find(launcher.action.is_current ?
-                    '[data-action-extra-panel]' :
-                    '[data-action-main-panel]'
-                );
+            if (this.massActionsInSticky) {
+                if (pasteToExtraPanel) {
+                    $el = this.$el.find('[data-action-extra-panel]');
+                    launcher.className = 'datagrid-massaction__action-trigger';
+                } else {
+                    $el = this.$el.find('[data-action-main-panel]');
+                }
             }
 
             return $el;
-        },
-
-        /**
-         * @param {Object} launcher
-         */
-        addExtraClass: function(launcher) {
-            if (this.massActionsOnSticky && launcher.action.is_current) {
-                launcher.className = 'datagrid-massaction__action-trigger';
-            }
-        },
-
-        /**
-         * @param {Object} launcher
-         */
-        wrapLauncher: function(launcher) {
-            if (!(this.massActionsOnSticky && launcher.action.is_current)) {
-                launcher.$el.wrap('<li/>');
-            }
         }
     });
 
