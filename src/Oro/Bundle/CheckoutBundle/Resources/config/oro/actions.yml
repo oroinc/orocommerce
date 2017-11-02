@@ -128,7 +128,7 @@ operations:
                     entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@call_service_method':
-                attribute: $.checkoutlineItems
+                attribute: $.checkoutLineItems
                 service: oro_checkout.line_items.factory
                 method: create
                 method_parameters: [$.data]
@@ -136,18 +136,19 @@ operations:
             - '@flash_message':
                 conditions:
                     '@not':
-                        - '@has_elements': $.checkoutlineItems
+                        - '@has_elements': $.checkoutLineItems
                 message: oro.checkout.frontend.checkout.cannot_create_order_no_line_items
                 type: 'warning'
 
             - '@tree':
                 conditions:
-                    '@has_elements': $.checkoutlineItems
+                    '@has_elements': $.checkoutLineItems
                 actions:
                     - '@run_action_group':
                         action_group: start_checkout
                         parameters_mapping:
                             force: true
+                            forceStartCheckout: true
                             sourceCriteria:
                                 order: $.data
                             settings:
@@ -350,7 +351,7 @@ action_groups:
 
             - '@run_action_group':
                 conditions:
-                    '@empty': $.forceStartCheckout
+                    '@equal': [false, $.forceStartCheckout]
                 parameters:
                     action_group: find_existing_checkout
                     parameters_mapping:
@@ -379,6 +380,7 @@ action_groups:
                         website: $.currentWebsite
                     results:
                         checkout: $.checkout
+                        updateData: $.updateData
 
             - '@run_action_group':
                 action_group: update_checkout_data

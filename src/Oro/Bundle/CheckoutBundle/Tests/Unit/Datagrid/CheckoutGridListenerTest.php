@@ -263,6 +263,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $sources
      * @param string $expectedLabel
+     * @param string $expectedType
      * @param string $message
      */
     protected function assertCheckoutSource(array $sources, $expectedLabel, $expectedType, $message)
