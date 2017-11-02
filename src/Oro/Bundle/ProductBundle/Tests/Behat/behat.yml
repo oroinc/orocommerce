@@ -448,7 +448,7 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"]'
+      selector: 'div.oro-datagrid'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
     ProductFrontendGridFiltersButton:
