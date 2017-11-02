@@ -6,8 +6,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
@@ -112,8 +110,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $expectedData,
         $defaultData,
         array $formErrors = []
-    )
-    {
+    ) {
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
 
@@ -283,8 +280,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $defaultData,
         array $formErrors = [],
         array $groupedAddresses = []
-    )
-    {
+    ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(
             ['a_1' => ['street' => 'street', 'organization' => static::ORGANIZATION]]
         );

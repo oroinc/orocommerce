@@ -91,7 +91,6 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         return $translatableEntity;
     }
 
-
     /**
      * @return array
      */
