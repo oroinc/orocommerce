@@ -11,37 +11,6 @@ Feature: Mass Product Actions Availability
     And I proceed as the Admin
     And I login as administrator
 
-  Scenario: Mass actions are disabled for guest when Guest Shopping List feature is Disabled
-    Given I proceed as the Admin
-    When I go to System/ Configuration
-    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then "Shopping List Config" must contains values:
-      | Enable Guest Shopping List | false |
-
-    When I proceed as the Buyer
-    And I go to homepage
-    When I type "rtsh_m" in "search"
-    And I click "Search Button"
-    And I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-
-  Scenario: Mass actions are enabled for guest when Guest Shopping List feature is Enabled
-    Given I proceed as the Admin
-    When I go to System/ Configuration
-    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    When uncheck "Use default" for "Enable guest shopping list" field
-    And I fill form with:
-      | Enable Guest Shopping List | true |
-    When I click "Save settings"
-    Then I should see "Configuration saved" flash message
-    And "Shopping List Config" must contains values:
-      | Enable Guest Shopping List | true |
-
-    When I proceed as the Buyer
-    And I go to homepage
-    When I type "rtsh_m" in "search"
-    And I click "Search Button"
-    And I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-
   Scenario: Mass actions are enabled by default
     Given I proceed as the Admin
     When I go to System/ Configuration
@@ -60,7 +29,7 @@ Feature: Mass Product Actions Availability
       | Enable Mass Adding on Product Listing | false |
 
     When I proceed as the Buyer
-    And I login as AmandaRCole@example.org the "Buyer" at "second_session" session
+    Given I login as AmandaRCole@example.org buyer
     And I go to homepage
     When I type "rtsh_m" in "search"
     And I click "Search Button"
@@ -78,16 +47,58 @@ Feature: Mass Product Actions Availability
       | Enable Mass Adding on Product Listing | true |
 
     When I proceed as the Buyer
-    And I go to homepage
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     And I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
-  Scenario: Mass actions not available for configurable product
+  Scenario: Mass actions not available for configurable products
     Given I proceed as the Buyer
-    And I login as AmandaRCole@example.org the "Buyer" at "second_session" session
     When I type "shirt_main" in "search"
     And I click "Search Button"
     And I should not see mass action checkbox in row with shirt_main content for "Product Frontend Grid"
     And I should see mass action checkbox in row with gtsh_l content for "Product Frontend Grid"
     And I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
+
+  Scenario: Non visible products can not be added to a newly created Shopping List with mass actions
+    Given I proceed as the Buyer
+    And I type "rtsh_m" in "search"
+    And I click "Search Button"
+    Then I should see "rtsh_m"
+    And I check rtsh_m record in "Product Frontend Grid" grid
+
+    When I proceed as the Admin
+    And I go to Products/ Products
+    And I click view rtsh_m in grid
+    And click "More actions"
+    And click "Manage Visibility"
+    And I select "Hidden" from "Visibility to All"
+    And I save and close form
+    Then I should see "Product visibility has been saved" flash message
+
+    When I proceed as the Buyer
+    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Create and Add"
+    Then I should see "No products were added"
+    And I should not see "rtsh_m"
+
+  Scenario: Non visible products can not be added with mass actions
+    Given I proceed as the Buyer
+    And I go to homepage
+    And I type "gtsh_l" in "search"
+    And I click "Search Button"
+    Then I should see "gtsh_l"
+    And I check gtsh_l record in "Product Frontend Grid" grid
+
+    When I proceed as the Admin
+    And I go to Products/ Products
+    And I click view gtsh_l in grid
+    And click "More actions"
+    And click "Manage Visibility"
+    And I select "Hidden" from "Visibility to All"
+    And I save and close form
+    Then I should see "Product visibility has been saved" flash message
+
+    When I proceed as the Buyer
+    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    Then I should see "No products were added"
+    And I should not see "gtsh_l"

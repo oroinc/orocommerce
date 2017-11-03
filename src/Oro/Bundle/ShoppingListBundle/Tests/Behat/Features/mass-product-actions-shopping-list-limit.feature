@@ -1,9 +1,9 @@
 @fixture-OroShoppingListBundle:ProductsMassAction.yml
-Feature: Mass Product Actions
+Feature: Mass Product Actions shopping list limit
 
-  In order to add multiple products to a shopping list
-  As a Customer User
-  I want to have ability to select multiple products and add them to a shopping list
+  In order to allow creation of only allowed amount of shopping lists
+  As an Administrator
+  I want to have ability to set limit of shopping lists that affects mass actions work
 
   Scenario: Create different window session
     Given sessions active:
@@ -28,7 +28,6 @@ Feature: Mass Product Actions
     And I click "Search Button"
     Then I should see "PSKU1"
     And I check PSKU1 record in "Product Frontend Grid" grid
-    When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element
     When I type "First Shopping List" in "Shopping List Name"
