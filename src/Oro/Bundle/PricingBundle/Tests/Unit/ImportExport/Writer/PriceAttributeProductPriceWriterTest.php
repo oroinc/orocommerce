@@ -31,7 +31,7 @@ class PriceAttributeProductPriceWriterTest extends TestCase
         $this->entityManager = $this->createMock(EntityManager::class);
 
         $registry = $this->createMock(RegistryInterface::class);
-        $registry->expects(static::once())
+        $registry->expects(static::any())
             ->method('getManager')
             ->willReturn($this->entityManager);
 

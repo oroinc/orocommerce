@@ -30,17 +30,15 @@ class ProductImportExportConfigurationProviderTest extends TestCase
     public function testGet()
     {
         $this->translator
-            ->expects(static::exactly(3))
+            ->expects(static::exactly(2))
             ->method('trans')
             ->withConsecutive(
                 ['oro.product.import_validation.button.label'],
-                ['oro.product.export_template.button.label'],
                 ['oro.product.export.button.label']
             )
             ->willReturnOnConsecutiveCalls(
                 '1',
-                '2',
-                '3'
+                '2'
             );
 
         $expected = new ImportExportConfiguration([
@@ -49,8 +47,7 @@ class ProductImportExportConfigurationProviderTest extends TestCase
             ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_PROCESSOR_ALIAS => 'oro_product_product_export_template',
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS => 'oro_product_product.add_or_replace',
             ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL => '1',
-            ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL => '2',
-            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '3',
+            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '2',
         ]);
 
         static::assertEquals($expected, $this->provider->get());

@@ -497,9 +497,7 @@ class ProductControllerTest extends ProductHelperTestCase
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         static::assertContains('Export Price Attribute Data', $crawler->html());
-        static::assertContains('Import Price Attributes Data', $crawler->html());
-        static::assertContains('Validate Price Attributes Data File', $crawler->html());
-        static::assertContains('Download Price Attributes Data Template', $crawler->html());
+        static::assertContains('Import file', $crawler->html());
     }
 
     /**

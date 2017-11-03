@@ -34,8 +34,8 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
             ->method('trans')
             ->withConsecutive(
                 ['oro.pricing.priceattributeproductprice.import_validation.button.label'],
-                ['oro.pricing.priceattributeproductprice.export_template.button.label'],
-                ['oro.pricing.priceattributeproductprice.export.button.label']
+                ['oro.pricing.priceattributeproductprice.export.button.label'],
+                ['oro.pricing.priceattributeproductprice.import.entity.label']
             )
             ->willReturnOnConsecutiveCalls(
                 '1',
@@ -52,8 +52,8 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS =>
                 'oro_pricing_product_price_attribute_price.add_or_replace',
             ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL => '1',
-            ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL => '2',
-            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '3',
+            ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '2',
+            ImportExportConfiguration::FIELD_IMPORT_ENTITY_LABEL => '3',
         ]);
 
         static::assertEquals($expected, $this->provider->get());

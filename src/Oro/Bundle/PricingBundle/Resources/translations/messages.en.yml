@@ -23,10 +23,8 @@ oro.pricing:
 
         export:
             button.label: 'Export Price Attribute Data'
-        export_template:
-            button.label: 'Download Price Attributes Data Template'
         import:
-            button.label: 'Import Price Attributes Data'
+            entity.label: 'Product Price Attribute'
             popup.title: 'Import Price Attributes Data'
         import_validation:
             button.label: 'Validate Price Attributes Data File'

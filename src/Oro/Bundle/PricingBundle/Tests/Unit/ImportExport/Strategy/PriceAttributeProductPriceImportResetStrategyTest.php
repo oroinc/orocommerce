@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportResetStrategy;
+use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -71,7 +72,8 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             $this->createMock(ChainEntityClassNameProvider::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->createMock(OwnerChecker::class)
         );
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);

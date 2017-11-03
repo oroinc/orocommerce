@@ -11,6 +11,7 @@ use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
+use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -56,7 +57,8 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
             $this->createMock(ChainEntityClassNameProvider::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
-            $this->createMock(DoctrineHelper::class)
+            $this->createMock(DoctrineHelper::class),
+            $this->createMock(OwnerChecker::class)
         );
         $this->strategy->setImportExportContext($this->createMock(ContextInterface::class));
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);

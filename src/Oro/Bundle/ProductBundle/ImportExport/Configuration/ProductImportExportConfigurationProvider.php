@@ -37,8 +37,6 @@ class ProductImportExportConfigurationProvider implements ImportExportConfigurat
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS => 'oro_product_product.add_or_replace',
             ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.import_validation.button.label'),
-            ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_BUTTON_LABEL =>
-                $this->translator->trans('oro.product.export_template.button.label'),
             ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.export.button.label'),
         ]);
