@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 
 class ShippingOriginType extends AbstractType
 {
@@ -66,6 +67,7 @@ class ShippingOriginType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'oro.shipping.shipping_origin.postal_code.label',
+                    StripTagsExtension::OPTION_NAME => true,
                     'attr' => ['placeholder' => 'oro.shipping.shipping_origin.postal_code.label']
                 ]
             )
@@ -74,6 +76,7 @@ class ShippingOriginType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'oro.shipping.shipping_origin.city.label',
+                    StripTagsExtension::OPTION_NAME => true,
                     'attr' => ['placeholder' => 'oro.shipping.shipping_origin.city.label']
                 ]
             )
@@ -82,6 +85,7 @@ class ShippingOriginType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'oro.shipping.shipping_origin.street.label',
+                    StripTagsExtension::OPTION_NAME => true,
                     'attr' => ['placeholder' => 'oro.shipping.shipping_origin.street.label']
                 ]
             )
@@ -91,6 +95,7 @@ class ShippingOriginType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.shipping.shipping_origin.street2.label',
+                    StripTagsExtension::OPTION_NAME => true,
                     'attr' => ['placeholder' => 'oro.shipping.shipping_origin.street2.label']
                 ]
             )

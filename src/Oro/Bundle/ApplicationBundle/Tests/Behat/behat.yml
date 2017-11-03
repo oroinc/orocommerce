@@ -425,3 +425,21 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+
+    Reset Any Text filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Any Text")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset SKU filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"SKU")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset Name filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Name")]/../button[@title="Reset this filter"]'
+        type: xpath
