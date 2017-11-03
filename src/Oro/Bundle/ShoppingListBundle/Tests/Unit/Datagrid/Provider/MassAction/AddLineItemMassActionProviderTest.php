@@ -266,43 +266,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getShoppingLists')
             ->willReturn($shoppingLists);
 
-        $expectedActions = [
-            'current' => [
-                'is_current' => true,
-                'type' => 'addproducts',
-                'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
-                'icon' => 'shopping-cart',
-                'data_identifier' => 'product.id',
-                'frontend_type' => 'add-products-mass',
-                'handler' => 'oro_shopping_list.mass_action.add_products_handler'
-            ],
-            'list1' => [
-                'is_current' => false,
-                'type' => 'addproducts',
-                'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
-                'icon' => 'shopping-cart',
-                'data_identifier' => 'product.id',
-                'frontend_type' => 'add-products-mass',
-                'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                'route_parameters' => [
-                    'shoppingList' => 1
-                ]
-            ],
-            'list2' => [
-                'is_current' => false,
-                'type' => 'addproducts',
-                'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
-                'icon' => 'shopping-cart',
-                'data_identifier' => 'product.id',
-                'frontend_type' => 'add-products-mass',
-                'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                'route_parameters' => [
-                    'shoppingList' => 2
-                ]
-            ]
-        ];
-
-        $this->assertEquals($expectedActions, $this->provider->getActions());
+        $this->assertArrayNotHasKey('new', $this->provider->getActions());
     }
 
     public function testGetActionsForAnonymousCustomerUser()
