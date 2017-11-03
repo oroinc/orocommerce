@@ -4,6 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -93,26 +95,68 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function getSortedLineItemsProvider()
     {
+        $productUnitEach = (new ProductUnit())->setCode('each');
+        $productUnitItem = (new ProductUnit())->setCode('item');
+
+        $productUnitPrecisionEach = (new ProductUnitPrecision())->setUnit($productUnitEach);
+        $productUnitPrecisionItem = (new ProductUnitPrecision())->setUnit($productUnitItem);
+
         $products = [];
         $products['parentProduct'] = $this->getEntity(Product::class, [
             'type' => Product::TYPE_CONFIGURABLE,
-            'id' => 1
+            'id' => 1,
+            'primaryUnitPrecision' => $productUnitPrecisionEach
         ]);
-        $products['variantProduct1'] = $this->getEntity(Product::class, ['type' => Product::TYPE_SIMPLE, 'id' => 11]);
-        $products['variantProduct2'] = $this->getEntity(Product::class, ['type' => Product::TYPE_SIMPLE, 'id' => 12]);
-        $products['simpleProduct3'] = $this->getEntity(Product::class, ['type' => Product::TYPE_SIMPLE, 'id' => 13]);
-        $products['simpleProduct4'] = $this->getEntity(Product::class, ['type' => Product::TYPE_SIMPLE, 'id' => 14]);
+
+        $products['variantProduct1'] = $this->getEntity(
+            Product::class,
+            [
+                'type' => Product::TYPE_SIMPLE,
+                'id' => 11,
+                'primaryUnitPrecision' => $productUnitPrecisionEach
+            ]
+        );
+
+        $products['variantProduct2'] = $this->getEntity(
+            Product::class,
+            [
+                'type' => Product::TYPE_SIMPLE,
+                'id' => 12,
+                'primaryUnitPrecision' => $productUnitPrecisionEach
+            ]
+        );
+
+        $products['simpleProduct3'] = $this->getEntity(
+            Product::class,
+            [
+                'type' => Product::TYPE_SIMPLE,
+                'id' => 13,
+                'primaryUnitPrecision' => $productUnitPrecisionItem
+            ]
+        );
+
+        $products['simpleProduct4'] = $this->getEntity(
+            Product::class,
+            [
+                'type' => Product::TYPE_SIMPLE,
+                'id' => 14,
+                'primaryUnitPrecision' => $productUnitPrecisionItem
+            ]
+        );
 
         $lineItems = [];
         $lineItems['lineItem1'] = $this->getEntity(
             LineItem::class,
             [
                 'id' => 1,
-                'product' => $products['simpleProduct3']
+                'product' => $products['simpleProduct3'],
+                'unit' => $productUnitItem
             ]
         );
         $lineItems['lineItem2'] = $this->getEntity(
@@ -120,14 +164,16 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 2,
                 'parentProduct' => $products['parentProduct'],
-                'product' => $products['variantProduct1']
+                'product' => $products['variantProduct1'],
+                'unit' => $productUnitEach
             ]
         );
         $lineItems['lineItem3'] = $this->getEntity(
             LineItem::class,
             [
                 'id' => 3,
-                'product' => $products['simpleProduct4']
+                'product' => $products['simpleProduct4'],
+                'unit' => $productUnitItem
             ]
         );
         $lineItems['lineItem4'] = $this->getEntity(
@@ -135,80 +181,81 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 4,
                 'parentProduct' => $products['parentProduct'],
-                'product' => $products['variantProduct2']
+                'product' => $products['variantProduct2'],
+                'unit' => $productUnitEach
             ]
         );
 
         $formView = $this->createMock(FormView::class);
 
         return [
-            'withoutInlineMatrixForm' => [
+            'without InlineMatrixForm' => [
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
                 'matrixFormOption' => 'inline',
                 'isMatrixFormAvailable' => false,
                 'expected' => [
-                    '11' => [
+                    '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1']
                     ],
-                    '12' => [
+                    '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2']
                     ],
-                    '13' => [
+                    '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3']
                     ],
-                    '14' => [
+                    '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4']
                     ],
                 ],
             ],
-            'withInlineMatrixForm' => [
+            'with InlineMatrixForm' => [
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
                 'matrixFormOption' => 'inline',
                 'isMatrixFormAvailable' => true,
                 'expected' => [
-                    '1' => [
+                    '1:each' => [
                         'lineItems' => [$lineItems['lineItem2'], $lineItems['lineItem4']],
                         'product' => $products['parentProduct'],
                         'form' => $formView
                     ],
-                    '13' => [
+                    '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3']
                     ],
-                    '14' => [
+                    '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4']
                     ]
                 ],
             ],
-            'withInlineOptionDisabled' => [
+            'with Inline Option Disabled' => [
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
                 'matrixFormOption' => 'group',
                 'isMatrixFormAvailable' => true,
                 'expected' => [
-                    '11' => [
+                    '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1']
                     ],
-                    '12' => [
+                    '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2']
                     ],
-                    '13' => [
+                    '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3']
                     ],
-                    '14' => [
+                    '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4']
                     ],

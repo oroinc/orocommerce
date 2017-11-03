@@ -353,7 +353,7 @@ Feature: Inline matrix for configurable products in product views
     And I click "Yes, Delete"
     Then I should see "You do not have available Shopping Lists"
 
-  Scenario: Enable popup matrix formin Product View
+  Scenario: Enable popup matrix form in Product View
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
@@ -367,6 +367,7 @@ Feature: Inline matrix for configurable products in product views
     Then I should not see an "Matrix Grid Form" element
     And I press "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
+    And I reload the page
 
   Scenario: Disabled matrix form in Product View
     Given I proceed as the Admin

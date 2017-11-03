@@ -185,19 +185,22 @@
                             {% set form = lineItem.form %}
                         {% endif %}
 
+                        {% set lineItem = lineItem.lineItems|first %}
+
                         {% do block|merge_context({
                             'matrixForm': form
                         }) %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
-                            lineItem: lineItem.lineItems|first,
-                            mainProduct: lineItem.product,
+                            lineItem: lineItem,
+                            mainProduct: lineItem.parentProduct|default(lineItem.product),
                             parent: block.vars,
                             loop: loop,
                             form: form,
                             productsAllPrices: productsAllPrices
                         }) %}
+
                         {{ block('container_widget') }}
                     </div>
                 {% endfor %}

@@ -66,6 +66,12 @@ Feature: Promotions in Shopping List
     And I save form
     Then I should see "Product has been saved" flash message
 
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Display Options In Shopping Lists" field
+    And I fill in "Display Options In Shopping Lists" with "Group Single Products"
+    And I save form
+
   Scenario: Check line item and subtotal discount in Shopping List with configurable product
     Given I operate as the Buyer
     When I open page with shopping list List 2 with configurable product
