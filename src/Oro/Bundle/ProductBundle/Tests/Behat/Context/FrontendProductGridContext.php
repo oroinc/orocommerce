@@ -16,11 +16,11 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
 
     /**
      * Updates line item form for a given row in frontend product grid.
-     * Example: I fill line item form for PSKU1 row in frontend product grid:
+     * Example: I fill line item with "PSKU1" in frontend product grid:
      *            | Unit    | item |
      *            | Quanity | 3    |
      *
-     * @When /^(?:I |)fill line item form for (?P<content>\S+) row in frontend product grid with:$/
+     * @When /^(?:I |)fill line item with "(?P<content>\S+)" in frontend product grid:$/
      *
      * @param string $content
      * @param TableNode $values

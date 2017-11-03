@@ -1103,22 +1103,4 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             ->find('css', sprintf('[name="oro_product[%s]"]', $field))
             ->setValue($value);
     }
-
-    /**
-     * Select a view for product frontend grid.
-     * Example: I select "no-image-view" for product frontend grid
-     *
-     * @When /^(?:|I )select "(?P<viewName>(?:[^"]|\\")*)" for product frontend grid$/
-     *
-     * @param string $viewName
-     */
-    public function iSelectViewForProductGrid(string $viewName)
-    {
-        $viewLink = $this->getPage()
-            ->find('css', sprintf('.catalog-switcher a[data-catalog-view-trigger*="%s"]', $viewName));
-
-        static::assertNotNull($viewLink, sprintf('Cannot find button for "%s"', $viewName));
-
-        $viewLink->click();
-    }
 }

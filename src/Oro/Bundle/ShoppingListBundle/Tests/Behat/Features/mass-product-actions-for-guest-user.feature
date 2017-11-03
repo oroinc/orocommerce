@@ -20,9 +20,9 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I select "gallery-view" for product frontend grid
+    When I click "Gallery View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I select "no-image-view" for product frontend grid
+    When I click "No Image View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Mass actions are enabled for Guest when Guest Shopping List feature is enabled
@@ -40,9 +40,9 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I select "gallery-view" for product frontend grid
+    When I click "Gallery View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I select "list-view" for product frontend grid
+    When I click "List View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Guest should be able to add products with help of mass actions
@@ -50,7 +50,7 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     And I check rtsh_m record in "Product Frontend Grid" grid
-    And I fill line item form for rtsh_m row in frontend product grid with:
+    And I fill line item with "rtsh_m" in frontend product grid:
       | Quantity | 3    |
       | Unit     | item |
     And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
