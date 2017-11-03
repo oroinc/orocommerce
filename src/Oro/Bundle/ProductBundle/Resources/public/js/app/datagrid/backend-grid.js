@@ -59,7 +59,7 @@ define(function(require) {
 
             mediator.on('widget:notFound', function() {
                 $(window).off('beforeunload');
-            })
+            });
 
             this._listenToDocumentEvents();
         },
