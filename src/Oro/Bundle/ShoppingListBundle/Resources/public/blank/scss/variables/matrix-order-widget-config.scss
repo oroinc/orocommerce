@@ -4,12 +4,25 @@ $matrix-order-widget-max-width: 100% !default;
 $matrix-order-widget-offset: 0 !default;
 $matrix-order-widget-border-color: 1px solid get-color('additional', 'light') !default;
 
+//Form inline modifier group variables for strict-desktop
+$matrix-order-widget-form-inline-strict-desktop-display: inline-flex !default;
+$matrix-order-widget-form-inline-strict-desktop-width: 100% !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-width: auto !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-max-width: 60% !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-offset-inner-right: 20px !default;
+$matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top: 60px !default;
+
 //Dialog group variables
 $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner: 0 !default;
 $matrix-order-widget-dialog-ui-dialog-title-display: none !default;
 $matrix-order-widget-dialog-ui-dialog-titlebar-close-font-size: 0 !default;
 $matrix-order-widget-dialog-ui-widget-content-offset-inner: 40px 40px 0 !default;
 $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner: 0 40px 20px !default;
+
+//Desktop variables
+$matrix-order-widget-dialog-max-width: 830px !default;
+$matrix-order-widget-dialog-grid-body-max-height: 310px !default;
+$matrix-order-widget-dialog-grid-side-max-height: 310px !default;
 
 //Dialog-fullscreen group variables
 $matrix-order-widget-dialog-fullscreen-position: static !default;
@@ -29,7 +42,6 @@ $matrix-order-widget-grid-multi-rows-grid-head-border-bottom: 1px solid get-colo
 $matrix-order-widget-grid-multi-rows-grid-head-background: get-color('additional', 'base') !default;
 
 $matrix-order-widget-grid-body-display: block !default;
-$matrix-order-widget-grid-body-max-height: 310px !default;
 $matrix-order-widget-grid-body-overflow: auto !default;
 $matrix-order-widget-grid-body-form-row-width: 75px !default;
 $matrix-order-widget-grid-body-form-offset: 0 auto !default;
@@ -55,7 +67,6 @@ $matrix-order-widget-grid-footer-total-valid-color: get-color('additional', 'dar
 
 $matrix-order-widget-grid-side-float: left !default;
 $matrix-order-widget-grid-side-width: 100px !default;
-$matrix-order-widget-grid-side-max-height: 310px !default;
 $matrix-order-widget-grid-side-overflow: hidden !default;
 
 $matrix-order-widget-grid-side-form-row-display: flex !default;
@@ -95,7 +106,7 @@ $matrix-order-widget-form-col-wrapper-word-break: break-all !default;
 $matrix-order-widget-form-col-form-field-quantity-font-family: $font-family-base !default;
 $matrix-order-widget-form-col-form-field-quantity-text-align: center !default;
 
-//Totals group variables
+//Summary group variables
 $matrix-order-widget-summary-display: flex !default;
 $matrix-order-widget-summary-justify-content: flex-end !default;
 $matrix-order-widget-summary-min-width: 140px !default;
@@ -109,11 +120,29 @@ $matrix-order-widget-summary-label-display: inline-flex !default;
 $matrix-order-widget-summary-label-min-width: 110px !default;
 $matrix-order-widget-summary-label-offset-inner: 0 $offset-x-s 0 0 !default;
 
+//Summary inline modifier group variables
+$matrix-order-widget-summary-inline-display: inline-flex !default;
+$matrix-order-widget-summary-inline-align-items: baseline !default;
+$matrix-order-widget-summary-inline-justify-content: flex-end !default;
+$matrix-order-widget-summary-inline-width: 100% !default;
+$matrix-order-widget-summary-inline-offset-bottom: 25px !default;
+$matrix-order-widget-summary-inline--btn-offset-inner: 3px 15px 2px 15px !default;
+
+$matrix-order-widget-summary-inline-wrapper-display: inline-flex !default;
+$matrix-order-widget-summary-inline-wrapper-background: get-color('additional', 'base') !default;
+$matrix-order-widget-summary-inline-wrapper-offset-inner: 11px 14px 10px 14px !default;
+$matrix-order-widget-summary-inline-wrapper-border-radius: 6px !default;
+$matrix-order-widget-summary-inline-wrapper-offset-right: 10px !default;
+
+$matrix-order-widget-summary-label-inline-min-width: 50px !default;
+
 $matrix-order-widget-total-items-display: flex !default;
 $matrix-order-widget-total-items-justify-content: space-between !default;
 $matrix-order-widget-total-price-offset-inner: 7px 0 $offset-y !default;
 $matrix-order-widget-total-price-font-size: 18px !default;
 $matrix-order-widget-total-quantity-offset-bottom: $offset-y-s !default;
+
+$matrix-order-widget-total-separator-offset: 0 10px !default;
 
 //Item group variables
 $matrix-order-widget-item-position: relative !default;
@@ -125,8 +154,12 @@ $matrix-order-widget-item-expanded-icon-last-child-display: block !default;
 $matrix-order-widget-item-icon-last-child-display: none !default;
 
 $matrix-order-widget-item-icon-wrapper-position: absolute !default;
-$matrix-order-widget-item-icon-wrapper-right: 12px !default;
-$matrix-order-widget-item-item-icon-wrapper-top: 20px !default;
+$matrix-order-widget-item-icon-wrapper-display: inline-flex !default;
+$matrix-order-widget-item-icon-wrapper-align-items: center !default;
+
+$matrix-order-widget-item-icon-wrapper-right: 15px !default;
+$matrix-order-widget-item-item-icon-wrapper-top: 50% !default;
+$matrix-order-widget-item-item-icon-wrapper-offset-top: -7px !default;
 
 $matrix-order-widget-item-label-min-width: 45% !default;
 $matrix-order-widget-item-label-offset: 0 10px !default;
@@ -140,11 +173,15 @@ $matrix-order-widget-item-value-input-text-align: center !default;
 $matrix-order-widget-item-separator-offset: 0 10px !default;
 
 $matrix-order-widget-item-info-display: inline-flex !default;
+$matrix-order-widget-item-info-position: relative !default;
 $matrix-order-widget-item-info-flex-direction: column !default;
 $matrix-order-widget-item-info-justify-content: space-between !default;
 $matrix-order-widget-item-info-width: 100% !default;
-$matrix-order-widget-item-info-offset-inner: 10px 15px !default;
+$matrix-order-widget-item-info-offset-inner: 15px 35px 15px 15px !default;
+
 $matrix-order-widget-item-info-wrapper-display: inline-flex !default;
+$matrix-order-widget-item-info-wrapper-align-items: center !default;
+$matrix-order-widget-item-info-wrapper-word-break: break-word !default;
 
 $matrix-order-widget-item-content-display: inline-flex !default;
 $matrix-order-widget-item-content-align-items: center !default;
@@ -161,9 +198,6 @@ $matrix-order-widget-item-content-wrapper-width: 100% !default;
 
 //Other variables
 $matrix-order-widget-pinned-dropdown-max-width: 210px !default;
-
-//Desktop variables
-$matrix-order-widget-dialog-width: 820px !default;
 
 //Strict-tablet variables
 $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis: 20% !default;

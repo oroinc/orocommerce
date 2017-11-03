@@ -49,6 +49,11 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     {
         $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
-        return $this->getFormView(MatrixCollectionType::class, $collection);
+        return $this->getFormView(
+            MatrixCollectionType::class,
+            $collection,
+            [],
+            ['cacheKey' => md5(serialize($collection))]
+        );
     }
 }

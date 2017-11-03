@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
@@ -28,18 +29,26 @@ class FrontendProductPricesDataProvider
     protected $priceListRequestHandler;
 
     /**
+     * @var ShoppingListLineItemsDataProvider
+     */
+    protected $shoppingListLineItemsDataProvider;
+
+    /**
      * @param ProductPriceProvider $productPriceProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
-        PriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler,
+        ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->shoppingListLineItemsDataProvider = $shoppingListLineItemsDataProvider;
     }
 
     /**
@@ -73,9 +82,7 @@ class FrontendProductPricesDataProvider
     {
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
             $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-            array_map(function (ProductHolderInterface $lineItem) {
-                return $lineItem->getProduct()->getId();
-            }, $lineItems),
+            $this->getProductIdsByLineItemsWithConfigurableVariants($lineItems),
             $this->userCurrencyManager->getUserCurrency()
         );
 
@@ -88,6 +95,20 @@ class FrontendProductPricesDataProvider
         }
 
         return $pricesByUnit;
+    }
+
+    /**
+     * @param array|ProductHolderInterface[] $lineItems
+     * @return array
+     */
+    protected function getProductIdsByLineItemsWithConfigurableVariants(array $lineItems)
+    {
+        $productsWithVariants = $this->shoppingListLineItemsDataProvider
+            ->getProductsWithConfigurableVariants($lineItems);
+
+        return array_map(function (Product $product) {
+            return $product->getId();
+        }, $productsWithVariants);
     }
 
     /**

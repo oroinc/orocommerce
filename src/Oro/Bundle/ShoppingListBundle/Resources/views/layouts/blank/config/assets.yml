@@ -1,4 +1,5 @@
 styles:
     inputs:
         - 'bundles/oroshoppinglist/blank/scss/variables/matrix-order-widget-config.scss'
+        - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-line-items-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/styles.scss'

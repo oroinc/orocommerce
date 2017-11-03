@@ -609,10 +609,9 @@ Feature: Commerce smoke e2e
     And should see an "Matrix Grid Form" element
     And should see an "Add to Shopping List" element
     And fill "Matrix Grid Form" with:
-      |Black L|2|
-      |Black M|3|
-      |White L|1|
-      |White M|5|
+      |       | L | M |
+      | Black | 2 | 3 |
+      | White | 1 | 5 |
     And click "Add to Shoppin..."
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
