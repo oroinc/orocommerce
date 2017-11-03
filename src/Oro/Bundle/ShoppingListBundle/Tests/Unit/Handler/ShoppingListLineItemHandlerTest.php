@@ -9,13 +9,13 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -24,7 +24,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,8 +48,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
     protected $featureChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier */
-    protected $queryBuilderModifier;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductManager */
+    protected $productManager;
 
     protected function setUp()
     {
@@ -60,7 +60,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->queryBuilderModifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
+        $this->productManager = $this->createMock(ProductManager::class);
 
         $this->managerRegistry = $this->getManagerRegistry();
 
@@ -74,7 +74,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->featureChecker,
-            $this->queryBuilderModifier
+            $this->productManager
         );
         $this->handler->setProductClass(Product::class);
         $this->handler->setShoppingListClass(ShoppingList::class);
@@ -230,10 +230,11 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->willReturn(true);
 
-        $this->queryBuilderModifier
+        $this->productManager
             ->expects($this->once())
-            ->method('modify')
-            ->with($this->isInstanceOf(QueryBuilder::class));
+            ->method('restrictQueryBuilder')
+            ->with($this->isInstanceOf(QueryBuilder::class), [])
+            ->willReturnArgument(0);
 
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(

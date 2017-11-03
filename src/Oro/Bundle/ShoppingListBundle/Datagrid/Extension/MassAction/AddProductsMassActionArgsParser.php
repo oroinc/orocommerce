@@ -52,12 +52,24 @@ class AddProductsMassActionArgsParser
     }
 
     /**
+     * Returns shopping list which was created but not saved yet.
+     *
      * @return ShoppingList|null
      */
-    public function getShoppingList()
+    public function getCreatedShoppingList()
     {
-        return array_key_exists('shoppingList', $this->args)
-            ? $this->args['shoppingList']
+        return array_key_exists('createdShoppingList', $this->args)
+            ? $this->args['createdShoppingList']
+            : null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getShoppingListId()
+    {
+        return array_key_exists('shoppingList', $this->args) && is_numeric($this->args['shoppingList'])
+            ? (int) $this->args['shoppingList']
             : null;
     }
 

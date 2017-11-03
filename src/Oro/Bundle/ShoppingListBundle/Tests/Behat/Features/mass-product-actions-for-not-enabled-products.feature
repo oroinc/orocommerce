@@ -1,8 +1,8 @@
 @fixture-OroProductBundle:Products_view_page_templates.yml
-Feature: Mass Product Actions for not visible products
-  In order to be able to add only visible products with help of mass actions
+Feature: Mass Product Actions for not enabled products
+  In order to be able to add only enabled products with help of mass actions
   As a Buyer
-  I should receive proper notifications when trying to add not visible product
+  I should receive proper notifications when trying to add disabled product
 
   Scenario: Create sessions
     Given sessions active:
@@ -11,7 +11,7 @@ Feature: Mass Product Actions for not visible products
     And I proceed as the Admin
     And I login as administrator
 
-  Scenario: Non visible products can not be added to a newly created Shopping List with mass actions
+  Scenario: Not enabled products can not be added to a newly created Shopping List with mass actions
     Given I proceed as the Buyer
     Given I login as AmandaRCole@example.org buyer
     And I go to homepage
@@ -22,12 +22,11 @@ Feature: Mass Product Actions for not visible products
 
     When I proceed as the Admin
     And I go to Products/ Products
-    And I click view rtsh_m in grid
-    And click "More actions"
-    And click "Manage Visibility"
-    And I select "Hidden" from "Visibility to All"
-    And I save and close form
-    Then I should see "Product visibility has been saved" flash message
+    And I click edit rtsh_m in grid
+    And I fill "ProductForm" with:
+      | Status | Disabled |
+    And I save form
+    Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
@@ -35,7 +34,7 @@ Feature: Mass Product Actions for not visible products
     Then I should see "No products were added"
     And I should not see "rtsh_m"
 
-  Scenario: Non visible products can not be added with mass actions
+  Scenario: Not enabled products can not be added with mass actions
     Given I proceed as the Buyer
     And I go to homepage
     And I type "gtsh_l" in "search"
@@ -45,12 +44,11 @@ Feature: Mass Product Actions for not visible products
 
     When I proceed as the Admin
     And I go to Products/ Products
-    And I click view gtsh_l in grid
-    And click "More actions"
-    And click "Manage Visibility"
-    And I select "Hidden" from "Visibility to All"
-    And I save and close form
-    Then I should see "Product visibility has been saved" flash message
+    And I click edit gtsh_l in grid
+    And I fill "ProductForm" with:
+      | Status | Disabled |
+    And I save form
+    Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
     And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"

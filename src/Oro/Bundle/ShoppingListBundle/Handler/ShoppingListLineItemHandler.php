@@ -11,13 +11,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ShoppingListLineItemHandler
 {
@@ -44,8 +44,8 @@ class ShoppingListLineItemHandler
     /** @var string */
     protected $productUnitClass;
 
-    /** @var  ProductVisibilityQueryBuilderModifier */
-    protected $queryBuilderModifier;
+    /** @var ProductManager */
+    protected $productManager;
 
     /**
      * @param ManagerRegistry $managerRegistry
@@ -53,7 +53,7 @@ class ShoppingListLineItemHandler
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface $tokenAccessor
      * @param FeatureChecker $featureChecker
-     * @param ProductVisibilityQueryBuilderModifier $queryBuilderModifier
+     * @param ProductManager $productManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -61,14 +61,14 @@ class ShoppingListLineItemHandler
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         FeatureChecker $featureChecker,
-        ProductVisibilityQueryBuilderModifier $queryBuilderModifier
+        ProductManager $productManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
         $this->featureChecker = $featureChecker;
-        $this->queryBuilderModifier = $queryBuilderModifier;
+        $this->productManager = $productManager;
     }
 
     /**
@@ -91,7 +91,7 @@ class ShoppingListLineItemHandler
             ->getRepository($this->productClass);
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
-        $this->queryBuilderModifier->modify($queryBuilder);
+        $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
         $iterableResult = $queryBuilder->getQuery()->iterate();
         $lineItems = [];
 

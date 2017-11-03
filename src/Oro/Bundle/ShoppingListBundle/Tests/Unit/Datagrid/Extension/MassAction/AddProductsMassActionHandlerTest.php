@@ -19,6 +19,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     const MESSAGE = 'test message';
+    const SHOPPING_LIST_ID = 735;
 
     /** @var AddProductsMassActionHandler */
     protected $handler;
@@ -65,7 +66,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
+            ->willReturn(['createdShoppingList' => $shoppingList, 'values' => 3]);
         $this->shoppingListItemHandler->expects($this->never())
             ->method('getShoppingList');
 
@@ -82,7 +83,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args->expects($this->any())
             ->method('getData')
             ->willReturn([
-                'shoppingList' => null,
+                'createdShoppingList' => null,
                 'values' => 3
             ]);
 
@@ -127,12 +128,14 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args->expects($this->any())
             ->method('getData')
             ->willReturn([
-                'shoppingList' => null,
+                'createdShoppingList' => null,
+                'shoppingList' => self::SHOPPING_LIST_ID,
                 'values' => 3
             ]);
 
         $this->shoppingListItemHandler->expects($this->once())
             ->method('getShoppingList')
+            ->with(self::SHOPPING_LIST_ID)
             ->willReturn($shoppingList);
 
         $this->shoppingListItemHandler->expects($this->once())
@@ -172,7 +175,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
+            ->willReturn(['createdShoppingList' => $shoppingList, 'values' => 3]);
 
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
 

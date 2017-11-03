@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResultInterface;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\MassActionInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionArgsParser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -11,76 +14,92 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    public function testGetProductIds()
+    public function testGetProductIdsWhenAllProductsSelected()
     {
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(0, '', '1'));
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData(
+            [
+                'inset' => 0,
+                'values' => '',
+                'shoppingList' => '1'
+            ]
+        ));
+
         $this->assertCount(0, $parser->getProductIds());
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2', '1'));
+    }
+
+    public function testGetProductIdsWhenProductsIdsProvided()
+    {
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData(
+            [
+                'inset' => 1,
+                'values' => '1,2',
+                'shoppingList' => '1'
+            ]
+        ));
+
         $this->assertCount(2, $parser->getProductIds());
     }
 
-    public function testGetShoppingList()
+    public function testGetCreatedShoppingListWhenNoCreatedShoppingListProvided()
+    {
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([]));
+
+        $this->assertNull($parser->getCreatedShoppingList());
+    }
+
+    public function testGetCreatedShoppingListWhenCreatedShoppingListProvided()
     {
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2', $shoppingList));
-        $this->assertEquals($shoppingList, $parser->getShoppingList());
-        $parser = new AddProductsMassActionArgsParser($this->getArgs(1, '1,2'));
-        $this->assertNull($parser->getShoppingList());
+        $parser = new AddProductsMassActionArgsParser(
+            $this->createHandlerArgsWithData(['createdShoppingList' => $shoppingList])
+        );
+
+        $this->assertEquals($shoppingList, $parser->getCreatedShoppingList());
+    }
+
+    public function testGetShoppingListIdWhenNoShoppingListIdProvided()
+    {
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([]));
+
+        $this->assertNull($parser->getShoppingListId());
+    }
+
+    public function testGetShoppingListIdWhenShoppingListIdProvided()
+    {
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData(['shoppingList' => 5]));
+
+        $this->assertEquals(5, $parser->getShoppingListId());
     }
 
     public function testGetUnitsAndQuantitiesWhenEmpty()
     {
-        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
-        $args = $this->createMock(MassActionHandlerArgs::class);
-        $args
-            ->expects($this->once())
-            ->method('getData')
-            ->willReturn([]);
-
-        $parser = new AddProductsMassActionArgsParser($args);
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([]));
         $this->assertEmpty($parser->getUnitsAndQuantities());
     }
 
     public function testGetUnitsAndQuantities()
     {
-        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
-        $args = $this->createMock(MassActionHandlerArgs::class);
-        $args
-            ->expects($this->once())
-            ->method('getData')
-            ->willReturn([
-                'units_and_quantities' => '{"SKU2":{"set":2},"SKU3":{"item":4}}'
-            ]);
+        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([
+            'units_and_quantities' => '{"SKU2":{"set":2},"SKU3":{"item":4}}'
+        ]));
 
         $expectedUnitsAndQuantities = ['SKU2' => ['set' => 2], 'SKU3' => ['item' => 4]];
-        $parser = new AddProductsMassActionArgsParser($args);
         $this->assertEquals($expectedUnitsAndQuantities, $parser->getUnitsAndQuantities());
     }
 
     /**
-     * @param int      $inset
-     * @param string   $values
-     * @param ShoppingList|null $shoppingList
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
+     * @param array $data
+     * @return MassActionHandlerArgs
      */
-    protected function getArgs($inset, $values, $shoppingList = null)
+    private function createHandlerArgsWithData(array $data): MassActionHandlerArgs
     {
-        $result = [
-            'inset' => $inset,
-            'values' => $values
-        ];
-        if ($shoppingList) {
-            $result['shoppingList'] = $shoppingList;
-        }
+        /** @var MassActionInterface $massAction */
+        $massAction = $this->createMock(MassActionInterface::class);
+        /** @var DatagridInterface $dataGrid */
+        $dataGrid = $this->createMock(DatagridInterface::class);
+        /** @var IterableResultInterface $iterableResult */
+        $iterableResult = $this->createMock(IterableResultInterface::class);
 
-        $args = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $args->expects($this->once())
-            ->method('getData')
-            ->willReturn($result);
-
-        return $args;
+        return new MassActionHandlerArgs($massAction, $dataGrid, $iterableResult, $data);
     }
 }

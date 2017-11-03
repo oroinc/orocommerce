@@ -178,7 +178,7 @@ class AjaxLineItemController extends AbstractLineItemController
                     $gridName,
                     $actionName,
                     $parameters,
-                    array_merge($requestData, ['shoppingList' => $shoppingList])
+                    array_merge($requestData, ['createdShoppingList' => $shoppingList])
                 );
 
             $manager->setCurrent($this->getUser(), $shoppingList);
