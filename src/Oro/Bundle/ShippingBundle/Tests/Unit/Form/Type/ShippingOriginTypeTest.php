@@ -121,7 +121,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                 ),
                 'defaultData' => $this->getShippingOrigin(
                     self::COUNTRY_WITH_REGION,
-                    self::COUNTRY_WITH_REGION,
+                    true,
                     self::REGION_WITH_COUNTRY,
                     'code1',
                     'city1',
