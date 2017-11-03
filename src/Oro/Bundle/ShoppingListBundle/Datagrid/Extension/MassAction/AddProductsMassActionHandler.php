@@ -72,8 +72,8 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             );
 
             $em->commit();
-            return $this->generateResponse($args, $addedCnt, $shoppingList->getId());
 
+            return $this->generateResponse($args, $addedCnt, $shoppingList->getId());
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
