@@ -5,17 +5,17 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
@@ -133,10 +133,18 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsMassAction(Request $request, $gridName, $actionName)
     {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $shoppingList = $this->get('oro_shopping_list.handler.shopping_list_line_item')
+            ->getShoppingList($request->query->get('shoppingList'));
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
+        $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+        $requestData = array_merge($request->query->all(), $request->request->all());
+
+        $response = $this->get('oro_datagrid.mass_action.dispatcher')->dispatch(
+            $gridName,
+            $actionName,
+            $parameters,
+            array_merge($requestData, ['shoppingList' => $shoppingList])
+        );
 
         $data = [
             'successful' => $response->isSuccessful(),
@@ -148,7 +156,7 @@ class AjaxLineItemController extends AbstractLineItemController
 
     /**
      * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
-     * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param Request $request
@@ -159,20 +167,48 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
-        $form = $this->createForm(ShoppingListType::NAME);
+        /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
-        $response = $this->get('oro_form.model.update_handler')->handleUpdate($manager->create(), $form, [], [], null);
+        $shoppingList = $manager->create();
 
+        $form = $this->createForm(ShoppingListType::NAME, $shoppingList);
+        $form->handleRequest($request);
+
+        $response = [];
         if ($form->isValid()) {
-            $manager->setCurrent($this->getUser(), $form->getData());
+            $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+            $requestData = array_merge($request->query->all(), $request->request->all());
 
+            /** @var MassActionResponseInterface $result */
             $result = $this->get('oro_datagrid.mass_action.dispatcher')
-                ->dispatchByRequest($gridName, $actionName, $request);
+                ->dispatch(
+                    $gridName,
+                    $actionName,
+                    $parameters,
+                    array_merge($requestData, ['shoppingList' => $shoppingList])
+                );
 
-            $response['message'] = $result->getMessage();
+            $manager->setCurrent($this->getUser(), $shoppingList);
+
+            $response['messages']['data'][] = $result->getMessage();
+            $response['savedId'] = $shoppingList->getId();
         }
 
-        return $response;
+        $defaultResponse = [
+            'form' => $form->createView(),
+            'savedId' => null,
+            'messages' => ['data'=>[]],
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly'),
+            'routeParameters' => [
+                'data' => array_merge($request->query->all(), [
+                    'gridName' => $gridName,
+                    'actionName' => $actionName,
+                ])
+            ]
+        ];
+
+        return ['data' => array_merge($defaultResponse, $response)];
     }
 
     /**

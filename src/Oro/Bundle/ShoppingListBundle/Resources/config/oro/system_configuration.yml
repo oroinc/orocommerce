@@ -12,6 +12,8 @@ system_configuration:
             icon: 'fa-cogs'
         shopping_list_limit_section:
             title: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
+        shopping_list_options:
+            title: oro.shoppinglist.system_configuration.groups.shopping_list_options.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
@@ -48,6 +50,14 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
+        oro_shopping_list.mass_adding_on_product_listing_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.mass_adding_on_product_listing_enabled.label
+                tooltip: oro.shoppinglist.system_configuration.fields.mass_adding_on_product_listing_enabled.tooltip
+                required: false
+
     tree:
         system_configuration:
             commerce:
@@ -72,5 +82,7 @@ system_configuration:
                                     guest_shopping_list_user_section:
                                         children:
                                             - oro_shopping_list.default_guest_shopping_list_owner
-
+                                    shopping_list_options:
+                                        children:
+                                            - oro_shopping_list.mass_adding_on_product_listing_enabled
 

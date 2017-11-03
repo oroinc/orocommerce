@@ -425,6 +425,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $shoppingList->getLineItems()->count());
     }
 
+    public function testBulkAddLineItemsWithEmptyLineItems()
+    {
+        $this->assertEquals(0, $this->manager->bulkAddLineItems([], new ShoppingList(), 10));
+    }
+
     public function testGetShoppingLists()
     {
         $user = new CustomerUser();
