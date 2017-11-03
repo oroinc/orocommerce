@@ -237,6 +237,7 @@ class MatrixGridOrderManager
         foreach ($lineItems->getIterator() as $lineItem) {
             if ($lineItem->getParentProduct() && $lineItem->getParentProduct()->getId() === $parentProduct->getId()
                 && $cellProduct->getId() === $lineItem->getProduct()->getId()
+                && $lineItem->getProductUnitCode() === $parentProduct->getPrimaryUnitPrecision()->getProductUnitCode()
             ) {
                 return $lineItem->getQuantity();
             }

@@ -357,4 +357,135 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
+
+//    /**
+//     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+//     */
+//    public function testGetMatrixCollectionCheckQtyForDifferentUnits()
+//    {
+//        /** @var Product $product */
+//        $product = $this->getEntity(Product::class, ['id' => 1]);
+//        $productUnitEach = (new ProductUnit())->setCode('each');
+//        $productUnitItem = (new ProductUnit())->setCode('item');
+//
+//        $productUnitPrecisionEach = (new ProductUnitPrecision())->setUnit($productUnitEach);
+//        $productUnitPrecisionItem = (new ProductUnitPrecision())->setUnit($productUnitItem);
+//
+//        $product->setPrimaryUnitPrecision($productUnitPrecisionEach);
+//
+//        $this->variantAvailability->expects($this->at(0))
+//            ->method('getVariantFieldsAvailability')
+//            ->with($product)
+//            ->willReturn([
+//                'size' => [
+//                    's' => true,
+//                    'm' => true,
+//                ],
+//                'color' => [
+//                    'red' => true,
+//                    'green' => true,
+//                ],
+//            ]);
+//
+//        $this->variantAvailability->expects($this->at(1))
+//            ->method('getVariantFieldValues')
+//            ->with('size')
+//            ->willReturn(['s' => 'Small', 'm' => 'Medium']);
+//
+//        $this->variantAvailability->expects($this->at(2))
+//            ->method('getVariantFieldValues')
+//            ->with('color')
+//            ->willReturn(['red' => 'Red', 'green' => 'Green']);
+//
+//        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(2);
+//        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
+//        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('red')->setId(4);
+//
+//        $simpleProductSmallRed->addUnitPrecision($productUnitPrecisionEach);
+//        $simpleProductMediumRed->addUnitPrecision($productUnitPrecisionEach);
+//        $simpleProductMediumGreen->addUnitPrecision($productUnitPrecisionItem);
+//
+//        $this->variantAvailability->expects($this->at(3))
+//            ->method('getSimpleProductsByVariantFields')
+//            ->with($product)
+//            ->willReturn([$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed]);
+//
+//        $this->variantAvailability->expects($this->at(4))
+//            ->method('getVariantFieldScalarValue')
+//            ->with($simpleProductSmallRed, 'size')
+//            ->willReturn('s');
+//
+//        $this->variantAvailability->expects($this->at(5))
+//            ->method('getVariantFieldScalarValue')
+//            ->with($simpleProductSmallRed, 'color')
+//            ->willReturn('red');
+//
+//        $this->variantAvailability->expects($this->at(6))
+//            ->method('getVariantFieldScalarValue')
+//            ->with($simpleProductMediumRed, 'size')
+//            ->willReturn('m');
+//
+//        $this->variantAvailability->expects($this->at(7))
+//            ->method('getVariantFieldScalarValue')
+//            ->with($simpleProductMediumRed, 'color')
+//            ->willReturn('green');
+//
+//        $columnSmallRed = new MatrixCollectionColumn();
+//        $columnSmallGreen = new MatrixCollectionColumn();
+//        $columnMediumRed = new MatrixCollectionColumn();
+//        $columnMediumGreen = new MatrixCollectionColumn();
+//
+//        $columnSmallRed->label = 'Red';
+//        $columnSmallGreen->label = 'Green';
+//        $columnMediumRed->label = 'Red';
+//        $columnMediumGreen->label = 'Green';
+//
+//        $columnSmallRed->product = $simpleProductSmallRed;
+//        $columnSmallRed->quantity = 1;
+//        $columnMediumGreen->product = $simpleProductMediumRed;
+//        $columnMediumGreen->quantity = 2;
+//
+//        $rowSmall = new MatrixCollectionRow();
+//        $rowSmall->label = 'Small';
+//        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+//
+//        $rowMedium = new MatrixCollectionRow();
+//        $rowMedium->label = 'Medium';
+//        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+//
+//        $expectedCollection = new MatrixCollection();
+//        $expectedCollection->unit = $productUnitEach;
+//        $expectedCollection->rows = [$rowSmall, $rowMedium];
+//
+//        $lineItems = new ArrayCollection();
+//        $lineItem = $this->getEntity(LineItem::class, [
+//            'product' => $simpleProductSmallRed,
+//            'quantity' => 1,
+//            'parentProduct' => $product,
+//            'unit' => $productUnitItem
+//        ]);
+//        $lineItems->add($lineItem);
+//
+//        $lineItem = $this->getEntity(LineItem::class, [
+//            'product' => $simpleProductMediumGreen,
+//            'quantity' => 2,
+//            'parentProduct' => $product,
+//            'unit' => $productUnitItem
+//        ]);
+//        $lineItems->add($lineItem);
+//
+//        $lineItem = $this->getEntity(LineItem::class, [
+//            'product' => $simpleProductMediumGreen,
+//            'quantity' => 3,
+//            'parentProduct' => $product,
+//            'unit' => $productUnitEach
+//        ]);
+//        $lineItems->add($lineItem);
+//
+//        $shoppingList = $this->getEntity(ShoppingList::class, [
+//            'lineItems' => $lineItems
+//        ]);
+//
+//        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+//    }
 }

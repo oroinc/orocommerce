@@ -429,7 +429,7 @@ oro:
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_on_shopping_list:
-                    display_options.label: 'Display Options in Shopping Lists'
+                    display_options.label: 'Display Options In Shopping Lists'
                     group.label: 'Group Single Products'
                     inline.label: 'Inline Matrix Form'
             notice:

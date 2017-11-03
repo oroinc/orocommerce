@@ -160,7 +160,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getLineItemSKU(TableRow $tableRowElement)
     {
-        return $tableRowElement->find('css', '.shopping-list-line-items__desctiption span')->getText();
+        return $tableRowElement->find('css', 'span.product-item__sku-value')->getText();
     }
 
     /**

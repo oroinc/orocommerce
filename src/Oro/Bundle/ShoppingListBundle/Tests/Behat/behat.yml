@@ -59,7 +59,7 @@ oro_behat_extension:
     Shopping List Line Item 1 Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       selector:
-        locator: '(//tbody[@class="line_item"])[1]//form'
+        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
         type: xpath
       options:
         mapping:
@@ -76,7 +76,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//div[text()[contains(.,"Item #:")]]/span'
+          locator: '//span[@class="product-item__sku-value"]'
 
     Shopping List Dropdown:
       selector:
@@ -146,6 +146,9 @@ oro_behat_extension:
 
     EditShopppingListLabel:
       selector: '#title-inline-editable [data-role="start-editing"]'
+
+    Remove Line Item:
+      selector: 'button.item-remove'
 
   suites:
     OroShoppingListBundle:
