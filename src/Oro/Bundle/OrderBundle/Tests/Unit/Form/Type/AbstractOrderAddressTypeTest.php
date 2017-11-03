@@ -18,8 +18,6 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 {
     const ORGANIZATION = 'test organization';
-    const COUNTRY = 'US';
-    const REGION = 'US-AL';
     const CITY = 'test city';
     const STREET = 'test street';
     const POSTAL_CODE = '1234567';
@@ -185,8 +183,8 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             'empty organization' => [
                 'isValid' => false,
                 'submittedData' => [
-                    'country' => static::COUNTRY,
-                    'region' => static::REGION,
+                    'country' => static::COUNTRY_WITH_REGION,
+                    'region' => static::REGION_WITH_COUNTRY,
                     'city' => static::CITY,
                     'street' => static::STREET,
                     'postalCode' => static::POSTAL_CODE,
@@ -202,8 +200,8 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             'valid data' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'country' => static::COUNTRY,
-                    'region' => static::REGION,
+                    'country' => static::COUNTRY_WITH_REGION,
+                    'region' => static::REGION_WITH_COUNTRY,
                     'organization' => static::ORGANIZATION,
                     'city' => static::CITY,
                     'street' => static::STREET,
@@ -215,8 +213,8 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             'customer address preselector' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'country' => static::COUNTRY,
-                    'region' => static::REGION,
+                    'country' => static::COUNTRY_WITH_REGION,
+                    'region' => static::REGION_WITH_COUNTRY,
                     'organization' => static::ORGANIZATION,
                     'city' => static::CITY,
                     'street' => static::STREET,
@@ -241,8 +239,8 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     'city' => 'City',
                     'region_text' => 'Region Text',
                     'postalCode' => 'AL',
-                    'country' => static::COUNTRY,
-                    'region' => static::REGION,
+                    'country' => static::COUNTRY_WITH_REGION,
+                    'region' => static::REGION_WITH_COUNTRY,
                 ],
                 'expectedData' => (new OrderAddress())
                     ->setLabel('Label')

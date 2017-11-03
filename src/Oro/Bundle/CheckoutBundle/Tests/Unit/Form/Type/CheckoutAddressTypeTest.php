@@ -160,10 +160,10 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             'street' => 'Street',
             'street2' => 'Street2',
             'city' => 'City',
-            'region' => 'US-AL',
+            'region' => self::REGION_WITH_COUNTRY,
             'region_text' => 'Region Text',
             'postalCode' => 'AL',
-            'country' => 'US',
+            'country' => self::COUNTRY_WITH_REGION,
         ];
 
         $expectedData = (new OrderAddress())

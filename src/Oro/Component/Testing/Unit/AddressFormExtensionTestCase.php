@@ -20,6 +20,10 @@ use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSu
 
 abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
 {
+    const COUNTRY_WITHOUT_REGION = 'US';
+    const COUNTRY_WITH_REGION = 'RO';
+    const REGION_WITH_COUNTRY = 'RO-MS';
+
     /**
      * {@inheritdoc}
      */
@@ -54,8 +58,11 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         list ($country, $region) = $this->getValidCountryAndRegion();
 
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => $region],
+            'OroAddressBundle:Country' => [
+                self::COUNTRY_WITH_REGION => $country,
+                self::COUNTRY_WITHOUT_REGION => new Country(self::COUNTRY_WITHOUT_REGION),
+            ],
+            'OroAddressBundle:Region' => [self::REGION_WITH_COUNTRY => $region],
         ];
 
         $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
@@ -96,8 +103,8 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
      */
     protected function getValidCountryAndRegion()
     {
-        $country = new Country('US');
-        $region = new Region('US-AL');
+        $country = new Country(self::COUNTRY_WITH_REGION);
+        $region = new Region(self::REGION_WITH_COUNTRY);
         $region->setCountry($country);
         $country->addRegion($region);
 
