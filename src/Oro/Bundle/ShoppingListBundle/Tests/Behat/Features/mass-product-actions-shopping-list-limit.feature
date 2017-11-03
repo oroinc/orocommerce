@@ -1,0 +1,73 @@
+@fixture-OroShoppingListBundle:ProductsMassAction.yml
+Feature: Mass Product Actions
+
+  In order to add multiple products to a shopping list
+  As a Customer User
+  I want to have ability to select multiple products and add them to a shopping list
+
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin  |first_session |
+      | User   |second_session|
+
+  Scenario: Setting shopping list limit in management console
+    Given I proceed as the Admin
+    And login as administrator
+    And I go to System/ Configuration
+    And follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And I fill form with:
+      | Use default         | false |
+      | Shopping List Limit | 1     |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Shopping List can be added if Shopping List limit is not reached
+    Given I proceed as the User
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1"
+    And I check PSKU1 record in "Product Frontend Grid" grid
+    When I check PSKU1 record in "Product Frontend Grid" grid
+    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    Then should see an "Create New Shopping List popup" element
+    When I type "First Shopping List" in "Shopping List Name"
+    And click "Create and Add"
+    Then should see 'Shopping list "First Shopping List" was created successfully' flash message
+    When I hover on "Shopping Cart"
+    Then I should see "First Shopping List"
+
+  Scenario: "Create New Shopping List" action is not available when Shopping List limit is less or equals the number of Shopping Lists
+    When I check PSKU1 record in "Product Frontend Grid" grid
+    And I click "ProductFrontendMassActionButton"
+    Then I should not see "Create New Shopping List" in the "ProductFrontendGridFloatingMenu" element
+    And I uncheck PSKU1 record in "Product Frontend Grid" grid
+
+  Scenario: Shopping List can not be added when Shopping List limit is less or equals the number of Shopping Lists
+    # Increase limit to allow to chose create shopping list mass action
+    Given I proceed as the Admin
+    And I fill form with:
+      | Shopping List Limit | 2 |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+    When I proceed as the User
+    And I type "PSKU2" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU2"
+    When I check PSKU2 record in "Product Frontend Grid" grid
+    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    Then should see an "Create New Shopping List popup" element
+    And I type "Second Shopping List" in "Shopping List Name"
+
+    # Decrease limit to check that shopping list is not added via dialog
+    When I proceed as the Admin
+    And I fill form with:
+      | Shopping List Limit | 1 |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+    When I proceed as the User
+    And click "Create and Add"
+    When I hover on "Shopping Cart"
+    Then I should not see "Second Shopping List"
