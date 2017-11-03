@@ -19,7 +19,7 @@ class ConfigurableProductControllerTest extends WebTestCase
 
     const CATEGORY_ID = 1;
     const CATEGORY_MENU_NAME = 'Master Catalog';
-    const CATEGORY_NAME = 'Products Categories';
+    const CATEGORY_NAME = 'All Products';
 
     const EXTENDED_FIELD_COLOR = 'color';
     const EXTENDED_FIELD_SIZE = 'size';

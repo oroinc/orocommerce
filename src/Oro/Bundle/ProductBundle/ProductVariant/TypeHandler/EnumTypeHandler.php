@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\TypeHandler;
 
-use Symfony\Component\Form\FormFactory;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
+use Symfony\Component\Form\FormFactory;
 
 class EnumTypeHandler implements ProductVariantTypeHandlerInterface
 {
@@ -18,13 +18,20 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
     protected $productClass;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * @param FormFactory $formFactory
      * @param string $productClass
+     * @param ConfigManager $configManager
      */
-    public function __construct(FormFactory $formFactory, $productClass)
+    public function __construct(FormFactory $formFactory, $productClass, ConfigManager $configManager)
     {
         $this->formFactory = $formFactory;
         $this->productClass = $productClass;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -59,8 +66,11 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
 
         $disabledValues = array_keys($notAvailableVariants);
 
+        $config = $this->configManager->getConfigFieldModel($this->productClass, $fieldName);
+        $extendConfig = $config->toArray('extend');
+
         return [
-            'enum_code' => ExtendHelper::generateEnumCode($this->productClass, $fieldName),
+            'class' => $extendConfig['target_entity'],
             'configs' => ['allowClear' => false],
             'disabled_values' => $disabledValues,
             'auto_initialize' => false

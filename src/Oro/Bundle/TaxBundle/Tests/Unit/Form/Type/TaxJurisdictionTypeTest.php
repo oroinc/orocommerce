@@ -157,7 +157,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
                     ],
                 ],
                 'expectedData' => [
-                    'code' => 'code',
+                    'code' => 'code_stripped',
                     'description' => 'description',
                     'country' => $country,
                     'region' => $region,

@@ -61,3 +61,18 @@ Feature: Open Orders Grid
       | Subtotal | Shipping | Total  |
       | $25.00   | $3.00   | $28.00 |
       | $10.00   | $3.00   | $13.00 |
+
+  Scenario: Checking Open Orders and Filtering By "Total" and "Subtotal"
+    Given I show filter "Total" in frontend grid
+    And I show filter "Subtotal" in frontend grid
+    Then I should see "Total" filter in frontend grid
+    And I should see "Subtotal" filter in frontend grid
+    And I filter Filter By Subtotal as equal "10" in "OpenOrdersGrid"
+    Then I should see following "OpenOrdersGrid" grid:
+      | Subtotal |  Total  |
+      | $10.00   |  $13.00 |
+    And I click "Clear All Filters"
+    And I filter Filter By Total as equals "28" in "OpenOrdersGrid"
+    Then I should see following "OpenOrdersGrid" grid:
+      | Subtotal |  Total  |
+      | $25.00   |  $28.00 |

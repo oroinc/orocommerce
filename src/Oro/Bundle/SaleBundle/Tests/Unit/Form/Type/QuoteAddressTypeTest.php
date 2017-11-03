@@ -208,19 +208,19 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                     'country' => self::COUNTRY_WITH_REGION,
                 ],
                 'expectedData' => (new QuoteAddress())
-                    ->setLabel('Label')
-                    ->setNamePrefix('NamePrefix')
-                    ->setFirstName('FirstName')
-                    ->setMiddleName('MiddleName')
-                    ->setLastName('LastName')
-                    ->setNameSuffix('NameSuffix')
-                    ->setOrganization('Organization')
-                    ->setStreet('Street')
-                    ->setStreet2('Street2')
-                    ->setCity('City')
+                    ->setLabel('Label_stripped')
+                    ->setNamePrefix('NamePrefix_stripped')
+                    ->setFirstName('FirstName_stripped')
+                    ->setMiddleName('MiddleName_stripped')
+                    ->setLastName('LastName_stripped')
+                    ->setNameSuffix('NameSuffix_stripped')
+                    ->setOrganization('Organization_stripped')
+                    ->setStreet('Street_stripped')
+                    ->setStreet2('Street2_stripped')
+                    ->setCity('City_stripped')
                     ->setRegion($region)
                     ->setRegionText('Region Text')
-                    ->setPostalCode('AL')
+                    ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => new QuoteAddress(),
             ],

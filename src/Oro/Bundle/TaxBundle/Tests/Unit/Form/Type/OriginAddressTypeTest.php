@@ -62,7 +62,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'country' => $country,
                     'region' => $region,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without region' => [
@@ -79,7 +79,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'country' => new Country(self::COUNTRY_WITHOUT_REGION),
                     'region' => null,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without country' => [
@@ -96,7 +96,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'country' => null,
                     'region' => $region,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without postal code' => [

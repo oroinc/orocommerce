@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +20,19 @@ class CategoryPageVariantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add(
+                'excludeSubcategories',
+                OroChoiceType::NAME,
+                [
+                    'label' => 'oro.catalog.subcategory.form.exclude_subcategories.label',
+                    'choices' => [
+                        'oro.catalog.subcategory.form.exclude_subcategories.include.label',
+                        'oro.catalog.subcategory.form.exclude_subcategories.exclude.label',
+                    ],
+                    'required' => true,
+                    'tooltip' => 'oro.catalog.subcategory.form.exclude_subcategories.tooltip',
+                ]
+            )
             ->add(
                 'categoryPageCategory',
                 CategoryTreeType::NAME,

@@ -4,6 +4,7 @@ namespace Oro\Component\Testing\Unit;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
@@ -16,6 +17,7 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
 abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
@@ -39,7 +41,12 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                     'translatable_entity' => $this->getTranslatableEntity(),
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                [
+                    'form' => [
+                        new AdditionalAttrExtension(),
+                        new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    ],
+                ]
             )
         ];
     }

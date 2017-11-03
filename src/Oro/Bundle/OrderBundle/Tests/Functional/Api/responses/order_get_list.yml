@@ -31,6 +31,10 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            payment_term_7c4f1e8e:
+                data:
+                    type: paymentterms
+                    id: '<toString(@payment_term.net_10->id)>'
             owner:
                 data:
                     type: users

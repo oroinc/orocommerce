@@ -243,19 +243,19 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     'region' => static::REGION_WITH_COUNTRY,
                 ],
                 'expectedData' => (new OrderAddress())
-                    ->setLabel('Label')
-                    ->setNamePrefix('NamePrefix')
-                    ->setFirstName('FirstName')
-                    ->setMiddleName('MiddleName')
-                    ->setLastName('LastName')
-                    ->setNameSuffix('NameSuffix')
-                    ->setOrganization(static::ORGANIZATION)
-                    ->setStreet('Street')
-                    ->setStreet2('Street2')
-                    ->setCity('City')
+                    ->setLabel('Label_stripped')
+                    ->setNamePrefix('NamePrefix_stripped')
+                    ->setFirstName('FirstName_stripped')
+                    ->setMiddleName('MiddleName_stripped')
+                    ->setLastName('LastName_stripped')
+                    ->setNameSuffix('NameSuffix_stripped')
+                    ->setOrganization(static::ORGANIZATION . '_stripped')
+                    ->setStreet('Street_stripped')
+                    ->setStreet2('Street2_stripped')
+                    ->setCity('City_stripped')
                     ->setRegion($region)
                     ->setRegionText('Region Text')
-                    ->setPostalCode('AL')
+                    ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => $emptyAddress,
             ],
@@ -375,7 +375,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                 'submittedData' => [
                     'customerAddress' => 'a_1',
                 ],
-                'expectedData' => $this->getValidAddress(),
+                'expectedData' => $this->getValidAddress(false),
                 'defaultData' => new OrderAddress(),
                 'formErrors' => ['customerAddress' => 1],
                 'groupedAddresses' => [
@@ -424,19 +424,20 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     abstract protected function getEntity();
 
     /**
+     * @param bool $isStripped
+     *
      * @return OrderAddress
      */
-    protected function getValidAddress()
+    protected function getValidAddress($isStripped = true)
     {
         $validAddress = new OrderAddress();
 
         list ($country, $region) = $this->getValidCountryAndRegion();
 
-        return $validAddress->setOrganization(static::ORGANIZATION)
-            ->setCity(static::CITY)
-            ->setStreet(static::STREET)
-            ->setPostalCode(static::POSTAL_CODE)
-            ->setCountry($country)
-            ->setRegion($region);
+        return $validAddress->setOrganization($isStripped ? static::ORGANIZATION . '_stripped' : static::ORGANIZATION)
+            ->setCountry(new Country(static::COUNTRY))
+            ->setCity($isStripped ? static::CITY . '_stripped' : static::CITY)
+            ->setStreet($isStripped ? static::STREET . '_stripped' : static::STREET)
+            ->setPostalCode($isStripped ? static::POSTAL_CODE . '_stripped' : static::POSTAL_CODE);
     }
 }

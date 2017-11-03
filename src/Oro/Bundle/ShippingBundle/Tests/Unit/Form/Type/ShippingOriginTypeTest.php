@@ -94,10 +94,10 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     self::COUNTRY_WITH_REGION,
                     true,
                     self::REGION_WITH_COUNTRY,
-                    'code1',
-                    'city1',
-                    'street1',
-                    'street2'
+                    'code1_stripped',
+                    'city1_stripped',
+                    'street1_stripped',
+                    'street2_stripped'
                 ),
                 'defaultData' => null,
             ],
@@ -114,10 +114,10 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     self::COUNTRY_WITH_REGION,
                     true,
                     self::REGION_WITH_COUNTRY,
-                    'code2',
-                    'city2',
-                    'street2',
-                    'street3'
+                    'code2_stripped',
+                    'city2_stripped',
+                    'street2_stripped',
+                    'street3_stripped'
                 ),
                 'defaultData' => $this->getShippingOrigin(
                     self::COUNTRY_WITH_REGION,

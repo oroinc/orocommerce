@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
@@ -96,7 +97,7 @@ class QuoteAddressType extends AbstractType
             }
         );
 
-        $builder->add('phone', 'text');
+        $builder->add('phone', 'text', [StripTagsExtension::OPTION_NAME => true]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,

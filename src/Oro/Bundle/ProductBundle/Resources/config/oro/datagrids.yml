@@ -765,6 +765,9 @@ datagrids:
                     data_name: all_text_LOCALIZATION_ID
                     label:     oro.product.anything.label
                     max_length: 255
+                    options:
+                        operator_choices:
+                           '@oro_search.utils.search_all_text->getOperatorChoices'
         properties:
             id: ~
             type: ~

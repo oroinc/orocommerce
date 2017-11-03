@@ -14,8 +14,13 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
             'Architectural Floodlighting' => [],
             'Headlamps'                   => []
         ],
-        'Medical Apparel'   => [
-            'Medical Uniforms' => []
+        'Medical' => [
+            'Medical Apparel'   => [
+                'Medical Uniforms' => [],
+                'Footwear' => [],
+            ],
+            'Patient Transportation Equipment' => [],
+            'Patient Identification' => [],
         ],
         'Office Furniture'  => [],
         'Retail Supplies'   => [

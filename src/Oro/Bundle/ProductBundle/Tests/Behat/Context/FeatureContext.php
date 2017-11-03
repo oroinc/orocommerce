@@ -673,37 +673,47 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product$/
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product$/
      */
-    public function shouldSeeForProduct($elementName, $SKU)
+    public function shouldSeeForProduct($elementNameOrText, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
 
-        if ($this->isElementVisible($elementName, $productItem)) {
+        if ($this->isElementVisible($elementNameOrText, $productItem)) {
             return;
         }
 
         self::assertNotFalse(
-            stripos($productItem->getText(), $elementName),
-            sprintf('text or element "%s" for product with SKU "%s" is not present or not visible', $elementName, $SKU)
+            stripos($productItem->getText(), $elementNameOrText),
+            sprintf(
+                '%s "%s" for product with SKU "%s" is not present or not visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
         );
     }
 
     /**
-     * @Then /^(?:|I )should not see "([^"]*)" for "([^"]*)" product$/
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product$/
      */
-    public function shouldNotSeeForProduct($elementName, $SKU)
+    public function shouldNotSeeForProduct($elementNameOrText, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
         self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
 
-        $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
-            || stripos($productItem->getText(), $elementName);
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
+            || stripos($productItem->getText(), $elementNameOrText);
 
         self::assertFalse(
             $textAndElementPresentedOnPage,
-            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $elementName, $SKU)
+            sprintf(
+                '%s "%s" for product with SKU "%s" is present or visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
         );
     }
 
@@ -1040,8 +1050,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Check checkboxes in multiple select filter
      * Example: When I check "Task, Email" in Activity Type filter in frontend product grid
+     * Example: When I check "Task, Email" in "Activity Type filter" in frontend product grid
      *
      * @When /^(?:|I )check "(?P<filterItems>.+)" in (?P<filterName>[\w\s]+) filter in frontend product grid$/
+     * @When /^(?:|I )check "(?P<filterItems>.+)" in "(?P<filterName>[^"]+)" filter in frontend product grid$/
      *
      * @param string $filterName
      * @param string $filterItems

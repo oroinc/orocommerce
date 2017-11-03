@@ -1,0 +1,4 @@
+data:
+    type: paymentterms
+    attributes:
+        label: 'net 999'
