@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -134,10 +133,18 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsMassAction(Request $request, $gridName, $actionName)
     {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $shoppingList = $this->get('oro_shopping_list.handler.shopping_list_line_item')
+            ->getShoppingList($request->query->get('shoppingList'));
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
+        $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
+        $requestData = array_merge($request->query->all(), $request->request->all());
+
+        $response = $this->get('oro_datagrid.mass_action.dispatcher')->dispatch(
+            $gridName,
+            $actionName,
+            $parameters,
+            array_merge($requestData, ['shoppingList' => $shoppingList])
+        );
 
         $data = [
             'successful' => $response->isSuccessful(),
@@ -178,7 +185,7 @@ class AjaxLineItemController extends AbstractLineItemController
                     $gridName,
                     $actionName,
                     $parameters,
-                    array_merge($requestData, ['createdShoppingList' => $shoppingList])
+                    array_merge($requestData, ['shoppingList' => $shoppingList])
                 );
 
             $manager->setCurrent($this->getUser(), $shoppingList);

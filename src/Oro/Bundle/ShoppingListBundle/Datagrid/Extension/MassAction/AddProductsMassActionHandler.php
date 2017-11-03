@@ -44,12 +44,8 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     public function handle(MassActionHandlerArgs $args)
     {
         $argsParser = new AddProductsMassActionArgsParser($args);
-        $shoppingList = $argsParser->getCreatedShoppingList();
+        $shoppingList = $argsParser->getShoppingList();
         $productIds = $argsParser->getProductIds();
-
-        if (!$shoppingList) {
-            $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($argsParser->getShoppingListId());
-        }
 
         if (!$this->isAllowed($shoppingList, $productIds)) {
             return $this->generateResponse($args);
@@ -60,7 +56,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $em->beginTransaction();
 
         try {
-            if ($argsParser->getCreatedShoppingList()) {
+            if (!$shoppingList->getId()) {
                 $em->persist($shoppingList);
                 $em->flush();
             }
@@ -95,7 +91,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         );
 
         return new MassActionResponse(
-            true,
+            $entitiesCount > 0 && $shoppingListId,
             $this->messageGenerator->getSuccessMessage($shoppingListId, $entitiesCount, $transChoiceKey),
             ['count' => $entitiesCount]
         );

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -19,7 +20,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     const MESSAGE = 'test message';
-    const SHOPPING_LIST_ID = 735;
 
     /** @var AddProductsMassActionHandler */
     protected $handler;
@@ -51,7 +51,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args->expects($this->any())
             ->method('getData')
             ->willReturn(['shoppingList' => null]);
-        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')->willReturn(null);
 
         $response = $this->handler->handle($args);
 
@@ -66,9 +65,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['createdShoppingList' => $shoppingList, 'values' => 3]);
-        $this->shoppingListItemHandler->expects($this->never())
-            ->method('getShoppingList');
+            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
 
         $response = $this->handler->handle($args);
         $this->assertFalse($response->isSuccessful());
@@ -83,13 +80,9 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args->expects($this->any())
             ->method('getData')
             ->willReturn([
-                'createdShoppingList' => null,
+                'shoppingList' => $shoppingList,
                 'values' => 3
             ]);
-
-        $this->shoppingListItemHandler->expects($this->once())
-            ->method('getShoppingList')
-            ->willReturn($shoppingList);
 
         $this->shoppingListItemHandler->expects($this->once())
             ->method('isAllowed')
@@ -128,15 +121,9 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args->expects($this->any())
             ->method('getData')
             ->willReturn([
-                'createdShoppingList' => null,
-                'shoppingList' => self::SHOPPING_LIST_ID,
+                'shoppingList' => $shoppingList,
                 'values' => 3
             ]);
-
-        $this->shoppingListItemHandler->expects($this->once())
-            ->method('getShoppingList')
-            ->with(self::SHOPPING_LIST_ID)
-            ->willReturn($shoppingList);
 
         $this->shoppingListItemHandler->expects($this->once())
             ->method('isAllowed')
@@ -170,12 +157,12 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandle()
     {
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $shoppingList = new ShoppingListStub();
 
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['createdShoppingList' => $shoppingList, 'values' => 3]);
+            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
 
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
 
@@ -192,7 +179,10 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($shoppingList);
         $em->expects($this->once())
-            ->method('flush');
+            ->method('flush')
+            ->willReturnCallback(function () use ($shoppingList) {
+                $shoppingList->setId(5);
+            });
 
         $em->expects($this->once())
             ->method('commit');

@@ -40,35 +40,21 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $parser->getProductIds());
     }
 
-    public function testGetCreatedShoppingListWhenNoCreatedShoppingListProvided()
+    public function testGetShoppingListWhenNoShoppingListProvided()
     {
         $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([]));
 
-        $this->assertNull($parser->getCreatedShoppingList());
+        $this->assertNull($parser->getShoppingList());
     }
 
-    public function testGetCreatedShoppingListWhenCreatedShoppingListProvided()
+    public function testGetShoppingListWhenShoppingListProvided()
     {
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
         $parser = new AddProductsMassActionArgsParser(
-            $this->createHandlerArgsWithData(['createdShoppingList' => $shoppingList])
+            $this->createHandlerArgsWithData(['shoppingList' => $shoppingList])
         );
 
-        $this->assertEquals($shoppingList, $parser->getCreatedShoppingList());
-    }
-
-    public function testGetShoppingListIdWhenNoShoppingListIdProvided()
-    {
-        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData([]));
-
-        $this->assertNull($parser->getShoppingListId());
-    }
-
-    public function testGetShoppingListIdWhenShoppingListIdProvided()
-    {
-        $parser = new AddProductsMassActionArgsParser($this->createHandlerArgsWithData(['shoppingList' => 5]));
-
-        $this->assertEquals(5, $parser->getShoppingListId());
+        $this->assertEquals($shoppingList, $parser->getShoppingList());
     }
 
     public function testGetUnitsAndQuantitiesWhenEmpty()
