@@ -57,7 +57,7 @@ define(function(require) {
 
             BackendGrid.__super__.initialize.apply(this, arguments);
 
-            mediator.on('widget:notFound', function () {
+            mediator.on('widget:notFound', function() {
                 $(window).off('beforeunload');
             })
 
