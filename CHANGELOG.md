@@ -41,6 +41,10 @@
         - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
 - Filtration services are now skippable. More details can be found in [documentation](https://github.com/orocommerce/orocommerce/tree/1.5.0/src/Oro/Bundle/PromotionBundle/README.md#filters-skippability-during-checkout).
 
+#### ShippingBundle
+* Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`:
+   * Interface lost his `addLineItem` method. All line item collection should be processed with `setLineItems` and related interface `Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface`. 
+
 #### WebsiteSearchBundle
 * Entity `Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal`:
     * changed decimal field `value`:
