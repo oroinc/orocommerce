@@ -11,6 +11,13 @@ define(function(require) {
         /** @property */
         className: '',
 
+        /**
+         * @inheritDoc
+         */
+        attributes: {
+            'data-grid-sorting': ''
+        },
+
         /** @property */
         dropdownClassName: 'oro-select2__dropdown',
 
