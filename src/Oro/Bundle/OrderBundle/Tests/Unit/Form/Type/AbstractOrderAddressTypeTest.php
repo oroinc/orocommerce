@@ -435,7 +435,8 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         list ($country, $region) = $this->getValidCountryAndRegion();
 
         return $validAddress->setOrganization($isStripped ? static::ORGANIZATION . '_stripped' : static::ORGANIZATION)
-            ->setCountry(new Country(static::COUNTRY))
+            ->setCountry($country)
+            ->setRegion($region)
             ->setCity($isStripped ? static::CITY . '_stripped' : static::CITY)
             ->setStreet($isStripped ? static::STREET . '_stripped' : static::STREET)
             ->setPostalCode($isStripped ? static::POSTAL_CODE . '_stripped' : static::POSTAL_CODE);
