@@ -130,7 +130,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         return array_map(function (NodeElement $element) {
             return $this->elementFactory->wrapElement(Table::TABLE_ROW_ELEMENT, $element);
-        }, $table->findAll('css', 'tbody tr.line_item_view'));
+        }, $table->findAll('css', '.shopping-list-line-items .shopping-list-line-items__item-wrapper'));
     }
 
     /**
@@ -160,7 +160,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getLineItemSKU(TableRow $tableRowElement)
     {
-        return $tableRowElement->find('css', '.product-item__desctiption span')->getText();
+        return $tableRowElement->find('css', 'span.product-item__sku-value')->getText();
     }
 
     /**

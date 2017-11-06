@@ -6,7 +6,7 @@ layout:
             namespace: matrix_grid_order
     actions:
         - '@add':
-            id: form_actions_submit
+            id: matrix_grid_order_form_actions_submit
             blockType: button
             parentId: widget_actions
             options:

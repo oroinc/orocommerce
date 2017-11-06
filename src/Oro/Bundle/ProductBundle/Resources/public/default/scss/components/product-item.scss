@@ -52,7 +52,12 @@
         }
     }
 
+    //TODO: Should remove all --in-cart modifiers from the component
     &--in-cart {
+        align-self: center;
+
+        margin-right: auto;
+
         @include clearfix();
     }
 
@@ -411,14 +416,6 @@
         }
     }
 
-    &__desctiption {
-        position: relative;
-
-        &--in-cart {
-            padding: 0 0 0 104px;
-        }
-    }
-
     &__select-row {
         padding-right: $offset-x-s;
 
@@ -430,12 +427,6 @@
             position: absolute;
             top: 100%;
             padding-top: $offset-x-s;
-        }
-    }
-
-    &__status {
-        &--in-cart {
-            display: none;
         }
     }
 }
@@ -475,12 +466,6 @@
 
         &__quick-view-btn {
             display: none !important;
-        }
-
-        &__status {
-            &--in-cart {
-                display: block;
-            }
         }
     }
 }
