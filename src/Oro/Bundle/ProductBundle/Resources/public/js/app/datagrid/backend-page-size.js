@@ -15,6 +15,24 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        initialize: function(options) {
+            BackendPageSize.__super__.initialize.call(this, options);
+        },
+
+        onChangePageSize: function(e) {
+            var obj = {};
+            this.collection.trigger('backgrid:checkUnSavedData', obj);
+
+            if (obj.live) {
+                BackendPageSize.__super__.onChangePageSize.apply(this, arguments);
+            } else {
+                this.render();
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
         render: function() {
             var $select = this.$el.find('[data-grid-pagesize-selector]');
             var currentSizeLabel = _.filter(

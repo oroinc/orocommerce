@@ -90,7 +90,15 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'street' => 'street1',
                     'street2' => 'street2',
                 ],
-                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1', 'street1', 'street2'),
+                'expectedData' => $this->getShippingOrigin(
+                    'US',
+                    'US',
+                    'US-AL',
+                    'code1_stripped',
+                    'city1_stripped',
+                    'street1_stripped',
+                    'street2_stripped'
+                ),
                 'defaultData' => null,
             ],
             'full data with default' => [
@@ -102,7 +110,15 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'street' => 'street2',
                     'street2' => 'street3',
                 ],
-                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code2', 'city2', 'street2', 'street3'),
+                'expectedData' => $this->getShippingOrigin(
+                    'US',
+                    'US',
+                    'US-AL',
+                    'code2_stripped',
+                    'city2_stripped',
+                    'street2_stripped',
+                    'street3_stripped'
+                ),
                 'defaultData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1', 'street1', 'street2'),
             ],
         ];

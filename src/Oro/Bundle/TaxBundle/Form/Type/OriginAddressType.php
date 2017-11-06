@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 
 class OriginAddressType extends AbstractType
 {
@@ -71,6 +72,7 @@ class OriginAddressType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.address.postal_code.label',
+                    StripTagsExtension::OPTION_NAME => true,
                     'attr' => ['placeholder' => 'oro.address.postal_code.label'],
                 ]
             )

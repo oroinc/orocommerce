@@ -448,8 +448,8 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"]'
-      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
     ProductFrontendGridFiltersButton:
       selector: 'div.filter-container > button.select-filter-widget'
@@ -458,6 +458,28 @@ oro_behat_extension:
     ProductFrontendGridFilterManager:
       selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
+      selector: 'div.oro-datagrid'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
+
+    ProductFrontendGridTable:
+      selector: 'div.grid.table'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+
+    ProductFrontendMassActionHeadCheckbox:
+      selector: 'div.datagrid-massaction button'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendMassActionButton:
+      selector: '.datagrid-massaction button.dropdown-toggle'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendGridFloatingMenu:
+      selector: '.datagrid-massaction__dropdown-menu'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendGridRow:
+      selector: '.grid-row'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow
 
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'

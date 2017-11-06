@@ -1,0 +1,28 @@
+<% if (_.isMobile()) { %>
+    <label class="btn btn--default btn--size-s">
+        <input type="checkbox" tabindex="-1" data-checkbox-change-visible class="custom-checkbox__input">
+        <span class="icon-selector icon--no-offset"></span>
+    </label>
+<% } else { %>
+    <div class="datagrid-massaction">
+        <div class="dropdown datagrid-massaction__toggle datagrid-massaction__toggle--size-m">
+            <button type="button" class="datagrid-massaction__invisible" data-toggle="dropdown"></button>
+            <label class="custom-checkbox">
+                <input type="checkbox" name="is_default" class="custom-checkbox__input" data-select>
+                <span class="custom-checkbox__icon"></span>
+            </label>
+            <ul class="dropdown-menu datagrid-massaction__dropdown-menu" data-options="{&quot;container&quot;: true}">
+                <li class="all-visible">
+                    <a href="#" class="action" data-select-all-visible>
+                        <%- _.__('oro.datagrid.headerCell.selectAll.allVisible') %>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="action" data-select-none>
+                        <%- _.__('oro.datagrid.headerCell.selectAll.none') %>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+<% } %>

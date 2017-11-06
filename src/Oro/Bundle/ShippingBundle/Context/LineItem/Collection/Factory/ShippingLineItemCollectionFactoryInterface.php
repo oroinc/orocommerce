@@ -8,9 +8,9 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 interface ShippingLineItemCollectionFactoryInterface
 {
     /**
-     * @param array|ShippingLineItemInterface[] $shippingLineItems
+     * @param ShippingLineItemInterface[] $shippingLineItems
      *
      * @return ShippingLineItemCollectionInterface
      */
-    public function createShippingLineItemCollection(array $shippingLineItems);
+    public function createShippingLineItemCollection(array $shippingLineItems): ShippingLineItemCollectionInterface;
 }
