@@ -20,7 +20,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/", name="oro_product_frontend_product_index")
-     * @Layout(vars={"entity_class", "grid_config"})
+     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -29,6 +29,8 @@ class ProductController extends Controller
     {
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
+                ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
             ],

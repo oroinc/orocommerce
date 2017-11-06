@@ -44,7 +44,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'shopping_list_limit' => [
                     'value' => 0,
                     'scope' => 'app'
-                ]
+                ],
+                'mass_adding_on_product_listing_enabled' => [
+                    'value' => true,
+                    'scope' => 'app',
+                ],
             ]
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));

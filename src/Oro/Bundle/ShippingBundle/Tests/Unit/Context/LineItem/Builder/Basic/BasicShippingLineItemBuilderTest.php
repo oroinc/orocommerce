@@ -14,14 +14,14 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
         $this->productHolderMock
             ->expects($this->once())
             ->method('getEntityIdentifier')
-            ->willReturn(self::TEST_ID);
+            ->willReturn(self::TEST_ENTITY_ID);
     }
 
     public function testFullBuild()
     {
         $builder = new BasicShippingLineItemBuilder(
             $this->productUnitMock,
-            self::TEST_CODE,
+            self::TEST_UNIT_CODE,
             self::TEST_QUANTITY,
             $this->productHolderMock
         );
@@ -29,7 +29,7 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
         $builder
             ->setProduct($this->productMock)
             ->setPrice($this->priceMock)
-            ->setProductSku(self::TEST_SKU)
+            ->setProductSku(self::TEST_PRODUCT_SKU)
             ->setDimensions($this->dimensionsMock)
             ->setWeight($this->weightMock);
 
@@ -44,7 +44,7 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     {
         $builder = new BasicShippingLineItemBuilder(
             $this->productUnitMock,
-            self::TEST_CODE,
+            self::TEST_UNIT_CODE,
             self::TEST_QUANTITY,
             $this->productHolderMock
         );
@@ -53,10 +53,10 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
 
         $expectedShippingLineItem = new ShippingLineItem([
             ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
-            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_CODE,
+            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
             ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
             ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
-            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ID
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID
         ]);
 
         $this->assertEquals($expectedShippingLineItem, $shippingLineItem);

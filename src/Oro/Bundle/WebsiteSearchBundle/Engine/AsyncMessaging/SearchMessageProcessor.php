@@ -108,15 +108,16 @@ class SearchMessageProcessor implements MessageProcessorInterface
                 $ownerId = $message->getMessageId();
                 $jobName = $this->buildJobNameForMessage($data);
                 $closure = function () use ($data) {
-                    return $this->indexer->reindex($data['class'], $data['context']);
+                    $this->indexer->reindex($data['class'], $data['context']);
+                    return true;
                 };
                 if (null !== $jobName) {
-                    $response = $this->jobRunner->runUnique($ownerId, $jobName, $closure);
+                    $this->jobRunner->runUnique($ownerId, $jobName, $closure);
                 } else {
-                    $response = $closure();
+                    $closure();
                 }
 
-                $result = $response ? static::ACK : static::REJECT;
+                $result = static::ACK;
                 break;
 
             case AsyncIndexer::TOPIC_RESET_INDEX:

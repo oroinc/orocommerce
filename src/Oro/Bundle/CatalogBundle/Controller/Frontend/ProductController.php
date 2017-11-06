@@ -15,7 +15,7 @@ class ProductController extends Controller
      * View List of ALL products
      *
      * @Route("/allproducts", name="oro_catalog_frontend_product_allproducts")
-     * @Layout(vars={"entity_class", "grid_config"})
+     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -27,6 +27,9 @@ class ProductController extends Controller
             'grid_config' => [
                 'frontend-catalog-allproducts-grid'
             ],
+            'theme_name' => $this->container
+                ->get('oro_product.datagrid_theme_helper')
+                ->getTheme('frontend-catalog-allproducts-grid')
         ];
     }
 }
