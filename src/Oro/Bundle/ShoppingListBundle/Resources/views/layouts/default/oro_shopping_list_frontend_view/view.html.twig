@@ -185,19 +185,22 @@
                             {% set form = lineItem.form %}
                         {% endif %}
 
+                        {% set lineItem = lineItem.lineItems|first %}
+
                         {% do block|merge_context({
                             'matrixForm': form
                         }) %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
-                            lineItem: lineItem.lineItems|first,
-                            mainProduct: lineItem.product,
+                            lineItem: lineItem,
+                            mainProduct: lineItem.parentProduct|default(lineItem.product),
                             parent: block.vars,
                             loop: loop,
                             form: form,
                             productsAllPrices: productsAllPrices
                         }) %}
+
                         {{ block('container_widget') }}
                     </div>
                 {% endfor %}
@@ -314,7 +317,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
-    {% if parent.configurableProducts[lineItem.product.id] is defined %}
+    {% if matrixForm is null and parent.configurableProducts[lineItem.product.id] is defined %}
         {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}: {{ field.value }}</div>
         {% endfor %}
@@ -459,14 +462,32 @@
 
 {% block _shopping_list_line_items_list_actions_remove_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set moduleOptions = {
+        removeClass: 'shopping-list-line-items__item-wrapper',
+        confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+    } %}
+
+    {% if matrixForm is not null %}
+        {% set moduleOptions = moduleOptions|merge({
+            route: 'oro_shopping_list_frontend_remove_product',
+            requestMethod: 'POST',
+            routeParams: {
+                'productId': mainProduct.id,
+                'shoppingListId': shoppingList.id
+            }
+        }) %}
+    {% else %}
+        {% set moduleOptions = moduleOptions|merge({
+            route: 'oro_api_shopping_list_frontend_delete_line_item',
+            routeParams: {'id': lineItem.id}
+        }) %}
+    {% endif %}
+
     <button class="item-remove button button--plain" {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/delete-item-component',
-            options: {
-                url: path('oro_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
-                removeClass: 'shopping-list-line-items__item-wrapper',
-                confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
-            }
+            options: moduleOptions
         }) }} >
         <i class="fa-trash-o fa--x-large fa--no-offset"></i>
     </button>

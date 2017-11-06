@@ -15,6 +15,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -23,9 +24,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var ShoppingListLineItemHandler */
     protected $handler;
 
@@ -44,6 +48,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
     protected $featureChecker;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductManager */
+    protected $productManager;
+
     protected function setUp()
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
@@ -52,6 +59,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->productManager = $this->createMock(ProductManager::class);
 
         $this->managerRegistry = $this->getManagerRegistry();
 
@@ -64,7 +73,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->shoppingListManager,
             $this->authorizationChecker,
             $this->tokenAccessor,
-            $this->featureChecker
+            $this->featureChecker,
+            $this->productManager
         );
         $this->handler->setProductClass(Product::class);
         $this->handler->setShoppingListClass(ShoppingList::class);
@@ -220,6 +230,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->willReturn(true);
 
+        $this->productManager
+            ->expects($this->once())
+            ->method('restrictQueryBuilder')
+            ->with($this->isInstanceOf(QueryBuilder::class), [])
+            ->willReturnArgument(0);
+
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
                 function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
@@ -254,11 +270,16 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function itemDataProvider()
     {
         return [
-            [
-                [1, 2],
-                ['SKU1' => ['item' => 5], 'sku2' => ['item' => 3]],
-                [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)],
+            'default quantity 1 is set for product with SKU2 as no info in productUnitsWithQuantities provided' => [
+                'productIds' => [1, 2],
+                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'SKU3' => ['item' => 3]],
+                'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)]
             ],
+            'lower case sku is acceptable in productUnitsWithQuantities too' => [
+                'productIds' => [1, 2],
+                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2' => ['item' => 3]],
+                'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(3)]
+            ]
         ];
     }
 
@@ -295,17 +316,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['iterate'])
             ->getMockForAbstractClass();
 
-        $product1 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1)
-            ->addUnitPrecision(
-                (new ProductUnitPrecision())->setUnit(new ProductUnit())
-            )
-            ->setSku('sku1');
+        $product1 = $this->getEntity(Product::class, [
+            'id' => 1,
+            'sku' => 'sku1',
+            'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
+        ]);
 
-        $product2 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 2)
-            ->addUnitPrecision(
-                (new ProductUnitPrecision())->setUnit(new ProductUnit())
-            )
-            ->setSku('sku1');
+        $product2 = $this->getEntity(Product::class, [
+            'id' => 2,
+            'sku' => 'sku2',
+            'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
+        ]);
 
         $iterableResult = [[$product1], [$product2]];
         $query->expects($this->any())
@@ -342,10 +363,10 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['findOneBy'])
             ->getMock();
 
-        $productRepository->expects($this->any())
+        $productUnitRepository->expects($this->any())
             ->method('findOneBy')
             ->willReturnCallback(function ($unit) {
-                return new ProductUnit($unit);
+                return $this->getEntity(ProductUnit::class, ['code' => $unit]);
             });
 
         $em->expects($this->any())
@@ -363,7 +384,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->any())->method('getReference')->will(
             $this->returnCallback(
                 function ($className, $id) {
-                    return $this->getEntity($className, $id);
+                    return $this->getEntity($className, ['id' => $id]);
                 }
             )
         );
@@ -378,22 +399,5 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         return $managerRegistry;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

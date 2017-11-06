@@ -25,13 +25,7 @@ define(function(require) {
             'fields': ['input', '_onQuantityChange']
         },
 
-        total: {
-            price: 0,
-            quantity: 0,
-            rows: {},
-            columns: {},
-            cells: {}
-        },
+        total: null,
 
         prices: null,
 
@@ -42,7 +36,6 @@ define(function(require) {
          */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.apply(this, arguments);
-            this.total = _.extend({}, this.total);
             this.initModel(options);
             this.setPrices(options);
             this.initializeElements(options);
@@ -51,6 +44,14 @@ define(function(require) {
                     el: this.el
                 }));
             }
+
+            this.total = {
+                price: 0,
+                quantity: 0,
+                rows: {},
+                columns: {},
+                cells: {}
+            };
             this.updateTotals();
         },
 

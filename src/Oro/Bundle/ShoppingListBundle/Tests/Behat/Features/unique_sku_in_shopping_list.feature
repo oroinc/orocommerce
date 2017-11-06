@@ -1,13 +1,15 @@
-@ticket-BB-10500
-@fixture-OroProductBundle:check_products_in_the_shopping_list.yml
-Feature: Check configurable product has attributes in the shopping list
-  In order to buy products on e-commerce site
-  As a Buyer
-  I should see product attributes of configurable product in my shopping lists
+@fixture-OroShoppingListBundle:unique_sku_in_shopping_list.yml
+Feature: Unique SKU in shopping list.
 
-  Scenario: Check configurable product in the shopping list
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin     |first_session |
+      | Guest     |second_session|
+
+  Scenario: Pre actions: creating product attributes and setting values in product
     # Prepare product attributes
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
 
     ## Create Color attribute
     And I go to Products / Product Attributes
@@ -71,21 +73,32 @@ Feature: Check configurable product has attributes in the shopping list
     And I save form
     Then I should see "Product has been saved" flash message
 
-    # Check if in the shopping list on front store shown correct attribute labels
-    Given I signed in as AmandaRCole@example.org on the store frontend
-    And Buyer is on Shopping List 1
-    Then I should see text matching "Color Attribute: Green"
-    And I should see text matching "Size Attribute: Yes"
-    Then I should not see text matching "color_attribute"
-    And I should not see text matching "size_attribute"
+        # Save configurable product with simple products selected
+    And I go to Products / Products
+    And I click Edit shirt_102 in grid
+    And I should see "No records found"
+    And I fill "ProductForm" with:
+      | Configurable Attributes | [color_attribute, size_attribute] |
+    And I check gtsh_l record in grid
+    And I save form
+    Then I should see "Product has been saved" flash message
 
-  Scenario: Pre-fill Matrix Order Form
-    Given I signed in as AmandaRCole@example.org on the store frontend
+  Scenario: Fill Matrix Order Form of configurable product
+    Given I proceed as the Guest
+    And I am on homepage
+    And I signed in as AmandaRCole@example.org on the store frontend
     Given I open product with sku "shirt_101" on the store frontend
     Then I should see an "Matrix Grid Form" element
     And I fill "Shirt_101 Matrix Grid Order Form" with:
-      | Green Yes Quantity | 100 |
+      | Green Yes Quantity | 10 |
     And I click "Add to Shopping List" in matrix order window
     Then I should see 'Shopping list "Shopping list" was updated successfully' flash message
     And "Shirt_101 Matrix Grid Order Form" must contains values:
-      | Green Yes Quantity | 100 |
+      | Green Yes Quantity | 10 |
+
+  Scenario: Check Matrix Order Form of another configurable product with same simple product as variant
+    Given I open product with sku "shirt_102" on the store frontend
+    Then I should see an "Matrix Grid Form" element
+    And "Shirt_102 Matrix Grid Order Form" must contains values:
+      | Green Yes Quantity | 10 |
+    And I should see "Update Shoppin..."

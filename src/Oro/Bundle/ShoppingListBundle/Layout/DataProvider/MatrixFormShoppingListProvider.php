@@ -46,13 +46,15 @@ class MatrixFormShoppingListProvider
 
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $product = $lineItem->getParentProduct() ?: $lineItem->getProduct();
+            $lineItemKey = $this->getLineItemKey($product->getId(), $lineItem->getProductUnitCode());
 
-            if (!isset($sortedLineItems[$product->getId()])) {
+            if (!isset($sortedLineItems[$lineItemKey])) {
                 if ($this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE
                     && $this->productFormAvailabilityProvider->isMatrixFormAvailable($product)
+                    && $product->getPrimaryUnitPrecision()->getProductUnitCode() === $lineItem->getProductUnitCode()
                 ) {
                     // Add matrix form view to line item data for applicable configurable products
-                    $sortedLineItems[$product->getId()]['form'] =
+                    $sortedLineItems[$lineItemKey]['form'] =
                         $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
                 } elseif ($lineItem->getParentProduct()) {
                     // If matrix form is not available for configurable product, group its variants together
@@ -84,8 +86,10 @@ class MatrixFormShoppingListProvider
      */
     protected function addLineItemData(&$array, LineItem $lineItem, Product $product)
     {
-        $array[$product->getId()]['lineItems'][] = $lineItem;
-        $array[$product->getId()]['product'] = $product;
+        $lineItemKey = $this->getLineItemKey($product->getId(), $lineItem->getProductUnitCode());
+
+        $array[$lineItemKey]['lineItems'][] = $lineItem;
+        $array[$lineItemKey]['product'] = $product;
     }
 
     /**
@@ -95,5 +99,15 @@ class MatrixFormShoppingListProvider
     {
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_SHOPPING_LIST));
+    }
+
+    /**
+     * @param int $productId
+     * @param string $unit
+     * @return string
+     */
+    protected function getLineItemKey($productId, $unit)
+    {
+        return sprintf('%s:%s', $productId, $unit);
     }
 }

@@ -8,7 +8,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface ShippingContextBuilderInterface
@@ -31,13 +30,6 @@ interface ShippingContextBuilderInterface
      * @return self
      */
     public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection);
-
-    /**
-     * @param ShippingLineItemInterface $shippingLineItem
-     *
-     * @return self
-     */
-    public function addLineItem(ShippingLineItemInterface $shippingLineItem);
 
     /**
      * @param AddressInterface $shippingAddress

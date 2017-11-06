@@ -69,7 +69,8 @@
     }
 
     .line-item-price {
-        width: $shopping-list-line-items-line-item-price-width;
+        min-width: $shopping-list-line-items-line-item-price-min-width;
+        text-align: $shopping-list-line-items-line-item-price-text-align;
     }
 }
 

@@ -12,6 +12,24 @@
     </div>
 {% endblock %}
 
+{% block __oro_product_list_item__product_box_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-item__box product-item__box--{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__content product-item__content--{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_product_list_item__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}'

@@ -177,6 +177,7 @@
         padding-right: $matrix-order-widget-summary-wrapper-offset-inner-right;
 
         &--inline {
+            display: $matrix-order-widget-summary-inline-wrapper-display;
             background: $matrix-order-widget-summary-inline-wrapper-background;
             padding: $matrix-order-widget-summary-inline-wrapper-offset-inner;
             border-radius: $matrix-order-widget-summary-inline-wrapper-border-radius;
@@ -371,11 +372,12 @@
 
         &__form--inline & {
             &__grid {
+                width: $matrix-order-widget-form-inline-grid-strict-desktop-width;
                 max-width: $matrix-order-widget-form-inline-grid-strict-desktop-max-width;
+                padding-right: $matrix-order-widget-form-inline-grid-strict-desktop-offset-inner-right;
             }
 
             &__summary--inline {
-                max-width: $matrix-order-widget-form-inline-summary-inline-strict-desktop-max-width;
                 margin-top: $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top;
             }
         }

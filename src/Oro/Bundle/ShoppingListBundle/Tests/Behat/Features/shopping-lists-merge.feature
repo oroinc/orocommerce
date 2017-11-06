@@ -29,7 +29,7 @@ Feature: Guest shopping list merging functionality
     And I should see "Add to Shopping list"
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping list"
-    And I click "Add to Shopping list"
+    And I click "Add to Shopping List button"
     And I should see "Product has been added to" flash message
     And I should see "In shopping list"
 
@@ -47,7 +47,7 @@ Feature: Guest shopping list merging functionality
     And type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
-    When I click "Add to Shopping list"
+    When I click "Add to Shopping List button"
     Then I should see "Product has been added to" flash message
 
   Scenario: Check guest shopping list was merged to existing customer shopping list

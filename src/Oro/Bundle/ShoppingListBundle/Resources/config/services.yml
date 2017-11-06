@@ -68,6 +68,7 @@ services:
             - "@security.authorization_checker"
             - "@oro_security.token_accessor"
             - "@oro_featuretoggle.checker.feature_checker"
+            - "@oro_product.product.manager"
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
@@ -208,8 +209,10 @@ services:
         arguments:
             - "@oro_shopping_list.shopping_list.manager"
             - "@translator"
+            - "@security.token_storage"
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
+            - { name: oro_featuretogle.feature, feature: 'shopping_list_create' }
 
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'

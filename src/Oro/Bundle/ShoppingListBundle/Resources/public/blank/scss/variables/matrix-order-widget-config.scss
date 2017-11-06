@@ -7,8 +7,9 @@ $matrix-order-widget-border-color: 1px solid get-color('additional', 'light') !d
 //Form inline modifier group variables for strict-desktop
 $matrix-order-widget-form-inline-strict-desktop-display: inline-flex !default;
 $matrix-order-widget-form-inline-strict-desktop-width: 100% !default;
-$matrix-order-widget-form-inline-grid-strict-desktop-max-width: 66.6% !default;
-$matrix-order-widget-form-inline-summary-inline-strict-desktop-max-width: 33.3% !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-width: auto !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-max-width: 60% !default;
+$matrix-order-widget-form-inline-grid-strict-desktop-offset-inner-right: 20px !default;
 $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top: 60px !default;
 
 //Dialog group variables
@@ -127,6 +128,7 @@ $matrix-order-widget-summary-inline-width: 100% !default;
 $matrix-order-widget-summary-inline-offset-bottom: 25px !default;
 $matrix-order-widget-summary-inline--btn-offset-inner: 3px 15px 2px 15px !default;
 
+$matrix-order-widget-summary-inline-wrapper-display: inline-flex !default;
 $matrix-order-widget-summary-inline-wrapper-background: get-color('additional', 'base') !default;
 $matrix-order-widget-summary-inline-wrapper-offset-inner: 11px 14px 10px 14px !default;
 $matrix-order-widget-summary-inline-wrapper-border-radius: 6px !default;

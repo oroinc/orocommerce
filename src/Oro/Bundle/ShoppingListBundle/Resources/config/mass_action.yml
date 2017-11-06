@@ -13,3 +13,4 @@ services:
         arguments:
             - '@oro_shopping_list.handler.shopping_list_line_item'
             - '@oro_shopping_list.service.message_generator'
+            - '@doctrine'

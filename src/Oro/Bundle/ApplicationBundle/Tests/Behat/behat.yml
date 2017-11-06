@@ -235,25 +235,19 @@ oro_behat_extension:
 
     Matrix Grid Form:
       selector: 'form[name="matrix_collection"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Black L: 'matrix_collection[rows][0][columns][0][quantity]'
-          Black M: 'matrix_collection[rows][0][columns][1][quantity]'
-          White L: 'matrix_collection[rows][1][columns][0][quantity]'
-          White M: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 11: 'matrix_collection[rows][0][columns][0][quantity]'
-          Value 12: 'matrix_collection[rows][1][columns][0][quantity]'
-          Value 13: 'matrix_collection[rows][2][columns][0][quantity]'
-          Value 14: 'matrix_collection[rows][3][columns][0][quantity]'
-          Value 21: 'matrix_collection[rows][0][columns][1][quantity]'
-          Value 22: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 23: 'matrix_collection[rows][2][columns][1][quantity]'
-          Value 24: 'matrix_collection[rows][3][columns][1][quantity]'
-          Value 31: 'matrix_collection[rows][0][columns][2][quantity]'
-          Value 32: 'matrix_collection[rows][1][columns][2][quantity]'
-          Value 33: 'matrix_collection[rows][2][columns][2][quantity]'
-          Value 34: 'matrix_collection[rows][3][columns][2][quantity]'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrix
+
+    InlineMatrixHeader:
+      selector: '.matrix-order-widget__grid-head-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeader
+
+    InlineMatrixRowHeader:
+      selector: '.matrix-order-widget__grid-side-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowHeader
+
+    InlineMatrixRow:
+      selector: '.matrix-order-widget__form__col'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRow
 
     Configurable Product Shopping List Form:
       selector: 'form[name="oro_product_product_variant_frontend_variant_field"]'
@@ -425,3 +419,21 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+
+    Reset Any Text filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Any Text")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset SKU filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"SKU")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset Name filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Name")]/../button[@title="Reset this filter"]'
+        type: xpath

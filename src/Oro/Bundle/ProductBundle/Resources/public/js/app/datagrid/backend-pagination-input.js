@@ -28,6 +28,32 @@ define(function(require) {
 
             return handles;
         },
+
+        /**
+         * @inheritDoc
+         */
+        onChangePage: function(e) {
+            var obj = {};
+            e.preventDefault();
+            this.collection.trigger('backgrid:checkUnSavedData', obj);
+
+            if (obj.live) {
+                BackendPaginationInput.__super__.onChangePage.apply(this, arguments);
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        onChangePageByInput: function(e) {
+            var obj = {};
+            this.collection.trigger('backgrid:checkUnSavedData', obj);
+
+            if (obj.live) {
+                BackendPaginationInput.__super__.onChangePageByInput.apply(this, arguments);
+            }
+        },
+
         /**
          * @inheritDoc
          */

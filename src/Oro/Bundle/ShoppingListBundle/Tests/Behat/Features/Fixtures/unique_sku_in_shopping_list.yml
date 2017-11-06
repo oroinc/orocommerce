@@ -9,10 +9,10 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_name:
         string: 'Green shirt L'
-    product2_name:
-        string: 'Red shirt M'
     configurable_product_name:
         string: 'Shirt 1'
+    configurable_product_name_2:
+        string: 'Shirt 2'
     tshirt_family_label:
         string: 'T-shirt'
 
@@ -31,7 +31,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit_precision2:
         unit: '@item'
         precision: '1'
-
+    unit_precision3:
+        unit: '@item'
+        precision: '1'
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         type: 'simple'
@@ -51,26 +53,12 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@configurable_product_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-
-Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
-    shoppinglist1:
-        label: 'Shopping List 1'
-        customerUser: '@CustomerUser_AmandaRCole'
-
-Oro\Bundle\ShoppingListBundle\Entity\LineItem:
-    lineitem1:
-        product: '@product1'
-        parentProduct: '@configurable_product'
-        quantity: '5'
-        unit: '@item'
-        customerUser: '@CustomerUser_AmandaRCole'
-        shoppingList: '@shoppinglist1'
+    configurable_product_2:
+        type: 'configurable'
+        sku: 'shirt_102'
         organization: '@organization'
-
-Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
-    shoppinglisttotal:
-        __construct: ['@shoppinglist1','USD']
-        shoppingList: '@shoppinglist1'
-        currency: 'USD'
-        subtotalValue: '10.1'
-        valid: true
+        attributeFamily: '@tshirt_family'
+        primaryUnitPrecision: '@unit_precision3'
+        addName: ['@configurable_product_name_2']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'

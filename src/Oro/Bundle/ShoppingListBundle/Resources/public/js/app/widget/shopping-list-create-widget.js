@@ -48,7 +48,7 @@ define(function(require) {
         },
 
         onFormSave: function(data) {
-            var label = this.$el.find('.form-field-label').val();
+            var label = data.label || this.$el.find('.form-field-label').val();
             if (this.shoppingListCollection.length) {
                 this.shoppingListCollection.each(function(model) {
                     model.set('is_current', model.get('id') === data.savedId, {silent: true});

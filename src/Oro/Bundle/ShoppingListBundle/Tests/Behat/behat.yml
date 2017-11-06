@@ -59,7 +59,7 @@ oro_behat_extension:
     Shopping List Line Item 1 Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       selector:
-        locator: '(//tbody[@class="line_item"])[1]//form'
+        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
         type: xpath
       options:
         mapping:
@@ -76,7 +76,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//div[text()[contains(.,"Item #:")]]/span'
+          locator: '//span[@class="product-item__sku-value"]'
 
     Shopping List Dropdown:
       selector:
@@ -97,8 +97,13 @@ oro_behat_extension:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       options:
         mapping:
-          Quantity: 'oro_product_frontend_line_item[quantity]'
-          Unit: 'oro_product_frontend_line_item[unit]'
+          Quantity:
+            type: css
+            locator: 'input[name="oro_product_frontend_line_item[quantity]"]'
+            element: TypeableInput
+          Unit:
+            type: css
+            locator: 'select[name="oro_product_frontend_line_item[unit]"]'
 
     LineItemQuantity:
       selector:
@@ -147,6 +152,22 @@ oro_behat_extension:
     EditShopppingListLabel:
       selector: '#title-inline-editable [data-role="start-editing"]'
 
+    View Shopping List Details:
+      selector: 'span.shopping-list-dropdown__info'
+
+    Product Quantity:
+      selector: 'input[name="oro_product_frontend_line_item[quantity]"]'
+
+    Shirt_102 Matrix Grid Order Form:
+      selector: 'form[name="matrix_collection"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
+    Remove Line Item:
+      selector: 'button.item-remove'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -154,6 +175,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::FrontendProductGridContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext

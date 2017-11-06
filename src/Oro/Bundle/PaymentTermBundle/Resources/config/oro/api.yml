@@ -1,0 +1,4 @@
+api:
+    entities:
+        Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+            documentation_resource: '@OroPaymentTermBundle/Resources/doc/api/payment_terms.md'

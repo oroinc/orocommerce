@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ReindexCommand extends ContainerAwareCommand
@@ -40,11 +39,12 @@ class ReindexCommand extends ContainerAwareCommand
                 'Enforces a scheduled (background) reindexation'
             )
             ->addOption(
-                'product-id',
+                'ids',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Product IDs to index. Expression e.g. range "1-50" or "*/100". Requires scheduled mode',
-                []
+                'Entity IDs to index. Expression e.g. range "1-50" or "*/100". '
+                .'Available only with \'class\' parameter. Requires scheduled mode',
+                ''
             )
             ->setDescription('Rebuild search index for certain website/entity type or all mapped entities');
     }
@@ -57,7 +57,7 @@ class ReindexCommand extends ContainerAwareCommand
         $class = $input->getOption('class');
         $websiteId = $input->getOption('website-id');
         $isScheduled = $input->getOption('scheduled');
-        $productId = $input->getOption('product-id');
+        $entityId = $input->getOption('ids');
 
         $class = $class ? $this->getFQCN($class) : null;
         
@@ -66,9 +66,13 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
-        $productId = $this->parseProductIdOption($output, $productId, $isScheduled);
+        $entityIds = $this->parseEntityIdOption($output, $class, $entityId, $isScheduled);
 
-        $this->fireReindexationEvents($classes, $websiteIds, $productId, $isScheduled);
+        if (!is_array($element = reset($entityIds))) {
+            $this->fireReindexationEvents($classes, $websiteIds, $entityIds, $isScheduled);
+        } else {
+            $this->fireReindexationEventsForChunks($classes, $websiteIds, $entityIds, $isScheduled);
+        }
 
         $output->writeln('Reindex finished successfully.');
     }
@@ -103,28 +107,29 @@ class ReindexCommand extends ContainerAwareCommand
     }
 
     /**
+     * @param string $className
      * @return mixed
      */
-    private function getLastProductId()
+    private function getLastEntityId($className)
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass(Product::class)
-            ->getRepository(Product::class)
-            ->getProductsQueryBuilder()
-            ->select('MAX(p.id)')
+            ->getManagerForClass($className)
+            ->getRepository($className)
+            ->createQueryBuilder('a')
+            ->select('MAX(a.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     /**
-     * @param string $productId
+     * @param string $entityId
      * @return bool
      */
-    private function getChunkSizeFromProductIdOption($productId)
+    private function getChunkSizeFromEntityIdOption($entityId)
     {
         // anything that ends with "/{number}"
-        if (!preg_match('/\/([\d]+)$/', $productId, $matches)) {
+        if (!preg_match('/\/([\d]+)$/', $entityId, $matches)) {
             return false;
         }
 
@@ -132,13 +137,13 @@ class ReindexCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param string $productId
+     * @param string $entityId
      * @return array|bool
      */
-    private function getRangeFromProductIdOption($productId)
+    private function getRangeFromEntityIdOption($entityId)
     {
         // anything that begins with "{number}-{number}"
-        if (!preg_match('/^([\d]+)\-([\d]+)/', $productId, $matches)) {
+        if (!preg_match('/^([\d]+)\-([\d]+)/', $entityId, $matches)) {
             return false;
         }
 
@@ -150,12 +155,12 @@ class ReindexCommand extends ContainerAwareCommand
      * @param array $range
      * @return string
      */
-    private function createProductIdMessage($chunkSize, $range)
+    private function createEntityIdMessage($chunkSize, $range)
     {
         $message = 'Generating indexation requests';
 
         if (false !== $chunkSize) {
-            $message .= ' ' . $chunkSize . ' products each';
+            $message .= ' ' . $chunkSize . ' entities each';
         }
         if (false !== $range) {
             $message .= ' for an ID range of ' . $range[0] . '-' . $range[1];
@@ -167,34 +172,39 @@ class ReindexCommand extends ContainerAwareCommand
 
     /**
      * @param OutputInterface $output
-     * @param string|array    $productId
-     * @param bool            $isScheduled
+     * @param string $className
+     * @param bool $isScheduled
+     * @param string $entityId
      * @return array
      */
-    private function parseProductIdOption($output, $productId, $isScheduled)
+    private function parseEntityIdOption($output, $className, $entityId, $isScheduled)
     {
-        if (empty($productId) || !is_string($productId)) {
-            return $productId;
+        if (empty($entityId)) {
+            return [];
         }
 
-        $chunkSize = $this->getChunkSizeFromProductIdOption($productId);
-        $range     = $this->getRangeFromProductIdOption($productId);
+        if (!$className) {
+            throw new \InvalidArgumentException('--class option is required when using --ids');
+        }
+
+        $chunkSize = $this->getChunkSizeFromEntityIdOption($entityId);
+        $range     = $this->getRangeFromEntityIdOption($entityId);
 
         if (false === $chunkSize && false === $range) {
-            throw new \RuntimeException('Cannot understand value: ' . $productId);
+            throw new \RuntimeException('Cannot understand value: ' . $entityId);
         }
 
         if (false === $isScheduled && false !== $chunkSize) {
-            throw new \RuntimeException('Splitting products makes only sense with --scheduled');
+            throw new \RuntimeException('Splitting entities makes only sense with --scheduled');
         }
 
-        $message = $this->createProductIdMessage($chunkSize, $range);
+        $message = $this->createEntityIdMessage($chunkSize, $range);
         $output->writeln($message);
 
         if (false !== $range) {
             $result  = range($range[0], $range[1]);
         } else {
-            $result = $this->getLastProductId();
+            $result = $this->getLastEntityId($className);
             $result = range(1, $result);
         }
 
@@ -210,26 +220,26 @@ class ReindexCommand extends ContainerAwareCommand
     /**
      * @param array $classes
      * @param array $websiteIds
-     * @param array $productId
+     * @param array $entityId
      * @param bool $isScheduled
      */
-    private function fireReindexationEvents(
-        $classes,
-        $websiteIds,
-        $productId,
-        $isScheduled
-    ) {
-        if (!is_array($productId) || empty($productId)) {
-            $event = new ReindexationRequestEvent($classes, $websiteIds, $productId, $isScheduled);
-            $dispatcher = $this->getContainer()->get('event_dispatcher');
-            $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
-            return;
-        }
+    private function fireReindexationEvents($classes, $websiteIds, array $entityId, $isScheduled)
+    {
+        $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled);
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+    }
 
-        foreach ($productId as $chunk) {
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $chunk, $isScheduled);
-            $dispatcher = $this->getContainer()->get('event_dispatcher');
-            $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+    /**
+     * @param array $classes
+     * @param array $websiteIds
+     * @param array $chunks
+     * @param bool $isScheduled
+     */
+    private function fireReindexationEventsForChunks($classes, $websiteIds, array $chunks, $isScheduled)
+    {
+        foreach ($chunks as $chunk) {
+            $this->fireReindexationEvents($classes, $websiteIds, $chunk, $isScheduled);
         }
     }
 }

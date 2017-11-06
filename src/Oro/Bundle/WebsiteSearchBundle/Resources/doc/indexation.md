@@ -45,9 +45,9 @@ Alternatively, you may trigger reindexation from the CLI using the `oro:website-
 optional parameters:
 
 * **website-id** (optional) - identifier of the website the reindexing applies to;
-* **class** (optional) - names of the entities that have to be reindexed;
+* **class** (optional) - names of the entities that have to be reindexed; Note, optional only if ids option is empty
 * **scheduled** (optional) - enables indexation via the message consumers;
-* **product-id** (optional) - allows entering range of product IDs to process incl. splitting. Note, that it is only possible to index `Product` entities when using this parameter!
+* **ids** (optional) - allows entering range of entity IDs to process incl. splitting.
 
 Below is an example of the reindex triggered via CLI:
 

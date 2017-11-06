@@ -1,5 +1,6 @@
-@fixture-OroProductBundle:products_inline_matrix_form.yml
+@fixture-OroProductBundle:configurable_products.yml
 @regression
+@ticket-BB-10500
 
 Feature: Inline matrix for configurable products in product views
   In order to quickly add specific configurations of a complex product to the shopping list
@@ -22,6 +23,8 @@ Feature: Inline matrix for configurable products in product views
       | Field Name | Attribute_1 |
       | Type       | Select      |
     And I click "Continue"
+    And I fill form with:
+      | Label      | Attribute 1 |
     And set Options with:
       | Label    |
       | Value 11 |
@@ -38,6 +41,8 @@ Feature: Inline matrix for configurable products in product views
       | Field Name | Attribute_2 |
       | Type       | Select      |
     And I click "Continue"
+    And I fill form with:
+      | Label      | Attribute 2 |
     And set Options with:
       | Label    |
       | Value 21 |
@@ -53,6 +58,8 @@ Feature: Inline matrix for configurable products in product views
       | Field Name | Attribute_3 |
       | Type       | Select      |
     And I click "Continue"
+    And I fill form with:
+      | Label      | Attribute 3 |
     And set Options with:
       | Label    |
       | Value 31 |
@@ -69,7 +76,7 @@ Feature: Inline matrix for configurable products in product views
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Attribute_1, Attribute_2, Attribute_3] |
+      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Attribute 1, Attribute 2, Attribute 3] |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -206,7 +213,7 @@ Feature: Inline matrix for configurable products in product views
     And I click Edit CNF_A in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute_1] |
+      | Configurable Attributes | [Attribute 1] |
     And I check PROD_A_1 and PROD_A_2 in grid
     And I check PROD_A_4 record in grid
     And I save form
@@ -217,7 +224,7 @@ Feature: Inline matrix for configurable products in product views
     And I click Edit CNF_B in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute_1, Attribute_2] |
+      | Configurable Attributes | [Attribute 1, Attribute 2] |
     And I check PROD_B_11 and PROD_B_12 in grid
     And I check PROD_B_21 and PROD_B_23 in grid
     And I check PROD_B_31 and PROD_B_32 in grid
@@ -230,14 +237,14 @@ Feature: Inline matrix for configurable products in product views
     And I click Edit CNF_C in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [Attribute_1, Attribute_2, Attribute_3] |
+      | Configurable Attributes | [Attribute 1, Attribute 2, Attribute 3] |
     And I check PROD_C_111 and PROD_C_121 in grid
     And I check PROD_C_231 and PROD_C_311 in grid
     And I check PROD_C_232 record in grid
     And I save form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Order with single dimensional inline matrix form
+  Scenario: Matrix form with single attribute
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
     And type "Configurable Product A" in "search"
@@ -245,69 +252,108 @@ Feature: Inline matrix for configurable products in product views
     And click "View Details" for "Configurable Product A" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
-      | Value 11 | 1 |
-      | Value 14 | 1 |
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        | -        | -        | 1        |
     And I click "Add to Shopping List"
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        |          |          | 1        |
+    And I fill "Matrix Grid Form" with:
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | -        | 2        | -        |          |
+    And I click "Update"
+    And I click "Configurable Product A"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        | 2        |          |          |
+    And I click on "Shopping List Dropdown"
+    And I click "Remove From Shopping List"
+    Then I should see "Product has been removed from \"Shopping list\""
+    And I click "Shopping list"
+    Then I should see "The Shopping List is empty"
 
-  Scenario: Order with two dimensional inline matrix form
+  Scenario: Matrix form with two attributes
     Given type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
-      | Value 11 | 1 |
-      | Value 21 | 1 |
-      | Value 12 | 1 |
-      | Value 32 | 1 |
-      | Value 34 | 1 |
-    And I click on "Shopping List Dropdown"
-    And I click "Create New Shopping List"
-    And I fill in "Shopping List Name" with "Product B Shopping List"
-    And I click "Create and Add"
-    Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Add to Shopping List"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 1        |
+      |          |          |          |
+      |          |          | 1        |
+    And I click "Remove Line Item"
+    And I click "Yes, Delete"
+    Then I should see "The Shopping List is empty"
 
-  Scenario: Update Configurable Product B variants
-    Given I fill "Matrix Grid Form" with:
-      | Value 32 | 3 |
-    And I click on "Shopping List Dropdown"
-    And I click "Update Product B Shopping List"
-    Then I should see "Shopping list \"Product B Shopping List\" was updated successfully"
-    And I click "Product B Shopping List"
-    Then I should see "Attribute_1: Value 12 Attribute_2: Value 23"
-
-  Scenario: Order with regular variant selectors
+  Scenario: Matrix form with tree attributes
     Given type "Configurable Product C" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product C" product
     Then I should see an "Configurable Product Shopping List Form" element
-    And I fill in "Attribute_1" with "Value 12"
-    And I fill in "Attribute_2" with "Value 23"
-    And I fill in "Attribute_3" with "Value 32"
-    And I click on "Shopping List Dropdown"
-    And I click "Create New Shopping List"
-    And I fill in "Shopping List Name" with "Product C Shopping List"
-    And I click "Create and Add"
-    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
-    And I should see "Product has been added to \"Product C Shopping List\""
-
-    And I click "Product C Shopping List"
-    Then I should see "Shopping list 2 Items"
-    And I should see "Product B Shopping List 5 Items"
-    And I should see "Product C Shopping List 1 Item"
-
-  Scenario: Remove Configurable Product A variants from shopping list
-    Given type "Configurable Product A" in "search"
-    And click "Search Button"
-    And click "View Details" for "Configurable Product A" product
-    Then I should see an "Matrix Grid Form" element
-    And I click on "Shopping List Dropdown"
-    And I click "Remove From Shopping List"
-    Then I should see "Product has been removed from \"Shopping list\""
+    And I fill in "Attribute 1" with "Value 12"
+    And I fill in "Attribute 2" with "Value 23"
+    And I fill in "Attribute 3" with "Value 32"
+    And I click "Add to Shopping List"
+    Then I should see "Product has been added to \"Shopping list\""
     And I click "Shopping list"
-    Then I should not see "Shopping list 2 Items"
+    #next 6 lines related to @ticket-BB-10500
+    And I should see text matching "Attribute 1: Value 12"
+    And I should see text matching "Attribute 2: Value 23"
+    And I should see text matching "Attribute 3: Value 32"
+    And I should not see text matching "Attribute_1"
+    And I should not see text matching "Attribute_2"
+    And I should not see text matching "Attribute_3"
+    And I click "Delete"
+    And I click "Yes, Delete"
+    Then I should see "You do not have available Shopping Lists"
 
-  Scenario: Check popup matrix form
+  Scenario: Disabled matrix form in Shopping List View
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Display Options In Shopping Lists" field
+    And I fill in "Display Options In Shopping Lists" with "Group Single Products"
+    And I save form
+    Given I proceed as the User
+    And type "Configurable Product B" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product B" product
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        |          | -        |
+      | Value 12 |          | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        |          |
+    And I click "Add to Shopping List"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should not see an "Matrix Grid Form" element
+    And I should see text matching "Attribute 1: Value 11"
+    And I should see text matching "Attribute 2: Value 21"
+    And I should see text matching "Attribute 1: Value 12"
+    And I should see text matching "Attribute 2: Value 23"
+    And I click "Delete"
+    And I click "Yes, Delete"
+    Then I should see "You do not have available Shopping Lists"
+
+  Scenario: Enable popup matrix form in Product View
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
@@ -321,8 +367,9 @@ Feature: Inline matrix for configurable products in product views
     Then I should not see an "Matrix Grid Form" element
     And I press "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
+    And I reload the page
 
-  Scenario: Check matrix form disabled
+  Scenario: Disabled matrix form in Product View
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
@@ -330,7 +377,6 @@ Feature: Inline matrix for configurable products in product views
     And I fill in "Display Matrix Form (where applicable)" with "Do Not Display"
     And I save form
     Given I proceed as the User
-    And I reload the page
     And type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product

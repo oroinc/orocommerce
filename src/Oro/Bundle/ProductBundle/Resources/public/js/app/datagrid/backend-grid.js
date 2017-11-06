@@ -3,9 +3,21 @@ define(function(require) {
 
     var BackendGrid;
     var _ = require('underscore');
+    var $ = require('jquery');
+    var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
+    var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
+    var BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
+    var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
+
+    var config = require('module').config();
+    config = _.extend({
+        massActionsInSticky: _.isMobile(),
+        massActionsContainer: $('[data-mass-actions-container]'),
+        massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
+    }, config);
 
     BackendGrid = Grid.extend({
         /** @property */
@@ -16,6 +28,20 @@ define(function(require) {
             optionPrefix: 'backendgrid'
         },
 
+        /** @property */
+        massActionsContainer: config.massActionsContainer,
+
+        /** @property */
+        massActionsStickyContainer: config.massActionsStickyContainer,
+
+        /** @property */
+        visibleState: {
+            visible: null
+        },
+
+        /** @property */
+        massActionsInSticky: config.massActionsInSticky,
+
         /**
          * @inheritDoc
          */
@@ -23,12 +49,23 @@ define(function(require) {
             this.header = null;
             this.footer = null;
             this.body = null;
+            this.multiSelectRowEnabled = options.multiSelectRowEnabled;
 
             mediator.on('grid-content-loaded', function(params) {
                 this.updateGridContent(params);
             }, this);
 
             BackendGrid.__super__.initialize.apply(this, arguments);
+
+            mediator.on('widget:notFound', function() {
+                $(window).off('beforeunload');
+            });
+
+            this._listenToDocumentEvents();
+        },
+
+        _listenToDocumentEvents: function() {
+            $(window).on('beforeunload.' + this.cid, _.bind(this.onWindowUnload, this));
         },
 
         /**
@@ -50,7 +87,27 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        backgridInitialize: function() {},
+        backgridInitialize: function() {
+            if (this.selectState === null) {
+                this.selectState = new SelectState();
+            }
+
+            this.listenTo(this.collection, {
+                'remove': this.onCollectionModelRemove,
+                'updateState': this.onCollectionUpdateState,
+                'backgrid:selected': this.onSelectRow,
+                'backgrid:selectAll': this.selectAll,
+                'backgrid:selectAllVisible': this.selectAllVisible,
+                'backgrid:selectNone': this.selectNone,
+                'backgrid:isSelected': this.isSelected,
+                'backgrid:getSelected': this.getSelected,
+                'backgrid:setVisibleState': this.setVisibleState,
+                'backgrid:getVisibleState': this.getVisibleState,
+                'backgrid:checkUnSavedData': this.checkUnSavedData,
+                'backgrid:hasMassActions': this.hasMassActions
+            });
+            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
+        },
 
         /**
          * @inheritDoc
@@ -61,6 +118,9 @@ define(function(require) {
             this.renderToolbar();
             this.renderNoDataBlock();
             this.renderLoadingMask();
+            if (this.multiSelectRowEnabled) {
+                this.renderActionsArea();
+            }
 
             this.listenTo(this.collection, 'reset', this.renderNoDataBlock);
 
@@ -105,6 +165,101 @@ define(function(require) {
             mediator.off('grid-content-loaded');
 
             BackendGrid.__super__.undelegateEvents.apply(this, arguments);
+        },
+
+        renderActionsArea: function() {
+            // Don't render Actions without data
+            if (!this.massActions.length) {
+                return ;
+            }
+
+            this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
+                collection: this.collection,
+                selectState: this.selectState
+            });
+
+            this.selectHeaderActionCell = new BackendActionHeaderCell({
+                collection: this.collection,
+                column: this.columns.findWhere('massActions'),
+                selectState: this.selectState,
+                massActionsInSticky: this.massActionsInSticky
+            });
+
+            this.massActionsContainer.append(this.selectAllHeaderCell.$el);
+            if (this.massActionsInSticky) {
+                this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
+                    collection: this.collection,
+                    selectState: this.selectState,
+                    additionalTpl: true
+                });
+
+                this.massActionsStickyContainer.append(this.additionalSelectAllHeaderCell.$el);
+                this.massActionsStickyContainer.append(this.selectHeaderActionCell.$el);
+            } else {
+                this.massActionsContainer.append(this.selectHeaderActionCell.$el);
+            }
+        },
+
+        showStickyContainer: function(selectState) {
+            this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
+        },
+
+        setVisibleState: function(state) {
+            this.visibleState.visible = state;
+        },
+
+        /**
+         * @param {Object} obj
+         */
+        getVisibleState: function(obj) {
+            if ($.isEmptyObject(obj) && _.isBoolean(this.visibleState.visible)) {
+                obj.visible = this.visibleState.visible;
+            }
+        },
+
+        /**
+         * @param {Object} obj
+         */
+        hasMassActions: function(obj) {
+            if ($.isEmptyObject(obj)) {
+                obj.hasMassActions = !!this.massActions.length;
+            }
+        },
+
+        onWindowUnload: function() {
+            if (!this.selectState.isEmpty()) {
+                return __('oro.ui.leave_page_with_unsaved_data_confirm');
+            }
+        },
+
+        checkUnSavedData: function(obj) {
+            var live = true;
+            var self = this;
+
+            if (!this.selectState.isEmpty()) {
+                var confirm = function() {
+                    var answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
+                    if (answer) {
+                        // Clear Selected State
+                        self.collection.trigger('backgrid:selectNone');
+                    }
+                    return answer;
+                };
+
+                live = confirm();
+            }
+
+            if ($.isEmptyObject(obj)) {
+                obj.live = live;
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            BackendGrid.__super__.dispose.apply(this, arguments);
+            $(window).off('.' + this.cid);
         }
     });
 

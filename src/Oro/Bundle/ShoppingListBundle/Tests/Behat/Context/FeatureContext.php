@@ -85,8 +85,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         foreach ($rows as $rowElement) {
             self::assertTrue(
                 $this->currentLineItemRowAppearsInExpectedLineItems($rowElement, $table),
-                sprintf(
-                    'Row "$s" isn\'t expected',
+                vsprintf(
+                    'Row "%s, %s, %s" isn\'t expected',
                     [
                         $this->getLineItemSKU($rowElement),
                         $this->getLineItemUnit($rowElement),
@@ -160,7 +160,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getLineItemSKU(TableRow $tableRowElement)
     {
-        return $tableRowElement->find('css', '.shopping-list-line-items__desctiption span')->getText();
+        return $tableRowElement->find('css', 'span.product-item__sku-value')->getText();
     }
 
     /**

@@ -90,24 +90,18 @@ class ProductShoppingListsDataProvider
      */
     private function prepareShoppingLists(array $products)
     {
-        $productIds = [];
-        foreach ($products as $product) {
-            $productIds[$product->getId()] = $product->getId();
-        }
-
         $lineItems = $this->lineItemRepository
             ->getProductItemsWithShoppingListNames($this->aclHelper, $products);
 
-        return $this->prepareShoppingListsData($lineItems, $productIds);
+        return $this->prepareShoppingListsData($lineItems);
     }
 
     /**
      * @param LineItem[] $lineItems
-     * @param array $searchedProductIds
      *
      * @return array
      */
-    private function prepareShoppingListsData(array $lineItems, array $searchedProductIds = [])
+    private function prepareShoppingListsData(array $lineItems)
     {
         $shoppingLists = [];
 
@@ -118,14 +112,6 @@ class ProductShoppingListsDataProvider
             $product = $lineItem->getProduct();
             $productId = $product->getId();
 
-            $parentProduct = $lineItem->getParentProduct();
-            $parentProductId = $parentProduct ? $parentProduct->getId() : null;
-
-            if ($parentProduct && !isset($searchedProductIds[$parentProduct->getId()])) {
-                continue;
-            }
-
-            $productId = $parentProductId ?: $productId;
             $productShoppingLists = $this->getProductShoppingList($shoppingLists, $productId);
 
             if (!isset($productShoppingLists[$shoppingListId])) {
@@ -144,6 +130,14 @@ class ProductShoppingListsDataProvider
             ];
 
             $shoppingLists[$productId] = $productShoppingLists;
+
+            if ($lineItem->getParentProduct() instanceof Product) {
+                $shoppingLists[$lineItem->getParentProduct()->getId()] = $productShoppingLists;
+            }
+
+            foreach ($product->getParentVariantLinks() as $parentVariantLink) {
+                $shoppingLists[$parentVariantLink->getParentProduct()->getId()] = $productShoppingLists;
+            }
         }
 
         return $shoppingLists;
