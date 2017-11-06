@@ -56,7 +56,10 @@ operations:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
         acl_resource: oro_shopping_list_frontend_update
-        datagrids: [frontend-product-search-grid]
+        datagrids:
+            - frontend-product-search-grid
+            - frontend-catalog-allproducts-grid
+            - order-products-previously-purchased-grid
         datagrid_options:
             mass_action_provider: oro_shopping_list_add_products
         button_options:

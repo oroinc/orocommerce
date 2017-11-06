@@ -46,6 +46,7 @@ oro:
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
             update_shopping_list: Update {{ shoppingList }}
+            add_to_current_shopping_list: Add to current Shopping List
             remove_from_shopping_list: Remove From {{ shoppingList }}
             add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
@@ -115,6 +116,7 @@ oro:
                 guest_shopping_list_owner.title: 'Guest Shopping List Owner Settings'
                 shopping_list.title: 'Shopping List'
                 shopping_list_limit.title: 'Shopping List Limit'
+                shopping_list_options.title: 'Shopping List Options'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
@@ -123,6 +125,9 @@ oro:
                 availability_for_guests:
                     label: 'Enable guest shopping list'
                     tooltip: 'Allows guests to create a shopping list'
+                mass_adding_on_product_listing_enabled:
+                    label: 'Enable Mass Adding on Product Listing'
+                    tooltip: 'Customers will be able to select multiple products on the product listing page and add them to a shopping list at once.'
 
         privilege:
             category.shopping.label: 'Shopping'

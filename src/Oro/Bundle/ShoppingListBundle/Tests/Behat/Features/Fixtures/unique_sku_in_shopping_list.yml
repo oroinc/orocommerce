@@ -1,0 +1,64 @@
+include:
+    - @OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1_name:
+        string: 'Green shirt L'
+    configurable_product_name:
+        string: 'Shirt 1'
+    configurable_product_name_2:
+        string: 'Shirt 2'
+    tshirt_family_label:
+        string: 'T-shirt'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    tshirt_family:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'T_shirt'
+        addLabel: ['@tshirt_family_label']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision1:
+        unit: '@item'
+        precision: '1'
+    unit_precision2:
+        unit: '@item'
+        precision: '1'
+    unit_precision3:
+        unit: '@item'
+        precision: '1'
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'gtsh_l'
+        organization: '@organization'
+        attributeFamily: '@tshirt_family'
+        primaryUnitPrecision: '@unit_precision1'
+        addName: ['@product1_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product:
+        type: 'configurable'
+        sku: 'shirt_101'
+        organization: '@organization'
+        attributeFamily: '@tshirt_family'
+        primaryUnitPrecision: '@unit_precision2'
+        addName: ['@configurable_product_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product_2:
+        type: 'configurable'
+        sku: 'shirt_102'
+        organization: '@organization'
+        attributeFamily: '@tshirt_family'
+        primaryUnitPrecision: '@unit_precision3'
+        addName: ['@configurable_product_name_2']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
