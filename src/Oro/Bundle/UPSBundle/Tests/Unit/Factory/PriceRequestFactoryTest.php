@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -43,11 +42,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
     protected $shippingService;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
-
-    /**
      * @var MeasureUnitConversion|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $measureUnitConversion;
@@ -69,10 +63,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()->getMock();
-
         $this->shippingService = $this->createMock(ShippingService::class);
 
         $this->transport = $this->getEntity(
@@ -107,7 +97,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->priceRequestFactory = new PriceRequestFactory(
-            $this->registry,
             $this->measureUnitConversion,
             $this->unitsMapper,
             $this->symmetricCrypter
@@ -188,8 +177,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
         $manager->expects(self::any())->method('getRepository')->willReturn($repository);
-
-        $this->registry->expects(self::any())->method('getManagerForClass')->willReturn($manager);
 
         $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
 

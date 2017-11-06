@@ -100,7 +100,7 @@ oro:
                 cancel: Cancel
                 save: Save
             flash:
-                save_success: shipping tracking numbers have been updated
+                save_success: Shipping Tracking Numbers have been updated
 
         orderdiscount:
             flash.save_success: Order Discount successfully added

@@ -69,7 +69,7 @@ class MatrixGridOrderManager
                 $column = new MatrixCollectionColumn();
                 if (isset($availableVariants[$firstValue['value']]['_product'])) {
                     $column->product = $availableVariants[$firstValue['value']]['_product'];
-                    $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
+                    $column->quantity = $this->getQuantity($column->product, $shoppingList);
                 }
 
                 $row->columns = [$column];
@@ -80,7 +80,7 @@ class MatrixGridOrderManager
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
-                        $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
+                        $column->quantity = $this->getQuantity($column->product, $shoppingList);
                     }
 
                     $row->columns[] = $column;
@@ -217,13 +217,12 @@ class MatrixGridOrderManager
     /**
      * Get MatrixCollectionColumn's quantity by shopping list line items
      *
-     * @param Product           $parentProduct
      * @param Product           $cellProduct
      * @param ShoppingList|null $shoppingList
      *
      * @return float|null
      */
-    private function getQuantity(Product $parentProduct, Product $cellProduct, ShoppingList $shoppingList = null)
+    private function getQuantity(Product $cellProduct, ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;
@@ -235,8 +234,7 @@ class MatrixGridOrderManager
 
         /** @var LineItem $lineItem */
         foreach ($lineItems->getIterator() as $lineItem) {
-            if ($lineItem->getParentProduct() && $lineItem->getParentProduct()->getId() === $parentProduct->getId()
-                && $cellProduct->getId() === $lineItem->getProduct()->getId()
+            if ($cellProduct->getId() === $lineItem->getProduct()->getId()
             ) {
                 return $lineItem->getQuantity();
             }

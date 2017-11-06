@@ -12,10 +12,11 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 abstract class AbstractShippingLineItemTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_CODE = 'someCode';
+    const TEST_UNIT_CODE = 'someCode';
     const TEST_QUANTITY = 15;
-    const TEST_SKU = 'someSku';
-    const TEST_ID = 'someId';
+    const TEST_PRODUCT_SKU = 'someSku';
+    const TEST_PRODUCT_ID = 1;
+    const TEST_ENTITY_ID = 'someId';
 
     /**
      * @var Price|\PHPUnit_Framework_MockObject_MockObject
@@ -49,27 +50,24 @@ abstract class AbstractShippingLineItemTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->priceMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceMock = $this->createMock(Price::class);
 
-        $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productUnitMock = $this->createMock(ProductUnit::class);
+
+        $this->productUnitMock->method('getCode')->willReturn(static::TEST_UNIT_CODE);
 
         $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
 
-        $this->dimensionsMock = $this->getMockBuilder(Dimensions::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productHolderMock->method('getEntityIdentifier')->willReturn(static::TEST_ENTITY_ID);
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dimensionsMock = $this->createMock(Dimensions::class);
 
-        $this->weightMock = $this->getMockBuilder(Weight::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
+
+        $this->productMock->method('getSku')->willReturn(static::TEST_PRODUCT_SKU);
+        $this->productMock->method('getId')->willReturn(static::TEST_PRODUCT_ID);
+
+        $this->weightMock = $this->createMock(Weight::class);
     }
 
     /**
@@ -80,14 +78,14 @@ abstract class AbstractShippingLineItemTest extends \PHPUnit_Framework_TestCase
         return [
             ShippingLineItem::FIELD_PRICE => $this->priceMock,
             ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
-            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_CODE,
+            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
             ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
             ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
             ShippingLineItem::FIELD_PRODUCT => $this->productMock,
-            ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_SKU,
+            ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_PRODUCT_SKU,
             ShippingLineItem::FIELD_DIMENSIONS => $this->dimensionsMock,
             ShippingLineItem::FIELD_WEIGHT => $this->weightMock,
-            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ID,
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID,
         ];
     }
 }
