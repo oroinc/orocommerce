@@ -1,3 +1,4 @@
+@skip #TODO: remove after fix BB-12701
 @regression
 @smoke
 @community-edition-only
