@@ -202,7 +202,12 @@ oro:
                 additional.label: Additional
                 listing.label: Listing
             import.label: Import images
-
+        productimagetype:
+            entity_label: Product Image Type
+            entity_plural_label: Product Image Types
+            id.label: Id
+            type.label: Type
+            product_image.label: Type
         related_products:
             label: Related Products
 
