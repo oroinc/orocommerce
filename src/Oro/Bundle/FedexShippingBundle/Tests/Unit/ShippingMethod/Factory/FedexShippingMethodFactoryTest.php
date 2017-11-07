@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Factory;
 
+// @codingStandardsIgnoreStart
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory;
@@ -15,6 +18,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
+// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodFactoryTest extends TestCase
 {
@@ -44,7 +48,12 @@ class FedexShippingMethodFactoryTest extends TestCase
     private $typeFactory;
 
     /**
-     * @var FedexRequestByContextAndSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceRequestSettingsFactory;
+
+    /**
+     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceRequestFactory;
 
@@ -64,7 +73,10 @@ class FedexShippingMethodFactoryTest extends TestCase
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->iconProvider = $this->createMock(IntegrationIconProviderInterface::class);
         $this->typeFactory = $this->createMock(FedexShippingMethodTypeFactoryInterface::class);
-        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByContextAndSettingsFactoryInterface::class);
+        $this->rateServiceRequestSettingsFactory = $this->createMock(
+            FedexRateServiceRequestSettingsFactoryInterface::class
+        );
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByRateServiceSettingsFactoryInterface::class);
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
 
         $this->factory = new FedexShippingMethodFactory(
@@ -72,6 +84,7 @@ class FedexShippingMethodFactoryTest extends TestCase
             $this->localizationHelper,
             $this->iconProvider,
             $this->typeFactory,
+            $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient
         );
@@ -79,10 +92,10 @@ class FedexShippingMethodFactoryTest extends TestCase
 
     public function testCreate()
     {
-        $services = [
+        $services = new ArrayCollection([
             new ShippingService(),
             new ShippingService(),
-        ];
+        ]);
         $settings = new FedexIntegrationSettings();
         $settings
             ->addShippingService($services[0])
@@ -123,6 +136,7 @@ class FedexShippingMethodFactoryTest extends TestCase
 
         static::assertEquals(
             new FedexShippingMethod(
+                $this->rateServiceRequestSettingsFactory,
                 $this->rateServiceRequestFactory,
                 $this->rateServiceClient,
                 self::IDENTIFIER,
@@ -130,7 +144,8 @@ class FedexShippingMethodFactoryTest extends TestCase
                 self::ICON_PATH,
                 self::ENABLED,
                 $settings,
-                $types
+                $types,
+                $services
             ),
             $this->factory->create($channel)
         );

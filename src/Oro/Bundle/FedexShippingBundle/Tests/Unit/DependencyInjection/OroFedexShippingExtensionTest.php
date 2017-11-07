@@ -52,6 +52,8 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.cache',
             'oro_fedex_shipping.validator.remove_used_shipping_service',
             'oro_fedex_shipping.client.rate_service.soap_test_settings',
+            'oro_fedex_shipping.client.rate_service.request.settings.factory',
+            'oro_fedex_shipping.expression_language',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

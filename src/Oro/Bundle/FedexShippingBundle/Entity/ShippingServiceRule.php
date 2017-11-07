@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ShippingServiceRule
 {
     /**
-     * @var integer
+     * @var integer|null
      *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -20,14 +20,14 @@ class ShippingServiceRule
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="limitation_expression_lbs", type="string", length=250)
      */
     private $limitationExpressionLbs;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="limitation_expression_kg", type="string", length=250)
      */
@@ -45,20 +45,20 @@ class ShippingServiceRule
      *
      * @ORM\Column(name="residential_address", type="boolean")
      */
-    private $residentialAddress;
+    private $residentialAddress = false;
 
     /**
-     * @return integer
+     * @return integer|null
      */
-    public function getId():int
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLimitationExpressionLbs(): string
+    public function getLimitationExpressionLbs()
     {
         return $this->limitationExpressionLbs;
     }
@@ -76,9 +76,9 @@ class ShippingServiceRule
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLimitationExpressionKg(): string
+    public function getLimitationExpressionKg()
     {
         return $this->limitationExpressionKg;
     }

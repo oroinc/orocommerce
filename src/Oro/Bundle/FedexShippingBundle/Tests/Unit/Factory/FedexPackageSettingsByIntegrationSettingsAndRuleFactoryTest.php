@@ -3,26 +3,28 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactory;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactory;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettings;
 use PHPUnit\Framework\TestCase;
 
-class FedexPackageSettingsByIntegrationSettingsFactoryTest extends TestCase
+class FedexPackageSettingsByIntegrationSettingsAndRuleFactoryTest extends TestCase
 {
     public function testCreateWithKg()
     {
         $settings = new FedexIntegrationSettings();
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
 
+        $rule = new ShippingServiceRule();
+        $rule->setLimitationExpressionKg('weight < 10');
+
         static::assertEquals(
             new FedexPackageSettings(
-                FedexPackageSettings::MAX_PACKAGE_WEIGHT_KGS,
-                FedexPackageSettings::MAX_PACKAGE_LENGTH_CM,
-                FedexPackageSettings::MAX_PACKAGE_GIRTH_CM,
                 FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
-                FedexIntegrationSettings::DIMENSION_CM
+                FedexIntegrationSettings::DIMENSION_CM,
+                'weight < 10'
             ),
-            (new FedexPackageSettingsByIntegrationSettingsFactory())->create($settings)
+            (new FedexPackageSettingsByIntegrationSettingsAndRuleFactory())->create($settings, $rule)
         );
     }
 
@@ -31,15 +33,16 @@ class FedexPackageSettingsByIntegrationSettingsFactoryTest extends TestCase
         $settings = new FedexIntegrationSettings();
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_LB);
 
+        $rule = new ShippingServiceRule();
+        $rule->setLimitationExpressionLbs('weight < 10');
+
         static::assertEquals(
             new FedexPackageSettings(
-                FedexPackageSettings::MAX_PACKAGE_WEIGHT_LBS,
-                FedexPackageSettings::MAX_PACKAGE_LENGTH_INCH,
-                FedexPackageSettings::MAX_PACKAGE_GIRTH_INCH,
                 FedexIntegrationSettings::UNIT_OF_WEIGHT_LB,
-                FedexIntegrationSettings::DIMENSION_IN
+                FedexIntegrationSettings::DIMENSION_IN,
+                'weight < 10'
             ),
-            (new FedexPackageSettingsByIntegrationSettingsFactory())->create($settings)
+            (new FedexPackageSettingsByIntegrationSettingsAndRuleFactory())->create($settings, $rule)
         );
     }
 }

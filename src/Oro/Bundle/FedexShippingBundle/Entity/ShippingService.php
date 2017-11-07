@@ -34,7 +34,7 @@ class ShippingService
     private $description;
 
     /**
-     * @var ShippingServiceRule
+     * @var ShippingServiceRule|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
@@ -90,9 +90,9 @@ class ShippingService
     }
 
     /**
-     * @return ShippingServiceRule
+     * @return ShippingServiceRule|null
      */
-    public function getRule(): ShippingServiceRule
+    public function getRule()
     {
         return $this->rule;
     }

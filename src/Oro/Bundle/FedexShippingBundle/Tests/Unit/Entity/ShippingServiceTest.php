@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -16,6 +17,7 @@ class ShippingServiceTest extends TestCase
             ['id', 12],
             ['code', 'code'],
             ['description', 'description'],
+            ['rule', new ShippingServiceRule()],
         ]);
     }
 }

@@ -6,10 +6,12 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettings;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactoryInterface;
-use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -34,7 +36,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private $crypter;
 
     /**
-     * @var FedexPackageSettingsByIntegrationSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $packageSettingsFactory;
 
@@ -62,7 +64,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->packageSettingsFactory = $this->createMock(
-            FedexPackageSettingsByIntegrationSettingsFactoryInterface::class
+            FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface::class
         );
         $this->packagesFactory = $this->createMock(FedexPackagesByLineItemsAndPackageSettingsFactoryInterface::class);
         $this->addProductOptionsModifier = $this->createMock(ShippingLineItemCollectionModifierInterface::class);
@@ -83,13 +85,19 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     {
         $lineItems = new DoctrineShippingLineItemCollection([]);
         $context = $this->createContext();
+        $integrationSettings = new FedexIntegrationSettings();
 
-        $settings = new FedexIntegrationSettings();
+        $settings = new FedexRateServiceRequestSettings(
+            $integrationSettings,
+            $context,
+            new ShippingServiceRule()
+        );
+
         $packageSettings = $this->createMock(FedexPackageSettingsInterface::class);
         $this->packageSettingsFactory
             ->expects(static::once())
             ->method('create')
-            ->with($settings)
+            ->with($integrationSettings)
             ->willReturn($packageSettings);
 
         $lineItemsWithOptions = new DoctrineShippingLineItemCollection([]);
@@ -103,7 +111,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         $this->convertToFedexUnitsModifier
             ->expects(static::once())
             ->method('modify')
-            ->with($lineItemsWithOptions, $settings)
+            ->with($lineItemsWithOptions, $integrationSettings)
             ->willReturn($lineItemsConverted);
 
         $this->packagesFactory
@@ -112,19 +120,30 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             ->with($lineItemsConverted, $packageSettings)
             ->willReturn([]);
 
-        static::assertNull($this->factory->create($settings, $context));
+        static::assertNull($this->factory->create($settings));
     }
 
     public function testCreate()
     {
         $packages = $this->createPackages();
-        $settings = $this->createSettings();
+        $integrationSettings = $this->createIntegrationSettings();
         $context = $this->createContext();
+
+        $rule = new ShippingServiceRule();
+        $rule
+            ->setServiceType('service')
+            ->setResidentialAddress(true);
+
+        $settings = new FedexRateServiceRequestSettings(
+            $integrationSettings,
+            $context,
+            $rule
+        );
 
         $this->packageSettingsFactory
             ->expects(static::once())
             ->method('create')
-            ->with($settings)
+            ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
 
         $this->addProductOptionsModifier
@@ -148,7 +167,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             ->with(self::PASS)
             ->willReturn(self::PASS);
 
-        static::assertEquals($this->getExpectedRequest(), $this->factory->create($settings, $context));
+        static::assertEquals($this->getExpectedRequest(), $this->factory->create($settings));
     }
 
     /**
@@ -210,7 +229,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     /**
      * @return FedexIntegrationSettings
      */
-    private function createSettings(): FedexIntegrationSettings
+    private function createIntegrationSettings(): FedexIntegrationSettings
     {
         $settings = new FedexIntegrationSettings();
 
@@ -246,6 +265,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private function getExpectedRequest(): FedexRequest
     {
         $packages = $this->createPackages();
+        $recipientAddress = $this->createRecipientAddress();
 
         return new FedexRequest([
             'WebAuthenticationDetail' => [
@@ -265,12 +285,23 @@ class FedexRateServiceRequestFactoryTest extends TestCase
                 'Minor' => '0'
             ],
             'RequestedShipment' => [
+                'ServiceType' => 'service',
                 'DropoffType' => self::PICKUP_TYPE,
                 'Shipper' => [
                     'Address' => $this->getExpectedAddress($this->createShipperAddress())
                 ],
                 'Recipient' => [
-                    'Address' => $this->getExpectedAddress($this->createRecipientAddress())
+                    'Address' => [
+                        'StreetLines' => [
+                            $recipientAddress->getStreet(),
+                            $recipientAddress->getStreet2(),
+                        ],
+                        'City' => $recipientAddress->getCity(),
+                        'StateOrProvinceCode' => $recipientAddress->getRegionCode(),
+                        'PostalCode' => $recipientAddress->getPostalCode(),
+                        'CountryCode' => $recipientAddress->getCountryIso2(),
+                        'Residential' => true,
+                    ]
                 ],
                 'PackageCount' => count($packages),
                 'RequestedPackageLineItems' => $packages,

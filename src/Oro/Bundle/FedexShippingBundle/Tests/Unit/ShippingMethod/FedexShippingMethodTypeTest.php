@@ -2,17 +2,23 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
+// @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use PHPUnit\Framework\TestCase;
+// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTypeTest extends TestCase
 {
@@ -20,7 +26,12 @@ class FedexShippingMethodTypeTest extends TestCase
     const LABEL = 'label';
 
     /**
-     * @var FedexRequestByContextAndSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceRequestSettingsFactory;
+
+    /**
+     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceRequestFactory;
 
@@ -31,13 +42,19 @@ class FedexShippingMethodTypeTest extends TestCase
 
     protected function setUp()
     {
-        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByContextAndSettingsFactoryInterface::class);
+        $this->rateServiceRequestSettingsFactory = $this->createMock(
+            FedexRateServiceRequestSettingsFactoryInterface::class
+        );
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByRateServiceSettingsFactoryInterface::class);
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
     }
 
     public function testGetters()
     {
-        $type = $this->createShippingMethodType(new FedexIntegrationSettings());
+        $service = new ShippingService();
+        $service->setDescription(self::LABEL);
+
+        $type = $this->createShippingMethodType(new FedexIntegrationSettings(), $service);
 
         static::assertSame(self::IDENTIFIER, $type->getIdentifier());
         static::assertSame(self::LABEL, $type->getLabel());
@@ -49,18 +66,29 @@ class FedexShippingMethodTypeTest extends TestCase
     {
         $settings = new FedexIntegrationSettings();
         $context = $this->createMock(ShippingContextInterface::class);
+        $rule = new ShippingServiceRule();
+        $requestSettings = $this->createMock(FedexRateServiceRequestSettingsInterface::class);
+
+        $this->rateServiceRequestSettingsFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context, $rule)
+            ->willReturn($requestSettings);
 
         $this->rateServiceRequestFactory
             ->expects(static::once())
             ->method('create')
-            ->with($settings, $context)
+            ->with($requestSettings)
             ->willReturn(null);
 
         $this->rateServiceClient
             ->expects(static::never())
             ->method('send');
 
-        static::assertNull($this->createShippingMethodType($settings)->calculatePrice($context, [], []));
+        static::assertNull(
+            $this->createShippingMethodType($settings, $this->createShippingService('', $rule))
+                ->calculatePrice($context, [], [])
+        );
     }
 
     public function testCalculatePricesHasNoNeededPrice()
@@ -72,14 +100,22 @@ class FedexShippingMethodTypeTest extends TestCase
         $settings = new FedexIntegrationSettings();
         $request = new FedexRequest();
         $response = new FedexRateServiceResponse('', 0, $prices);
+        $rule = new ShippingServiceRule();
+        $requestSettings = $this->createMock(FedexRateServiceRequestSettingsInterface::class);
 
         $context = $this->createMock(ShippingContextInterface::class);
-        $type = $this->createShippingMethodType($settings);
+        $type = $this->createShippingMethodType($settings, $this->createShippingService('', $rule));
+
+        $this->rateServiceRequestSettingsFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context, $rule)
+            ->willReturn($requestSettings);
 
         $this->rateServiceRequestFactory
             ->expects(static::once())
             ->method('create')
-            ->with($settings, $context)
+            ->with($requestSettings)
             ->willReturn($request);
 
         $this->rateServiceClient
@@ -101,14 +137,22 @@ class FedexShippingMethodTypeTest extends TestCase
         $settings = new FedexIntegrationSettings();
         $request = new FedexRequest();
         $response = new FedexRateServiceResponse('', 0, $prices);
+        $rule = new ShippingServiceRule();
+        $requestSettings = $this->createMock(FedexRateServiceRequestSettingsInterface::class);
 
         $context = $this->createMock(ShippingContextInterface::class);
-        $type = $this->createShippingMethodType($settings);
+        $type = $this->createShippingMethodType($settings, $this->createShippingService(self::IDENTIFIER, $rule));
+
+        $this->rateServiceRequestSettingsFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context, $rule)
+            ->willReturn($requestSettings);
 
         $this->rateServiceRequestFactory
             ->expects(static::once())
             ->method('create')
-            ->with($settings, $context)
+            ->with($requestSettings)
             ->willReturn($request);
 
         $this->rateServiceClient
@@ -129,17 +173,37 @@ class FedexShippingMethodTypeTest extends TestCase
 
     /**
      * @param FedexIntegrationSettings $settings
+     * @param ShippingService          $service
      *
      * @return FedexShippingMethodType
      */
-    private function createShippingMethodType(FedexIntegrationSettings $settings): FedexShippingMethodType
-    {
+    private function createShippingMethodType(
+        FedexIntegrationSettings $settings,
+        ShippingService $service
+    ): FedexShippingMethodType {
         return new FedexShippingMethodType(
+            $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient,
             self::IDENTIFIER,
-            self::LABEL,
+            $service,
             $settings
         );
+    }
+
+    /**
+     * @param string              $code
+     * @param ShippingServiceRule $rule
+     *
+     * @return ShippingService
+     */
+    private function createShippingService(string $code, ShippingServiceRule $rule): ShippingService
+    {
+        $service = new ShippingService();
+        $service
+            ->setCode($code)
+            ->setRule($rule);
+
+        return $service;
     }
 }
