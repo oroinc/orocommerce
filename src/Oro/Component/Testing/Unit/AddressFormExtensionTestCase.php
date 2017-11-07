@@ -62,7 +62,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         $choices = [
             'OroAddressBundle:Country' => [

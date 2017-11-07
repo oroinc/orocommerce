@@ -152,7 +152,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
      */
     public function submitProvider()
     {
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
         $countryWithoutRegion = new Country(self::COUNTRY_WITHOUT_REGION);
 
         return [

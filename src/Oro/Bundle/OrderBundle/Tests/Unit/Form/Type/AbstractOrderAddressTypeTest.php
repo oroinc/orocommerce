@@ -147,7 +147,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
      */
     public function submitProvider()
     {
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
         $emptyAddress = new OrderAddress();
         $validAddress = $this->getValidAddress();
 
@@ -352,7 +352,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
      */
     public function submitWithoutPermissionProvider()
     {
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'empty data' => [
@@ -432,7 +432,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     {
         $validAddress = new OrderAddress();
 
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return $validAddress->setOrganization($isStripped ? static::ORGANIZATION . '_stripped' : static::ORGANIZATION)
             ->setCountry($country)

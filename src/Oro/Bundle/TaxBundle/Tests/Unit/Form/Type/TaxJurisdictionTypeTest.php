@@ -125,7 +125,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
             ZipCodeTestHelper::getSingleValueZipCode('89')->setTaxJurisdiction($taxJurisdiction),
         ];
 
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'valid tax jurisdiction' => [

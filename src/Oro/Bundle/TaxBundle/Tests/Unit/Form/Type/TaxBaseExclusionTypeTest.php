@@ -50,7 +50,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
      */
     public function submitDataProvider()
     {
-        list ($country, $region) = $this->getValidCountryAndRegion();
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'valid form' => [
