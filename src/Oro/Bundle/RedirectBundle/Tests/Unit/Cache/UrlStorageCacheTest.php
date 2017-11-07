@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Cache;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
