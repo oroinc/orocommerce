@@ -5,7 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Fac
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettings;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class FedexRateServiceRequestSettingsFactory implements FedexRateServiceRequestSettingsFactoryInterface
@@ -16,8 +16,8 @@ class FedexRateServiceRequestSettingsFactory implements FedexRateServiceRequestS
     public function create(
         FedexIntegrationSettings $integrationSettings,
         ShippingContextInterface $shippingContext,
-        ShippingService $service
+        ShippingServiceRule $rule
     ): FedexRateServiceRequestSettingsInterface {
-        return new FedexRateServiceRequestSettings($integrationSettings, $shippingContext, $service);
+        return new FedexRateServiceRequestSettings($integrationSettings, $shippingContext, $rule);
     }
 }

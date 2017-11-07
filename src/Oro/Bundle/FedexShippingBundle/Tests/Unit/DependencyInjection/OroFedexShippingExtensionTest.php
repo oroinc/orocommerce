@@ -31,7 +31,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.transfomer.shipping_dimensions_unit',
             'oro_fedex_shipping.transfomer.shipping_weight_unit',
             'oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection',
-            'oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings',
+            'oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule',
             'oro_fedex_shipping.factory.fedex_package_by_shipping_package_options',
             'oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings',
             'oro_fedex_shipping.builder.shipping_packages_by_line_item',

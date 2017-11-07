@@ -28,20 +28,20 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     protected $severityCode;
 
     /**
-     * @var Price|null
+     * @var Price[]
      */
-    protected $price;
+    protected $prices;
 
     /**
-     * @param string     $severityType
-     * @param int        $severityCode
-     * @param Price|null $price
+     * @param string $severityType
+     * @param int    $severityCode
+     * @param array  $prices
      */
-    public function __construct(string $severityType, int $severityCode, Price $price = null)
+    public function __construct(string $severityType, int $severityCode, array $prices = [])
     {
         $this->severityType = $severityType;
         $this->severityCode = $severityCode;
-        $this->price = $price;
+        $this->prices = $prices;
     }
 
     /**
@@ -63,9 +63,9 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     /**
      * {@inheritDoc}
      */
-    public function getPrice()
+    public function getPrices(): array
     {
-        return $this->price;
+        return $this->prices;
     }
 
     /**

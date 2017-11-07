@@ -107,18 +107,20 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
+        $rule = $this->shippingService->getRule();
         $request = $this->rateServiceRequestFactory->create(
-            $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $this->shippingService)
+            $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $rule)
         );
         if (!$request) {
             return null;
         }
 
-        $price = $this->rateServiceClient->send($request, $this->settings)->getPrice();
-        if (!$price) {
+        $prices = $this->rateServiceClient->send($request, $this->settings)->getPrices();
+        if (!array_key_exists($this->shippingService->getCode(), $prices)) {
             return null;
         }
 
+        $price = $prices[$this->shippingService->getCode()];
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
         $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 

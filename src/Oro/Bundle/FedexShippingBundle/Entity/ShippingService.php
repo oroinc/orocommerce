@@ -34,18 +34,12 @@ class ShippingService
     private $description;
 
     /**
-     * @var string|null
+     * @var ShippingServiceRule
      *
-     * @ORM\Column(name="limitation_expression_lbs", type="string", length=250)
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      */
-    private $limitationExpressionLbs;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="limitation_expression_kg", type="string", length=250)
-     */
-    private $limitationExpressionKg;
+    private $rule;
 
     /**
      * @return integer
@@ -96,41 +90,21 @@ class ShippingService
     }
 
     /**
-     * @return null|string
+     * @return ShippingServiceRule
      */
-    public function getLimitationExpressionLbs()
+    public function getRule(): ShippingServiceRule
     {
-        return $this->limitationExpressionLbs;
+        return $this->rule;
     }
 
     /**
-     * @param string $limitationExpressionLbs
+     * @param ShippingServiceRule $rule
      *
      * @return self
      */
-    public function setLimitationExpressionLbs(string $limitationExpressionLbs): self
+    public function setRule(ShippingServiceRule $rule): self
     {
-        $this->limitationExpressionLbs = $limitationExpressionLbs;
-
-        return $this;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getLimitationExpressionKg()
-    {
-        return $this->limitationExpressionKg;
-    }
-
-    /**
-     * @param string $limitationExpressionKg
-     *
-     * @return self
-     */
-    public function setLimitationExpressionKg(string $limitationExpressionKg): self
-    {
-        $this->limitationExpressionKg = $limitationExpressionKg;
+        $this->rule = $rule;
 
         return $this;
     }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettingsInterface
@@ -19,23 +19,23 @@ class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettings
     private $shippingContext;
 
     /**
-     * @var ShippingService
+     * @var ShippingServiceRule
      */
-    private $service;
+    private $rule;
 
     /**
      * @param FedexIntegrationSettings $integrationSettings
      * @param ShippingContextInterface $shippingContext
-     * @param ShippingService          $service
+     * @param ShippingServiceRule      $rule
      */
     public function __construct(
         FedexIntegrationSettings $integrationSettings,
         ShippingContextInterface $shippingContext,
-        ShippingService $service
+        ShippingServiceRule $rule
     ) {
         $this->integrationSettings = $integrationSettings;
         $this->shippingContext = $shippingContext;
-        $this->service = $service;
+        $this->rule = $rule;
     }
 
     /**
@@ -57,8 +57,8 @@ class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettings
     /**
      * {@inheritDoc}
      */
-    public function getShippingService(): ShippingService
+    public function getShippingServiceRule(): ShippingServiceRule
     {
-        return $this->service;
+        return $this->rule;
     }
 }

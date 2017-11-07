@@ -17,9 +17,9 @@ interface FedexRateServiceResponseInterface
     public function getSeverityCode(): int;
 
     /**
-     * @return Price|null
+     * @return Price[]
      */
-    public function getPrice();
+    public function getPrices(): array;
 
     /**
      * @return bool

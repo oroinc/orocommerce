@@ -60,7 +60,7 @@ services:
         public: false
         arguments:
             - '@oro_security.encoder.mcrypt'
-            - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings'
+            - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule'
             - '@oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings'
             - '@oro_shipping.modifier.add_product_options_to_shipping_line_item_colection'
             - '@oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection'
@@ -83,8 +83,8 @@ services:
             - '@oro_shipping.context.doctrine_line_item_collection_factory'
             - '@oro_shipping.line_item.factory_basic'
 
-    oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings:
-        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactory'
+    oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactory'
         public: false
 
     oro_fedex_shipping.factory.fedex_package_by_shipping_package_options:

@@ -27,7 +27,7 @@ class ValidateConnectionController extends Controller
      *
      * @throws \InvalidArgumentException
      */
-    public function validateConnectionAction(Request $request, Channel $channel = null)
+    public function validateConnectionAction(Request $request, Channel $channel = null): JsonResponse
     {
         if (!$this->isShippingOriginProvided()) {
             return new JsonResponse([
@@ -56,7 +56,7 @@ class ValidateConnectionController extends Controller
             ->create($settings);
         $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request, $settings);
 
-        if ($response->getPrice()) {
+        if (!empty($response->getPrices())) {
             return new JsonResponse([
                 'success' => true,
                 'message' => $this->get('translator')->trans('oro.fedex.connection_validation.result.success.message'),
@@ -80,7 +80,7 @@ class ValidateConnectionController extends Controller
             return 'oro.fedex.connection_validation.result.authorization_error.message';
         } elseif ($response->getSeverityCode() === FedexRateServiceResponse::CONNECTION_ERROR) {
             return 'oro.fedex.connection_validation.result.connection_error.message';
-        } elseif (!$response->getPrice()) {
+        } elseif (empty($response->getPrices())) {
             return 'oro.fedex.connection_validation.result.no_services_error.message';
         }
 

@@ -24,10 +24,28 @@ class OroFedexShippingBundleInstaller implements Installation
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->createShippingServiceRuleTable($schema);
         $this->createShippingServiceTable($schema);
+
         $this->createOroFedexTransportLabelTable($schema);
         $this->updateOroIntegrationTransportTable($schema);
         $this->createOroFedexShippingServiceTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createShippingServiceRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_fedex_ship_service_rule');
+
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('limitation_expression_lbs', 'string', ['notnull' => true, 'length' => 250]);
+        $table->addColumn('limitation_expression_kg', 'string', ['notnull' => true, 'length' => 250]);
+        $table->addColumn('service_type', 'string', ['notnull' => false, 'length' => 250]);
+        $table->addColumn('residential_address', 'boolean', ['notnull' => true, 'default' => false]);
+
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -40,8 +58,14 @@ class OroFedexShippingBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['notnull' => true, 'length' => 200]);
         $table->addColumn('description', 'string', ['notnull' => true, 'length' => 200]);
-        $table->addColumn('limitation_expression_lbs', 'string', ['notnull' => true, 'length' => 250]);
-        $table->addColumn('limitation_expression_kg', 'string', ['notnull' => true, 'length' => 250]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fedex_ship_service_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
 
         $table->setPrimaryKey(['id']);
     }

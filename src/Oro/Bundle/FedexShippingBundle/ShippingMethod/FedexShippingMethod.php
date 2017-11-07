@@ -10,6 +10,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexReque
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
@@ -214,25 +215,17 @@ class FedexShippingMethod implements
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
+        $shippingServices = $this->getShippingServicesFromOptions($optionsByTypes);
+        $prices = $this->getPricesForShippingServices($shippingServices, $context);
+
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
         $result = [];
         foreach ($optionsByTypes as $typeId => $option) {
-            $shippingService = $this->getShippingService($typeId);
-            if (!$shippingService) {
+            if (!array_key_exists($typeId, $prices)) {
                 continue;
             }
 
-            $request = $this->rateServiceRequestFactory->create(
-                $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $shippingService)
-            );
-            if (!$request) {
-                continue;
-            }
-
-            $price = $this->rateServiceClient->send($request, $this->settings)->getPrice();
-            if (!$price) {
-                continue;
-            }
+            $price = $prices[$typeId];
 
             $result[$typeId] = Price::create(
                 (float) $price->getValue() + $methodSurcharge + $this->getSurchargeFromOptions($option),
@@ -277,5 +270,68 @@ class FedexShippingMethod implements
     private function getSurchargeFromOptions(array $option): float
     {
         return (float) $option[static::OPTION_SURCHARGE];
+    }
+
+    /**
+     * @param array $optionsByTypes
+     *
+     * @return ShippingService[]
+     */
+    private function getShippingServicesFromOptions(array $optionsByTypes): array
+    {
+        $services = [];
+        foreach (array_keys($optionsByTypes) as $typeId) {
+            $shippingService = $this->getShippingService($typeId);
+            if (!$shippingService) {
+                continue;
+            }
+
+            $services[] = $shippingService;
+        }
+
+        return $services;
+    }
+
+    /**
+     * @param ShippingService[]        $shippingServices
+     * @param ShippingContextInterface $context
+     *
+     * @return Price[]
+     */
+    private function getPricesForShippingServices(array $shippingServices, ShippingContextInterface $context): array
+    {
+        $prices = [];
+        $rulePrices = [];
+        foreach ($shippingServices as $service) {
+            $ruleId = $service->getRule()->getId();
+
+            if (!array_key_exists($ruleId, $rulePrices)) {
+                $rulePrices[$ruleId] = $this->getPricesForRule($context, $service->getRule());
+            }
+
+            if (array_key_exists($service->getCode(), $rulePrices[$ruleId])) {
+                $prices[$service->getCode()] = $rulePrices[$ruleId][$service->getCode()];
+            }
+        }
+
+        return $prices;
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     * @param ShippingServiceRule      $rule
+     *
+     * @return array
+     */
+    private function getPricesForRule(ShippingContextInterface $context, ShippingServiceRule $rule): array
+    {
+        $request = $this->rateServiceRequestFactory->create(
+            $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $rule)
+        );
+        if (!$request) {
+            return [];
+        }
+
+        return $this->rateServiceClient->send($request, $this->settings)->getPrices();
     }
 }

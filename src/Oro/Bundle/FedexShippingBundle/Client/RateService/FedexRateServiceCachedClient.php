@@ -4,7 +4,6 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService;
 
 use Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheInterface;
-use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
@@ -56,9 +55,7 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
         }
 
         $response = $this->rateServiceClient->send($request, $settings);
-        if ($response->isSuccessful() ||
-            $response->getSeverityCode() === FedexRateServiceResponse::SERVICE_NOT_ALLOWED
-        ) {
+        if ($response->isSuccessful()) {
             $this->cache->set($cacheKey, $response);
         }
 

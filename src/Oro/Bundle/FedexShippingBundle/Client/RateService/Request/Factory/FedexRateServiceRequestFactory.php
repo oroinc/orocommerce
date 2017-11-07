@@ -5,7 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactoryInterface;
-use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Modifier\ShippingLineItemCollectionModifierInterface;
@@ -18,7 +18,7 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
     private $crypter;
 
     /**
-     * @var FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface
+     * @var FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface
      */
     private $packageSettingsFactory;
 
@@ -38,15 +38,15 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
     private $convertToFedexUnitsModifier;
 
     /**
-     * @param SymmetricCrypterInterface                                                   $crypter
-     * @param FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface $packageSettingsFactory
-     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface                  $packagesFactory
-     * @param ShippingLineItemCollectionModifierInterface                                 $addProductOptionsModifier
-     * @param ShippingLineItemCollectionBySettingsModifierInterface                       $convertToFedexUnitsModifier
+     * @param SymmetricCrypterInterface                                        $crypter
+     * @param FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory
+     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface       $packagesFactory
+     * @param ShippingLineItemCollectionModifierInterface                      $addProductOptionsModifier
+     * @param ShippingLineItemCollectionBySettingsModifierInterface            $convertToFedexUnitsModifier
      */
     public function __construct(
         SymmetricCrypterInterface $crypter,
-        FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface $packageSettingsFactory,
+        FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory,
         FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory,
         ShippingLineItemCollectionModifierInterface $addProductOptionsModifier,
         ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
@@ -66,7 +66,7 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
         $context = $settings->getShippingContext();
         $packageSettings = $this->packageSettingsFactory->create(
             $settings->getIntegrationSettings(),
-            $settings->getShippingService()
+            $settings->getShippingServiceRule()
         );
 
         $lineItems = $this->convertToFedexUnitsModifier->modify(
@@ -97,7 +97,6 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
                 'Minor' => '0'
             ],
             'RequestedShipment' => [
-                'ServiceType' => $settings->getShippingService()->getCode(),
                 'DropoffType' => $settings->getIntegrationSettings()->getPickupType(),
                 'Shipper' => [
                     'Address' => [
@@ -128,7 +127,11 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
             ],
         ];
 
-        if ($settings->getShippingService()->getCode() === 'GROUND_HOME_DELIVERY') {
+        if ($settings->getShippingServiceRule()->getServiceType()) {
+            $requestData['RequestedShipment']['ServiceType'] = $settings->getShippingServiceRule()->getServiceType();
+        }
+
+        if ($settings->getShippingServiceRule()->isResidentialAddress()) {
             $requestData['RequestedShipment']['Recipient']['Address']['Residential'] = true;
         }
 

@@ -25,12 +25,12 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         }
         $severityCode = $notifications->Code;
 
-        $price = null;
+        $prices = [];
         if ($this->isResponseHasPrices($severityType, $soapResponse)) {
-            $price = $this->createPricesByResponse($soapResponse)[0];
+            $prices = $this->createPricesByResponse($soapResponse);
         }
         
-        return new FedexRateServiceResponse($severityType, $severityCode, $price);
+        return new FedexRateServiceResponse($severityType, $severityCode, $prices);
     }
 
     /**
@@ -67,14 +67,15 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         $prices = [];
         if (is_array($soapResponse->RateReplyDetails)) {
             foreach ($soapResponse->RateReplyDetails as $rateReply) {
-                $prices[] = $this->createPriceByResponse($rateReply);
+                $serviceCode = $rateReply->ServiceType;
+                $prices[$serviceCode] = $this->createPriceByResponse($rateReply);
             }
 
             return $prices;
         }
 
         $rateReply = $soapResponse->RateReplyDetails;
-        $prices[] = $this->createPriceByResponse($rateReply);
+        $prices[$rateReply->ServiceType] = $this->createPriceByResponse($rateReply);
 
         return $prices;
     }
