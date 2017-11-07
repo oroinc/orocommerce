@@ -77,8 +77,8 @@ Feature: Mass Product Actions processing
       | PSKU2 | 15       | item |
       | PSKU3 | 7        | set  |
 
-  #Todo: replace after #BAP-15242 done, merge scenarios
-  @skipWait
+  # TODO: unskip after BB-12797
+  @skip
   Scenario: Check warning message when products are selected and trying to refresh the page
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
