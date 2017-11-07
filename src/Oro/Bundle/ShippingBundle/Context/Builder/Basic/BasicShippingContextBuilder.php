@@ -7,10 +7,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -47,9 +45,9 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     private $sourceEntityIdentifier;
 
     /**
-     * @var array
+     * @var ShippingLineItemCollectionInterface
      */
-    private $lineItems = [];
+    private $lineItems;
 
     /**
      * @var AddressInterface
@@ -72,11 +70,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     private $customerUser;
 
     /**
-     * @var ShippingLineItemCollectionFactoryInterface
-     */
-    private $shippingLineItemCollectionFactory;
-
-    /**
      * @var ShippingOriginProvider
      */
     private $shippingOriginProvider;
@@ -89,18 +82,15 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * @param object $sourceEntity
      * @param string $sourceEntityIdentifier
-     * @param ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
      * @param ShippingOriginProvider $shippingOriginProvider
      */
     public function __construct(
         $sourceEntity,
         $sourceEntityIdentifier,
-        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
         ShippingOriginProvider $shippingOriginProvider
     ) {
         $this->sourceEntity = $sourceEntity;
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
-        $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
         $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
@@ -130,17 +120,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
      */
     public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection)
     {
-        $this->lineItems = $lineItemCollection->toArray();
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addLineItem(ShippingLineItemInterface $shippingLineItem)
-    {
-        $this->lineItems[] = $shippingLineItem;
+        $this->lineItems = $lineItemCollection;
 
         return $this;
     }
@@ -230,16 +210,13 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
      */
     protected function getMandatoryParams()
     {
-        $lineItems = $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($this->lineItems);
-        $shippingOrigin = null !== $this->shippingOrigin ?
-            $this->shippingOrigin :
-            $this->shippingOriginProvider->getSystemShippingOrigin();
+        $shippingOrigin = $this->shippingOrigin ?? $this->shippingOriginProvider->getSystemShippingOrigin();
 
         $params = [
             ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            ShippingContext::FIELD_LINE_ITEMS => $lineItems,
+            ShippingContext::FIELD_LINE_ITEMS => $this->lineItems,
         ];
 
         return $params;

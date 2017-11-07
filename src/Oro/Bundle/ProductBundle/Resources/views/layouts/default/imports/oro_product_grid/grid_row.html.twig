@@ -167,3 +167,15 @@
 {% block _product_datagrid_cell_matrixForm_value_widget %}
     {{ datagrid_row[column_name]|raw }}
 {% endblock %}
+
+{% block _product_item_select_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__select-row product-item__select-row--{{ class_prefix }}'
+    }) %}
+
+    {% if not is_configurable_product_type(product.type) %}
+        <div {{ block('block_attributes') }}>
+            <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+        </div>
+    {% endif %}
+{% endblock %}

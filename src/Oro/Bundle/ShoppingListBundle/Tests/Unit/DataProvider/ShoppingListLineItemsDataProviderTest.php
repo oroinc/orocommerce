@@ -116,8 +116,23 @@ class ShoppingListLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
         $lineItem1 = $this->getEntity(LineItem::class, ['id' => 1, 'product' => $simple1]);
         $lineItem2 = $this->getEntity(LineItem::class, ['id' => 2, 'product' => $simple2]);
         $lineItem3 = $this->getEntity(LineItem::class, ['id' => 3, 'product' => $simple3]);
-        $lineItem12 = $this->getEntity(LineItem::class, ['id' => 12, 'product' => $variant12, 'parentProduct' => $configurable1]);
-        $lineItem21 = $this->getEntity(LineItem::class, ['id' => 21, 'product' => $variant21, 'parentProduct' => $configurable2]);
+        $lineItem12 = $this->getEntity(
+            LineItem::class,
+            [
+                'id' => 12,
+                'product' => $variant12,
+                'parentProduct' => $configurable1
+            ]
+        );
+
+        $lineItem21 = $this->getEntity(
+            LineItem::class,
+            [
+                'id' => 21,
+                'product' => $variant21,
+                'parentProduct' => $configurable2
+            ]
+        );
 
         return [
             'no line items' => [

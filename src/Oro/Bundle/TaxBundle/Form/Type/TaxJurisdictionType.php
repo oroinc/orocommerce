@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 
 class TaxJurisdictionType extends AbstractType
 {
@@ -48,6 +49,7 @@ class TaxJurisdictionType extends AbstractType
         $builder
             ->add('code', 'text', [
                 'label' => 'oro.tax.taxjurisdiction.code.label',
+                StripTagsExtension::OPTION_NAME => true,
                 'required' => true
             ])
             ->add('description', 'textarea', [

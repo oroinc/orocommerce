@@ -21,16 +21,20 @@
 {% endblock %}
 
 {% block _shopping_list_matrix_form_summary_quantity_widget %}
-    <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
+    <div class="{{ class_prefix }}__total-quantity-wrapper">
+        <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
         {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
-    </span>
-    <span class="{{ class_prefix }}__total-quantity-value" data-role="total-quantity"></span>
-    <span class="{{ class_prefix }}__total-separator">|</span>
+        </span>
+        <span class="{{ class_prefix }}__total-quantity-value" data-role="total-quantity"></span>
+    </div>
+    <div class="{{ class_prefix }}__total-separator">|</div>
 {% endblock %}
 
 {% block _shopping_list_matrix_form_summary_total_widget %}
-    <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
-        {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
-    </span>
-    <span class="{{ class_prefix }}__total-price-value" data-role="total-price"></span>
+    <div class="{{ class_prefix }}__total-price-wrapper">
+        <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
+            {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
+        </span>
+        <span class="{{ class_prefix }}__total-price-value" data-role="total-price"></span>
+    </div>
 {% endblock %}

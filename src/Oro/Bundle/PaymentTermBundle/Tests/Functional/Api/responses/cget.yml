@@ -1,0 +1,21 @@
+data:
+    -
+        type: paymentterms
+        id: '<toString(@payment_term_test_data_net 10->id)>'
+        attributes:
+            label: 'net 10'
+    -
+        type: paymentterms
+        id: '<toString(@payment_term_test_data_net 20->id)>'
+        attributes:
+            label: 'net 20'
+    -
+        type: paymentterms
+        id: '<toString(@payment_term_test_data_net 30->id)>'
+        attributes:
+            label: 'net 30'
+    -
+        type: paymentterms
+        id: '<toString(@payment_term_test_data_net 40->id)>'
+        attributes:
+            label: 'net 40'
