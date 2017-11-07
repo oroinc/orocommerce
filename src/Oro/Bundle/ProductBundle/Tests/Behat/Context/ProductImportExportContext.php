@@ -84,10 +84,8 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
                 $imagePath,
                 sprintf('%s/%s', $importImageDir, $imageName)
             );
-
         } catch (IOExceptionInterface $e) {
             echo "An error occurred while copying image" . $imagePath;
         }
-
     }
 }
