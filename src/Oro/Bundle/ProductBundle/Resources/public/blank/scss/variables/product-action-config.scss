@@ -1,0 +1,11 @@
+// @theme: blank;
+
+// In Grid
+$product-action-in-grid-offset: $offset-x-s !default;
+
+// In Sticky Panel
+$product-action-area-in-sticky-inner-offset: $offset-y-m $offset-x !default;
+$product-action-area-in-sticky-inner-bg-color: get-color('additional', 'base') !default;
+
+$product-action-in-sticky-width: 50% !default;
+$product-action-in-sticky-offset: $offset-x-m !default;

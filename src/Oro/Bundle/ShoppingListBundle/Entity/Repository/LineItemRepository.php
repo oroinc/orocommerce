@@ -49,8 +49,11 @@ class LineItemRepository extends EntityRepository
         $qb = $this->createQueryBuilder('li');
         $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
-            ->andWhere('li.product IN (:products)')
+            ->join('li.product', 'product')
+            ->leftJoin('product.parentVariantLinks', 'parentVariantLinks')
+            ->andWhere('product IN (:products)')
             ->orWhere('li.parentProduct IN (:products)')
+            ->orWhere('parentVariantLinks.parentProduct IN (:products)')
             ->setParameter('products', $products)
             ->addOrderBy($qb->expr()->asc('li.id'));
 

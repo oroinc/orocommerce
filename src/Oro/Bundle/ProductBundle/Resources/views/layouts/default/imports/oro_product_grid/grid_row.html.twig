@@ -53,7 +53,7 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_view_widget %}
+{% block  __oro_product_grid__product_view_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview'
@@ -83,11 +83,11 @@
     {% endif %}
 
     <a href="{{ product.view_link }}" {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {{ block('container_widget') }}
     </a>
 {% endblock %}
 
-{% block __oro_product_list_item__product_popup_gallery_widget %}
+{% block __oro_product_grid__product_popup_gallery_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set isNoImage = false %}
@@ -108,7 +108,7 @@
     {% endif %}
 {% endblock %}
 
-{% block __oro_product_list_item__product_view_image_widget %}
+{% block __oro_product_grid__product_view_image_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
@@ -158,4 +158,16 @@
 
 {% block __oro_product_grid__product_price_container_widget %}
     {{ block("product_price_container") }}
+{% endblock %}
+
+{% block _product_item_select_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__select-row product-item__select-row--{{ class_prefix }}'
+    }) %}
+
+    {% if not is_configurable_product_type(product.type) %}
+        <div {{ block('block_attributes') }}>
+            <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+        </div>
+    {% endif %}
 {% endblock %}

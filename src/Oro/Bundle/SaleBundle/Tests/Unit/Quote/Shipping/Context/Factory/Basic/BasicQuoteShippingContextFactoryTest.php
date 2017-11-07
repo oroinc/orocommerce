@@ -15,7 +15,6 @@ use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFact
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
@@ -82,11 +81,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $totalMock = $this->getTotalMock($amount, $currency);
         $calculableQuoteMock = $this->getCalculableQuoteMock();
         $shippingAddressMock = $this->getShippingAddressMock();
-        $shippingLineItems = new DoctrineShippingLineItemCollection(
-            [
-                $this->getShippingLineItemMock(),
-            ]
-        );
+        $shippingLineItems = $this->createMock(DoctrineShippingLineItemCollection::class);
         $quoteMock = $this->getQuoteMock();
         $websiteMock = $this->createMock(Website::class);
         $shippingContextMock = $this->getShippingContextMock();
@@ -143,7 +138,8 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $builder
             ->expects($this->once())
             ->method('setLineItems')
-            ->with($shippingLineItems);
+            ->with($shippingLineItems)
+            ->willReturnSelf();
 
         $builder
             ->expects($this->once())
@@ -154,7 +150,8 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $builder
             ->expects($this->once())
             ->method('setCurrency')
-            ->with($currency);
+            ->with($currency)
+            ->willReturnSelf();
 
         $builder
             ->expects($this->once())
@@ -188,9 +185,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getTotalMock($amount, $currency)
     {
-        $totalMock = $this
-            ->getMockBuilder(Subtotal::class)
-            ->getMock();
+        $totalMock = $this->createMock(Subtotal::class);
 
         $totalMock
             ->expects($this->once())
@@ -210,9 +205,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getCalculableQuoteMock()
     {
-        return $this
-            ->getMockBuilder(CalculableQuoteInterface::class)
-            ->getMock();
+        return $this->createMock(CalculableQuoteInterface::class);
     }
 
     /**
@@ -220,19 +213,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getShippingContextBuilderMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContextBuilderInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @return ShippingLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getShippingLineItemMock()
-    {
-        return $this
-            ->getMockBuilder(ShippingLineItemInterface::class)
-            ->getMock();
+        return $this->createMock(ShippingContextBuilderInterface::class);
     }
 
     /**
@@ -240,10 +221,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getShippingAddressMock()
     {
-        return $this
-            ->getMockBuilder(QuoteAddress::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(QuoteAddress::class);
     }
 
     /**
@@ -251,10 +229,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getQuoteMock()
     {
-        return $this
-            ->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(Quote::class);
     }
 
     /**
@@ -262,9 +237,6 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getShippingContextMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(ShippingContext::class);
     }
 }

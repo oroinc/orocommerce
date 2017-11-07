@@ -101,6 +101,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 3', false);
 
         $product = $this->getEntity(Product::class, ['id' => 1]);
+        $parentProduct = $this->getEntity(Product::class, ['id' => 2]);
         return [
             'no_shopping_list' => [
                 'product' => $product,
@@ -158,6 +159,32 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
+            'shipping_lists_for_product_added_as_simple_and_configurable_in_different_shopping_lists' => [
+                'product' => $product,
+                'shoppingList' => $activeShoppingListSecond,
+                'lineItems' => [
+                    $this->createLineItem(1, 'code1', 42, $activeShoppingListSecond, $product),
+                    $this->createLineItem(2, 'code2', 30, $otherShoppingList, $product, $parentProduct),
+                ],
+                'expected' => [
+                    [
+                        'id' => 1,
+                        'label' => 'ShoppingList 2',
+                        'is_current' => true,
+                        'line_items' => [
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                        ]
+                    ],
+                    [
+                        'id' => 2,
+                        'label' => 'ShoppingList 3',
+                        'is_current' => false,
+                        'line_items' => [
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 30],
+                        ]
+                    ]
+                ]
+            ],
         ];
     }
 
@@ -182,23 +209,28 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @param int $quantity
      * @param ShoppingList $shoppingList
      * @param object $product
+     * @param object|null $parentProduct
      * @return object
      */
-    private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
+    private function createLineItem($id, $unit, $quantity, $shoppingList, $product, $parentProduct = null)
     {
         $productUnit = $this->getEntity(ProductUnit::class, [
             'code' => $unit,
         ]);
 
-        $lineItem = $this->getEntity(LineItem::class, [
+        $options = [
             'id' => $id,
             'unit' => $productUnit,
             'quantity' => $quantity,
             'shoppingList' => $shoppingList,
             'product' => $product
-        ]);
+        ];
 
-        return $lineItem;
+        if (null !== $parentProduct) {
+            $options['parentProduct'] = $parentProduct;
+        }
+
+        return $this->getEntity(LineItem::class, $options);
     }
 
     /**

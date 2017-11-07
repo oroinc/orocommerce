@@ -11,6 +11,10 @@ layout:
             items:
                 __product:
                     blockType: container
+                __product_box:
+                    blockType: container
+                __product_content:
+                    blockType: container
                 __product_sticker_new:
                     blockType: product_sticker
                 __product_sticker_new_text:
@@ -70,22 +74,24 @@ layout:
             tree:
                 __root:
                     __product:
-                        __product_image_holder:
-                            __product_view:
-                                __product_view_image: ~
-                                __product_popup_gallery: ~
-                            __product_sticker_new: ~
-                            __product_quick_view: ~
-                        __product_title: ~
-                        __product_primary_content_container:
-                            __product_specification:
-                                __product_sku: ~
-                                __product_mfg: ~
-                                __product_sticker_new_text: ~
-                            __product_short_description: ~
-                            __product_details: ~
-                        __product_secondary_content_container:
-                            __product_secondary_content_first_container:
-                                __product_specification_delivery: ~
-                            __product_secondary_content_second_container:
-                                __product_more_info: ~
+                        __product_box:
+                            __product_content:
+                                __product_image_holder:
+                                    __product_view:
+                                        __product_view_image: ~
+                                        __product_popup_gallery: ~
+                                    __product_sticker_new: ~
+                                    __product_quick_view: ~
+                                __product_title: ~
+                                __product_primary_content_container:
+                                    __product_specification:
+                                        __product_sku: ~
+                                        __product_mfg: ~
+                                        __product_sticker_new_text: ~
+                                    __product_short_description: ~
+                                    __product_details: ~
+                                __product_secondary_content_container:
+                                    __product_secondary_content_first_container:
+                                        __product_specification_delivery: ~
+                                    __product_secondary_content_second_container:
+                                        __product_more_info: ~
