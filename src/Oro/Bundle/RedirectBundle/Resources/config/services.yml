@@ -254,8 +254,10 @@ services:
             - { name: 'monolog.logger', channel: 'router' }
 
     oro_redirect.slug_url.cache.persistent:
-        parent: oro.cache.abstract
+        class: Oro\Bundle\CacheBundle\Provider\PhpFileCache
         public: false
+        arguments:
+            - '%kernel.cache_dir%/oro_data'
         calls:
             - [ setNamespace, [ 'oro_slug_url' ] ]
 
