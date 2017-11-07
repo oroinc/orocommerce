@@ -2,18 +2,27 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
+// @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodType implements ShippingMethodTypeInterface
 {
     /**
-     * @var FedexRequestByContextAndSettingsFactoryInterface
+     * @var FedexRateServiceRequestSettingsFactoryInterface
+     */
+    private $rateServiceRequestSettingsFactory;
+
+    /**
+     * @var FedexRequestByRateServiceSettingsFactoryInterface
      */
     private $rateServiceRequestFactory;
 
@@ -28,9 +37,9 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     private $identifier;
 
     /**
-     * @var string
+     * @var ShippingService
      */
-    private $label;
+    private $shippingService;
 
     /**
      * @var FedexIntegrationSettings
@@ -38,23 +47,26 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     private $settings;
 
     /**
-     * @param FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface        $rateServiceClient
-     * @param string                                           $identifier
-     * @param string                                           $label
-     * @param FedexIntegrationSettings                         $settings
+     * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
+     * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
+     * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
+     * @param string                                            $identifier
+     * @param ShippingService                                   $shippingService,
+     * @param FedexIntegrationSettings                          $settings
      */
     public function __construct(
-        FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory,
+        FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
+        FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         string $identifier,
-        string $label,
+        ShippingService $shippingService,
         FedexIntegrationSettings $settings
     ) {
+        $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
         $this->rateServiceClient = $rateServiceClient;
         $this->identifier = $identifier;
-        $this->label = $label;
+        $this->shippingService = $shippingService;
         $this->settings = $settings;
     }
 
@@ -71,7 +83,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return $this->label;
+        return $this->shippingService->getDescription();
     }
 
     /**
@@ -95,17 +107,18 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
-        $request = $this->rateServiceRequestFactory->create($this->settings, $context);
+        $request = $this->rateServiceRequestFactory->create(
+            $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $this->shippingService)
+        );
         if (!$request) {
             return null;
         }
 
-        $prices = $this->rateServiceClient->send($request, $this->settings)->getPrices();
-        if (!array_key_exists($this->getIdentifier(), $prices)) {
+        $price = $this->rateServiceClient->send($request, $this->settings)->getPrice();
+        if (!$price) {
             return null;
         }
 
-        $price = $prices[$this->getIdentifier()];
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
         $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 

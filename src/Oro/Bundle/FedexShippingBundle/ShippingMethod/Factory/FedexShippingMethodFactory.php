@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory;
 
+// @codingStandardsIgnoreStart
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -13,6 +15,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
@@ -37,7 +40,12 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     private $typeFactory;
 
     /**
-     * @var FedexRequestByContextAndSettingsFactoryInterface
+     * @var FedexRateServiceRequestSettingsFactoryInterface
+     */
+    private $rateServiceRequestSettingsFactory;
+
+    /**
+     * @var FedexRequestByRateServiceSettingsFactoryInterface
      */
     private $rateServiceRequestFactory;
 
@@ -47,25 +55,28 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     private $rateServiceClient;
 
     /**
-     * @param IntegrationIdentifierGeneratorInterface          $identifierGenerator
-     * @param LocalizationHelper                               $localizationHelper
-     * @param IntegrationIconProviderInterface                 $iconProvider
-     * @param FedexShippingMethodTypeFactoryInterface          $typeFactory
-     * @param FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface        $rateServiceClient
+     * @param IntegrationIdentifierGeneratorInterface           $identifierGenerator
+     * @param LocalizationHelper                                $localizationHelper
+     * @param IntegrationIconProviderInterface                  $iconProvider
+     * @param FedexShippingMethodTypeFactoryInterface           $typeFactory
+     * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
+     * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
+     * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
      */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
         LocalizationHelper $localizationHelper,
         IntegrationIconProviderInterface $iconProvider,
         FedexShippingMethodTypeFactoryInterface $typeFactory,
-        FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory,
+        FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
+        FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient
     ) {
         $this->identifierGenerator = $identifierGenerator;
         $this->localizationHelper = $localizationHelper;
         $this->iconProvider = $iconProvider;
         $this->typeFactory = $typeFactory;
+        $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
         $this->rateServiceClient = $rateServiceClient;
     }
@@ -76,6 +87,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     public function create(Channel $channel): FedexShippingMethod
     {
         return new FedexShippingMethod(
+            $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient,
             $this->identifierGenerator->generateIdentifier($channel),
@@ -83,7 +95,8 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
             $this->iconProvider->getIcon($channel),
             $channel->isEnabled(),
             $this->getSettings($channel),
-            $this->createTypes($channel)
+            $this->createTypes($channel),
+            $this->getSettings($channel)->getShippingServices()
         );
     }
 

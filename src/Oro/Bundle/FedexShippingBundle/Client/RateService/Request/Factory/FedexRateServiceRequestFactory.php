@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
-use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactoryInterface;
-use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Modifier\ShippingLineItemCollectionModifierInterface;
 
-class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettingsFactoryInterface
+class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSettingsFactoryInterface
 {
     /**
      * @var SymmetricCrypterInterface
@@ -20,7 +18,7 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
     private $crypter;
 
     /**
-     * @var FedexPackageSettingsByIntegrationSettingsFactoryInterface
+     * @var FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface
      */
     private $packageSettingsFactory;
 
@@ -40,15 +38,15 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
     private $convertToFedexUnitsModifier;
 
     /**
-     * @param SymmetricCrypterInterface                                  $crypter
-     * @param FedexPackageSettingsByIntegrationSettingsFactoryInterface  $packageSettingsFactory
-     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory
-     * @param ShippingLineItemCollectionModifierInterface                $addProductOptionsModifier
-     * @param ShippingLineItemCollectionBySettingsModifierInterface      $convertToFedexUnitsModifier
+     * @param SymmetricCrypterInterface                                                   $crypter
+     * @param FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface $packageSettingsFactory
+     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface                  $packagesFactory
+     * @param ShippingLineItemCollectionModifierInterface                                 $addProductOptionsModifier
+     * @param ShippingLineItemCollectionBySettingsModifierInterface                       $convertToFedexUnitsModifier
      */
     public function __construct(
         SymmetricCrypterInterface $crypter,
-        FedexPackageSettingsByIntegrationSettingsFactoryInterface $packageSettingsFactory,
+        FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactoryInterface $packageSettingsFactory,
         FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory,
         ShippingLineItemCollectionModifierInterface $addProductOptionsModifier,
         ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
@@ -63,13 +61,17 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
     /**
      * {@inheritDoc}
      */
-    public function create(FedexIntegrationSettings $settings, ShippingContextInterface $context)
+    public function create(FedexRateServiceRequestSettingsInterface $settings)
     {
-        $packageSettings = $this->packageSettingsFactory->create($settings);
+        $context = $settings->getShippingContext();
+        $packageSettings = $this->packageSettingsFactory->create(
+            $settings->getIntegrationSettings(),
+            $settings->getShippingService()
+        );
 
         $lineItems = $this->convertToFedexUnitsModifier->modify(
             $this->addProductOptionsModifier->modify($context->getLineItems()),
-            $settings
+            $settings->getIntegrationSettings()
         );
 
         $packages = $this->packagesFactory->create($lineItems, $packageSettings);
@@ -77,16 +79,16 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
             return null;
         }
 
-        return new FedexRequest([
+        $requestData = [
             'WebAuthenticationDetail' => [
                 'UserCredential' => [
-                    'Key' => $settings->getKey(),
-                    'Password' => $this->crypter->decryptData($settings->getPassword()),
+                    'Key' => $settings->getIntegrationSettings()->getKey(),
+                    'Password' => $this->crypter->decryptData($settings->getIntegrationSettings()->getPassword()),
                 ]
             ],
             'ClientDetail' => [
-                'AccountNumber' => $settings->getAccountNumber(),
-                'MeterNumber' => $settings->getMeterNumber(),
+                'AccountNumber' => $settings->getIntegrationSettings()->getAccountNumber(),
+                'MeterNumber' => $settings->getIntegrationSettings()->getMeterNumber(),
             ],
             'Version' => [
                 'ServiceId' => 'crs',
@@ -95,7 +97,8 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
                 'Minor' => '0'
             ],
             'RequestedShipment' => [
-                'DropoffType' => $settings->getPickupType(),
+                'ServiceType' => $settings->getShippingService()->getCode(),
+                'DropoffType' => $settings->getIntegrationSettings()->getPickupType(),
                 'Shipper' => [
                     'Address' => [
                         'StreetLines' => [
@@ -123,6 +126,12 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
                 'PackageCount' => count($packages),
                 'RequestedPackageLineItems' => $packages,
             ],
-        ]);
+        ];
+
+        if ($settings->getShippingService()->getCode() === 'GROUND_HOME_DELIVERY') {
+            $requestData['RequestedShipment']['Recipient']['Address']['Residential'] = true;
+        }
+
+        return new FedexRequest($requestData);
     }
 }

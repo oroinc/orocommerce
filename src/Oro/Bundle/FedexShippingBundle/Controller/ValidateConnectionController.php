@@ -56,7 +56,7 @@ class ValidateConnectionController extends Controller
             ->create($settings);
         $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request, $settings);
 
-        if (!empty($response->getPrices())) {
+        if ($response->getPrice()) {
             return new JsonResponse([
                 'success' => true,
                 'message' => $this->get('translator')->trans('oro.fedex.connection_validation.result.success.message'),
@@ -80,7 +80,7 @@ class ValidateConnectionController extends Controller
             return 'oro.fedex.connection_validation.result.authorization_error.message';
         } elseif ($response->getSeverityCode() === FedexRateServiceResponse::CONNECTION_ERROR) {
             return 'oro.fedex.connection_validation.result.connection_error.message';
-        } elseif (empty($response->getPrices())) {
+        } elseif (!$response->getPrice()) {
             return 'oro.fedex.connection_validation.result.no_services_error.message';
         }
 

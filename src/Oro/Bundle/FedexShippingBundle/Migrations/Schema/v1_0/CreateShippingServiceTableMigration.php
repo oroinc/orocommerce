@@ -18,6 +18,8 @@ class CreateShippingServiceTableMigration implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['notnull' => true, 'length' => 200]);
         $table->addColumn('description', 'string', ['notnull' => true, 'length' => 200]);
+        $table->addColumn('limitation_expression_lbs', 'string', ['notnull' => true, 'length' => 250]);
+        $table->addColumn('limitation_expression_kg', 'string', ['notnull' => true, 'length' => 250]);
         
         $table->setPrimaryKey(['id']);
     }

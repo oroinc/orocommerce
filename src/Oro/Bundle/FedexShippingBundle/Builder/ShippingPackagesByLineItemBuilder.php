@@ -10,6 +10,7 @@ use Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactoryInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBuilderInterface
 {
@@ -17,6 +18,11 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
      * @var ShippingPackageOptionsFactoryInterface
      */
     private $packageOptionsFactory;
+
+    /**
+     * @var ExpressionLanguage
+     */
+    private $expressionLanguage;
     
     /**
      * @var FedexPackageSettingsInterface
@@ -35,10 +41,14 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
 
     /**
      * @param ShippingPackageOptionsFactoryInterface $packageOptionsFactory
+     * @param ExpressionLanguage                     $expressionLanguage
      */
-    public function __construct(ShippingPackageOptionsFactoryInterface $packageOptionsFactory)
-    {
+    public function __construct(
+        ShippingPackageOptionsFactoryInterface $packageOptionsFactory,
+        ExpressionLanguage $expressionLanguage
+    ) {
         $this->packageOptionsFactory = $packageOptionsFactory;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**
@@ -58,7 +68,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     public function addLineItem(ShippingLineItemInterface $lineItem): bool
     {
         $itemOptions = $this->packageOptionsFactory->create($lineItem->getDimensions(), $lineItem->getWeight());
-        if ($this->isItemTooBig($itemOptions)) {
+        if (!$this->itemCanFit($itemOptions)) {
             return false;
         }
 
@@ -104,9 +114,15 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
      */
     private function itemCanFitInCurrentPackage(ShippingPackageOptionsInterface $itemOptions): bool
     {
-        return $itemOptions->getWeight() + $this->currentPackage->getWeight() <= $this->settings->getMaxWeight() &&
-            $itemOptions->getLength() + $this->currentPackage->getLength() <= $this->settings->getMaxLength() &&
-            $itemOptions->getGirth() + $this->currentPackage->getGirth() <= $this->settings->getMaxGirth();
+        return $this->expressionLanguage->evaluate(
+            $this->settings->getLimitationExpression(),
+            [
+                'weight' => $itemOptions->getWeight() + $this->currentPackage->getWeight(),
+                'length' => $itemOptions->getLength() + $this->currentPackage->getLength(),
+                'width' => $itemOptions->getWidth() + $this->currentPackage->getWidth(),
+                'height' => $itemOptions->getHeight() + $this->currentPackage->getHeight(),
+            ]
+        );
     }
 
     /**
@@ -114,11 +130,17 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
      *
      * @return bool
      */
-    private function isItemTooBig(ShippingPackageOptionsInterface $itemOptions): bool
+    private function itemCanFit(ShippingPackageOptionsInterface $itemOptions): bool
     {
-        return $itemOptions->getWeight() > $this->settings->getMaxWeight() ||
-            $itemOptions->getLength() > $this->settings->getMaxLength() ||
-            $itemOptions->getGirth() > $this->settings->getMaxGirth();
+        return $this->expressionLanguage->evaluate(
+            $this->settings->getLimitationExpression(),
+            [
+                'weight' => $itemOptions->getWeight(),
+                'length' => $itemOptions->getLength(),
+                'width' => $itemOptions->getWidth(),
+                'height' => $itemOptions->getHeight(),
+            ]
+        );
     }
 
     private function packCurrentPackage()

@@ -34,6 +34,20 @@ class ShippingService
     private $description;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="limitation_expression_lbs", type="string", length=250)
+     */
+    private $limitationExpressionLbs;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="limitation_expression_kg", type="string", length=250)
+     */
+    private $limitationExpressionKg;
+
+    /**
      * @return integer
      */
     public function getId()
@@ -77,6 +91,46 @@ class ShippingService
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLimitationExpressionLbs()
+    {
+        return $this->limitationExpressionLbs;
+    }
+
+    /**
+     * @param string $limitationExpressionLbs
+     *
+     * @return self
+     */
+    public function setLimitationExpressionLbs(string $limitationExpressionLbs): self
+    {
+        $this->limitationExpressionLbs = $limitationExpressionLbs;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLimitationExpressionKg()
+    {
+        return $this->limitationExpressionKg;
+    }
+
+    /**
+     * @param string $limitationExpressionKg
+     *
+     * @return self
+     */
+    public function setLimitationExpressionKg(string $limitationExpressionKg): self
+    {
+        $this->limitationExpressionKg = $limitationExpressionKg;
 
         return $this;
     }

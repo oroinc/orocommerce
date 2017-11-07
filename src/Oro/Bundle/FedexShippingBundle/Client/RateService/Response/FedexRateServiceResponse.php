@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Response;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
 class FedexRateServiceResponse implements FedexRateServiceResponseInterface
 {
     const SEVERITY_SUCCESS = 'SUCCESS';
@@ -13,6 +15,7 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     const CONNECTION_ERROR = 111;
     const NO_SERVICES_ERROR = 556;
     const AUTHORIZATION_ERROR = 1000;
+    const SERVICE_NOT_ALLOWED = 868;
 
     /**
      * @var string
@@ -25,20 +28,20 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     protected $severityCode;
 
     /**
-     * @var array
+     * @var Price|null
      */
-    protected $prices;
+    protected $price;
 
     /**
-     * @param string $severityType
-     * @param int    $severityCode
-     * @param array  $prices
+     * @param string     $severityType
+     * @param int        $severityCode
+     * @param Price|null $price
      */
-    public function __construct(string $severityType, int $severityCode, array $prices = [])
+    public function __construct(string $severityType, int $severityCode, Price $price = null)
     {
         $this->severityType = $severityType;
         $this->severityCode = $severityCode;
-        $this->prices = $prices;
+        $this->price = $price;
     }
 
     /**
@@ -60,9 +63,9 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     /**
      * {@inheritDoc}
      */
-    public function getPrices(): array
+    public function getPrice()
     {
-        return $this->prices;
+        return $this->price;
     }
 
     /**
@@ -70,7 +73,6 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
      */
     public function isSuccessful(): bool
     {
-        return $this->getSeverityType() === FedexRateServiceResponse::SEVERITY_SUCCESS ||
-            $this->getSeverityType() === FedexRateServiceResponse::SEVERITY_NOTE;
+        return $this->getSeverityType() === self::SEVERITY_SUCCESS || $this->getSeverityType() === self::SEVERITY_NOTE;
     }
 }

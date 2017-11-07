@@ -51,6 +51,10 @@ services:
             - '@oro_fedex_shipping.client.rate_service.soap_settings'
             - '@oro_fedex_shipping.client.rate_service.soap_test_settings'
 
+    oro_fedex_shipping.client.rate_service.request.settings.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactory'
+        public: false
+
     oro_fedex_shipping.client.rate_service.request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
         public: false
@@ -80,7 +84,7 @@ services:
             - '@oro_shipping.line_item.factory_basic'
 
     oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings:
-        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactory'
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndShippingServiceFactory'
         public: false
 
     oro_fedex_shipping.factory.fedex_package_by_shipping_package_options:
@@ -99,6 +103,7 @@ services:
         public: false
         arguments:
             - '@oro_shipping.factory.shipping_package_options'
+            - '@oro_fedex_shipping.expression_language'
 
     oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
@@ -115,6 +120,7 @@ services:
         public: false
         arguments:
             - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+            - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
             - '@oro_fedex_shipping.client.rate_service.request.factory'
             - '@oro_fedex_shipping.client.rate_service_cached'
 
@@ -126,6 +132,7 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_integration.provider.integration_icon'
             - '@oro_fedex_shipping.shipping_method.factory.method_type'
+            - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
             - '@oro_fedex_shipping.client.rate_service.request.factory'
             - '@oro_fedex_shipping.client.rate_service_cached'
 
@@ -204,3 +211,6 @@ services:
             - 'shippingServices'
         tags:
             - { name: validator.constraint_validator, alias: oro_fedex_shipping_remove_used_shipping_service_validator }
+
+    oro_fedex_shipping.expression_language:
+        class: 'Symfony\Component\ExpressionLanguage\ExpressionLanguage'

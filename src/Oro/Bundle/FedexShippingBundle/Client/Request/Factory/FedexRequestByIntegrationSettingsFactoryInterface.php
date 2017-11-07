@@ -5,7 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Client\Request\Factory;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
-interface FedexRequestBySettingsFactoryInterface
+interface FedexRequestByIntegrationSettingsFactoryInterface
 {
     /**
      * @param FedexIntegrationSettings $settings
