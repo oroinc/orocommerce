@@ -35,4 +35,12 @@ class ProductImageTypeNormalizer extends ConfigurableEntityNormalizer
     {
         return is_a($type, $this->productImageTypeClass, true);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null, array $context = [])
+    {
+        return is_a($data, $this->productImageTypeClass);
+    }
 }
