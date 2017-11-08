@@ -133,6 +133,14 @@ class WebsiteSearchProductIndexerListener
 
             $this->processImages($event, $productImages, $product->getId());
 
+            if ($product->getPrimaryUnitPrecision()) {
+                $event->addField(
+                    $product->getId(),
+                    'unit',
+                    $product->getPrimaryUnitPrecision()->getProductUnitCode()
+                );
+            }
+
             if (array_key_exists($product->getId(), $productUnits)) {
                 $units = serialize($productUnits[$product->getId()]);
                 $event->addField(

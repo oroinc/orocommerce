@@ -60,7 +60,7 @@
     }) %}
 
     {% set isNoImage = false %}
-    
+
     {% if product.image is defined %}
         {% set isNoImage = (product.image|trim) == (Image.url(null, 'product_large')|e|trim) %}
     {% else %}
@@ -165,6 +165,7 @@
 {% endblock %}
 
 {% block _product_datagrid_cell_matrixForm_value_widget %}
+    {#{{ dump(datagrid_row) }}#}
     {{ datagrid_row[column_name]|raw }}
 {% endblock %}
 

@@ -49,13 +49,8 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $request->request->get('matrix_collection', [])
             );
 
-            $updateQuantity = (bool) $request->get('updateQuantity', false);
             foreach ($lineItems as $lineItem) {
-                if ($updateQuantity === false) {
-                    $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
-                } else {
-                    $shoppingListManager->updateLineItem($lineItem, $shoppingList);
-                }
+                $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
 
             if ($request->isXmlHttpRequest()) {

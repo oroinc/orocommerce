@@ -131,12 +131,8 @@ class ProductShoppingListsDataProvider
 
             $shoppingLists[$productId] = $productShoppingLists;
 
-            if ($lineItem->getParentProduct() instanceof Product) {
+            if ($lineItem->getParentProduct()) {
                 $shoppingLists[$lineItem->getParentProduct()->getId()] = $productShoppingLists;
-            }
-
-            foreach ($product->getParentVariantLinks() as $parentVariantLink) {
-                $shoppingLists[$parentVariantLink->getParentProduct()->getId()] = $productShoppingLists;
             }
         }
 

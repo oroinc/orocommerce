@@ -177,7 +177,7 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
-        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList, $concatNotes) {
+        $func = function (LineItem $duplicate) use ($lineItem, $concatNotes) {
             $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
         };
 
@@ -197,7 +197,7 @@ class ShoppingListManager
      */
     public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
-        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList) {
+        $func = function (LineItem $duplicate) use ($lineItem) {
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {

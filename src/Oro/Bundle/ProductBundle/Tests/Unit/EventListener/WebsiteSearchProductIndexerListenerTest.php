@@ -13,6 +13,8 @@ use Oro\Bundle\FrontendBundle\Manager\AttachmentManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
@@ -111,6 +113,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $attributeFamilyId = 42;
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
 
+        $unit = $this->getEntity(ProductUnit::class, ['code' => 'each']);
+        $primaryUnit = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
         $product = $this->getEntity(
             Product::class,
             [
@@ -121,6 +125,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
+                'primaryUnitPrecision' => $primaryUnit
             ]
         );
 
@@ -295,6 +300,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'system' => [
                 [
                     'value'    => 'system',
+                    'all_text' => false
+                ]
+            ],
+            'unit' => [
+                [
+                    'value' => 'each',
                     'all_text' => false
                 ]
             ]
