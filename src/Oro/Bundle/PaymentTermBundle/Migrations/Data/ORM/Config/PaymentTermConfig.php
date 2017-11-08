@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\PaymentTermBundle\DependencyInjection\OroPaymentTermExtension;
 
 class PaymentTermConfig

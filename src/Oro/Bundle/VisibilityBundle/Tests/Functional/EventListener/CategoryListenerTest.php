@@ -5,14 +5,18 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 class CategoryListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * @var EntityManager
      */
@@ -23,25 +27,26 @@ class CategoryListenerTest extends WebTestCase
      */
     protected $categoryRepository;
 
-    /**
-     * @var MessageCollector
-     */
-    protected $messageProducer;
-
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->categoryManager = $this->getContainer()->get('doctrine')
+        $this->categoryManager = self::getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category');
         $this->categoryRepository = $this->categoryManager
             ->getRepository('OroCatalogBundle:Category');
 
         $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
 
-        $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
-        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
-        $this->messageProducer->clear();
+        $this->cleanScheduledMessages();
+    }
+
+    /**
+     * @return ProductMessageHandler
+     */
+    protected function getMessageHandler()
+    {
+        return self::getContainer()->get('oro_visibility.model.product_message_handler');
     }
 
     public function testChangeProductCategory()
@@ -57,16 +62,12 @@ class CategoryListenerTest extends WebTestCase
         $previousCategory->removeProduct($product);
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
-        $this->messageProducer->clear();
-        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_visibility.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
+
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_visibility.visibility.change_product_category',
+            ['id' => $product->getId()]
         );
     }
 
@@ -78,34 +79,22 @@ class CategoryListenerTest extends WebTestCase
 
         $category->removeProduct($product);
         $this->categoryManager->flush();
-        $this->messageProducer->clear();
-        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages = [
-            [
-                'topic' => 'oro_visibility.visibility.change_product_category',
-                'message' => ['id' => $product->getId()],
-            ]
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
+
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_visibility.visibility.change_product_category',
+            ['id' => $product->getId()]
         );
+
         $category->addProduct($product);
         $this->categoryManager->flush();
 
-        $this->messageProducer->clear();
-        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages = [
-            [
-                'topic' => 'oro_visibility.visibility.change_product_category',
-                'message' => ['id' => $product->getId()],
-            ]
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_visibility.visibility.change_product_category',
+            ['id' => $product->getId()]
         );
     }
 }

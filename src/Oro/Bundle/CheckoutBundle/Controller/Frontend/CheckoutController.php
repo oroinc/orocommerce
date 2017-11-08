@@ -285,7 +285,7 @@ class CheckoutController extends Controller
         $items = $this->getWorkflowManager()->getWorkflowItemsByEntity($checkout);
 
         if (count($items) !== 1) {
-            throw new \RuntimeException('Should be only one WorkflowItem');
+            throw $this->createNotFoundException('Unable to find correct WorkflowItem for current checkout');
         }
 
         return reset($items);

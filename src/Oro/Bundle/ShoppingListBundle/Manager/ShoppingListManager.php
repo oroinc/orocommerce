@@ -306,13 +306,13 @@ class ShoppingListManager
      */
     public function bulkAddLineItems(array $lineItems, ShoppingList $shoppingList, $batchSize)
     {
-        $iteration = 0;
+        $lineItemsCount = count($lineItems);
         foreach ($lineItems as $iteration => $lineItem) {
-            $flush = $iteration % $batchSize === 0 || count($lineItems) === $iteration + 1;
+            $flush = $iteration % $batchSize === 0 || $lineItemsCount === $iteration + 1;
             $this->addLineItem($lineItem, $shoppingList, $flush);
         }
 
-        return $iteration + 1;
+        return $lineItemsCount;
     }
 
     /**

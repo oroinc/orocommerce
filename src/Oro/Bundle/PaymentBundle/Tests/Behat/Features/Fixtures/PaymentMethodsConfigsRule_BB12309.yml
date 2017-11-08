@@ -1,0 +1,29 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRule:
+        name: '<script>alert(1)</script>'
+        enabled: true
+        sortOrder: 5
+        expression: 'expression'
+        stopProcessing: false
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfig:
+        type: '<("payment_term_".@paymentTermIntegration->id)>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRule:
+        rule: '@paymentRule'
+        currency: 'USD'
+        organization: '@organization'
+        methodConfigs: ['@paymentMethodConfig']
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+    paymentMethodsConfigsRuleDestination:
+        methodsConfigsRule: '@paymentMethodsConfigsRule'
+        country: '@united_states'
+        region: '@florida'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode:
+    paymentMethodsConfigsRuleDestinationPostalCode:
+        destination: '@paymentMethodsConfigsRuleDestination'
+        name: '<script>alert(2)</script>'

@@ -8,6 +8,7 @@ features:
         strategy: affirmative
         routes:
             - 'oro_shopping_list_frontend_create'
+            - 'oro_shopping_list_add_products_to_new_massaction'
         operations:
             - 'oro_shoppinglist_frontend_duplicate'
     guest_shopping_list:

@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@setOption':
+            id: form_start
+            optionName: form_route_name
+            optionValue: 'oro_shopping_list_add_products_to_new_massaction'
+        - '@setOption':
+            id: form_start
+            optionName: form_route_parameters
+            optionValue: '=data["routeParameters"]'
+        - '@setOption':
+            id: widget_content
+            optionName: messages
+            optionValue: '=data["messages"]'
+    imports:
+        - 'oro_shopping_list_create'

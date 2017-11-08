@@ -8,10 +8,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -59,11 +57,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
     private $sourceEntityMock;
 
     /**
-     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $shippingLineItemCollectionFactoryMock;
-
-    /**
      * @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shippingOriginProviderMock;
@@ -80,31 +73,16 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerMock = $this->createMock(Customer::class);
+        $this->customerUserMock = $this->createMock(CustomerUser::class);
         $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);
         $this->billingAddressMock = $this->createMock(AddressInterface::class);
         $this->shippingAddressMock = $this->createMock(AddressInterface::class);
         $this->shippingOriginMock = $this->createMock(AddressInterface::class);
-        $this->subtotalMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shippingLineItemCollectionFactoryMock = $this->createMock(
-            ShippingLineItemCollectionFactoryInterface::class
-        );
-        $this->shippingOriginProviderMock = $this->getMockBuilder(ShippingOriginProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->defaultShippingOriginMock = $this->getMockBuilder(ShippingOrigin::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->subtotalMock = $this->createMock(Price::class);
+        $this->sourceEntityMock = $this->createMock(Checkout::class);
+        $this->shippingOriginProviderMock = $this->createMock(ShippingOriginProvider::class);
+        $this->defaultShippingOriginMock = $this->createMock(ShippingOrigin::class);
         $this->websiteMock = $this->createMock(Website::class);
     }
 
@@ -113,21 +91,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
         $entityId = '12';
-        $lineItems = [
-            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 2]),
-            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 5]),
-        ];
-
-        $this->lineItemsCollectionMock
-            ->expects($this->once())
-            ->method('toArray')
-            ->willReturn($lineItems);
-
-        $this->shippingLineItemCollectionFactoryMock
-            ->expects($this->once())
-            ->method('createShippingLineItemCollection')
-            ->with($lineItems)
-            ->willReturn($this->lineItemsCollectionMock);
 
         $this->shippingOriginProviderMock
             ->expects($this->never())
@@ -136,7 +99,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new BasicShippingContextBuilder(
             $this->sourceEntityMock,
             $entityId,
-            $this->shippingLineItemCollectionFactoryMock,
             $this->shippingOriginProviderMock
         );
 
@@ -166,13 +128,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
     public function testOptionalFields()
     {
         $entityId = '12';
-        $lineItems = [];
-
-        $this->shippingLineItemCollectionFactoryMock
-            ->expects($this->once())
-            ->method('createShippingLineItemCollection')
-            ->with($lineItems)
-            ->willReturn($this->lineItemsCollectionMock);
 
         $this->shippingOriginProviderMock
             ->expects($this->once())
@@ -182,7 +137,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new BasicShippingContextBuilder(
             $this->sourceEntityMock,
             $entityId,
-            $this->shippingLineItemCollectionFactoryMock,
             $this->shippingOriginProviderMock
         );
 
@@ -201,22 +155,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
         $entityId = '12';
-        $lineItems = [
-            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 2]),
-            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 5]),
-        ];
         $street = 'someStreet';
-
-        $this->lineItemsCollectionMock
-            ->expects($this->once())
-            ->method('toArray')
-            ->willReturn($lineItems);
-
-        $this->shippingLineItemCollectionFactoryMock
-            ->expects($this->once())
-            ->method('createShippingLineItemCollection')
-            ->with($lineItems)
-            ->willReturn($this->lineItemsCollectionMock);
 
         $this->defaultShippingOriginMock
             ->method('getStreet')
@@ -230,7 +169,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new BasicShippingContextBuilder(
             $this->sourceEntityMock,
             $entityId,
-            $this->shippingLineItemCollectionFactoryMock,
             $this->shippingOriginProviderMock
         );
 
@@ -294,7 +232,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
     private function getExpectedContextWithoutOptionalFields($entityId, AddressInterface $shippingOrigin)
     {
         $params = [
-            ShippingContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
+            ShippingContext::FIELD_LINE_ITEMS => null,
             ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,

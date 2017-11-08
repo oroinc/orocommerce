@@ -435,3 +435,21 @@ oro_behat_extension:
         mapping:
           Registration Allowed Default: 'customer_users[oro_customer___registration_allowed][use_parent_scope_value]'
           Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
+
+    Reset Any Text filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Any Text")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset SKU filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"SKU")]/../button[@title="Reset this filter"]'
+        type: xpath
+
+    Reset Name filter:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//span[contains (text(),"Name")]/../button[@title="Reset this filter"]'
+        type: xpath

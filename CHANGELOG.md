@@ -41,6 +41,10 @@
         - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
 - Filtration services are now skippable. More details can be found in [documentation](https://github.com/orocommerce/orocommerce/tree/1.5.0/src/Oro/Bundle/PromotionBundle/README.md#filters-skippability-during-checkout).
 
+#### ShippingBundle
+* Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`:
+   * Interface lost his `addLineItem` method. All line item collection should be processed with `setLineItems` and related interface `Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface`. 
+
 #### WebsiteSearchBundle
 * Entity `Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal`:
     * changed decimal field `value`:
@@ -76,6 +80,14 @@
     * Class `ResetPriceRuleFieldOnUpdateProcessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Api/ProductPrice/Processor/ResetPriceRuleFieldOnUpdateProcessor.php "Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdateProcessor")</sup> was added to reset product price rule when one of the fields: `value`, `quantity`, `unit`, `currency` changes
 #### ProductBundle
 * Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
+#### RedirectBundle
+* Added method to `SlugRepository`:
+    * `getRawSlug` method to retrieve slug URL data 
+* Added new interface:
+    * `SluggableUrlProviderInterface`
+* Added new URL providers:
+    * `SluggableUrlCacheAwareProvider` takes slug URLs from persistent cache
+    * `SluggableUrlDatabaseAwareProvider` takes slug URLs from the database  
 ### Changed
 #### OrderBundle
 * Form type `OrderDiscountItemType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/OrderBundle/Form/Type/OrderDiscountItemType.php "Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType")</sup> was changed for use in popup.

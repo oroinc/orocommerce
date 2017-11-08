@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory\BasicShippingContextBuilderFactory;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
@@ -28,11 +27,6 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
     private $sourceEntityMock;
 
     /**
-     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $shippingLineItemCollectionFactoryMock;
-
-    /**
      * @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shippingOriginProviderMock;
@@ -40,18 +34,9 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);
-        $this->subtotalMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shippingLineItemCollectionFactoryMock = $this->createMock(
-            ShippingLineItemCollectionFactoryInterface::class
-        );
-        $this->shippingOriginProviderMock = $this->getMockBuilder(ShippingOriginProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->subtotalMock = $this->createMock(Price::class);
+        $this->sourceEntityMock = $this->createMock(Checkout::class);
+        $this->shippingOriginProviderMock = $this->createMock(ShippingOriginProvider::class);
     }
 
     public function testCreateBuilder()
@@ -63,7 +48,6 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getSystemShippingOrigin');
 
         $builderFactory = new BasicShippingContextBuilderFactory(
-            $this->shippingLineItemCollectionFactoryMock,
             $this->shippingOriginProviderMock
         );
 
@@ -75,7 +59,6 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedBuilder = new BasicShippingContextBuilder(
             $this->sourceEntityMock,
             $entityId,
-            $this->shippingLineItemCollectionFactoryMock,
             $this->shippingOriginProviderMock
         );
 

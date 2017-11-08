@@ -96,7 +96,7 @@ class CheckoutShippingContextFactory
             $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
         }
 
-        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+        if (null !== $convertedLineItems) {
             $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 

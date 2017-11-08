@@ -72,7 +72,8 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
 
         $shippingContextBuilder
             ->setSubTotal($subtotal)
-            ->setCurrency($quote->getCurrency());
+            ->setCurrency($quote->getCurrency())
+            ->setLineItems($convertedLineItems);
 
         if (null !== $quote->getWebsite()) {
             $shippingContextBuilder
@@ -82,10 +83,6 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
         if (null !== $quote->getShippingAddress()) {
             $shippingContextBuilder
                 ->setShippingAddress($quote->getShippingAddress());
-        }
-
-        if (false === $convertedLineItems->isEmpty()) {
-            $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 
         return $shippingContextBuilder->getResult();

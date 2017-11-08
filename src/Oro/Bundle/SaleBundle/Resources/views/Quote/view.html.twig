@@ -135,7 +135,7 @@
     {% if entity.quoteProducts | length %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.sale.quote.sections.quote_products'|trans,
-            'subblocks': [{'data' : [quoteProducts]}]
+            'subblocks': [{'data' : {'products' : quoteProducts}}]
         }]) %}
     {% endif %}
 

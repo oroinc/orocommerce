@@ -23,6 +23,17 @@ class ShoppingListStub extends ShoppingList
     }
 
     /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * @return ArrayCollection|CustomerVisitor[]
      */
     public function getVisitors()
