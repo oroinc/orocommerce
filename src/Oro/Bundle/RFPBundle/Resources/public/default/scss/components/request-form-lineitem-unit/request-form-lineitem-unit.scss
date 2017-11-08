@@ -12,13 +12,6 @@
         text-align: right;
 
         border-radius: 3px 0 0 3px;
-
-        &:hover, &:focus {
-            + .product-tier-prices .popover-trigger {
-                border-color: $input-border-color-focus-state;
-                border-left-color: transparent;
-            }
-        }
     }
 
     &--size {
