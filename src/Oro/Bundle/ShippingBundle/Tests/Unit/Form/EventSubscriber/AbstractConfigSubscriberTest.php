@@ -12,6 +12,7 @@ use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
@@ -32,6 +33,7 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidation
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Asset\Packages as AssetHelper;
@@ -216,7 +218,10 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                     'translatable_entity' => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                ['form' => [
+                    new AdditionalAttrExtension(),
+                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
+                ]]
             ),
             $this->getValidatorExtension(true)
         ];

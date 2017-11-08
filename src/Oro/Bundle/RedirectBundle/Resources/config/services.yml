@@ -237,11 +237,25 @@ services:
             - '@oro_redirect.url_storage_cache'
 
     oro_redirect.routing.sluggable_url_generator:
-        class: Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator
+        class: 'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator'
         arguments:
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.provider.sluggable_url_database'
             - '@oro_redirect.provider.context_url_provider_registry'
             - '@oro_frontend_localization.manager.user_localization'
+
+    oro_redirect.provider.sluggable_url_cache:
+        public: false
+        class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider'
+        arguments:
+            - '@oro_redirect.url_storage_cache'
+
+    oro_redirect.provider.sluggable_url_database:
+        public: false
+        class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider'
+        arguments:
+            - '@oro_redirect.provider.sluggable_url_cache'
+            - '@oro_redirect.url_storage_cache'
+            - '@doctrine'
 
     oro_redirect.routing.router:
         class: Oro\Bundle\RedirectBundle\Routing\Router

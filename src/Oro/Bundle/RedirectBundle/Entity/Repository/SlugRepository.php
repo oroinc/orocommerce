@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\DBAL\Types\Type;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -169,6 +172,45 @@ class SlugRepository extends EntityRepository
             ->where($queryBuilder->expr()->in($slugIdField, $subQueryBuilder->getSQL()));
 
         $queryBuilder->execute();
+    }
+
+    /**
+     * Doctrine cannot handle searching by "array" columns, therefore
+     * we need a low-level query here.
+     *
+     * @param string $name
+     * @param array $parameters
+     * @param int $localizationId
+     * @return null|array
+     */
+    public function getRawSlug($name, $parameters, $localizationId)
+    {
+        /** @var Connection $connection */
+        $connection = $this->_em->getConnection();
+
+        $hashParameters = Slug::hashParameters($name, $parameters, $localizationId);
+        $qb = $connection->createQueryBuilder()
+            ->select('url', 'slug_prototype')
+            ->from('oro_redirect_slug')
+            ->where('parameters_hash = :parameters_hash')
+            ->andWhere('route_name = :routeName')
+            ->andWhere('route_parameters = :routeParameters')
+            ->andWhere('localization_id = :localizationId OR localization_id IS NULL')
+            ->setParameters(
+                [
+                    'parameters_hash' => $hashParameters,
+                    'routeName' => $name,
+                    'routeParameters' => $parameters,
+                    'localizationId' => $localizationId
+                ],
+                [
+                    'routeName' => Type::STRING,
+                    'routeParameters' => Type::TARRAY,
+                    'localizationId' => Type::INTEGER
+                ]
+            );
+
+        return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**

@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\HttpFoundation\File\File;
 
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -26,11 +25,6 @@ class ProductImageListenerTest extends WebTestCase
      * @var EntityManager
      */
     protected $em;
-
-    /**
-     * @var MessageCollector
-     */
-    protected $messageCollector;
 
     /**
      * @var string

@@ -7,6 +7,7 @@ define(function(require) {
     var priceOverridden = require('tpl!oropricing/templates/product/prices-price-overridden.html');
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var layout = require('oroui/js/layout');
     var $ = require('jquery');
     var _ = require('underscore');
@@ -58,6 +59,8 @@ define(function(require) {
          */
         deferredInitialize: function(options) {
             ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
+
+            ProductHelper.normalizeNumberField(this.model, this.getElement('priceValue'), 2);
         },
 
         /**
