@@ -753,6 +753,14 @@ oro_behat_extension:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
+    Uploaded Product Image:
+      selector: 'img[src^="/media/cache/attachment"]'
+
+    Empty Product Image:
+      selector:
+       type: xpath
+       locator: '//img[contains (@src,"no_image.png")]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
