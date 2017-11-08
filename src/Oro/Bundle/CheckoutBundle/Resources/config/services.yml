@@ -548,7 +548,9 @@ services:
     oro_checkout.line_item.converter.order:
         class: 'Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter'
         arguments:
+            - '@oro_config.manager'
             - '@oro_inventory.provider.inventory_quantity'
+            - 'oro_product.general_frontend_product_visibility'
         tags:
             - { name: oro.checkout.line_item.converter, alias: order }
 
@@ -586,3 +588,6 @@ services:
             - '@monolog.logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
+
+    oro_checkout.provider.checkout_line_items:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'

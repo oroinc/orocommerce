@@ -1,0 +1,44 @@
+include:
+    - '@OroCheckoutBundle:Shipping.yml'
+    - '@OroCheckoutBundle:AdditionalShipping.yml'
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:AdditionalPayment.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    #notUsedCustomer<n> are used only for assign proper ID for "customer1" it should be 4
+    notUsedCustomer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    notUsedCustomer2:
+        name: 'second customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    notUsedCustomer3:
+        name: 'third customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    customer1:
+        name: 'fourth customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        role: ['@buyer']
+        owner: '@admin'
+        website: '@website1'

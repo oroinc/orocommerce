@@ -5,8 +5,11 @@ namespace Oro\Bundle\CheckoutBundle\Converter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -14,15 +17,28 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class OrderLineItemConverter implements CheckoutLineItemConverterInterface
 {
+    /** @var ConfigManager */
+    protected $configManager;
+
     /** @var InventoryQuantityProviderInterface */
     protected $quantityProvider;
 
+    /** @var string */
+    protected $configPath;
+
     /**
+     * @param ConfigManager $configManager
      * @param InventoryQuantityProviderInterface $quantityProvider
+     * @param string $configPath
      */
-    public function __construct(InventoryQuantityProviderInterface $quantityProvider)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        InventoryQuantityProviderInterface $quantityProvider,
+        $configPath
+    ) {
+        $this->configManager = $configManager;
         $this->quantityProvider = $quantityProvider;
+        $this->configPath = $configPath;
     }
 
     /**
@@ -43,13 +59,18 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
         $checkoutLineItems = new ArrayCollection();
 
         foreach ($lineItems as $lineItem) {
+            if (!$this->isLineItemAvailable($lineItem)) {
+                continue;
+            }
+
             $availableQuantity = $this->getAvailableProductQuantity($lineItem);
             if (!$availableQuantity) {
                 continue;
             }
+
             $checkoutLineItem = new CheckoutLineItem();
             $checkoutLineItem
-                ->setFromExternalSource($lineItem->isFromExternalSource())
+                ->setFromExternalSource(false)
                 ->setPriceFixed(false)
                 ->setProduct($lineItem->getProduct())
                 ->setParentProduct($lineItem->getParentProduct())
@@ -59,13 +80,33 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
                 ->setProductUnitCode($lineItem->getProductUnitCode())
                 // use only available quantity of the product
                 ->setQuantity(min($availableQuantity, $lineItem->getQuantity()))
-                ->setPrice($lineItem->getPrice())
-                ->setPriceType($lineItem->getPriceType())
                 ->setComment($lineItem->getComment());
+
             $checkoutLineItems->add($checkoutLineItem);
         }
 
         return $checkoutLineItems;
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return bool
+     */
+    protected function isLineItemAvailable(OrderLineItem $lineItem)
+    {
+        $product = $lineItem->getProduct();
+
+        if (!$product || !$lineItem->getProductUnit()) {
+            return false;
+        }
+
+        if ($product->getStatus() !== Product::STATUS_ENABLED) {
+            return false;
+        }
+
+        $inventoryStatuses = $this->configManager->get($this->configPath);
+
+        return in_array($product->getInventoryStatus()->getId(), $inventoryStatuses, true);
     }
 
     /**

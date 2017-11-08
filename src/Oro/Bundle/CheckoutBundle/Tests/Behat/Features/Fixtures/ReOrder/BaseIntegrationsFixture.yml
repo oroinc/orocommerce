@@ -1,0 +1,11 @@
+include:
+    - '@OroFlatRateShippingBundle:FlatRateIntegration.yml'
+    - '@OroPaymentTermBundle:PaymentTermIntegration.yml'
+
+parameters:
+  flat_rate_label: 'Flat Rate One'
+  payment_term_label: 'Payment Term One'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm2:
+        label: net 90
