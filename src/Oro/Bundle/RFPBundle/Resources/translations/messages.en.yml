@@ -67,14 +67,23 @@ oro:
             entity_label: 'Request Additional Note'
             entity_plural_label: 'Request Additional Notes'
             id.label: 'ID'
-            request.label: 'Request'
+            request:
+                label: 'Request'
+                description: 'The Request related to the note'
             type:
                 label: 'Type'
+                description: 'The type of the note'
                 customer_note.label: 'Customer Note'
                 seller_note.label: 'Seller Note'
-            author.label: 'Author'
-            user_id.label: 'User Id'
-            text.label: 'Text'
+            author:
+                label: 'Author'
+                description: 'The author of the note'
+            user_id:
+                label: 'User Id'
+                description: 'The author user ID'
+            text:
+                label: 'Text'
+                description: 'The text of the note'
             created_at.label: 'Created At'
             updated_at.label: 'Updated At'
 
