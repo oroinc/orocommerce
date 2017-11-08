@@ -406,6 +406,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
 
+    Inventory Status:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
+
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

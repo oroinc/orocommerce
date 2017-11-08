@@ -1111,9 +1111,15 @@ services:
     oro_product.provider.brand_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
 
+    oro_product.service.product_collection_segment_filters_purifier:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentFiltersPurifier
+        public: false
+
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
         public: false
+        arguments:
+            - '@oro_product.service.product_collection_segment_filters_purifier'
 
     oro_product.event_listener.product_collection_datagrid_parameters_for_selected_products_grid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener

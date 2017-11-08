@@ -17,6 +17,19 @@ class ProductCollectionDefinitionConverter
     const EXCLUDED_FILTER_ALIAS = 'excl';
 
     /**
+     * @var ProductCollectionSegmentFiltersPurifier
+     */
+    private $filtersPurifier;
+
+    /**
+     * @param ProductCollectionSegmentFiltersPurifier $filterDefinitionValidator
+     */
+    public function __construct(ProductCollectionSegmentFiltersPurifier $filterDefinitionValidator)
+    {
+        $this->filtersPurifier = $filterDefinitionValidator;
+    }
+
+    /**
      * Put excluded or\and included filters into definition.
      * Accept empty definition, in such case will create needed.
      *
@@ -30,9 +43,15 @@ class ProductCollectionDefinitionConverter
     {
         $definition = $this->normalizeDefinition($rawDefinition);
 
+        $filters = [];
         if ($this->hasFilters($definition)) {
-            $definition['filters'] = [$definition['filters']];
+            $filters = $this->filtersPurifier->purifyFilters($definition['filters']);
+            if (!empty($filters)) {
+                $filters = [$filters];
+            }
         }
+
+        $definition['filters'] = $filters;
 
         if ($included) {
             if ($this->hasFilters($definition)) {
