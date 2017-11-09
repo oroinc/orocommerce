@@ -92,6 +92,7 @@ class WebsiteSearchProductIndexerListener
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
+        $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager->getAttributesByClass(Product::class);
         $attributeFamilies = $this->getAttributeFamilyRepository()->getFamilyIdsForAttributes($attributes);
 
@@ -133,11 +134,11 @@ class WebsiteSearchProductIndexerListener
 
             $this->processImages($event, $productImages, $product->getId());
 
-            if ($product->getPrimaryUnitPrecision()) {
+            if (isset($primaryUnits[$product->getId()])) {
                 $event->addField(
                     $product->getId(),
                     'unit',
-                    $product->getPrimaryUnitPrecision()->getProductUnitCode()
+                    $primaryUnits[$product->getId()]
                 );
             }
 
