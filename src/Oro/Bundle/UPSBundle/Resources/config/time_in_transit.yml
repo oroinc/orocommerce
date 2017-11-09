@@ -37,7 +37,7 @@ services:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory'
         arguments:
             - '@oro_ups.cache.time_in_transit'
-        lazy: true
+            - '@oro_ups.cache.lifetime_provider'
 
     oro_ups.provider.cacheable_time_in_transit:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider'

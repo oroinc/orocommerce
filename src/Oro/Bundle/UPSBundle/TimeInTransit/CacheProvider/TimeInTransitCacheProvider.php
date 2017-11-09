@@ -4,12 +4,19 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 
 class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
 {
     const CACHE_LIFETIME = 86400;
-    const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdHi';
+    const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdH';
+
+    /**
+     * @var UPSSettings
+     */
+    private $settings;
 
     /**
      * @var CacheProvider
@@ -17,11 +24,23 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
     private $cacheProvider;
 
     /**
-     * @param CacheProvider $cacheProvider
+     * @var LifetimeProviderInterface
      */
-    public function __construct(CacheProvider $cacheProvider)
-    {
+    private $lifetimeProvider;
+
+    /**
+     * @param UPSSettings               $settings
+     * @param CacheProvider             $cacheProvider
+     * @param LifetimeProviderInterface $lifetimeProvider
+     */
+    public function __construct(
+        UPSSettings $settings,
+        CacheProvider $cacheProvider,
+        LifetimeProviderInterface $lifetimeProvider
+    ) {
+        $this->settings = $settings;
         $this->cacheProvider = $cacheProvider;
+        $this->lifetimeProvider = $lifetimeProvider;
     }
 
     /**
@@ -29,7 +48,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
      */
     public function contains(AddressInterface $shipFromAddress, AddressInterface $shipToAddress, \DateTime $pickupDate)
     {
-        return $this->cacheProvider->contains($this->composeCacheKey($shipToAddress, $shipToAddress, $pickupDate));
+        return $this->cacheProvider->contains($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
     /**
@@ -37,7 +56,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
      */
     public function fetch(AddressInterface $shipFromAddress, AddressInterface $shipToAddress, \DateTime $pickupDate)
     {
-        return $this->cacheProvider->fetch($this->composeCacheKey($shipToAddress, $shipToAddress, $pickupDate));
+        return $this->cacheProvider->fetch($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
     /**
@@ -45,7 +64,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
      */
     public function delete(AddressInterface $shipFromAddress, AddressInterface $shipToAddress, \DateTime $pickupDate)
     {
-        return $this->cacheProvider->delete($this->composeCacheKey($shipToAddress, $shipToAddress, $pickupDate));
+        return $this->cacheProvider->delete($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
     /**
@@ -66,7 +85,9 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         TimeInTransitResultInterface $timeInTransitResult,
         $lifeTime = self::CACHE_LIFETIME
     ) {
-        $cacheKey = $this->composeCacheKey($shipToAddress, $shipToAddress, $pickupDate);
+        $cacheKey = $this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate);
+
+        $lifeTime = $this->lifetimeProvider->getLifetime($this->settings, $lifeTime);
 
         return $this->cacheProvider->save($cacheKey, $timeInTransitResult, $lifeTime);
     }
@@ -83,7 +104,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
     ) {
-        return sprintf(
+        $key = sprintf(
             '%s:%s:%s:%s:%s',
             $shipFromAddress->getCountryIso2(),
             $shipFromAddress->getPostalCode(),
@@ -91,5 +112,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
             $shipToAddress->getPostalCode(),
             $pickupDate->format(self::PICKUP_DATE_CACHE_KEY_FORMAT)
         );
+
+        return $this->lifetimeProvider->generateLifetimeAwareKey($this->settings, $key);
     }
 }
