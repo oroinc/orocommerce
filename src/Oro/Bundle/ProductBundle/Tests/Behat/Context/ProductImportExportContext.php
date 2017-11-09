@@ -62,12 +62,10 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
     public function copyImageFromFixturesToImageImportExportDir()
     {
         $fs = new Filesystem();
-        $imageName = 'dog1.jpg';
         $imagePath = sprintf(
-            '%s%s%s',
+            '%s%s',
             __DIR__,
-            '/../Features/Fixtures/',
-            $imageName
+            '/../Features/Fixtures/product_images_import'
         );
 
         $importImageDir = sprintf(
@@ -80,9 +78,9 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
             if ($fs->exists($importImageDir)) {
                 $fs->mkdir($importImageDir);
             }
-            $fs->copy(
+            $fs->mirror(
                 $imagePath,
-                sprintf('%s/%s', $importImageDir, $imageName)
+                $importImageDir
             );
         } catch (IOExceptionInterface $e) {
             echo "An error occurred while copying image" . $imagePath;
