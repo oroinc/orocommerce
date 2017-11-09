@@ -2,7 +2,8 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
-        Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
+        Oro\Bundle\ProductBundle\Entity\ProductUnit:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
         Oro\Bundle\ProductBundle\Entity\ProductImage:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image.md'
         Oro\Bundle\ProductBundle\Entity\ProductImageType:
@@ -38,6 +39,8 @@ api:
                                 constraints:
                                     - Count:
                                         min: 1
+        Extend\Entity\EV_Prod_Inventory_Status:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
         Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
             actions:
@@ -62,7 +65,8 @@ api:
                             form_options:
                                 constraints:
                                     - NotBlank: ~
-        Oro\Bundle\ProductBundle\Entity\Brand: ~
+        Oro\Bundle\ProductBundle\Entity\Brand:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/brand.md'
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
         Oro\Bundle\AttachmentBundle\Entity\File:
