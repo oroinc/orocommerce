@@ -3,25 +3,36 @@
 namespace Oro\Bundle\CatalogBundle\Datagrid\Filter;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\AbstractFilter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
+use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class SubcategoryFilter extends AbstractFilter
 {
     const FILTER_TYPE_NAME = 'subcategory';
+    const DEFAULT_VALUE = [];
 
     /**
      * {@inheritDoc}
      */
     protected function getFormType()
     {
-        return SubcategoryFilterType::NAME;
+        return SearchEntityFilterType::NAME;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function init($name, array $params)
+    {
+        $params[FilterUtility::FORM_OPTIONS_KEY]['class'] = Category::class;
+
+        parent::init($name, $params);
     }
 
     /**
