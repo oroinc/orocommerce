@@ -15,18 +15,19 @@ oro.tax:
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
 
     producttaxcode:
-        entity_label: 'Product Tax Code'
-        entity_plural_label: 'Product Tax Codes'
+        entity_label:         'Product Tax Code'
+        entity_plural_label:  'Product Tax Codes'
+        entity_description:   Product tax code is an identifier that labels the products that taxed in a particular way (e.g. Medical Products, Non-Taxable Prodcuts, Taxable Products, etc.)
         list:
-            description: 'List of Product Tax Codes'
-        products.label: 'Products'
-        id.label: 'ID'
+            description:      'List of Product Tax Codes'
+        products.label:       'Products'
+        id.label:             'ID'
         code:
-            label: 'Code'
-            description: The code of the tax
+            label:            'Code'
+            description:      The code of the tax
         description:
-            label: 'Description'
-            description: The description of the tax
+            label:            'Description'
+            description:      The description of the tax
 
     customertaxcode:
         entity_label: 'Customer Tax Code'

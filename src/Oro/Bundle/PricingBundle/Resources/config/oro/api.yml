@@ -71,6 +71,7 @@ api:
                             - NotBlank: ~
                 # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
             fields:
                 prices:
                     exclude: true
