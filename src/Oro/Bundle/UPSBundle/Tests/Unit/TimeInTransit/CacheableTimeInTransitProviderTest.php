@@ -85,7 +85,13 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             new CacheableTimeInTransitProvider($this->timeInTransit, $this->timeInTransitCacheProviderFactory);
     }
 
-    public function testGetTimeInTransitResult()
+    /**
+     * @dataProvider timeInTransitResultStatusDataProvider
+     *
+     * @param bool $status
+     * @param int  $saveCache
+     */
+    public function testGetTimeInTransitResult($status, $saveCache)
     {
         $this->mockUpsTransport();
 
@@ -103,8 +109,13 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->upsTransport, $this->address, $this->address, $this->pickupDate)
             ->willReturn($this->timeInTransitResult);
 
-        $this->timeInTransitCacheProvider
+        $this->timeInTransitResult
             ->expects(static::once())
+            ->method('getStatus')
+            ->willReturn($status);
+
+        $this->timeInTransitCacheProvider
+            ->expects(static::exactly($saveCache))
             ->method('save')
             ->with($this->address, $this->address, $this->pickupDate, $this->timeInTransitResult);
 
@@ -119,6 +130,23 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             );
 
         static::assertEquals($this->timeInTransitResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function timeInTransitResultStatusDataProvider()
+    {
+        return [
+            'result should be cached' => [
+                'status' => true,
+                'saveCache' => 1,
+            ],
+            'result should not be cached' => [
+                'status' => false,
+                'saveCache' => 0,
+            ],
+        ];
     }
 
     public function testGetTimeInTransitResultWhenCacheExists()

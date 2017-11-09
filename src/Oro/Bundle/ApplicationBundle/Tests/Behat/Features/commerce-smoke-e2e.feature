@@ -1,3 +1,5 @@
+#TODO: remove skip after fix BB-12701
+@skip
 @regression
 @smoke
 @community-edition-only
