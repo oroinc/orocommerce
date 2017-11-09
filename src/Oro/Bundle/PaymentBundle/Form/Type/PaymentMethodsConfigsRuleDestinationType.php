@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Form\DataTransformer\DestinationPostalCodeTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -49,6 +50,7 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
             ->add('postalCodes', TextType::class, [
                 'required' => false,
                 'label' => 'oro.payment.paymentmethodsconfigsruledestination.postal_codes.label',
+                StripTagsExtension::OPTION_NAME => true,
             ])
         ;
 

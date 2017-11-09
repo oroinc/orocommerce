@@ -1,0 +1,326 @@
+# Oro\Bundle\OrderBundle\Entity\OrderAddress
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order address record.
+
+{@inheritdoc}
+
+### get_list
+
+Retrieve a collection of order address records.
+
+The list of records that will be returned, could be limited by filters.
+
+{@inheritdoc}
+
+### create
+
+Create a new order address record.
+
+The created record is returned in the response.
+
+{@inheritdoc}
+
+{@request:json_api}
+Example:
+
+`</admin/api/orderaddresses>`
+
+```JSON
+{
+  "data": {
+    "type": "orderaddresses",
+      "attributes": {
+      "phone": "1234567890",
+      "label": "Address 01",
+      "street": "1215 Caldwell Road",
+      "city": "Rochester",
+      "postalCode": "14608",
+      "firstName": "Amanda",
+      "lastName": "Cole"
+    },
+    "relationships": {
+      "country": {
+        "data": {
+          "type": "countries",
+          "id": "US"
+        }
+      },
+      "region": {
+        "data": {
+          "type": "regions",
+          "id": "US-NY"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
+
+### update
+
+Edit a specific order address record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
+
+{@request:json_api}
+Example:
+
+`</admin/api/orderaddresses/1>`
+
+```JSON
+{
+  "data": {
+    "type": "orderaddresses",
+      "id": "1",
+      "attributes": {
+      "phone": "1234567890",
+      "label": "Address 01",
+      "street": "1215 Caldwell Road",
+      "city": "Rochester",
+      "postalCode": "14608",
+      "firstName": "Amanda",
+      "lastName": "Cole"
+    },
+    "relationships": {
+      "country": {
+        "data": {
+          "type": "countries",
+          "id": "US"
+        }
+      },
+      "region": {
+        "data": {
+          "type": "regions",
+          "id": "US-NY"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
+
+### delete
+
+Delete a specific order address record.
+
+{@inheritdoc}
+
+### delete_list
+
+Delete a collection of order address records.
+
+The list of records that will be deleted, could be limited by filters.
+
+{@inheritdoc}
+
+## FIELDS
+
+### city
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### postalCode
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### street
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*
+
+### firstName
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either "Organization" or "FirstName" and "LastName" must be defined.*
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+
+### lastName
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either "Organization" or "FirstName" and "LastName" must be defined.*
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+
+### organization
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*Either "Organization" or "FirstName" and "LastName" must be defined.*
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+
+### country
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+### region
+
+#### create
+
+{@inheritdoc}
+
+**Conditionally required field:**
+*State is required for some countries.*
+
+## SUBRESOURCES
+
+### country
+
+#### get_subresource
+
+Retrieve a record of country assigned to a specific address record.
+
+#### get_relationship
+
+Retrieve ID of country record assigned to a specific address record.
+
+#### update_relationship
+
+Replace country assigned to a specific address record.
+
+{@request:json_api}
+Example:
+
+`</admin/api/orderaddresses/1/relationships/country>`
+
+```JSON
+{
+  "data": {
+    "type": "countries",
+    "id": "US"
+  }
+}
+```
+{@/request}
+
+### region
+
+#### get_subresource
+
+Retrieve a record of region assigned to a specific region record.
+
+#### get_relationship
+
+Retrieve IDs of region records assigned to a specific region record.
+
+#### update_relationship
+
+Replace region assigned to a specific region record.
+
+{@request:json_api}
+Example:
+
+`</admin/api/orderaddresses/1/relationships/region>`
+
+```JSON
+{
+  "data": {
+    "type": "regions",
+    "id": "US-NY"
+  }
+}
+```
+{@/request}
+
+### customerUserAddress
+
+#### get_subresource
+
+Retrieve a record of customer user address assigned to a specific order address record.
+
+#### get_relationship
+
+Retrieve the ID of customer user address record assigned to a specific order address record.
+
+#### update_relationship
+
+Replace the customer user address assigned to a specific order address record.
+
+{@request:json_api}
+Example:
+
+`</admin/api/orderaddresses/1/relationships/customerUserAddress>`
+
+```JSON
+{
+  "data": {
+    "type": "customer_user_addresses",
+    "id": "4"
+  }
+}
+```
+{@/request}

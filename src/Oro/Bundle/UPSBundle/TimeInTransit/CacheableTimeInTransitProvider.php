@@ -52,7 +52,10 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
                 ->timeInTransit
                 ->getTimeInTransitResult($transport, $shipFromAddress, $shipToAddress, $pickupDate, $weight);
 
-            $timeInTransitCacheProvider->save($shipFromAddress, $shipToAddress, $pickupDate, $result);
+            // Cache only successful results.
+            if ($result->getStatus()) {
+                $timeInTransitCacheProvider->save($shipFromAddress, $shipToAddress, $pickupDate, $result);
+            }
         } else {
             $result = $timeInTransitCacheProvider->fetch($shipFromAddress, $shipToAddress, $pickupDate);
         }
