@@ -114,7 +114,7 @@ class OrderTest extends RestJsonApiTestCase
                         'customerNotes' => $newNotes,
                     ],
                     'relationships' => [
-                        'payment_term_7c4f1e8e' => [
+                        'paymentTerm' => [
                             'data' => [
                                 'type' => 'paymentterms',
                                 'id' => '<toString(@payment_term.net_20->id)>'

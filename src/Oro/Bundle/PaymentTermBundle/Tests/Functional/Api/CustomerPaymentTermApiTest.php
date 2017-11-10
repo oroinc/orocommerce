@@ -4,8 +4,6 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 class CustomerPaymentTermApiTest extends RestJsonApiTestCase
@@ -21,12 +19,10 @@ class CustomerPaymentTermApiTest extends RestJsonApiTestCase
 
     public function testPaymentTermIsReturnedInCustomerGetListResponse()
     {
-        $associationName = ExtendHelper::buildAssociationName(PaymentTerm::class);
-
         $response = $this->cget(['entity' => $this->getEntityType(Customer::class)]);
         $responseContent = $response->getContent();
 
-        $this->assertContains($associationName, $responseContent);
+        $this->assertContains('paymentTerm', $responseContent);
     }
 
     public function testCustomerGetResponseContainsAssignedPaymentTerm()
