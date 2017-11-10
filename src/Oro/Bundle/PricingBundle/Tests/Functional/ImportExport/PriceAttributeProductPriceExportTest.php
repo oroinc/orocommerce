@@ -24,16 +24,18 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
     {
         parent::setUp();
 
-        $this->loadFixtures([
-            LoadPriceAttributeProductPrices::class,
-        ]);
+        $this->loadFixtures(
+            [
+                LoadPriceAttributeProductPrices::class,
+            ]
+        );
     }
 
     public function testExportTemplate()
     {
         $this->assertExportTemplateWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__ . '/data/price_attribute_product_price/export_template.csv'
+            __DIR__.'/data/price_attribute_product_price/export_template.csv'
         );
     }
 
@@ -41,7 +43,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
     {
         $this->assertExportWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__ . '/data/price_attribute_product_price/export.csv'
+            __DIR__.'/data/price_attribute_product_price/export.csv'
         );
     }
 
@@ -49,7 +51,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
     {
         $this->assertImportWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__ . '/data/price_attribute_product_price/import.csv'
+            __DIR__.'/data/price_attribute_product_price/import.csv'
         );
 
         $this->assertImportedDataValid();
@@ -62,19 +64,21 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
 
     public function testImportResetAndAddStrategy()
     {
-        $configuration = new ImportExportConfiguration([
-            ImportExportConfiguration::FIELD_ENTITY_CLASS => PriceAttributeProductPrice::class,
-            ImportExportConfiguration::FIELD_IMPORT_JOB_NAME => 'price_attribute_product_price_import_from_csv',
-            ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS =>
-                'oro_pricing_product_price_attribute_price.reset',
-        ]);
+        $configuration = new ImportExportConfiguration(
+            [
+                ImportExportConfiguration::FIELD_ENTITY_CLASS => PriceAttributeProductPrice::class,
+                ImportExportConfiguration::FIELD_IMPORT_JOB_NAME => 'price_attribute_product_price_import_from_csv',
+                ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS =>
+                    'oro_pricing_product_price_attribute_price.reset',
+            ]
+        );
 
         $this->assertImportWorks(
             $configuration,
-            __DIR__ . '/data/price_attribute_product_price/import.csv'
+            __DIR__.'/data/price_attribute_product_price/import_reset_and_add.csv'
         );
 
-        $this->assertImportedDataValid();
+        $this->assertResetAndAddValid();
 
         static::assertCount(
             7,
@@ -86,8 +90,39 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
     {
         $this->assertImportValidateWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__ . '/data/price_attribute_product_price/import_wrong_data.csv',
-            __DIR__ . '/data/price_attribute_product_price/import_validation_errors.json'
+            __DIR__.'/data/price_attribute_product_price/import_wrong_data.csv',
+            __DIR__.'/data/price_attribute_product_price/import_validation_errors.json'
+        );
+    }
+
+    private function assertResetAndAddValid()
+    {
+//        product-1,priceAttributePriceList1,bottle,EUR,100.5500
+//        product-2,priceAttributePriceList1,liter,USD,100.500
+//        product-3,priceAttributePriceList2,liter,USD,50.0000
+
+        $this->assertSamePriceByUniqueKey(
+            '100.5500',
+            $this->getReference(LoadProductData::PRODUCT_1),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
+            $this->getReference(LoadProductUnits::BOTTLE),
+            'EUR'
+        );
+
+        $this->assertSamePriceByUniqueKey(
+            '100.500',
+            $this->getReference(LoadProductData::PRODUCT_2),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
+            $this->getReference(LoadProductUnits::LITER),
+            'USD'
+        );
+
+        $this->assertSamePriceByUniqueKey(
+            '50.0000',
+            $this->getReference(LoadProductData::PRODUCT_3),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2),
+            $this->getReference(LoadProductUnits::LITER),
+            'USD'
         );
     }
 
@@ -101,17 +136,12 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
                 'USD'
             )
         );
-        static::assertSame(
+        $this->assertSamePriceByUniqueKey(
             '120.0000',
-            $this
-                ->getPriceByUniqueKey(
-                    $this->getReference(LoadProductData::PRODUCT_1),
-                    $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
-                    $this->getReference(LoadProductUnits::LITER),
-                    'EUR'
-                )
-                ->getPrice()
-                ->getValue()
+            $this->getReference(LoadProductData::PRODUCT_1),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
+            $this->getReference(LoadProductUnits::LITER),
+            'EUR'
         );
         static::assertNull(
             $this->getPriceByUniqueKey(
@@ -121,54 +151,33 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
                 'USD'
             )
         );
-        static::assertSame(
+        $this->assertSamePriceByUniqueKey(
             '100.5500',
-            $this
-                ->getPriceByUniqueKey(
-                    $this->getReference(LoadProductData::PRODUCT_1),
-                    $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
-                    $this->getReference(LoadProductUnits::BOTTLE),
-                    'EUR'
-                )
-                ->getPrice()
-                ->getValue()
+            $this->getReference(LoadProductData::PRODUCT_1),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
+            $this->getReference(LoadProductUnits::BOTTLE),
+            'EUR'
         );
-        static::assertSame(
+        $this->assertSamePriceByUniqueKey(
             '0.0000',
-            $this
-                ->getPriceByUniqueKey(
-                    $this->getReference(LoadProductData::PRODUCT_2),
-                    $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
-                    $this->getReference(LoadProductUnits::LITER),
-                    'USD'
-                )
-                ->getPrice()
-                ->getValue()
+            $this->getReference(LoadProductData::PRODUCT_2),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
+            $this->getReference(LoadProductUnits::LITER),
+            'USD'
         );
-
-        static::assertSame(
+        $this->assertSamePriceByUniqueKey(
             '50.0000',
-            $this
-                ->getPriceByUniqueKey(
-                    $this->getReference(LoadProductData::PRODUCT_3),
-                    $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2),
-                    $this->getReference(LoadProductUnits::LITER),
-                    'USD'
-                )
-                ->getPrice()
-                ->getValue()
+            $this->getReference(LoadProductData::PRODUCT_3),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2),
+            $this->getReference(LoadProductUnits::LITER),
+            'USD'
         );
-        static::assertSame(
+        $this->assertSamePriceByUniqueKey(
             '0.0000',
-            $this
-                ->getPriceByUniqueKey(
-                    $this->getReference(LoadProductData::PRODUCT_3),
-                    $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_3),
-                    $this->getReference(LoadProductUnits::LITER),
-                    'CAD'
-                )
-                ->getPrice()
-                ->getValue()
+            $this->getReference(LoadProductData::PRODUCT_3),
+            $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_3),
+            $this->getReference(LoadProductUnits::LITER),
+            'CAD'
         );
         static::assertNull(
             $this->getPriceByUniqueKey(
@@ -178,6 +187,24 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
                 'USD'
             )
         );
+    }
+
+    protected function assertSamePriceByUniqueKey(
+        string $assertedPrice,
+        Product $product,
+        PriceAttributePriceList $priceList,
+        ProductUnit $unit,
+        string $currency
+    ) {
+        $price = $this->getPriceByUniqueKey($product, $priceList, $unit, $currency);
+
+        self::assertNotNull($price);
+
+        if (null === $price) {
+            return;
+        }
+
+        self::assertSame($assertedPrice, $price->getPrice()->getValue());
     }
 
     /**
@@ -195,12 +222,14 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
         string $currency
     ) {
         return $this->getPriceAttributeProductPriceRepository()
-            ->findOneBy([
-                'priceList' => $priceList,
-                'product' => $product,
-                'unit' => $unit,
-                'currency' => $currency,
-            ]);
+            ->findOneBy(
+                [
+                    'priceList' => $priceList,
+                    'product' => $product,
+                    'unit' => $unit,
+                    'currency' => $currency,
+                ]
+            );
     }
 
     /**
