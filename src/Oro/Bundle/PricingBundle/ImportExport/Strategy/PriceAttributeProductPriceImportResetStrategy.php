@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 
@@ -19,10 +20,15 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
     /**
      * {@inheritDoc}
      */
-    protected function afterProcessEntity($entity)
+    protected function beforeProcessEntity($entity)
     {
-        $priceList = $entity->getPriceList();
-        if (!$priceList || $priceList->getId() === null) {
+        if (!$entity instanceof PriceAttributeProductPrice || null === $entity->getPriceList()) {
+            return parent::beforeProcessEntity($entity);
+        }
+
+        $priceList = $this->getPersistedPriceList($entity->getPriceList());
+
+        if (null === $priceList) {
             return parent::afterProcessEntity($entity);
         }
 
@@ -32,7 +38,7 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
 
         $this->deletePricesByPriceList($priceList);
 
-        return parent::afterProcessEntity($entity);
+        return parent::beforeProcessEntity($entity);
     }
 
     /**
@@ -64,5 +70,25 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
         return $this->doctrineHelper
             ->getEntityManager(PriceAttributeProductPrice::class)
             ->getRepository(PriceAttributeProductPrice::class);
+    }
+
+    /**
+     * Database helper caches the result by criteria so there's no need to worry about request repetition
+     *
+     * @param BasePriceList $unPersistedPriceList
+     *
+     * @return null|PriceAttributePriceList
+     */
+    protected function getPersistedPriceList(BasePriceList $unPersistedPriceList)
+    {
+        $name = $unPersistedPriceList->getName();
+
+        if (!$name) {
+            return null;
+        }
+
+        return $this
+            ->databaseHelper
+            ->findOneBy(PriceAttributePriceList::class, ['name' => $name]);
     }
 }

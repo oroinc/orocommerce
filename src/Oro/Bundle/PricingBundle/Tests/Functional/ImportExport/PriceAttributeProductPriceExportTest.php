@@ -81,7 +81,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
         $this->assertResetAndAddValid();
 
         static::assertCount(
-            7,
+            5,
             $this->getPriceAttributeProductPriceRepository()->findAll()
         );
     }
@@ -97,10 +97,6 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
 
     private function assertResetAndAddValid()
     {
-//        product-1,priceAttributePriceList1,bottle,EUR,100.5500
-//        product-2,priceAttributePriceList1,liter,USD,100.500
-//        product-3,priceAttributePriceList2,liter,USD,50.0000
-
         $this->assertSamePriceByUniqueKey(
             '100.5500',
             $this->getReference(LoadProductData::PRODUCT_1),
@@ -110,7 +106,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
         );
 
         $this->assertSamePriceByUniqueKey(
-            '100.500',
+            '0.0000',
             $this->getReference(LoadProductData::PRODUCT_2),
             $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
             $this->getReference(LoadProductUnits::LITER),
@@ -118,7 +114,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
         );
 
         $this->assertSamePriceByUniqueKey(
-            '50.0000',
+            '300.0000',
             $this->getReference(LoadProductData::PRODUCT_3),
             $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2),
             $this->getReference(LoadProductUnits::LITER),

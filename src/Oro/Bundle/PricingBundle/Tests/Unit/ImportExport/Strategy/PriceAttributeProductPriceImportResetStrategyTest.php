@@ -39,6 +39,11 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
     private $context;
 
     /**
+     * @var DatabaseHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $databaseHelper;
+
+    /**
      * @var PriceAttributeProductPriceImportResetStrategy
      */
     private $strategy;
@@ -63,12 +68,13 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->context = $this->createMock(ContextInterface::class);
+        $this->databaseHelper = $this->createMock(DatabaseHelper::class);
 
         $this->strategy = new PriceAttributeProductPriceImportResetStrategy(
             $this->createMock(EventDispatcherInterface::class),
             $strategyHelper,
             $this->fieldHelper,
-            $this->createMock(DatabaseHelper::class),
+            $this->databaseHelper,
             $this->createMock(ChainEntityClassNameProvider::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
@@ -102,11 +108,30 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 
     public function testProcessResetsPricesOnlyOnce()
     {
+        $priceListName = 'msrp';
+
+        $priceList = $this->createMock(PriceAttributePriceList::class);
+        $priceList
+            ->expects(static::exactly(2))
+            ->method('getName')
+            ->willReturn($priceListName);
+
         $repository = $this->createMock(PriceAttributeProductPriceRepository::class);
         $repository
             ->expects(static::once())
             ->method('deletePricesByPriceList')
             ->willReturn(self::DELETED_COUNT);
+
+        $this->databaseHelper
+            ->expects(static::any())
+            ->method('findOneBy')
+            ->will(
+                $this->returnValueMap(
+                    array(
+                        array(PriceAttributePriceList::class, ['name' => $priceListName], $priceList),
+                    )
+                )
+            );
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager
@@ -123,12 +148,6 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             ->expects(static::once())
             ->method('incrementDeleteCount')
             ->with(self::DELETED_COUNT);
-
-        $priceList = $this->createMock(PriceAttributePriceList::class);
-        $priceList
-            ->expects(static::any())
-            ->method('getId')
-            ->willReturn(1);
 
         $entity = new PriceAttributeProductPrice();
         $entity->setPriceList($priceList);

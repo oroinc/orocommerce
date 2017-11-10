@@ -30,7 +30,7 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
     {
         $this->setPrice($entity);
 
-        return parent::beforeProcessEntity($entity);
+        return parent::afterProcessEntity($entity);
     }
 
     /**
