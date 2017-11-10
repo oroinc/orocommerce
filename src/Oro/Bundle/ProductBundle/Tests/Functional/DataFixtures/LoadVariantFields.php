@@ -56,7 +56,7 @@ class LoadVariantFields extends AbstractFixture
 
         $attributeGroup = $defaultFamily->getAttributeGroup(LoadProductDefaultAttributeFamilyData::GENERAL_GROUP_CODE);
 
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
         $variantField = $configManager->getConfigFieldModel(
             Product::class,
             OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME

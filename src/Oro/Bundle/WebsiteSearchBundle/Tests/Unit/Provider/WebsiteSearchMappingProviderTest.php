@@ -75,20 +75,34 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
     {
         $provider = $this->getProvider();
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch')
             ->with(WebsiteSearchMappingEvent::NAME, $this->isInstanceOf(WebsiteSearchMappingEvent::class))
-            ->willReturnCallback(
-                function ($name, WebsiteSearchMappingEvent $event) {
-                    $config = $event->getConfiguration();
-                    $config['Oro\TestBundle\Entity\TestEntity']['fields']['lastname'] = [
-                        'name' => 'lastname',
-                        'type' => 'text',
-                        'store' => true
-                    ];
+            ->willReturnOnConsecutiveCalls(
+                $this->returnCallback(
+                    function ($name, WebsiteSearchMappingEvent $event) {
+                        $config = $event->getConfiguration();
+                        $config['Oro\TestBundle\Entity\TestEntity']['fields']['lastname'] = [
+                            'name' => 'lastname',
+                            'type' => 'text',
+                            'store' => true
+                        ];
 
-                    $event->setConfiguration($config);
-                }
+                        $event->setConfiguration($config);
+                    }
+                ),
+                $this->returnCallback(
+                    function ($name, WebsiteSearchMappingEvent $event) {
+                        $config = $event->getConfiguration();
+                        $config['Oro\TestBundle\Entity\TestEntity']['fields']['email'] = [
+                            'name' => 'email',
+                            'type' => 'text',
+                            'store' => true
+                        ];
+
+                        $event->setConfiguration($config);
+                    }
+                )
             );
 
         $this->assertEquals(
@@ -119,6 +133,36 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
 
         // Check that cache was used
         $provider->getMappingConfig();
+
+        // Clear cache
+        $provider->clearCache();
+
+        // Check that cache was cleared
+        $this->assertEquals(
+            [
+                'Oro\TestBundle\Entity\TestEntity' => [
+                    'alias'  => 'test_entity',
+                    'fields' => [
+                        'firstname' => [
+                            'name' => 'firstname',
+                            'type' => 'text',
+                            'store' => true
+                        ],
+                        'qty' => [
+                            'name' => 'qty',
+                            'type' => 'integer',
+                            'store' => true
+                        ],
+                        'email' => [
+                            'name' => 'email',
+                            'type' => 'text',
+                            'store' => true
+                        ]
+                    ]
+                ]
+            ],
+            $provider->getMappingConfig()
+        );
     }
 
     /**
@@ -127,7 +171,7 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
     protected function getProvider()
     {
         $this->mappingConfigurationLoader = $this->createMock(ConfigurationLoaderInterface::class);
-        $this->mappingConfigurationLoader->expects($this->once())
+        $this->mappingConfigurationLoader->expects($this->any())
             ->method('getConfiguration')
             ->willReturn($this->testMapping);
 
