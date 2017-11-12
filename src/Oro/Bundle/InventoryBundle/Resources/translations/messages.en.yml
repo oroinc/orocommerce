@@ -16,13 +16,24 @@ oro:
             additional: Additional
 
         inventorylevel:
-            entity_label: Inventory Level
-            entity_plural_label: Inventory Levels
-            id.label: Id
-            quantity.label: Quantity
-            product.label: Product
-            product_unit_precision.label: Product Unit Precision
-            status.label: Status
+            entity_label:         Inventory Level
+            entity_plural_label:  Inventory Levels
+            entity_description:   Inventory Level is a product quantity that is availabile in a warehouse.
+            id.label:             Id
+            quantity:
+                label:            Quantity
+                description:      The quantity of product that is availabile in a warehouse.
+            product:
+                label:            Product
+                description:      A product the inventory level is for.
+            product_unit_precision:
+                label:            Product Unit Precision
+                description:      Product Unit Precision links the inventory level for the product with the product unit and its precision.
+            status.label:         Status
+            warehouse:
+                label:            Warehouse
+                description:      A warehouse this inventory level is for.
+
 
             error:
                 units: "Please add at least one Unit of Quantity to the current product to enable inventory management."

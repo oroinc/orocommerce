@@ -93,8 +93,6 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTimeInTransitResult($status, $saveCache)
     {
-        $this->mockUpsTransport();
-
         $this->mockTimeInTransitCacheProviderFactory();
 
         $this->timeInTransitCacheProvider
@@ -151,8 +149,6 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTimeInTransitResultWhenCacheExists()
     {
-        $this->mockUpsTransport();
-
         $this->mockTimeInTransitCacheProviderFactory();
 
         $this->timeInTransitCacheProvider
@@ -184,20 +180,12 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
         static::assertEquals($this->timeInTransitResult, $result);
     }
 
-    private function mockUpsTransport()
-    {
-        $this->upsTransport
-            ->expects(static::once())
-            ->method('getId')
-            ->willReturn(self::TRANSPORT_ID);
-    }
-
     private function mockTimeInTransitCacheProviderFactory()
     {
         $this->timeInTransitCacheProviderFactory
             ->expects(static::once())
             ->method('createCacheProviderForTransport')
-            ->with(self::TRANSPORT_ID)
+            ->with($this->upsTransport)
             ->willReturn($this->timeInTransitCacheProvider);
     }
 }
