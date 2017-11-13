@@ -50,6 +50,35 @@ workflows:
                         - '@equal': [true, $.result.isAllowed]
                         - '@equal': [true, $.result.isCheckoutAllowed]
 
+            start_from_shoppinglist_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowed
+                        attribute: $isAllowed
+                preconditions:
+                   '@and':
+                       - '@extendable':
+                            events: [extendable_condition.shopping_list_start]
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                            showErrors: true
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+
             unblock_and_recalculate_definition:
                 actions:
                     - '@assign_value': [$payment_method, null]

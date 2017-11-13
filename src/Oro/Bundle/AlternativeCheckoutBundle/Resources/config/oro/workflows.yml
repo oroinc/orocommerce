@@ -546,7 +546,10 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@has_elements': $.result.shoppingList.lineItems
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@extendable':
+                            events: [extendable_condition.shopping_list_start]
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout

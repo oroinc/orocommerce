@@ -125,9 +125,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
-        $this->assertContains($createOrderLabel, $crawler->html());
-        $this->client->followRedirects(true);
-        $crawler->selectLink($createOrderLabel)->link();
+        $this->assertNotContains($createOrderLabel, $crawler->html());
 
         $errorMessage = $this->translator->trans(
             $errorMessage,

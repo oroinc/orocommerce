@@ -24,7 +24,7 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-##### 1. Static options for product attributes
+#### 1. Static options for product attributes
 
 | Attribute| Options | Description |
 |----------|---------|-------------|
@@ -37,7 +37,7 @@ The created record is returned in the response.
 | newArrival | true / false |  |
 | | | |
 
-##### 2. Creating related entities together with the Product entity:
+#### 2. Creating related entities together with the Product entity:
 
 When creating a Product entity there are certain relations or associations with other entities
 which require by default that you specify their type and id so that they are loaded.
@@ -71,7 +71,7 @@ The same applies to other relation entities like "localizedfallbackvalues" type,
 properties like "names", "descriptions", "shortDescriptions", and also meta fields. You can see in
 the detailed example for product creation.
 
-##### 3. Using ProductPrecisionUnits:
+#### 3. Using ProductPrecisionUnits:
 
 A ProductPrecisionUnit is a relation between the product and unit of quantity and other details like
 conversion rates. Also, there is the concept of the primary ProductPrecisionUnit which is actually the
@@ -85,7 +85,7 @@ the primary unit precision
 - when sending the "primaryUnitPrecision" you need to specify the unit code, but it is mandatory that
 this unit code is found between the items of the **"unitPrecisions"**
 
-##### 4. Specify Category
+#### 4. Specify Category
 
 The Category is not directly handled by the Product, but you can specify it when creating or updating
 a Product entity, in the **"data"** section. Example:
@@ -99,7 +99,7 @@ a Product entity, in the **"data"** section. Example:
 
 You can see the existing categories using its API [here](#get--admin-api-categories)
 
-##### 5. Creating configurable products
+#### 5. Creating configurable products
 
 When creating a product , there are two types available : simple and configurable. Configurable products must
 have custom product attributes in the product attribute family specified and a result product variants can be added to a
@@ -147,7 +147,7 @@ in the **"relations"** section. Example:
 
 The simple product with custom attribute can now be linked to a configurable product as a product variant.
  
-##### 6. Specify variants (for configurable products only)
+#### 6. Specify variants (for configurable products only)
 
 When adding a new configurable product you can the variants of that product. To be able to specify
 variants of a product first you have to add a configurable attribute for product entity and create the simple products
@@ -215,7 +215,7 @@ For **parentProduct** id you need to specify any id of an existing product from 
 the link between the configurable product that is added on this request and the variants will be handled internally
 by the API. In **product** tag we specify the id of the product that will be a variant of the created product.
             
-##### 7. Using product images
+#### 7. Using product images
 
 Add images definition in the **"data"** section. Example:
 
@@ -656,7 +656,7 @@ and explanations.
 
 Other details:
 
-##### 1. Using ProductPrecisionUnits:
+#### 1. Using ProductPrecisionUnits:
 
 Besides what it is mentioned in the create Product section above, for the ProductPrecisionUnits
 there are a few more restrictions and situations that the API caller should know:
@@ -682,7 +682,7 @@ database (id which you use in the "data" section on the field) and specify the "
 of the "included" section (see example below)
 
 
-##### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
+#### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
 
 **Important** - When you want to update existing related entities, it can only be done by using the
 "included" section, the same way it is used in the create section. What is important to mention is:
