@@ -54,6 +54,8 @@ workflows:
                         attribute: $isAllowed
                 preconditions:
                    '@and':
+                       - '@extendable':
+                            events: [extendable_condition.shopping_list_start]
                        - '@has_elements': $.result.shoppingList.lineItems
                        - '@equal': [$isAllowed, true]
                 actions:

@@ -131,7 +131,7 @@ define(function(require) {
                     this._resetData();
 
                     var data = this.fieldsByName.product.inputWidget('data') || {};
-                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
+                    this.$el.find(this.options.selectors.productSku).text(data.sku || null);
                 }, this));
             }
         },

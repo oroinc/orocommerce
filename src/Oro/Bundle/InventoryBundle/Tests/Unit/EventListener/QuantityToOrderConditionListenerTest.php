@@ -17,8 +17,10 @@ use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -244,5 +246,27 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('allowedRFP', $errors[0]['parameters']);
         $this->assertEquals($errors[0]['message'], 'errorString');
         $this->assertTrue($errors[0]['parameters']['allowedRFP']);
+    }
+
+    public function testOnShoppingListStart()
+    {
+        $event = $this->createMock(ExtendableConditionEvent::class);
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->method('getWorkflowName')->willReturn('b2b_flow_checkout');
+        $workflowResult = $this->createMock(WorkflowResult::class);
+        $workflowResult->method('has')->willReturn(true);
+        $workflowItem->method('getResult')->willReturn($workflowResult);
+
+        $lineItems = [$this->createMock(LineItem::class, $this->createMock(LineItem::class))];
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->method('getLineItems')->willReturn($lineItems);
+        $workflowResult->method('get')->willReturn($shoppingList);
+
+        $this->validatorService->expects($this->once())->method('isLineItemListValid')->willReturn(false);
+        $event->method('getContext')->willReturn($workflowItem);
+
+        $event->expects($this->once())
+            ->method('addError');
+        $this->quantityToOrderConditionListener->onShoppingListStart($event);
     }
 }
