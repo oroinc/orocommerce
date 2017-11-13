@@ -19,7 +19,10 @@
         importProcessor: 'oro_product_image.add_or_replace',
         importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.product.productimage.entity_plural_label'|trans}),
         datagridName: gridName,
-        importLabel: 'oro.product.productimage.import.label'|trans
+        importLabel: 'oro.product.productimage.import.label'|trans,
+        options: {
+            'additionalNotices': ['oro.product.productimage.import.notice']
+        }
     } %}
 
     {% if is_granted('oro_product_create') %}
