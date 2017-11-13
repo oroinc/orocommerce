@@ -2,7 +2,7 @@ oro:
     product:
         entity_label: Product
         entity_plural_label: Products
-        entity_description: Represents product information
+        entity_description: Represents product information.
         id.label: Id
         sku_uppercase:
             label: SKU
@@ -15,6 +15,9 @@ oro:
             placeholder: "Enter Product Name or Item Number"
             not_found: Item Number Cannot Be Found
             description: The code of the product
+        back_order:
+            label:        Backorder
+            description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields:
@@ -153,25 +156,35 @@ oro:
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
-            entity_description: Represents product units information
+            entity_description: Represents product units information.
             code.label: Code
             default_precision:
                 label: 'Default Precision'
-                description: 'Default Precision for the product unit'
+                description: 'Default Precision for the product unit.'
             form.choose: Choose Unit...
             removed: '{title} - removed'
 
         productunitprecision:
-            entity_label: Product Unit Precision
-            entity_plural_label: Product Unit Precisions
-            id.label: Id
-            product.label: Product
-            unit.label: Unit
-            precision.label: Precision
-            conversion_rate.label: Conversion Rate
-            sell.label: Sell
-            sell_yes.label: Yes
-            sell_not.label: No
+            entity_label: 'Product Unit Precision'
+            entity_plural_label: 'Product Unit Precisions'
+            id.label: 'Id'
+            product:
+                label: 'Product'
+                description: 'The product related to the product unit precision.'
+            unit:
+                label: 'Unit'
+                description: 'The unit of quantity for the product.'
+            precision:
+                label: 'Precision'
+                description: 'The price precision.'
+            conversion_rate:
+                label: 'Conversion Rate'
+                description: 'The price conversion rate.'
+            sell:
+                label: 'Sell'
+                description: 'The sell flag that tells if the current product unit precision can be sold.'
+            sell_yes.label: 'Yes'
+            sell_not.label: 'No'
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"
@@ -529,7 +542,7 @@ oro:
             description:          Brand of the product
             entity_label:         Brand
             entity_plural_label:  Brands
-
+            entity_description:   The brand is a combination of the name and visual identity that is aimed to mark products or product lines of a single firm or manufacturer. Brand identifies the product and distinguishes it from the competition.
             descriptions:
                 label:    Description
                 description: The descriptions for the brand

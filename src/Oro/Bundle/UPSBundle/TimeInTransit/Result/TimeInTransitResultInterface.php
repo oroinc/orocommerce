@@ -7,7 +7,7 @@ interface TimeInTransitResultInterface
     /**
      * Identifies the success or failure of the interchange.
      *
-     * @return string
+     * @return bool
      */
     public function getStatus();
 

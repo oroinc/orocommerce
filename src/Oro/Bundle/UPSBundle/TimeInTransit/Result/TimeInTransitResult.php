@@ -46,7 +46,7 @@ class TimeInTransitResult extends ParameterBag implements TimeInTransitResultInt
      */
     public function getStatus()
     {
-        return (string)$this->get(self::STATUS_KEY);
+        return (bool)$this->get(self::STATUS_KEY);
     }
 
     /**

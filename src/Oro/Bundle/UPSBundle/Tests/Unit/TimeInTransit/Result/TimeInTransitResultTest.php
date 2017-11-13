@@ -9,7 +9,7 @@ class TimeInTransitResultTest extends \PHPUnit_Framework_TestCase
     /**
      * @internal
      */
-    const STATUS = '1';
+    const STATUS = true;
 
     /**
      * @internal

@@ -1,0 +1,5 @@
+api:
+    entity_aliases:
+        Extend\Entity\EV_Variant_Field_Code:
+            alias:        testapivariantfieldcode
+            plural_alias: testapivariantfieldcodes

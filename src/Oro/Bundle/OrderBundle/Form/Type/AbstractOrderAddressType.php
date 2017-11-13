@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
@@ -127,6 +128,7 @@ abstract class AbstractOrderAddressType extends AbstractType
             ->setDefaults([
                 'data_class' => $this->dataClass,
                 'isEditEnabled' => true,
+                'constraints' => [new NameOrOrganization()],
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface');
