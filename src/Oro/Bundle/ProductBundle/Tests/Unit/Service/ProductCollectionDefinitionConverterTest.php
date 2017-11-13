@@ -437,6 +437,10 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
             'excluded' => null
         ];
 
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
         $this->assertEquals($expectedParts, $this->definitionConverter->getDefinitionParts($definition));
     }
 
@@ -454,6 +458,10 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
         $expectedIncluded,
         $expectedExcluded
     ) {
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
         $definitionParts = $this->definitionConverter->getDefinitionParts(json_encode($definition));
 
         $this->assertEquals(
@@ -700,6 +708,9 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
      */
     public function testHasFilters($definition, $expectedResult)
     {
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
         $result = $this->definitionConverter->hasFilters($definition);
         $this->assertEquals($expectedResult, $result);
     }

@@ -22,11 +22,11 @@ class ProductCollectionDefinitionConverter
     private $filtersPurifier;
 
     /**
-     * @param ProductCollectionSegmentFiltersPurifier $filterDefinitionValidator
+     * @param ProductCollectionSegmentFiltersPurifier $filterDefinitionPurifier
      */
-    public function __construct(ProductCollectionSegmentFiltersPurifier $filterDefinitionValidator)
+    public function __construct(ProductCollectionSegmentFiltersPurifier $filterDefinitionPurifier)
     {
-        $this->filtersPurifier = $filterDefinitionValidator;
+        $this->filtersPurifier = $filterDefinitionPurifier;
     }
 
     /**
@@ -43,15 +43,7 @@ class ProductCollectionDefinitionConverter
     {
         $definition = $this->normalizeDefinition($rawDefinition);
 
-        $filters = [];
-        if ($this->hasFilters($definition)) {
-            $filters = $this->filtersPurifier->purifyFilters($definition['filters']);
-            if (!empty($filters)) {
-                $filters = [$filters];
-            }
-        }
-
-        $definition['filters'] = $filters;
+        $definition['filters'] = $this->normalizeFilters($definition);
 
         if ($included) {
             if ($this->hasFilters($definition)) {
@@ -121,6 +113,27 @@ class ProductCollectionDefinitionConverter
         }
 
         return !empty($definition['filters']);
+    }
+
+    /**
+     * @param array $definition
+     * @return array
+     */
+    private function normalizeFilters(array $definition): array
+    {
+        $filters = [];
+        if ($this->hasFilters($definition)) {
+            $filters = $definition['filters'];
+            if ($this->filtersPurifier) {
+                $filters = $this->filtersPurifier->purifyFilters($filters);
+            }
+
+            if (!empty($filters)) {
+                $filters = [$filters];
+            }
+        }
+
+        return $filters;
     }
 
     /**
