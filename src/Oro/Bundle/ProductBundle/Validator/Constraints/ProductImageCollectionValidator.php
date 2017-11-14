@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
 class ProductImageCollectionValidator extends ConstraintValidator
@@ -53,7 +53,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImage[]|Collection $value
+     * @param EntityProductImage[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
      *
      * {@inheritdoc}

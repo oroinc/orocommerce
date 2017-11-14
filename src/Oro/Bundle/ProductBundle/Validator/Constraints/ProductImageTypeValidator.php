@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType as EntityProductImageType;
 
 class ProductImageTypeValidator extends ConstraintValidator
 {
@@ -43,7 +43,7 @@ class ProductImageTypeValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImageType $value
+     * @param EntityProductImageType $value
      * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
@@ -59,11 +59,11 @@ class ProductImageTypeValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImageType $value
+     * @param EntityProductImageType $value
      * @param Constraint $constraint
      * @param $validTypes
      */
-    private function validateType(ProductImageType $value, Constraint $constraint, $validTypes)
+    private function validateType(EntityProductImageType $value, Constraint $constraint, $validTypes)
     {
         $validTypeNames = array_keys($validTypes);
 
@@ -80,11 +80,11 @@ class ProductImageTypeValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImageType $value
+     * @param EntityProductImageType $value
      * @param $constraint
      * @param $validTypes
      */
-    private function validateDuplicateType(ProductImageType $value, $constraint, $validTypes)
+    private function validateDuplicateType(EntityProductImageType $value, $constraint, $validTypes)
     {
         if (null === $value->getProductImage() ||
             ($existingProductImageTypes = $value->getProductImage()->getTypes())->contains($value)

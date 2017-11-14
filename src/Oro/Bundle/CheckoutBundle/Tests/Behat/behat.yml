@@ -92,6 +92,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    BackendOrderLineItemsGrid:
+      selector: 'div[data-page-component-name="order-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     OrderLineItemsGrid:
       selector: 'div[data-page-component-name="order-line-items-grid-frontend"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

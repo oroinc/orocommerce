@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -12,7 +10,6 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -66,12 +63,17 @@ class HasPriceInShoppingLineItemsListener
         /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
         $lineItems = $checkout->getLineItems();
+        $lineItemsWithNotFixedPrice = $lineItems->filter(
+            function (CheckoutLineItem $lineItem) {
+                return !$lineItem->isPriceFixed();
+            }
+        );
 
-        if (!$lineItems->count()) {
+        if ($lineItemsWithNotFixedPrice->isEmpty()) {
             return;
         }
 
-        if (!$this->isThereAPricePresent($lineItems)) {
+        if (!$this->isThereAPricePresent($lineItemsWithNotFixedPrice)) {
             $conditionEvent->addError(
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'
             );
@@ -91,7 +93,7 @@ class HasPriceInShoppingLineItemsListener
 
         $checkout = $context->get('checkout');
 
-        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
+        return $checkout instanceof Checkout;
     }
 
     /**
