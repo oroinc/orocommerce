@@ -348,7 +348,10 @@ workflows:
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                             options:
@@ -450,7 +453,10 @@ workflows:
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                         state_token:

@@ -7,6 +7,7 @@ data:
         productType: 'simple'
         featured: true
         newArrival: false
+        availability_date: '01-01-2018'
     relationships:
         owner:
             data:
@@ -65,6 +66,10 @@ data:
             data:
                 type: entityfieldfallbackvalues
                 id: '2abcd'
+        isUpcoming:
+            data:
+                type: entityfieldfallbackvalues
+                id: 'product-is-upcoming'
         minimumQuantityToOrder:
             data:
                 type: entityfieldfallbackvalues
@@ -99,6 +104,13 @@ included:
         attributes:
             fallback: null
             scalarValue: short
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: 'product-is-upcoming'
+        attributes:
+            fallback: category
+            scalarValue: null
             arrayValue: null
     -
         type: entityfieldfallbackvalues

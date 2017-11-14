@@ -325,7 +325,8 @@ Example:
       "variantFields": [],
       "productType": "simple",
       "featured": true,
-      "newArrival": false
+      "newArrival": false,
+      "availability_date": "01-01-2018"
     },
     "relationships": {
       "owner": {
@@ -426,6 +427,12 @@ Example:
           "id": "low2abcd"
         }
       },
+      "isUpcoming": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "product-is-upcoming"
+        }
+      },      
       "minimumQuantityToOrder": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -501,6 +508,15 @@ Example:
       "attributes": {
         "fallback": null,
         "scalarValue": "41",
+        "arrayValue": null
+      }
+    },
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "product-is-upcoming",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "1",
         "arrayValue": null
       }
     },
@@ -1300,6 +1316,20 @@ Example:
 
 ```
 {@/request}
+
+### isUpcoming
+
+#### get_subresource
+
+Retrieve the service records that store flag if this product will be available later
+
+#### get_relationship
+
+Retrieve an ID of the isUpcoming fallback entity for a specific product.
+
+#### update_relationship
+
+Replace the isUpcoming entity fallback value for a specific product record.
 
 ### lowInventoryThreshold
 

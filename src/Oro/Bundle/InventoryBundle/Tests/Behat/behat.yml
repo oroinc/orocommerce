@@ -5,5 +5,11 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroCheckoutBundle::FeatureContext
+        - OroPromotionBundle::PromotionContext
       paths:
         - '@OroInventoryBundle/Tests/Behat/Features'
