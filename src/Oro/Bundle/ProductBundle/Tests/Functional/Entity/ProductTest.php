@@ -33,6 +33,7 @@ class ProductTest extends WebTestCase
 
         $this->assertEquals($product->getDenormalizedDefaultName(), $defaultName);
         $this->assertEquals($product->getDenormalizedDefaultName(), $product->getDefaultName());
+        $this->assertEquals($product->getDenormalizedDefaultNameUppercase(), mb_strtoupper($product->getDefaultName()));
 
         $product->removeName($defaultName);
         $otherName = (new LocalizedFallbackValue)->setString('Light lamp');
@@ -42,5 +43,6 @@ class ProductTest extends WebTestCase
 
         $this->assertEquals($product->getDenormalizedDefaultName(), $otherName);
         $this->assertEquals($product->getDenormalizedDefaultName(), $product->getDefaultName());
+        $this->assertEquals($product->getDenormalizedDefaultNameUppercase(), mb_strtoupper($product->getDefaultName()));
     }
 }
