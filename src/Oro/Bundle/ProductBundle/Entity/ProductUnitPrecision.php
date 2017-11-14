@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
@@ -19,7 +18,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository")
- * @Config(mode="hidden")
+ * @Config
  */
 class ProductUnitPrecision implements ProductUnitHolderInterface
 {

@@ -3,7 +3,10 @@
 namespace Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
+use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 
 class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFactoryInterface
 {
@@ -23,25 +26,44 @@ class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFac
     private $cacheProviderPrototype;
 
     /**
-     * @param CacheProvider $cacheProvider
+     * @var LifetimeProviderInterface
      */
-    public function __construct(CacheProvider $cacheProvider)
+    private $lifetimeProvider;
+
+    /**
+     * @param CacheProvider             $cacheProvider
+     * @param LifetimeProviderInterface $lifetimeProvider
+     */
+    public function __construct(CacheProvider $cacheProvider, LifetimeProviderInterface $lifetimeProvider)
     {
         $this->cacheProviderPrototype = $cacheProvider;
+        $this->lifetimeProvider = $lifetimeProvider;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function createCacheProviderForTransport($transportId)
+    public function createCacheProviderForTransport(UPSSettings $settings): TimeInTransitCacheProviderInterface
     {
-        if (!array_key_exists($transportId, $this->cacheProviderInstances)) {
-            $cacheProvider = clone $this->cacheProviderPrototype;
-            $cacheProvider->setNamespace(sprintf('%s_%d', self::CACHE_NAMESPACE_PREFIX, $transportId));
+        $settingsId = $settings->getId();
 
-            $this->cacheProviderInstances[$transportId] = new TimeInTransitCacheProvider($cacheProvider);
+        if (!array_key_exists($settingsId, $this->cacheProviderInstances)) {
+            $this->cacheProviderInstances[$settingsId] = $this->createCacheProvider($settings);
         }
 
-        return $this->cacheProviderInstances[$transportId];
+        return $this->cacheProviderInstances[$settingsId];
+    }
+
+    /**
+     * @param UPSSettings $settings
+     *
+     * @return TimeInTransitCacheProviderInterface
+     */
+    private function createCacheProvider(UPSSettings $settings): TimeInTransitCacheProviderInterface
+    {
+        $cacheProvider = clone $this->cacheProviderPrototype;
+        $cacheProvider->setNamespace(sprintf('%s_%d', self::CACHE_NAMESPACE_PREFIX, $settings->getId()));
+
+        return new TimeInTransitCacheProvider($settings, $cacheProvider, $this->lifetimeProvider);
     }
 }

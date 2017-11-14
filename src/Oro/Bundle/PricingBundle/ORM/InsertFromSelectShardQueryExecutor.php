@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\ORM;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -13,6 +15,8 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
 {
+    const BUFFER_SIZE = 200; //use the same value as iterator
+
     /**
      * @var ShardManager
      */
@@ -37,14 +41,42 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
         $insertToTableName = $this->getTableName($className, $fields, $selectQueryBuilder);
         $columns = $this->getColumns($className, $fields);
         $selectQuery = $selectQueryBuilder->getQuery();
-        list($params, $types) = $this->helper->processParameterMappings($selectQuery);
         $selectQuery->useQueryCache(false);
         $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
         $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
-        $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
-
-        return $this->shardManager->getEntityManager()->getConnection()->executeUpdate($sql, $params, $types);
+        $sql = sprintf('insert into %s (%s) values ', $insertToTableName, implode(',', $columns));
+        $iterator = new BufferedQueryResultIterator($selectQuery);
+        $iterator->setBufferSize(static::BUFFER_SIZE);
+        $connection = $this->shardManager->getEntityManager()->getConnection();
+        $values = [];
+        $rowsCount = 0;
+        $columnsCount = count($columns);
+        $allTypes = [];
+        $types = [];
+        foreach ($iterator as $row) {
+            if (count($types) === 0) {
+                $types = $this->prepareParametersTypes($row);
+            }
+            $values = array_merge($values, array_values($row));
+            $allTypes = array_merge($allTypes, array_values($types));
+            $rowsCount++;
+            if ($rowsCount % static::BUFFER_SIZE === 0) {
+                $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
+                $connection->executeUpdate($fullSql, $values, $allTypes);
+                $rowsCount = 0;
+                unset($values);
+                unset($allTypes);
+                $values = [];
+                $allTypes = [];
+            }
+        }
+        if ($rowsCount > 0) {
+            $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
+            $connection->executeUpdate($fullSql, $values, $allTypes);
+            unset($values);
+            unset($allTypes);
+        }
     }
 
     /**
@@ -84,5 +116,53 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
         }
 
         return $this->shardManager->getEnabledShardName($className, ['priceList' => (int)$priceListId]);
+    }
+
+    /**
+     * @param int $columnsCount
+     * @param int $rowsCount
+     *
+     * @return string
+     */
+    private function prepareSqlPlaceholders($columnsCount, $rowsCount)
+    {
+        $placeHolders = '?';
+        if ($columnsCount - 1 > 0) {
+            $placeHolders .= str_repeat(',' . $placeHolders, $columnsCount - 1);
+        }
+        $placeHolders = '(' . $placeHolders . ')';
+
+        if ($rowsCount - 1 > 0) {
+            $placeHolders .= str_repeat(',' . $placeHolders, $rowsCount - 1);
+        }
+
+        return $placeHolders;
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return array
+     */
+    private function prepareParametersTypes(array $values)
+    {
+        $types = [];
+        foreach ($values as $value) {
+            switch (true) {
+                case is_bool($value):
+                    $types[] = Type::BOOLEAN;
+                    break;
+                case is_float($value):
+                    $types[] = Type::FLOAT;
+                    break;
+                case is_integer($value):
+                    $types[] = Type::INTEGER;
+                    break;
+                default:
+                    $types[] = Type::STRING;
+            }
+        }
+
+        return $types;
     }
 }

@@ -4,19 +4,26 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
 class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
+    use EntityTrait;
+
     /** @var ShippingMethodsConfigsRuleDestinationType */
     protected $formType;
 
@@ -62,7 +69,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     /**
      * @dataProvider submitDataProvider
      *
-     * @param array|null $data
+     * @param null|ShippingMethodsConfigsRuleDestination $data
      */
     public function testSubmit($data)
     {
@@ -71,13 +78,32 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         $this->assertEquals($data, $form->getData());
 
         $form->submit([
-            'country' => 'US',
+            'country' => 'CA',
+            'region' => 'CA-QC',
+            'postalCodes' => 'code3, code4',
         ]);
 
+        $form->isValid();
+
         $this->assertTrue($form->isValid());
+
+        /** @var ShippingMethodsConfigsRuleDestination $actual */
+        $actual = $form->getData();
+        // first code not stripped, because form used model transformer that split string by comma
+        // our extension applied on pre_submit, so all string stripped
+        $expected = $this->getDestination('CA', 'CA-QC', ['code3', 'code4_stripped']);
+
+        $this->assertInstanceOf(ShippingMethodsConfigsRuleDestination::class, $actual);
+        $this->assertEquals($expected->getCountry(), $actual->getCountry());
+        $this->assertEquals($expected->getRegion(), $actual->getRegion());
+
+        $getNames = function (ShippingMethodsConfigsRuleDestinationPostalCode $code) {
+            return $code->getName();
+        };
+
         $this->assertEquals(
-            (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('US')),
-            $form->getData()
+            $expected->getPostalCodes()->map($getNames)->getValues(),
+            $actual->getPostalCodes()->map($getNames)->getValues()
         );
     }
 
@@ -87,11 +113,40 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     public function submitDataProvider()
     {
         return [
-            [null],
-            [
-                (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('AF'))
+            'empty default form data' => [
+                'data' => null
             ],
+            'with default form data' => [
+                'data' => $this->getDestination('US', 'US-AL', ['code1', 'code2'])
+            ]
         ];
+    }
+
+    /**
+     * @param string $countryCode
+     * @param string $regionCode
+     * @param array $postalCodes
+     * @return ShippingMethodsConfigsRuleDestination
+     */
+    protected function getDestination($countryCode, $regionCode, array $postalCodes)
+    {
+        $country = new Country($countryCode);
+
+        $region = new Region($regionCode);
+        $region->setCountry($country);
+
+        $destination = new ShippingMethodsConfigsRuleDestination();
+        $destination->setCountry($country)
+            ->setRegion($region);
+
+        foreach ($postalCodes as $code) {
+            $postalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
+            $postalCode->setName($code);
+
+            $destination->addPostalCode($postalCode);
+        }
+
+        return $destination;
     }
 
     /**
@@ -107,7 +162,10 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
                     'translatable_entity' => $this->getTranslatableEntity(),
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                ['form' => [
+                    new AdditionalAttrExtension(),
+                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
+                ]]
             ),
             $this->getValidatorExtension(true)
         ];

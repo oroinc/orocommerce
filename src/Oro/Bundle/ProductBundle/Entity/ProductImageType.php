@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 /**
  * @ORM\Entity
  * @ORM\Table(
@@ -12,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *         @ORM\Index(name="idx_oro_product_image_type_type", columns={"type"})
  *     }
  * )
+ * @Config
  */
 class ProductImageType
 {

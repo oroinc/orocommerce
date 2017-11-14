@@ -1,0 +1,45 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroProductBundle:highlighting_new_products.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    brand1NameDefault:
+        string: 'ACME'
+    brand2NameDefault:
+        string: 'Default Ltd.'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand1:
+        owner: '@business_unit'
+        organization: '@organization'
+        addName: ['@brand1NameDefault']
+    brand2:
+        owner: '@business_unit'
+        organization: '@organization'
+        addName: ['@brand2NameDefault']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        brand: '@brand2'
+    product2:
+        sku: 'PSKU2'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision2'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        brand: '@brand1'

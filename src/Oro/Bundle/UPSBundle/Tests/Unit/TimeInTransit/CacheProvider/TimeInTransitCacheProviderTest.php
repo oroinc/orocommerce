@@ -4,15 +4,22 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\CacheProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
+use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class TimeInTransitCacheProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @internal
      */
-    const CACHE_KEY = 'US:12345:US:12345:201801011200';
+    const BEFORE_LIFETIME_PROVIDER_CACHE_KEY = 'US:12345:US:12345:2018010112';
+
+    /**
+     * @internal
+     */
+    const CACHE_KEY = 'US:12345:US:12345:2018010112_transport_id';
 
     /**
      * @internal
@@ -30,9 +37,19 @@ class TimeInTransitCacheProviderTest extends \PHPUnit_Framework_TestCase
     private $timeInTransitCacheProvider;
 
     /**
+     * @var UPSSettings|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $settings;
+
+    /**
      * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $cacheProvider;
+
+    /**
+     * @var LifetimeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $lifetimeProvider;
 
     /**
      * @var \DateTime
@@ -51,8 +68,19 @@ class TimeInTransitCacheProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->address = new AddressStub();
         $this->pickupDate = \DateTime::createFromFormat('d.m.Y H:i', self::PICKUP_DATE);
+        $this->settings = $this->createMock(UPSSettings::class);
         $this->cacheProvider = $this->createMock(CacheProvider::class);
-        $this->timeInTransitCacheProvider = new TimeInTransitCacheProvider($this->cacheProvider);
+        $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
+
+        $this->lifetimeProvider->method('generateLifetimeAwareKey')
+            ->with($this->settings, self::BEFORE_LIFETIME_PROVIDER_CACHE_KEY)
+            ->willReturn(self::CACHE_KEY);
+
+        $this->timeInTransitCacheProvider = new TimeInTransitCacheProvider(
+            $this->settings,
+            $this->cacheProvider,
+            $this->lifetimeProvider
+        );
     }
 
     public function testContains()
@@ -96,14 +124,28 @@ class TimeInTransitCacheProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testSave()
     {
-        $timeInTransitResult = $this->createMock(TimeInTransitResultInterface::class);
+        $timeInTransitResult = $this->createTimeInTransitResultMock();
 
         $this->cacheProvider
             ->expects(static::once())
             ->method('save')
             ->with(self::CACHE_KEY, $timeInTransitResult, self::LIFETIME);
 
+        $lifetime = 10;
+
+        $this->lifetimeProvider->method('getLifetime')
+            ->with($this->settings, $lifetime)
+            ->willReturn(self::LIFETIME);
+
         $this->timeInTransitCacheProvider
-            ->save($this->address, $this->address, $this->pickupDate, $timeInTransitResult, self::LIFETIME);
+            ->save($this->address, $this->address, $this->pickupDate, $timeInTransitResult, $lifetime);
+    }
+
+    /**
+     * @return TimeInTransitResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createTimeInTransitResultMock()
+    {
+        return $this->createMock(TimeInTransitResultInterface::class);
     }
 }

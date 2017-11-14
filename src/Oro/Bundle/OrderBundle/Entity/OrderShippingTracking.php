@@ -8,9 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * @ORM\Entity
  * @ORM\Table("oro_order_shipping_tracking")
- * @Config(
- *     mode="hidden",
- * )
+ * @Config
  */
 class OrderShippingTracking
 {
