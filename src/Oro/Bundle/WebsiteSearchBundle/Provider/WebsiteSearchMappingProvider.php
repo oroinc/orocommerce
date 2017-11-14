@@ -54,6 +54,14 @@ class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
     }
 
     /**
+     * Invalidate local cache
+     */
+    public function clearCache()
+    {
+        $this->configuration = null;
+    }
+
+    /**
      * @param ConfigurationInterface $configuration
      * @param array $configs
      *

@@ -77,9 +77,15 @@ and types [here](#get--admin-api-productimagetypes).
 
 ### get
 
+Retrieve a specific product image record.
+
 {@inheritdoc}
 
 ### get_list
+
+Retrieve a collection of product image records.
+
+The list of records that will be returned, could be limited by filters.
 
 {@inheritdoc}
 
@@ -177,12 +183,23 @@ Complete request example:
     }
 ```
 {@/request}
+Edit a specific product image record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 ### delete
+
+Delete a specific product image record.
 
 {@inheritdoc}
 
 ### delete_list
+
+Delete a collection of order records.
+
+The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -190,15 +207,15 @@ Complete request example:
 
 ### product
 
-The product for the productImage
+The product for the product image
 
 ### types
 
-The imaget types for the productImage
+The imaget types for the product image
 
 ### image
 
-The image file for the productImage
+The image file for the product image
 
 ## SUBRESOURCES
 
@@ -206,15 +223,15 @@ The image file for the productImage
 
 #### get_subresource
 
-Retrieve product of a specific productImage record. 
+Retrieve product of a specific product image record. 
 
 #### get_relationship
 
-Retrieve the ID of the product for a specific productImage.
+Retrieve the ID of the product for a specific product image.
 
 #### update_relationship
 
-Replace the product for a specific productImage.
+Replace the product for a specific product image.
 
 {@request:json_api}
 Example:
@@ -235,15 +252,15 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the types of a specific productImage record.
+Retrieve the records for the types of a specific product image record.
 
 #### get_relationship
 
-Retrieve a list of IDs for the types of a specific productImage record. 
+Retrieve a list of IDs for the types of a specific product image record. 
 
 #### update_relationship
 
-Replace the types for a specific productImage.
+Replace the types for a specific product image.
 
 {@request:json_api}
 Example:
@@ -265,7 +282,7 @@ Example:
 
 #### add_relationship
 
-Set the types of a specific productImage record.
+Set the types of a specific product image record.
 
 {@request:json_api}
 Example:
@@ -286,21 +303,21 @@ Example:
 
 #### delete_relationship
 
-Remove the types of a specific productImage record.
+Remove the types of a specific product image record.
 
 ### image
 
 #### get_subresource
 
-Retrieve the image file of a specific productImage record.  
+Retrieve the image file of a specific product image record.  
 
 #### get_relationship
 
-Retrieve the ID of the image file for a specific productImage.
+Retrieve the ID of the image file for a specific product image.
 
 #### update_relationship
 
-Replace the image file for a specific productImage.
+Replace the image file for a specific product image.
 
 {@request:json_api}
 Example:

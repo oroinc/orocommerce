@@ -29,7 +29,7 @@ Example:
 ```
 {@/request}
 
-##### Validation
+#### Validation
 
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
  of image defined in themes and it is not directly handled by the API.
@@ -119,6 +119,7 @@ Retrieve the ID of the productImage for a specific productImageType.
 Replace the productImage for a specific productImageType.
 
 {@request:json_api}
+
 Example:
 
 </api/productimagetypes/3/relationships/productImage>

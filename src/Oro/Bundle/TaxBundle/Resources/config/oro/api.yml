@@ -1,6 +1,7 @@
 api:
     entities:
         Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/product_tax_code.md'
             actions:
                 create: false
                 delete: false

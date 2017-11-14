@@ -1,5 +1,10 @@
 {% spaceless %}
     {% set destinations = record.getValue('destinations').toArray() %}
 
-    {{ destinations|join('</br>')|raw }}
+    {% set escapedDestinations={} %}
+    {% for key, destination in destinations %}
+        {% set escapedDestinations = escapedDestinations|merge({(key): destination|e}) %}
+    {% endfor %}
+
+    {{ escapedDestinations|join('</br>')|raw }}
 {% endspaceless %}

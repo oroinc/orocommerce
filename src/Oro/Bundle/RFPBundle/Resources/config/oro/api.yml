@@ -17,6 +17,7 @@ api:
                     exclude: true
 
         Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+            documentation_resource: '@OroRFPBundle/Resources/doc/api/request_product_item.md'
             fields:
                 value:
                     form_options:
@@ -32,8 +33,15 @@ api:
                     exclude: true
 
         Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote:
+            documentation_resource: '@OroRFPBundle/Resources/doc/api/request_additional_note.md'
             actions:
                 create: false
                 update: false
                 delete: false
                 delete_list: false
+
+        Extend\Entity\EV_Rfp_Customer_Status:
+            documentation_resource: '@OroRFPBundle/Resources/doc/api/request.md'
+
+        Extend\Entity\EV_Rfp_Internal_Status:
+            documentation_resource: '@OroRFPBundle/Resources/doc/api/request.md'

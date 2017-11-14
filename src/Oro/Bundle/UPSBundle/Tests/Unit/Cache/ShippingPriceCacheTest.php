@@ -4,177 +4,154 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Model\PriceRequest;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCacheKey;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
+    /**
+     * @internal
+     */
+    const CACHE_KEY = 'cache_key';
 
     /**
      * @internal
      */
-    const PROCESSING_TIME_ERROR_VALUE = 3;
+    const SETTINGS_ID = 7;
 
     /**
      * @var ShippingPriceCache
      */
-    protected $cache;
+    private $cache;
 
     /**
      * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $cacheProvider;
+    private $cacheProvider;
+
+    /**
+     * @var LifetimeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $lifetimeProvider;
+
+    /**
+     * @var UPSSettings|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $settings;
+
+    /**
+     * @var ShippingPriceCacheKey|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cacheKey;
 
     public function setUp()
     {
-        $this->cacheProvider = $this->getMockBuilder(CacheProvider::class)
-            ->setMethods(['fetch', 'contains', 'save', 'deleteAll'])->getMockForAbstractClass();
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
 
-        $this->cache = new ShippingPriceCache($this->cacheProvider);
+        $this->settings = $this->createMock(UPSSettings::class);
+
+        $this->settings
+            ->method('getId')
+            ->willReturn(self::SETTINGS_ID);
+
+        $this->cacheProvider->expects(static::once())
+            ->method('setNamespace')
+            ->with('oro_ups_shipping_price_'.self::SETTINGS_ID);
+
+        $this->cacheKey = $this->getCacheKeyMock($this->settings, self::CACHE_KEY);
+
+        $this->lifetimeProvider->method('generateLifetimeAwareKey')
+            ->with($this->settings, self::CACHE_KEY)
+            ->willReturn(self::CACHE_KEY);
+
+        $this->cache = new ShippingPriceCache($this->cacheProvider, $this->lifetimeProvider);
     }
 
     public function testFetchPrice()
     {
-        $invalidateCacheAt = new \DateTime('+30 minutes');
-
-        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
-
-        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
-
-        $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
-
         $this->cacheProvider->expects(static::once())
             ->method('contains')
-            ->with($stringKey)
+            ->with(self::CACHE_KEY)
             ->willReturn(true);
 
         $price = Price::create(10, 'USD');
 
         $this->cacheProvider->expects(static::once())
             ->method('fetch')
-            ->with($stringKey)
+            ->with(self::CACHE_KEY)
             ->willReturn($price);
 
-        static::assertSame($price, $this->cache->fetchPrice($key));
+        static::assertSame($price, $this->cache->fetchPrice($this->cacheKey));
     }
 
     public function testFetchPriceFalse()
     {
-        $invalidateCacheAt = new \DateTime('+30 minutes');
-
-        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
-
-        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
-
-        $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
-
         $this->cacheProvider->expects(static::once())
             ->method('contains')
-            ->with($stringKey)
+            ->with(self::CACHE_KEY)
             ->willReturn(false);
 
         $this->cacheProvider->expects(static::never())
             ->method('fetch');
 
-        static::assertFalse($this->cache->fetchPrice($key));
+        static::assertFalse($this->cache->fetchPrice($this->cacheKey));
     }
 
     public function testContainsPrice()
     {
-        $invalidateCacheAt = new \DateTime('+30 minutes');
-
-        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
-
-        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
-
-        $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
-
         $this->cacheProvider->expects(static::once())
             ->method('contains')
-            ->with($stringKey)
+            ->with(self::CACHE_KEY)
             ->willReturn(true);
 
-        static::assertTrue($this->cache->containsPrice($key));
+        static::assertTrue($this->cache->containsPrice($this->cacheKey));
     }
 
     public function testContainsPriceFalse()
     {
-        $invalidateCacheAt = new \DateTime('+30 minutes');
-
-        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
-
-        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
-
-        $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
-
         $this->cacheProvider->expects(static::once())
             ->method('contains')
-            ->with($stringKey)
+            ->with(self::CACHE_KEY)
             ->willReturn(false);
 
-        static::assertFalse($this->cache->containsPrice($key));
+        static::assertFalse($this->cache->containsPrice($this->cacheKey));
     }
 
-    /**
-     * @dataProvider savePriceDataProvider
-     *
-     * @param string $invalidateCacheAtString
-     * @param string $expectedLifetime
-     */
-    public function testSavePrice($invalidateCacheAtString, $expectedLifetime)
+    public function testSavePrice()
     {
-        $invalidateCacheAt = new \DateTime($invalidateCacheAtString);
+        $lifetime = 100;
 
-        $upsSettings = $this->getUPSSettingsMock($invalidateCacheAt);
-
-        $key = $this->cache->createKey($upsSettings, new PriceRequest(), 'method_id', 'type_id');
-
-        $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
+        $this->lifetimeProvider->method('getLifetime')
+            ->with($this->settings, 86400)
+            ->willReturn($lifetime);
 
         $price = Price::create(10, 'USD');
         $this->cacheProvider->expects(static::once())
             ->method('save')
-            ->with($stringKey, $price)
-            ->will($this->returnCallback(function ($actualKey, $price, $actualLifetime) use ($expectedLifetime) {
-                static::assertLessThan(self::PROCESSING_TIME_ERROR_VALUE, abs($expectedLifetime - $actualLifetime));
-            }));
+            ->with(self::CACHE_KEY, $price, $lifetime);
 
-        static::assertEquals($this->cache, $this->cache->savePrice($key, $price));
+        static::assertEquals($this->cache, $this->cache->savePrice($this->cacheKey, $price));
     }
 
     /**
-     * @return array
-     */
-    public function savePriceDataProvider()
-    {
-        return [
-            'earlier than lifetime' => [
-                'invalidateCacheAt' => '+3second',
-                'expectedLifetime' => 3,
-            ],
-            'in past' => [
-                'invalidateCacheAt' => '-1second',
-                'expectedLifetime' => ShippingPriceCache::LIFETIME,
-            ],
-            'later than lifetime' => [
-                'invalidateCacheAt' => '+24hour+10second',
-                'expectedLifetime' => ShippingPriceCache::LIFETIME + 10,
-            ],
-        ];
-    }
-
-    /**
-     * @param \DateTime $invalidateCacheAt
+     * @param UPSSettings $settings
+     * @param string      $stringKey
      *
-     * @return UPSTransport|object
+     * @return ShippingPriceCacheKey|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getUPSSettingsMock(\DateTime $invalidateCacheAt): UPSTransport
+    private function getCacheKeyMock(UPSSettings $settings, string $stringKey): ShippingPriceCacheKey
     {
-        return $this->getEntity(UPSTransport::class, [
-            'upsInvalidateCacheAt' => $invalidateCacheAt,
-        ]);
+        $mock = $this->createMock(ShippingPriceCacheKey::class);
+
+        $mock->method('getTransport')
+            ->willReturn($settings);
+
+        $mock->method('generateKey')
+            ->willReturn($stringKey);
+
+        return $mock;
     }
 }

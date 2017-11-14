@@ -14,7 +14,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -50,10 +50,12 @@ class OroRedirectBundleInstaller implements Installation
         $table->addColumn('url', 'string', ['length' => 1024]);
         $table->addColumn('slug_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('parameters_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
         $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
         $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
+        $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx', []);
     }
 
     /**

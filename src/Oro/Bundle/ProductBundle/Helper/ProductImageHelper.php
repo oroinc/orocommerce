@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
  */
 class ProductImageHelper
 {
+    /** @var  string $productImageImportDir */
+    protected $productImageImportDir;
+
     /**
      * @param ProductImage[]|Collection $productImages
      * @return array
@@ -32,5 +35,21 @@ class ProductImageHelper
         }
 
         return $imagesByTypeCounter;
+    }
+
+    /**
+     * @param string $productImageImportDir
+     */
+    public function setProductImageImportDir(string $productImageImportDir)
+    {
+        $this->productImageImportDir = $productImageImportDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductImageImportDir()
+    {
+        return $this->productImageImportDir;
     }
 }
