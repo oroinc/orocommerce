@@ -699,12 +699,19 @@ oro_behat_extension:
             type: xpath
             locator: '//div[contains(@id,"s2id_oro_product_brand-uid")]//abbr[@class="select2-search-choice-close"]'
 
+    Brand Form Name Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Name"]/../..//span[@class="fallback-status"]'
+
     Brand Form:
       selector: 'form[name="oro_product_brand"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
           Name: 'oro_product_brand[names][values][default]'
+          Name Second: 'oro_product_brand[names][values][localizations][2][value]'
+          Name Second Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
@@ -752,6 +759,14 @@ oro_behat_extension:
       options:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
+    Uploaded Product Image:
+      selector: 'img[src^="/media/cache/attachment"]'
+
+    Empty Product Image:
+      selector:
+       type: xpath
+       locator: '//img[contains (@src,"no_image.png")]'
 
   suites:
     # Revert by OPI-52

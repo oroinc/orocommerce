@@ -22,7 +22,11 @@ class QuantityToOrderConditionListener
     /**
      * @var array
      */
-    public static $allowedWorkflows = ['b2b_flow_checkout', 'b2b_flow_alternative_checkout'];
+    public static $allowedWorkflows = [
+        'b2b_flow_checkout',
+        'b2b_flow_alternative_checkout',
+        'b2b_flow_checkout_single_page',
+    ];
 
     /**
      * @var QuantityToOrderValidatorService
@@ -70,6 +74,27 @@ class QuantityToOrderConditionListener
         $checkout = $context->get('checkout');
         if (false === $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->addError('oro.inventory.frontend.messages.quantity_limits_error');
+        }
+    }
+
+    /**
+     * Event listener to check if shopping list actions can be run (ex. used to show/hide shopping list trigger buttons)
+     *
+     * @param ExtendableConditionEvent $event
+     */
+    public function onShoppingListStart(ExtendableConditionEvent $event)
+    {
+        $context = $event->getContext();
+        if (!$context instanceof WorkflowItem
+            || !in_array($context->getWorkflowName(), self::$allowedWorkflows)
+            || !$context->getResult()->get('shoppingList') instanceof ShoppingList
+        ) {
+            return;
+        }
+
+        $lineItems = $context->getResult()->get('shoppingList')->getLineItems();
+        if (false === $this->validatorService->isLineItemListValid($lineItems)) {
+            $event->addError('');
         }
     }
 

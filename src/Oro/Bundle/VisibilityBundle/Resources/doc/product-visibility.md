@@ -63,7 +63,7 @@ Also each row in cache tables stores one on the data sources:
 
 Here are tables that describe calculation algorithms for all cache values.   
 
-##### Visibility to All
+#### Visibility to All
 | `ProductToAllVisibilityResolved` | **Category**                                | **Config** | **Hidden**                                  | **Visible**                                 |
 |----------------------------------|---------------------------------------------|------------|---------------------------------------------|---------------------------------------------|
 | **scope (FK) (PK)**              | Get scope from current product visibility   |      X     | Get scope from current product visibility   | Get scope from current product visibility   |
@@ -73,7 +73,7 @@ Here are tables that describe calculation algorithms for all cache values.
 | **source**                       |                ::CATEGORY                   |      X     |                   ::STATIC                  |                   ::STATIC                  |
 | **category (FK)**                | Get category from product                   |      X     |                     null                    |                     null                    |
 
-##### Visibility to Customer Group
+#### Visibility to Customer Group
 | `ProductToCustomerGroupVisibilityResolved`    | **Current Product (Visibility to All)** | **Category**                                               | **Hidden**                                                | **Visible**                                               |
 |----------------------------------------------|-----------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
 | **scope (FK) (PK)**                          |                    X                    | Get scope from current customer group product visibility    | Get scope from current customer group product visibility   | Get scope from currentcustomer group product visibility    |
@@ -84,7 +84,7 @@ Here are tables that describe calculation algorithms for all cache values.
 | **source**                                   |                    X                    |                         ::CATEGORY                         |                          ::STATIC                         |                          ::STATIC                         |
 | **category (FK)**                            |                    X                    | Get category from product                                  |                            null                           |                            null                           |
 
-##### Visibility to Customer
+#### Visibility to Customer
 | `ProductToCustomerVisibilityResolved`    | **Customer Group** | **Current Product**                                  | **Category**                                         | **Hidden**                                                | **Visible**                                               |
 |-----------------------------------------|-------------------|------------------------------------------------------|------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
 | **scope (FK) (PK)**                     |         X         | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility               | Get scope from cur. acc. group product visibility         |
