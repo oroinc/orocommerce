@@ -5,7 +5,6 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -95,13 +94,13 @@ class SearchCategoryFilteringEventListener
             'type' => SubcategoryFilter::FILTER_TYPE_NAME,
             'rootCategory' => $category,
             'options' => [
-                'categories' => $subcategories
+                'choices' => $subcategories
             ]
         ];
 
         if ($includeSubcategories) {
             $filters['default'][SubcategoryFilter::FILTER_TYPE_NAME] = [
-                'value' => SubcategoryFilterType::DEFAULT_VALUE,
+                'value' => SubcategoryFilter::DEFAULT_VALUE,
             ];
         }
 

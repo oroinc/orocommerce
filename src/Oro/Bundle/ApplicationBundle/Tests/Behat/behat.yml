@@ -443,3 +443,9 @@ oro_behat_extension:
       selector:
         locator: '//span[contains (text(),"Name")]/../button[@title="Reset this filter"]'
         type: xpath
+
+    Add to New Front Shopping List:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div/a[@title="Add to New Front Shopping List"]'
+        type: xpath

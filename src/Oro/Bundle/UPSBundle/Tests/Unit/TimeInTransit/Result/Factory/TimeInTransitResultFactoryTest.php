@@ -79,7 +79,12 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @internal
      */
-    const STATUS = '1';
+    const STATUS_CODE = '1';
+
+    /**
+     * @internal
+     */
+    const STATUS = true;
 
     /**
      * @internal
@@ -123,7 +128,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn('');
 
         $expectedTimeInTransitResult = new TimeInTransitResult([
-            TimeInTransitResult::STATUS_KEY => 0,
+            TimeInTransitResult::STATUS_KEY => false,
             TimeInTransitResult::STATUS_DESCRIPTION_KEY => '',
         ]);
 
@@ -187,11 +192,12 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateResultByUpsClientResponseWithFault()
     {
-        $code = 0;
+        $status = false;
+        $code = '0';
         $description = 'sample';
 
         $expectedResult = new TimeInTransitResult([
-            TimeInTransitResult::STATUS_KEY => $code,
+            TimeInTransitResult::STATUS_KEY => $status,
             TimeInTransitResult::STATUS_DESCRIPTION_KEY => $description,
         ]);
 
@@ -321,7 +327,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
                         [
                             'ResponseStatus' =>
                                 [
-                                    'Code' => self::STATUS,
+                                    'Code' => self::STATUS_CODE,
                                     'Description' => self::STATUS_DESCRIPTION,
                                 ],
                             'TransactionReference' => [
@@ -377,7 +383,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int    $code
+     * @param string $code
      * @param string $description
      *
      * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject

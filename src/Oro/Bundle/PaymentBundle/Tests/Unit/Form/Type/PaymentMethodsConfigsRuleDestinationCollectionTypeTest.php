@@ -8,17 +8,20 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
-class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AbstractPaymentMethodsConfigRuleTypeTest
+class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressFormExtensionTestCase
 {
     use EntityTrait;
 
@@ -81,15 +84,40 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AbstractPay
                     ]
                 ],
                 'expected' => [
-                    (new PaymentMethodsConfigsRuleDestination())
-                        ->setCountry(new Country('US'))
-                        ->setRegion(new Region('US-AL'))
-                        ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
-                        ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2')),
+                    // first code not stripped, because form used model transformer that split string by comma
+                    // our extension applied on pre_submit, so all string stripped
+                    $this->getDestination('US', 'US-AL', ['code1', 'code2_stripped']),
                     (new PaymentMethodsConfigsRuleDestination())->setCountry(new Country('US')),
                 ]
             ]
         ];
+    }
+
+    /**
+     * @param string $countryCode
+     * @param string $regionCode
+     * @param array $postalCodes
+     * @return PaymentMethodsConfigsRuleDestination
+     */
+    protected function getDestination($countryCode, $regionCode, array $postalCodes)
+    {
+        $country = new Country($countryCode);
+
+        $region = new Region($regionCode);
+        $region->setCountry($country);
+
+        $destination = new PaymentMethodsConfigsRuleDestination();
+        $destination->setCountry($country)
+            ->setRegion($region);
+
+        foreach ($postalCodes as $code) {
+            $postalCode = new PaymentMethodsConfigsRuleDestinationPostalCode();
+            $postalCode->setName($code);
+
+            $destination->addPostalCode($postalCode);
+        }
+
+        return $destination;
     }
 
     /**
@@ -111,7 +139,9 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AbstractPay
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'translatable_entity' => $translatableEntity,
                 ],
-                []
+                ['form' => [
+                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                ]]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];

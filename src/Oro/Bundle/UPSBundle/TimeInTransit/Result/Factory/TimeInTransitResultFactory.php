@@ -37,7 +37,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
 
         if ($data && array_key_exists('Fault', $data)) {
             return new TimeInTransitResult([
-                TimeInTransitResult::STATUS_KEY => 0,
+                TimeInTransitResult::STATUS_KEY => false,
                 TimeInTransitResult::STATUS_DESCRIPTION_KEY => $this->getErrorMessage($data),
             ]);
         }
@@ -49,7 +49,8 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
             // Define a shortcut to make lines shorter.
             $timeInTransitResponse =& $data['TimeInTransitResponse'];
 
-            $responseStatusCode = $timeInTransitResponse['Response']['ResponseStatus']['Code'];
+            // A "1" normally indicates a successful response, whereas a "0" indicates a Transient or Hard error.
+            $responseStatusCode = (string) $timeInTransitResponse['Response']['ResponseStatus']['Code'];
             $responseStatusDescription = $timeInTransitResponse['Response']['ResponseStatus']['Description'];
 
             foreach ($timeInTransitResponse['TransitResponse']['ServiceSummary'] as $serviceTimeInTransit) {
@@ -79,7 +80,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
         $transactionIdentifier = $this->getOptionalParameter('TransactionIdentifier', $data);
 
         return new TimeInTransitResult([
-            TimeInTransitResult::STATUS_KEY => $responseStatusCode,
+            TimeInTransitResult::STATUS_KEY => $responseStatusCode === '1',
             TimeInTransitResult::STATUS_DESCRIPTION_KEY => $responseStatusDescription,
             TimeInTransitResult::ESTIMATED_ARRIVALS_KEY => $estimatedArrivals,
             TimeInTransitResult::AUTO_DUTY_CODE_KEY => $autoDutyCode,
@@ -94,7 +95,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
     public function createExceptionResult(RestException $exception)
     {
         $parameters = [
-            TimeInTransitResult::STATUS_KEY => 0,
+            TimeInTransitResult::STATUS_KEY => false,
             TimeInTransitResult::STATUS_DESCRIPTION_KEY => $exception->getMessage(),
         ];
 

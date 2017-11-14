@@ -15,3 +15,4 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
             element: Payment Method Config Type Field
+          Destination1PostalCodes: 'oro_payment_methods_configs_rule[destinations][0][postalCodes]'
