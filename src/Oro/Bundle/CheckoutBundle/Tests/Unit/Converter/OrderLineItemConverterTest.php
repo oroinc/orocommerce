@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,9 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
     /** @var InventoryQuantityProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $quantityProvider;
+
+    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $authorizationChecker;
 
     /** @var OrderLineItemConverter */
     protected $converter;
@@ -42,8 +46,14 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
             ->willReturn([Product::INVENTORY_STATUS_IN_STOCK]);
 
         $this->quantityProvider = $this->createMock(InventoryQuantityProviderInterface::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->converter = new OrderLineItemConverter($this->configManager, $this->quantityProvider, self::CONFIG_PATH);
+        $this->converter = new OrderLineItemConverter(
+            $this->configManager,
+            $this->quantityProvider,
+            $this->authorizationChecker,
+            self::CONFIG_PATH
+        );
     }
 
     public function testIsSourceSupported()
@@ -58,11 +68,17 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
      * @param array $orderLineItems
      * @param bool $canDecrement
      * @param int $availableQuantity
+     * @param bool $isVisible
      * @param array $checkoutLineItems
      */
-    public function testConvert(array $orderLineItems, $canDecrement, $availableQuantity, array $checkoutLineItems)
-    {
-        $this->quantityProvider->expects($this->once())
+    public function testConvert(
+        array $orderLineItems,
+        $canDecrement,
+        $availableQuantity,
+        $isVisible,
+        array $checkoutLineItems
+    ) {
+        $this->quantityProvider->expects($this->any())
             ->method('canDecrement')
             ->willReturnCallback(
                 function (Product $product) use ($canDecrement) {
@@ -75,6 +91,14 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function (Product $product) use ($availableQuantity) {
                     return $product->getId() === 3 ? $availableQuantity : 0;
+                }
+            );
+
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->willReturnCallback(
+                function ($argument, Product $product) use ($isVisible) {
+                    return $isVisible && $argument === 'VIEW' && $product->getId() === 3;
                 }
             );
 
@@ -128,6 +152,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'canDecrement' => false,
                 'availableQuantity' => 10,
+                'isVisible' => true,
                 'checkoutLineItems' => [],
             ],
             'can decrement with available quantity' => [
@@ -138,6 +163,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'canDecrement' => true,
                 'availableQuantity' => 10,
+                'isVisible' => true,
                 'checkoutLineItems' => [
                     $this->getEntity(
                         CheckoutLineItem::class,
@@ -161,6 +187,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'canDecrement' => false,
                 'availableQuantity' => 10,
+                'isVisible' => true,
                 'checkoutLineItems' => [
                     $this->getEntity(
                         CheckoutLineItem::class,
@@ -184,6 +211,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'canDecrement' => true,
                 'availableQuantity' => 0,
+                'isVisible' => true,
                 'checkoutLineItems' => [],
             ],
             'can decrement with less available quantity' => [
@@ -194,6 +222,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'canDecrement' => true,
                 'availableQuantity' => 5,
+                'isVisible' => true,
                 'checkoutLineItems' => [
                     $this->getEntity(
                         CheckoutLineItem::class,
@@ -208,6 +237,17 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                         ]
                     ),
                 ],
+            ],
+            'can decrement not visible' => [
+                'orderLineItems' => [
+                    $this->getEntity(OrderLineItem::class, ['product' => $product1, 'productUnit' => $productUnit]),
+                    $this->getEntity(OrderLineItem::class, ['product' => $product2, 'productUnit' => $productUnit]),
+                    $orderLineItem
+                ],
+                'canDecrement' => true,
+                'availableQuantity' => 100,
+                'isVisible' => false,
+                'checkoutLineItems' => [],
             ],
         ];
     }

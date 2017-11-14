@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Converts Order line items to CheckoutLineItems.
@@ -23,21 +24,27 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
     /** @var InventoryQuantityProviderInterface */
     protected $quantityProvider;
 
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
     /** @var string */
     protected $configPath;
 
     /**
      * @param ConfigManager $configManager
      * @param InventoryQuantityProviderInterface $quantityProvider
+     * @param AuthorizationCheckerInterface $authorizationChecker
      * @param string $configPath
      */
     public function __construct(
         ConfigManager $configManager,
         InventoryQuantityProviderInterface $quantityProvider,
+        AuthorizationCheckerInterface $authorizationChecker,
         $configPath
     ) {
         $this->configManager = $configManager;
         $this->quantityProvider = $quantityProvider;
+        $this->authorizationChecker = $authorizationChecker;
         $this->configPath = $configPath;
     }
 
@@ -106,7 +113,11 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
 
         $inventoryStatuses = $this->configManager->get($this->configPath);
 
-        return in_array($product->getInventoryStatus()->getId(), $inventoryStatuses, true);
+        if (!in_array($product->getInventoryStatus()->getId(), $inventoryStatuses, true)) {
+            return false;
+        }
+
+        return $this->authorizationChecker->isGranted('VIEW', $lineItem->getProduct());
     }
 
     /**
