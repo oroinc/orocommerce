@@ -36,7 +36,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
 
         -
-            name: unit
+            name: primary_unit
             type: text
 
 Oro\Bundle\ProductBundle\Entity\Brand:

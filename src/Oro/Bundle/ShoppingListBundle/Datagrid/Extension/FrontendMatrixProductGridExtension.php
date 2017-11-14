@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
@@ -17,7 +17,8 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 class FrontendMatrixProductGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'frontend-product-search-grid';
-    const COLUMN_NAME = 'matrixForm';
+    const MATRIX_FORM_COLUMN_NAME = 'matrixForm';
+    const PRODUCT_PRICES_COLUMN_NAME = 'productPrices';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
@@ -82,7 +83,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      */
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
-        /** @var ResultRecordInterface[] $rows */
+        /** @var ResultRecord[] $rows */
         $rows = $result->getData();
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
         $shoppingList = $this->shoppingListManager->getForCurrentUser();
@@ -101,11 +102,17 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                 $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
                 $formHtml = $this->matrixGridOrderFormProvider->getMatrixOrderFormHtml($product, $shoppingList);
 
-                $row->setValue(self::COLUMN_NAME, $formHtml);
-                $row->setValue('productPrices', $this->frontendProductPricesProvider->getByProducts($simpleProducts));
+                $row->setValue(self::MATRIX_FORM_COLUMN_NAME, $formHtml);
+                $row->setValue(
+                    self::PRODUCT_PRICES_COLUMN_NAME,
+                    $this->frontendProductPricesProvider->getByProducts($simpleProducts)
+                );
             }
         }
 
-        $config->addColumn('productPrices', ['frontend_type' => 'array', 'type' => 'field', 'renderable' => false]);
+        $config->addColumn(
+            self::PRODUCT_PRICES_COLUMN_NAME,
+            ['frontend_type' => 'array', 'type' => 'field', 'renderable' => false]
+        );
     }
 }

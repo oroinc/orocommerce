@@ -137,7 +137,7 @@ class WebsiteSearchProductIndexerListener
             if (isset($primaryUnits[$product->getId()])) {
                 $event->addField(
                     $product->getId(),
-                    'unit',
+                    'primary_unit',
                     $primaryUnits[$product->getId()]
                 );
             }
