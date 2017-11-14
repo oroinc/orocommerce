@@ -82,6 +82,16 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->gridExtension->isApplicable($config));
     }
 
+    public function testIsNotApplicable()
+    {
+        $config = DatagridConfiguration::create(
+            [
+                DatagridConfiguration::NAME_KEY => 'frontend-product-grid'
+            ]
+        );
+        $this->assertFalse($this->gridExtension->isApplicable($config));
+    }
+
     public function testVisitResult()
     {
         $resultObject = ResultsObject::create([

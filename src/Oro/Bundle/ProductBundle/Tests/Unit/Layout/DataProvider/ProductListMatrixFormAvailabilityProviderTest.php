@@ -49,69 +49,64 @@ class ProductListMatrixFormAvailabilityProviderTest extends \PHPUnit_Framework_T
         );
     }
 
-    public function testIsInlineMatrixFormAvailableIsMobile()
+    /**
+     * @return array
+     */
+    public function isInlineMatrixFormAvailableDataProvider()
     {
-        $this->userAgent->expects($this->once())
-            ->method('isMobile')
-            ->willReturn(true);
-
-
-        $this->assertFalse($this->provider->isInlineMatrixFormAvailable($this->getEntity(Product::class)));
+        return [
+            'is mobile' => [
+                'isMobile' => true,
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+                'isMatrixFormAvailable' => true,
+                'expected' => false,
+            ],
+            'config not inline' => [
+                'isMobile' => false,
+                'matrixFormConfig' => 'none',
+                'isMatrixFormAvailable' => true,
+                'expected' => false,
+            ],
+            'matrix form not available' => [
+                'isMobile' => false,
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+                'isMatrixFormAvailable' => false,
+                'expected' => false,
+            ],
+            'matrix form available' => [
+                'isMobile' => false,
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+                'isMatrixFormAvailable' => true,
+                'expected' => true,
+            ],
+        ];
     }
 
-    public function testIsInlineMatrixFormAvailableConfigNotInline()
+    /**
+     * @param bool $isMobile
+     * @param string $matrixFormConfig
+     * @param bool $isMatrixFormAvailable
+     * @param bool $expected
+     * @dataProvider isInlineMatrixFormAvailableDataProvider
+     */
+    public function testIsInlineMatrixFormAvailable($isMobile, $matrixFormConfig, $isMatrixFormAvailable, $expected)
     {
         $this->userAgent->expects($this->once())
             ->method('isMobile')
-            ->willReturn(false);
+            ->willReturn($isMobile);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
             ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_LISTING))
-            ->willReturn('none');
-
-        $this->assertFalse($this->provider->isInlineMatrixFormAvailable($this->getEntity(Product::class)));
-    }
-
-    public function testIsInlineMatrixFormAvailableMatrixFormIsNotAvailable()
-    {
-        $this->userAgent->expects($this->once())
-            ->method('isMobile')
-            ->willReturn(false);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_LISTING))
-            ->willReturn(Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE);
+            ->willReturn($matrixFormConfig);
 
         $product = $this->getEntity(Product::class);
 
-        $this->productFormAvailabilityProvider->expects($this->once())
+        $this->productFormAvailabilityProvider->expects($this->any())
             ->method('isMatrixFormAvailable')
             ->with($product)
-            ->willReturn(false);
+            ->willReturn($isMatrixFormAvailable);
 
-        $this->assertFalse($this->provider->isInlineMatrixFormAvailable($product));
-    }
-
-    public function testIsInlineMatrixFormAvailable()
-    {
-        $this->userAgent->expects($this->once())
-            ->method('isMobile')
-            ->willReturn(false);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_LISTING))
-            ->willReturn(Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE);
-
-        $product = $this->getEntity(Product::class);
-
-        $this->productFormAvailabilityProvider->expects($this->once())
-            ->method('isMatrixFormAvailable')
-            ->with($product)
-            ->willReturn(true);
-
-        $this->assertTrue($this->provider->isInlineMatrixFormAvailable($product));
+        $this->assertEquals($expected, $this->provider->isInlineMatrixFormAvailable($product));
     }
 }

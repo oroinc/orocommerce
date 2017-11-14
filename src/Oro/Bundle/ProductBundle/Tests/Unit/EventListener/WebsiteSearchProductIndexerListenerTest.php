@@ -13,8 +13,6 @@ use Oro\Bundle\FrontendBundle\Manager\AttachmentManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
@@ -113,8 +111,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $attributeFamilyId = 42;
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
 
-        $unit = $this->getEntity(ProductUnit::class, ['code' => 'each']);
-        $primaryUnit = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
         $product = $this->getEntity(
             Product::class,
             [
@@ -125,7 +121,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
-                'primaryUnitPrecision' => $primaryUnit
             ]
         );
 
@@ -157,6 +152,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->with([777])
             ->willReturn([777 => ['item', 'set']]);
 
+        $unitRepository->expects($this->once())
+            ->method('getPrimaryProductsUnits')
+            ->with([777])
+            ->willReturn([777 => 'item']);
+
         $attributeId1 = 1001;
         $attributeId2 = 1002;
         $attributeId3 = 1003;
@@ -185,11 +185,17 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             );
 
         $this->registry
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('getRepository')
-            ->withConsecutive(['OroProductBundle:Product'], ['OroProductBundle:ProductUnit'], [AttributeFamily::class])
+            ->withConsecutive(
+                ['OroProductBundle:Product'],
+                ['OroProductBundle:ProductUnit'],
+                ['OroProductBundle:ProductUnit'],
+                [AttributeFamily::class]
+            )
             ->willReturnOnConsecutiveCalls(
                 $productRepository,
+                $unitRepository,
                 $unitRepository,
                 $attributeFamilyRepository
             );
@@ -303,9 +309,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     'all_text' => false
                 ]
             ],
-            'unit' => [
+            'primary_unit' => [
                 [
-                    'value' => 'each',
+                    'value' => 'item',
                     'all_text' => false
                 ]
             ]
