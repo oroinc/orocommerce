@@ -691,6 +691,8 @@ services:
         public: false
         arguments:
             - '@event_dispatcher'
+            - '@oro_layout.provider.image_type'
+            - '@oro_product.helper.product_image_helper'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
@@ -1246,6 +1248,13 @@ services:
             - '@oro_product.provider.index_fields'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
+
+    oro_product.event_listener.entity_config:
+        class: 'Oro\Bundle\ProductBundle\Search\EventListener\WebsiteSearchEntityConfigListener'
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush, priority: -255 }
 
     oro_product.voter.guest_quick_order:
         parent: oro_customer.voter.anonymous_customer_user

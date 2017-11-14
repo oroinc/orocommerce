@@ -79,6 +79,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
 
+        /** @var AttributeFamily $attributeFamily */
+        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $entity->setAttributeFamily($attributeFamily);
         /** @var \Oro\Bundle\ProductBundle\Entity\Product $result */
         $result = $this->strategy->process($entity);
 

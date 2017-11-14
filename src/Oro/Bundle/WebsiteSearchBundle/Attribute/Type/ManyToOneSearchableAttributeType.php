@@ -13,7 +13,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterStorageFieldType()
     {
-        return Query::TYPE_TEXT;
+        return Query::TYPE_INTEGER;
     }
 
     /**
@@ -29,7 +29,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterType()
     {
-        return self::FILTER_TYPE_STRING;
+        return self::FILTER_TYPE_ENTITY;
     }
 
     /**
@@ -45,7 +45,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterableFieldName(FieldConfigModel $attribute)
     {
-        return $attribute->getFieldName() . '_' . LocalizationIdPlaceholder::NAME;
+        return $attribute->getFieldName();
     }
 
     /**

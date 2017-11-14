@@ -12,6 +12,7 @@ interface SearchableAttributeTypeInterface extends AttributeTypeInterface
     const FILTER_TYPE_ENUM = 'enum';
     const FILTER_TYPE_MULTI_ENUM = 'multi-enum';
     const FILTER_TYPE_PERCENT = 'percent';
+    const FILTER_TYPE_ENTITY = 'entity';
 
     /**
      * @return string

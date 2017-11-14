@@ -58,10 +58,14 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $country = new Country('US');
+        $countryUS = new Country('US');
+        $countryCA = new Country('CA');
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
+            'OroAddressBundle:Country' => ['US' => $countryUS, 'CA' => $countryCA],
+            'OroAddressBundle:Region' => [
+                'US-AL' => (new Region('US-AL'))->setCountry($countryUS),
+                'CA-QC' => (new Region('CA-QC'))->setCountry($countryCA),
+            ],
         ];
 
         $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(

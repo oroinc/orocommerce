@@ -36,20 +36,23 @@ define(function(require) {
          *
          * @param {Object} model
          * @param {jQuery} $el
+         * @param {Number} precision
          */
-        normalizeNumberField: function(model, $el) {
+        normalizeNumberField: function(model, $el, precision) {
             model.on('change:product_units', function() {
-                this._initNormalizeNumberField(model, $el);
+                this._initNormalizeNumberField(model, $el, precision);
             }, this);
             model.on('change:unit', function() {
-                this._initNormalizeNumberField(model, $el);
+                this._initNormalizeNumberField(model, $el, precision);
             }, this);
 
-            this._initNormalizeNumberField(model, $el);
+            this._initNormalizeNumberField(model, $el, precision);
         },
 
-        _initNormalizeNumberField: function(model, $el) {
-            var precision = model.get('product_units')[model.get('unit')] || 0;
+        _initNormalizeNumberField: function(model, $el, precision) {
+            if (_.isUndefined(precision)) {
+                precision = model.get('product_units')[model.get('unit')] || 0;
+            }
 
             if (_.isDesktop()) {
                 $el.attr('type', 'text');

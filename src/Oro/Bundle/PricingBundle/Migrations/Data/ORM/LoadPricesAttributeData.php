@@ -55,7 +55,7 @@ class LoadPricesAttributeData extends AbstractFixture implements
         $defaultAttributeFamily = $manager->getRepository(AttributeFamily::class)
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
 
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
         $entityManager = $configManager->getEntityManager();
 

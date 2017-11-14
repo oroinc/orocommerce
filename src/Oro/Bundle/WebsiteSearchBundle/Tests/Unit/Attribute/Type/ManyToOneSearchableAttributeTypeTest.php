@@ -20,7 +20,7 @@ class ManyToOneSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     public function testGetFilterStorageFieldType()
     {
         $this->assertSame(
-            Query::TYPE_TEXT,
+            Query::TYPE_INTEGER,
             $this->getSearchableAttributeType()->getFilterStorageFieldType()
         );
     }
@@ -36,7 +36,7 @@ class ManyToOneSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_STRING,
+            SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }
@@ -49,7 +49,7 @@ class ManyToOneSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     public function testGetFilterableFieldName()
     {
         $this->assertSame(
-            self::FIELD_NAME . '_' . LocalizationIdPlaceholder::NAME,
+            self::FIELD_NAME,
             $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
         );
     }

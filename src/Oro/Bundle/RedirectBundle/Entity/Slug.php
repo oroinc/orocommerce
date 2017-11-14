@@ -14,7 +14,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * @ORM\Table(name="oro_redirect_slug", indexes={
  *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
  *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
- *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"})
+ *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
+ *     @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
  * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
@@ -28,6 +29,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          }
  *      }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class Slug
 {
@@ -118,6 +120,14 @@ class Slug
      */
     protected $localization;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="parameters_hash", type="string", length=32)
+     */
+    protected $parametersHash;
+
     public function __construct()
     {
         $this->redirects = new ArrayCollection();
@@ -167,6 +177,7 @@ class Slug
     public function setRouteName($routeName)
     {
         $this->routeName = $routeName;
+        $this->updateParametersHash();
 
         return $this;
     }
@@ -186,6 +197,7 @@ class Slug
     public function setRouteParameters(array $routeParameters)
     {
         $this->routeParameters = $routeParameters;
+        $this->updateParametersHash();
 
         return $this;
     }
@@ -296,6 +308,7 @@ class Slug
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
+        $this->updateParametersHash();
 
         return $this;
     }
@@ -317,5 +330,56 @@ class Slug
         $this->slugPrototype = $slugPrototype;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParametersHash()
+    {
+        return $this->parametersHash;
+    }
+
+    /**
+     * @param string $name
+     * @param array $parameters
+     * @param int $localizationId
+     * @return string
+     */
+    public static function hashParameters($name, array $parameters, $localizationId)
+    {
+        $key = [
+            $name,
+            base64_encode(serialize($parameters)),
+            $localizationId ?? 0
+        ];
+
+        return md5(implode("|", $key));
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updateParametersHash();
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updateParametersHash();
+    }
+
+    protected function updateParametersHash()
+    {
+        $localizationId = $this->localization ? $this->localization->getId() : 0;
+        $this->parametersHash = static::hashParameters($this->routeName, $this->routeParameters, $localizationId);
     }
 }

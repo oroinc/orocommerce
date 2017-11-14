@@ -1,5 +1,5 @@
 @fixture-OroShoppingListBundle:unique_sku_in_shopping_list.yml
-Feature: Unique SKU in shopping list.
+Feature: Unique SKU in shopping list
 
   Scenario: Create different window session
     Given sessions active:

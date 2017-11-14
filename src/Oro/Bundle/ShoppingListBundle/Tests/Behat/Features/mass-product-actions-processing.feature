@@ -77,13 +77,17 @@ Feature: Mass Product Actions processing
       | PSKU2 | 15       | item |
       | PSKU3 | 7        | set  |
 
-  #Todo: replace after #BAP-15242 done, merge scenarios
-  @skipWait
-  Scenario: Check warning message when products are selected and trying to refresh the page
+  # TODO: unskip after BB-12797
+  @skip
+  Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "All Products"
-    When I check PSKU2 record in "Product Frontend Grid" grid
+    When I click "All Products"
+    And I check PSKU2 record in "Product Frontend Grid" grid
+
+  # TODO: unskip after BB-12797
+  @skip
+  Scenario: Show warning message when products are selected and trying to refresh the page
     And I click "List View"
     And I accept alert
     Then I should see PSKU2 unchecked record in "Product Frontend Grid"
