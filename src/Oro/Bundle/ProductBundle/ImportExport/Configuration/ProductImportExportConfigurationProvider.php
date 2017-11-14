@@ -39,6 +39,8 @@ class ProductImportExportConfigurationProvider implements ImportExportConfigurat
                 $this->translator->trans('oro.product.import_validation.button.label'),
             ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL =>
                 $this->translator->trans('oro.product.export.button.label'),
+            ImportExportConfiguration::FIELD_IMPORT_ENTITY_LABEL =>
+                $this->translator->trans('oro.product.import.entity.label'),
         ]);
     }
 }

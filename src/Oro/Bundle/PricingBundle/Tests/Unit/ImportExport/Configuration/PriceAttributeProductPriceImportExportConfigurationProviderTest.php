@@ -30,17 +30,21 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
     public function testGet()
     {
         $this->translator
-            ->expects(static::exactly(3))
+            ->expects(static::exactly(5))
             ->method('trans')
             ->withConsecutive(
                 ['oro.pricing.priceattributeproductprice.import_validation.button.label'],
                 ['oro.pricing.priceattributeproductprice.export.button.label'],
-                ['oro.pricing.priceattributeproductprice.import.entity.label']
+                ['oro.pricing.priceattributeproductprice.import.entity.label'],
+                ['oro.pricing.priceattributeproductprice.import.strategy.tooltip'],
+                ['oro.pricing.priceattributeproductprice.import.strategy.reset_and_add_confirmation']
             )
             ->willReturnOnConsecutiveCalls(
                 '1',
                 '2',
-                '3'
+                '3',
+                '4',
+                '5'
             );
 
         $expected = new ImportExportConfiguration([
@@ -54,6 +58,10 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
             ImportExportConfiguration::FIELD_IMPORT_VALIDATION_BUTTON_LABEL => '1',
             ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL => '2',
             ImportExportConfiguration::FIELD_IMPORT_ENTITY_LABEL => '3',
+            ImportExportConfiguration::FIELD_IMPORT_STRATEGY_TOOLTIP => '4',
+            ImportExportConfiguration::FIELD_IMPORT_PROCESSORS_TO_CONFIRMATION_MESSAGE => [
+                'oro_pricing_product_price_attribute_price.reset' => '5'
+            ]
         ]);
 
         static::assertEquals($expected, $this->provider->get());

@@ -506,6 +506,7 @@ oro:
             button.label: 'Export Products'
         import:
             popup.title: 'Import Products'
+            entity.label: 'Products'
         import_validation:
             button.label: 'Validate Products File'
 

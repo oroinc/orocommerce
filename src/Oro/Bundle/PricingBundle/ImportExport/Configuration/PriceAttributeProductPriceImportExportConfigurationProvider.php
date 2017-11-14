@@ -41,7 +41,13 @@ class PriceAttributeProductPriceImportExportConfigurationProvider implements Imp
             ImportExportConfiguration::FIELD_EXPORT_BUTTON_LABEL =>
                 $this->translator->trans('oro.pricing.priceattributeproductprice.export.button.label'),
             ImportExportConfiguration::FIELD_IMPORT_ENTITY_LABEL =>
-                $this->translator->trans('oro.pricing.priceattributeproductprice.import.entity.label')
+                $this->translator->trans('oro.pricing.priceattributeproductprice.import.entity.label'),
+            ImportExportConfiguration::FIELD_IMPORT_STRATEGY_TOOLTIP =>
+                $this->translator->trans('oro.pricing.priceattributeproductprice.import.strategy.tooltip'),
+            ImportExportConfiguration::FIELD_IMPORT_PROCESSORS_TO_CONFIRMATION_MESSAGE => [
+                'oro_pricing_product_price_attribute_price.reset' => $this->translator
+                    ->trans('oro.pricing.priceattributeproductprice.import.strategy.reset_and_add_confirmation')
+            ]
         ]);
     }
 }
