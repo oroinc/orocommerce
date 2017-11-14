@@ -26,6 +26,12 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_catalog.provider.category_tree_provider'
 
+    oro_catalog.provider.category_entity_name:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository

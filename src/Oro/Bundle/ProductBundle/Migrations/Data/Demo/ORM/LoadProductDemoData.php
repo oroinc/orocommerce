@@ -123,7 +123,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
             $shortDescription = new LocalizedFallbackValue();
             $shortDescription->setText($row['description']);
-            $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
+
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
@@ -136,8 +136,15 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->addShortDescription($shortDescription)
                 ->setType($row['type'])
                 ->setFeatured($row['featured'])
-                ->setNewArrival($row['new_arrival'])
-                ->setBrand($brand);
+                ->setNewArrival($row['new_arrival']);
+
+            if ($row['brand_id']) {
+                $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
+
+                if ($brand) {
+                    $product->setBrand($brand);
+                }
+            }
 
             $this->setPageTemplate($product, $row);
 
