@@ -22,6 +22,7 @@ Feature: Product Images Import
     Given I proceed as the Admin
     And login as administrator
     And go to Products/ Products
+    And I open "Products" import tab
     When I download "Products" Data Template file with processor "oro_product_product_export_template"
     Then see attributeFamily.code column
     And see sku column
@@ -67,7 +68,8 @@ Feature: Product Images Import
   Scenario: Data Template for Product Images
     Given I proceed as the Admin
     And go to Products/ Products
-    When I download "Product images" Data Template file through "Import images" button
+    And I open "Product Images" import tab
+    When I download "Product Images" Data Template file
     Then see SKU column
     And see Name column
     And see Main column
@@ -81,7 +83,7 @@ Feature: Product Images Import
       |SKU |Name                  |Main  |Listing   |Additional|
       |SKU1|tiger.svg |1     |1         |1         |
       |SKU2|dog1.jpg              |0     |0         |1         |
-    When import file with "Import images" button
+    When import file
     #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page
     And click view "SKU1" in grid
