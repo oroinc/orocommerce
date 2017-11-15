@@ -14,7 +14,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 /**
  * Add highlight low inventory of the products on product grid
  */
-class ProductDatagridListener
+class ProductDatagridLowInventoryListener
 {
     const COLUMN_LOW_INVENTORY = 'low_inventory';
 

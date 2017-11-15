@@ -62,7 +62,10 @@ workflows:
                             form_type: checkbox
                         additional_data:
                             form_type: hidden
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         po_number: ~
                         customer_notes:
                             form_type: textarea
@@ -142,7 +145,10 @@ workflows:
                             form_type: hidden
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                         state_token:

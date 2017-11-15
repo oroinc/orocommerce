@@ -1,0 +1,17 @@
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel1:
+        product: '@product1'
+        productUnitPrecision: '@first_precision_product1'
+        quantity: 1000
+    inventoryLevel2:
+        product: '@product1'
+        productUnitPrecision: '@second_precision_product1'
+        quantity: 1000
+    inventoryLevel3:
+        product: '@product2'
+        productUnitPrecision: '@first_precision_product2'
+        quantity: 1000
+    inventoryLevel4:
+        product: '@product2'
+        productUnitPrecision: '@second_precision_product2'
+        quantity: 1000

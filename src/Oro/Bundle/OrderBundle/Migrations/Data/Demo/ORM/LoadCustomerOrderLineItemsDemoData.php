@@ -7,17 +7,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
-use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
-use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -26,6 +25,9 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     DependentFixtureInterface
 {
     use ContainerAwareTrait;
+
+    /** @var Product[]|array */
+    protected $products;
 
     /**
      * {@inheritdoc}
@@ -45,12 +47,7 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        /** @var RateConverterInterface $rateConverter */
-        $rateConverter = $this->container->get('oro_currency.converter.rate');
-
-        $product = $manager->getRepository(Product::class)->findOneBy([]);
-        $productUnit = $manager->getRepository(ProductUnit::class)->findOneBy([]);
-
+        $totalHelper = $this->getTotalHelper();
         $orders = $manager->getRepository(Order::class)->findAll();
 
         /** @var Order $order */
@@ -58,55 +55,74 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
             if ($order->getLineItems()->count()) {
                 continue;
             }
+            $order->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY);
+            $productsCount = random_int(1, 5);
 
-            $orderLineItem = $this->getOrderLineItem($product, $productUnit);
+            for ($i = 0; $i < $productsCount; $i++) {
+                $lineItem = $this->getOrderLineItem($manager);
+                $order->addLineItem($lineItem);
+            }
+            $totalHelper->fillDiscounts($order);
+            $totalHelper->fillSubtotals($order);
+            $totalHelper->fillTotal($order);
 
-            $totalValue = $orderLineItem->getQuantity() * $orderLineItem->getPrice()->getValue();
-
-            $total = MultiCurrency::create($totalValue, $orderLineItem->getCurrency());
-            $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
-            $total->setBaseCurrencyValue($baseTotal);
-
-            $subtotal = MultiCurrency::create($totalValue, $orderLineItem->getCurrency());
-            $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
-            $subtotal->setBaseCurrencyValue($baseSubtotal);
-
-            $orderLineItem->setOrder($order);
-            $manager->persist($orderLineItem);
-
-            $order
-                ->addLineItem($orderLineItem)
-                ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
-                ->setTotalObject($total)
-                ->setSubtotalObject($subtotal);
+            $manager->persist($order);
         }
 
         $manager->flush();
     }
 
     /**
-     * @param Product $product
-     * @param ProductUnit $productUnit
-     *
+     * @param ObjectManager $manager
      * @return OrderLineItem
      */
-    private function getOrderLineItem(Product $product, ProductUnit $productUnit)
+    private function getOrderLineItem(ObjectManager $manager)
     {
         $orderLineItem = new OrderLineItem();
 
         $quantity = random_int(1, 13);
         $price = Price::create(random_int(10, 1000), CurrencyConfiguration::DEFAULT_CURRENCY);
-        $priceTypes = [OrderLineItem::PRICE_TYPE_UNIT, OrderLineItem::PRICE_TYPE_BUNDLED];
+        $product = $this->getProduct($manager);
 
         $orderLineItem
             ->setFromExternalSource(random_int(0, 1))
             ->setProduct($product)
-            ->setFreeFormProduct($product)
-            ->setProductUnit($productUnit)
+            ->setProductUnit($this->getProductUnit($product))
             ->setQuantity($quantity)
-            ->setPriceType($priceTypes[array_rand($priceTypes)])
             ->setPrice($price);
 
         return $orderLineItem;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Product
+     */
+    protected function getProduct(ObjectManager $manager)
+    {
+        if (null === $this->products) {
+            $this->products = $manager->getRepository(Product::class)->findAll();
+        }
+
+        return $this->products[array_rand($this->products)];
+    }
+
+    /**
+     * @param Product $product
+     * @return ProductUnit|null
+     */
+    protected function getProductUnit(Product $product)
+    {
+        $units = $product->getAvailableUnits();
+
+        return $units ? $units[array_rand($units)] : null;
+    }
+
+    /**
+     * @return TotalHelper
+     */
+    protected function getTotalHelper()
+    {
+        return $this->container->get('oro_order.order.total.total_helper');
     }
 }
