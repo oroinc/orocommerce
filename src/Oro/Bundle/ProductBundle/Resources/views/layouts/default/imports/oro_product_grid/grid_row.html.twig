@@ -25,8 +25,10 @@
         getDefaultName: datagrid_row.name
     }) %}
 
+    {% set class_prefix = themeOptions.currentRowView %}
+
     {% do block|merge_context({
-        class_prefix: themeOptions.currentRowView,
+        class_prefix: class_prefix,
         product: product
     }) %}
 
@@ -34,9 +36,12 @@
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product|default({})
+            modelAttr: product|default({
+                unit: product.unit
+            }),
         },
-        'data-layout': 'separate'
+        'data-layout': 'separate',
+        '~class': product.matrixForm|default(null) ? 'product-item__wrapper--{{ class_prefix }}' : ''
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block('container_widget') }}
@@ -161,11 +166,20 @@
 {% endblock %}
 
 {% block _product_datagrid_cell_matrixForm_widget %}
-    {{- block('container_widget') -}}
+    {% if product.matrixForm|default(null) %}
+        {% do block|merge_context({
+            'prices': product.productPrices,
+            'matrixForm': product[column_name]
+        }) %}
+        {{- block('container_widget') -}}
+    {% endif %}
 {% endblock %}
 
 {% block _product_datagrid_cell_matrixForm_value_widget %}
-    {{ datagrid_row[column_name]|raw }}
+{% endblock %}
+
+{% block _product_list_matrix_form_fields_widget %}
+    {{ matrixForm|raw }}
 {% endblock %}
 
 {% block _product_item_select_row_widget %}

@@ -10,16 +10,45 @@ layout:
             root: product_datagrid_row
             namespace: product_datagrid_row
 
+        -
+            id: product_list_matrix_grid_order
+            root: product_datagrid_cell_matrixForm
+            namespace: product_list
+
+        -
+            id: line_item_buttons
+            root: product_list_matrix_wrapper
+            namespace: product_list
+
     actions:
         - '@setBlockTheme':
             themes:
                 - 'grid.html.twig'
                 - 'grid_row.html.twig'
 
+        - '@move':
+            id: product_list_line_item_buttons
+            parentId: product_list_matrix_form_summary
+            prepend: false
+
+        - '@setOption':
+            id: product_list_line_item_form_buttons_shopping_list
+            optionName: attr.componentModule
+            optionValue: 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view'
+
+        - '@setOption':
+            id: product_list_line_item_form_buttons_shopping_list
+            optionName: productShoppingLists
+            optionValue: 'undefined'
+
         - '@setOption':
             id: product_datagrid
             optionName: grid_render_parameters.enableViews
             optionValue: false
+
+        - '@move':
+            id: product_datagrid_cell_matrixForm
+            parentId: product_datagrid_row_product_primary_content_container
 
         - '@addTree':
             items:

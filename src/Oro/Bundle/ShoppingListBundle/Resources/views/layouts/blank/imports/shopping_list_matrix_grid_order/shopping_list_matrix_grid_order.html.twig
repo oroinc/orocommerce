@@ -1,5 +1,5 @@
 {% block  _shopping_list_matrix_form_start_widget %}
-    {% if columnsCount == 1 %}
+    {% if form.rows[0].columns|length == 1 %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': class_prefix ~ '__form--inline '
         }) %}

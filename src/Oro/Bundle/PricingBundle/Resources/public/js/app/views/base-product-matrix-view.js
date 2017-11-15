@@ -78,6 +78,11 @@ define(function(require) {
          */
         setPrices: function(options) {
             this.prices = {};
+
+            if (options.prices && !_.isObject(options.prices)) {
+                options.prices = JSON.parse(options.prices);
+            }
+
             _.each(options.prices, function(unitPrices, productId) {
                 this.prices[productId] = PricesHelper.preparePrices(unitPrices);
             }, this);

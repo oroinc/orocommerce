@@ -1,6 +1,13 @@
 // @theme: default;
 
 .product-item {
+    &__wrapper {
+        &--no-image-view {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
     &--category-title {
         width: 100%;
         margin: 10px 0;
@@ -184,6 +191,15 @@
                 width: 50%;
             }
         }
+
+        &--remainder-width {
+            width: 77%;
+            padding-right: 0;
+        }
+
+        &--full-width {
+            width: 100%;
+        }
     }
 
     &__primary-half {
@@ -205,14 +221,14 @@
         }
 
         &--no-image-view {
-            width: 50%;
+            width: 55%;
             float: left;
 
             .product-item__secondary-half--no-image-view {
-                width: 35%;
+                width: 45%;
 
                 &:last-child {
-                    width: 65%;
+                    width: 55%;
                 }
 
                 .product-item--compact & {
@@ -273,7 +289,7 @@
         &--list-view {
             float: left;
             width: 77%;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             padding-left: 30px;
 
             font-size: $base-font-size--m - 1;
@@ -282,7 +298,7 @@
 
         &--no-image-view {
             float: left;
-            width: 25%;
+            width: 20%;
             padding: 0 25px 0 0;
 
             font-size: 16px;
@@ -441,6 +457,10 @@
             &--list-view {
                 width: calc(77% - 240px);
             }
+
+            &--remainder-width {
+                width: 77%;
+            }
         }
 
         &__primary-half {
@@ -593,7 +613,6 @@
         }
     }
 }
-
 
 @include breakpoint('strict-tablet') {
     .product-item {

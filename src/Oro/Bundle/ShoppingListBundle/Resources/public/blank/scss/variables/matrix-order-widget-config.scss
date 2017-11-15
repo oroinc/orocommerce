@@ -1,5 +1,6 @@
 // @theme: blank
 
+$matrix-order-widget-clear: both !default;
 $matrix-order-widget-max-width: 100% !default;
 $matrix-order-widget-offset: 0 !default;
 $matrix-order-widget-border-color: 1px solid get-color('additional', 'light') !default;
@@ -32,9 +33,10 @@ $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner: 0 !defaul
 //Grid group variables
 $matrix-order-widget-grid-width: 100% !default;
 $matrix-order-widget-grid-offset-bottom: 15px !default;
+$matrix-order-widget-grid-offset-inner-top: 15px !default;
 $matrix-order-widget-grid-font-family: $font-family-base !default;
-$matrix-order-widget-grid-border-bottom: $matrix-order-widget-border-color !default;
 
+$matrix-order-widget-grid-multi-rows-border-bottom: $matrix-order-widget-border-color !default;
 $matrix-order-widget-grid-multi-rows-items-wrapper-offset-left: 100px !default;
 
 $matrix-order-widget-grid-multi-rows-grid-head-border-top: 1px solid get-color('additional', 'light') !default;

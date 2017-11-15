@@ -1,8 +1,5 @@
 {% block __matrix_grid_order__wrapper_widget %}
     {% set class_prefix = 'matrix-order-widget' %}
-    {% set defaultColumns = form.rows[0].columns %}
-    {% set rowsCount = form.rows|length %}
-    {% set columnsCount = defaultColumns|length %}
 
     {% do block|merge_context({
         class_prefix: class_prefix,
@@ -10,9 +7,9 @@
         product: product,
         shoppingList: shoppingList,
         totals: totals,
-        prices: prices,
-        columnsCount: columnsCount
+        prices: prices
     }) %}
+
     {% do set_class_prefix_to_form(form, class_prefix) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -38,6 +35,20 @@
         '~class': class_prefix ~ '__form'
     }) %}
     {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __matrix_grid_order__form_end_widget %}
+    {% if renderCache is not defined %}
+        {% set renderCache %}
+               {{ form_widget(form._token) }}
+           {% endset %}
+        {% do block|merge_context({
+            renderCache: renderCache
+        }) %}
+    {% endif %}
+    {{ renderCache }}
+
+    {{ form_end(form,  {'render_rest': false}) }}
 {% endblock %}
 
 {% block __matrix_grid_order__form_summary_widget %}
@@ -73,5 +84,4 @@
 {% block __matrix_grid_order__form_fields_widget %}
     {# TODO: should be replaced to {{ parent_block_widget(block) }} in BB-12666 #}
     {{ block_widget(block) }}
-    <input type="hidden" name="updateQuantity" value="true"/>
 {% endblock %}

@@ -59,15 +59,6 @@
         color: $shopping-list-line-items-status-color;
     }
 
-    .matrix-order-widget {
-        clear: $shopping-list-line-items-matrix-order-widget-clear;
-
-        &__grid {
-            border-bottom: $shopping-list-line-items-matrix-order-widget-grid-border-bottom;
-            padding-top: $shopping-list-line-items-matrix-order-widget-grid-offset-inner-top;
-        }
-    }
-
     .line-item-price {
         min-width: $shopping-list-line-items-line-item-price-min-width;
         text-align: $shopping-list-line-items-line-item-price-text-align;

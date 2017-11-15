@@ -1,19 +1,22 @@
 // @theme: blank;
 
 .matrix-order-widget {
+    clear: $matrix-order-widget-clear;
+
     max-width: $matrix-order-widget-max-width;
     margin: $matrix-order-widget-offset;
 
     &__grid {
         width: $matrix-order-widget-grid-width;
         margin-bottom: $matrix-order-widget-grid-offset-bottom;
+        padding-top: $matrix-order-widget-grid-offset-inner-top;
 
         font-family: $matrix-order-widget-grid-font-family;
-
-        border-bottom: $matrix-order-widget-grid-border-bottom;
     }
 
     &__grid--multi-rows & {
+        border-bottom: $matrix-order-widget-grid-multi-rows-border-bottom;
+
         &__grid-head,
         &__grid-body,
         &__grid-footer {
