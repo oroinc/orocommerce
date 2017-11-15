@@ -73,6 +73,10 @@ class InventoryQuantityManager
         $inventoryLevel->setQuantity($inventoryLevel->getQuantity() + $quantityToIncrement);
     }
 
+    /**
+     * @param Product $product
+     * @return bool
+     */
     public function shouldDecrement(Product $product = null)
     {
         if (!$product instanceof Product) {
@@ -102,5 +106,23 @@ class InventoryQuantityManager
         }
 
         return true;
+    }
+
+    /**
+     * @param InventoryLevel $inventoryLevel
+     * @return int
+     */
+    public function getAvailableQuantity(InventoryLevel $inventoryLevel)
+    {
+        $product = $inventoryLevel->getProduct();
+        if (!$this->shouldDecrement($product)
+            || $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
+        ) {
+            return $inventoryLevel->getQuantity();
+        }
+
+        $inventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'inventoryThreshold');
+
+        return $inventoryLevel->getQuantity() - $inventoryThreshold;
     }
 }

@@ -64,4 +64,26 @@ class QuoteDemandTest extends AbstractTest
         $this->assertSame($quote, $demand->getSourceDocument());
         $this->assertEquals('PO123', $demand->getSourceDocumentIdentifier());
     }
+
+    public function testGetShippingMethod()
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+        $demand = new QuoteDemand();
+        $demand->setQuote($quote);
+        $this->assertNull($demand->getShippingMethod());
+        $quote->setShippingMethod('test_ship');
+        $this->assertSame('test_ship', $demand->getShippingMethod());
+    }
+
+    public function testGetShippingMethodType()
+    {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class);
+        $demand = new QuoteDemand();
+        $demand->setQuote($quote);
+        $this->assertNull($demand->getShippingMethodType());
+        $quote->setShippingMethodType('test_ship_type');
+        $this->assertSame('test_ship_type', $demand->getShippingMethodType());
+    }
 }

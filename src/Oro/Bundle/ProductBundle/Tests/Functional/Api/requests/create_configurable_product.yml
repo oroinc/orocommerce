@@ -338,7 +338,7 @@ included:
         relationships:
             test_variant_field:
                 data:
-                    type: variantfieldcodes
+                    type: testapivariantfieldcodes
                     id: 'good'
             owner:
                 data:

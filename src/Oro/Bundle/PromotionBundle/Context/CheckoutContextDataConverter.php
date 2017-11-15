@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Context;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class CheckoutContextDataConverter implements ContextDataConverterInterface
 {
@@ -52,6 +52,6 @@ class CheckoutContextDataConverter implements ContextDataConverterInterface
      */
     public function supports($entity): bool
     {
-        return $entity instanceof Checkout && $entity->getSourceEntity() instanceof ShoppingList;
+        return $entity instanceof Checkout && !$entity->getSourceEntity() instanceof QuoteDemand;
     }
 }

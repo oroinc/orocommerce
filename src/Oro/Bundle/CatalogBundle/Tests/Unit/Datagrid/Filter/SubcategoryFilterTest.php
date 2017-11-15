@@ -6,10 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Form\Type\Filter\SubcategoryFilterType;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
+use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -42,6 +42,23 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $this->filter = new SubcategoryFilter($this->formFactory, $this->filterUtility);
     }
 
+    public function testInit()
+    {
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(
+                SearchEntityFilterType::NAME,
+                [],
+                [
+                    'class' => Category::class,
+                    'csrf_protection' => false,
+                ]
+            );
+
+        $this->filter->init('filter', []);
+        $this->filter->getForm();
+    }
+
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Invalid filter datasource adapter provided
@@ -63,7 +80,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
             [
                 FilterUtility::DATA_NAME_KEY => 'field',
                 'options' => [
-                    'categories' => [$category]
+                    'choices' => [$category]
                 ]
             ]
         );
@@ -89,9 +106,9 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
-                SubcategoryFilterType::NAME,
+                SearchEntityFilterType::NAME,
                 [],
-                ['csrf_protection' => false, 'categories' => [$category]]
+                ['csrf_protection' => false, 'choices' => [$category], 'class' => Category::class]
             )
             ->willReturn($form);
 
@@ -104,7 +121,8 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'data_name' => 'field',
                 'options' => [
-                    'categories' => [$category]
+                    'choices' => [$category],
+                    'class' => Category::class,
                 ],
                 'lazy' => false,
             ],

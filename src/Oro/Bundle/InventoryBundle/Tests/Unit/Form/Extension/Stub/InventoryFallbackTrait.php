@@ -30,6 +30,12 @@ trait InventoryFallbackTrait
     /** @var EntityFieldFallbackValue */
     protected $manageInventory;
 
+    /** @var EntityFieldFallbackValue */
+    protected $isUpcoming;
+
+    /** @var \DateTime|null */
+    protected $availabilityDate;
+
     /**
      * @return EntityFieldFallbackValue
      */
@@ -164,5 +170,37 @@ trait InventoryFallbackTrait
     public function getManageInventory()
     {
         return $this->manageInventory;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $isUpcoming
+     */
+    public function setIsUpcoming(EntityFieldFallbackValue $isUpcoming)
+    {
+        $this->isUpcoming = $isUpcoming;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getIsUpcoming()
+    {
+        return $this->isUpcoming;
+    }
+
+    /**
+     * @param \DateTime|null $availabilityDate
+     */
+    public function setAvailabilityDate($availabilityDate)
+    {
+        $this->availabilityDate = $availabilityDate;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getAvailabilityDate()
+    {
+        return $this->availabilityDate;
     }
 }

@@ -122,3 +122,25 @@ services:
             - '@translator'
         tags:
             - { name: oro_importexport.configuration, alias: oro_inventory_level }
+
+    oro_inventory.event_listener.product_data_converter:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductDataConverterEventListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.data_converter.backend_header, method: modifyBackendHeader }
+
+    oro_inventory.event_listener.product_normalizer:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductNormalizerEventListener'
+        arguments: ['@oro_inventory.provider.product_upcoming_provider']
+        tags:
+            - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: normalize }
+
+    oro_inventory_event_listener.product_template_fixture:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductImportTemplateFixtureEventListener'
+        tags:
+            - { name: kernel.event_listener, event: oro.import_export.after_load_template_fixtures, method: afterLoadTemplateFixture }
+
+    oro_inventory.importexport.normalizer.is_upcoming:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Serializer\ProductUpcomingNormalizer'
+        arguments: ['@oro_inventory.provider.product_upcoming_provider']
+        tags:
+            - { name: oro_importexport.normalizer }

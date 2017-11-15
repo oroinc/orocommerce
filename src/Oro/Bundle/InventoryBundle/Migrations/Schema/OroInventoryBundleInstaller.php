@@ -7,12 +7,17 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
+use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSectionQuery;
@@ -25,9 +30,11 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
@@ -99,6 +106,11 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addBackOrderFieldToProduct($schema);
         $this->addBackOrderFieldToCategory($schema);
+
+        $this->addUpcomingFieldToProduct($schema);
+        $this->addUpcomingFieldToCategory($schema);
+        $this->addAvailabilityDateToProduct($schema);
+        $this->addAvailabilityDateToCategory($schema);
 
         $this->updateWarehouseEntityRelations($schema);
 
@@ -682,6 +694,100 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             [
                 ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'backOrder'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.backorders'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addUpcomingFieldToProduct(Schema $schema)
+    {
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            OroProductBundleInstaller::PRODUCT_TABLE_NAME,
+            ProductUpcomingProvider::IS_UPCOMING,
+            'oro.inventory.is_upcoming.label',
+            [
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+            ],
+            EntityFallbackResolver::TYPE_BOOLEAN
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addUpcomingFieldToCategory(Schema $schema)
+    {
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
+            ProductUpcomingProvider::IS_UPCOMING,
+            'oro.inventory.is_upcoming.label',
+            [
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+            ],
+            EntityFallbackResolver::TYPE_BOOLEAN
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAvailabilityDateToProduct(Schema $schema)
+    {
+        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+        $table->addColumn(
+            'availability_date',
+            'datetime',
+            [
+                'notnull' => false,
+                'comment' => '(DC2Type:datetime)',
+                OroOptions::KEY => [
+                    'entity' => ['label' => 'oro.inventory.availability_date.label'],
+                    'extend' => [
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'is_extend' => true,
+                    ],
+                    'datagrid' => ['is_visible' => false],
+                    'form' => ['is_enabled' => false,],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true],
+                    'importexport' => ['full' => true]
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAvailabilityDateToCategory(Schema $schema)
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table->addColumn(
+            'availability_date',
+            'datetime',
+            [
+                'notnull' => false,
+                'comment' => '(DC2Type:datetime)',
+                OroOptions::KEY => [
+                    'entity' => ['label' => 'oro.inventory.availability_date.label'],
+                    'extend' => [
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'is_extend' => true,
+                    ],
+                    'datagrid' => ['is_visible' => false],
+                    'form' => ['is_enabled' => false,],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true],
+                    'importexport' => ['full' => true]
+                ],
             ]
         );
     }

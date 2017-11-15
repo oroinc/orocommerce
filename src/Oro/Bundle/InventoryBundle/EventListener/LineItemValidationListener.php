@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class LineItemValidationListener
@@ -35,9 +34,9 @@ class LineItemValidationListener
         }
 
         foreach ($lineItems as $lineItem) {
-            // stop checking if the current line item is not supported
+            // skip checking if the current line item is not supported
             if (!$this->isSupported($lineItem)) {
-                return;
+                continue;
             }
             $product = $lineItem->getProduct();
             if (!$product instanceof Product) {
@@ -66,9 +65,7 @@ class LineItemValidationListener
         if (!$lineItem instanceof CheckoutLineItem) {
             return false;
         }
-        $checkout = $lineItem->getCheckout();
-        $sourceEntity = $checkout ? $checkout->getSourceEntity() : null;
 
-        return $sourceEntity instanceof ShoppingList;
+        return !$lineItem->isPriceFixed();
     }
 }

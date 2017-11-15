@@ -1,0 +1,43 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress1:
+        region: 'US-FL'
+        frontendOwner: '@amanda'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: '@organization'
+    amandaAddress3:
+        region: 'US-IN'
+        frontendOwner: '@amanda'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 3'
+        street: '34500 Capitol Avenue'
+        city: 'Romney'
+        postalCode: '47981'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress1ShippingDefault:
+        address: '@amandaAddress1'
+        type: 'shipping'
+        default: true
+    amandaAddress3Shipping:
+        address: '@amandaAddress3'
+        type: 'shipping'
+        default: false
+    amandaAddress1BillingDefault:
+        address: '@amandaAddress1'
+        type: 'billing'
+        default: true
+    amandaAddress3Billing:
+        address: '@amandaAddress3'
+        type: 'billing'
+        default: false

@@ -224,6 +224,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
@@ -261,6 +262,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
@@ -346,7 +348,10 @@ workflows:
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                             options:
@@ -448,7 +453,10 @@ workflows:
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                         state_token:
@@ -533,7 +541,10 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@has_elements': $.result.shoppingList.lineItems
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@extendable':
+                            events: [extendable_condition.shopping_list_start]
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
@@ -639,7 +650,6 @@ workflows:
                                     state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - '@assign_value': [$shipping_method, null]
                     - '@call_method':
                         conditions:
                             '@not_empty': $checkout.billingAddress.customerAddress

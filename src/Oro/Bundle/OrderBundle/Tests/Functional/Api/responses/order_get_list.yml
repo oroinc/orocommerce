@@ -31,7 +31,7 @@ data:
                 data: []
             shippingTrackings:
                 data: []
-            payment_term_7c4f1e8e:
+            paymentTerm:
                 data:
                     type: paymentterms
                     id: '<toString(@payment_term.net_10->id)>'
@@ -243,6 +243,54 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order5->customer->id)>'
+    -
+        type: orders
+        id: '<toString(@simple_order6->id)>'
+        attributes:
+            identifier: '@simple_order6->identifier'
+            poNumber: '@simple_order6->poNumber'
+            customerNotes: null
+            shipUntil: '@simple_order6->shipUntil->format("Y-m-d")'
+            currency: '@simple_order6->currency'
+            subtotalValue: '<toString(@simple_order6->subtotal)>'
+            totalValue: '<toString(@simple_order6->total)>'
+            shippingMethod: '@simple_order6->shippingMethod'
+            shippingMethodType: '@simple_order6->shippingMethodType'
+            estimatedShippingCostAmount: '<toString(@simple_order6->estimatedShippingCostAmount)>'
+            overriddenShippingCostAmount: null
+            sourceEntityClass: null
+            sourceEntityId: null
+            sourceEntityIdentifier: null
+            totalDiscountsAmount: null
+            createdAt: '@simple_order6->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@simple_order6->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data: []
+            discounts:
+                data: []
+            shippingTrackings:
+                data: []
+            owner:
+                data:
+                    type: users
+                    id: '<toString(@simple_order6->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order6->organization->id)>'
+            customerUser:
+                data:
+                     type: customer_users
+                     id: '<toString(@simple_order6->customerUser->id)>'
+            customer:
+                data:
+                     type: customers
+                     id: '<toString(@simple_order6->customer->id)>'
     -
         type: orders
         id: '<toString(@my_order->id)>'

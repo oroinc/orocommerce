@@ -9,6 +9,18 @@
         'alias': 'oro_product_index'
     } %}
 
+    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
+        entity_class: product_image_entity_class,
+        exportTemplateProcessor: 'oro_product_image_export_template',
+        importProcessor: 'oro_product_image.add_or_replace',
+        importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.product.productimage.entity_plural_label'|trans}),
+        datagridName: gridName,
+        importLabel: 'oro.product.productimage.import.label'|trans,
+        options: {
+            'additionalNotices': ['oro.product.productimage.import.notice']
+        }
+    } %}
+
     {% if is_granted('oro_product_create') %}
         <div class="btn-group pull-right">
             {{ UI.addButton({

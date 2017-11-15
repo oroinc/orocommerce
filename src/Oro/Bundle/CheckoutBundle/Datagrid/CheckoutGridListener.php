@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Util\Inflector;
 use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -17,13 +19,11 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
@@ -138,7 +138,11 @@ class CheckoutGridListener
             $data = $ch->getCompletedData();
 
             if (isset($checkouts[$id])) {
-                $record->addData(['startedFrom' => $this->getStartedFrom($checkouts[$id]->getSource()->getEntity())]);
+                $sourceEntity = $checkouts[$id]->getSource()->getEntity();
+
+                if ($sourceEntity) {
+                    $record->addData(['startedFrom' => $this->getStartedFrom($sourceEntity)]);
+                }
             }
 
             if ($record->getValue('completed')) {
@@ -182,14 +186,8 @@ class CheckoutGridListener
             $source = $source->getQuote();
         }
 
-        $type = null;
         // simplify type checking in twig
-        if ($source instanceof ShoppingList) {
-            $type = 'shopping_list';
-        }
-        if ($source instanceof Quote) {
-            $type = 'quote';
-        }
+        $type = $this->getShortClassName($source);
 
         return [
             'entity' => $source,
@@ -214,5 +212,14 @@ class CheckoutGridListener
                 $record->addData([$key => $value]);
             }
         }
+    }
+
+    /**
+     * @param object $object
+     * @return string
+     */
+    protected function getShortClassName($object)
+    {
+        return Inflector::tableize(ExtendHelper::getShortClassName(ClassUtils::getClass($object)));
     }
 }

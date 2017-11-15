@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,6 +25,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @var CheckoutLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $checkoutLineItemsConverter;
+
+    /**
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $authorizationChecker;
 
     /**
      * @var CheckoutLineItemsManager
@@ -57,11 +63,13 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 return $result;
             }));
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
             $this->currencyManager,
-            $this->configManager
+            $this->configManager,
+            $this->authorizationChecker
         );
     }
 
@@ -83,19 +91,25 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getDataDataProvider
      * @param bool $withDataProvider
      * @param bool $isEntitySupported
+     * @param bool $visible
      */
-    public function testGetDataEntitySupported($withDataProvider, $isEntitySupported)
+    public function testGetDataEntitySupported($withDataProvider, $isEntitySupported, $visible)
     {
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->with('VIEW', $this->isInstanceOf(Product::class))
+            ->willReturn($visible);
+
         $checkout = $this->getCheckout();
         $data = [];
 
         if ($withDataProvider) {
-            if ($isEntitySupported) {
+            if ($isEntitySupported && $visible) {
                 $data = [$this->getLineItemData(true, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
             $provider = $this->getProvider($checkout, $data, $isEntitySupported);
@@ -111,14 +125,20 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getDataDataProvider
      * @param array $providerData
      * @param bool $disablePriceFilter
+     * @param bool $visible
      * @param ArrayCollection|array $expectedData
      */
-    public function testGetData(array $providerData, $disablePriceFilter, array $expectedData)
+    public function testGetData(array $providerData, $disablePriceFilter, $visible, array $expectedData)
     {
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
+
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->with('VIEW', $this->isInstanceOf(Product::class))
+            ->willReturn($visible);
 
         $checkout = $this->getCheckout();
 
@@ -149,6 +169,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
                 'disablePriceFilter' => false,
+                'visible' => true,
                 'expectedData' => [
                     $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
@@ -164,8 +185,18 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        'PRO',
+                        'in_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD'),
+                        Product::STATUS_DISABLED
+                    ),
                 ],
                 'disablePriceFilter' => true,
+                'visible' => true,
                 'expectedData' => [
                     $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
@@ -173,6 +204,22 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
                     $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
+            ],
+            [
+                'providerData' => [
+                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
+                'disablePriceFilter' => true,
+                'visible' => false,
+                'expectedData' => [
                     $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
             ],
@@ -186,14 +233,22 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @param float $qty
      * @param string $unit
      * @param Price|null $price
+     * @param string $status
      * @return array
      */
-    protected function getLineItemData($hasProduct, $productSku, $inventoryStatus, $qty, $unit, Price $price = null)
-    {
+    protected function getLineItemData(
+        $hasProduct,
+        $productSku,
+        $inventoryStatus,
+        $qty,
+        $unit,
+        Price $price = null,
+        $status = Product::STATUS_ENABLED
+    ) {
         $product = null;
         if ($hasProduct && $productSku) {
             $product = new Product();
-            $product->setSku($productSku);
+            $product->setSku($productSku)->setStatus($status);
 
             if ($inventoryStatus) {
                 $inventoryStatus = new StubEnumValue($inventoryStatus, $inventoryStatus);

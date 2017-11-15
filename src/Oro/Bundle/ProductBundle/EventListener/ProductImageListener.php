@@ -2,13 +2,20 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ProductImageListener
 {
@@ -18,24 +25,93 @@ class ProductImageListener
     protected $updatedProductImageIds = [];
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface $eventDispatcher
      */
     protected $eventDispatcher;
 
     /**
+     * @var ImageTypeProvider $imageTypeProvider
+     */
+    protected $imageTypeProvider;
+
+    /**
+     * @var ProductImageHelper $productImageHelper
+     */
+    protected $productImageHelper;
+
+    /**
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        ImageTypeProvider $imageTypeProvider,
+        ProductImageHelper $productImageHelper
+    ) {
         $this->eventDispatcher = $eventDispatcher;
+        $this->imageTypeProvider = $imageTypeProvider;
+        $this->productImageHelper = $productImageHelper;
     }
+
     /**
      * @param ProductImage $productImage
      * @param LifecycleEventArgs $args
      */
     public function postPersist(ProductImage $productImage, LifecycleEventArgs $args)
     {
+        /** @var Product $parentProduct */
+        $parentProduct = $productImage->getProduct();
+
+        /** @var Collection $images */
+        $parentProductImages = $parentProduct->getImages();
+
+        if ($parentProductImages->contains($productImage)) {
+            $parentProductImages->removeElement($productImage);
+        }
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $args->getEntityManager();
+
+        //Remove all types of the new image within the existing collection,
+        //simulating a replace , required for api and UI import
+        foreach ($productImage->getTypes() as $newType) {
+            $this->removeImageTypeFromParent($parentProductImages, $newType->getType(), $entityManager);
+        }
+
+        $parentProduct->addImage($productImage);
+
         $this->dispatchEvent($productImage);
+    }
+
+    /**
+     * Removes existing type from parent product image collection
+     *
+     * @param Collection $parentProductImages
+     * @param string $newTypeName
+     * @param EntityManagerInterface $entityManager
+     */
+    private function removeImageTypeFromParent(
+        Collection $parentProductImages,
+        string $newTypeName,
+        EntityManagerInterface $entityManager
+    ) {
+        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
+        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($parentProductImages);
+
+        /** @var ProductImage $productImage */
+        foreach ($parentProductImages as $productImage) {
+            /** @var ProductImageType $type */
+            foreach ($productImage->getTypes() as $type) {
+                $name = $type->getType();
+                if ($newTypeName === $name &&
+                    !is_null($max = $maxNumberByType[$name]['max']) &&
+                    $imagesByTypeCounter[$name] >= $max
+                ) {
+                    $entityManager->remove($type);
+                    $productImage->getTypes()->removeElement($type);
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -71,6 +147,20 @@ class ProductImageListener
     {
         if ($productImage->getTypes()->isEmpty()) {
             return;
+        }
+
+        if ($product = $productImage->getProduct()) {
+            $this->eventDispatcher->dispatch(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent(
+                    [
+                        Product::class],
+                    [],
+                    [
+                        $product->getId()
+                    ]
+                )
+            );
         }
 
         $this->eventDispatcher->dispatch(
