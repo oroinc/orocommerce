@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub;
 
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\Order as BaseOrder;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion as BaseAppliedPromotion;
 
 class AppliedPromotion extends BaseAppliedPromotion
 {
     /**
-     * @var Order
+     * @var BaseOrder
      */
     private $order;
 
     /**
-     * @param Order $order
+     * @param BaseOrder $order
      * @return $this
      */
-    public function setOrder(Order $order)
+    public function setOrder(BaseOrder $order)
     {
         $this->order = $order;
 
@@ -24,9 +24,9 @@ class AppliedPromotion extends BaseAppliedPromotion
     }
 
     /**
-     * @return Order
+     * @return BaseOrder
      */
-    public function getOrder()
+    public function getOrder(): BaseOrder
     {
         return $this->order;
     }

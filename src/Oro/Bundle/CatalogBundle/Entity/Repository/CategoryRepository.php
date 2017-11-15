@@ -137,6 +137,9 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function findOneByProduct(Product $product)
     {
+        if (!$product->getId()) {
+            return null;
+        }
         return $this->createQueryBuilder('category')
             ->where(':product MEMBER OF category.products')
             ->setParameter('product', $product)

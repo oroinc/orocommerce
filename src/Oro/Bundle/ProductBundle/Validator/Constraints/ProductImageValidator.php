@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
 
 class ProductImageValidator extends ConstraintValidator
 {
@@ -18,7 +18,7 @@ class ProductImageValidator extends ConstraintValidator
     protected $context;
 
     /**
-     * @param ProductImage $value
+     * @param EntityProductImage $value
      * @param Constraint $constraint
      *
      * {@inheritdoc}

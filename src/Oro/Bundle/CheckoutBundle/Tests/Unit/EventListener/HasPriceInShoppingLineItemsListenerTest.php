@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -53,17 +52,9 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
 
     public function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder(ProductPriceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userCurrencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceListRequestHandler = $this->getMockBuilder(PriceListRequestHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
 
         $this->listener = new HasPriceInShoppingLineItemsListener(
             $this->productPriceProvider,
@@ -81,17 +72,27 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $firstProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
         $secondProduct = $this->getEntity(Product::class, ['id' => 2]);
         $secondProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $thirdProduct = $this->getEntity(Product::class, ['id' => 3]);
+        $thirdProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
 
         return new ArrayCollection([
             $this->getEntity(CheckoutLineItem::class, [
                 'product' => $firstProduct,
                 'productUnit' => $firstProductUnit,
                 'quantity' => 1,
+                'priceFixed' => false
             ]),
             $this->getEntity(CheckoutLineItem::class, [
                 'product' => $secondProduct,
                 'productUnit' => $secondProductUnit,
                 'quantity' => 2,
+                'priceFixed' => false
+            ]),
+            $this->getEntity(CheckoutLineItem::class, [
+                'product' => $thirdProduct,
+                'productUnit' => $thirdProductUnit,
+                'quantity' => 3,
+                'priceFixed' => true
             ]),
         ]);
     }
@@ -104,15 +105,8 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
     {
         $lineItems = $this->createCheckoutLineItems();
 
-        $checkoutSourceMock = $this->createMock(CheckoutSource::class);
-        $checkoutSourceMock
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($this->createMock(ShoppingList::class));
-
         /** @var Checkout $checkout */
         $checkout = $this->getEntity(Checkout::class, [
-            'source' => $checkoutSourceMock,
             'lineItems' => $lineItems,
         ]);
 

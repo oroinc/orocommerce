@@ -10,8 +10,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutLineItemsManager
 {
@@ -36,18 +38,26 @@ class CheckoutLineItemsManager
     protected $configManager;
 
     /**
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
+
+    /**
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -75,6 +85,12 @@ class CheckoutLineItemsManager
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
+                $lineItems = $lineItems->filter(
+                    function ($lineItem) {
+                        return $this->isLineItemAvailable($lineItem);
+                    }
+                );
+
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
                         function ($lineItem) use ($currency, $supportedStatuses) {
@@ -106,6 +122,25 @@ class CheckoutLineItemsManager
         }
 
         return $supportedStatuses;
+    }
+
+    /**
+     * @param object $lineItem
+     * @return bool
+     */
+    protected function isLineItemAvailable($lineItem)
+    {
+        if (!$lineItem instanceof ProductHolderInterface) {
+            return true;
+        }
+
+        $product = $lineItem->getProduct();
+        if (!$product) {
+            return true;
+        }
+
+        return $product->getStatus() === Product::STATUS_ENABLED &&
+            $this->authorizationChecker->isGranted('VIEW', $product);
     }
 
     /**
