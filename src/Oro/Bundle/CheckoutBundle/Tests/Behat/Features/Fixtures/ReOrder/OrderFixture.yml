@@ -1,0 +1,224 @@
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    billingAddress1:
+        customerUserAddress: '@amandaAddress3'
+        region: 'US-IN'
+        country: 'US'
+        label: 'Address 3'
+        street: '34500 Capitol Avenue'
+        city: 'Romney'
+        postalCode: '47981'
+        organization: '@organization'
+    shippingAddress1:
+        region: 'US-NY'
+        country: 'US'
+        label: 'Address 2'
+        street: '23401 Caldwell Road'
+        city: 'Rochester'
+        postalCode: '14609'
+        organization: '@organization'
+    billingAddress2:
+        customerUserAddress: '@amandaAddress3'
+        region: 'US-IN'
+        country: 'US'
+        label: 'Address 3'
+        street: '34500 Capitol Avenue'
+        city: 'Romney'
+        postalCode: '47981'
+        organization: '@organization'
+    shippingAddress2:
+        region: 'US-NY'
+        country: 'US'
+        label: 'Address 2'
+        street: '23401 Caldwell Road'
+        city: 'Rochester'
+        postalCode: '14609'
+        organization: '@organization'
+
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency (local):
+    subtotal1:
+        value: 3585.00
+        baseCurrencyValue: 3585.00
+        currency: 'USD'
+    total1:
+        value: 2121.00
+        baseCurrencyValue: 2121.00
+        currency: 'USD'
+    subtotal2:
+        value: 30.00
+        baseCurrencyValue: 30.00
+        currency: 'USD'
+    total2:
+        value: 30.00
+        baseCurrencyValue: 30.00
+        currency: 'USD'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        identifier: 'FirstOrder'
+        billingAddress: '@billingAddress1'
+        shippingAddress: '@shippingAddress1'
+        currency: USD
+        subtotalObject: '@subtotal1'
+        totalObject: '@total1'
+        website: '@website1'
+        shippingMethod: 'flat_rate_3'
+        shippingMethodType: 'primary'
+        estimatedShippingCostAmount: 51.00
+        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityId: '2'
+        sourceEntityIdentifier: 'Shopping list'
+        totalDiscountsAmount: 500.00
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        payment_term_7c4f1e8e: '@paymentTerm2'
+    order2:
+        identifier: 'SecondOrder'
+        billingAddress: '@billingAddress2'
+        shippingAddress: '@shippingAddress2'
+        currency: USD
+        subtotalObject: '@subtotal2'
+        totalObject: '@total2'
+        website: '@website1'
+        shippingMethod: 'flat_rate_3'
+        shippingMethodType: 'primary'
+        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityId: '3'
+        sourceEntityIdentifier: 'Shopping list'
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        payment_term_7c4f1e8e: '@paymentTerm2'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 201.00
+        currency: USD
+    price2:
+        value: 22.00
+        currency: USD
+    price3:
+        value: 10.00
+        currency: USD
+    price4:
+        value: 10.00
+        currency: USD
+    price5:
+        value: 10.00
+        currency: USD
+    price6:
+        value: 10.00
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem1:
+        order: '@order1'
+        product: '@product1'
+        productSku: 'AAA1'
+        quantity: 15
+        productUnit: '@piece'
+        price: '@price1'
+        productUnitCode: piece
+    orderLineItem2:
+        order: '@order1'
+        product: '@product2'
+        productSku: 'BBB2'
+        quantity: 25
+        productUnit: '@item'
+        price: '@price2'
+        productUnitCode: item
+    orderLineItem3:
+        order: '@order1'
+        product: '@product3'
+        productSku: 'CCC3'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price3'
+        productUnitCode: item
+    orderLineItem4:
+        order: '@order1'
+        product: '@product4'
+        productSku: 'DDD4'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price4'
+        productUnitCode: piece
+    orderLineItem5:
+        order: '@order2'
+        product: '@product3'
+        productSku: 'CCC3'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price5'
+        productUnitCode: item
+    orderLineItem6:
+        order: '@order2'
+        product: '@product4'
+        productSku: 'DDD4'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price6'
+        productUnitCode: piece
+
+Oro\Bundle\PromotionBundle\Entity\AppliedPromotion:
+    order_orderAppliedPromotion:
+        type: 'order'
+        sourcePromotionId: 1
+        promotionName: 'Order promotion'
+        configOptions:
+            discount_type: 'amount'
+            discount_value: 1500.00
+            discount_currency: 'USD'
+        promotionData:
+            id: 1
+            useCoupons: false
+            rule:
+                name: 'Order promotion'
+                expression: null
+                sortOrder: 1
+                isStopProcessing: false
+            productsSegment:
+                definition: '{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+            scopes: [{ id: 1 }]
+    order_shippingAppliedPromotion:
+        type: 'shipping'
+        sourcePromotionId: 2
+        promotionName: 'Shipping promotion'
+        configOptions:
+            discount_type: 'amount'
+            discount_value: 15.00
+            discount_currency: 'USD'
+            shipping_options:
+                shipping_method: 'flat_rate_2'
+                shipping_method_type: 'primary'
+        promotionData:
+            id: 2
+            useCoupons: false
+            rule:
+                name: 'Shipping promotion'
+                expression: null
+                sortOrder: 1
+                isStopProcessing: false
+            productsSegment:
+                definition: '{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+            scopes: [{ id: 1 }]
+
+Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    orderDiscount:
+        description: 'From admin panel'
+        amount: 500.00
+        percent: 14.03
+        order: '@order1'
+        type: 'oro_order_discount_item_type_amount'
+
+Oro\Bundle\PromotionBundle\Entity\AppliedDiscount:
+    order_orderAppliedDiscount:
+        appliedPromotion: '@order_orderAppliedPromotion'
+        amount: 1
+        currency: 'USD'
+    order_shippingAppliedDiscount:
+        appliedPromotion: '@order_shippingAppliedPromotion'
+        amount: 1
+        currency: 'USD'

@@ -4,13 +4,13 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException;
@@ -151,9 +151,8 @@ class QuantityToOrderConditionListener
         return (!$context instanceof WorkflowItem
             || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
             || !$context->getEntity() instanceof Checkout
-            || !$context->getEntity()->getSource() instanceof CheckoutSource
-            // make sure checkout only done from shopping list
-            || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
+            // make sure that checkout not done from quote demand
+            || $context->getEntity()->getSourceEntity() instanceof QuoteDemand
         );
     }
 
@@ -169,6 +168,6 @@ class QuantityToOrderConditionListener
 
         $checkout = $context->get('checkout');
 
-        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
+        return ($checkout instanceof Checkout && !$checkout->getSourceEntity() instanceof QuoteDemand);
     }
 }

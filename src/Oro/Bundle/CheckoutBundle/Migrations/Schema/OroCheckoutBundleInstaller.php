@@ -3,6 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -10,14 +14,25 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroCheckoutBundleInstaller implements Installation
+class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
+    /** @var ExtendExtension */
+    protected $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -36,6 +51,8 @@ class OroCheckoutBundleInstaller implements Installation
         $this->addOroCheckoutForeignKeys($schema);
         $this->addOroCheckoutLineItemForeignKeys($schema);
         $this->addOroCheckoutSubtotalForeignKeys($schema);
+
+        $this->addOrderCheckoutSource($schema);
     }
 
     /**
@@ -270,5 +287,37 @@ class OroCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOrderCheckoutSource(Schema $schema)
+    {
+        if (class_exists('Oro\Bundle\OrderBundle\Entity\Order')) {
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                'oro_checkout_source',
+                'order',
+                'oro_order',
+                'id',
+                [
+                    'entity' => ['label' => 'oro.order.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'datagrid' => [
+                        'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => false]
+                ]
+            );
+        }
     }
 }

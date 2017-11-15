@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -44,25 +43,72 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCa
     public function testSetDefaultShippingMethod()
     {
         $shippingMethod = 'flat_rate_1';
+        $shippingMethodType = 'primarty';
 
-        $quoteDemand = $this
-            ->getMockBuilder(QuoteDemand::class)
-            ->getMock();
+        $quoteDemand = $this->createMock(QuoteDemand::class);
 
-        $quote = $this
-            ->getMockBuilder(Quote::class)
-            ->getMock();
-
-        $quoteDemand->expects(static::once())->method('getQuote')->willReturn($quote);
-        $quote->expects(static::once())->method('getShippingMethod')->willReturn($shippingMethod);
+        $quoteDemand->expects(static::exactly(2))->method('getShippingMethod')->willReturn($shippingMethod);
+        $quoteDemand->expects(static::exactly(2))->method('getShippingMethodType')->willReturn($shippingMethodType);
 
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this
-            ->getMockBuilder(Checkout::class)
-            ->getMock();
+        $checkout = $this->createMock(Checkout::class);
 
         $checkout->expects(static::once())->method('getSourceEntity')->willReturn($quoteDemand);
         $checkout->expects(static::once())->method('setShippingMethod')->with($shippingMethod);
+        $checkout->expects(static::once())->method('setShippingMethodType')->with($shippingMethodType);
+
+        $this->serviceDecorator->setDefaultShippingMethod($checkout);
+    }
+
+    public function testSetDefaultShippingMethodWithoutSourceShippingMethod()
+    {
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+
+        $quoteDemand->expects($this->once())
+            ->method('getShippingMethod')
+            ->willReturn(null);
+        $quoteDemand->expects($this->never())
+            ->method('getShippingMethodType');
+
+        /* @var $checkout Checkout|\PHPUnit_Framework_MockObject_MockObject */
+        $checkout = $this->createMock(Checkout::class);
+
+        $checkout->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($quoteDemand);
+
+        $checkout->expects($this->never())
+            ->method('setShippingMethod');
+        $checkout->expects($this->never())
+            ->method('setShippingMethodType');
+
+        $this->serviceDecorator->setDefaultShippingMethod($checkout);
+    }
+
+    public function testSetDefaultShippingMethodWithoutSourceShippingMethodType()
+    {
+        $shippingMethod = 'flat_rate_1';
+
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+
+        $quoteDemand->expects($this->once())
+            ->method('getShippingMethod')
+            ->willReturn($shippingMethod);
+        $quoteDemand->expects($this->once())
+            ->method('getShippingMethodType')
+            ->willReturn(null);
+
+        /* @var $checkout Checkout|\PHPUnit_Framework_MockObject_MockObject */
+        $checkout = $this->createMock(Checkout::class);
+
+        $checkout->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($quoteDemand);
+
+        $checkout->expects($this->never())
+            ->method('setShippingMethod');
+        $checkout->expects($this->never())
+            ->method('setShippingMethodType');
 
         $this->serviceDecorator->setDefaultShippingMethod($checkout);
     }

@@ -21,7 +21,7 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue:
-                label: 'oro.order.navigation.view'
+                label: 'oro.frontend.order.identifier.label'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
@@ -32,6 +32,14 @@ layout:
             id: order_view_page_toolbar_print_button
             optionName: text
             optionValue: 'oro.frontend.order.toolbar-actions.btn.print'
+        - '@add':
+            id: button_container
+            blockType: line_buttons
+            parentId: order_view_page_toolbar_actions-list
+            options:
+                visible: '=data["buttons"].getAll(data["order"])!=null'
+                buttons: '=data["buttons"].getAll(data["order"])'
+            prepend: true
         - '@addTree':
             items:
                 order_view_page:

@@ -58,6 +58,16 @@ Retrieve the service records that store the category inventory threshold data.
 
 Retrieve the ID's of service records that store the category inventory threshold data.
 
+### isUpcoming
+
+#### get_subresource
+
+Retrieve the service records that products from this category will be available later
+
+#### get_relationship
+
+Retrieve the ID's of service records that products from this category will be available later
+
 ### largeImage
 
 #### get_subresource

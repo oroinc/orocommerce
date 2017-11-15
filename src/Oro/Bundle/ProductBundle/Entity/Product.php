@@ -1268,6 +1268,7 @@ class Product extends ExtendProduct implements
             throw new \RuntimeException('Product has to have a default name');
         }
         $this->denormalizedDefaultName = $this->getDefaultName()->getString();
+        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
 
         if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
