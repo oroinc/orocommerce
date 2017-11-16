@@ -21,6 +21,8 @@ class WebsiteSearchControllerTest extends WebTestCase
 
     public function testSearchResultsAction()
     {
+        $this->markTestSkipped('OPI-219: Unstable test');
+
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         // assert search widget exists on page
