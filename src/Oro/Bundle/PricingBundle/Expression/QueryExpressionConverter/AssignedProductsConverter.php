@@ -42,12 +42,13 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
                     $left = $node->getLeft();
                     $this->assertLeftOperand($left);
 
-                    $limitationDql = sprintf(
-                        'SELECT 1 FROM %s _ap WHERE _ap.product = %s AND _ap.priceList = %s',
+                    $alias = '_ap' . $right->getContainerId();
+                    $limitationDql = str_replace('alias', $alias, sprintf(
+                        'SELECT 1 FROM %s alias WHERE alias.product = %s AND alias.priceList = %s',
                         PriceListToProduct::class,
                         $this->getTableAliasByNode($aliasMapping, $left),
                         $this->getTableAliasByNode($aliasMapping, $right)
-                    );
+                    ));
 
                     $expression = $expr->exists($limitationDql);
                     if ($operation === 'not in') {
