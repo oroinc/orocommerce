@@ -15,7 +15,7 @@ oro:
                     request_courier.label: 'Request Courier'
                     drop_box.label: 'Drop Box'
                     business_service_center.label: 'Business Service Center'
-                    station: 'Station'
+                    station.label: 'Station'
                 unit_of_weight:
                     label: 'Unit Of Weight'
                     kg.label: 'Kilogram'
