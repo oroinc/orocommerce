@@ -112,7 +112,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
 
         $config->addColumn(
             self::PRODUCT_PRICES_COLUMN_NAME,
-            ['frontend_type' => 'array', 'type' => 'field', 'renderable' => false]
+            ['frontend_type' => 'array', 'type' => 'field', 'renderable' => false, 'translatable' => true]
         );
     }
 }
