@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
@@ -23,6 +24,7 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -73,7 +75,7 @@ class RequestTypeTest extends AbstractTest
     public function submitProvider()
     {
         $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
-        $requestProduct     = $this->getRequestProduct(2, 'comment', [$requestProductItem]);
+        $requestProduct     = $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem]);
 
         $longStr    = str_repeat('a', 256);
         $longEmail  = $longStr . '@example.com';
@@ -474,7 +476,7 @@ class RequestTypeTest extends AbstractTest
                     $customerMultiSelectType->getName()      => $customerMultiSelectType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
-                []
+                ['form' => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
             ),
             $this->getValidatorExtension(true),
         ];
