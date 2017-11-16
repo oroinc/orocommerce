@@ -241,9 +241,11 @@ services:
     oro_website_search.migration.demo_data_fixtures_listener.reindex:
         class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener
         arguments:
+            - '@oro_platform.optional_listeners.manager'
             - '@event_dispatcher'
         tags:
             # do reindexation of website index after reindexation of search index
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad, priority: -110 }
 
     oro_website_search.provider.placeholder_provider:
