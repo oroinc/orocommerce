@@ -1,0 +1,94 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..6}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..6}:
+        sku: 'PSKU<current()>'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision<current()>'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@localValueProduct<current()>']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    lightingProducts:
+        __construct: [['@product1']]
+    architecturalFloodlightingProducts:
+        __construct: [['@product2']]
+    categoryHeadlampsProducts:
+        __construct: [['@product3', '@product4']]
+    categoryMedicalApparelProducts:
+        __construct: [['@product5']]
+    categoryMedicalUniformsProducts:
+        __construct: [['@product6']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localValueLightingProducts']
+        addSlugPrototype: ['@localValueLightingProductsSlug']
+        setParentCategory: [1]
+        setProducts: ['@lightingProducts']
+
+    categoryArchitecturalFloodlighting:
+        addTitle: ['@localValueArchitecturalFloodlighting']
+        addSlugPrototype: ['@localValueArchitecturalFloodlightingSlug']
+        setParentCategory: ['@categoryLightingProducts']
+        setProducts: ['@architecturalFloodlightingProducts']
+
+    categoryHeadlamps:
+        addTitle: ['@localValueHeadlamps']
+        addSlugPrototype: ['@localValueHeadlampsSlug']
+        setParentCategory: ['@categoryLightingProducts']
+        setProducts: ['@categoryHeadlampsProducts']
+
+    categoryMedicalApparel:
+        addTitle: ['@localValueMedicalApparel']
+        addSlugPrototype: ['@localValueMedicalApparelSlug']
+        setParentCategory: [1]
+        setProducts: ['@categoryMedicalApparelProducts']
+
+    categoryMedicalUniforms:
+        addTitle: ['@localValueMedicalUniforms']
+        addSlugPrototype: ['@localValueMedicalUniformsSlug']
+        setParentCategory: ['@categoryMedicalApparel']
+        setProducts: ['@categoryMedicalUniformsProducts']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueProduct{1..6}:
+        string: 'Product<current()>'
+
+    localValueLightingProducts:
+        string: 'Lighting Products'
+
+    localValueLightingProductsSlug:
+        string: 'lighting-products'
+
+    localValueArchitecturalFloodlighting:
+        string: 'Architectural Floodlighting'
+
+    localValueArchitecturalFloodlightingSlug:
+        string: 'architectural-floodlighting'
+
+    localValueHeadlamps:
+        string: 'Headlamps'
+
+    localValueHeadlampsSlug:
+        string: 'headlamps'
+
+    localValueMedicalApparel:
+        string: 'Medical Apparel'
+
+    localValueMedicalApparelSlug:
+        string: 'medical-apparel'
+
+    localValueMedicalUniforms:
+        string: 'Medical Uniforms'
+
+    localValueMedicalUniformsSlug:
+        string: 'medical-uniforms'

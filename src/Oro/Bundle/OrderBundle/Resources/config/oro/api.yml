@@ -1,9 +1,13 @@
 api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
             form_event_subscriber:
                 - oro_order.form.type.event_listener.subtotals_subscriber
-                - oro_order.api.form_listener.default_website
+                - oro_website.form_subscriber.default_website
+            fields:
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e
             actions:
                 create:
                     fields:
@@ -13,6 +17,9 @@ api:
                             exclude: true
                         totalDiscountsAmount:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
                 update:
                     fields:
                         subtotalValue:
@@ -23,8 +30,14 @@ api:
                             exclude: true
                         currency:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
+        Extend\Entity\EV_Order_Internal_Status:
+            actions: false
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'
             fields:
                 # this is added in order to properly handle "price" parameter that is created out of these values
                 # which are not present in validations.yml and so are not handled by api
@@ -49,9 +62,12 @@ api:
                         productUnitCode:
                             exclude: true
 
-        Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
+        Oro\Bundle\OrderBundle\Entity\OrderAddress:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order_address.md'
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'
             form_event_subscriber: oro_order.api.form_listener.discount
 
-        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking: ~
+        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order_shipping_tracking.md'

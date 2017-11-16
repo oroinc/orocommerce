@@ -12,7 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -65,7 +67,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initCustomerAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
-        $builder->add('phone', 'text', ['required' => false]);
+        $builder->add('phone', 'text', ['required' => false, StripTagsExtension::OPTION_NAME => true,]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -126,6 +128,7 @@ abstract class AbstractOrderAddressType extends AbstractType
             ->setDefaults([
                 'data_class' => $this->dataClass,
                 'isEditEnabled' => true,
+                'constraints' => [new NameOrOrganization()],
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface');

@@ -12,13 +12,13 @@ Feature: Start checkout for a quote
       | PO Number | PONUMBER1 |
 
   Scenario: BackOffice scenario background
-    And I login as administrator
+    Given I login as administrator
     And I create a quote from RFQ with PO Number "PONUMBER1"
     And I click "Send to Customer"
     And I click "Send"
 
   Scenario: Verify "All Quotes" grid
-    Given I login as AmandaRCole@example.org buyer
+    Given I am on homepage
     When I click "Quotes"
     Then I shouldn't see "Status" column in frontend grid
     And I shouldn't see "Status" filter in frontend grid

@@ -5,28 +5,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: product_id
             type: integer
         -
-            name: name_LOCALIZATION_ID
-            type: text
-        -
-            name: sku
-            type: text
-        -
             name: sku_uppercase
-            type: text
-        -
-            name: new_arrival
-            type: integer
-        -
-            name: short_description_LOCALIZATION_ID
             type: text
         -
             name: status
             type: text
         -
             name: type
-            type: text
-        -
-            name: inventory_status
             type: text
         -
             name:  all_text
@@ -40,6 +25,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: assigned_to_ASSIGN_TYPE_ASSIGN_ID
             type: integer
+        -
+            name: image_product_large
+            type: text
+        -
+            name: image_product_medium
+            type: text
+        -
+            name: product_units
+            type: text
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

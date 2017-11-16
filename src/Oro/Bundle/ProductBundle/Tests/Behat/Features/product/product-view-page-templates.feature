@@ -76,7 +76,8 @@ Feature: Product View Page Templates
   #    remark: Test text for configurable product
 
   Scenario: Prepare product attributes
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
 
     # Create Color attribute
     And I go to Products / Product Attributes
@@ -164,34 +165,35 @@ Feature: Product View Page Templates
     Then I should see "Product has been saved" flash message
 
   Scenario: Open, fill and submit Matrix Order Form
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I operate as the Buyer
     And I open product with sku "shirt_main" on the store frontend
-    And I should see "Order with Matrix Grid"
-    And I click "Order with Matrix Grid"
+    Then I should see an "Matrix Grid Form" element
     And I should see "Green"
     And I should see "Red"
     And I should see "Total QTY"
     And I type "1" in "matrix_collection[rows][0][columns][0][quantity]"
     And I type "2" in "matrix_collection[rows][1][columns][1][quantity]"
     And I should see "$24.00"
-    And I click "Add to Shopping List" in matrix order window
-    And I should see "Product has been added to" flash message
-    Then I should see "In shopping list"
+    And I click "Add to Shopping List"
+    And I should see 'Shopping list "Shopping list" was updated successfully' flash message
 
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
-    Given I login as administrator
+    Given I operate as the Admin
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates Form" with:
       | Use Default  | true             |
       | Product Page | Default template |
     And save form
     Then I should see "Configuration saved" flash message
     Then I should see "Default template"
-    And I click Logout in user menu
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Display Matrix Form (where applicable)" field
+    And I fill in "Display Matrix Form (where applicable)" with "Do Not Display"
+    And I save form
+    Then I should see "Configuration saved" flash message
+
+    And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     Then I should see "Item #: gtsh_l"
@@ -214,22 +216,19 @@ Feature: Product View Page Templates
       | Size   | L     |
     Then I should see "Default Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
-    And I am logged out
 
   Scenario: "Product View Page Templates 2A" > Check simple product page with selected: Short page template
-    Given I login as administrator
+    Given I operate as the Admin
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false      |
       | Product Page | Short page |
     And save form
     Then I should see "Configuration saved" flash message
     Then I should see "Short page"
-    And I click Logout in user menu
-    And I signed in as AmandaRCole@example.org on the store frontend
+
+    And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     Then I should see "Item #: gtsh_l"
@@ -247,22 +246,19 @@ Feature: Product View Page Templates
       | Color  | Green |
       | Size   | L     |
     Then I should not see "Remark Group"
-    And I am logged out
 
   Scenario: "Product View Page Templates 3A" > Check simple product page with selected: Two columns page template
-    Given I login as administrator
+    Given I operate as the Admin
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false            |
       | Product Page | Two columns page |
     And save form
     Then I should see "Configuration saved" flash message
     Then I should see "Two columns page"
-    And I click Logout in user menu
-    And I signed in as AmandaRCole@example.org on the store frontend
+
+    And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     Then I should see "Item #: gtsh_l"
@@ -287,22 +283,19 @@ Feature: Product View Page Templates
       | Your Price:   | $10.00 / item                  |
     Then I should see "Two Columns Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
-    And I am logged out
 
   Scenario: "Product View Page Templates 4A" > Check simple product page with selected: List page template
-    Given I login as administrator
+    Given I operate as the Admin
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false     |
       | Product Page | List page |
     And save form
     Then I should see "Configuration saved" flash message
     Then I should see "List page"
-    And I click Logout in user menu
-    And I signed in as AmandaRCole@example.org on the store frontend
+
+    And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     Then I should see "Item #: gtsh_l"
@@ -325,7 +318,6 @@ Feature: Product View Page Templates
       | Price | $10.00 / item |
     Then I should see "List Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
-    And I am logged out
 
   # TODO: Should be uncommented after BB-9990 is done
 #  Scenario: "Product View Page Templates 5A" > Check that the label is hiding if the condition _name
@@ -336,9 +328,7 @@ Feature: Product View Page Templates
 #      | Label | _Remark |
 #    And I save and close form
 #    And go to System / Configuration
-#    And I click "Commerce"
-#    And I click "Design"
-#    And I click "Theme"
+#    And I follow "Commerce/Design/Theme" on configuration sidebar
 #    And fill "Page Templates form" with:
 #      | Use Default  | false     |
 #      | Product Page | List page |

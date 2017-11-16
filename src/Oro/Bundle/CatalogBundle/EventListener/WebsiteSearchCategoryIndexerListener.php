@@ -4,8 +4,8 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
@@ -16,6 +16,8 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchCategoryIndexerListener
 {
+    const CATEGORY_TITLE_L10N_FIELD = 'category_title_LOCALIZATION_ID';
+
     /**
      * @var DoctrineHelper
      */
@@ -76,7 +78,8 @@ class WebsiteSearchCategoryIndexerListener
             if (!empty($category)) {
                 // Non localized fields
                 $event->addField($product->getId(), 'category_id', $category->getId());
-                $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
+
+                $this->addCategoryPathInformation($event, $product, $category);
 
                 // Localized fields
                 foreach ($localizations as $localization) {
@@ -84,7 +87,7 @@ class WebsiteSearchCategoryIndexerListener
 
                     $event->addPlaceholderField(
                         $product->getId(),
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        static::CATEGORY_TITLE_L10N_FIELD,
                         (string)$category->getTitle($localization),
                         $placeholders,
                         true
@@ -107,6 +110,33 @@ class WebsiteSearchCategoryIndexerListener
                     );
                 }
             }
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param Product $product
+     * @param Category $category
+     */
+    protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category)
+    {
+        $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
+
+        $pathParts = explode(Category::MATERIALIZED_PATH_DELIMITER, $category->getMaterializedPath());
+        $lastPart = null;
+
+        foreach ($pathParts as $part) {
+            $delimiter = $lastPart ? Category::MATERIALIZED_PATH_DELIMITER : '';
+
+            $lastPart .= $delimiter . $part;
+
+            $event->addPlaceholderField(
+                $product->getId(),
+                'category_path_CATEGORY_PATH',
+                1,
+                [CategoryPathPlaceholder::NAME => $lastPart],
+                false
+            );
         }
     }
 

@@ -5,6 +5,7 @@ define(function(require) {
 
     var ProductUnitSelectComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var _ = require('underscore');
 
     ProductUnitSelectComponent = BaseComponent.extend({
@@ -34,29 +35,16 @@ define(function(require) {
                 return;
             }
 
-            var productUnits = model.get('product_units');
+            var $select = this.options._sourceElement.find('select');
+            UnitsUtil.updateSelect(model, $select);
 
-            if (productUnits) {
-                var select = this.options._sourceElement.find('select');
-
-                var content = '';
-                var length = productUnits.length;
-
-                for (var i = 0; i < length; i++) {
-                    var unitCode = productUnits[i];
-                    content = content + '<option value=' + unitCode + '>' +
-                        _.__(this.options.unitLabel.replace('%s', unitCode)) + '</option>';
+            var productUnits = _.keys(model.get('product_units'));
+            if (this.isProductApplySingleUnitMode(productUnits)) {
+                if (this.options.singleUnitModeCodeVisible) {
+                    $select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
                 }
-
-                select.html(content).change();
-
-                if (this.isProductApplySingleUnitMode(productUnits)) {
-                    if (this.options.singleUnitModeCodeVisible) {
-                        select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
-                    }
-                    select.inputWidget('dispose');
-                    select.addClass('no-input-widget').hide();
-                }
+                $select.inputWidget('dispose');
+                $select.addClass('no-input-widget').hide();
             }
         },
 

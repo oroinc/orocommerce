@@ -18,8 +18,8 @@ navigation:
             oro_sale_quote_frontend_index:
                 label: 'oro.frontend.sale.quote.entity_plural_label'
                 route: oro_sale_quote_frontend_index
-                position: 70
                 acl_resource_id: 'oro_sale_quote_frontend_index'
+                position: 70
 
             oro_sale_quote_frontend_view:
                 label: 'oro.ui.view'
@@ -49,7 +49,10 @@ navigation:
 
             oro_customer_menu:
                 children:
-                    oro_sale_quote_frontend_index: ~
+                    oro_sale_quote_frontend_index:
+                        children:
+                            oro_sale_quote_frontend_view: ~
+
     titles:
         oro_sale_quote_index: ~
         oro_sale_quote_view:   'oro.sale.navigation.view'

@@ -89,9 +89,9 @@ class Coupon implements
     protected $code;
 
     /**
-     * @var integer
+     * @var bool
      *
-     * @ORM\Column(name="total_uses", type="integer", nullable=false, options={"default"=0})
+     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -103,7 +103,7 @@ class Coupon implements
      *      }
      *  )
      */
-    protected $totalUses = 0;
+    protected $enabled = false;
 
     /**
      * @var integer
@@ -210,6 +210,23 @@ class Coupon implements
     protected $organization;
 
     /**
+     * @ORM\Column(name="valid_from", type="datetime", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=45
+     *          }
+     *      }
+     *  )
+     *
+     * @var \DateTime|null
+     */
+    protected $validFrom;
+
+    /**
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
      * @ConfigField(
      *      defaultValues={
@@ -254,20 +271,20 @@ class Coupon implements
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getTotalUses()
+    public function isEnabled(): bool
     {
-        return $this->totalUses;
+        return $this->enabled;
     }
 
     /**
-     * @param int $totalUses
+     * @param bool $enabled
      * @return Coupon
      */
-    public function setTotalUses($totalUses)
+    public function setEnabled(bool $enabled)
     {
-        $this->totalUses = (int)$totalUses;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -325,6 +342,25 @@ class Coupon implements
     public function setPromotion($promotion)
     {
         $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getValidFrom()
+    {
+        return $this->validFrom;
+    }
+
+    /**
+     * @param \DateTime|null $validFrom
+     * @return Coupon
+     */
+    public function setValidFrom($validFrom)
+    {
+        $this->validFrom = $validFrom;
 
         return $this;
     }

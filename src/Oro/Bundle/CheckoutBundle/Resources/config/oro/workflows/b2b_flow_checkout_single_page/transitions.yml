@@ -62,7 +62,10 @@ workflows:
                             form_type: checkbox
                         additional_data:
                             form_type: hidden
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         po_number: ~
                         customer_notes:
                             form_type: textarea
@@ -104,6 +107,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             form_type: oro_save_address
@@ -119,6 +123,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                         save_shipping_address:
                             form_type: oro_save_address
                         ship_to_billing_address:
@@ -140,7 +145,10 @@ workflows:
                             form_type: hidden
                         remove_source: ~
                         po_number: ~
-                        ship_until: ~
+                        ship_until:
+                            form_type: oro_checkout_ship_until
+                            options:
+                                checkout: $checkout
                         customer_notes:
                             form_type: textarea
                         state_token:

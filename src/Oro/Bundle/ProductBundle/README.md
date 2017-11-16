@@ -4,7 +4,6 @@ Oro\Bundle\ProductBundle\OroProductBundle
 Table of Contents
 -----------------
  - [Description](#description)
- - [Bundle responsibilities](#bundle-responsibilities)
  - [Expected dependencies](#expected-dependencies)
  - Formatting
     - [Product Unit Value Formatting](./Resources/doc/product-unit-value-formatting.md)

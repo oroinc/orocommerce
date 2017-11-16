@@ -44,7 +44,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_entity.entity_class_name_provider'),
             $container->get('translator'),
             $container->get('oro_importexport.strategy.new_entities_helper'),
-            $container->get('oro_entity.doctrine_helper')
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('oro_security.owner.checker')
         );
         $this->strategy->setLocalizedFallbackValueClass(
             $container->getParameter('oro_locale.entity.localized_fallback_value.class')
@@ -78,6 +79,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
 
+        /** @var AttributeFamily $attributeFamily */
+        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $entity->setAttributeFamily($attributeFamily);
         /** @var \Oro\Bundle\ProductBundle\Entity\Product $result */
         $result = $this->strategy->process($entity);
 

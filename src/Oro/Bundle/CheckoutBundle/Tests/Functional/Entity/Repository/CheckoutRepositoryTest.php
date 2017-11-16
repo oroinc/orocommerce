@@ -72,7 +72,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->assertEquals(count($ids), $found);
     }
 
-    public function testGetSourcePerCheckout()
+    public function testGetCheckoutsByIds()
     {
         $repository = $this->getRepository();
 
@@ -90,7 +90,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             }
         }
 
-        $sources = $repository->getSourcePerCheckout($ids);
+        $sources = $repository->getCheckoutsByIds($ids);
 
         $found = 0;
 
@@ -138,6 +138,32 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
             $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
                 $customerUser,
+                $criteria,
+                'b2b_flow_checkout'
+            )
+        );
+    }
+
+    public function testFindCheckoutBySourceCriteriaByQuoteDemand()
+    {
+        $criteria = ['quoteDemand' => $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1)];
+
+        $this->assertSame(
+            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
+            $this->getRepository()->findCheckoutBySourceCriteria(
+                $criteria,
+                'b2b_flow_checkout'
+            )
+        );
+    }
+
+    public function testFindCheckoutBySourceCriteriaByShoppingList()
+    {
+        $criteria = ['shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)];
+
+        $this->assertSame(
+            $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
+            $this->getRepository()->findCheckoutBySourceCriteria(
                 $criteria,
                 'b2b_flow_checkout'
             )

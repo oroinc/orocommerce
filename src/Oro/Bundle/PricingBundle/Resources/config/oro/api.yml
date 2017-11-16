@@ -35,7 +35,7 @@ api:
                         add_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
-            form_event_subscriber: oro_pricing.api_form_subscriber.add_schdules_to_price_list
+            form_event_subscriber: oro_pricing.api_form_subscriber.add_schedules_to_price_list
             actions:
                 update:
                     fields:
@@ -71,6 +71,7 @@ api:
                             - NotBlank: ~
                 # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_price_list.md'
             fields:
                 prices:
                     exclude: true
@@ -83,3 +84,122 @@ api:
                     exclude: true
                 delete_list:
                     exclude: true
+        Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer_group.md'
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customerGroup:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                priceList:
+                    actions:
+                        update_relationship: false
+                customerGroup:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_customer_group_fallback.md'
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customerGroup:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                customerGroup:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_to_customer.md'
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customer:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                priceList:
+                    actions:
+                        update_relationship: false
+                customer:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_customer_fallback.md'
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customer:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                customer:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\PricingBundle\Entity\ProductPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
+            filters:
+                fields:
+                    priceList:
+                        operators: ['=']
+                        allow_array: false
+            fields:
+                # this is added in order to properly handle "price" parameter that is created out of these values
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                          - NotBlank: ~
+                productSku:
+                    exclude: true
+                priceRule:
+                    exclude: true
+            actions:
+                update_relationship:
+                    exclude: true
+                get_subresource:
+                    exclude: true
+                get_relationship:
+                    exclude: true
+                delete_relationship:
+                    exclude: true
+                add_relationship:
+                    exclude: true
+                update:
+                    fields:
+                        priceList:
+                            exclude: true
+            delete_handler: 'oro_pricing.api.price_manager_delete_handler'

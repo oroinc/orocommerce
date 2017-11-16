@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Tests\Functional\DataFixtures\LoadBusinessUnitData;
-use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrganizations;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,6 +16,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
@@ -36,8 +38,8 @@ class ProductApiTest extends RestJsonApiTestCase
             LoadBusinessUnitData::class,
             LoadOrganizations::class,
             LoadProductTaxCodes::class,
-            LoadAttributeFamilyData::class,
             LoadCategoryData::class,
+            LoadVariantFields::class
         ]);
     }
 
@@ -428,5 +430,33 @@ class ProductApiTest extends RestJsonApiTestCase
             $updatedUnitPrecisionData['attributes']['precision'],
             'update attribute for unit precision'
         );
+    }
+
+    public function testDeleteAction()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $id = $product->getId();
+        $this->delete(
+            [
+                'entity' => 'products',
+                'id' => (string)$id
+            ]
+        );
+
+        $this->assertNull(
+            $this->getEntityManager()->find(Product::class, $id)
+        );
+    }
+
+    public function testCreateConfigurableProduct()
+    {
+        $response = $this->post(
+            [
+                'entity' => $this->getEntityType(Product::class)
+            ],
+            __DIR__ . '/requests/create_configurable_product.yml'
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
     }
 }

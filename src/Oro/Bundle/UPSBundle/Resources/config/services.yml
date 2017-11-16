@@ -85,7 +85,6 @@ services:
         class: 'Oro\Bundle\UPSBundle\Factory\PriceRequestFactory'
         public: false
         arguments:
-            - '@doctrine'
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_ups.shipping_units_mapper'
             - '@oro_security.encoder.mcrypt'
@@ -107,18 +106,25 @@ services:
     oro_ups.handler.action.invalidate_cache:
         class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler'
         arguments:
+            - "@oro_entity.doctrine_helper"
             - "@oro_ups.shipping_price_cache"
             - "@oro_shipping.shipping_price.provider.cache"
+            - "@oro_ups.time_in_transit.cache_provider.factory"
 
     oro_ups.shipping_price_cache:
         class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'
         public: false
         arguments:
             - "@oro_ups.cache.shipping_price"
+            - "@oro_ups.cache.lifetime_provider"
 
     oro_ups.cache.shipping_price:
         public: false
         parent: oro.cache.abstract
+
+    oro_ups.cache.lifetime_provider:
+        class: 'Oro\Bundle\UPSBundle\Cache\Lifetime\UPSSettings\LifetimeByInvalidateCacheAtFieldProvider'
+        public: false
 
     oro_ups.disable_integration_listener:
         parent: oro_shipping.disable_integration_listener

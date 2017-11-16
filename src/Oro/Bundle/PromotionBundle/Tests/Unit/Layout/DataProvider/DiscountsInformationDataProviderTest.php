@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Test\Unit\Layout\DataProvider;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;

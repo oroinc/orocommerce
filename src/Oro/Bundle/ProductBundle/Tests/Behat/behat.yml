@@ -138,6 +138,24 @@ oro_behat_extension:
           Type: 'oro_product_step_one[type]'
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
+    Product Attribute Frontend Options:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-section")]//h4[contains(., "Frontend options")]/..'
+
+    Product Option Form:
+      selector: 'form[name="product_options"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Manage Inventory  Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
+          Inventory Threshold Default: 'product_options[oro_inventory___inventory_threshold][use_parent_scope_value]'
+          Backorders Default: 'product_options[oro_inventory___backorders][use_parent_scope_value]'
+          Decrement Inventory Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
+          Low Inventory Threshold Default: 'product_options[oro_inventory___low_inventory_threshold][use_parent_scope_value]'
+          Highlight Low Inventory: 'product_options[oro_inventory___highlight_low_inventory][value]'
+          Highlight Low Inventory Default: 'product_options[oro_inventory___highlight_low_inventory][use_parent_scope_value]'
+
     ProductForm:
       selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -158,6 +176,22 @@ oro_behat_extension:
           Size: 'oro_product[Size]'
           Color Attribute: 'oro_product[color_attribute]'
           Size Attribute: 'oro_product[size_attribute]'
+        # for testing product attributes
+          StringField: 'oro_product[StringField]'
+          IntegerField: 'oro_product[IntegerField]'
+          BigIntField: 'oro_product[BigIntField]'
+          SmallIntField: 'oro_product[SmallIntField]'
+          BooleanField: 'oro_product[BooleanField]'
+          DecimalField: 'oro_product[DecimalField]'
+          FloatField: 'oro_product[FloatField]'
+          PercentField: 'oro_product[PercentField]'
+          CurrencyField: 'oro_product[CurrencyField]'
+          DateField:
+            type: 'css'
+            locator: 'input[name^="date_selector_oro_product_DateField"]'
+          DateTimeField: 'oro_product[DateTimeField]'
+          SelectField: 'oro_product[SelectField]'
+          TextField: 'oro_product[TextField]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -242,6 +276,11 @@ oro_behat_extension:
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select2Entity
 
+    Quick Order Form > QTY1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
@@ -307,7 +346,9 @@ oro_behat_extension:
       selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
 
     Field Condition:
-      selector: 'li[data-widget="fieldCondition"]'
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
     Drop condition here:
       selector: ".right-area"
@@ -407,7 +448,38 @@ oro_behat_extension:
 
     # front products grid
     ProductFrontendGrid:
-      selector: '.product-list'
+      selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
+
+    ProductFrontendGridFiltersButton:
+      selector: 'div.filter-container > button.select-filter-widget'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
+
+    ProductFrontendGridFilterManager:
+      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
+      selector: 'div.oro-datagrid'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
+
+    ProductFrontendGridTable:
+      selector: 'div.grid.table'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+
+    ProductFrontendMassActionHeadCheckbox:
+      selector: 'div.datagrid-massaction button'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendMassActionButton:
+      selector: '.datagrid-massaction button.dropdown-toggle'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendGridFloatingMenu:
+      selector: '.datagrid-massaction__dropdown-menu'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductFrontendGridRow:
+      selector: '.grid-row'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow
 
     ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
@@ -454,6 +526,29 @@ oro_behat_extension:
 
     ProductItem:
       selector: 'div.product-item'
+
+    ProductLineItem:
+      selector: 'tbody.line_item'
+
+    Product Shopping List Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]'
+        type: xpath
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    Product Shopping List Dropdown:
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        type: 'xpath'
+
+    Request A Quote Button:
+      selector:
+        locator: '//a[@data-url="oro_rfp_frontend_request_create"]'
+        type: 'xpath'
 
     Product Collection Variant Label:
       selector:
@@ -561,6 +656,17 @@ oro_behat_extension:
     RequestAQuoteProductLineUnit:
       selector: '.request-form-product__item--quantity .request-form-quantity__units'
 
+    ProductQuantityField:
+      selector: '.product-item__qty__current-grid input'
+
+    ProductLineItemForm:
+      selector: '[name="oro_product_frontend_line_item"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
     New Arrivals Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
@@ -572,6 +678,12 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Featured Products"]/../../div'
+
+    Related Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Related Products"]/../../div'
 
     EmbeddedProduct:
       selector: 'div.embedded-product'
@@ -587,12 +699,19 @@ oro_behat_extension:
             type: xpath
             locator: '//div[contains(@id,"s2id_oro_product_brand-uid")]//abbr[@class="select2-search-choice-close"]'
 
+    Brand Form Name Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="Name"]/../..//span[@class="fallback-status"]'
+
     Brand Form:
       selector: 'form[name="oro_product_brand"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
           Name: 'oro_product_brand[names][values][default]'
+          Name Second: 'oro_product_brand[names][values][localizations][2][value]'
+          Name Second Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
@@ -614,6 +733,41 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Product navbar:
+      selector: '#product-edit.navbar'
+
+    Additional Units Form Section:
+      selector:
+        type: xpath
+        locator: '//label[contains(., "Additional Units")]/ancestor::div[contains(@class, "control-group")]'
+
+    Brand humburger button:
+      selector:
+        type: xpath
+        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+
+    Frontend Product Grid MultipleChoice:
+      selector: 'div.filter-item'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice
+
+    Frontend Product Grid Sorter:
+      selector: 'div.datagrid-tool div[data-grid-sorting] select'
+
+    Shirt_101 Matrix Grid Order Form:
+      selector: 'form[name="matrix_collection"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
+    Uploaded Product Image:
+      selector: 'img[src^="/media/cache/attachment"]'
+
+    Empty Product Image:
+      selector:
+       type: xpath
+       locator: '//img[contains (@src,"no_image.png")]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
@@ -622,6 +776,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::ProductImportExportContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext
@@ -629,9 +784,13 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
+        - '@OroProductBundle/Tests/Behat/Features/product-attributes'
     OroProductBundleRelatedItems:
       contexts:
         - OroApplicationBundle::CommerceMainContext
@@ -660,7 +819,6 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
-        - OroAuthorizeNetBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext

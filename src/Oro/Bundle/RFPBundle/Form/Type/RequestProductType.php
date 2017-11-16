@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
 class RequestProductType extends AbstractType
@@ -21,19 +21,6 @@ class RequestProductType extends AbstractType
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $labelFormatter;
-
-    /**
-     * @param ProductUnitLabelFormatter $labelFormatter
-     */
-    public function __construct(ProductUnitLabelFormatter $labelFormatter)
-    {
-        $this->labelFormatter = $labelFormatter;
-    }
 
     /**
      * @param string $dataClass
@@ -67,6 +54,7 @@ class RequestProductType extends AbstractType
             ->add('comment', 'textarea', [
                 'required'  => false,
                 'label'     => 'oro.rfp.requestproduct.comment.label',
+                StripTagsExtension::OPTION_NAME => true,
             ])
         ;
     }
@@ -106,14 +94,7 @@ class RequestProductType extends AbstractType
         }
 
         foreach ($products as $product) {
-            $units[$product->getId()] = [];
-
-            foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format(
-                    $unitCode,
-                    $options['compact_units']
-                );
-            }
+            $units[$product->getId()] = $product->getAvailableUnitsPrecision();
         }
 
         $componentOptions = [

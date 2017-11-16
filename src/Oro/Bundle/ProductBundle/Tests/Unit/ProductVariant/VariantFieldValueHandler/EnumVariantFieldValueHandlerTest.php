@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
-use Psr\Log\LoggerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Model\EnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
+use Psr\Log\LoggerInterface;
 
 class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +22,11 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $logger;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     /** @var EnumVariantFieldValueHandler */
     private $handler;
 
@@ -29,20 +35,16 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->enumValueProvider = $this->getMockBuilder(EnumValueProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->enumValueProvider = $this->createMock(EnumValueProvider::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->handler = new EnumVariantFieldValueHandler(
             $this->doctrineHelper,
             $this->enumValueProvider,
-            $this->logger
+            $this->logger,
+            $this->configManager
         );
     }
 
@@ -69,10 +71,19 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
         $fieldName = 'testField';
         $enumValues = ['red', 'green'];
 
-        $enumCode = ExtendHelper::generateEnumCode(Product::class, $fieldName);
+        $fieldConfig = $this->createMock(FieldConfigModel::class);
+        $fieldConfig->expects($this->once())
+            ->method('toArray')
+            ->with('extend')
+            ->willReturn(['target_entity' => '\stdClass']);
+        $this->configManager->expects($this->once())
+            ->method('getConfigFieldModel')
+            ->with(Product::class, $fieldName)
+            ->willReturn($fieldConfig);
+
         $this->enumValueProvider->expects($this->once())
-            ->method('getEnumChoicesByCode')
-            ->with($enumCode)
+            ->method('getEnumChoices')
+            ->with('\stdClass')
             ->willReturn($enumValues);
 
         $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));

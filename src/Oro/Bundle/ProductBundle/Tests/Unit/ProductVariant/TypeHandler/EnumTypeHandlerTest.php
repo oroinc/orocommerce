@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\TypeHandler;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler;
 use Symfony\Component\Form\Form;
@@ -16,6 +17,11 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     /** @var EnumTypeHandler */
     protected $handler;
 
@@ -24,8 +30,9 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->formFactory = $this->getMockBuilder(FormFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->handler = new EnumTypeHandler($this->formFactory, self::PRODUCT_CLASS);
+        $this->handler = new EnumTypeHandler($this->formFactory, self::PRODUCT_CLASS, $this->configManager);
     }
 
     public function testCreateForm()
@@ -38,6 +45,16 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
             'black' => true,
         ];
 
+        $fieldConfig = $this->createMock(FieldConfigModel::class);
+        $fieldConfig->expects($this->once())
+            ->method('toArray')
+            ->with('extend')
+            ->willReturn(['target_entity' => '\stdClass']);
+        $this->configManager->expects($this->once())
+            ->method('getConfigFieldModel')
+            ->with(Product::class, $fieldName)
+            ->willReturn($fieldConfig);
+
         $form = $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -48,7 +65,7 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
                 $disabledValues = ['red', 'yellow'];
 
                 $this->assertEquals([
-                    'enum_code' => ExtendHelper::generateEnumCode(self::PRODUCT_CLASS, $fieldName),
+                    'class' => '\stdClass',
                     'configs' => ['allowClear' => false],
                     'disabled_values' => $disabledValues,
                     'auto_initialize' => false,

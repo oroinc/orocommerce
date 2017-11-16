@@ -76,7 +76,7 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
             'oro_product_frontend_product_index',
             [
                 'categoryId' => $category->getId(),
-                'includeSubcategories' => true
+                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories')
             ]
         );
     }

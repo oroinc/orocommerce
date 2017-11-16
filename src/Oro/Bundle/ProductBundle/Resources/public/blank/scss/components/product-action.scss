@@ -1,0 +1,42 @@
+// @theme: blank;
+
+.product-action-area {
+    .product-action {
+        display: inline-block;
+
+        vertical-align: middle;
+
+        &:last-child {
+            padding-left: $product-action-in-grid-offset;
+        }
+
+        &:first-child {
+            padding-left: 0;
+            padding-right: $product-action-in-grid-offset;
+        }
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &.in-sticky {
+        display: flex;
+
+        padding: $product-action-area-in-sticky-inner-offset;
+
+        background-color: get-color('additional', 'base');
+
+        .product-action {
+            min-width: $product-action-in-sticky-width;
+
+            &:first-child {
+                padding-right: $product-action-in-sticky-offset;
+            }
+
+            &:last-child {
+                padding-left: $product-action-in-sticky-offset;
+            }
+        }
+    }
+}

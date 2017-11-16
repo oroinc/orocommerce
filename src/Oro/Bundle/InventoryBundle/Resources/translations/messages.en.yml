@@ -16,13 +16,24 @@ oro:
             additional: Additional
 
         inventorylevel:
-            entity_label: Inventory Level
-            entity_plural_label: Inventory Levels
-            id.label: Id
-            quantity.label: Quantity
-            product.label: Product
-            product_unit_precision.label: Product Unit Precision
-            status.label: Status
+            entity_label:         Inventory Level
+            entity_plural_label:  Inventory Levels
+            entity_description:   Inventory Level is a product quantity that is availabile in a warehouse.
+            id.label:             Id
+            quantity:
+                label:            Quantity
+                description:      The quantity of product that is availabile in a warehouse.
+            product:
+                label:            Product
+                description:      A product the inventory level is for.
+            product_unit_precision:
+                label:            Product Unit Precision
+                description:      Product Unit Precision links the inventory level for the product with the product unit and its precision.
+            status.label:         Status
+            warehouse:
+                label:            Warehouse
+                description:      A warehouse this inventory level is for.
+
 
             error:
                 units: "Please add at least one Unit of Quantity to the current product to enable inventory management."
@@ -30,6 +41,9 @@ oro:
         inventory_level_save.flash.success: Inventory Level has been saved
         inventory:
             entity_plural_label: Inventories
+        low_inventory:
+            label: Low Inventory
+            message: This item is running low on inventory
 
         export:
             popup:
@@ -70,6 +84,12 @@ oro:
             fields:
                 manage_inventory.label: Managed Inventory
                 inventory_threshold.label: Inventory Threshold
+                highlight_low_inventory:
+                    label: Highlight Low Inventory
+                    tooltip: Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
+                low_inventory_threshold:
+                    label: Low Inventory Threshold
+                    tooltip: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
                 backorders.label: Backorders
                 decrement_inventory:
                     label: Decrement Inventory
@@ -82,8 +102,24 @@ oro:
             choice:
                 'true': Yes
                 'false': No
+        highlight_low_inventory:
+            label: Highlight Low Inventory
+            choice:
+                'true': Yes
+                'false': No
+        is_upcoming:
+            label: 'Upcoming'
+            notification: 'This product will be available later'
+            notification_with_date: 'This product will be available on '
+            choice:
+                'true': 'Yes'
+                'false': 'No'
+        availability_date.label: 'Availability Date'
+        availability_date.warning: 'This order contains upcoming products without availability date'
         inventory_threshold:
             label: Inventory Threshold
+        low_inventory_threshold:
+            label: Low Inventory Threshold
         decrement_inventory:
             product:
                 not_allowed: 'There is not enough quantity for this product'
@@ -104,8 +140,12 @@ oro:
     product:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not
+        highlight_low_inventory:
+            description:  Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
         inventory_threshold:
             description: The value that defines the limit of the inventory after which this product can not be ordered
+        low_inventory_threshold:
+            description: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
         decrement_quantity:
             description: Option that defines the strategy used for decrementing inventory for ordered products
         backOrder:
@@ -114,3 +154,17 @@ oro:
             description: The maximum quantity that the user must order for this product
         minimum_quantity_to_order:
             description: The minimum quantity that the user must order for this product
+        is_upcoming:
+            description: Indicates that this product will be available later
+        availability_date:
+            description: Date when this product will be avaiable in store
+    catalog:
+        category:
+            highlight_low_inventory:
+                description:  Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
+            low_inventory_threshold:
+                description: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
+            is_upcoming:
+                description: Indicates that products from this category will be available later
+            availability_date:
+                description: Date when products from this category will be avaiable in store

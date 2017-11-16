@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
-use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
+
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
+use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {
@@ -20,25 +21,33 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private $generator;
 
     /**
-     * @var UrlStorageCache
-     */
-    private $cache;
-
-    /**
      * @var ContextUrlProviderRegistry
      */
     private $contextUrlProvider;
 
     /**
-     * @param UrlStorageCache $cache
+     * @var SluggableUrlProviderInterface
+     */
+    private $sluggableUrlProvider;
+
+    /**
+     * @var UserLocalizationManager
+     */
+    private $userLocalizationManager;
+
+    /**
+     * @param SluggableUrlProviderInterface $sluggableUrlProvider
      * @param ContextUrlProviderRegistry $contextUrlProvider
+     * @param UserLocalizationManager $userLocalizationManager
      */
     public function __construct(
-        UrlStorageCache $cache,
-        ContextUrlProviderRegistry $contextUrlProvider
+        SluggableUrlProviderInterface $sluggableUrlProvider,
+        ContextUrlProviderRegistry $contextUrlProvider,
+        UserLocalizationManager $userLocalizationManager
     ) {
-        $this->cache = $cache;
+        $this->sluggableUrlProvider = $sluggableUrlProvider;
         $this->contextUrlProvider = $contextUrlProvider;
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -61,20 +70,13 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private function generateSluggableUrl($name, $parameters)
     {
         $contextUrl = $this->getContextUrl($parameters);
+        $localizationId = $this->getLocalizationId();
 
         $url = null;
-        $urlDataStorage = $this->getUrlDataStorage($name, $parameters);
-        if ($urlDataStorage) {
-            // For context aware URLs slug may be used as item part
-            if ($contextUrl && $slug = $urlDataStorage->getSlug($parameters)) {
-                $url = $slug;
-            }
 
-            // For URLs without context only full URL is acceptable
-            if (!$url) {
-                $url = $urlDataStorage->getUrl($parameters);
-            }
-        }
+        $this->sluggableUrlProvider->setContextUrl($contextUrl);
+
+        $url = $this->sluggableUrlProvider->getUrl($name, $parameters, $localizationId);
 
         // If no Slug based URL is available - generate URL with base generator logic
         if (!$url) {
@@ -106,16 +108,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     public function setBaseGenerator(UrlGeneratorInterface $generator)
     {
         $this->generator = $generator;
-    }
-
-    /**
-     * @param string $name
-     * @param array $parameters
-     * @return null|UrlDataStorage
-     */
-    private function getUrlDataStorage($name, $parameters)
-    {
-        return $this->cache->getUrlDataStorage($name, $parameters);
     }
 
     /**
@@ -159,5 +151,14 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         $urlParts[] = ltrim($url, '/');
 
         return '/' . implode('/', $urlParts);
+    }
+
+    /**
+     * @return null|int
+     */
+    private function getLocalizationId()
+    {
+        $localization = $this->userLocalizationManager->getCurrentLocalization();
+        return $localization ? $localization->getId() : null;
     }
 }

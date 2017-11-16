@@ -6,14 +6,12 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\HttpFoundation\File\File;
 
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -29,11 +27,6 @@ class ProductImageListenerTest extends WebTestCase
     protected $em;
 
     /**
-     * @var MessageCollector
-     */
-    protected $messageCollector;
-
-    /**
      * @var string
      */
     protected $imageResizeTopic;
@@ -46,7 +39,7 @@ class ProductImageListenerTest extends WebTestCase
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
         $this->imageResizeTopic = ProductImageResizeListener::IMAGE_RESIZE_TOPIC;
 
-        $this->loadFixtures([LoadProductImageData::class]);
+        $this->loadFixtures([LoadProductData::class]);
     }
 
     public function testCreateProductImage()
@@ -70,7 +63,7 @@ class ProductImageListenerTest extends WebTestCase
     public function testUpdateTypesOnProductImage()
     {
         /** @var Product $product1 */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
         $productImage = new ProductImage();
         $productImage->setProduct($product);
 
@@ -99,7 +92,7 @@ class ProductImageListenerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var ProductImage $productImage */
-        $productImage = $product ->getImages()->first();
+        $productImage = $product->getImages()->first();
 
         $image = $productImage->getImage();
         $image->setFile(new File('test.file', false));

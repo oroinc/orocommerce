@@ -1,0 +1,9 @@
+{% block _category_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h1>
+{% endblock %}

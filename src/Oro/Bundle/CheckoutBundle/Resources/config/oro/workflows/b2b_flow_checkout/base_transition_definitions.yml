@@ -21,12 +21,23 @@ workflows:
                         attribute: $.result.isAllowed
                         service: oro_shopping_list.processor.quick_add_to_checkout
                         method: isAllowed
+                    - '@call_service_method':
+                       attribute: $.result.isReachedLimit
+                       service: oro_shopping_list.manager.shopping_list_limit
+                       method: isReachedLimit
+                    - '@call_service_method':
+                       attribute: $.result.shoppingListLimit
+                       service: oro_shopping_list.manager.shopping_list_limit
+                       method: getShoppingListLimitForUser
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowed
+                        attribute: $.result.isCheckoutAllowed
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
-                        - '@feature_enabled':
-                            feature: 'shopping_list_create'
+                        - '@equal': [true, $.result.isCheckoutAllowed]
 
             start_from_shoppinglist_definition:
                 preactions:
@@ -43,6 +54,8 @@ workflows:
                         attribute: $isAllowed
                 preconditions:
                    '@and':
+                       - '@extendable':
+                            events: [extendable_condition.shopping_list_start]
                        - '@has_elements': $.result.shoppingList.lineItems
                        - '@equal': [$isAllowed, true]
                 actions:

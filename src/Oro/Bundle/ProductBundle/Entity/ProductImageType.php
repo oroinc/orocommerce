@@ -4,9 +4,17 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 /**
  * @ORM\Entity
- * @ORM\Table(name="oro_product_image_type")
+ * @ORM\Table(
+ *     name="oro_product_image_type",
+ *     indexes={
+ *         @ORM\Index(name="idx_oro_product_image_type_type", columns={"type"})
+ *     }
+ * )
+ * @Config
  */
 class ProductImageType
 {
@@ -60,6 +68,17 @@ class ProductImageType
     }
 
     /**
+     * @param $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
      * @param ProductImage $productImage
      * @return $this
      */
@@ -76,5 +95,13 @@ class ProductImageType
     public function getProductImage()
     {
         return $this->productImage;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->type;
     }
 }

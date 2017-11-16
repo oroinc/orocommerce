@@ -20,6 +20,15 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist}
 
+    oro_order.order.listener.orm.order_status_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener'
+        public: false
+        arguments:
+            - '@oro_order.provider.configuration'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist}
+
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
         public: false
@@ -144,11 +153,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
-    oro_order.event_listener.order.address:
-        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
+    oro_order.event_listener.order.form.abstract:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\AbstractFormEventListener'
+        abstract: true
         arguments:
             - '@templating'
             - '@form.factory'
+
+    oro_order.event_listener.order.address:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
+        parent: oro_order.event_listener.order.form.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.event_listener.order.discount:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderDiscountEventListener'
+        parent: oro_order.event_listener.order.form.abstract
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
@@ -322,7 +342,7 @@ services:
     oro_order.shipping_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:
-            - '@?oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@?oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
             - '@?oro_shipping.line_item.factory_basic'
 
     oro_order.payment_line_item.converter_basic:
@@ -379,3 +399,69 @@ services:
           public: false
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_order.datagrid.orders_view_list:
+        class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
+        arguments:
+            - '@translator'
+
+    oro_order.provider.configuration:
+        class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
+        arguments:
+            - '@oro_config.manager'
+
+    oro_order.provider.latest_ordered_products_info:
+        class: 'Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_order.provider.previously_purchased_order_statuses'
+
+    oro_order.event_listener.product_website_search_index:
+        class: 'Oro\Bundle\OrderBundle\EventListener\WebsiteSearchProductIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_order.provider.latest_ordered_products_info'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+            - { name: oro_featuretogle.feature, feature: previously_purchased_products }
+
+    oro_order.previously_purchased.configuration:
+        class: 'Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedConfigProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.settings'
+            - '@oro_search.formatter.datetime_formatter'
+
+    oro_order.order.listener.orm.reindex_product_line_item_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
+        public: false
+        arguments:
+            - '@oro_product.search.product_reindex_manager'
+            - '@oro_order.provider.previously_purchased_order_statuses'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postRemove, method: reindexProductOnLineItemCreateOrDelete}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preUpdate, method: reindexProductOnLineItemUpdate}
+            - { name: oro_featuretogle.feature, feature: previously_purchased_products }
+
+    oro_order.order.listener.orm.reindex_product_order_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener'
+        public: false
+        arguments:
+            - '@oro_product.search.product_reindex_manager'
+            - '@oro_order.provider.previously_purchased_order_statuses'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preUpdate, method: processOrderUpdate}
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postRemove, method: processOrderRemove}
+            - { name: oro_featuretogle.feature, feature: previously_purchased_products }
+
+    oro_order.provider.previously_purchased_order_statuses:
+        class: Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedOrderStatusesProvider
+
+    oro_order.event_listener.change_config_option:
+        class: Oro\Bundle\OrderBundle\EventListener\PreviouslyPurchasedFeatureToggleListener
+        arguments:
+            - '@oro_product.search.product_reindex_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }

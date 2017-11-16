@@ -9,6 +9,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -41,22 +44,31 @@ class ShoppingListLineItemHandler
     /** @var string */
     protected $productUnitClass;
 
+    /** @var ProductManager */
+    protected $productManager;
+
     /**
      * @param ManagerRegistry $managerRegistry
      * @param ShoppingListManager $shoppingListManager
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface $tokenAccessor
+     * @param FeatureChecker $featureChecker
+     * @param ProductManager $productManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenAccessorInterface $tokenAccessor
+        TokenAccessorInterface $tokenAccessor,
+        FeatureChecker $featureChecker,
+        ProductManager $productManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
+        $this->featureChecker = $featureChecker;
+        $this->productManager = $productManager;
     }
 
     /**
@@ -78,8 +90,14 @@ class ShoppingListLineItemHandler
         $productsRepo = $this->managerRegistry->getManagerForClass($this->productClass)
             ->getRepository($this->productClass);
 
-        $iterableResult = $productsRepo->getProductsQueryBuilder($productIds)->getQuery()->iterate();
+        $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
+        $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
+        $iterableResult = $queryBuilder->getQuery()->iterate();
         $lineItems = [];
+
+        $skus = array_map('strtoupper', array_keys($productUnitsWithQuantities));
+        $values = array_values($productUnitsWithQuantities);
+        $productUnitsWithQuantities = array_combine($skus, $values);
 
         foreach ($iterableResult as $entityArray) {
             /** @var Product $product */
@@ -192,7 +210,7 @@ class ShoppingListLineItemHandler
      */
     public function isAllowed(ShoppingList $shoppingList = null)
     {
-        if (!$this->tokenAccessor->hasUser()) {
+        if (!$this->tokenAccessor->hasUser() && !$this->isAllowedForGuest()) {
             return false;
         }
 
@@ -236,5 +254,19 @@ class ShoppingListLineItemHandler
     public function setProductUnitClass($productUnitClass)
     {
         $this->productUnitClass = $productUnitClass;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowedForGuest()
+    {
+        $isAllowed = false;
+
+        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
+            $isAllowed = $this->featureChecker->isFeatureEnabled('guest_shopping_list');
+        }
+
+        return $isAllowed;
     }
 }

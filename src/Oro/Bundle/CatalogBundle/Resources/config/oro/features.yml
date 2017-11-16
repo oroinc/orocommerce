@@ -4,3 +4,9 @@ features:
         description: oro.catalog.feature.frontend_master_catalog.description
         strategy: unanimous
         allow_if_all_abstain: true
+    all_products_page:
+        label: oro.catalog.feature.all_products_page.label
+        description: oro.catalog.feature.all_products_page.description
+        toggle: oro_catalog.all_products_page_enabled
+        routes:
+            - 'oro_catalog_frontend_product_allproducts'

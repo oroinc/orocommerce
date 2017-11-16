@@ -45,9 +45,9 @@ Alternatively, you may trigger reindexation from the CLI using the `oro:website-
 optional parameters:
 
 * **website-id** (optional) - identifier of the website the reindexing applies to;
-* **class** (optional) - names of the entities that have to be reindexed;
+* **class** (optional) - names of the entities that have to be reindexed; Note, optional only if ids option is empty
 * **scheduled** (optional) - enables indexation via the message consumers;
-* **product-id** (optional) - allows entering range of product IDs to process incl. splitting. Note, that it is only possible to index `Product` entities when using this parameter!
+* **ids** (optional) - allows entering range of entity IDs to process incl. splitting.
 
 Below is an example of the reindex triggered via CLI:
 
@@ -147,7 +147,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku
             type: text
         -
-            name: name_LOCALIZATION_ID
+            name: names_LOCALIZATION_ID
             type: text
         -
             name: all_text_LOCALIZATION_ID
@@ -173,7 +173,7 @@ class WebsiteSearchProductIndexerListener
     /**
      * @var WebsiteContextManager
      */
-    private $websiteContextManger;
+    private $websiteContextManager;
 
     /**
      * @var WebsiteLocalizationProvider
@@ -189,7 +189,7 @@ class WebsiteSearchProductIndexerListener
         WebsiteContextManager $websiteContextManager
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->websiteContextManger = $websiteContextManager;
+        $this->websiteContextManager = $websiteContextManager;
     }
 
     /**
@@ -198,7 +198,7 @@ class WebsiteSearchProductIndexerListener
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         // get current website ID
-        $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
             return;
@@ -220,7 +220,7 @@ class WebsiteSearchProductIndexerListener
             foreach ($localizations as $localization) {
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'name_LOCALIZATION_ID',
+                    'names_LOCALIZATION_ID',
                     (string)$product->getName($localization),
                     ['LOCALIZATION_ID' => $localization->getId()],
                     true
@@ -271,16 +271,16 @@ And here is what search index might contain after the indexation:
 {
     1: {
         sku: "PR1",
-        name_1: "First product",
-        name_2: "Первый продукт",
+        names_1: "First product",
+        names_2: "Первый продукт",
         all_text_1: "PR1 First product",
         all_text_2: "PR1 Первый продукт",
         all_text: "PR1 First product Первый продукт"
     },
     2: {
         sku: "PR2",
-        name_1: "Second product",
-        name_2: "Второй продукт",
+        names_1: "Second product",
+        names_2: "Второй продукт",
         all_text_1: "PR2 Second product",
         all_text_2: "PR2 Второй продукт",
         all_text: "PR2 Second product Второй продукт"
@@ -294,13 +294,13 @@ And here is what search index might contain after the indexation:
 {
     1: {
         sku: "PR1",
-        name_2: "Первый продукт",
+        names_2: "Первый продукт",
         all_text_2: "PR1 Первый продукт",
         all_text: "PR1 Первый продукт"
     },
     2: {
         sku: "PR2",
-        name_2: "Второй продукт",
+        names_2: "Второй продукт",
         all_text_2: "PR2 Второй продукт",
         all_text: "PR2 Второй продукт"
     }

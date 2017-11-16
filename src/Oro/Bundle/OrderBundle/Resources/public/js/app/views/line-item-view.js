@@ -67,7 +67,8 @@ define(function(require) {
                 unitSelector: this.options.selectors.unitSelector,
                 loadingMaskEnabled: false,
                 dropQuantityOnLoad: false,
-                defaultValues: this.options.freeFormUnits
+                defaultValues: this.options.freeFormUnits,
+                model: this.model
             };
 
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions)));
@@ -189,7 +190,7 @@ define(function(require) {
                     this.resetData();
 
                     var data = this.fieldsByName.product.inputWidget('data') || {};
-                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
+                    this.$el.find(this.options.selectors.productSku).text(data.sku || null);
                 }, this));
             }
         }

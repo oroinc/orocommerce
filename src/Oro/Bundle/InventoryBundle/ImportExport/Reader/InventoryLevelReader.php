@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Reader;
 
+use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\InventoryLevelIteratorStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -19,6 +21,15 @@ class InventoryLevelReader extends EntityReader
     {
         $this->currentEntityName = $entityName;
         parent::setSourceEntityName($entityName, $organization, $ids);
+    }
+
+    /**
+     * @param ContextInterface $context
+     */
+    protected function initializeFromContext(ContextInterface $context)
+    {
+        parent::initializeFromContext($context);
+        $this->getSourceIterator()->setIterationStrategy(new InventoryLevelIteratorStrategy());
     }
 
     /**

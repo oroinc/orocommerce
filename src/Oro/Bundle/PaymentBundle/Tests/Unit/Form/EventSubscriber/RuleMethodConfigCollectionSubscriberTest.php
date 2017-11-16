@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -20,7 +21,10 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
+use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormEvents;
@@ -139,9 +143,24 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                     'translatable_entity' => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                ['form' => [
+                    new AdditionalAttrExtension(),
+                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                ]]
             ),
             $this->getValidatorExtension(true)
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators()
+    {
+        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
+
+        return [
+            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 }

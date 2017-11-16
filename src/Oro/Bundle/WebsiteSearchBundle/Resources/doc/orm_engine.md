@@ -45,8 +45,8 @@ Let's check an example of a simple query. Here is the text representation of a s
 ```
 SELECT
     text.sku,
-    text.name_LOCALIZATION_ID,
-    text.short_description_LOCALIZATION_ID,
+    text.names_LOCALIZATION_ID,
+    text.shortDescriptions_LOCALIZATION_ID,
     text.type
 FROM
     oro_product_WEBSITE_ID

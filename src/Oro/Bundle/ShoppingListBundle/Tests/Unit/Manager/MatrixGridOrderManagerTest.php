@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -35,10 +38,13 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testGetMatrixCollection()
     {
         /** @var Product $product */
-        $product = $this->getEntity(Product::class);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
         $productUnit = new ProductUnit();
         $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
@@ -67,9 +73,9 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             ->with('color')
             ->willReturn(['red' => 'Red', 'green' => 'Green']);
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
-        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
+        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
+        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
 
         $simpleProductSmallRed->addUnitPrecision($productUnitPrecision);
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecision);
@@ -110,7 +116,9 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $columnMediumGreen->label = 'Green';
 
         $columnSmallRed->product = $simpleProductSmallRed;
+        $columnSmallRed->quantity = 1;
         $columnMediumGreen->product = $simpleProductMediumGreen;
+        $columnMediumGreen->quantity = 2;
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
@@ -124,7 +132,25 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $expectedCollection->unit = $productUnit;
         $expectedCollection->rows = [$rowSmall, $rowMedium];
 
-        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
+        $lineItems = new ArrayCollection();
+        $lineItem = $this->getEntity(LineItem::class, [
+            'product' => $simpleProductSmallRed,
+            'quantity' => 1,
+            'parentProduct' => $product
+        ]);
+        $lineItems->add($lineItem);
+        $lineItem = $this->getEntity(LineItem::class, [
+            'product' => $simpleProductMediumGreen,
+            'quantity' => 2,
+            'parentProduct' => $product
+        ]);
+        $lineItems->add($lineItem);
+
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'lineItems' => $lineItems
+        ]);
+
+        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
     public function testGetMatrixCollectionWithBoolean()
@@ -223,7 +249,13 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
     }
 
-    public function testConvertMatrixIntoLineItems()
+    /**
+     * @param array $requiredCollection
+     * @param array $expectedLineItems
+     *
+     * @dataProvider getProviderForConvertMatrixIntoLineItems
+     */
+    public function testConvertMatrixIntoLineItems($requiredCollection, $expectedLineItems)
     {
         $productUnit = $this->getEntity(ProductUnit::class);
 
@@ -256,6 +288,26 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class);
         $product->setType(Product::TYPE_CONFIGURABLE);
 
+        $this->assertEquals(
+            $expectedLineItems,
+            $this->manager->convertMatrixIntoLineItems($collection, $product, $requiredCollection)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getProviderForConvertMatrixIntoLineItems()
+    {
+        $productUnit = $this->getEntity(ProductUnit::class);
+
+        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
+        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+
         $lineItem1 = $this->getEntity(LineItem::class, [
             'product' => $simpleProductSmallRed,
             'unit' => $productUnit,
@@ -269,9 +321,40 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             'parentProduct' => $product
         ]);
 
-        $this->assertEquals(
-            [$lineItem1, $lineItem2],
-            $this->manager->convertMatrixIntoLineItems($collection, $product)
-        );
+        return [
+            'without matrix collection' => [
+                'requiredCollection' => [],
+                'expectedLineItems' => []
+            ],
+            'empty matrix collection' => [
+                'requiredCollection' => [
+                    'rows' => []
+                ],
+                'expectedLineItems' => []
+            ],
+            'partial matrix collection' => [
+                'requiredCollection' => [
+                    'rows' => [
+                        1 => [
+                            'columns' => ['quantity' => 4]
+                        ]
+                    ]
+                ],
+                'expectedLineItems' => [$lineItem2]
+            ],
+            'full matrix collection' => [
+                'requiredCollection' => [
+                    'rows' => [
+                        0 => [
+                            'columns' => ['quantity' => 1]
+                        ],
+                        1 => [
+                            'columns' => ['quantity' => 4]
+                        ]
+                    ]
+                ],
+                'expectedLineItems' => [$lineItem1, $lineItem2]
+            ]
+        ];
     }
 }

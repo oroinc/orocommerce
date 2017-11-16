@@ -4,14 +4,14 @@ namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
  * It filter out promotions for shipping discount if promotion's options not fit shipping method and shipping method
  * type from context.
  */
-class ShippingFiltrationService implements RuleFiltrationServiceInterface
+class ShippingFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
      * @var RuleFiltrationServiceInterface
@@ -29,7 +29,7 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilteredRuleOwners(array $ruleOwners, array $context): array
+    protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $shippingMethod = $context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null;
         $shippingMethodType = $context[ContextDataConverterInterface::SHIPPING_METHOD_TYPE] ?? null;
@@ -38,7 +38,7 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
             array_filter(
                 $ruleOwners,
                 function ($ruleOwner) use ($shippingMethod, $shippingMethodType) {
-                    if (!$ruleOwner instanceof Promotion) {
+                    if (!$ruleOwner instanceof PromotionDataInterface) {
                         return false;
                     }
 
@@ -55,13 +55,13 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
     }
 
     /**
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @param string $shippingMethod|null
      * @param string $shippingMethodType|null
      *
      * @return bool
      */
-    private function isShippingOptionsMatched(Promotion $promotion, $shippingMethod, $shippingMethodType)
+    private function isShippingOptionsMatched(PromotionDataInterface $promotion, $shippingMethod, $shippingMethodType)
     {
         $discountOptions = $promotion->getDiscountConfiguration()->getOptions();
 

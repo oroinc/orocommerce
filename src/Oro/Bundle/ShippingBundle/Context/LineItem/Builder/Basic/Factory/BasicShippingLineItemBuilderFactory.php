@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemB
 class BasicShippingLineItemBuilderFactory implements ShippingLineItemBuilderFactoryInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function createBuilder(
         ProductUnit $productUnit,

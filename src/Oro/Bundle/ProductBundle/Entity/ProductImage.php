@@ -37,13 +37,6 @@ class ProductImage extends ExtendProductImage
      * @var Product
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
     protected $product;
 
@@ -61,9 +54,9 @@ class ProductImage extends ExtendProductImage
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "full"=true
      *          }
-     *      }
+     *     }
      * )
      */
     protected $types;
@@ -117,18 +110,47 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @return array
+     * @return ProductImageType[]|ArrayCollection
      */
     public function getTypes()
     {
-        return $this->types->getKeys();
+        return $this->types;
     }
 
     /**
-     * @param string $type
+     * @param $type
+     * @return mixed|null
+     */
+    public function getType($type)
+    {
+        return $this->types->get($type);
+    }
+
+    /**
+     * @param ArrayCollection $types
+     * @return $this
+     */
+    public function setTypes(ArrayCollection $types)
+    {
+        $this->types = $types;
+
+        return $this;
+    }
+
+    /**
+     * @param ProductImageType|string $type
+     * @return null|$this
      */
     public function addType($type)
     {
+        if ($type instanceof ProductImageType && !$this->types->contains($type)) {
+            $this->types->add($type);
+            $type->setProductImage($this);
+            $this->setUpdatedAtToNow();
+
+            return $this;
+        }
+
         if (!$this->types->containsKey($type)) {
             $productImageType = new ProductImageType($type);
             $productImageType->setProductImage($this);
@@ -139,11 +161,15 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @param string $type
+     * @param ProductImageType|string $type
      */
     public function removeType($type)
     {
-        if ($this->types->containsKey($type)) {
+        if ($type instanceof ProductImageType) {
+            $type = $type->getType();
+        }
+
+        if ($this->hasType($type)) {
             $this->types->remove($type);
 
             $this->setUpdatedAtToNow();
@@ -160,9 +186,9 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param $updatedAt
      */
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
     }
@@ -170,6 +196,14 @@ class ProductImage extends ExtendProductImage
     public function setUpdatedAtToNow()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 
     /**
@@ -203,7 +237,7 @@ class ProductImage extends ExtendProductImage
             $types = $this->getTypes();
             $this->types = new ArrayCollection();
             foreach ($types as $type) {
-                $this->addType($type);
+                $this->addType($type->getType());
             }
         }
     }

@@ -30,13 +30,6 @@ class AjaxLineItemControllerTest extends WebTestCase
                 LoadCombinedProductPrices::class,
             ]
         );
-
-        $this->simulateAuthentication(
-            LoadCustomerUserData::AUTH_USER,
-            LoadCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
-        );
     }
 
     /**
@@ -301,6 +294,14 @@ class AjaxLineItemControllerTest extends WebTestCase
     public function removeProductFromViewProvider()
     {
         return [
+            [
+                'productRef' => LoadProductData::PRODUCT_8,
+                'expectedResult' => false,
+                'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
+                'expectedInitCount' => 1,
+                'removeCurrent' => true,
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1
+            ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,

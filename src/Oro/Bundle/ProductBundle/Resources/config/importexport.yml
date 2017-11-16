@@ -7,11 +7,22 @@ services:
             - [setEntityName, ['%oro_product.entity.product.class%']]
             - [setEventDispatcher, ['@event_dispatcher']]
 
+    oro_product.importexport.data_converter.product_image:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductImageDataConverter'
+        public: false
+        parent: oro_importexport.data_converter.configurable
+        calls:
+            - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
+
     oro_product.importexport.data_converter.product_template:
         public: false
         parent: oro_product.importexport.data_converter.product
         calls:
             - [setRelationCalculator, ['@oro_importexport.data_converter.template_fixture.relation_calculator']]
+
+    oro_product.importexport.data_converter.product_image_template:
+        public: false
+        parent: oro_product.importexport.data_converter.product_image
 
     oro_product.importexport.strategy.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy'
@@ -21,6 +32,10 @@ services:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
             - [setVariantLinkClass, ['%oro_product.entity.product_variant_link.class%']]
             - [setProductClass, ['%oro_product.entity.product.class%']]
+
+    oro_product.importexport.strategy.product_image:
+        public: false
+        parent: oro_importexport.strategy.configurable_add_or_replace
 
     oro_product.importexport.normalizer.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'
@@ -32,12 +47,40 @@ services:
         tags:
             - { name: oro_importexport.normalizer, priority: -5 }
 
+    oro_product.importexport.normalizer.product_image:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer'
+        public: false
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        calls:
+            - [setProductImageClass, ['%oro_product.entity.product_image.class%']]
+            - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
+            - [setFileLocator, ['@file_locator']]
+            - [setProductImageDir, ['%kernel.root_dir%/import_export/product_images/']]
+        tags:
+            - { name: oro_importexport.normalizer }
+
+    oro_product.importexport.normalizer.product_image_type:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageTypeNormalizer'
+        public: false
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        calls:
+            - [setProductImageTypeClass, ['%oro_product.entity.product_image_type.class%']]
+        tags:
+            - { name: oro_importexport.normalizer }
+
     # Template Fixture
     oro_product.importexport.template_fixture.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture'
         public: false
         tags:
             - { name: oro_importexport.template_fixture }
+
+    oro_product.importexport.template_fixture.product_image:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductImageFixture'
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
+
 
     # Import processor
     oro_product.importexport.processor.import.product:
@@ -50,6 +93,16 @@ services:
         tags:
             - { name: oro_importexport.processor, type: import, entity: '%oro_product.entity.product.class%', alias: oro_product_product.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product.class%', alias: oro_product_product.add_or_replace }
+
+    oro_product.importexport.processor.import.product_image:
+        public: false
+        parent: oro_importexport.processor.import_abstract
+        calls:
+            - [setDataConverter, ['@oro_product.importexport.data_converter.product_image']]
+            - [setStrategy, ['@oro_product.importexport.strategy.product_image']]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image.add_or_replace }
 
     # Export processor
     oro_product.importexport.processor.export.product:
@@ -67,6 +120,14 @@ services:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product_template']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product_product_export_template }
+
+    oro_product.importexport.processor.export_template.product_image:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_product.importexport.data_converter.product_image_template']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product_image.class%', alias: oro_product_image_export_template }
 
     oro_product.event_listener.product_normalizer:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener'

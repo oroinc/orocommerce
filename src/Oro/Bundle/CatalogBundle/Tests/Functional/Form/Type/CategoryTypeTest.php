@@ -9,14 +9,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryTypeTest extends WebTestCase
 {
@@ -91,6 +92,7 @@ class CategoryTypeTest extends WebTestCase
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             'inventoryThreshold' => ['scalarValue' => 0],
+            LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => ['scalarValue' => 0],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
 
@@ -171,6 +173,16 @@ class CategoryTypeTest extends WebTestCase
         $form->submit($submitData);
         $this->assertFalse($form->isValid());
         $this->assertStringStartsWith('inventoryThreshold', $form->getErrorsAsString());
+
+        $this->assertEquals(
+            "ERROR: This value should not be blank.\n",
+            (string)$form->get('inventoryThreshold')->getErrors(true)
+        );
+
+        $this->assertEquals(
+            "ERROR: This value should not be blank.\n",
+            (string)$form->get(LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION)->getErrors(true)
+        );
     }
 
     /**

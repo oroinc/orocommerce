@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
+
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class DiscountsValidator extends ConstraintValidator
 {
@@ -35,6 +36,27 @@ class DiscountsValidator extends ConstraintValidator
             && $value->getSubtotal()
             && $value->getSubtotal() < $value->getTotalDiscounts()->getValue()
         ) {
+            $this->addSingleViolation($constraint);
+        }
+    }
+
+    /**
+     * @param Constraint $constraint
+     */
+    private function addSingleViolation(Constraint $constraint)
+    {
+        $exists = false;
+        /** @var ConstraintViolation $violation */
+        foreach ($this->context->getViolations() as $violation) {
+            if ($violation->getConstraint() === $constraint
+                && $violation->getInvalidValue() === $this->context->getValue()
+            ) {
+                $exists = true;
+                break;
+            }
+        }
+
+        if (!$exists) {
             $this->context->buildViolation($constraint->errorMessage)
                 ->atPath('totalDiscountsAmount')
                 ->addViolation();

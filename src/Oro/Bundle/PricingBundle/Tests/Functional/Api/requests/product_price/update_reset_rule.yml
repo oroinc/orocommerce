@@ -1,0 +1,5 @@
+data:
+    type: 'productprices'
+    id: '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>'
+    attributes:
+        value: '150.0000'

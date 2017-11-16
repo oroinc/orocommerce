@@ -6,6 +6,8 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var BaseView = require('oroui/js/app/views/base/view');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
+    var BaseModel = require('oroui/js/app/models/base/model');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
@@ -146,6 +148,10 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            if (!this.model) {
+                this.model = new BaseModel();
+            }
+
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
             this.allUnits = _.defaults(this.allUnits, options.allUnits);
@@ -367,41 +373,19 @@ define(function(require) {
         updateProductUnits: function(data, force) {
             var self = this;
 
-            var units = data || {};
+            self.model.set('product_units', data || {});
 
             var widgets = self.$el.find(self.options.itemWidget);
 
             $.each(widgets, function(index, widget) {
-                var select = $(widget).find(self.options.unitsSelect);
+                var $select = $(widget).find(self.options.unitsSelect);
 
-                if (!force && $(select).hasClass(self.options.syncClass)) {
+                if (!force && $select.hasClass(self.options.syncClass)) {
                     return;
                 }
 
-                var currentValue = $(select).val();
-                $(select).empty();
-                $.each(units, function(key, value) {
-                    $(select)
-                        .append($('<option/>').val(key).text(value))
-                    ;
-                });
-                var firstValue = $(select).find('option:first-child').val();
-                if (!currentValue && firstValue) {
-                    currentValue = firstValue;
-                }
-                $(select).val(currentValue);
-                if (null === $(select).val() && firstValue) {
-                    $(select).val(firstValue);
-                }
-                $(select).addClass(self.options.syncClass);
-
-                if (currentValue !== $(select).val()) {
-                    $(select).change();
-                }
-
-                if (!force) {
-                    $(widget).find('select').inputWidget('refresh');
-                }
+                UnitsUtil.updateSelect(self.model, $select);
+                $select.addClass(self.options.syncClass);
             });
 
             if (force) {
@@ -503,7 +487,7 @@ define(function(require) {
         updateSkuLabel: function() {
             var productData = this.$el.find(this.options.productSelect).inputWidget('data') || {};
 
-            this.$el.find(this.options.productSkuLabel).html(productData.sku || '');
+            this.$el.find(this.options.productSkuLabel).text(productData.sku || '');
         },
 
         /**

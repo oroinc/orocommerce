@@ -45,3 +45,12 @@ oro:
     payment:
         admin:
             payment_term.label: 'Payment Terms'
+
+    customer:
+        payment_term_7c4f1e8e:
+            label:              'Payment term'
+            description:        Relationship with the payment term that was selected as a payment method.
+        customergroup:
+            payment_term_7c4f1e8e:
+                label:          'Payment term'
+                description:    Relationship with the payment term that was selected as a payment method.

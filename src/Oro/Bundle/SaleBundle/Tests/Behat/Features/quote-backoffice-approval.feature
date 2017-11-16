@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9130
 @ticket-BB-11080
+@ticket-BB-12075
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Backoffice Quote Flow with Approvals
@@ -9,22 +10,25 @@ Feature: Backoffice Quote Flow with Approvals
   I want to have ability to change Quote internal status and approve quotes by Workflow transitions
 
   Scenario: Check workflow variable
-    Given I login as administrator
+    Given sessions active:
+      | Admin   | first_session  |
+      | Manager | second_session |
+    And I proceed as the Admin
+    And I login as administrator
     When I go to System/Workflows
     And I click Configuration Backoffice Quote Flow with Approvals in grid
     Then the "Price override requires approval" checkbox should be checked
 
-  Scenario: Add workflow permissions for user
+  Scenario: Check workflow permissions for user
     Given I go to System/ User Management/ Roles
-    And I filter Label as is equal to "Sales Rep"
-    When I click edit Sales Rep in grid
-    And I select following permissions:
+    When I filter Label as is equal to "Sales Rep"
+    And I click view Sales Rep in grid
+    Then the role has following active workflow permissions:
       | Backoffice Quote Flow with Approvals | View Workflow:Global | Perform transitions:Global |
-    And I save and close form
-    Then I should see "Role saved" flash message
 
   Scenario: Draft -> Edit: Quote prices not changed
-    Given I login as "john" user
+    Given I proceed as the Manager
+    And I login as "john" user
     When I go to Sales/Quotes
     And I filter PO Number as is equal to "PO1"
     And I click View PO1 in grid
@@ -55,7 +59,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Internal Status | Sent to Customer |
 
   Scenario: Sales Rep role granting "Override quote prices"
-    Given I login as administrator
+    Given I proceed as the Admin
     When I go to System/User Management/Roles
     And I filter Label as is equal to "Sales Rep"
     And I click Edit Sales Rep in grid
@@ -66,7 +70,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Override quote prices |
 
   Scenario: Draft -> Edit: Quotes prices changed
-    Given I login as "john" user
+    Given I proceed as the Manager
     When I go to Sales/Quotes
     And I filter PO Number as is equal to "PO2"
     And I click View PO2 in grid
@@ -86,13 +90,13 @@ Feature: Backoffice Quote Flow with Approvals
       | Internal Status | Draft |
     When I click "Submit for Review"
     And I fill form with:
-      | Comment | Test comment for submitting |
+      | Comment | Test comment for submitting <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #2 successfully submitted for review" flash message
     And I should see Quote with:
       | PO Number       | PO2                  |
       | Internal Status | Submitted for Review |
-    And should see "Test comment for submitting" note in activity list
+    And I collapse "Test comment for submitting alert(1)" in activity list
 
   Scenario Outline: Quotes change and Submit for Review
     Given I go to Sales/Quotes
@@ -118,7 +122,7 @@ Feature: Backoffice Quote Flow with Approvals
       | PO5      |
 
   Scenario: Sales Rep role granting "Review and approve quotes"
-    Given I login as administrator
+    Given I proceed as the Admin
     When I go to System/User Management/Roles
     And I filter Label as is equal to "Sales Rep"
     And I click Edit Sales Rep in grid
@@ -129,7 +133,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Review and approve quotes |
 
   Scenario: Submitted for Review -> Under Review: Quote prices changed
-    Given I login as "john" user
+    Given I proceed as the Manager
     When I go to Sales/Quotes
     And I filter PO Number as is equal to "PO2"
     And I click View PO2 in grid
@@ -162,13 +166,13 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO2 in grid
     And I click "Return"
     And I fill form with:
-      | Comment | Return reason note text |
+      | Comment | Return reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #2 returned" flash message
     And I should see Quote with:
       | PO Number       | PO2   |
       | Internal Status | Draft |
-    And should see "Return reason note text" note in activity list
+    And I collapse "Return reason note text alert(1)" in activity list
 
   Scenario: Under Review -> Approve and Send to Customer: Quote prices changed
     Given I go to Sales/Quotes
@@ -222,13 +226,13 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO4 in grid
     When I click "Approve"
     And I fill form with:
-      | Comment | Approve reason note text |
+      | Comment | Approve reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #4 approved" flash message
     And I should see Quote with:
       | PO Number       | PO4      |
       | Internal Status | Reviewed |
-    And should see "Approve reason note text" note in activity list
+    And I collapse "Approve reason note text alert(1)" in activity list
     And I should see "Send to Customer"
 
   Scenario: Approved -> Sent to Customer: Quote prices changed
@@ -260,16 +264,16 @@ Feature: Backoffice Quote Flow with Approvals
     And click View PO5 in grid
     When I click "Decline"
     And I fill form with:
-      | Comment | Decline reason note text |
+      | Comment | Decline reason note text <script>alert(1)</script> |
     And I click "Submit"
     Then I should see "Quote #5 declined" flash message
     And I should see Quote with:
       | PO Number       | PO5          |
       | Internal Status | Not Approved |
-    And should see "Decline reason note text" note in activity list
+    And I collapse "Decline reason note text alert(1)" in activity list
 
   Scenario: Draft -> Delete: Internal status: Deleted, customer status: N/A
-    Given I login as "john" user
+    Given I proceed as the Manager
     When go to Sales/Quotes
     And I filter PO Number as is equal to "PO6"
     And click view PO6 in grid
@@ -442,7 +446,7 @@ Feature: Backoffice Quote Flow with Approvals
     And request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PO35 |
 
-    When I login as "john" user
+    Then I am on dashboard
     And create a quote from RFQ with PO Number "PO35"
     Then I should see Quote with:
       | Quote #         | 35    |
@@ -468,7 +472,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Customer Status | N/A   |
 
   Scenario: Sales Rep role remove "Override quote prices" and "Review and approve quotes"
-    Given I login as administrator
+    Given I proceed as the Admin
     When I go to System/User Management/Roles
     And I filter Label as is equal to "Sales Rep"
     And I click Edit Sales Rep in grid
@@ -478,7 +482,7 @@ Feature: Backoffice Quote Flow with Approvals
     Then I should see "Role saved" flash message
 
   Scenario: Draft: Quote prices change are not allowed
-    Given I login as "john" user
+    Given I proceed as the Manager
     And I go to Sales/Quotes
     When I filter PO Number as is equal to "PO13"
     And I click Edit PO13 in grid

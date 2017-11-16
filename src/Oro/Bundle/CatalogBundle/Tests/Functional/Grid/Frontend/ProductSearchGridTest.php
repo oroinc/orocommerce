@@ -56,16 +56,16 @@ class ProductSearchGridTest extends FrontendWebTestCase
         $products = $this->getDatagridData(
             ProductController::GRID_NAME,
             [],
-            ['[name]' => AbstractSorterExtension::DIRECTION_ASC,]
+            ['[names]' => AbstractSorterExtension::DIRECTION_ASC,]
         );
-        $this->checkSorting($products, 'name', AbstractSorterExtension::DIRECTION_ASC);
+        $this->checkSorting($products, 'names', AbstractSorterExtension::DIRECTION_ASC);
 
         $products = $this->getDatagridData(
             ProductController::GRID_NAME,
             [],
-            ['[name]' => AbstractSorterExtension::DIRECTION_DESC,]
+            ['[names]' => AbstractSorterExtension::DIRECTION_DESC,]
         );
-        $this->checkSorting($products, 'name', AbstractSorterExtension::DIRECTION_DESC);
+        $this->checkSorting($products, 'names', AbstractSorterExtension::DIRECTION_DESC);
     }
 
     /**
@@ -105,8 +105,8 @@ class ProductSearchGridTest extends FrontendWebTestCase
             [
                 '[sku][value]' => $lastRow['sku'],
                 '[sku][type]' => '1',
-                '[name][value]' => $lastRow['name'],
-                '[name][type]' => '1',
+                '[names][value]' => $lastRow['name'],
+                '[names][type]' => '1',
             ]
         );
 
@@ -124,10 +124,11 @@ class ProductSearchGridTest extends FrontendWebTestCase
      * @dataProvider dataProviderForFiltersWithForceLikeOption
      *
      * @param string $filter
+     * @param string $field
      * @param string $searchString
      * @param array|string $expectedFieldValue
      */
-    public function testGridFiltersWithForceLikeOption($filter, $searchString, $expectedFieldValue)
+    public function testGridFiltersWithForceLikeOption($filter, $field, $searchString, $expectedFieldValue)
     {
         $products = $this->getDatagridData(
             ProductController::GRID_NAME,
@@ -139,7 +140,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
         $expectedFieldValues = [];
         foreach ($products as $product) {
-            $expectedFieldValues[] = $product[$filter];
+            $expectedFieldValues[] = $product[$field];
         }
 
         $this->assertNotEmpty($expectedFieldValues);
@@ -159,17 +160,16 @@ class ProductSearchGridTest extends FrontendWebTestCase
     {
         return [
             'sku' => [
-                'sku', substr(LoadProductData::PRODUCT_1, 2, 5), LoadProductData::PRODUCT_1
+                'filter' => 'sku',
+                'field' => 'sku',
+                'searchString' => substr(LoadProductData::PRODUCT_1, 2, 5),
+                'expectedFieldValue' => LoadProductData::PRODUCT_1
             ],
-            'name filter' => [
-                'name', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 7, 12), LoadProductData::PRODUCT_1_DEFAULT_NAME
-            ],
-            'ignore if string is shorter than min_length' => [
-                'name', 'xx', [
-                    LoadProductData::PRODUCT_1_DEFAULT_NAME,
-                    LoadProductData::PRODUCT_2_DEFAULT_NAME,
-                    LoadProductData::PRODUCT_3_DEFAULT_NAME,
-                ]
+            'names filter' => [
+                'filter' => 'names',
+                'field' => 'name',
+                'searchString' => substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 7, 12),
+                'expectedFieldValue' => LoadProductData::PRODUCT_1_DEFAULT_NAME
             ]
         ];
     }
@@ -216,19 +216,21 @@ class ProductSearchGridTest extends FrontendWebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_7
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
             'sku not like inside' => [
                 'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [],
             ],
-            'name not like inside' => [
-                'name', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [
+            'names not like inside' => [
+                'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [
                     LoadProductData::PRODUCT_2_DEFAULT_NAME,
                     LoadProductData::PRODUCT_3_DEFAULT_NAME,
                     LoadProductData::PRODUCT_6_DEFAULT_NAME,
                     LoadProductData::PRODUCT_7_DEFAULT_NAME,
                     LoadProductData::PRODUCT_8_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_9_DEFAULT_NAME,
                 ],
             ],
         ];

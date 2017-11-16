@@ -8,6 +8,7 @@ oro:
                     desc: descending
                 pagination:
                     label: %start%-%end% out of %total%
+            select_product: 'Select Item'
 
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?
@@ -149,10 +150,20 @@ oro:
                         default: '--'
                 copy_paste:
                     error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
+            choose_action: 'Choose Action'
+        dialog:
+            quick_add.confirm:
+                title: 'Create Order'
+                content: 'You can have only {{ count }} shopping list(s). If you proceed, your default shopping list will be overwritten with items from your order.'
+                continue: 'Create Order'
+                cancel: 'Cancel'
         product_collection:
             filter_query:
                 continue: Continue
                 confirmation_modal_content: You have changes in the Filters section that have not been applied. Please click Cancel if you want to review and apply these changes before saving, or click Continue if you want to save all the changes.
+        product_filters:
+            collapse:
+                label: 'Product filters'
         widgets:
             select_related_items:
                 limit_has_been_reached: Limit of related items has been reached

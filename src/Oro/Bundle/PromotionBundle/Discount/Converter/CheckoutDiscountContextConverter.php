@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class CheckoutDiscountContextConverter implements DiscountContextConverterInterface
 {
@@ -52,6 +52,6 @@ class CheckoutDiscountContextConverter implements DiscountContextConverterInterf
      */
     public function supports($sourceEntity): bool
     {
-        return $sourceEntity instanceof Checkout && $sourceEntity->getSourceEntity() instanceof ShoppingList;
+        return $sourceEntity instanceof Checkout && !$sourceEntity->getSourceEntity() instanceof QuoteDemand;
     }
 }

@@ -10,8 +10,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutLineItemsManager
 {
@@ -36,18 +38,26 @@ class CheckoutLineItemsManager
     protected $configManager;
 
     /**
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
+
+    /**
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -69,12 +79,18 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
-        $entity = $checkout->getSourceEntity();
+        $entity = $checkout;
         $currency = $this->userCurrencyManager->getUserCurrency();
         $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
+                $lineItems = $lineItems->filter(
+                    function ($lineItem) {
+                        return $this->isLineItemAvailable($lineItem);
+                    }
+                );
+
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
                         function ($lineItem) use ($currency, $supportedStatuses) {
@@ -110,29 +126,46 @@ class CheckoutLineItemsManager
 
     /**
      * @param object $lineItem
+     * @return bool
+     */
+    protected function isLineItemAvailable($lineItem)
+    {
+        if (!$lineItem instanceof ProductHolderInterface) {
+            return true;
+        }
+
+        $product = $lineItem->getProduct();
+        if (!$product) {
+            return true;
+        }
+
+        return $product->getStatus() === Product::STATUS_ENABLED &&
+            $this->authorizationChecker->isGranted('VIEW', $product);
+    }
+
+    /**
+     * @param object $lineItem
      * @param string $currency
      * @param array  $supportedStatuses
      * @return bool
      */
     protected function isLineItemHasCurrencyAndSupportedStatus($lineItem, $currency, array $supportedStatuses)
     {
+        if (!$lineItem instanceof ProductHolderInterface || !$lineItem instanceof PriceAwareInterface) {
+            return false;
+        }
         $allowedProduct = true;
 
-        if ($lineItem instanceof ProductHolderInterface) {
-            $product = $lineItem->getProduct();
-            if ($product) {
-                $allowedProduct = false;
-                if ($product->getInventoryStatus()) {
-                    $statusId = $product->getInventoryStatus()->getId();
-                    $allowedProduct = !empty($supportedStatuses[$statusId]);
-                }
+        $product = $lineItem->getProduct();
+        if ($product) {
+            $allowedProduct = false;
+            if ($product->getInventoryStatus()) {
+                $statusId = $product->getInventoryStatus()->getId();
+                $allowedProduct = !empty($supportedStatuses[$statusId]);
             }
         }
 
-        $lineItemPrice = null;
-        if ($lineItem instanceof PriceAwareInterface) {
-            $lineItemPrice = $lineItem->getPrice();
-        }
+        $lineItemPrice = $lineItem->getPrice();
 
         return $allowedProduct
             && (bool)$lineItemPrice

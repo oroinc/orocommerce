@@ -45,17 +45,7 @@ class RequestTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /* @var $configManager ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formType = new RequestType($configManager, $registry);
+        $this->formType = new RequestType();
         $this->formType->setDataClass(self::DATA_CLASS);
 
         parent::setUp();

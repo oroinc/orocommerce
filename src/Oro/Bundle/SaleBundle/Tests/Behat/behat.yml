@@ -15,10 +15,11 @@ oro_behat_extension:
         - OroSecurityBundle::ACLContext
         - OroSaleBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
         - OroConfigBundle::FeatureContext
-        - OroCheckoutBundle::FeatureContext
-        - OroWarehouseBundle::FeatureContext
+        - OroShippingBundle::FeatureContext
+        - OroProductBundle::FeatureContext
+        - OroRFPBundle::FeatureContext
+        - OroWorkflowBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 

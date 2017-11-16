@@ -5,7 +5,6 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -44,33 +43,9 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(28))
+        $event->expects($this->exactly(12))
             ->method('addPlaceholderField')
             ->withConsecutive(
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'ACME',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'Polish meta title',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'Polish meta description',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'Polish meta keywords',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
@@ -88,30 +63,6 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                     'all_text_LOCALIZATION_ID',
                     'Polish Category meta keywords',
                     [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'ACME',
-                    [LocalizationIdPlaceholder::NAME => 2],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'English meta title',
-                    [LocalizationIdPlaceholder::NAME => 2],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'English meta description',
-                    [LocalizationIdPlaceholder::NAME => 2],
-                ],
-                [
-                    1,
-                    'all_text_LOCALIZATION_ID',
-                    'English meta keywords',
-                    [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
                     1,
@@ -179,7 +130,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         foreach ($entityIds as $id) {
             $product = $this->getMockBuilder(Product::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['getId', 'getMetaTitle', 'getMetaDescription', 'getMetaKeyword', 'getBrand'])
+                ->setMethods(['getId', 'getMetaTitle', 'getMetaDescription', 'getMetaKeyword'])
                 ->getMock();
 
             $product->expects($this->any())
@@ -211,24 +162,6 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                         [$localizations['EN'], 'English meta keywords'],
                     ]
                 );
-
-            $brand = $this->getMockBuilder(Brand::class)
-                ->disableOriginalConstructor()
-                ->setMethods(['getName'])
-                ->getMock();
-
-            $brand->expects($this->any())
-                ->method('getName')
-                ->willReturnMap(
-                    [
-                        [$localizations['PL'], 'ACME'],
-                        [$localizations['EN'], 'ACME'],
-                    ]
-                );
-
-            $product->expects($this->any())
-                ->method('getBrand')
-                ->willReturn($brand);
 
             $result[] = $product;
         }

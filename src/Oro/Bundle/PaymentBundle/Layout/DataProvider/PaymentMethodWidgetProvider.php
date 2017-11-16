@@ -25,11 +25,11 @@ class PaymentMethodWidgetProvider
 
     /**
      * @param object $entity
-     * @param string $suffix
+     * @param string $prefix
      *
      * @return string
      */
-    public function getPaymentMethodWidgetName($entity, $suffix)
+    public function getPaymentMethodWidgetName($entity, $prefix)
     {
         if (!$entity instanceof PaymentMethodAwareInterface) {
             throw new \InvalidArgumentException(sprintf(
@@ -40,6 +40,6 @@ class PaymentMethodWidgetProvider
         }
         $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($entity->getPaymentMethod());
 
-        return sprintf('_%s%s', $suffix, $paymentMethodView->getBlock());
+        return sprintf('_%s%s', $prefix, $paymentMethodView->getBlock());
     }
 }

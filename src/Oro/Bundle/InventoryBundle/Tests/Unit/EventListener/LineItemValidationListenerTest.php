@@ -3,9 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
@@ -20,11 +18,6 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     protected $quantityValidator;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
      * @var LineItemValidationListener
      */
     protected $lineItemValidationListener;
@@ -36,14 +29,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->quantityValidator = $this->getMockBuilder(QuantityToOrderValidatorService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator, $this->translator);
-        $this->event = $this->getMockBuilder(LineItemValidateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quantityValidator = $this->createMock(QuantityToOrderValidatorService::class);
+        $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator);
+        $this->event = $this->createMock(LineItemValidateEvent::class);
     }
 
     public function testOnLineItemValidateDoesNotValidate()
@@ -65,6 +53,28 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->event->expects($this->never())
             ->method('addError');
+        $this->lineItemValidationListener->onLineItemValidate($this->event);
+    }
+
+    public function testOnLineItemValidateForCheckoutLineItem()
+    {
+        $lineItem1 = $this->createMock(CheckoutLineItem::class);
+        $lineItem1->expects($this->once())
+            ->method('isPriceFixed')
+            ->willReturn(false);
+        $lineItem2 = $this->createMock(CheckoutLineItem::class);
+        $lineItem2->expects($this->once())
+            ->method('isPriceFixed')
+            ->willReturn(true);
+        $lineItem3 = $this->createMock(LineItem::class);
+
+        $this->event->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
+
+        $lineItem1->expects($this->once())->method('getProduct');
+        $lineItem2->expects($this->never())->method('getProduct');
+        $lineItem3->expects($this->once())->method('getProduct');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 

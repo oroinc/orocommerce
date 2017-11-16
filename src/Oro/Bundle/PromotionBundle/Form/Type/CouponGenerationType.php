@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Form\Type\BusinessUnitSelectAutocomplete;
-use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Valid;
 
 /**
@@ -72,42 +70,6 @@ class CouponGenerationType extends AbstractType
                 ]
             )
             ->add(
-                'promotion',
-                PromotionSelectType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'oro.promotion.coupon.promotion.label',
-                    'autocomplete_alias' => 'oro_promotion_use_coupons',
-                    'grid_name' => 'promotion-for-coupons-select-grid',
-                ]
-            )
-            ->add(
-                'usesPerCoupon',
-                IntegerType::class,
-                [
-                    'required' => false,
-                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_coupon',
-                    'label' => 'oro.promotion.coupon.uses_per_coupon.label',
-                ]
-            )
-            ->add(
-                'usesPerPerson',
-                IntegerType::class,
-                [
-                    'required' => false,
-                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_person',
-                    'label' => 'oro.promotion.coupon.uses_per_person.label',
-                ]
-            )
-            ->add(
-                'validUntil',
-                OroDateTimeType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'oro.promotion.coupon.valid_until.label',
-                ]
-            )
-            ->add(
                 'codeLength',
                 IntegerType::class,
                 [
@@ -152,6 +114,14 @@ class CouponGenerationType extends AbstractType
                     'attr' => ['class' => 'dashesSequence-coupon-preview promotion-coupon-generation-preview'],
                 ]
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return BaseCouponType::class;
     }
 
     /**

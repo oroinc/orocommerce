@@ -44,6 +44,8 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
         currency:
             - Currency: ~
             - NotBlank: ~
+        rule:
+            - Valid: ~
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     properties:
@@ -65,3 +67,9 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
     properties:
         type:
             - NotBlank: ~
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    properties:
+        expression:
+            - Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax:
+                groups: ['ShippingMethodsConfigsRule']

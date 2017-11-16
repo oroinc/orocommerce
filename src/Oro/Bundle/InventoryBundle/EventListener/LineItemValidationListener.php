@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -33,15 +34,15 @@ class LineItemValidationListener
         }
 
         foreach ($lineItems as $lineItem) {
-            // stop checking if list item is not LineItem
-            if (!$lineItem instanceof LineItem) {
-                return;
+            // skip checking if the current line item is not supported
+            if (!$this->isSupported($lineItem)) {
+                continue;
             }
-            if (!$lineItem->getProduct() instanceof Product) {
+            $product = $lineItem->getProduct();
+            if (!$product instanceof Product) {
                 continue;
             }
 
-            $product = $lineItem->getProduct();
             if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $lineItem->getQuantity())) {
                 $event->addError($product->getSku(), $maxError);
                 continue;
@@ -50,5 +51,21 @@ class LineItemValidationListener
                 $event->addError($product->getSku(), $minError);
             }
         }
+    }
+
+    /**
+     * @param mixed $lineItem
+     * @return bool
+     */
+    protected function isSupported($lineItem)
+    {
+        if ($lineItem instanceof LineItem) {
+            return true;
+        }
+        if (!$lineItem instanceof CheckoutLineItem) {
+            return false;
+        }
+
+        return !$lineItem->isPriceFixed();
     }
 }

@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
@@ -28,13 +32,23 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $listener;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
     public function setUp()
     {
         $this->productShoppingListsDataProvider = $this->getMockBuilder(ProductShoppingListsDataProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new FrontendProductDatagridListener($this->productShoppingListsDataProvider);
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
+
+        $this->listener = new FrontendProductDatagridListener(
+            $this->productShoppingListsDataProvider,
+            $this->doctrineHelper
+        );
     }
 
     public function testOnPreBuild()
@@ -64,12 +78,25 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $record = new ResultRecord(['id' => 777]);
+        $product = $this->getEntity(Product::class, ['id' => 777]);
+
+        $entityManager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(Product::class)
+            ->willReturn($entityManager);
+
+        $entityManager->expects($this->once())
+            ->method('getReference')
+            ->with(Product::class, 777)
+            ->willReturn($product);
 
         $this->productShoppingListsDataProvider
             ->expects($this->once())
             ->method('getProductsUnitsQuantity')
-            ->with([777])
+            ->with([$product])
             ->willReturn([]);
+
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
@@ -109,10 +136,25 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $record2 = new ResultRecord(['id' => 555]);
         $record3 = new ResultRecord(['id' => 444]);
 
+        $product777 = $this->getEntity(Product::class, ['id' => 777]);
+        $product555 = $this->getEntity(Product::class, ['id' => 555]);
+        $product444 = $this->getEntity(Product::class, ['id' => 444]);
+
+        $entityManager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(Product::class)
+            ->willReturn($entityManager);
+
+        $entityManager->expects($this->any())
+            ->method('getReference')
+            ->withConsecutive([Product::class, 777], [Product::class, 555], [Product::class, 444])
+            ->willReturnOnConsecutiveCalls($product777, $product555, $product444);
+
         $this->productShoppingListsDataProvider
             ->expects($this->once())
             ->method('getProductsUnitsQuantity')
-            ->with([777, 555, 444])
+            ->with([$product777, $product555, $product444])
             ->willReturn([
                 777 => ['Some data'],
                 555 => ['Some data2'],
