@@ -139,13 +139,14 @@ class FrontendProductGridEventListener
         array $params
     ) {
         $fieldType = $attributeType->getFilterStorageFieldType();
-        $enumFilterTypes = [
+        $entityFilterTypes = [
             SearchableAttributeTypeInterface::FILTER_TYPE_ENUM,
-            SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM
+            SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+            SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
         ];
 
-        if (in_array($attributeType->getFilterType(), $enumFilterTypes, true)) {
-            $params['class'] = $this->getEnumClass($attribute);
+        if (in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
+            $params['class'] = $this->getEntityClass($attribute);
         } elseif ($fieldType === Query::TYPE_TEXT) {
             $params['max_length'] = 255;
         } elseif ($fieldType === Query::TYPE_DECIMAL) {
@@ -199,10 +200,10 @@ class FrontendProductGridEventListener
      *
      * @return string|null
      */
-    private function getEnumClass(FieldConfigModel $attribute)
+    private function getEntityClass(FieldConfigModel $attribute)
     {
         $config = $attribute->toArray('extend');
-        if (isset($config['target_entity']) && is_a($config['target_entity'], AbstractEnumValue::class, true)) {
+        if (isset($config['target_entity'])) {
             return $config['target_entity'];
         }
 
@@ -213,10 +214,7 @@ class FrontendProductGridEventListener
         }
 
         $mapping = $metadata->getAssociationMapping($fieldName);
-        if (isset($mapping['targetEntity']) && is_a($mapping['targetEntity'], AbstractEnumValue::class, true)) {
-            return $mapping['targetEntity'];
-        }
 
-        return null;
+        return $mapping['targetEntity'] ?? null;
     }
 }

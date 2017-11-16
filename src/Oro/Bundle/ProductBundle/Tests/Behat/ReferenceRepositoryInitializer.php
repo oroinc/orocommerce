@@ -39,5 +39,8 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         /** @var ProductUnit $set */
         $set = $repository->findOneBy(['code' => 'set']);
         $referenceRepository->set('set', $set);
+        /** @var ProductUnit $piece */
+        $piece = $repository->findOneBy(['code' => 'piece']);
+        $referenceRepository->set('piece', $piece);
     }
 }

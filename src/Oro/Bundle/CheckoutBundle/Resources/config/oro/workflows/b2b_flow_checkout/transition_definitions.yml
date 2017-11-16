@@ -124,8 +124,6 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
-                    - '@assign_value': [$shipping_method, null]
-
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_billing_address
                         parameters_mapping:

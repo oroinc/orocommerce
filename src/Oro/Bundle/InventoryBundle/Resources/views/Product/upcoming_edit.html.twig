@@ -1,0 +1,11 @@
+<div
+    data-page-component-module="oroui/js/app/components/view-component"
+    data-page-component-options="{{ {
+        view: 'oroentity/js/app/views/form-hide-related-field',
+        trackedFields: 'oro_product[isUpcoming]',
+        hideField: 'oro_product[availabilityDate]',
+    }|json_encode }}"
+>
+    {{ form_row(form.isUpcoming) }}
+    {{ form_row(form.availabilityDate) }}
+</div>

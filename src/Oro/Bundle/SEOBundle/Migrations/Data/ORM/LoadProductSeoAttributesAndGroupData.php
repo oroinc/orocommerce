@@ -76,7 +76,7 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         $attributeGroup->setCode(self::GROUP_CODE);
         $attributeGroup->setIsVisible(false);
 
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
         foreach ($this->fields as $attribute => $data) {
             $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);
             $attributeGroupRelation = new AttributeGroupRelation();

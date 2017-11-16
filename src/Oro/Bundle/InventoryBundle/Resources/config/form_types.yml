@@ -82,6 +82,25 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
 
+    oro_inventory.form.type.extension.product_upcoming_form_extension:
+        class: Oro\Bundle\InventoryBundle\Form\Extension\ProductUpcomingFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+
+    oro_inventory.form.type.extension.categpry_upcoming_form_extension:
+        class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryUpcomingFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
+
+    oro_inventory.form.type.extension.checkout_ship_until_form_extension:
+        class: Oro\Bundle\InventoryBundle\Form\Extension\CheckoutShipUntilFormExtension
+        arguments:
+             - '@oro_inventory.provider.product_upcoming_provider'
+             - '@oro_checkout.data_provider.manager.checkout_line_items'
+             - '@oro_locale.formatter.date_time'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType }
+
     oro_inventory.form.type.extension.product_quantity_to_order_type_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\ProductQuantityToOrderFormExtension
         tags:

@@ -11,7 +11,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridListener;
+use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridLowInventoryListener;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -20,7 +20,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
-class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -35,7 +35,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private $doctrineHelper;
 
     /**
-     * @var ProductDatagridListener
+     * @var ProductDatagridLowInventoryListener
      */
     private $listener;
 
@@ -50,7 +50,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $this->listener = new ProductDatagridListener(
+        $this->listener = new ProductDatagridLowInventoryListener(
             $this->lowInventoryProvider,
             $this->doctrineHelper
         );
@@ -67,7 +67,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             [
                 'name'       => 'grid-name',
                 'properties' => [
-                    ProductDatagridListener::COLUMN_LOW_INVENTORY => [
+                    ProductDatagridLowInventoryListener::COLUMN_LOW_INVENTORY => [
                         'type'          => 'field',
                         'frontend_type' => PropertyInterface::TYPE_BOOLEAN
                     ]

@@ -5,6 +5,12 @@ services:
         tags:
             - { name: form.type, alias: oro_checkout_address }
 
+    oro_checkout.form.type.ship_until:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
+        parent: oro_form.type.date
+        tags:
+            - { name: form.type, alias: oro_checkout_ship_until }
+
     oro_checkout.form.type.ship_to_billing_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType'
         tags:

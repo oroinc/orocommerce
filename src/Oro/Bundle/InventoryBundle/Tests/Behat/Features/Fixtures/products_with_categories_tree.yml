@@ -1,0 +1,150 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..3}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locValue1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        primaryUnitPrecision: '@precision2'
+        addName: ['@locValue2']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+    product3:
+        sku: 'SKU3'
+        type: 'simple'
+        primaryUnitPrecision: '@precision3'
+        addName: ['@locValue3']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelistShipping:
+        name: 'pricelist_shipping'
+        default: true
+        setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer'
+        pricelist: '@pricelistShipping'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelistShipping'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@pricelistShipping'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+    productPrice3:
+        pricelist: '@pricelistShipping'
+        product: '@product3'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+   combinedProductPrice2:
+        pricelist: '@combinedPriceList'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+   combinedProductPrice3:
+        pricelist: '@combinedPriceList'
+        product: '@product3'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        addTitle: ['@localNewCategory']
+        addProduct: ['@product1']
+    category2:
+        addTitle: ['@localNewCategory2']
+        setParentCategory: ['@category1']
+        addProduct: ['@product2']
+    category3:
+        addTitle: ['@localNewCategory3']
+        setParentCategory: ['@category2']
+        addProduct: ['@product3']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValue1:
+        string: 'Product1'
+    locValue2:
+        string: 'Product2'
+    locValue3:
+        string: 'Product3'
+    localNewCategory:
+        string: 'NewCategory'
+    localNewCategory2:
+        string: 'NewCategory2'
+    localNewCategory3:
+        string: 'NewCategory3'

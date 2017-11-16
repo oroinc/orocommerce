@@ -474,6 +474,7 @@ oro:
             entity_plural_label: Orders
             create.label: 'Create Order'
             past_orders.label: Past Orders
+            identifier.label: 'Order #%identifier%'
             method_type:
                 view:
                     label: '%translatedMethodType%'

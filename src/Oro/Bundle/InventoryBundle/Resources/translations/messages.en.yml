@@ -107,6 +107,15 @@ oro:
             choice:
                 'true': Yes
                 'false': No
+        is_upcoming:
+            label: 'Upcoming'
+            notification: 'This product will be available later'
+            notification_with_date: 'This product will be available on '
+            choice:
+                'true': 'Yes'
+                'false': 'No'
+        availability_date.label: 'Availability Date'
+        availability_date.warning: 'This order contains upcoming products without availability date'
         inventory_threshold:
             label: Inventory Threshold
         low_inventory_threshold:
@@ -145,9 +154,17 @@ oro:
             description: The maximum quantity that the user must order for this product
         minimum_quantity_to_order:
             description: The minimum quantity that the user must order for this product
+        is_upcoming:
+            description: Indicates that this product will be available later
+        availability_date:
+            description: Date when this product will be avaiable in store
     catalog:
         category:
             highlight_low_inventory:
                 description:  Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
             low_inventory_threshold:
                 description: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
+            is_upcoming:
+                description: Indicates that products from this category will be available later
+            availability_date:
+                description: Date when products from this category will be avaiable in store

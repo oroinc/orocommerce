@@ -38,6 +38,16 @@
     {% endif %}
 {% endblock pageHeader %}
 
+{% block content %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div {{ UI.renderPageComponentAttributes({
+        view: 'oroform/js/app/views/form-loading-view',
+        layout: 'separate'
+    }) }} data-skip-input-widgets>
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% block content_data %}
     {% set id = 'product-edit' %}
     {%  set generalData = {
