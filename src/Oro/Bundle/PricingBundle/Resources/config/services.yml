@@ -655,6 +655,18 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postRemove }
             - { name: kernel.event_listener, event: oro_pricing.assignment_rule_builder.build, method: onAssignmentRuleBuilderBuild}
 
+    oro_pricing.migration.demo_data_fixtures_listener.build_prices:
+        class: Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener
+        arguments:
+            - '@oro_platform.optional_listeners.manager'
+            - '@doctrine'
+            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@oro_pricing.builder.product_price_builder'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
     oro_pricing.provider.matching_price:
         class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
         arguments:
