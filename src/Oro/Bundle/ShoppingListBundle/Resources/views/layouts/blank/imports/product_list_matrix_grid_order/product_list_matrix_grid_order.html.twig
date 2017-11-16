@@ -1,16 +1,16 @@
-{% block _product_list_matrix_form_summary_widget %}
+{% block __product_list_matrix_grid_order__form_summary_widget %}
     <div class="{{ class_prefix }}__summary--inline">
         {{ block('container_widget') }}
     </div>
 {% endblock %}
 
-{% block _product_list_matrix_form_summary_wrapper_widget %}
+{% block __product_list_matrix_grid_order__form_summary_wrapper_widget %}
     <div class="{{ class_prefix }}__summary-wrapper--inline">
         {{ block('container_widget') }}
     </div>
 {% endblock %}
 
-{% block _product_list_matrix_form_summary_quantity_widget %}
+{% block __product_list_matrix_grid_order__form_summary_quantity_widget %}
     <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
         {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
     </span>
@@ -18,7 +18,7 @@
     <span class="{{ class_prefix }}__total-separator">|</span>
 {% endblock %}
 
-{% block _product_list_matrix_form_summary_total_widget %}
+{% block __product_list_matrix_grid_order__form_summary_total_widget %}
     <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
         {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
     </span>

@@ -10,8 +10,6 @@
         prices: prices
     }) %}
 
-    {% do set_class_prefix_to_form(form, class_prefix) %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' {{ class_prefix }}',
         '~data-page-component-view': {
