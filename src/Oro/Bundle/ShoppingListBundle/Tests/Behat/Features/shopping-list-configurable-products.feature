@@ -327,8 +327,8 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Display Options In Shopping Lists" field
-    And I fill in "Display Options In Shopping Lists" with "Group Single Products"
+    And uncheck "Use default" for "Shopping Lists" field
+    And I fill in "Shopping Lists" with "Group Single Products"
     And I save form
     Given I proceed as the User
     And type "Configurable Product B" in "search"
@@ -357,8 +357,8 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Display Matrix Form (where applicable)" field
-    And I fill in "Display Matrix Form (where applicable)" with "Popup Matrix Form"
+    And uncheck "Use default" for "Product Views" field
+    And I fill in "Product Views" with "Popup Matrix Form"
     And I save form
     Given I proceed as the User
     Given type "Configurable Product B" in "search"
@@ -373,8 +373,8 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Display Matrix Form (where applicable)" field
-    And I fill in "Display Matrix Form (where applicable)" with "Do Not Display"
+    And uncheck "Use default" for "Product Views" field
+    And I fill in "Product Views" with "No Matrix Form"
     And I save form
     Given I proceed as the User
     And type "Configurable Product B" in "search"

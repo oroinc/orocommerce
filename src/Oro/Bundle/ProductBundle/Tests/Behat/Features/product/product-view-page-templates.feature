@@ -188,8 +188,8 @@ Feature: Product View Page Templates
     Then I should see "Configuration saved" flash message
     Then I should see "Default template"
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And uncheck "Use default" for "Display Matrix Form (where applicable)" field
-    And I fill in "Display Matrix Form (where applicable)" with "Do Not Display"
+    And uncheck "Use default" for "Product Views" field
+    And I fill in "Product Views" with "No Matrix Form"
     And I save form
     Then I should see "Configuration saved" flash message
 
