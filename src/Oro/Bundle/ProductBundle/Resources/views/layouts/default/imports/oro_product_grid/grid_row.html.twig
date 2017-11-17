@@ -27,21 +27,22 @@
 
     {% set class_prefix = themeOptions.currentRowView %}
 
+    {% set matrixFormAvailable = product.matrixForm is not null and class_prefix != 'gallery-view' and blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
+
     {% do block|merge_context({
         class_prefix: class_prefix,
+        matrixFormAvailable: matrixFormAvailable,
         product: product
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
+        '~class': matrixFormAvailable ? 'product-item__wrapper--{{ class_prefix }}' : '',
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product|default({
-                unit: product.unit
-            }),
+            modelAttr: product|default({})
         },
-        'data-layout': 'separate',
-        '~class': product.matrixForm|default(null) ? 'product-item__wrapper--{{ class_prefix }}' : ''
+        'data-layout': 'separate'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block('container_widget') }}
@@ -64,12 +65,9 @@
         '~class': ' product-item__preview'
     }) %}
 
-    {% set isNoImage = false %}
-
+    {% set isNoImage = true %}
     {% if product.image is defined %}
         {% set isNoImage = (product.image|trim) == (Image.url(null, 'product_large')|e|trim) %}
-    {% else %}
-        {% set isNoImage = true %}
     {% endif %}
     
     {% if popup_gallery and not isNoImage %}
@@ -166,7 +164,7 @@
 {% endblock %}
 
 {% block _product_datagrid_cell_matrixForm_widget %}
-    {% if product.matrixForm|default(null) %}
+    {% if matrixFormAvailable %}
         {% do block|merge_context({
             'prices': product.productPrices,
             'matrixForm': product[column_name]
@@ -175,10 +173,7 @@
     {% endif %}
 {% endblock %}
 
-{% block _product_datagrid_cell_matrixForm_value_widget %}
-{% endblock %}
-
-{% block _product_list_matrix_form_fields_widget %}
+{% block _product_datagrid_cell_matrix_form_fields_widget %}
     {{ matrixForm|raw }}
 {% endblock %}
 
