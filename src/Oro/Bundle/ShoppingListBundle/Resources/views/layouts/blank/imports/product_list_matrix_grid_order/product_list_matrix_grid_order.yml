@@ -12,6 +12,11 @@ layout:
         - '@setBlockTheme':
             themes: 'product_list_matrix_grid_order.html.twig'
 
+        - '@move':
+            id: __matrix_line_item_buttons
+            parentId: __matrix_form_summary
+            prepend: false
+
         - '@setOption':
             id: __matrix_wrapper
             optionName: form
