@@ -595,7 +595,7 @@ Feature: Commerce smoke e2e
     And should see "Your Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     And should see "Listed Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     When click "Shirts"
-    Then should not see "Add to Shopping List button" for "Shirt_Sku" product
+    Then should see "Add to Shopping List button" for "Shirt_Sku" product
     And should see "View Details" for "Shirt_Sku" product
     And should see "Product Image" for "Shirt_Sku" product
     And should see "Product Name" for "Shirt_Sku" product
