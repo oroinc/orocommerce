@@ -24,6 +24,7 @@ class FrontendRoutingTest extends WebTestCase
 
     public function testSlugRouting()
     {
+        $this->markTestSkipped('BB-12944');
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
 
@@ -52,6 +53,7 @@ class FrontendRoutingTest extends WebTestCase
 
     public function testSlugRoutingAuthentication()
     {
+        $this->markTestSkipped('BB-12944');
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
         $this->client->request(
