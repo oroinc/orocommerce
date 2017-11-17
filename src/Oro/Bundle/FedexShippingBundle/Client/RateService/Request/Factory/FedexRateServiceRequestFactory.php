@@ -8,7 +8,6 @@ use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSet
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Modifier\ShippingLineItemCollectionModifierInterface;
 
 class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSettingsFactoryInterface
 {
@@ -28,33 +27,25 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
     private $packagesFactory;
 
     /**
-     * @var ShippingLineItemCollectionModifierInterface
-     */
-    private $addProductOptionsModifier;
-
-    /**
      * @var ShippingLineItemCollectionBySettingsModifierInterface
      */
     private $convertToFedexUnitsModifier;
 
     /**
-     * @param SymmetricCrypterInterface                                        $crypter
+     * @param SymmetricCrypterInterface $crypter
      * @param FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory
-     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface       $packagesFactory
-     * @param ShippingLineItemCollectionModifierInterface                      $addProductOptionsModifier
-     * @param ShippingLineItemCollectionBySettingsModifierInterface            $convertToFedexUnitsModifier
+     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory
+     * @param ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
      */
     public function __construct(
         SymmetricCrypterInterface $crypter,
         FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory,
         FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory,
-        ShippingLineItemCollectionModifierInterface $addProductOptionsModifier,
         ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
     ) {
         $this->crypter = $crypter;
         $this->packageSettingsFactory = $packageSettingsFactory;
         $this->packagesFactory = $packagesFactory;
-        $this->addProductOptionsModifier = $addProductOptionsModifier;
         $this->convertToFedexUnitsModifier = $convertToFedexUnitsModifier;
     }
 
@@ -70,7 +61,7 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
         );
 
         $lineItems = $this->convertToFedexUnitsModifier->modify(
-            $this->addProductOptionsModifier->modify($context->getLineItems()),
+            $context->getLineItems(),
             $settings->getIntegrationSettings()
         );
 

@@ -66,30 +66,4 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 
         static::assertEquals([], $shippingOptionsArray);
     }
-
-    public function testFindByProductsAndProductUnits()
-    {
-        $options = $this->repository->findByProductsAndProductUnits(
-            [
-                $this->getReference('product-1'),
-                $this->getReference('product-1')
-            ],
-            [
-                $this->getReference('product_unit.liter'),
-                $this->getReference('product_unit.bottle')
-            ]
-        );
-
-        static::assertTrue(in_array(
-            $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1),
-            $options,
-            false
-        ));
-
-        static::assertTrue(in_array(
-            $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_2),
-            $options,
-            false
-        ));
-    }
 }

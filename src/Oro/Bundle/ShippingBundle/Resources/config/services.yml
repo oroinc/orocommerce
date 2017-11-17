@@ -516,14 +516,6 @@ services:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
 
-    oro_shipping.modifier.add_product_options_to_shipping_line_item_colection:
-        class: 'Oro\Bundle\ShippingBundle\Modifier\AddProductOptionsShippingLineItemCollectionModifier'
-        public: false
-        arguments:
-            - '@oro_shipping.context.doctrine_line_item_collection_factory'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_shipping.line_item.factory_basic'
-
     oro_shipping.factory.shipping_package_options:
         class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
         public: false

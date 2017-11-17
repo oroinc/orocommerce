@@ -19,7 +19,6 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Modifier\ShippingLineItemCollectionModifierInterface;
 use PHPUnit\Framework\TestCase;
 
 class FedexRateServiceRequestFactoryTest extends TestCase
@@ -46,11 +45,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private $packagesFactory;
 
     /**
-     * @var ShippingLineItemCollectionModifierInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $addProductOptionsModifier;
-
-    /**
      * @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $convertToFedexUnitsModifier;
@@ -67,7 +61,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface::class
         );
         $this->packagesFactory = $this->createMock(FedexPackagesByLineItemsAndPackageSettingsFactoryInterface::class);
-        $this->addProductOptionsModifier = $this->createMock(ShippingLineItemCollectionModifierInterface::class);
         $this->convertToFedexUnitsModifier = $this->createMock(
             ShippingLineItemCollectionBySettingsModifierInterface::class
         );
@@ -76,14 +69,12 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             $this->crypter,
             $this->packageSettingsFactory,
             $this->packagesFactory,
-            $this->addProductOptionsModifier,
             $this->convertToFedexUnitsModifier
         );
     }
 
     public function testCreateNoPackages()
     {
-        $lineItems = new DoctrineShippingLineItemCollection([]);
         $context = $this->createContext();
         $integrationSettings = new FedexIntegrationSettings();
 
@@ -101,11 +92,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             ->willReturn($packageSettings);
 
         $lineItemsWithOptions = new DoctrineShippingLineItemCollection([]);
-        $this->addProductOptionsModifier
-            ->expects(static::once())
-            ->method('modify')
-            ->with($lineItems)
-            ->willReturn($lineItemsWithOptions);
 
         $lineItemsConverted = new DoctrineShippingLineItemCollection([]);
         $this->convertToFedexUnitsModifier
@@ -145,11 +131,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
-
-        $this->addProductOptionsModifier
-            ->expects(static::once())
-            ->method('modify')
-            ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
 
         $this->convertToFedexUnitsModifier
             ->expects(static::once())
