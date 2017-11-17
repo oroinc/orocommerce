@@ -283,7 +283,6 @@ services:
         public: false
         arguments:
             - '@oro_visibility.visibility_message_handler'
-            - '@oro_scope.scope_manager'
         calls:
             - [setTopic, ['oro_visibility.visibility.change_category_visibility']]
         tags:
