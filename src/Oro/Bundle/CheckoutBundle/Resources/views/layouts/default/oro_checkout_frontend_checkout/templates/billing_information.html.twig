@@ -34,26 +34,27 @@
             </div>
 
             {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
+
+            {% set hideShipping = false %}
+            {% if billingAddress %}
+                {% set typedAddress = billingAddress.customerAddress %}
+                {% if typedAddress is empty %}
+                    {% set typedAddress  = billingAddress.customerUserAddress %}
+                {% endif %}
+
+                {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
+            {% endif %}
+
+            {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+                <fieldset class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}">
+                    <div class="grid__column grid__column--offset-y">
+                        {{ form_row(form.ship_to_billing_address) }}
+                    </div>
+                </fieldset>
+            {% endif %}
         </div>
     {% endif %}
 
-    {% set hideShipping = false %}
-    {% if billingAddress %}
-        {% set typedAddress = billingAddress.customerAddress %}
-        {% if typedAddress is empty %}
-            {% set typedAddress  = billingAddress.customerUserAddress %}
-        {% endif %}
-
-        {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
-    {% endif %}
-
-    {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-        <fieldset class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}">
-            <div class="grid__column grid__column--offset-y">
-                {{ form_row(form.ship_to_billing_address) }}
-            </div>
-        </fieldset>
-    {% endif %}
     {%  if  form.state_token is defined %}
         {{ form_row(form.state_token) }}
     {% endif %}
