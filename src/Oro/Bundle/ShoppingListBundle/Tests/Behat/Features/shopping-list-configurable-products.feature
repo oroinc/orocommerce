@@ -249,7 +249,11 @@ Feature: Inline matrix for configurable products in product views
     Given I signed in as AmandaRCole@example.org on the store frontend
     And type "Configurable Product A" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product A" product
+    And I click "List View"
+    Then I should see "Matrix Grid Form" for "CNF_A" product
+    And I click "No Image View"
+    Then I should see "Matrix Grid Form" for "CNF_A" product
+    And click "View Details" for "CNF_A" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
@@ -270,6 +274,18 @@ Feature: Inline matrix for configurable products in product views
     And I should see next rows in "Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | 2        |          |          |
+    And type "CNF_A" in "search"
+    And click "Search Button"
+    And I click "List View"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        | 2        |          |          |
+    And I click "No Image View"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        | 2        |          |          |
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
     Then I should see "Product has been removed from \"Shopping list\""
@@ -279,7 +295,11 @@ Feature: Inline matrix for configurable products in product views
   Scenario: Matrix form with two attributes
     Given type "Configurable Product B" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product B" product
+    And I click "List View"
+    Then I should see "Matrix Grid Form" for "CNF_B" product
+    And I click "No Image View"
+    Then I should see "Matrix Grid Form" for "CNF_B" product
+    And click "View Details" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -301,10 +321,14 @@ Feature: Inline matrix for configurable products in product views
     And I click "Yes, Delete"
     Then I should see "The Shopping List is empty"
 
-  Scenario: Matrix form with tree attributes
+  Scenario: Matrix form with three attributes
     Given type "Configurable Product C" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product C" product
+    And I click "List View"
+    Then I should not see "Matrix Grid Form" for "CNF_C" product
+    And I click "No Image View"
+    Then I should not see "Matrix Grid Form" for "CNF_C" product
+    And click "View Details" for "CNF_C" product
     Then I should see an "Configurable Product Shopping List Form" element
     And I fill in "Attribute 1" with "Value 12"
     And I fill in "Attribute 2" with "Value 23"
@@ -323,6 +347,30 @@ Feature: Inline matrix for configurable products in product views
     And I click "Yes, Delete"
     Then I should see "You do not have available Shopping Lists"
 
+  Scenario: Disabled matrix form in Product List View
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Product Listings" field
+    And I fill in "Product Listings" with "No Matrix Form"
+    And I save form
+    Given I proceed as the User
+    And type "Configurable Product" in "search"
+    And click "Search Button"
+    And I click "List View"
+    Then I should not see "Matrix Grid Form" for "CNF_A" product
+    And I should not see "Matrix Grid Form" for "CNF_B" product
+    And I should not see "Matrix Grid Form" for "CNF_C" product
+    And I click "No Image View"
+    Then I should not see "Matrix Grid Form" for "CNF_A" product
+    And I should not see "Matrix Grid Form" for "CNF_B" product
+    And I should not see "Matrix Grid Form" for "CNF_C" product
+    Then I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And check "Use default" for "Product Listings" field
+    And I save form
+
   Scenario: Disabled matrix form in Shopping List View
     Given I proceed as the Admin
     And I go to System/ Configuration
@@ -333,7 +381,7 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the User
     And type "Configurable Product B" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product B" product
+    And click "View Details" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -363,7 +411,7 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the User
     Given type "Configurable Product B" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product B" product
+    And click "View Details" for "CNF_B" product
     Then I should not see an "Matrix Grid Form" element
     And I press "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
@@ -379,6 +427,54 @@ Feature: Inline matrix for configurable products in product views
     Given I proceed as the User
     And type "Configurable Product B" in "search"
     And click "Search Button"
-    And click "View Details" for "Configurable Product B" product
+    And click "View Details" for "CNF_B" product
     Then I should not see an "Matrix Grid Form" element
     And I should see an "Configurable Product Shopping List Form" element
+
+  Scenario: Order with matrix form in Product List View
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And check "Use default" for "Shopping Lists" field
+    And I save form
+    Given I proceed as the User
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Add to Shoppin..."
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 1        |
+      |          |          |          |
+      |          |          | 1        |
+
+  Scenario: Update order with matrix form in Product List View
+    Given type "CNF_B" in "search"
+    And click "Search Button"
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | -        | 2        | -        |
+      | Value 12 | -        | -        | 3        |
+      | Value 13 | -        | -        | -        |
+      | Value 14 | -        | -        | -        |
+    And I click "Update Shoppin..."
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 2        |          |
+      | 1        |          | 3        |
+      |          |          |          |
+      |          |          | 1        |
