@@ -24,7 +24,7 @@ oro.pricing:
         export:
             button.label: 'Export Price Attribute Data'
         import:
-            entity.label: 'Product Price Attributes'
+            entity.label: 'Price Attributes Data'
             popup.title: 'Import Price Attributes Data'
             strategy:
                 tooltip: '<b>Add and Replace</b> strategy overrides the existing price attribute data (e.g. MAP, MSRP, etc.) with the new one from the imported file. <br> <b>Reset and Add</b> strategy removes the existing price attribute values for all the products (regardless of the currency) if the price attribute is listed in the file. For example, if an MSRP value is provided for a Product A, all the MSRP values in all the currencies are removed for all the products. If MAP is not mentioned it the file, the MAP values remain intact.'
