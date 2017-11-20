@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_combined_price_uidx",
- *              columns={"product_id", "combined_price_list_id", "quantity", "unit_code", "currency"}
+ *              columns={"combined_price_list_id", "currency", "product_id", "quantity", "unit_code"}
  *          )
  *      },
  *     indexes={
