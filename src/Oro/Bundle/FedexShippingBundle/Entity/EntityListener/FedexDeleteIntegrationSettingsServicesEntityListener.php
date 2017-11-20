@@ -5,7 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Entity\EntityListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Integration\FedexChannel;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -73,8 +73,8 @@ class FedexDeleteIntegrationSettingsServicesEntityListener
     }
 
     /**
-     * @param ShippingService[] $deletedServices
-     * @param Channel           $channel
+     * @param FedexShippingService[] $deletedServices
+     * @param Channel                $channel
      */
     private function dispatchTypeRemovalEvents(array $deletedServices, Channel $channel)
     {

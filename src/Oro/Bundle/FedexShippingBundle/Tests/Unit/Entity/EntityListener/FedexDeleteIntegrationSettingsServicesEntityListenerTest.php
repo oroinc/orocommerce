@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\FedexShippingBundle\Entity\EntityListener\FedexDeleteIntegrationSettingsServicesEntityListener;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Integration\FedexChannel;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -74,8 +74,8 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
     public function testPostUpdateNoChannel()
     {
         $settings = $this->createSettings([
-            new ShippingService(),
-            new ShippingService(),
+            new FedexShippingService(),
+            new FedexShippingService(),
         ]);
 
         $this->typeRemovalEventDispatcher
@@ -89,8 +89,8 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
     {
         $channel = new Channel();
         $services = [
-            new ShippingService(),
-            new ShippingService(),
+            new FedexShippingService(),
+            new FedexShippingService(),
         ];
         $typeIds = ['1', '2'];
 
@@ -117,7 +117,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
     }
 
     /**
-     * @param ShippingService[] $deletedServices
+     * @param FedexShippingService[] $deletedServices
      *
      * @return FedexIntegrationSettings|\PHPUnit_Framework_MockObject_MockObject
      */

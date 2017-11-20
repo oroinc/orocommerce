@@ -11,7 +11,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRate
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
@@ -51,7 +51,7 @@ class FedexShippingMethodTypeTest extends TestCase
 
     public function testGetters()
     {
-        $service = new ShippingService();
+        $service = new FedexShippingService();
         $service->setDescription(self::LABEL);
 
         $type = $this->createShippingMethodType(new FedexIntegrationSettings(), $service);
@@ -173,13 +173,13 @@ class FedexShippingMethodTypeTest extends TestCase
 
     /**
      * @param FedexIntegrationSettings $settings
-     * @param ShippingService          $service
+     * @param FedexShippingService     $service
      *
      * @return FedexShippingMethodType
      */
     private function createShippingMethodType(
         FedexIntegrationSettings $settings,
-        ShippingService $service
+        FedexShippingService $service
     ): FedexShippingMethodType {
         return new FedexShippingMethodType(
             $this->rateServiceRequestSettingsFactory,
@@ -195,11 +195,11 @@ class FedexShippingMethodTypeTest extends TestCase
      * @param string              $code
      * @param ShippingServiceRule $rule
      *
-     * @return ShippingService
+     * @return FedexShippingService
      */
-    private function createShippingService(string $code, ShippingServiceRule $rule): ShippingService
+    private function createShippingService(string $code, ShippingServiceRule $rule): FedexShippingService
     {
-        $service = new ShippingService();
+        $service = new FedexShippingService();
         $service
             ->setCode($code)
             ->setRule($rule);

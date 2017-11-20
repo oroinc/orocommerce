@@ -8,7 +8,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettings
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
@@ -37,7 +37,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     private $identifier;
 
     /**
-     * @var ShippingService
+     * @var FedexShippingService
      */
     private $shippingService;
 
@@ -51,7 +51,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
      * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
      * @param string                                            $identifier
-     * @param ShippingService                                   $shippingService,
+     * @param FedexShippingService                              $shippingService,
      * @param FedexIntegrationSettings                          $settings
      */
     public function __construct(
@@ -59,7 +59,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
         FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         string $identifier,
-        ShippingService $shippingService,
+        FedexShippingService $shippingService,
         FedexIntegrationSettings $settings
     ) {
         $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;

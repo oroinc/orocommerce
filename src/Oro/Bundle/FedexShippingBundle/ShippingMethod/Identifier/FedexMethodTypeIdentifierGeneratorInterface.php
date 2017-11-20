@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier;
 
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 
 interface FedexMethodTypeIdentifierGeneratorInterface
 {
     /**
-     * @param ShippingService $service
+     * @param FedexShippingService $service
      *
      * @return string
      */
-    public function generate(ShippingService $service): string;
+    public function generate(FedexShippingService $service): string;
 }

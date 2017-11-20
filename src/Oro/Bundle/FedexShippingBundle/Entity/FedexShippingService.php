@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="oro_fedex_shipping_service")
  * @ORM\Entity
  */
-class ShippingService
+class FedexShippingService
 {
     /**
      * @var integer|null

@@ -7,7 +7,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettings
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -58,7 +58,7 @@ class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryIn
     /**
      * {@inheritDoc}
      */
-    public function create(Channel $channel, ShippingService $service): ShippingMethodTypeInterface
+    public function create(Channel $channel, FedexShippingService $service): ShippingMethodTypeInterface
     {
         return new FedexShippingMethodType(
             $this->rateServiceRequestSettingsFactory,

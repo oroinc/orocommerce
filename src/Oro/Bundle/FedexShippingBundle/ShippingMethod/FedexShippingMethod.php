@@ -9,7 +9,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettings
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -66,7 +66,7 @@ class FedexShippingMethod implements
     private $types;
 
     /**
-     * @var Collection|ShippingService[]
+     * @var Collection|FedexShippingService[]
      */
     private $shippingServices;
 
@@ -90,7 +90,7 @@ class FedexShippingMethod implements
      * @param bool                                              $enabled
      * @param FedexIntegrationSettings                          $settings,
      * @param ShippingMethodTypeInterface[]                     $types
-     * @param Collection|ShippingService[]                      $shippingServices
+     * @param Collection|FedexShippingService[]                 $shippingServices
      */
     public function __construct(
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
@@ -181,7 +181,7 @@ class FedexShippingMethod implements
     /**
      * @param string $code
      *
-     * @return ShippingService|null
+     * @return FedexShippingService|null
      */
     public function getShippingService(string $code)
     {
@@ -275,7 +275,7 @@ class FedexShippingMethod implements
     /**
      * @param array $optionsByTypes
      *
-     * @return ShippingService[]
+     * @return FedexShippingService[]
      */
     private function getShippingServicesFromOptions(array $optionsByTypes): array
     {
@@ -293,7 +293,7 @@ class FedexShippingMethod implements
     }
 
     /**
-     * @param ShippingService[]        $shippingServices
+     * @param FedexShippingService[]   $shippingServices
      * @param ShippingContextInterface $context
      *
      * @return Price[]

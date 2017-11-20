@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory;
 
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 interface FedexShippingMethodTypeFactoryInterface
 {
     /**
-     * @param Channel         $channel
-     * @param ShippingService $service
+     * @param Channel              $channel
+     * @param FedexShippingService $service
      *
      * @return ShippingMethodTypeInterface
      */
-    public function create(Channel $channel, ShippingService $service): ShippingMethodTypeInterface;
+    public function create(Channel $channel, FedexShippingService $service): ShippingMethodTypeInterface;
 }

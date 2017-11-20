@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Form\Type;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
@@ -112,7 +112,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 'shippingServices',
                 'entity',
                 [
-                    'class' => ShippingService::class,
+                    'class' => FedexShippingService::class,
                     'property' => 'description',
                     'label' => 'oro.fedex.integration.settings.shipping_services.label',
                     'required' => true,

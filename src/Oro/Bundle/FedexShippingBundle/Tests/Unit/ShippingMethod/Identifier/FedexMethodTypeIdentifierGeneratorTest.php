@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Identifier;
 
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -12,7 +12,7 @@ class FedexMethodTypeIdentifierGeneratorTest extends TestCase
 
     public function testGenerate()
     {
-        $service = new ShippingService();
+        $service = new FedexShippingService();
         $service->setCode(self::CODE);
 
         static::assertSame(

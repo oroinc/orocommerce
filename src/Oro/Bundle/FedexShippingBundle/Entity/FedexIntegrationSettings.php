@@ -76,10 +76,10 @@ class FedexIntegrationSettings extends Transport
     private $unitOfWeight;
 
     /**
-     * @var Collection|ShippingService[]
+     * @var Collection|FedexShippingService[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="ShippingService",
+     *      targetEntity="FedexShippingService",
      *      fetch="EAGER"
      * )
      * @ORM\JoinTable(
@@ -304,7 +304,7 @@ class FedexIntegrationSettings extends Transport
     }
 
     /**
-     * @return Collection|ShippingService[]
+     * @return Collection|FedexShippingService[]
      */
     public function getShippingServices(): Collection
     {
@@ -312,11 +312,11 @@ class FedexIntegrationSettings extends Transport
     }
 
     /**
-     * @param ShippingService $service
+     * @param FedexShippingService $service
      *
      * @return self
      */
-    public function addShippingService(ShippingService $service): self
+    public function addShippingService(FedexShippingService $service): self
     {
         if (!$this->shippingServices->contains($service)) {
             $this->shippingServices->add($service);
@@ -326,11 +326,11 @@ class FedexIntegrationSettings extends Transport
     }
 
     /**
-     * @param ShippingService $service
+     * @param FedexShippingService $service
      *
      * @return self
      */
-    public function removeShippingService(ShippingService $service): self
+    public function removeShippingService(FedexShippingService $service): self
     {
         if ($this->shippingServices->contains($service)) {
             $this->shippingServices->removeElement($service);

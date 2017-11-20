@@ -8,7 +8,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettings
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodTypeFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
@@ -93,8 +93,8 @@ class FedexShippingMethodFactoryTest extends TestCase
     public function testCreate()
     {
         $services = new ArrayCollection([
-            new ShippingService(),
-            new ShippingService(),
+            new FedexShippingService(),
+            new FedexShippingService(),
         ]);
         $settings = new FedexIntegrationSettings();
         $settings

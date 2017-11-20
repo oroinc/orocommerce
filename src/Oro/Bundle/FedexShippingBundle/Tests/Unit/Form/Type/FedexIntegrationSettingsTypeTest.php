@@ -4,7 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexIntegrationSettingsType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -52,7 +52,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 
         $entityType = new EntityTypeStub([
             1 => $this->getEntity(
-                ShippingService::class,
+                FedexShippingService::class,
                 [
                     'id' => 1,
                     'code' => '01',
@@ -60,7 +60,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                 ]
             ),
             2 => $this->getEntity(
-                ShippingService::class,
+                FedexShippingService::class,
                 [
                     'id' => 2,
                     'code' => '03',
@@ -110,7 +110,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ->setPickupType('pickup')
             ->setUnitOfWeight('unit')
             ->addLabel((new LocalizedFallbackValue())->setString('label'))
-            ->addShippingService(new ShippingService());
+            ->addShippingService(new FedexShippingService());
 
         $form = $this->factory->create($this->formType, $settings);
 

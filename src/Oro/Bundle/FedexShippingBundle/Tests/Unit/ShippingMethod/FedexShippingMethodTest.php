@@ -13,7 +13,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRate
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
@@ -33,7 +33,7 @@ class FedexShippingMethodTest extends TestCase
      * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceRequestSettingsFactory;
-    
+
     /**
      * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -190,11 +190,11 @@ class FedexShippingMethodTest extends TestCase
     /**
      * @param string $code
      *
-     * @return ShippingService
+     * @return FedexShippingService
      */
-    private function createShippingService(string $code, ShippingServiceRule $rule): ShippingService
+    private function createShippingService(string $code, ShippingServiceRule $rule): FedexShippingService
     {
-        $service = new ShippingService();
+        $service = new FedexShippingService();
         $service
             ->setCode($code)
             ->setRule($rule);
@@ -219,9 +219,9 @@ class FedexShippingMethodTest extends TestCase
     }
 
     /**
-     * @param FedexIntegrationSettings      $settings
-     * @param ShippingMethodTypeInterface[] $types
-     * @param ShippingService[]|Collection  $services
+     * @param FedexIntegrationSettings          $settings
+     * @param ShippingMethodTypeInterface[]     $types
+     * @param FedexShippingService[]|Collection $services
      *
      * @return FedexShippingMethod
      */
