@@ -1313,3 +1313,21 @@ services:
             - '@oro_product.datagrid_theme_helper'
         tags:
             - { name: layout.data_provider, alias: oro_product_datagrid_row_view }
+
+    oro_product.event_listener.orm.new_arrival_index_listener:
+        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
+        public: false
+        arguments:
+            - 'oro_product'
+            - 'idx_oro_product_new_arrival'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
+
+    oro_product.event_listener.orm.featured_index_listener:
+        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
+        public: false
+        arguments:
+            - 'oro_product'
+            - 'idx_oro_product_featured'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
