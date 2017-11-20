@@ -83,17 +83,17 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
             ],
             'full data' => [
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'postalCode' => 'code1',
                     'city' => 'city1',
                     'street' => 'street1',
                     'street2' => 'street2',
                 ],
                 'expectedData' => $this->getShippingOrigin(
-                    'US',
-                    'US',
-                    'US-AL',
+                    self::COUNTRY_WITH_REGION,
+                    true,
+                    self::REGION_WITH_COUNTRY,
                     'code1_stripped',
                     'city1_stripped',
                     'street1_stripped',
@@ -103,30 +103,38 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
             ],
             'full data with default' => [
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'postalCode' => 'code2',
                     'city' => 'city2',
                     'street' => 'street2',
                     'street2' => 'street3',
                 ],
                 'expectedData' => $this->getShippingOrigin(
-                    'US',
-                    'US',
-                    'US-AL',
+                    self::COUNTRY_WITH_REGION,
+                    true,
+                    self::REGION_WITH_COUNTRY,
                     'code2_stripped',
                     'city2_stripped',
                     'street2_stripped',
                     'street3_stripped'
                 ),
-                'defaultData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1', 'street1', 'street2'),
+                'defaultData' => $this->getShippingOrigin(
+                    self::COUNTRY_WITH_REGION,
+                    true,
+                    self::REGION_WITH_COUNTRY,
+                    'code1',
+                    'city1',
+                    'street1',
+                    'street2'
+                ),
             ],
         ];
     }
 
     /**
      * @param string $countryCode
-     * @param string $regionCountryCode
+     * @param boolean $linkRegionCountry
      * @param string $regionCode
      * @param string $postalCode
      * @param string $city
@@ -136,7 +144,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
      */
     protected function getShippingOrigin(
         $countryCode = null,
-        $regionCountryCode = null,
+        $linkRegionCountry = null,
         $regionCode = null,
         $postalCode = null,
         $city = null,
@@ -153,8 +161,10 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 
         if ($regionCode) {
             $region = new Region($regionCode);
-            if ($regionCountryCode) {
-                $region->setCountry(new Country($regionCountryCode));
+
+            if ($linkRegionCountry) {
+                $country->addRegion($region);
+                $region->setCountry($country);
             }
 
             $shippingOrigin->setRegion($region);

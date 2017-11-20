@@ -75,19 +75,24 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
                 ],
                 'submitted' => [
                     [
-                        'country' => 'US',
-                        'region' => 'US-AL',
+                        'country' => self::COUNTRY_WITH_REGION,
+                        'region' => self::REGION_WITH_COUNTRY,
                         'postalCodes' => 'code1, code2',
                     ],
                     [
-                        'country' => 'US',
+                        'country' => self::COUNTRY_WITHOUT_REGION,
                     ]
                 ],
                 'expected' => [
                     // first code not stripped, because form used model transformer that split string by comma
                     // our extension applied on pre_submit, so all string stripped
-                    $this->getDestination('US', 'US-AL', ['code1', 'code2_stripped']),
-                    (new PaymentMethodsConfigsRuleDestination())->setCountry(new Country('US')),
+                    $this->getDestination(
+                        self::COUNTRY_WITH_REGION,
+                        self::REGION_WITH_COUNTRY,
+                        ['code1', 'code2_stripped']
+                    ),
+                    (new PaymentMethodsConfigsRuleDestination())
+                        ->setCountry(new Country(self::COUNTRY_WITHOUT_REGION)),
                 ]
             ]
         ];
@@ -105,6 +110,7 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
 
         $region = new Region($regionCode);
         $region->setCountry($country);
+        $country->addRegion($region);
 
         $destination = new PaymentMethodsConfigsRuleDestination();
         $destination->setCountry($country)
