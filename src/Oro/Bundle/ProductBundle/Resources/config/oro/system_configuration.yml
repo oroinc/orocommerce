@@ -453,6 +453,7 @@ system_configuration:
                 choices:
                     none: oro.product.system_configuration.fields.matrix_form_on_product_listing.none.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label
+                    popup: oro.product.system_configuration.fields.matrix_form_on_product_listing.popup.label
 
         oro_product.matrix_form_on_shopping_list:
             data_type: string
@@ -464,6 +465,7 @@ system_configuration:
                 choices:
                     group: oro.product.system_configuration.fields.matrix_form_on_shopping_list.group.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label
+                    popup: oro.product.system_configuration.fields.matrix_form_on_shopping_list.popup.label
 
     tree:
         system_configuration:

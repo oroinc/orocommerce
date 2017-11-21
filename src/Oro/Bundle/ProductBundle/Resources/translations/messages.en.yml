@@ -454,11 +454,13 @@ oro:
                     label: 'Shopping Lists'
                     group.label: 'Group Single Products'
                     inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
                 matrix_form_on_product_listing:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms on product listings. Applies only to list views; inline matrix is not supported in gallery view.'
                     label: 'Product Listings'
                     none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
