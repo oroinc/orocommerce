@@ -325,7 +325,8 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertNotEmpty($slug);
         $this->assertEquals([
             'url' => $expected->getUrl(),
-            'slug_prototype' => $expected->getSlugPrototype()
+            'slug_prototype' => $expected->getSlugPrototype(),
+            'localization_id' => $expected->getLocalization() ? $expected->getLocalization()->getId() : null
         ], $slug);
     }
 }

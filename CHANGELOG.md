@@ -11,6 +11,16 @@
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
 
+#### RedirectBundle
+* Added interface `Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface` that should be implemented by URL cache services.
+* Added interface `Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface` that should be implemented by URL providers.
+* Added new URL caches: `key_value` and `local`. Previous implementation was registered with `storage` key and was set by default.
+* Added Sluggable URL providers which are used by URL generator. This service encapsulate logic related to semantic URL retrieval.
+Was added 2 provider implementations: `database` and `cache`. `database` is set by default.
+* Added DI parameter `oro_redirect.url_cache_type` for URL cache configuration
+* Added DI parameter `oro_redirect.url_provider_type` for URL provider configuration
+* Added DI parameter `oro_redirect.url_storage_cache.split_deep` for tuning `storage` cache
+
 ### Changed
 #### CheckoutBundle
 * Entity `Oro\Bundle\CheckoutBundle\Entity\Checkout`:
@@ -40,6 +50,14 @@
     - changes in constructor:
         - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
 - Filtration services are now skippable. More details can be found in [documentation](https://github.com/orocommerce/orocommerce/tree/1.5.0/src/Oro/Bundle/PromotionBundle/README.md#filters-skippability-during-checkout).
+
+#### RedirectBundle
+ - Service `oro_redirect.url_cache` must be used instead `oro_redirect.url_storage_cache`
+ - Interface `Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface` must be used as dependency instead of `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
+ - URL cache format for `storage` cache type was improved to decrease files size and speed up caches loading. 
+ Old caches should be recalculated. Old caches format is still supported to simplify migration, to be able to use existing URL caches set `oro_redirect.url_storage_cache.split_deep` to 1. 
+ To improve page rendering speed and decrease memory usage recommended to recalculate caches with `oro_redirect.url_storage_cache.split_deep` set to 2 (default value) or 3. Value depends on number of slugs in system 
+ - By default if there are no pre-calculated URLs in cache them will be fetched from database on the fly and put to cache.
 
 #### ShippingBundle
 * Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`:
