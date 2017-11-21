@@ -149,3 +149,7 @@ oro:
         filter:
             subcategory:
                 label: 'Sub-Categories'
+
+    product:
+        category:
+            label: 'Category'

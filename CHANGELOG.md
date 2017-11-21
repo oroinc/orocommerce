@@ -1,3 +1,23 @@
+## 1.6.0 (Unreleased)
+
+### Changed
+#### CatalogBundle
+* Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
+* Class `Oro\Bundle\CatalogBundle\Entity\Category`:
+    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `removeProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+    * property `products` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+* Removed `oro_category_to_product` joining table.
+* The `CategoryRepository::getCategoriesProductsCountQueryBuilder` is deprecated. Not using.
+
+#### ProductBundle
+* Class `Oro\Bundle\CatalogBundle\Model\ExtendProduct`:
+    * method `setCategory` was added
+    * method `getCategory` was added
+    * property `category_id` was added
+
 ## 1.5.0 (Unreleased)
 
 ### Added

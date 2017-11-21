@@ -133,17 +133,27 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * @param Product $product
      * @return Category|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findOneByProduct(Product $product)
     {
         if (!$product->getId()) {
             return null;
         }
-        return $this->createQueryBuilder('category')
-            ->where(':product MEMBER OF category.products')
+
+        $qb = $this->_em->createQueryBuilder();
+
+        $qb->select('category as cat')
+            ->from(Product::class, 'product')
+            ->innerJoin($this->_entityName, 'category', Join::WITH, 'category = product.category')
+            ->where('product = :product')
             ->setParameter('product', $product)
-            ->getQuery()->getOneOrNullResult();
+            ->setMaxResults(1);
+        $result = $qb->getQuery()
+            ->getResult();
+        if (count($result) > 0) {
+            return $result[0]['cat'];
+        }
+        return null;
     }
 
     /**
@@ -172,22 +182,19 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param array $categories
+     *
      * @return QueryBuilder
+     *
+     * @deprecated Not using
      */
     public function getCategoriesProductsCountQueryBuilder($categories)
     {
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('category.id, COUNT(product.id) as products_count')
+        $qb->select('IDENTITY(product.category), COUNT(product.id) as products_count')
             ->from('OroProductBundle:Product', 'product')
-            ->innerJoin(
-                'OroCatalogBundle:Category',
-                'category',
-                Expr\Join::WITH,
-                'product MEMBER OF category.products'
-            )
-            ->where($qb->expr()->in('category.id', ':categories'))
+            ->where($qb->expr()->in('product.category', ':categories'))
             ->setParameter('categories', $categories)
-            ->groupBy('category.id');
+            ->groupBy('product.category');
 
         return $qb;
     }
@@ -232,7 +239,7 @@ class CategoryRepository extends NestedTreeRepository
     {
         $builder = $this->createQueryBuilder('category');
         $builder
-            ->join(Product::class, 'product', 'WITH', $builder->expr()->isMemberOf('product', 'category.products'))
+            ->innerJoin('category.products', 'product', 'WITH', $builder->expr()->in('product.id', ':products'))
             ->andWhere($builder->expr()->in('product', ':products'))
             ->setParameter('products', $products);
 
