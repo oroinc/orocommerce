@@ -67,6 +67,8 @@ system_configuration:
             title: oro.product.system_configuration.groups.configurable_products_matrix_form.title
         configurable_products_with_matrix_form:
             title: oro.product.system_configuration.groups.configurable_products_with_matrix_form.title
+        configurable_products_variations:
+            title: oro.product.system_configuration.groups.configurable_products_variations.title
 
     fields:
         oro_product.related_products_enabled:
@@ -465,6 +467,16 @@ system_configuration:
                     group: oro.product.system_configuration.fields.matrix_form_on_shopping_list.group.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label
 
+        oro_product.display_simple_variations:
+            data_type: string
+            type: choice
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.display_simple_variations.label
+                choices:
+                    everywhere: oro.product.system_configuration.fields.display_simple_variations.everywhere.label
+                    hide_completely: oro.product.system_configuration.fields.display_simple_variations.hide_completely.label
+
     tree:
         system_configuration:
             platform:
@@ -557,6 +569,9 @@ system_configuration:
                                             - oro_product.matrix_form_on_product_listing
                                             - oro_product.matrix_form_on_shopping_list
 
+                                    configurable_products_variations:
+                                        children:
+                                            - oro_product.display_simple_variations
                             product_collections:
                                 priority: 0
                                 children:
@@ -619,3 +634,6 @@ system_configuration:
                                             - oro_product.matrix_form_on_product_view
                                             - oro_product.matrix_form_on_product_listing
                                             - oro_product.matrix_form_on_shopping_list
+                                    configurable_products_variations:
+                                        children:
+                                            - oro_product.display_simple_variations

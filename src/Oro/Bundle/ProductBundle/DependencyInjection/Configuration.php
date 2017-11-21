@@ -61,6 +61,9 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
     const MATRIX_FORM_ON_PRODUCT_LISTING_INLINE = 'inline';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
+    const DISPLAY_SIMPLE_VARIATIONS = 'display_simple_variations';
+    const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
+    const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
 
     /**
      * {@inheritDoc}
@@ -142,6 +145,10 @@ class Configuration implements ConfigurationInterface
                 static::MATRIX_FORM_ON_PRODUCT_LISTING => [
                     'type' => 'string',
                     'value' => static::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE
+                ],
+                static::DISPLAY_SIMPLE_VARIATIONS => [
+                    'type' => 'string',
+                    'value' => static::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY
                 ],
             ]
         );
