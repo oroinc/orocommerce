@@ -43,7 +43,7 @@ class ShippingServiceRule
     /**
      * @var boolean
      *
-     * @ORM\Column(name="residential_address", type="boolean")
+     * @ORM\Column(name="residential_address", type="boolean", options={"default": false})
      */
     private $residentialAddress = false;
 

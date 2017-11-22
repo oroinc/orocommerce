@@ -86,6 +86,22 @@ class AddIntegrationSettingsMigration implements Migration
         $table->addColumn('ship_service_id', 'integer', []);
 
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
+
+        $table->addIndex(['transport_id'], 'oro_fedex_transp_id', []);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_integration_transport'),
+            ['transport_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+
         $table->addIndex(['ship_service_id'], 'oro_fedex_transp_ship_service_id');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fedex_shipping_service'),
+            ['ship_service_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }

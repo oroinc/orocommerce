@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Helper;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\UserBundle\Tests\Functional\Helper\AdminUserTrait;
 
@@ -27,7 +28,7 @@ trait FedexIntegrationTrait
         $services = static::getContainer()
             ->get('doctrine')
             ->getManager()
-            ->getRepository('OroFedexShippingBundle:ShippingService')
+            ->getRepository(FedexShippingService::class)
             ->findBy([
                 'code' => [
                     'EUROPE_FIRST_INTERNATIONAL_PRIORITY',
