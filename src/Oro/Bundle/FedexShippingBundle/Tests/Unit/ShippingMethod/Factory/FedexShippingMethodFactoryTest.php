@@ -18,6 +18,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodFactoryTest extends TestCase
@@ -92,16 +93,18 @@ class FedexShippingMethodFactoryTest extends TestCase
 
     public function testCreate()
     {
-        $services = new ArrayCollection([
-            new FedexShippingService(),
-            new FedexShippingService(),
-        ]);
+        $services = new ArrayCollection(
+            [
+                new FedexShippingService(),
+                new FedexShippingService(),
+            ]
+        );
         $settings = new FedexIntegrationSettings();
         $settings
             ->addShippingService($services[0])
             ->addShippingService($services[1]);
 
-        $channel  = new Channel();
+        $channel = new Channel();
         $channel
             ->setTransport($settings)
             ->setEnabled(self::ENABLED);

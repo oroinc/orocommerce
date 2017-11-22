@@ -12,6 +12,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodType implements ShippingMethodTypeInterface
@@ -51,7 +52,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
      * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
      * @param string                                            $identifier
-     * @param FedexShippingService                              $shippingService,
+     * @param FedexShippingService                              $shippingService ,
      * @param FedexIntegrationSettings                          $settings
      */
     public function __construct(
@@ -125,7 +126,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
         $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 
         return Price::create(
-            (float) $price->getValue() + $methodSurcharge + $typeSurcharge,
+            (float)$price->getValue() + $methodSurcharge + $typeSurcharge,
             $price->getCurrency()
         );
     }
@@ -137,6 +138,6 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     private function getSurchargeFromOptions(array $option): float
     {
-        return (float) $option[FedexShippingMethod::OPTION_SURCHARGE];
+        return (float)$option[FedexShippingMethod::OPTION_SURCHARGE];
     }
 }

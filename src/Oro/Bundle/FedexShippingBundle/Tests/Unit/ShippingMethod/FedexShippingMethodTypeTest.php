@@ -18,6 +18,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use PHPUnit\Framework\TestCase;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTypeTest extends TestCase

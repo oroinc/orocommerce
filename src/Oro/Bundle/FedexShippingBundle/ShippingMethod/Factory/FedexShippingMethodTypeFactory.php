@@ -13,6 +13,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIden
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryInterface

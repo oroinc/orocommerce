@@ -18,6 +18,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethod implements
@@ -88,7 +89,7 @@ class FedexShippingMethod implements
      * @param string                                            $label
      * @param string|null                                       $iconPath
      * @param bool                                              $enabled
-     * @param FedexIntegrationSettings                          $settings,
+     * @param FedexIntegrationSettings                          $settings ,
      * @param ShippingMethodTypeInterface[]                     $types
      * @param Collection|FedexShippingService[]                 $shippingServices
      */
@@ -170,7 +171,7 @@ class FedexShippingMethod implements
     public function getType($identifier)
     {
         foreach ($this->getTypes() as $methodType) {
-            if ($methodType->getIdentifier() === (string) $identifier) {
+            if ($methodType->getIdentifier() === (string)$identifier) {
                 return $methodType;
             }
         }
@@ -228,7 +229,7 @@ class FedexShippingMethod implements
             $price = $prices[$typeId];
 
             $result[$typeId] = Price::create(
-                (float) $price->getValue() + $methodSurcharge + $this->getSurchargeFromOptions($option),
+                (float)$price->getValue() + $methodSurcharge + $this->getSurchargeFromOptions($option),
                 $price->getCurrency()
             );
         }
@@ -243,7 +244,7 @@ class FedexShippingMethod implements
     {
         foreach ($this->getTrackingRegexList() as $regex) {
             if (preg_match($regex, $number)) {
-                return self::TRACKING_URL . $number;
+                return self::TRACKING_URL.$number;
             }
         }
 
@@ -269,7 +270,7 @@ class FedexShippingMethod implements
      */
     private function getSurchargeFromOptions(array $option): float
     {
-        return (float) $option[static::OPTION_SURCHARGE];
+        return (float)$option[static::OPTION_SURCHARGE];
     }
 
     /**

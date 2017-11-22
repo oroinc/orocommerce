@@ -20,6 +20,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTest extends TestCase
@@ -92,7 +93,7 @@ class FedexShippingMethodTest extends TestCase
 
         foreach ($matchingNumbers as $number) {
             static::assertEquals(
-                FedexShippingMethod::TRACKING_URL . $number,
+                FedexShippingMethod::TRACKING_URL.$number,
                 $method->getTrackingLink($number)
             );
         }
@@ -109,12 +110,14 @@ class FedexShippingMethodTest extends TestCase
             $this->createShippingServiceRule(2),
             $this->createShippingServiceRule(3),
         ];
-        $services = new ArrayCollection([
-            $this->createShippingService('test2', $rules[0]),
-            $this->createShippingService('test3', $rules[0]),
-            $this->createShippingService('test4', $rules[1]),
-            $this->createShippingService('test6', $rules[2]),
-        ]);
+        $services = new ArrayCollection(
+            [
+                $this->createShippingService('test2', $rules[0]),
+                $this->createShippingService('test3', $rules[0]),
+                $this->createShippingService('test4', $rules[1]),
+                $this->createShippingService('test6', $rules[2]),
+            ]
+        );
         $prices = [
             'test1' => Price::create(12.6, 'USD'),
             'test2' => Price::create(10.3, 'USD'),
@@ -128,7 +131,7 @@ class FedexShippingMethodTest extends TestCase
 
         $requests = [
             new FedexRequest(),
-            null
+            null,
         ];
         $response = new FedexRateServiceResponse('', 0, $prices);
 

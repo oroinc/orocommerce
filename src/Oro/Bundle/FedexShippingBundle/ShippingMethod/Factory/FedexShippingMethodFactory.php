@@ -15,6 +15,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
@@ -107,7 +108,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
      */
     private function getLabel(Channel $channel): string
     {
-        return (string) $this->localizationHelper->getLocalizedValue(
+        return (string)$this->localizationHelper->getLocalizedValue(
             $this->getSettings($channel)->getLabels()
         );
     }

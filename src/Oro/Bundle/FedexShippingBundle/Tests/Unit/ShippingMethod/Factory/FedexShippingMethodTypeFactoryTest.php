@@ -13,6 +13,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use PHPUnit\Framework\TestCase;
+
 // @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTypeFactoryTest extends TestCase
