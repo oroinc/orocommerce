@@ -473,6 +473,7 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.display_simple_variations.label
+                tooltip: oro.product.system_configuration.fields.display_simple_variations.tooltip
                 choices:
                     everywhere: oro.product.system_configuration.fields.display_simple_variations.everywhere.label
                     hide_completely: oro.product.system_configuration.fields.display_simple_variations.hide_completely.label

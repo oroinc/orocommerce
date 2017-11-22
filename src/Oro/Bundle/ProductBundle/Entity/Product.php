@@ -1098,13 +1098,20 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
-
     /**
      * @return Collection|ProductVariantLink[]
      */
     public function getParentVariantLinks()
     {
         return $this->parentVariantLinks;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVariant(): bool
+    {
+        return $this->isSimple() && count($this->parentVariantLinks) > 0;
     }
 
     /**
