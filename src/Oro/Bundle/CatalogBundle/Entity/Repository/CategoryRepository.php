@@ -216,12 +216,11 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function getProductIdsByCategories(array $categories)
     {
-        $qb = $this->createQueryBuilder('category');
+        $qb = $this->_em->createQueryBuilder();
         $productIds = $qb->select('product.id')
-            ->innerJoin('category.products', 'product')
-            ->where($qb->expr()->in('category.id', ':categories'))
+            ->from(Product::class, 'product')
+            ->where($qb->expr()->in('product.category', ':categories'))
             ->setParameter('categories', $categories)
-            ->groupBy('product.id')
             ->orderBy($qb->expr()->asc('product.id'))
             ->getQuery()
             ->getScalarResult();
@@ -237,9 +236,10 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function getCategoryMapByProducts(array $products, array $localizations = [])
     {
-        $builder = $this->createQueryBuilder('category');
+        $builder = $this->_em->createQueryBuilder();
         $builder
-            ->innerJoin('category.products', 'product', 'WITH', $builder->expr()->in('product.id', ':products'))
+            ->from(Product::class, 'product')
+            ->innerJoin($this->_entityName, 'category', 'WITH', 'product.category = category')
             ->andWhere($builder->expr()->in('product', ':products'))
             ->setParameter('products', $products);
 
