@@ -30,7 +30,7 @@ services:
         public: false
         factory: ['Oro\Bundle\SoapBundle\Client\Settings\Factory\SoapClientSettingsFactory', create]
         arguments:
-            - '@=service("kernel").locateResource("@OroFedexShippingBundle/Resources/wsdl/RateService_v20.wsdl")'
+            - '%fedex_root_dir%Resources/wsdl/RateService_v20.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'
             - connection_timeout: 3
 
@@ -39,7 +39,7 @@ services:
         public: false
         factory: 'oro_soap.client.factory.settings:create'
         arguments:
-            - '@=service("kernel").locateResource("@OroFedexShippingBundle/Resources/wsdl/RateService_v20_test_mode.wsdl")'
+            - '%fedex_root_dir%Resources/wsdl/RateService_v20_test_mode.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'
             - connection_timeout: 3
 
