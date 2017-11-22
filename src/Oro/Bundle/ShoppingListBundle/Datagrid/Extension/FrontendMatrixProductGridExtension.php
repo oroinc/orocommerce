@@ -17,6 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 class FrontendMatrixProductGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'frontend-product-search-grid';
+    const MATRIX_FORM_TYPE_COLUMN_NAME = 'matrixFormType';
     const MATRIX_FORM_COLUMN_NAME = 'matrixForm';
     const PRODUCT_PRICES_COLUMN_NAME = 'productPrices';
 
@@ -97,6 +98,11 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
             if (!$product) {
                 continue;
             }
+
+            $row->setValue(
+                self::MATRIX_FORM_TYPE_COLUMN_NAME,
+                $this->productListMatrixFormAvailabilityProvider->getAvailableMatrixFormType($product)
+            );
 
             if ($this->productListMatrixFormAvailabilityProvider->isInlineMatrixFormAvailable($product)) {
                 $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);

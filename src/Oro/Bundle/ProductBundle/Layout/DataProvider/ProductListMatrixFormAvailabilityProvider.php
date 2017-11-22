@@ -34,12 +34,26 @@ class ProductListMatrixFormAvailabilityProvider
      */
     public function isInlineMatrixFormAvailable(Product $product)
     {
-        if ($this->userAgentProvider->getUserAgent()->isMobile()) {
-            return false;
+        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE;
+    }
+
+    /**
+     * @param Product $product
+     * @return string
+     */
+    public function getAvailableMatrixFormType(Product $product)
+    {
+        if ($this->getMatrixFormOnProductListingConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE
+            || !$this->productFormAvailabilityProvider->isMatrixFormAvailable($product)
+        ) {
+            return Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE;
         }
 
-        return $this->getMatrixFormOnProductListingConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE
-            && $this->productFormAvailabilityProvider->isMatrixFormAvailable($product);
+        if ($this->userAgentProvider->getUserAgent()->isMobile()) {
+            return Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_POPUP;
+        }
+
+        return $this->getMatrixFormOnProductListingConfig();
     }
 
     /**

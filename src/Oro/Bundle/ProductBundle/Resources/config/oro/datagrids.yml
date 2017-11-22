@@ -759,6 +759,7 @@ datagrids:
                 label:         oro.product.names.label
             shortDescription:
                 label:         oro.product.short_descriptions.label
+            matrixFormType: ~
             matrixForm: ~
         filters:
             columns:
