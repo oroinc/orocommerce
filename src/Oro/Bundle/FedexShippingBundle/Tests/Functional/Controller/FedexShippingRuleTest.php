@@ -94,7 +94,7 @@ class FedexShippingRuleTest extends WebTestCase
             ]
         ];
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $this->client->request(
             'POST',

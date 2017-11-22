@@ -43,7 +43,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
 
     public function testCreateLineItemCannotBeAdded()
     {
-        $packageSettings = new FedexPackageSettings(0, 0, 0, '', '');
+        $packageSettings = new FedexPackageSettings(0, 0, 0);
         $lineItemCollection = new DoctrineShippingLineItemCollection([
             new ShippingLineItem([
                 ShippingLineItem::FIELD_WEIGHT => Weight::create(0),
@@ -66,7 +66,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
 
     public function testCreateNoWeight()
     {
-        $packageSettings = new FedexPackageSettings(0, 0, 0, '', '');
+        $packageSettings = new FedexPackageSettings(0, 0, 0);
         $lineItemCollection = new DoctrineShippingLineItemCollection([
             new ShippingLineItem([
                 ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(0, 0, 0),
@@ -78,7 +78,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
 
     public function testCreateNoDimensions()
     {
-        $packageSettings = new FedexPackageSettings(0, 0, 0, '', '');
+        $packageSettings = new FedexPackageSettings(0, 0, 0);
         $lineItemCollection = new DoctrineShippingLineItemCollection([
             new ShippingLineItem([
                 ShippingLineItem::FIELD_WEIGHT => Weight::create(0),
@@ -101,7 +101,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
             ]),
         ];
         $lineItemCollection = new DoctrineShippingLineItemCollection($lineItems);
-        $packageSettings = new FedexPackageSettings(0, 0, 0, '', '');
+        $packageSettings = new FedexPackageSettings(0, 0, 0);
         $packageOptions = [
             new ShippingPackageOptions(Dimensions::create(0, 0, 0), Weight::create(0)),
             new ShippingPackageOptions(Dimensions::create(0, 0, 0), Weight::create(0)),

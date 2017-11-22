@@ -45,7 +45,7 @@ class FedexIntegrationTest extends WebTestCase
             'shippingServices' => [1, 2],
         ];
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->request(
             $form->getMethod(),

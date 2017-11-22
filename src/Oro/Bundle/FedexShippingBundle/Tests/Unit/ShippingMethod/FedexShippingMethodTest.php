@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
 // @codingStandardsIgnoreStart
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
