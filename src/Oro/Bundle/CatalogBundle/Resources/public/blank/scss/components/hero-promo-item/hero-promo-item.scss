@@ -4,6 +4,8 @@
     position: $hero-promo-item-position;
 
     &__link {
+        color: inherit;
+
         @include element-state('hover') {
             text-decoration: none;
         }
@@ -25,28 +27,7 @@
         width: $hero-promo-item-img-width;
     }
 
-    &__cover {
-        &:before {
-            display: inline-block;
-            width: 0;
-            height: 100%;
-
-            vertical-align: middle;
-
-            content: '';
-        }
-    }
-
-    &__desc {
-        display: inline-block;
-        width: 100%;
-
-        vertical-align: middle;
-
-        white-space: normal;
-    }
-
-    &__pretitle {
+    &__title {
         overflow-y: hidden;
 
         display: block;
@@ -60,7 +41,7 @@
         color: get-color('additional', 'ultra');
     }
 
-    &__title {
+    &__description {
         overflow-y: hidden;
 
         margin: 0 0 10px;
@@ -96,8 +77,7 @@
         text-align: center;
     }
 
-    &--text-color-dark &__title,
-    &--text-color-dark &__pretitle {
+    &--text-color-dark {
         color: get-color('additional', 'dark');
     }
 }
