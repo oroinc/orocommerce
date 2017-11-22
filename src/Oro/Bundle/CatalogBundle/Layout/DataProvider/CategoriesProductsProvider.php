@@ -4,9 +4,12 @@ namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
+use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 class CategoriesProductsProvider
 {
+    use DataProviderCacheTrait;
+
     /**
      * @var array
      */
@@ -41,8 +44,23 @@ class CategoriesProductsProvider
      */
     public function getCountByCategories($categoriesIds)
     {
-        $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
+        $this->initCache(['categories_products', implode('_', $categoriesIds)]);
 
-        return $this->searchRepository->getCategoriesCounts($categories);
+        $useCache = $this->isCacheUsed();
+        if (true === $useCache) {
+            $result = $this->getFromCache();
+            if ($result) {
+                return $result;
+            }
+        }
+
+        $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
+        $result = $this->searchRepository->getCategoriesCounts($categories);
+
+        if (true === $useCache) {
+            $this->saveToCache($result);
+        }
+
+        return $result;
     }
 }

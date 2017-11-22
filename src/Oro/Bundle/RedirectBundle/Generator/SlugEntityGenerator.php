@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -28,26 +28,31 @@ class SlugEntityGenerator
     protected $slugResolver;
 
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
-    private $urlStorageCache;
+    private $urlCache;
+
+    /**
+     * @var RedirectGenerator
+     */
+    private $redirectGenerator;
 
     /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
-     * @param UrlStorageCache $urlStorageCache
+     * @param UrlCacheInterface $urlCache
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
         RedirectGenerator $redirectGenerator,
-        UrlStorageCache $urlStorageCache
+        UrlCacheInterface $urlCache
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
         $this->slugResolver = $slugResolver;
         $this->redirectGenerator = $redirectGenerator;
-        $this->urlStorageCache = $urlStorageCache;
+        $this->urlCache = $urlCache;
     }
 
     /**
@@ -78,7 +83,7 @@ class SlugEntityGenerator
                     $this->redirectGenerator->generate($previousSlugUrl, $slug);
                 }
 
-                $this->urlStorageCache->setUrl(
+                $this->urlCache->setUrl(
                     $slug->getRouteName(),
                     $slug->getRouteParameters(),
                     $slug->getUrl(),
@@ -94,7 +99,7 @@ class SlugEntityGenerator
         foreach ($toRemove as $slugToRemove) {
             $entity->removeSlug($slugToRemove);
 
-            $this->urlStorageCache->removeUrl(
+            $this->urlCache->removeUrl(
                 $slugToRemove->getRouteName(),
                 $slugToRemove->getRouteParameters(),
                 $this->getLocalizationId($slugToRemove->getLocalization())
@@ -108,7 +113,7 @@ class SlugEntityGenerator
                 $slug = $this->createSlug($routeData, $slugUrl);
                 $entity->addSlug($slug);
 
-                $this->urlStorageCache->setUrl(
+                $this->urlCache->setUrl(
                     $slug->getRouteName(),
                     $slug->getRouteParameters(),
                     $slug->getUrl(),

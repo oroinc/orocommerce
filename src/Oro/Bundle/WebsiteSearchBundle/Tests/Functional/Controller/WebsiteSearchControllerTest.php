@@ -21,7 +21,7 @@ class WebsiteSearchControllerTest extends WebTestCase
 
     public function testSearchResultsAction()
     {
-        $this->markTestSkipped('OPI-219: Unstable test');
+        $this->markTestSkipped('BB-12933: Unstable test');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 

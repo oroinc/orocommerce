@@ -188,22 +188,25 @@ class SlugRepository extends EntityRepository
         /** @var Connection $connection */
         $connection = $this->_em->getConnection();
 
-        $hashParameters = Slug::hashParameters($name, $parameters, $localizationId);
+        $hashParameters = Slug::hashParameters($parameters);
         $qb = $connection->createQueryBuilder()
-            ->select('url', 'slug_prototype')
-            ->from('oro_redirect_slug')
-            ->where('parameters_hash = :parameters_hash')
-            ->andWhere('route_name = :routeName')
-            ->andWhere('route_parameters = :routeParameters')
-            ->andWhere('localization_id = :localizationId OR localization_id IS NULL')
+            ->select('slug.url', 'slug.slug_prototype', 'slug.localization_id')
+            ->from('oro_redirect_slug', 'slug')
+            ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
+            ->where('scope.slug_id IS NULL')
+            ->andWhere('slug.parameters_hash = :parametersHash')
+            ->andWhere('slug.route_name = :routeName')
+            ->andWhere('slug.route_parameters = :routeParameters')
+            ->andWhere('slug.localization_id = :localizationId OR slug.localization_id IS NULL')
             ->setParameters(
                 [
-                    'parameters_hash' => $hashParameters,
+                    'parametersHash' => $hashParameters,
                     'routeName' => $name,
                     'routeParameters' => $parameters,
                     'localizationId' => $localizationId
                 ],
                 [
+                    'parametersHash' => Type::STRING,
                     'routeName' => Type::STRING,
                     'routeParameters' => Type::TARRAY,
                     'localizationId' => Type::INTEGER

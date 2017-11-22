@@ -162,29 +162,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $childCategories;
 
     /**
-     * @var Collection|Product[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinTable(
-     *      name="oro_category_to_product",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $products;
-
-    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -287,7 +264,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
 
         $this->titles = new ArrayCollection();
         $this->childCategories = new ArrayCollection();
-        $this->products = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->longDescriptions = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
@@ -396,63 +372,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
         }
 
         return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    /**
-     * @param Collection|Product[] $products
-     *
-     * @return $this
-     */
-    public function setProducts(Collection $products)
-    {
-        $this->products = $products;
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return $this
-     */
-    public function addProduct(Product $product)
-    {
-        if (!$this->hasProduct($product)) {
-            $this->products->add($product);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return $this
-     */
-    public function removeProduct(Product $product)
-    {
-        if ($this->hasProduct($product)) {
-            $this->products->removeElement($product);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function hasProduct(Product $product)
-    {
-        return $this->products->contains($product);
     }
 
     /**

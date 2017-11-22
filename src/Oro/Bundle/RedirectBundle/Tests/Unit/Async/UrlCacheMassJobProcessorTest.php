@@ -5,8 +5,9 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -48,7 +49,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $cache;
 
@@ -65,9 +66,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->cache = $this->getMockBuilder(UrlStorageCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->cache = $this->createMock(UrlCacheInterface::class);
 
         $this->processor = new UrlCacheMassJobProcessor(
             $this->jobRunner,
@@ -110,9 +109,6 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $message = $this->createMessage();
 
-        $this->cache->expects($this->once())
-            ->method('deleteAll');
-
         $this->repository->expects($this->once())
             ->method('getUsedRoutes')
             ->willReturn(['route1']);
@@ -136,6 +132,48 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             MessageProcessorInterface::ACK,
             $this->processor->process($message, $this->createSession())
+        );
+    }
+
+    public function testProcessClearableCache()
+    {
+        $message = $this->createMessage();
+
+        $this->repository->expects($this->once())
+            ->method('getUsedRoutes')
+            ->willReturn(['route1']);
+        $this->repository->expects($this->once())
+            ->method('getSlugsCountByRoute')
+            ->with('route1')
+            ->willReturn(3);
+        $this->repository->expects($this->once())
+            ->method('getSlugIdsByRoute')
+            ->with('route1', 0, UrlCacheMassJobProcessor::BATCH_SIZE)
+            ->willReturn([1, 3]);
+
+        $this->producer
+            ->expects($this->once())
+            ->method('send')
+            ->with(
+                Topics::PROCESS_CALCULATE_URL_CACHE_JOB,
+                ['route_name' => 'route1', 'entity_ids' => [1, 3], 'jobId' => null]
+            );
+
+        /** @var UrlCacheAllCapabilities|\PHPUnit_Framework_MockObject_MockObject $cache */
+        $cache = $this->createMock(UrlCacheAllCapabilities::class);
+        $cache->expects($this->once())
+            ->method('deleteAll');
+        $processor = new UrlCacheMassJobProcessor(
+            $this->jobRunner,
+            $this->producer,
+            $this->repository,
+            $this->logger,
+            $cache
+        );
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $processor->process($message, $this->createSession())
         );
     }
 
@@ -167,9 +205,6 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessWithChangedBatchSize()
     {
         $message = $this->createMessage();
-
-        $this->cache->expects($this->once())
-            ->method('deleteAll');
 
         $this->repository->expects($this->once())
             ->method('getUsedRoutes')
@@ -223,9 +258,6 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->cache->expects($this->once())
-            ->method('deleteAll');
-
         /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
         $jobRunner
             ->expects($this->once())
@@ -274,9 +306,6 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
         $jobRunner = $this->getMockBuilder(JobRunner::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->cache->expects($this->once())
-            ->method('deleteAll');
 
         $exception = new \Exception();
         /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */

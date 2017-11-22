@@ -1,3 +1,29 @@
+## 1.6.0 (Unreleased)
+
+### Changed
+#### CatalogBundle
+* Improved caching of home page, added `Oro\Component\Cache\Layout\DataProviderCacheTrait` to the following layout data providers:
+    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`) 
+    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
+* Layout data provider method `=data["featured_categories"].getAll()` returns data in format `[['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]`
+
+#### CatalogBundle
+* Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
+* Class `Oro\Bundle\CatalogBundle\Entity\Category`:
+    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `removeProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+    * property `products` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+* Removed `oro_category_to_product` joining table.
+* The `CategoryRepository::getCategoriesProductsCountQueryBuilder` is deprecated. Not using.
+
+#### ProductBundle
+* Class `Oro\Bundle\CatalogBundle\Model\ExtendProduct`:
+    * method `setCategory` was added
+    * method `getCategory` was added
+    * property `category_id` was added
+
 ## 1.5.0 (Unreleased)
 
 ### Added
@@ -10,6 +36,16 @@
 * Added new twig function `rfp_products` that returns list of request products (formatted) for current request for quote. Can be used in email templates.
 #### WebsiteSearchBundle
 * Added interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` that should be implemented in case new type of arguments added.
+
+#### RedirectBundle
+* Added interface `Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface` that should be implemented by URL cache services.
+* Added interface `Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface` that should be implemented by URL providers.
+* Added new URL caches: `key_value` and `local`. Previous implementation was registered with `storage` key and was set by default.
+* Added Sluggable URL providers which are used by URL generator. This service encapsulate logic related to semantic URL retrieval.
+Was added 2 provider implementations: `database` and `cache`. `database` is set by default.
+* Added DI parameter `oro_redirect.url_cache_type` for URL cache configuration
+* Added DI parameter `oro_redirect.url_provider_type` for URL provider configuration
+* Added DI parameter `oro_redirect.url_storage_cache.split_deep` for tuning `storage` cache
 
 ### Changed
 #### CheckoutBundle
@@ -40,6 +76,14 @@
     - changes in constructor:
         - dependency on `Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService` moved to `setCouponApplicabilityValidationService` setter
 - Filtration services are now skippable. More details can be found in [documentation](https://github.com/orocommerce/orocommerce/tree/1.5.0/src/Oro/Bundle/PromotionBundle/README.md#filters-skippability-during-checkout).
+
+#### RedirectBundle
+ - Service `oro_redirect.url_cache` must be used instead `oro_redirect.url_storage_cache`
+ - Interface `Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface` must be used as dependency instead of `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
+ - URL cache format for `storage` cache type was improved to decrease files size and speed up caches loading. 
+ Old caches should be recalculated. Old caches format is still supported to simplify migration, to be able to use existing URL caches set `oro_redirect.url_storage_cache.split_deep` to 1. 
+ To improve page rendering speed and decrease memory usage recommended to recalculate caches with `oro_redirect.url_storage_cache.split_deep` set to 2 (default value) or 3. Value depends on number of slugs in system 
+ - By default if there are no pre-calculated URLs in cache them will be fetched from database on the fly and put to cache.
 
 #### ShippingBundle
 * Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`:

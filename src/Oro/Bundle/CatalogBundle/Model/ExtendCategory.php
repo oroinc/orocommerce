@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -21,6 +23,11 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
  * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
+ * @method Category setProducts(ArrayCollection $value)
+ * @method removeProduct(Product $value)
+ * @method ArrayCollection getProducts()
+ * @method addProduct(Product $value)
+
  */
 class ExtendCategory
 {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +21,7 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
     private $requestStack;
 
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
     private $cache;
 
@@ -32,12 +32,12 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
 
     /**
      * @param RequestStack $requestStack
-     * @param UrlStorageCache $cache
+     * @param UrlCacheInterface $cache
      * @param UserLocalizationManager $userLocalizationManager
      */
     public function __construct(
         RequestStack $requestStack,
-        UrlStorageCache $cache,
+        UrlCacheInterface $cache,
         UserLocalizationManager $userLocalizationManager
     ) {
         $this->requestStack = $requestStack;

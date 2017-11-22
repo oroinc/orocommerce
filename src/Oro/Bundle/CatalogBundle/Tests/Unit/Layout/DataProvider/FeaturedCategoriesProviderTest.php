@@ -2,16 +2,22 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
+use Doctrine\Common\Cache\CacheProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\Testing\Unit\EntityTrait;
+
 class FeaturedCategoriesProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CategoryTreeProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -21,6 +27,16 @@ class FeaturedCategoriesProviderTest extends \PHPUnit_Framework_TestCase
      * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenStorage;
+
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $localizationHelper;
+
+    /**
+     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cache;
 
     /**
      * @var FeaturedCategoriesProvider
@@ -33,39 +49,36 @@ class FeaturedCategoriesProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+
         $this->featuredCategoriesProvider = new FeaturedCategoriesProvider(
             $this->categoryTreeProvider,
-            $this->tokenStorage
+            $this->tokenStorage,
+            $this->localizationHelper
         );
+
+        $this->cache = $this->createMock(CacheProvider::class);
+        $this->featuredCategoriesProvider->setCache($this->cache);
     }
 
-    public function testGetAll()
+    /**
+     * @dataProvider categoriesDataProvider
+     *
+     * @param array $data
+     * @param array $categoryIds
+     * @param array $result
+     */
+    public function testGetAll($data, $categoryIds, $result)
     {
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->any())
             ->method('getUser')
             ->will($this->returnValue(new CustomerUser()));
 
-        $firstCategory = $this->createMock(Category::class);
-        $firstCategory->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue(1));
-        $firstCategory->expects($this->any())
-            ->method('getLevel')
-            ->will($this->returnValue(2));
-
-        $secondCategory = $this->createMock(Category::class);
-        $secondCategory->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue(2));
-        $secondCategory->expects($this->any())
-            ->method('getLevel')
-            ->will($this->returnValue(3));
-
-
-        $categoryIds = [5, 6, 0, 1];
-        $categories = [1 => $firstCategory, 2 => $secondCategory];
-        $visibleCategories = [1 => $firstCategory];
+        $categories = [];
+        foreach ($data as $categoryData) {
+            $categories[] = $this->getEntity(Category::class, $categoryData);
+        }
 
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
@@ -76,7 +89,72 @@ class FeaturedCategoriesProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->tokenStorage->getToken()->getUser())
             ->willReturn($categories);
 
+        $this->cache->expects($this->exactly(2))
+            ->method('save');
+
         $actual = $this->featuredCategoriesProvider->getAll($categoryIds);
-        $this->assertEquals($visibleCategories, $actual);
+        $this->assertEquals($result, $actual);
+    }
+
+    public function testGetAllCached()
+    {
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->any())
+            ->method('getUser')
+            ->will($this->returnValue(new CustomerUser()));
+
+        $result = ['id' => 1, 'title' => '', 'small_image' => null];
+
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with('cacheVal_featured_categories__0_1')
+            ->willReturn($result);
+
+        $this->tokenStorage->expects($this->any())
+            ->method('getToken')
+            ->will($this->returnValue($token));
+
+        $this->categoryTreeProvider->expects($this->never())
+            ->method('getCategories');
+
+        $this->cache->expects($this->never())
+            ->method('save');
+
+        $actual = $this->featuredCategoriesProvider->getAll([1]);
+        $this->assertEquals($result, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function categoriesDataProvider()
+    {
+        return [
+            'level is equal zero' => [
+                'data' => [
+                    ['id' => 1, 'level' => 0],
+                ],
+                'categoryIds' => [1],
+                'result' => [],
+            ],
+            'not in list of category ids' => [
+                'data' => [
+                    ['id' => 1, 'level' => 1],
+                ],
+                'categoryIds' => [2],
+                'result' => [],
+            ],
+            'one proper category in list' => [
+                'data' => [
+                    ['id' => 1, 'level' => 1],
+                    ['id' => 2, 'level' => 0],
+                    ['id' => 3, 'level' => 1],
+                ],
+                'categoryIds' => [1, 2],
+                'result' => [
+                    ['id' => 1, 'title' => '', 'small_image' => null]
+                ]
+            ],
+        ];
     }
 }
