@@ -4,7 +4,6 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
 // @codingStandardsIgnoreStart
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -60,7 +59,7 @@ class FedexShippingMethodTest extends TestCase
             $this->createMethodType('test1'),
             $this->createMethodType('test2'),
         ];
-        $method = $this->createShippingMethod(new FedexIntegrationSettings(), $types, new ArrayCollection());
+        $method = $this->createShippingMethod(new FedexIntegrationSettings(), $types);
 
         static::assertTrue($method->isGrouped());
         static::assertSame(self::ENABLED, $method->isEnabled());
@@ -77,7 +76,7 @@ class FedexShippingMethodTest extends TestCase
 
     public function testGetTrackingLinkMatches()
     {
-        $method = $this->createShippingMethod(new FedexIntegrationSettings(), [], new ArrayCollection());
+        $method = $this->createShippingMethod(new FedexIntegrationSettings(), []);
         $matchingNumbers = [
             '9612345676543456787654',
             '145678765432123',
@@ -110,14 +109,12 @@ class FedexShippingMethodTest extends TestCase
             $this->createShippingServiceRule(2),
             $this->createShippingServiceRule(3),
         ];
-        $services = new ArrayCollection(
-            [
-                $this->createShippingService('test2', $rules[0]),
-                $this->createShippingService('test3', $rules[0]),
-                $this->createShippingService('test4', $rules[1]),
-                $this->createShippingService('test6', $rules[2]),
-            ]
-        );
+        $settings
+            ->addShippingService($this->createShippingService('test2', $rules[0]))
+            ->addShippingService($this->createShippingService('test3', $rules[0]))
+            ->addShippingService($this->createShippingService('test4', $rules[1]))
+            ->addShippingService($this->createShippingService('test6', $rules[2]));
+
         $prices = [
             'test1' => Price::create(12.6, 'USD'),
             'test2' => Price::create(10.3, 'USD'),
@@ -135,7 +132,7 @@ class FedexShippingMethodTest extends TestCase
         ];
         $response = new FedexRateServiceResponse('', 0, $prices);
 
-        $method = $this->createShippingMethod($settings, [], $services);
+        $method = $this->createShippingMethod($settings, []);
         $context = $this->createMock(ShippingContextInterface::class);
 
         $this->rateServiceRequestSettingsFactory
@@ -224,14 +221,12 @@ class FedexShippingMethodTest extends TestCase
     /**
      * @param FedexIntegrationSettings          $settings
      * @param ShippingMethodTypeInterface[]     $types
-     * @param FedexShippingService[]|Collection $services
      *
      * @return FedexShippingMethod
      */
     private function createShippingMethod(
         FedexIntegrationSettings $settings,
-        array $types,
-        Collection $services
+        array $types
     ): FedexShippingMethod {
         return new FedexShippingMethod(
             $this->rateServiceRequestSettingsFactory,
@@ -242,8 +237,7 @@ class FedexShippingMethodTest extends TestCase
             self::ICON_PATH,
             self::ENABLED,
             $settings,
-            $types,
-            $services
+            $types
         );
     }
 }

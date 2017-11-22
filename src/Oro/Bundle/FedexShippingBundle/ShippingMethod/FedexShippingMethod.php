@@ -89,9 +89,8 @@ class FedexShippingMethod implements
      * @param string                                            $label
      * @param string|null                                       $iconPath
      * @param bool                                              $enabled
-     * @param FedexIntegrationSettings                          $settings ,
+     * @param FedexIntegrationSettings                          $settings
      * @param ShippingMethodTypeInterface[]                     $types
-     * @param Collection|FedexShippingService[]                 $shippingServices
      */
     public function __construct(
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
@@ -102,8 +101,7 @@ class FedexShippingMethod implements
         $iconPath,
         bool $enabled,
         FedexIntegrationSettings $settings,
-        array $types,
-        Collection $shippingServices
+        array $types
     ) {
         $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
@@ -114,7 +112,7 @@ class FedexShippingMethod implements
         $this->enabled = $enabled;
         $this->settings = $settings;
         $this->types = $types;
-        $this->shippingServices = $shippingServices;
+        $this->shippingServices = $settings->getShippingServices();
     }
 
     /**

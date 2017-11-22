@@ -147,8 +147,7 @@ class FedexShippingMethodFactoryTest extends TestCase
                 self::ICON_PATH,
                 self::ENABLED,
                 $settings,
-                $types,
-                $services
+                $types
             ),
             $this->factory->create($channel)
         );

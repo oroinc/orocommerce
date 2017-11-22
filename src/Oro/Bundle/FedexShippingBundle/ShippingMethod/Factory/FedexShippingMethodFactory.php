@@ -96,8 +96,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
             $this->iconProvider->getIcon($channel),
             $channel->isEnabled(),
             $this->getSettings($channel),
-            $this->createTypes($channel),
-            $this->getSettings($channel)->getShippingServices()
+            $this->createTypes($channel)
         );
     }
 
