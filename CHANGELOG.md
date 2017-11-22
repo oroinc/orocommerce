@@ -2,6 +2,12 @@
 
 ### Changed
 #### CatalogBundle
+* Improved caching of home page, added `Oro\Component\Cache\Layout\DataProviderCacheTrait` to the following layout data providers:
+    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`) 
+    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
+* Layout data provider method `=data["featured_categories"].getAll()` returns data in format `[['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]`
+
+#### CatalogBundle
 * Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
 * Class `Oro\Bundle\CatalogBundle\Entity\Category`:
     * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
