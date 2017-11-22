@@ -25,7 +25,7 @@ class CheckoutLineItemsConverter
 
     /**
      * @param array $data
-     * @return ArrayCollection
+     * @return ArrayCollection|OrderLineItem[]
      */
     public function convert(array $data)
     {
@@ -34,7 +34,7 @@ class CheckoutLineItemsConverter
         foreach ($data as $item) {
             $orderLineItem = new OrderLineItem();
             foreach ($item as $property => $value) {
-                if ($this->propertyAccessor->isWritable($orderLineItem, $property)) {
+                if (null !== $value && $this->propertyAccessor->isWritable($orderLineItem, $property)) {
                     $this->propertyAccessor->setValue($orderLineItem, $property, $value);
                 }
             }

@@ -123,10 +123,12 @@ datagrids:
                     - coupon.id
                     - coupon.code
                     - rule.name as promotionName
+                    - coupon.enabled
                     - coupon.createdAt
                     - coupon.updatedAt
                     - coupon.usesPerCoupon
                     - coupon.usesPerPerson
+                    - coupon.validFrom
                     - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
@@ -142,6 +144,135 @@ datagrids:
                 frontend_type: html
                 type:          twig
                 template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+            enabled:
+                label:         oro.promotion.coupon.enabled.label
+                frontend_type: boolean
+            usesPerCoupon:
+                label:         oro.promotion.coupon.uses_per_coupon.label
+            usesPerPerson:
+                label:         oro.promotion.coupon.uses_per_person.label
+            validFrom:
+                label:         oro.promotion.coupon.valid_from.label
+                frontend_type: datetime
+            validUntil:
+                label:         oro.promotion.coupon.valid_until.label
+                frontend_type: datetime
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: coupon.code
+                promotionName:
+                    data_name: rule.name
+                enabled:
+                    data_name: coupon.enabled
+                usesPerCoupon:
+                    data_name: coupon.usesPerCoupon
+                usesPerPerson:
+                    data_name: coupon.usesPerPerson
+                validFrom:
+                    data_name: coupon.validFrom
+                validUntil:
+                    data_name: coupon.validUntil
+                createdAt:
+                    data_name: coupon.createdAt
+                updatedAt:
+                    data_name: coupon.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: coupon.code
+                promotionName:
+                    type:      string
+                    data_name: rule.name
+                enabled:
+                    type:      boolean
+                    data_name: coupon.enabled
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerPerson:
+                    type:      number
+                    data_name: coupon.usesPerPerson
+                validFrom:
+                    type:      datetime
+                    data_name: coupon.validFrom
+                validUntil:
+                    type:      datetime
+                    data_name: coupon.validUntil
+                createdAt:
+                    type:      datetime
+                    data_name: coupon.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: coupon.updatedAt
+        mass_actions:
+            edit:
+                type:            massedit
+                handler:         oro_promotion.mass_action.coupon_edit_mass_action_handler
+                acl_resource:    oro_promotion_coupon_edit
+                route:           oro_promotion_coupon_mass_edit_widget
+                label:           oro.ui.edit
+                icon:            edit
+                data_identifier: coupon.id
+                frontend_options:
+                    title:       "@translator->trans(oro.promotion.coupon.form.title.mass_edit)"
+                    dialogOptions:
+                        width: 500
+                        modal: false
+                        allowMaximize: false
+                        allowMinimize: false
+
+    promotion-coupons-assigned-to-promotion-grid:
+        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        options:
+            entityHint: coupon
+            export: true
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: oro_promotion_coupon_update
+                params:
+                    id: id
+        actions:
+            update:
+                type:          dialog
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          pencil-square-o
+                acl_resource:  oro_promotion_coupon_update
+                widgetOptions:
+                    reload-grid-name: promotion-coupons-assigned-to-promotion-grid
+        source:
+            type: orm
+            query:
+                select:
+                    - coupon.id
+                    - coupon.code
+                    - coupon.createdAt
+                    - coupon.updatedAt
+                    - coupon.usesPerCoupon
+                    - coupon.usesPerPerson
+                    - coupon.validUntil
+                from:
+                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                where:
+                    and:
+                        - coupon.promotion = :promotion_id
+            bind_parameters:
+                - promotion_id
+        columns:
+            code:
+                label:         oro.promotion.coupon.code.label
             usesPerCoupon:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
@@ -159,8 +290,6 @@ datagrids:
             columns:
                 code:
                     data_name: coupon.code
-                promotionName:
-                    data_name: rule.name
                 usesPerCoupon:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
@@ -178,9 +307,6 @@ datagrids:
                 code:
                     type:      string
                     data_name: coupon.code
-                promotionName:
-                    type:      string
-                    data_name: rule.name
                 usesPerCoupon:
                     type:      number
                     data_name: coupon.usesPerCoupon
@@ -212,6 +338,13 @@ datagrids:
                         modal: false
                         allowMaximize: false
                         allowMinimize: false
+            unassign:
+                type:            ajax
+                handler:         oro_promotion.mass_action.assigned_coupon_unassign_mass_action_handler
+                acl_resource:    oro_promotion_coupon_edit
+                label:           oro.promotion.ui.unassign_coupon.label
+                icon:            times
+                data_identifier: coupon.id
 
     promotion-coupons-select-grid:
         extended_entity_name: '%oro_promotion.entity.coupon.class%'
@@ -226,6 +359,7 @@ datagrids:
                     - rule.name as promotionName
                     - coupon.usesPerCoupon
                     - coupon.usesPerPerson
+                    - coupon.validFrom
                     - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
@@ -247,6 +381,9 @@ datagrids:
                 label:         oro.promotion.coupon.uses_per_coupon.label
             usesPerPerson:
                 label:         oro.promotion.coupon.uses_per_person.label
+            validFrom:
+                label:         oro.promotion.coupon.valid_from.label
+                frontend_type: datetime
             validUntil:
                 label:         oro.promotion.coupon.valid_until.label
                 frontend_type: datetime
@@ -260,6 +397,8 @@ datagrids:
                     data_name: coupon.usesPerCoupon
                 usesPerPerson:
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    data_name: coupon.validFrom
                 validUntil:
                     data_name: coupon.validUntil
         filters:
@@ -276,6 +415,9 @@ datagrids:
                 usesPerPerson:
                     type:      number
                     data_name: coupon.usesPerPerson
+                validFrom:
+                    type:      datetime
+                    data_name: coupon.validFrom
                 validUntil:
                     type:      datetime
                     data_name: coupon.validUntil

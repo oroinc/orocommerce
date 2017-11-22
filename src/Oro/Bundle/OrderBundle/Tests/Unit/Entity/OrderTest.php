@@ -64,6 +64,19 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
     }
 
+    public function testSourceDocument()
+    {
+        $order = $this->getEntity(
+            Order::class,
+            [
+                'identifier' => 'ident',
+            ]
+        );
+
+        $this->assertSame($order, $order->getSourceDocument());
+        $this->assertEquals('ident', $order->getSourceDocumentIdentifier());
+    }
+
     public function testToString()
     {
         $order = new Order();

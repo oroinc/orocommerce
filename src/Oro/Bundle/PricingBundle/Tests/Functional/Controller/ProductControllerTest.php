@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -11,8 +15,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductHelperTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -396,8 +398,11 @@ class ProductControllerTest extends ProductHelperTestCase
         $button = $crawler->selectLink('Duplicate');
         $this->assertCount(1, $button);
 
-        $headers = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
-        $this->client->request('GET', $button->attr('data-operation-url'), [], [], $headers);
+        $this->assertExecuteOperation(
+            'oro_product_duplicate',
+            $product->getId(),
+            Product::class
+        );
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $data = json_decode($response->getContent(), true);
@@ -482,5 +487,65 @@ class ProductControllerTest extends ProductHelperTestCase
                 'expected' => ['product-1']
             ],
         ];
+    }
+
+    /**
+     * @param string $operationName
+     * @param mixed $entityId
+     * @param string $entityClass
+     * @param array $data
+     * @param array $server
+     * @param int $expectedCode
+     * @return Crawler
+     */
+    protected function assertExecuteOperation(
+        $operationName,
+        $entityId,
+        $entityClass,
+        array $data = [],
+        array $server = ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
+        $expectedCode = Response::HTTP_OK
+    ) {
+        $actionContext = [
+            'operationName' => $operationName,
+            'entityId'      => $entityId,
+            'entityClass'   => $entityClass
+        ];
+        $data = array_merge($actionContext, $data);
+        $url = $this->getUrl('oro_action_operation_execute', $data);
+        $dataGrid = $data['datagrid'] ?? null;
+        $params = $this->getOperationExecuteParams($operationName, $entityId, $entityClass, $dataGrid);
+        $crawler = $this->client->request('POST', $url, $params, [], $server);
+
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), $expectedCode);
+
+        return $crawler;
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     * @param $datagrid
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass, $datagrid = null)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass,
+            'datagrid'    => $datagrid
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

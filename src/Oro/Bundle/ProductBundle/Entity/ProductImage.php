@@ -37,13 +37,6 @@ class ProductImage extends ExtendProductImage
      * @var Product
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
     protected $product;
 
@@ -61,9 +54,9 @@ class ProductImage extends ExtendProductImage
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "full"=true
      *          }
-     *      }
+     *     }
      * )
      */
     protected $types;
@@ -146,11 +139,16 @@ class ProductImage extends ExtendProductImage
 
     /**
      * @param ProductImageType|string $type
+     * @return null|$this
      */
     public function addType($type)
     {
-        if ($type instanceof ProductImageType) {
-            $type = $type->getType();
+        if ($type instanceof ProductImageType && !$this->types->contains($type)) {
+            $this->types->add($type);
+            $type->setProductImage($this);
+            $this->setUpdatedAtToNow();
+
+            return $this;
         }
 
         if (!$this->types->containsKey($type)) {
@@ -163,7 +161,7 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @param string $type
+     * @param ProductImageType|string $type
      */
     public function removeType($type)
     {

@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -22,7 +23,7 @@ trait MakeProductAttributesTrait
      */
     private function makeProductAttributes(array $fields, $owner = ExtendScope::ORIGIN_SYSTEM)
     {
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
         $entityManager = $configManager->getEntityManager();
 
@@ -50,7 +51,7 @@ trait MakeProductAttributesTrait
      */
     private function updateProductAttributes(array $fields)
     {
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
         $entityManager = $configManager->getEntityManager();
 
@@ -62,6 +63,14 @@ trait MakeProductAttributesTrait
         }
 
         $entityManager->flush();
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    private function getConfigManager()
+    {
+        return $this->container->get('oro_entity_config.config_manager');
     }
 
     /**
@@ -77,7 +86,7 @@ trait MakeProductAttributesTrait
         AttributeFamily $attributeFamily,
         ObjectManager $manager
     ) {
-        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $configManager = $this->getConfigManager();
 
         foreach ($groupsWithAttributes as $groupData) {
             $attributeGroup = new AttributeGroup();

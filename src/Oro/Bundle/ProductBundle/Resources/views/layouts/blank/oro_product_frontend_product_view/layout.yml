@@ -17,7 +17,7 @@ layout:
                     blockType: product_view_container
                     options:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
-                        parentProduct: '=data["product"].isConfigurable()?data["product"]'
+                        parentProduct: '=data["parentProduct"]'
                         productTheme: '=context["page_template"]'
                 product_view_primary_wrapper:
                     blockType: container

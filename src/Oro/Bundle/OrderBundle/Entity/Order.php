@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -23,9 +23,11 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
@@ -79,16 +81,15 @@ class Order extends ExtendOrder implements
     DiscountAwareInterface,
     SubtotalAwareInterface,
     MultiCurrencyHolderInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CheckoutSourceEntityInterface,
+    PreConfiguredShippingMethodConfigurationInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
 
     const INTERNAL_STATUS_CODE = 'order_internal_status';
-
-    const INTERNAL_STATUS_OPEN = 'open';
-    const INTERNAL_STATUS_CANCELLED = 'cancelled';
 
     /**
      * @var integer
@@ -537,6 +538,22 @@ class Order extends ExtendOrder implements
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocument()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
      * @return OrderAddress|null
      */
     public function getBillingAddress()
@@ -668,11 +685,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Set currency
-     *
-     * @param string $currency
-     *
-     * @return $this
+     * {@inheritDoc}
      */
     public function setCurrency($currency)
     {
@@ -684,9 +697,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Get currency
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getCurrency()
     {
@@ -889,7 +900,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getEmail()
     {
@@ -901,8 +912,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @param Website $website
-     * @return Order
+     * {@inheritDoc}
      */
     public function setWebsite(Website $website)
     {
@@ -912,7 +922,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @return Website
+     * {@inheritDoc}
      */
     public function getWebsite()
     {
@@ -920,7 +930,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @return Price|null
+     * {@inheritDoc}
      */
     public function getShippingCost()
     {
@@ -1167,7 +1177,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getShippingMethod()
     {
@@ -1186,7 +1196,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getShippingMethodType()
     {

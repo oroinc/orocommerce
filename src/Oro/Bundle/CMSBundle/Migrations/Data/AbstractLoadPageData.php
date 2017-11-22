@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
+use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -41,7 +42,6 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         $organization = $this->getOrganization($manager);
 
         $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
-        $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
 
         $loadedPages = [];
         foreach ((array)$this->getFilePaths() as $filePath) {
@@ -57,7 +57,10 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
             $slugRedirectGenerator->generate($page, true);
         }
 
-        $urlStorageCache->flush();
+        $cache = $this->container->get('oro_redirect.url_cache');
+        if ($cache instanceof FlushableCache) {
+            $cache->flushAll();
+        }
         $manager->flush();
     }
 

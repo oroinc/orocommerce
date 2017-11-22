@@ -27,8 +27,11 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *      indexes={
  *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
+ *          @ORM\Index(name="idx_oro_product_default_name", columns={"name"}),
+ *          @ORM\Index(name="idx_oro_product_default_uppercase", columns={"name_uppercase"}),
  *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
  *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(name="idx_oro_product_status", columns={"status"}),
  *          @ORM\Index(
  *              name="idx_oro_product_created_at_id_organization",
  *              columns={"created_at", "id", "organization_id"}
@@ -603,6 +606,39 @@ class Product extends ExtendProduct implements
      * )
      */
     protected $brand;
+
+    /**
+     * This is a mirror field for performance reasons only.
+     * It mirrors getDefaultName()->getString()
+     *
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
+     */
+    protected $denormalizedDefaultName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name_uppercase", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
+     */
+    protected $denormalizedDefaultNameUppercase;
 
     /**
      * {@inheritdoc}
@@ -1211,7 +1247,12 @@ class Product extends ExtendProduct implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = strtoupper($this->sku);
+        $this->skuUppercase = mb_strtoupper($this->sku);
+        if (!$this->getDefaultName()) {
+            throw new \RuntimeException('Product has to have a default name');
+        }
+        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
+        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
     }
 
     /**
@@ -1223,6 +1264,11 @@ class Product extends ExtendProduct implements
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->skuUppercase = strtoupper($this->sku);
+        if (!$this->getDefaultName()) {
+            throw new \RuntimeException('Product has to have a default name');
+        }
+        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
+        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
 
         if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
@@ -1256,6 +1302,7 @@ class Product extends ExtendProduct implements
         return [
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitsPrecision(),
+            'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }
@@ -1425,5 +1472,25 @@ class Product extends ExtendProduct implements
     public function getSkuUppercase()
     {
         return $this->skuUppercase;
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getDenormalizedDefaultName()
+    {
+        return $this->denormalizedDefaultName;
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getDenormalizedDefaultNameUppercase()
+    {
+        return $this->denormalizedDefaultNameUppercase;
     }
 }

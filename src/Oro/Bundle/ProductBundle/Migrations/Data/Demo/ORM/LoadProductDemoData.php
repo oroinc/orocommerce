@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -132,7 +133,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
             $shortDescription = new LocalizedFallbackValue();
             $shortDescription->setText($row['description']);
-            $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
+
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
@@ -145,8 +146,15 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->addShortDescription($shortDescription)
                 ->setType($row['type'])
                 ->setFeatured($row['featured'])
-                ->setNewArrival($row['new_arrival'])
-                ->setBrand($brand);
+                ->setNewArrival($row['new_arrival']);
+
+            if ($row['brand_id']) {
+                $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
+
+                if ($brand) {
+                    $product->setBrand($brand);
+                }
+            }
 
             $this->setPageTemplate($product, $row);
 
@@ -191,7 +199,10 @@ class LoadProductDemoData extends AbstractFixture implements
             $slugRedirectGenerator->generate($product, true);
         }
 
-        $this->container->get('oro_redirect.url_storage_cache')->flush();
+        $cache = $this->container->get('oro_redirect.url_cache');
+        if ($cache instanceof FlushableCache) {
+            $cache->flushAll();
+        }
         $manager->flush();
     }
 

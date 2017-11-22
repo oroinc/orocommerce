@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,7 +23,11 @@ class QuantityToOrderConditionListener
     /**
      * @var array
      */
-    public static $allowedWorkflows = ['b2b_flow_checkout', 'b2b_flow_alternative_checkout'];
+    public static $allowedWorkflows = [
+        'b2b_flow_checkout',
+        'b2b_flow_alternative_checkout',
+        'b2b_flow_checkout_single_page',
+    ];
 
     /**
      * @var QuantityToOrderValidatorService
@@ -50,10 +53,9 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
-
-        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
+        /** @var Checkout $checkout */
+        $checkout = $workflowItem->getEntity();
+        if (false === $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->setIsCheckoutRestartRequired(true);
         }
     }
@@ -71,8 +73,29 @@ class QuantityToOrderConditionListener
 
         /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
-        if (false == $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
+        if (false === $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->addError('oro.inventory.frontend.messages.quantity_limits_error');
+        }
+    }
+
+    /**
+     * Event listener to check if shopping list actions can be run (ex. used to show/hide shopping list trigger buttons)
+     *
+     * @param ExtendableConditionEvent $event
+     */
+    public function onShoppingListStart(ExtendableConditionEvent $event)
+    {
+        $context = $event->getContext();
+        if (!$context instanceof WorkflowItem
+            || !in_array($context->getWorkflowName(), self::$allowedWorkflows)
+            || !$context->getResult()->get('shoppingList') instanceof ShoppingList
+        ) {
+            return;
+        }
+
+        $lineItems = $context->getResult()->get('shoppingList')->getLineItems();
+        if (false === $this->validatorService->isLineItemListValid($lineItems)) {
+            $event->addError('');
         }
     }
 
@@ -86,7 +109,7 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
+        if (false === $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -128,11 +151,8 @@ class QuantityToOrderConditionListener
         return (!$context instanceof WorkflowItem
             || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
             || !$context->getEntity() instanceof Checkout
-            || !$context->getEntity()->getSource() instanceof CheckoutSource
-            // make sure checkout only done from shopping list
-            || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
-            || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
-            || $context->getEntity()->getSource()->getQuoteDemand() instanceof QuoteDemand
+            // make sure that checkout not done from quote demand
+            || $context->getEntity()->getSourceEntity() instanceof QuoteDemand
         );
     }
 
@@ -148,6 +168,6 @@ class QuantityToOrderConditionListener
 
         $checkout = $context->get('checkout');
 
-        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
+        return ($checkout instanceof Checkout && !$checkout->getSourceEntity() instanceof QuoteDemand);
     }
 }

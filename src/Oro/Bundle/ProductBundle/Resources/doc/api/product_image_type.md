@@ -4,8 +4,12 @@
 
 ### create
 
+{@request:json_api}
 Example:
 
+</api/productimagetypes>
+
+```JSON
     {
       "data": {
         "type": "productimagetypes",
@@ -22,8 +26,10 @@ Example:
         }
       }
     }
+```
+{@/request}
 
-##### Validation
+#### Validation
 
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
  of image defined in themes and it is not directly handled by the API.
@@ -38,12 +44,18 @@ The type attribute of the product image type model ("productImageTypeType") shou
 
 ### update
 
+Edit a specific ProductImageType record.
+
+{@request:json_api}
 Example:
 
+</api/productimagetypes/1>
+
+```JSON
     {
       "data": {
         "type": "productimagetypes",
-        "id": "6",
+        "id": "1",
         "attributes": {
           "productImageTypeType": "additional"
         },
@@ -69,6 +81,8 @@ Example:
         }
       ]
     }
+```
+{@/request}
 
 ### delete
 
@@ -104,11 +118,18 @@ Retrieve the ID of the productImage for a specific productImageType.
 
 Replace the productImage for a specific productImageType.
 
+{@request:json_api}
+
 Example:
 
+</api/productimagetypes/3/relationships/productImage>
+
+```JSON
     {
       "data": {
         "type": "productimages",
         "id": "3"
       }
     }
+```
+{@/request}

@@ -40,8 +40,7 @@ class DatagridListener
      */
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
-        $this->addCategoryJoin($event->getConfig());
-        $this->addCategoryRelation($event->getConfig());
+        $this->addCategoryInfo($event->getConfig());
     }
 
     /**
@@ -56,15 +55,19 @@ class DatagridListener
     /**
      * @param DatagridConfiguration $config
      */
-    protected function addCategoryRelation(DatagridConfiguration $config)
+    protected function addCategoryInfo(DatagridConfiguration $config)
     {
-        // columns
-        $categoryColumn = ['label' => 'oro.catalog.category.entity_label'];
-        $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
+        $query = $config->getOrmQuery();
 
-        // properties
-        $categoryProperty = ['type' => LocalizedValueProperty::NAME, 'data_name' => 'productCategory.titles'];
-        $this->addConfigElement($config, '[properties]', $categoryProperty, self::CATEGORY_COLUMN);
+        // select
+        $query->addSelect('IDENTITY(product.category) as ' . self::CATEGORY_COLUMN);
+
+        // columns
+        $categoryColumn = [
+            'label' => 'oro.catalog.category.entity_label',
+            'data_name' => self::CATEGORY_COLUMN
+        ];
+        $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
 
         // sorter
         $categorySorter = ['data_name' => self::CATEGORY_COLUMN];
@@ -80,21 +83,11 @@ class DatagridListener
 
     /**
      * @param DatagridConfiguration $config
+     * @deprecated since 1.5. Please use denormalizedDefaultTitle instead of Category and associated relation
      */
-    protected function addCategoryJoin(DatagridConfiguration $config)
+    protected function addCategoryRelation(DatagridConfiguration $config)
     {
-        $joinCategory = [
-            'join' => 'OroCatalogBundle:Category',
-            'alias' => 'productCategory',
-            'conditionType' => 'WITH',
-            'condition' => 'product MEMBER OF productCategory.products',
-        ];
-        $query = $config->getOrmQuery();
-        $leftJoins = $query->getLeftJoins();
-        if (!in_array($joinCategory, $leftJoins, true)) {
-            $leftJoins[] = $joinCategory;
-            $query->setLeftJoins($leftJoins);
-        }
+        $this->addCategoryInfo($config);
     }
 
     /**
@@ -114,9 +107,7 @@ class DatagridListener
             '[options][urlParams][includeNotCategorizedProducts]',
             true
         );
-        $config->getOrmQuery()->addOrWhere('productCategory.id IS NULL');
-
-        $this->addCategoryJoin($event->getConfig());
+        $config->getOrmQuery()->addOrWhere('product.category IS NULL');
     }
 
     /**
@@ -153,14 +144,13 @@ class DatagridListener
             $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
 
-        $config->getOrmQuery()->addAndWhere('productCategory.id IN (:productCategoryIds)');
+        $config->getOrmQuery()->addAndWhere('product.category IN (:productCategoryIds)');
 
         $config->offsetSetByPath(
             DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
         );
         $event->getParameters()->set('productCategoryIds', $productCategoryIds);
-        $this->addCategoryJoin($event->getConfig());
     }
 
     /**

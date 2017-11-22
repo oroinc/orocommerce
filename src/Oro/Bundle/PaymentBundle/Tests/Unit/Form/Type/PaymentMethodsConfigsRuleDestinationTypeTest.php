@@ -9,14 +9,17 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
-class PaymentMethodsConfigsRuleDestinationTypeTest extends AbstractPaymentMethodsConfigRuleTypeTest
+class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
     /** @var PaymentMethodsConfigsRuleDestinationType */
     protected $formType;
@@ -66,55 +69,87 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AbstractPaymentMethod
         $this->assertContains('oro_api_country_get_regions', $options['region_route']);
     }
 
-    public function testSubmitNull()
+    /**
+     * @dataProvider submitDataProvider
+     *
+     * @param null|PaymentMethodsConfigsRuleDestination $data
+     */
+    public function testSubmit($data)
     {
-        $destination = null;
+        $form = $this->factory->create($this->formType, $data);
 
-        $form = $this->factory->create($this->formType, $destination);
-
-        $this->assertEquals($destination, $form->getData());
+        $this->assertEquals($data, $form->getData());
 
         $form->submit([
-            'country' => 'US',
-            'region' => 'US-AL',
-            'postalCodes' => 'code1, code2',
+            'country' => 'CA',
+            'region' => 'CA-QC',
+            'postalCodes' => 'code3, code4',
         ]);
 
-        $destination = (new PaymentMethodsConfigsRuleDestination())
-            ->setCountry(new Country('US'))
-            ->setRegion(new Region('US-AL'))
-            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
-            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2'));
+        $form->isValid();
+
         $this->assertTrue($form->isValid());
+
+        /** @var PaymentMethodsConfigsRuleDestination $actual */
+        $actual = $form->getData();
+        // first code not stripped, because form used model transformer that split string by comma
+        // our extension applied on pre_submit, so all string stripped
+        $expected = $this->getDestination('CA', 'CA-QC', ['code3', 'code4_stripped']);
+
+        $this->assertInstanceOf(PaymentMethodsConfigsRuleDestination::class, $actual);
+        $this->assertEquals($expected->getCountry(), $actual->getCountry());
+        $this->assertEquals($expected->getRegion(), $actual->getRegion());
+
+        $getNames = function (PaymentMethodsConfigsRuleDestinationPostalCode $code) {
+            return $code->getName();
+        };
+
         $this->assertEquals(
-            $destination,
-            $form->getData()
+            $expected->getPostalCodes()->map($getNames)->getValues(),
+            $actual->getPostalCodes()->map($getNames)->getValues()
         );
     }
 
-    public function testSubmit()
+    /**
+     * @return array
+     */
+    public function submitDataProvider()
     {
-        $destination = (new PaymentMethodsConfigsRuleDestination())
-            ->setCountry(new Country('US'))
-            ->setRegion(new Region('US-AL'))
-            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
-            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2'));
+        return [
+            'empty default form data' => [
+                'data' => null
+            ],
+            'with default form data' => [
+                'data' => $this->getDestination('US', 'US-AL', ['code1', 'code2'])
+            ]
+        ];
+    }
 
-        $form = $this->factory->create($this->formType, $destination);
+    /**
+     * @param string $countryCode
+     * @param string $regionCode
+     * @param array $postalCodes
+     * @return PaymentMethodsConfigsRuleDestination
+     */
+    protected function getDestination($countryCode, $regionCode, array $postalCodes)
+    {
+        $country = new Country($countryCode);
 
-        $this->assertEquals($destination, $form->getData());
+        $region = new Region($regionCode);
+        $region->setCountry($country);
 
-        $form->submit([
-            'country' => 'US',
-            'region' => 'US-AL',
-            'postalCodes' => 'code1, code2',
-        ]);
+        $destination = new PaymentMethodsConfigsRuleDestination();
+        $destination->setCountry($country)
+            ->setRegion($region);
 
-        $this->assertTrue($form->isValid());
-        $this->assertEquals(
-            $destination,
-            $form->getData()
-        );
+        foreach ($postalCodes as $code) {
+            $postalCode = new PaymentMethodsConfigsRuleDestinationPostalCode();
+            $postalCode->setName($code);
+
+            $destination->addPostalCode($postalCode);
+        }
+
+        return $destination;
     }
     
     /**
@@ -132,7 +167,10 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AbstractPaymentMethod
                     'translatable_entity' => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                ['form' => [
+                    new AdditionalAttrExtension(),
+                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                ]]
             ),
             $this->getValidatorExtension(true)
         ];

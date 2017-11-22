@@ -58,7 +58,15 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          PO Number: 'oro_workflow_transition[po_number]'
           Notes: 'oro_workflow_transition[customer_notes]'
+          Do not ship later than:
+            type: 'xpath'
+            locator: '//input[@name="oro_workflow_transition[ship_until]"]/../../input'
+
+    Do not ship later than Datepicker:
+      selector: 'form[name="oro_workflow_transition"] input.hasDatepicker'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Checkout Totals:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
@@ -86,6 +94,10 @@ oro_behat_extension:
 
     PastOrdersGrid:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    BackendOrderLineItemsGrid:
+      selector: 'div[data-page-component-name="order-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     OrderLineItemsGrid:
@@ -135,6 +147,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Billing Address: 'oro_workflow_transition[billing_address][customerAddress]'
           First Name: 'oro_workflow_transition[billing_address][firstName]'
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
           Email: 'oro_workflow_transition[visitor_email]'
@@ -143,6 +156,7 @@ oro_behat_extension:
           Country: 'oro_workflow_transition[billing_address][country]'
           State: 'oro_workflow_transition[billing_address][region]'
           Zip/Postal Code: 'oro_workflow_transition[billing_address][postalCode]'
+          Ship to this address: 'oro_workflow_transition[ship_to_billing_address]'
 
     Shipping Information Form:
       selector: 'form[name="oro_workflow_transition"]'
@@ -156,3 +170,18 @@ oro_behat_extension:
           Country: 'oro_workflow_transition[shipping_address][country]'
           State: 'oro_workflow_transition[shipping_address][region]'
           Zip/Postal Code: 'oro_workflow_transition[shipping_address][postalCode]'
+
+    Checkout Order Form:
+      selector: 'form[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          PO Number: 'oro_workflow_transition[po_number]'
+
+    Checkout Edit Order Link:
+      selector: '.checkout-order-summary__edit-link'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Submit Order:
+        selector: '.order-checkout-widget button:contains("Submit Order")'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

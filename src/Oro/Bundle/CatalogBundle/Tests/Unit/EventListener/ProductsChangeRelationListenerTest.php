@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\CatalogBundle\EventListener\ProductsChangeRelationListener;
-use Oro\Bundle\ProductBundle\Entity\Product;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductsChangeRelationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,21 +62,20 @@ class ProductsChangeRelationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlush()
     {
-        $collection = new PersistentCollection($this->em, Category::class, new ArrayCollection([]));
-        $mapping = ['inversedBy' => 'Product', 'fieldName' => Category::FIELD_PRODUCTS];
-        $collection->setOwner(new Category(), $mapping);
-        $collection->setDirty(true);
-        $collection->setInitialized(true);
+        $category = $this->createMock(Category::class);
+
         $product1 = new Product();
-        $product2 = new Product();
-        $collection->add($product1);
-        $collection->add($product2);
+        $product1->setCategory($category);
 
         $this->unitOfWork->expects($this->once())
-            ->method('getScheduledCollectionUpdates')
-            ->willReturn([$collection]);
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$product1]);
 
-        $event = new ProductsChangeRelationEvent([$product1, $product2]);
+        $this->unitOfWork->expects($this->once())
+            ->method('getEntityChangeSet')
+            ->willReturn(['category' => $category]);
+
+        $event = new ProductsChangeRelationEvent([$product1]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(ProductsChangeRelationEvent::NAME, $event);
@@ -86,51 +83,46 @@ class ProductsChangeRelationListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFlush($this->onFlushEvent);
     }
 
-    public function testOnFlushWrongCollection()
+    public function testOnFlushNoAnyEntityChanged()
     {
         $this->unitOfWork->expects($this->once())
-            ->method('getScheduledCollectionUpdates')
-            ->willReturn([new ArrayCollection()]);
+            ->method('getScheduledEntityUpdates')
+            ->willReturn(null);
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
         $this->listener->onFlush($this->onFlushEvent);
     }
 
-    public function testOnFlushNotDirty()
+    public function testOnFlushNoAnyProductChanged()
     {
-        $collection = new PersistentCollection($this->em, Category::class, new ArrayCollection([]));
-        $collection->setDirty(false);
+        $category = new Category();
+
         $this->unitOfWork->expects($this->once())
-            ->method('getScheduledCollectionUpdates')
-            ->willReturn([$collection]);
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$category]);
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
         $this->listener->onFlush($this->onFlushEvent);
     }
 
-    public function testOnFlushNotInitialized()
+    public function testOnFlushNoProductCategoryChanged()
     {
-        $collection = new PersistentCollection($this->em, Category::class, new ArrayCollection([]));
-        $collection->setInitialized(false);
-        $this->unitOfWork->expects($this->once())
-            ->method('getScheduledCollectionUpdates')
-            ->willReturn([$collection]);
-        $this->eventDispatcher->expects($this->never())
-            ->method('dispatch');
-        $this->listener->onFlush($this->onFlushEvent);
-    }
+        $category = $this->createMock(Category::class);
 
-    public function testOnFlushWrongMapping()
-    {
-        $collection = new PersistentCollection($this->em, Category::class, new ArrayCollection([]));
-        $collection->setDirty(true);
-        $mapping = ['inversedBy' => 'Product', 'fieldName' => 'randomField'];
-        $collection->setOwner(new Category(), $mapping);
+        $product1 = new Product();
+        $product1->setCategory($category);
+
         $this->unitOfWork->expects($this->once())
-            ->method('getScheduledCollectionUpdates')
-            ->willReturn([$collection]);
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$product1]);
+
+        $this->unitOfWork->expects($this->once())
+            ->method('getEntityChangeSet')
+            ->willReturn(['update' => '2010-10-10 10:10:10']);
+
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
+
         $this->listener->onFlush($this->onFlushEvent);
     }
 }

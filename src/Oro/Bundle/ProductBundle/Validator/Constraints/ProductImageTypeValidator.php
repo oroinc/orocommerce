@@ -2,31 +2,48 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImageType as ProductImageTypeEntity;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType as EntityProductImageType;
 
 class ProductImageTypeValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_type_validator';
 
     /**
-     * @var ImageTypeProvider
+     * @var ImageTypeProvider $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @param ImageTypeProvider $imageTypeProvider
+     * @var TranslatorInterface $translator
      */
-    public function __construct(ImageTypeProvider $imageTypeProvider)
-    {
+    protected $translator;
+
+    /**
+     * @var ExecutionContextInterface $context
+     */
+    protected $context;
+
+    /**
+     * @param ImageTypeProvider $imageTypeProvider
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(
+        ImageTypeProvider $imageTypeProvider,
+        TranslatorInterface $translator
+    ) {
         $this->imageTypeProvider = $imageTypeProvider;
+        $this->translator = $translator;
     }
 
     /**
-     * @param ProductImageTypeEntity $value
+     * @param EntityProductImageType $value
      * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
@@ -35,10 +52,56 @@ class ProductImageTypeValidator extends ConstraintValidator
             return;
         }
 
-        $validTypes = array_keys($this->imageTypeProvider->getImageTypes());
-        if (!in_array($value->getType(), $validTypes)) {
+        /** @var ThemeImageType[] $availableTypes */
+        $validTypes = $this->imageTypeProvider->getImageTypes();
+        $this->validateType($value, $constraint, $validTypes);
+        $this->validateDuplicateType($value, $constraint, $validTypes);
+    }
+
+    /**
+     * @param EntityProductImageType $value
+     * @param Constraint $constraint
+     * @param $validTypes
+     */
+    private function validateType(EntityProductImageType $value, Constraint $constraint, $validTypes)
+    {
+        $validTypeNames = array_keys($validTypes);
+
+        if (!in_array($value->getType(), $validTypeNames)) {
             $this->context
-                ->buildViolation($constraint->message, ['%type%' => $value->getType()])
+                ->buildViolation(
+                    $constraint->invalid_type_message,
+                    [
+                        '%type%' => $value->getType()
+                    ]
+                )
+                ->addViolation();
+        }
+    }
+
+    /**
+     * @param EntityProductImageType $value
+     * @param $constraint
+     * @param $validTypes
+     */
+    private function validateDuplicateType(EntityProductImageType $value, $constraint, $validTypes)
+    {
+        if (null === $value->getProductImage() ||
+            ($existingProductImageTypes = $value->getProductImage()->getTypes())->contains($value)
+        ) {
+            return;
+        }
+
+        if ($existingProductImageTypes->containsKey($value->getType())) {
+            $this->context
+                ->buildViolation(
+                    $constraint->already_exists_message,
+                    [
+                        '%type%' => $this->translator->trans(
+                            $validTypes[$value->getType()]->getLabel()
+                        )
+                    ]
+                )
                 ->addViolation();
         }
     }

@@ -111,10 +111,78 @@ operations:
                  route: 'oro_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}
 
+    oro_checkout_frontend_start_from_order:
+        label: oro.checkout.frontend.start_from_order
+        applications: [commerce]
+        routes:
+            - oro_order_frontend_view
+        datagrids:
+            - frontend-orders-grid
+        acl_resource: [CHECKOUT_CREATE, $.data]
+        button_options:
+            icon: fa-shopping-cart
+        preconditions:
+            '@and':
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@call_service_method':
+                attribute: $.checkoutLineItems
+                service: oro_checkout.line_items.factory
+                method: create
+                method_parameters: [$.data]
+
+            - '@flash_message':
+                conditions:
+                    '@not':
+                        - '@has_elements': $.checkoutLineItems
+                message: oro.checkout.frontend.checkout.cannot_create_reorder_no_line_items
+                type: 'warning'
+
+            - '@tree':
+                conditions:
+                    '@has_elements': $.checkoutLineItems
+                actions:
+                    - '@run_action_group':
+                        action_group: start_checkout
+                        parameters_mapping:
+                            force: true
+                            forceStartCheckout: true
+                            sourceCriteria:
+                                order: $.data
+                            settings:
+                                allow_manual_source_remove: false
+                                remove_source: false
+                            showErrors: true
+                            validateOnStartCheckout: true
+                        results:
+                            redirectUrl: $.redirectUrl
+                            checkout: $.checkout
+                            errors: $.errors
+                    - '@call_service_method':
+                        attribute: $.changedSkus
+                        service: oro_checkout.provider.checkout_line_items
+                        method: getProductSkusWithDifferences
+                        method_parameters: [$.checkout.lineItems, $.data.lineItems]
+                    - '@tree':
+                        conditions:
+                            '@has_elements': $.changedSkus
+                        actions:
+                            - '@call_method':
+                                attribute: $.changedSkus
+                                method: implode
+                                method_parameters: [', ', $.changedSkus]
+                            - '@flash_message':
+                                message: oro.checkout.frontend.checkout.some_changes_in_line_items
+                                message_parameters:
+                                    skus: $.changedSkus
+                                type: 'warning'
+
 action_groups:
     oro_update_shipping_price:
         parameters:
-          checkout:
+            checkout:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@call_service_method':
@@ -162,6 +230,56 @@ action_groups:
                     checkout: $.checkout
                     errors: $.errors
 
+    prepare_checkout_settings:
+        parameters:
+            source:
+                type: Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface
+        actions:
+            - '@tree':
+                conditions:
+                    '@not_blank': $.source.billingAddress
+                actions:
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_duplicate_address
+                        parameters_mapping:
+                            address: $.source.billingAddress
+                        results:
+                            'settings.billing_address': $.newAddress
+
+            - '@tree':
+                conditions:
+                    '@not_blank': $.source.shippingAddress
+                actions:
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_duplicate_address
+                        parameters_mapping:
+                            address: $.source.shippingAddress
+                        results:
+                            'settings.shipping_address': $.newAddress
+
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_blank': $.source.shippingMethod
+                        - '@not_blank': $.source.shippingMethodType
+                actions:
+                    - '@assign_value': [$.settings.shipping_method, $.source.shippingMethod]
+                    - '@assign_value': [$.settings.shipping_method_type, $.source.shippingMethodType]
+
+            - '@call_service_method':
+                service: oro_payment.provider.payment_transaction
+                method: getPaymentMethods
+                method_parameters: [$.source]
+                attribute: $.paymentMethods
+
+            - '@tree':
+                conditions:
+                    '@has_elements': $.paymentMethods
+                actions:
+                    - '@assign_value':
+                        - $.settings.payment_method
+                        - $.paymentMethods[0]
+
     start_checkout:
         parameters:
             sourceCriteria:
@@ -178,6 +296,9 @@ action_groups:
             showErrors:
                 type: bool
                 default: false
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             - '@run_action_group':
                 action_group: find_checkout
@@ -185,9 +306,23 @@ action_groups:
                     sourceCriteria: $.sourceCriteria
                     checkoutData: $.data
                     updateData: $.force
+                    forceStartCheckout: $.forceStartCheckout
                 results:
                     checkout: $.checkout
                     force: $.updateData
+
+            - '@tree':
+                conditions:
+                    '@not_blank': $.checkout.sourceEntity
+                actions:
+                    - '@run_action_group':
+                        action_group: prepare_checkout_settings
+                        parameters_mapping:
+                            source: $.checkout.sourceEntity
+                        results:
+                            preparedSettings: $.settings
+
+                    - '@copy_values': [$.settings, $.preparedSettings]
 
             - '@tree':
                 conditions:
@@ -218,6 +353,9 @@ action_groups:
             updateData:
                 type: bool
                 default: false
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             # find or create checkout and checkout source
             - '@get_available_workflow_by_record_group':
@@ -229,7 +367,9 @@ action_groups:
 
             - '@tree':
                 conditions:
-                    '@not_empty': $.currentUser
+                    '@and':
+                        - '@equal': [false, $.forceStartCheckout]
+                        - '@not_empty': $.currentUser
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout
@@ -242,7 +382,9 @@ action_groups:
 
             - '@tree':
                 conditions:
-                    '@empty': $.currentUser
+                    '@and':
+                        - '@equal': [false, $.forceStartCheckout]
+                        - '@empty': $.currentUser
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout
@@ -299,6 +441,19 @@ action_groups:
                 attribute: $.checkout.currency
                 service: oro_pricing.user_currency_manager
                 method: getUserCurrency
+
+            # actualize line items
+            - '@call_service_method':
+                attribute: $.checkout.lineItems
+                service: oro_checkout.line_items.factory
+                method: create
+                method_parameters: [$.checkout.source.entity]
+
+            # calculate subtotal
+            - '@call_service_method':
+                service: oro_checkout.model.checkout_subtotal_updater
+                method: recalculateCheckoutSubtotals
+                method_parameters: [$.checkout]
 
             - '@flush_entity': $.checkout
 

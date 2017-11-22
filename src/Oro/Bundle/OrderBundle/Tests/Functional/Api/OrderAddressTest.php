@@ -119,56 +119,73 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertSame('111-111-111', $updatedOrderAddress->getPhone());
     }
 
-    public function testUpdateCountryRelationship()
+    public function testUpdateWrongRegion()
     {
         /** @var OrderAddress $orderAddress */
         $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-        /** @var Country $country */
-        $country = $this->getReference(LoadCountryData::COUNTRY_MEXICO);
 
-        $this->patchRelationship(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId(), 'association' => 'country'],
+        $response = $this->patch(
+            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()],
             [
                 'data' => [
-                    'type' => $this->getEntityType(Country::class),
-                    'id' => $country->getIso2Code(),
+                    'type' => 'orderaddresses',
+                    'id' => (string)$orderAddress->getId(),
+                    'relationships' => [
+                        'region' => [
+                            'data' => [
+                                'type' => 'regions',
+                                'id' => 'DE-BE',
+                            ]
+                        ]
+                    ],
                 ],
-            ]
+            ],
+            [],
+            false
         );
 
-        /** @var OrderAddress $updatedOrderAddress */
-        $updatedOrderAddress = $this->getEntityManager()
-            ->getRepository(OrderAddress::class)
-            ->find($orderAddress->getId());
-
-        self::assertEquals($country->getIso2Code(), $updatedOrderAddress->getCountryIso2());
+        $this->assertResponseValidationError(
+            [
+                'title' => 'valid region constraint',
+                'detail' => 'Region Berlin does not belong to country United States'
+            ],
+            $response
+        );
     }
 
-    public function testUpdateRegionRelationship()
+    public function testUpdateWrongCountry()
     {
         /** @var OrderAddress $orderAddress */
         $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-        /** @var Region $region */
-        $region = $this->getReference(LoadRegionData::REGION_AD_07);
 
-        $this->patchRelationship(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId(), 'association' => 'region'],
+        $response = $this->patch(
+            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()],
             [
                 'data' => [
-                    'type' => $this->getEntityType(Region::class),
-                    'id' => $region->getCombinedCode(),
+                    'type' => 'orderaddresses',
+                    'id' => (string)$orderAddress->getId(),
+                    'relationships' => [
+                        'country' => [
+                            'data' => [
+                                'type' => 'countries',
+                                'id' => 'DE',
+                            ]
+                        ]
+                    ],
                 ],
-            ]
+            ],
+            [],
+            false
         );
 
-        /** @var OrderAddress $updatedOrderAddress */
-        $updatedOrderAddress = $this->getEntityManager()
-            ->getRepository(OrderAddress::class)
-            ->find($orderAddress->getId());
-
-        self::assertEquals($region->getCombinedCode(), $updatedOrderAddress->getRegion()->getCombinedCode());
+        $this->assertResponseValidationError(
+            [
+                'title' => 'valid region constraint',
+                'detail' => 'Region New York does not belong to country Germany'
+            ],
+            $response
+        );
     }
-
     public function testDeleteByFilter()
     {
         /** @var OrderAddress $orderAddress */

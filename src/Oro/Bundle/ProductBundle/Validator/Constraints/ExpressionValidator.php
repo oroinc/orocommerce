@@ -69,7 +69,8 @@ class ExpressionValidator extends ConstraintValidator
             $this->validateSupportedFields($rootNode, $constraint);
             $this->validateDivisionByZero($rootNode, $constraint);
         } catch (SyntaxError $ex) {
-            $this->context->addViolation($ex->getMessage());
+            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
+            return;
         }
     }
 

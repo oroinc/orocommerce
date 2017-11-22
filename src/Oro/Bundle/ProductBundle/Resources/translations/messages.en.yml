@@ -2,7 +2,7 @@ oro:
     product:
         entity_label: Product
         entity_plural_label: Products
-        entity_description: Represents product information
+        entity_description: Represents product information.
         id.label: Id
         sku_uppercase:
             label: SKU
@@ -15,6 +15,9 @@ oro:
             placeholder: "Enter Product Name or Item Number"
             not_found: Item Number Cannot Be Found
             description: The code of the product
+        back_order:
+            label:        Backorder
+            description:  Backorder flag defines whether a product may be ordered while not in stock or when the inventory is low. When such product is ordered, the shippment will happen once the product is restocked.
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields:
@@ -56,7 +59,9 @@ oro:
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
-        variant_links.label: Product Variant Links
+        variant_links:
+            label: Product Variant Links
+            description: The variants set for the configurable product
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images.label: Images
@@ -151,25 +156,35 @@ oro:
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
-            entity_description: Represents product units information
+            entity_description: Represents product units information.
             code.label: Code
             default_precision:
                 label: 'Default Precision'
-                description: 'Default Precision for the product unit'
+                description: 'Default Precision for the product unit.'
             form.choose: Choose Unit...
             removed: '{title} - removed'
 
         productunitprecision:
-            entity_label: Product Unit Precision
-            entity_plural_label: Product Unit Precisions
-            id.label: Id
-            product.label: Product
-            unit.label: Unit
-            precision.label: Precision
-            conversion_rate.label: Conversion Rate
-            sell.label: Sell
-            sell_yes.label: Yes
-            sell_not.label: No
+            entity_label: 'Product Unit Precision'
+            entity_plural_label: 'Product Unit Precisions'
+            id.label: 'Id'
+            product:
+                label: 'Product'
+                description: 'The product related to the product unit precision.'
+            unit:
+                label: 'Unit'
+                description: 'The unit of quantity for the product.'
+            precision:
+                label: 'Precision'
+                description: 'The price precision.'
+            conversion_rate:
+                label: 'Conversion Rate'
+                description: 'The price conversion rate.'
+            sell:
+                label: 'Sell'
+                description: 'The sell flag that tells if the current product unit precision can be sold.'
+            sell_yes.label: 'Yes'
+            sell_not.label: 'No'
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"
@@ -199,7 +214,15 @@ oro:
                 main.label: Main
                 additional.label: Additional
                 listing.label: Listing
-
+            import:
+                label: Import images
+                notice: "Please make sure that the image files are uploaded at path:\n \"{PROJECT}/app/import_export/product_images\""
+        productimagetype:
+            entity_label: Product Image Type
+            entity_plural_label: Product Image Types
+            id.label: Id
+            type.label: Type
+            product_image.label: Type
         related_products:
             label: Related Products
 
@@ -304,6 +327,8 @@ oro:
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
+                configurable_products.title: 'Configurable Products'
+                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -418,6 +443,11 @@ oro:
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
+                matrix_form_on_product_view:
+                    label: 'Display Matrix Form (where applicable)'
+                    none.label: 'Do Not Display'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -488,6 +518,9 @@ oro:
                     invalid_request: Invalid request submitted
             titles:
                 catalog: Catalog
+            grid:
+                toolbar:
+                    display.label: Display
 
         export:
             inventory_status_only: "Inventory statuses only"
@@ -517,7 +550,7 @@ oro:
             description:          Brand of the product
             entity_label:         Brand
             entity_plural_label:  Brands
-
+            entity_description:   The brand is a combination of the name and visual identity that is aimed to mark products or product lines of a single firm or manufacturer. Brand identifies the product and distinguishes it from the competition.
             descriptions:
                 label:    Description
                 description: The descriptions for the brand
@@ -737,3 +770,7 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+
+    importexport:
+        export:
+            oro_product_product: Products

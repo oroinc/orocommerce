@@ -84,6 +84,20 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
                                 'price' => null,
                             ],
                         ]
+                    ],
+                    [
+                        ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['productSku'],
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
+                        'commentCustomer' => $rfpRequestData['comment'],
+                        'requestProductItems' => [
+                            [
+                                'productUnit' => $rfpRequestData['unitCode'],
+                                'productUnitCode' => $rfpRequestData['unitCode'],
+                                'requestProductItem' => $requestProductItem->getId(),
+                                'quantity' => $rfpRequestData['quantity'],
+                                'price' => null,
+                            ],
+                        ]
                     ]
                 ]
             ]);
@@ -130,12 +144,15 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             ->setProduct($product)
             ->setComment($rfpRequestData['comment'])
             ->addRequestProductItem($requestProductItem);
+        $requestProduct2 = clone $requestProduct;
+        $requestProduct2->setProduct(null);
 
         $rfpRequest = new RFPRequest();
         $rfpRequest
             ->setCustomer($customer)
             ->setCustomerUser($customerUser)
-            ->addRequestProduct($requestProduct);
+            ->addRequestProduct($requestProduct)
+            ->addRequestProduct($requestProduct2);
 
         foreach ($rfpRequestData['assignedUsers'] as $assignedUserId) {
             /** @var \Oro\Bundle\UserBundle\Entity\User $assignedUser */

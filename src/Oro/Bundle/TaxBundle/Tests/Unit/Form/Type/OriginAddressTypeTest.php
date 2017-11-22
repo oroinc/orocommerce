@@ -45,7 +45,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
      */
     public function submitDataProvider()
     {
-        $country = new Country('US');
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'valid form' => [
@@ -53,16 +53,16 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'region_text' => 'Alabama',
                     'postal_code' => '35004',
                 ],
                 'expectedData' => [
                     'country' => $country,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without region' => [
@@ -70,16 +70,16 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
-                    'country' => 'US',
+                    'country' => self::COUNTRY_WITHOUT_REGION,
                     'region' => null,
                     'region_text' => 'Alabama',
                     'postal_code' => '35004',
                 ],
                 'expectedData' => [
-                    'country' => $country,
+                    'country' => new Country(self::COUNTRY_WITHOUT_REGION),
                     'region' => null,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without country' => [
@@ -88,15 +88,15 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                 'viewData' => new Address(),
                 'submittedData' => [
                     'country' => null,
-                    'region' => 'US-AL',
+                    'region' => self::REGION_WITH_COUNTRY,
                     'region_text' => 'Alabama',
                     'postal_code' => '35004',
                 ],
                 'expectedData' => [
                     'country' => null,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => 'Alabama',
-                    'postal_code' => '35004',
+                    'postal_code' => '35004_stripped',
                 ],
             ],
             'valid without postal code' => [
@@ -104,14 +104,14 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'region_text' => 'Alabama',
                     'postal_code' => null,
                 ],
                 'expectedData' => [
                     'country' => $country,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => 'Alabama',
                     'postal_code' => null,
                 ],

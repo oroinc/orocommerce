@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Provider\MassAction;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,23 +26,31 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
     protected $translator;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
+    protected $tokenStorage;
+
     /** @var AddLineItemMassActionProvider */
     protected $provider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    protected $featureChecker;
+
     protected function setUp()
     {
-        $this->manager = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->manager = $this->createMock(ShoppingListManager::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($label) {
                 return $label;
             });
 
-        $this->provider = new AddLineItemMassActionProvider($this->manager, $this->translator);
+        $this->provider = new AddLineItemMassActionProvider($this->manager, $this->translator, $this->tokenStorage);
+        $this->provider->setFeatureChecker($this->featureChecker);
+        $this->provider->addFeature('shopping_list_create');
     }
 
     protected function tearDown()
@@ -54,6 +66,18 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetActions(array $shoppingLists, array $expected)
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
+
+        /** @var UsernamePasswordOrganizationToken $token */
+        $token = $this->createMock(UsernamePasswordOrganizationToken::class);
+
+        $this->tokenStorage
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn($token);
+
         $this->manager->expects($this->once())
             ->method('getShoppingLists')
             ->willReturn($shoppingLists);
@@ -72,6 +96,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'shoppingLists' => [],
                 'expected' => [
                     'new' => [
+                        'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
@@ -101,7 +126,17 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                     $this->createShoppingList(2),
                 ],
                 'expected' => [
+                    'current' => [
+                        'is_current' => true,
+                        'type' => 'addproducts',
+                        'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
+                        'icon' => 'shopping-cart',
+                        'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+                    ],
                     'list1' => [
+                        'is_current' => false,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
@@ -113,6 +148,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'list2' => [
+                        'is_current' => false,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
@@ -124,6 +160,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'new' => [
+                        'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
@@ -154,17 +191,16 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     'current' => [
+                        'is_current' => true,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                        'route_parameters' => [
-                            'shoppingList' => 42
-                        ]
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler'
                     ],
                     'list3' => [
+                        'is_current' => false,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
@@ -175,7 +211,20 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                             'shoppingList' => 3
                         ]
                     ],
+                    'list42' => [
+                        'is_current' => false,
+                        'type' => 'addproducts',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'icon' => 'shopping-cart',
+                        'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+                        'route_parameters' => [
+                            'shoppingList' => 42
+                        ]
+                    ],
                     'new' => [
+                        'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
@@ -200,6 +249,56 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
+    }
+
+    public function testGetActionsCreateShoppingListFeatureOff()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
+
+        $shoppingLists = [
+            $this->createShoppingList(1),
+            $this->createShoppingList(2),
+        ];
+
+        $this->manager->expects($this->once())
+            ->method('getShoppingLists')
+            ->willReturn($shoppingLists);
+
+        $this->assertArrayNotHasKey('new', $this->provider->getActions());
+    }
+
+    public function testGetActionsForAnonymousCustomerUser()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
+
+        /** @var AnonymousCustomerUserToken $token */
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $this->tokenStorage
+            ->expects($this->any())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->manager
+            ->expects($this->never())
+            ->method('getShoppingLists');
+
+        $expectedActions = [
+            'current' => [
+                'is_current' => true,
+                'type' => 'addproducts',
+                'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
+                'icon' => 'shopping-cart',
+                'data_identifier' => 'product.id',
+                'frontend_type' => 'add-products-mass',
+                'handler' => 'oro_shopping_list.mass_action.add_products_handler'
+            ]
+        ];
+
+        $this->assertEquals($expectedActions, $this->provider->getActions());
     }
 
     /**

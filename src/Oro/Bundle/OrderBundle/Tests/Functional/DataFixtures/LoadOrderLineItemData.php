@@ -18,6 +18,11 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
     const ORDER_LINEITEM_2 = 'order_lineitem_2';
     const ORDER_LINEITEM_3 = 'order_lineitem_3';
     const ORDER_LINEITEM_4 = 'order_lineitem_4';
+    const ORDER_LINEITEM_5 = 'order_lineitem_5';
+    const ORDER_LINEITEM_6 = 'order_lineitem_6';
+    const ORDER_LINEITEM_7 = 'order_lineitem_7';
+    const ORDER_LINEITEM_8 = 'order_lineitem_8';
+    const ORDER_LINEITEM_9 = 'order_lineitem_9';
 
     /**
      * @var array
@@ -49,6 +54,61 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
             'order' => LoadOrders::ORDER_4,
             'product' => LoadProductData::PRODUCT_1,
             'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 100,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_5 => [
+            'order' => LoadOrders::ORDER_5,
+            'product' => LoadProductData::PRODUCT_5,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 100,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_6 => [
+            'order' => LoadOrders::ORDER_5,
+            'product' => LoadProductData::PRODUCT_6,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 200,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_7 => [
+            'order' => LoadOrders::ORDER_6,
+            'product' => LoadProductData::PRODUCT_5,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 100,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_8 => [
+            'order' => LoadOrders::ORDER_6,
+            'product' => LoadProductData::PRODUCT_6,
+            'quantity' => 20,
+            'productUnit' => LoadProductUnits::LITER,
+            'price' => [
+                'value' => 200,
+                'currency' => 'USD'
+            ],
+            'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+        ],
+        self::ORDER_LINEITEM_9 => [
+            'order' => LoadOrders::ORDER_6,
+            'product' => LoadProductData::PRODUCT_1,
+            'quantity' => 15,
             'productUnit' => LoadProductUnits::LITER,
             'price' => [
                 'value' => 100,

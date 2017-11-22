@@ -16,6 +16,7 @@
             data-page-component-options="{{ form.vars.attr['data-page-component-options'] }}"
     >
         {{ form_row(form.discount_type) }}
+        {{ form_row(form.discount_product_unit_code) }}
         {{ form_row(form.buy_x) }}
         {{ form_row(form.get_y) }}
         {{ form_row(form.amount_discount_value) }}
@@ -23,6 +24,20 @@
         {{ form_rest(form) }}
     </div>
 {% endblock %}
+
+{% block oro_promotion_line_item_discount_options_widget %}
+    <div
+            data-page-component-module="{{ form.vars.attr['data-page-component-module'] }}"
+            data-page-component-options="{{ form.vars.attr['data-page-component-options'] }}"
+    >
+        {{ form_row(form.discount_type) }}
+        {{ form_row(form.amount_discount_value) }}
+        {{ form_row(form.percent_discount_value) }}
+        {{ form_row(form.apply_to) }}
+        {{ form_row(form.discount_product_unit_code) }}
+        {{ form_rest(form) }}
+    </div>
+    {% endblock %}
 
 {% block oro_promotion_discount_configuration_widget %}
     {% set dataPrototypes = [] %}
@@ -97,7 +112,7 @@
     <div class="oro-collection-table-heading">
         <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
         {{ UI.clientLink({
-            'dataUrl': path('oro_frontend_action_widget_form', {
+            'dataUrl': path('oro_action_widget_form', {
                 operationName: 'oro_promotion_add_coupon_form',
                 entityClass: oro_class_name(form.vars.entity),
                 entityId: {id: form.vars.entity.id}

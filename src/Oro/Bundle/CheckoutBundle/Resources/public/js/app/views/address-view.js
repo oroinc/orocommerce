@@ -60,13 +60,10 @@ define(function(require) {
             }
 
             var isOneOption = this.$addressSelector[0].length === 1;
-            if (!disabled && this._isFormVisible()) {
-                this._showForm();
-            } else {
-                this._hideForm(true);
+            if (disabled || this._isFormVisible()) {
                 this.$addressSelector.focus();
             }
-            this.$addressSelector.prop('disabled', disabled || isOneOption).inputWidget('refresh');
+            this.$addressSelector.prop('disabled', isOneOption).inputWidget('refresh');
             mediator.trigger('checkout:ship_to_checkbox:changed', this.$shipToBillingCheckbox);
             if (isOneOption) {
                 this.$addressSelector.inputWidget('dispose');
@@ -143,9 +140,9 @@ define(function(require) {
             this.$fieldsContainer.removeClass('hidden');
         },
 
-        _hideForm: function(showCheckbox) {
+        _hideForm: function() {
             if (this.needCheckAddressTypes) {
-                if (showCheckbox || _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
+                if (_.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
                     this.shipToBillingContainer.removeClass('hidden');
                 } else {
                     this.$shipToBillingCheckbox.prop('checked', false);

@@ -3,19 +3,44 @@ oro:
         category:
             entity_label:                           'Category'
             entity_plural_label:                    'Categories'
+            entity_description:                     A category of the <a href="https://www.orocommerce.com/documentation/current/user-guide/master-catalog">master catalog</a>.
             id.label:                               'ID'
-            titles.label:                           'Title'
-            short_descriptions.label:               'Short Description'
-            long_descriptions.label:                'Long Description'
-            small_image.label:                      'Small Image'
-            large_image.label:                      'Large Image'
-            left.label:                             'Tree left index'
-            level.label:                            'Tree level'
-            right.label:                            'Tree right index'
-            root.label:                             'Tree root'
-            child_categories.label:                 'Child categories'
-            parent_category.label:                  'Parent category'
-            products.label:                         'Products'
+            titles:
+                label:                              'Title'
+                description:                        The category title that is used to refer to the category in the UI is localizable, therefore it is stored as a relationship between the master catalog category and the collection of the titles translations.
+            short_descriptions:
+                label:                              'Short Description'
+                description:                        The short description of the category that is stored as a relationship between the master catalog category and the collection of the short description translations.
+            long_descriptions:
+                label:                              'Long Description'
+                description:                        The long description of the category that is stored as a relationship between the master catalog category and the collection of the long description translations.
+            small_image:
+                label:                              'Small Image'
+                description:                        The relationship between the category and the file that represents the small category image.
+            large_image:
+                label:                              'Large Image'
+                description:                        The relationship between the category and the file that represents the large category image.
+            left:
+                label:                              'Tree left index'
+                description:                        Reserved for service use.
+            level:
+                label:                              'Tree level'
+                description:                        A level of the category in the category structure. The root category is a zero point and, for example, the category A nested directly into the root category is on the first level, and the sub-category nested into the category A is on the second level.
+            right:
+                label:                              'Tree right index'
+                description:                        Reserved for service use.
+            root:
+                label:                              'Tree root'
+                description:                        Identifier of the master catalog root category.
+            child_categories:
+                label:                              'Child categories'
+                description:                        The relationship between the category and the categories nested into the category.
+            parent_category:
+                label:                              'Parent category'
+                description:                        The relationship between the category and its parent category.
+            products:
+                label:                              'Products'
+                description:                        The relationship between the category and the products in it.
             categories.label:                       'Product categories'
             include_subcategories.label:            'Include Sub-Categories'
             include_not_categorized_products.label: 'Include Not Categorized Products'
@@ -24,13 +49,34 @@ oro:
             unit.label:                             'Unit of Quantity'
             precision.label:                        'Precision'
             content_variant_type.label:             'Category Page'
-            materialized_path.label:                'Materialized path'
+            materialized_path:
+                label:                              'Materialized path'
+                description:                        Materialized path represents the logical path to the category in the master catalog category tree. It is a concatenation of the parent category identifiers from the root to the category. For example, a materializedPath for the category C (id 3) nested into the category B (id 2) which in turn linked to the root category (id 1) is 1_2_3.
             slugs:
-                label:              'Slugs'
-                singular_label:     'Slug'
+                label:                              'Slugs'
+                singular_label:                     'Slug'
             slug_prototypes:
-                label:              'URL Slug'
-                singular_label:     'Slug Prototype'
+                label:                              'URL Slug'
+                singular_label:                     'Slug prototype'
+                description:                        The relationship between the category and the collection of translations of the slug prototype.
+            back_order:
+                label:                              'Back order'
+                description:                        A flag that defines whether the products in the category may be ordered while not in stock or when the inventory is low. This option applies only when the category settings apply to the product.
+            decrement_quantity:
+                label:                              'Decrement quantity'
+                description:                        A flag that defines whether the inventory level should be updated when the order is placed for the particular quantity of the product units. This option applies only when the category settings apply to the product.
+            inventory_threshold:
+                label:                              'Inventory threshold'
+                description:                        The inventory threshold that marks the line for the low inventory. This option applies only when the category settings apply to the product.
+            manage_inventory:
+                label:                              'Manage inventory'
+                description:                        An option that defines whether the inventory is managed or not for the products in the category. This option applies only when the category settings apply to the product.
+            maximum_quantity_to_order:
+                label:                              'Maximum quantity to order'
+                description:                        The maximum quantity that the user can order by default for the products in the category. This option applies only when the category settings apply to the product.
+            minimum_quantity_to_order:
+                label:                              'Minimum quantity to order'
+                description:                        The minimum quantity that the user can order by default for the products in the category. This option applies only when the category settings apply to the product.
 
         all_products:
             label: All Products
@@ -42,6 +88,13 @@ oro:
 
         subcategory:
             entity_label:   'Subcategory'
+
+            form:
+                exclude_subcategories:
+                    label: 'Sub-Categories'
+                    include.label: 'Include, show as filter'
+                    exclude.label: 'Do not include'
+                    tooltip: 'This option can be used to include all products assigned to sub-categories (all levels) of the current category in addition to the products that are assigned directly. The first level sub-categories that have (directly or in any of their sub-categories) at least one product visible to the current user will be shown as category filter options.'
 
         menu:
             master_catalog.label:                  'Master Catalog'
@@ -77,6 +130,7 @@ oro:
                     tooltip: 'Once you enable All Products page, add it as a part of your web catalog (Marketing>Web Catalogs) or a frontend menu (System>Frontend Menus). To add All Products Page to the frontend menu, use the /catalog/allproducts URL. If you add All Products Page to a web catalog, the URL slug will be autogenerated or provided manually.'
 
         featured_categories:
+            label: 'Featured Categories'
             view:
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
@@ -91,3 +145,11 @@ oro:
             all_products_page:
                 label: All products page
                 description: This feature enables a page where all products are shown on one page grouped by category
+
+        filter:
+            subcategory:
+                label: 'Sub-Categories'
+
+    product:
+        category:
+            label: 'Category'

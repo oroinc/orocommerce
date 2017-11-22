@@ -5,7 +5,9 @@ namespace Oro\Bundle\CatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Gedmo\Mapping\Annotation as Gedmo;
+
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
@@ -19,7 +21,12 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * @ORM\Table(name="oro_catalog_category")
+ * @ORM\Table(
+ *      name="oro_catalog_category",
+ *      indexes={
+ *              @ORM\Index(name="idx_oro_category_default_title", columns={"title"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @ORM\AssociationOverrides({
@@ -155,29 +162,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $childCategories;
 
     /**
-     * @var Collection|Product[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinTable(
-     *      name="oro_category_to_product",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $products;
-
-    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -254,6 +238,24 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $materializedPath;
 
     /**
+     * This is a mirror field for performance reasons only.
+     * It mirrors getDefaultTitle()->getString()
+     *
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
+     */
+    protected $denormalizedDefaultTitle;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -262,7 +264,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
 
         $this->titles = new ArrayCollection();
         $this->childCategories = new ArrayCollection();
-        $this->products = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->longDescriptions = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
@@ -374,60 +375,16 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|Product[]
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    /**
-     * @param Collection|Product[] $products
+     * Pre persist event handler
      *
-     * @return $this
+     * @ORM\PrePersist
      */
-    public function setProducts(Collection $products)
+    public function prePersist()
     {
-        $this->products = $products;
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return $this
-     */
-    public function addProduct(Product $product)
-    {
-        if (!$this->hasProduct($product)) {
-            $this->products->add($product);
+        if (!$this->getDefaultTitle()) {
+            throw new \RuntimeException('Category has to have a default title');
         }
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return $this
-     */
-    public function removeProduct(Product $product)
-    {
-        if ($this->hasProduct($product)) {
-            $this->products->removeElement($product);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function hasProduct(Product $product)
-    {
-        return $this->products->contains($product);
+        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
     }
 
     /**
@@ -436,6 +393,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if (!$this->getDefaultTitle()) {
+            throw new \RuntimeException('Category has to have a default title');
+        }
+        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
     }
 
     /**
@@ -559,5 +521,15 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
         $this->materializedPath = $materializedPath;
 
         return $this;
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getDenormalizedDefaultTitle()
+    {
+        return $this->denormalizedDefaultTitle;
     }
 }

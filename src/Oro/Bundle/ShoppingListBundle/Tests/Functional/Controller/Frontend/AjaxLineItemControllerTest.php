@@ -295,6 +295,14 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         return [
             [
+                'productRef' => LoadProductData::PRODUCT_8,
+                'expectedResult' => false,
+                'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
+                'expectedInitCount' => 1,
+                'removeCurrent' => true,
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1
+            ],
+            [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,
                 'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.

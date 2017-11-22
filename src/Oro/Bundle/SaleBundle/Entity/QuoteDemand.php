@@ -13,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwar
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
@@ -47,7 +48,8 @@ class QuoteDemand implements
     ShippingAwareInterface,
     SubtotalAwareInterface,
     CustomerOwnerAwareInterface,
-    CheckoutLineItemsHolderInterface
+    CheckoutLineItemsHolderInterface,
+    PreConfiguredShippingMethodConfigurationInterface
 {
     use AuditableFrontendCustomerUserAwareTrait;
 
@@ -181,15 +183,27 @@ class QuoteDemand implements
     }
 
     /**
-     * @return Price|null
+     * {@inheritDoc}
      */
     public function getShippingCost()
     {
-        if ($this->quote) {
-            return $this->quote->getShippingCost();
-        }
+        return $this->quote ? $this->quote->getShippingCost() : null;
+    }
 
-        return null;
+    /**
+     * {@inheritDoc}
+     */
+    public function getShippingMethod()
+    {
+        return $this->quote ? $this->quote->getShippingMethod() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getShippingMethodType()
+    {
+        return $this->quote ? $this->quote->getShippingMethodType() : null;
     }
 
     protected function initQuoteProductDemands()

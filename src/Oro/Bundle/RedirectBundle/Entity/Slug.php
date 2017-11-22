@@ -14,7 +14,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * @ORM\Table(name="oro_redirect_slug", indexes={
  *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
  *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
- *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"})
+ *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
+ *     @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
  * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
@@ -28,6 +29,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          }
  *      }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class Slug
 {
@@ -118,6 +120,14 @@ class Slug
      */
     protected $localization;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="parameters_hash", type="string", length=32)
+     */
+    protected $parametersHash;
+
     public function __construct()
     {
         $this->redirects = new ArrayCollection();
@@ -186,6 +196,7 @@ class Slug
     public function setRouteParameters(array $routeParameters)
     {
         $this->routeParameters = $routeParameters;
+        $this->parametersHash = self::hashParameters($routeParameters);
 
         return $this;
     }
@@ -317,5 +328,22 @@ class Slug
         $this->slugPrototype = $slugPrototype;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParametersHash()
+    {
+        return $this->parametersHash;
+    }
+
+    /**
+     * @param array|null $parameters
+     * @return string
+     */
+    public static function hashParameters(array $parameters = null)
+    {
+        return md5(base64_encode(serialize($parameters)));
     }
 }

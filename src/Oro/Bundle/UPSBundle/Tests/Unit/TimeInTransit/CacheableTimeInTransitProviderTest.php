@@ -64,11 +64,17 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     private $address;
 
     /**
+     * @var int
+     */
+    private $weight;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->address = new AddressStub();
+        $this->weight = 1;
         $this->pickupDate = \DateTime::createFromFormat('d.m.Y H:i', self::PICKUP_DATE);
         $this->upsTransport = $this->createMock(UPSTransport::class);
         $this->timeInTransitCacheProviderFactory = $this->createMock(TimeInTransitCacheProviderFactoryInterface::class);
@@ -79,10 +85,14 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             new CacheableTimeInTransitProvider($this->timeInTransit, $this->timeInTransitCacheProviderFactory);
     }
 
-    public function testGetTimeInTransitResult()
+    /**
+     * @dataProvider timeInTransitResultStatusDataProvider
+     *
+     * @param bool $status
+     * @param int  $saveCache
+     */
+    public function testGetTimeInTransitResult($status, $saveCache)
     {
-        $this->mockUpsTransport();
-
         $this->mockTimeInTransitCacheProviderFactory();
 
         $this->timeInTransitCacheProvider
@@ -97,22 +107,48 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->upsTransport, $this->address, $this->address, $this->pickupDate)
             ->willReturn($this->timeInTransitResult);
 
-        $this->timeInTransitCacheProvider
+        $this->timeInTransitResult
             ->expects(static::once())
+            ->method('getStatus')
+            ->willReturn($status);
+
+        $this->timeInTransitCacheProvider
+            ->expects(static::exactly($saveCache))
             ->method('save')
             ->with($this->address, $this->address, $this->pickupDate, $this->timeInTransitResult);
 
         $result = $this
             ->cacheableTimeInTransit
-            ->getTimeInTransitResult($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult(
+                $this->upsTransport,
+                $this->address,
+                $this->address,
+                $this->pickupDate,
+                $this->weight
+            );
 
         static::assertEquals($this->timeInTransitResult, $result);
     }
 
+    /**
+     * @return array
+     */
+    public function timeInTransitResultStatusDataProvider()
+    {
+        return [
+            'result should be cached' => [
+                'status' => true,
+                'saveCache' => 1,
+            ],
+            'result should not be cached' => [
+                'status' => false,
+                'saveCache' => 0,
+            ],
+        ];
+    }
+
     public function testGetTimeInTransitResultWhenCacheExists()
     {
-        $this->mockUpsTransport();
-
         $this->mockTimeInTransitCacheProviderFactory();
 
         $this->timeInTransitCacheProvider
@@ -133,17 +169,15 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
 
         $result = $this
             ->cacheableTimeInTransit
-            ->getTimeInTransitResult($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+            ->getTimeInTransitResult(
+                $this->upsTransport,
+                $this->address,
+                $this->address,
+                $this->pickupDate,
+                $this->weight
+            );
 
         static::assertEquals($this->timeInTransitResult, $result);
-    }
-
-    private function mockUpsTransport()
-    {
-        $this->upsTransport
-            ->expects(static::once())
-            ->method('getId')
-            ->willReturn(self::TRANSPORT_ID);
     }
 
     private function mockTimeInTransitCacheProviderFactory()
@@ -151,7 +185,7 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
         $this->timeInTransitCacheProviderFactory
             ->expects(static::once())
             ->method('createCacheProviderForTransport')
-            ->with(self::TRANSPORT_ID)
+            ->with($this->upsTransport)
             ->willReturn($this->timeInTransitCacheProvider);
     }
 }

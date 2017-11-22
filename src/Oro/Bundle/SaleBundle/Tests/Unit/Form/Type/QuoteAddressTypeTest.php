@@ -152,7 +152,8 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
      */
     public function submitProvider()
     {
-        $country = new Country('US');
+        list($country, $region) = $this->getValidCountryAndRegion();
+        $countryWithoutRegion = new Country(self::COUNTRY_WITHOUT_REGION);
 
         return [
             'empty data' => [
@@ -174,18 +175,18 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             'valid country only' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'country' => 'US',
+                    'country' => self::COUNTRY_WITHOUT_REGION,
                 ],
-                'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
+                'expectedData' => (new QuoteAddress())->setCountry($countryWithoutRegion),
                 'defaultData' => new QuoteAddress(),
             ],
             'customer address preselector' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'country' => 'US',
+                    'country' => self::COUNTRY_WITHOUT_REGION,
                     'customerAddress' => null,
                 ],
-                'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
+                'expectedData' => (new QuoteAddress())->setCountry($countryWithoutRegion),
                 'defaultData' => new QuoteAddress(),
             ],
             'valid full' => [
@@ -201,25 +202,25 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                     'street' => 'Street',
                     'street2' => 'Street2',
                     'city' => 'City',
-                    'region' => 'US-AL',
+                    'region' => self::REGION_WITH_COUNTRY,
                     'region_text' => 'Region Text',
                     'postalCode' => 'AL',
-                    'country' => 'US',
+                    'country' => self::COUNTRY_WITH_REGION,
                 ],
                 'expectedData' => (new QuoteAddress())
-                    ->setLabel('Label')
-                    ->setNamePrefix('NamePrefix')
-                    ->setFirstName('FirstName')
-                    ->setMiddleName('MiddleName')
-                    ->setLastName('LastName')
-                    ->setNameSuffix('NameSuffix')
-                    ->setOrganization('Organization')
-                    ->setStreet('Street')
-                    ->setStreet2('Street2')
-                    ->setCity('City')
-                    ->setRegion((new Region('US-AL'))->setCountry($country))
+                    ->setLabel('Label_stripped')
+                    ->setNamePrefix('NamePrefix_stripped')
+                    ->setFirstName('FirstName_stripped')
+                    ->setMiddleName('MiddleName_stripped')
+                    ->setLastName('LastName_stripped')
+                    ->setNameSuffix('NameSuffix_stripped')
+                    ->setOrganization('Organization_stripped')
+                    ->setStreet('Street_stripped')
+                    ->setStreet2('Street2_stripped')
+                    ->setCity('City_stripped')
+                    ->setRegion($region)
                     ->setRegionText('Region Text')
-                    ->setPostalCode('AL')
+                    ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => new QuoteAddress(),
             ],

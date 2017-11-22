@@ -22,11 +22,16 @@ datagrids:
                     - checkout.customerNotes
                     - checkout.shippingMethod
                     - checkout.shippingMethodType
+                    - checkout_subtotals.valid as isSubtotalValid
+                    - checkout_subtotals.value as subtotal
+                    - checkout_subtotals.currency as currency
+                    - (checkout_subtotals.value + COALESCE(checkout.shippingEstimateAmount, 0)) AS total
                 from:
                     - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
                 join:
                     left:
                         - { join: checkout.customerUser, alias: customer_user }
+                        - { join: checkout.subtotals, alias: checkout_subtotals, conditionType: WITH, condition: "checkout_subtotals.currency = :user_currency" }
                 where:
                     and:
                         - checkout.deleted = false
@@ -43,6 +48,19 @@ datagrids:
             itemsCount:
                 label: oro.checkout.line_items_count.label
                 order: 20
+            subtotal:
+                label: oro.checkout.grid.subtotal.label
+                type: twig
+                frontend_type: html
+                template: OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                order: 25
+            total:
+                label: oro.checkout.grid.total.label
+                type: twig
+                frontend_type: html
+                template: OroPricingBundle:Datagrid:Column/total.html.twig
+                order: 85
+                renderable: false
             createdAt:
                 label: oro.checkout.created_at.label
                 frontend_type: datetime
@@ -101,6 +119,10 @@ datagrids:
                     data_name: checkout.shippingEstimateAmount
                 customerNotes:
                     data_name: checkout.customerNotes
+                subtotal:
+                    data_name: subtotal
+                total:
+                    data_name: total
         filters:
             columns:
                 createdAt:
@@ -119,6 +141,12 @@ datagrids:
                 shipUntil:
                     type: date
                     data_name: checkout.shipUntil
+                subtotal:
+                    type: currency
+                    data_name: subtotal
+                total:
+                    type: currency
+                    data_name: total
         properties:
             id: ~
             view_link:

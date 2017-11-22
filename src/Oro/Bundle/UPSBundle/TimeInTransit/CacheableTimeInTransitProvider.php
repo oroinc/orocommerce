@@ -14,7 +14,7 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
     const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdHi';
 
     /**
-     * @var TimeInTransitProvider
+     * @var TimeInTransitProviderInterface
      */
     protected $timeInTransit;
 
@@ -24,11 +24,11 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
     protected $timeInTransitCacheProviderFactory;
 
     /**
-     * @param TimeInTransitProvider                      $timeInTransit
+     * @param TimeInTransitProviderInterface                      $timeInTransit
      * @param TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
      */
     public function __construct(
-        TimeInTransitProvider $timeInTransit,
+        TimeInTransitProviderInterface $timeInTransit,
         TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
     ) {
         $this->timeInTransit = $timeInTransit;
@@ -42,16 +42,20 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
         UPSTransport $transport,
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
-        \DateTime $pickupDate
+        \DateTime $pickupDate,
+        int $weight
     ): TimeInTransitResultInterface {
         $timeInTransitCacheProvider = $this->createCacheProvider($transport);
 
         if (!$timeInTransitCacheProvider->contains($shipFromAddress, $shipToAddress, $pickupDate)) {
             $result = $this
                 ->timeInTransit
-                ->getTimeInTransitResult($transport, $shipFromAddress, $shipToAddress, $pickupDate);
+                ->getTimeInTransitResult($transport, $shipFromAddress, $shipToAddress, $pickupDate, $weight);
 
-            $timeInTransitCacheProvider->save($shipFromAddress, $shipToAddress, $pickupDate, $result);
+            // Cache only successful results.
+            if ($result->getStatus()) {
+                $timeInTransitCacheProvider->save($shipFromAddress, $shipToAddress, $pickupDate, $result);
+            }
         } else {
             $result = $timeInTransitCacheProvider->fetch($shipFromAddress, $shipToAddress, $pickupDate);
         }
@@ -66,6 +70,6 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
      */
     protected function createCacheProvider(UPSTransport $transport)
     {
-        return $this->timeInTransitCacheProviderFactory->createCacheProviderForTransport($transport->getId());
+        return $this->timeInTransitCacheProviderFactory->createCacheProviderForTransport($transport);
     }
 }

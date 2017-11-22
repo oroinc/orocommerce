@@ -3,17 +3,15 @@ define(function(require) {
 
     var MatrixGridAddToShoppingListView;
     var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
-    var $ = require('jquery');
 
     MatrixGridAddToShoppingListView = ProductAddToShoppingListView.extend({
-        _addProductToShoppingList: function(url, urlOptions) {
-            var $shoppingList = this.$form.find('[name="shoppingListId"]');
-            if (!$shoppingList.length) {
-                $shoppingList = $('<input name="shoppingListId" type="hidden"/>');
-                this.$form.append($shoppingList);
-            }
-            $shoppingList.val(urlOptions.shoppingListId);
-            this.$form.submit();
+        _saveLineItem: function(url, urlOptions, formData) {
+            return this._addLineItem(url, urlOptions, formData);
+        },
+
+        _addLineItem: function(url, urlOptions, formData) {
+            url = 'oro_shopping_list_frontend_matrix_grid_order';
+            return MatrixGridAddToShoppingListView.__super__._addLineItem.call(this, url, urlOptions, formData);
         }
     });
 

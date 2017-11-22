@@ -1,6 +1,10 @@
 api:
     entities:
         Oro\Bundle\CatalogBundle\Entity\Category:
+            documentation_resource: '@OroCatalogBundle/Resources/doc/api/category.md'
+            fields:
+                denormalizedDefaultTitle:
+                    exclude: true
             actions:
                 create: false
                 update: false

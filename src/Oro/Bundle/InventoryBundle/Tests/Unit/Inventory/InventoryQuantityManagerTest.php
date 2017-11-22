@@ -129,4 +129,98 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->inventoryQuantityManager->decrementInventory($this->inventoryLevel, 5);
     }
+
+    public function testShouldDecrementReturnTrue()
+    {
+        $this->entityFallbackResolver->expects($this->at(0))
+            ->method('getFallbackValue')
+            ->willReturn(true);
+        $product = $this->createMock(Product::class);
+        $this->assertTrue($this->inventoryQuantityManager->shouldDecrement($product));
+    }
+
+    public function testShouldDecrementReturnFalse()
+    {
+        $this->entityFallbackResolver->expects($this->at(0))
+            ->method('getFallbackValue')
+            ->willReturn(false);
+        $product = $this->createMock(Product::class);
+        $this->assertFalse($this->inventoryQuantityManager->shouldDecrement($product));
+        $this->assertFalse($this->inventoryQuantityManager->shouldDecrement(null));
+    }
+
+    public function testGetAvailableQuantity()
+    {
+        $product = new Product();
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->entityFallbackResolver->expects($this->exactly(3))
+            ->method('getFallbackValue')
+            ->willReturnMap([
+                [$product, 'decrementQuantity', 1, true],
+                [$product, 'backOrder', 1, false],
+                [$product, 'inventoryThreshold', 1, 3],
+            ]);
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn(10);
+
+        $this->assertEquals(
+            7,
+            $this->inventoryQuantityManager->getAvailableQuantity($this->inventoryLevel)
+        );
+    }
+
+    public function testGetAvailableQuantityWithoutDecrementQuantity()
+    {
+        $product = new Product();
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->entityFallbackResolver->expects($this->once())
+            ->method('getFallbackValue')
+            ->willReturnMap([
+                [$product, 'decrementQuantity', 1, false],
+            ]);
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn(15);
+
+        $this->assertEquals(
+            15,
+            $this->inventoryQuantityManager->getAvailableQuantity($this->inventoryLevel)
+        );
+    }
+
+    public function testGetAvailableQuantityWithBackOrder()
+    {
+        $product = new Product();
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->entityFallbackResolver->expects($this->exactly(2))
+            ->method('getFallbackValue')
+            ->willReturnMap([
+                [$product, 'decrementQuantity', 1, true],
+                [$product, 'backOrder', 1, true],
+            ]);
+
+        $this->inventoryLevel->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn(15);
+
+        $this->assertEquals(
+            15,
+            $this->inventoryQuantityManager->getAvailableQuantity($this->inventoryLevel)
+        );
+    }
 }

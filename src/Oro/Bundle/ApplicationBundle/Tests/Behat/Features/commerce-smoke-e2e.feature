@@ -1,5 +1,6 @@
 @regression
 @smoke
+@community-edition-only
 Feature: Commerce smoke e2e
 
   Scenario: Create different window session
@@ -10,6 +11,12 @@ Feature: Commerce smoke e2e
   Scenario: Create Product Tax Code, Customer Tax Code, Create Tax, Create Tax Jurisdiction, Create Tax Rule
     Given I proceed as the Admin
     And I login as administrator
+    And go to System/ Configuration
+    And follow "Commerce/Inventory/Product Options" on configuration sidebar
+    And fill "Product Option Form" with:
+      |Backorders Default|false|
+      |Backorders        |Yes  |
+    And click "Save settings"
     And go to System/ Configuration
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
@@ -442,7 +449,7 @@ Feature: Commerce smoke e2e
       | Password         | AmandaRCole1@example.org |
       | Confirm Password | AmandaRCole1@example.org |
     When I press "Create An Account"
-    Then I should see "Please check your email to complete registration"
+    Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Create customer from the frontstore
     Given I proceed as the User
@@ -533,7 +540,7 @@ Feature: Commerce smoke e2e
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
-    Then should see "Products categories / Phones"
+    Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
@@ -573,7 +580,7 @@ Feature: Commerce smoke e2e
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
-    Then should see "Products categories / Phones"
+    Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
@@ -599,28 +606,24 @@ Feature: Commerce smoke e2e
     And should see an "Product Image (view page)" element
     And should see "ConfigurableShirt"
     And should see "Item"
-    And should see "1 $8.00"
-    And should see "Order with Matrix Grid"
+    And should see an "Matrix Grid Form" element
     And should see an "Add to Shopping List" element
-    When click "Order with Matrix Grid"
-    Then I should see an "Matrix Grid Popup" element
     And fill "Matrix Grid Form" with:
       |Black L|2|
       |Black M|3|
       |White L|1|
       |White M|5|
-    And click "Add to Shopping List form Matrix Grid"
-    And should see an "Green Box" element
+    And click "Add to Shoppin..."
+    And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
     And click "Shopping list"
     And should see "Subtotal $175.20"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
     And click "Phones"
-    When fill "FrontendLineItemForm" with:
+    When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Unit    |item|
-    And I type "10" in "FrontendLineItemForm > Quantity"
-    And I click on empty space
+      |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
@@ -643,10 +646,10 @@ Feature: Commerce smoke e2e
     And click "Create"
     And should see "New Front Shopping List"
     And click "Phones"
-    When fill "FrontendLineItemForm" with:
+    When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|112 |
       |Unit    |item|
-    And click "Add to New Front Shopping List"
+    And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
     When I hover on "Shopping Cart"
     And click "New Front Shopping List"
     And I type "52" in "ShoppingListLineItemForm > Quantity"
@@ -723,7 +726,7 @@ Feature: Commerce smoke e2e
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And click "Sign Out"
 
-  Scenario: Checkout by customer created from front store throug the shopping list created by himself and review the submited order
+  Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
     When I hover on "Shopping Cart"

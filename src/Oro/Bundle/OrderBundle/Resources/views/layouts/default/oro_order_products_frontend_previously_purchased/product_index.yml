@@ -1,0 +1,39 @@
+layout:
+    imports:
+        - oro_product_grid
+        - oro_customer_page
+
+    actions:
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_name
+            optionValue: '=context["product_grid_name"]'
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName(context["product_grid_name"])'
+
+        - '@setOption':
+            id: product_datagrid_toolbar_display_options
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName(context["product_grid_name"])'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName(context["product_grid_name"])!="no-image-view"'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName(context["product_grid_name"])=="no-image-view"'
+
+        - '@remove':
+            id: product_datagrid_cell_recency
+
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue:
+                label: 'oro.order.menu.product.previously_purchased.label'

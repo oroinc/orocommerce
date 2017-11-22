@@ -70,18 +70,20 @@ class ShoppingListControllerTest extends WebTestCase
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
 
+        $operationName = 'oro_shoppinglist_delete';
+        $entityId = $shoppingList->getId();
+        $entityClass = self::getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_frontend_action_operation_execute',
                 [
-                    'operationName' => 'oro_shoppinglist_delete',
-                    'entityId' => $shoppingList->getId(),
-                    'entityClass' =>
-                        $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class'),
+                    'operationName' => $operationName,
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
                 ]
             ),
-            [],
+            $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -93,7 +95,7 @@ class ShoppingListControllerTest extends WebTestCase
             $removedShoppingList = static::getContainer()
                 ->get('doctrine')
                 ->getRepository('OroShoppingListBundle:ShoppingList')
-                ->find($shoppingList->getId());
+                ->find($entityId);
 
             static::assertNull($removedShoppingList);
         }
@@ -223,5 +225,29 @@ class ShoppingListControllerTest extends WebTestCase
                 'status' => 200,
             ],
         ];
+    }
+
+    /**
+     * @param $operationName
+     * @param $entityId
+     * @param $entityClass
+     *
+     * @return array
+     */
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    {
+        $actionContext = [
+            'entityId'    => $entityId,
+            'entityClass' => $entityClass
+        ];
+        $container = self::getContainer();
+        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
+        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
+        $tokenData = $container
+            ->get('oro_action.operation.execution.form_provider')
+            ->createTokenData($operation, $actionData);
+        $container->get('session')->save();
+
+        return $tokenData;
     }
 }

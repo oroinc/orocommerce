@@ -181,21 +181,19 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->expects($this->any())
-            ->method('getAssociationMapping')
-            ->willReturn(['targetEntity' => LocalizedFallbackValue::class]);
-
         /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityMetadata')
-            ->willReturn($metadata);
-        
+
         $manyToManyAttribute = new FieldConfigModel('names');
         $manyToManyAttribute->setEntity(new EntityConfigModel());
         $manyToManySearchAttributeType = new SearchableType\ManyToManySearchableAttributeType(
             new Type\ManyToManyAttributeType($entityNameResolver, $doctrineHelper)
+        );
+
+        $manyToOneAttribute = new FieldConfigModel('manytoone');
+        $manyToOneAttribute->setEntity(new EntityConfigModel());
+        $manyToOneSearchAttributeType = new SearchableType\ManyToOneSearchableAttributeType(
+            new Type\ManyToOneAttributeType($entityNameResolver, $doctrineHelper)
         );
 
         return [
@@ -401,6 +399,37 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
                         'columns' => [
                             'names' => [
                                 'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'many-to-one attribute filterable and sortable' => [
+                'attribute' => $manyToOneAttribute,
+                'attributeType' => $manyToOneSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+                'hasAssociation' => true,
+                'expected' => [
+                    'filters' => [
+                        'columns' => [
+                            'manytoone' => [
+                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
+                                'data_name' => Query::TYPE_INTEGER . '.manytoone',
+                                'label' => self::LABEL,
+                                'class' => StubEnumValue::class,
+                            ]
+                        ]
+                    ],
+                    'columns' => [
+                        'manytoone' => [
+                            'label' => self::LABEL,
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => [
+                            'manytoone' => [
+                                'data_name' => Query::TYPE_TEXT . '.manytoone_' . LocalizationIdPlaceholder::NAME,
                             ]
                         ]
                     ]

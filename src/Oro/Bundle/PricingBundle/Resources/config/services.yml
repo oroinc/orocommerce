@@ -395,13 +395,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_price_list_product_prices_currency_validator }
 
-    oro_pricing.validator.dates_chain:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
-        arguments:
-            - '@property_accessor'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing_dates_chain_validator }
-
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
         arguments:

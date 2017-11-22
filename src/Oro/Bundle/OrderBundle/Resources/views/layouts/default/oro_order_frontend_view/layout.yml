@@ -4,6 +4,10 @@ layout:
             id: oro_line_items_grid
             root: order_container
             namespace: line_items
+        -
+            id: oro_customer_toolbar_actions
+            root: order_view_page
+            namespace: order_view_page_toolbar
 
     actions:
         - '@setBlockTheme':
@@ -17,13 +21,25 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue:
-                label: 'oro.order.navigation.view'
+                label: 'oro.frontend.order.identifier.label'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
             id: page_content
             optionName: class_prefix
             optionValue: 'customer'
+        - '@setOption':
+            id: order_view_page_toolbar_print_button
+            optionName: text
+            optionValue: 'oro.frontend.order.toolbar-actions.btn.print'
+        - '@add':
+            id: button_container
+            blockType: line_buttons
+            parentId: order_view_page_toolbar_actions-list
+            options:
+                visible: '=data["buttons"].getAll(data["order"])!=null'
+                buttons: '=data["buttons"].getAll(data["order"])'
+            prepend: true
         - '@addTree':
             items:
                 order_view_page:
@@ -46,10 +62,6 @@ layout:
                     blockType: container
                     options:
                         additional_block_prefixes: ['order_body_block_container']
-                order_head_container:
-                    blockType: container
-                    options:
-                        additional_block_prefixes: ['order_head_block_container']
                 order_information_head:
                     blockType: text
                     options:
@@ -59,6 +71,9 @@ layout:
                     options:
                         route_name: oro_order_frontend_index
                         text: 'oro.order.frontend.order_list_link.text'
+                        icon: angle-left
+                        attr:
+                            class: 'link pull-left hide-on-print'
                 order_identifier:
                     blockType: text
                     options:
@@ -157,8 +172,7 @@ layout:
                     order_view_page:
                         order_container:
                             order_body:
-                                order_head_container:
-                                    order_information_head: ~
+                                order_information_head: ~
                                 order_body_container:
                                     order_body_column_left:
                                         order_date: ~

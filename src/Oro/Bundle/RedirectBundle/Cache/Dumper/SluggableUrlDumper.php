@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache\Dumper;
 
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Doctrine\Common\Cache\FlushableCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 
 class SluggableUrlDumper
@@ -13,15 +14,15 @@ class SluggableUrlDumper
     private $slugRepository;
 
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
     private $cache;
 
     /**
      * @param SlugRepository $slugRepository
-     * @param UrlStorageCache $cache
+     * @param UrlCacheInterface $cache
      */
-    public function __construct(SlugRepository $slugRepository, UrlStorageCache $cache)
+    public function __construct(SlugRepository $slugRepository, UrlCacheInterface $cache)
     {
         $this->slugRepository = $slugRepository;
         $this->cache = $cache;
@@ -43,6 +44,8 @@ class SluggableUrlDumper
             );
         }
 
-        $this->cache->flush();
+        if ($this->cache instanceof FlushableCache) {
+            $this->cache->flushAll();
+        }
     }
 }

@@ -8,8 +8,10 @@ use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 
 class CouponValidationService
 {
+    const MESSAGE_DISABLED = 'oro.promotion.coupon.violation.disabled';
     const MESSAGE_ABSENT_PROMOTION = 'oro.promotion.coupon.violation.absent_promotion';
     const MESSAGE_EXPIRED = 'oro.promotion.coupon.violation.expired';
+    const MESSAGE_NOT_STARTED = 'oro.promotion.coupon.violation.not_started';
     const MESSAGE_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.usage_limit_exceeded';
     const MESSAGE_USER_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.customer_user_usage_limit_exceeded';
 
@@ -45,8 +47,16 @@ class CouponValidationService
     {
         $violations = [];
 
+        if (!$coupon->isEnabled()) {
+            $violations[] = self::MESSAGE_DISABLED;
+        }
+
         if (!$coupon->getPromotion()) {
             $violations[] = self::MESSAGE_ABSENT_PROMOTION;
+        }
+
+        if ($this->isCouponNotStarted($coupon)) {
+            $violations[] = self::MESSAGE_NOT_STARTED;
         }
 
         if ($this->isCouponExpired($coupon)) {
@@ -62,6 +72,15 @@ class CouponValidationService
         }
 
         return $violations;
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return bool
+     */
+    private function isCouponNotStarted(Coupon $coupon): bool
+    {
+        return $coupon->getValidFrom() && $coupon->getValidFrom() > new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**

@@ -9,7 +9,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class PaymentStatusProvider
+class PaymentStatusProvider implements PaymentStatusProviderInterface
 {
     const FULL = 'full';
     const PARTIALLY = 'partially';
@@ -37,8 +37,7 @@ class PaymentStatusProvider
     }
 
     /**
-     * @param object $entity
-     * @return string
+     * {@inheritdoc}
      */
     public function getPaymentStatus($entity)
     {

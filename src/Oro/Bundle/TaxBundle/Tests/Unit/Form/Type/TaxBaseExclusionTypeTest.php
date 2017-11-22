@@ -50,7 +50,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
      */
     public function submitDataProvider()
     {
-        $country = new Country('US');
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'valid form' => [
@@ -58,13 +58,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'defaultData' => new TaxBaseExclusion(),
                 'viewData' => new TaxBaseExclusion(),
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'option' => 'shipping_origin',
                 ],
                 'expectedData' => [
                     'country' => $country,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => null,
                     'option' => 'shipping_origin',
                 ],
@@ -74,12 +74,12 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'defaultData' => new TaxBaseExclusion(),
                 'viewData' => new TaxBaseExclusion(),
                 'submittedData' => [
-                    'country' => 'US',
+                    'country' => self::COUNTRY_WITHOUT_REGION,
                     'region' => null,
                     'option' => 'shipping_origin',
                 ],
                 'expectedData' => [
-                    'country' => $country,
+                    'country' => new Country(self::COUNTRY_WITHOUT_REGION),
                     'region' => null,
                     'region_text' => null,
                     'option' => 'shipping_origin',
@@ -91,12 +91,12 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'viewData' => new TaxBaseExclusion(),
                 'submittedData' => [
                     'country' => null,
-                    'region' => 'US-AL',
+                    'region' => self::REGION_WITH_COUNTRY,
                     'option' => 'shipping_origin',
                 ],
                 'expectedData' => [
                     'country' => null,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => null,
                     'option' => 'shipping_origin',
                 ],
@@ -106,13 +106,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'defaultData' => new TaxBaseExclusion(),
                 'viewData' => new TaxBaseExclusion(),
                 'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'option' => 'false',
                 ],
                 'expectedData' => [
                     'country' => $country,
-                    'region' => (new Region('US-AL'))->setCountry($country),
+                    'region' => $region,
                     'region_text' => null,
                     'option' => null,
                 ],

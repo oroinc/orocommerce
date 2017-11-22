@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     /**
      * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -151,5 +151,10 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             [$promotion],
             $context
         );
+    }
+
+    public function testFilterIsSkippable()
+    {
+        $this->assertServiceSkipped($this->shippingFiltrationService, $this->filtrationService);
     }
 }

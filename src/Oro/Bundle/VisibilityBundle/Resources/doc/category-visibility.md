@@ -61,7 +61,7 @@ Also each row in cache tables stores one on the data sources:
 
 Here is a list of possible cases that require to update the cache:
 
-##### Category Visibility to All
+#### Category Visibility to All
 | `CategoryVisibilityResolved`     | **Parent Category**                          | **Config** | **Hidden**                                    | **Visible**                                  |
 |----------------------------------|----------------------------------------------|------------|-----------------------------------------------|----------------------------------------------|
 | **category (FK) (PK)**           | Get category from current category visibility|      X     | Get category from current category visibility | Get category from current category visibility|
@@ -70,7 +70,7 @@ Here is a list of possible cases that require to update the cache:
 | **visibility**                   | Get parent category visibility from cache    |      X     |             ::VISIBILITY_HIDDEN               |             ::VISIBILITY_VISIBLE             |
 | **source**                       |           ::SOURCE_PARENT_CATEGORY           |      X     |               ::SOURCE_STATIC                 |               ::SOURCE_STATIC                |
 
-##### Category Visibility to Customer Group
+#### Category Visibility to Customer Group
 | `CustomerGroupCategoryVisibilityResolved` | **Visibility to All** | **Parent Category**                                              | **Hidden**                                                 | **Visible**                                                |
 |------------------------------------------|-----------------------|------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
 | **category (FK) (PK)**                   |          X            | Get category from current customer group category visibility      | Get category from current customer group category visibility| Get category from current customer group category visibility|
@@ -79,7 +79,7 @@ Here is a list of possible cases that require to update the cache:
 | **visibility**                           |          X            | Get parent category visibility from cache for this customer group |                     ::VISIBILITY_HIDDEN                    |                   ::VISIBILITY_VISIBLE                     |
 | **source**                               |          X            |           ::SOURCE_PARENT_CATEGORY                               |                       ::SOURCE_STATIC                      |                     ::SOURCE_STATIC                        |
 
-##### Category Visibility to Customer
+#### Category Visibility to Customer
 | `CustomerCategoryVisibilityResolved`     | **Customer Group** | **Visibility to All**                                       | **Parent Category**                                        | **Hidden**                                           | **Visible**                                          |
 |-----------------------------------------|-------------------|-------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
 | **category (FK) (PK)**                  |         X         | Get category from current customer group category visibility | Get category from current customer category visibility      | Get category from current customer category visibility| Get category from current customer category visibility|

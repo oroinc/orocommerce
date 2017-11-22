@@ -1,4 +1,20 @@
 action_groups:
+    b2b_flow_checkout_duplicate_address:
+        parameters:
+            address:
+                type: Oro\Bundle\OrderBundle\Entity\OrderAddress
+        actions:
+            - '@duplicate':
+                target: $.address
+                attribute: $.newAddress
+                settings:
+                    - [[setNull], [propertyName, [id]]]
+                    - [[keep], [propertyType, ['Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\AddressBundle\Entity\Country']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\AddressBundle\Entity\Region']]]
+                    - [[shallowCopy], [propertyType, ['\DateTime']]]
+
     b2b_flow_checkout_update_billing_address:
         parameters:
             checkout:

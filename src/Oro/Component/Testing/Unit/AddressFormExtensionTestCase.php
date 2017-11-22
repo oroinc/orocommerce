@@ -4,6 +4,7 @@ namespace Oro\Component\Testing\Unit;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
@@ -16,10 +17,15 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
 abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
 {
+    const COUNTRY_WITHOUT_REGION = 'US';
+    const COUNTRY_WITH_REGION = 'RO';
+    const REGION_WITH_COUNTRY = 'RO-MS';
+
     /**
      * {@inheritdoc}
      */
@@ -35,7 +41,12 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                     'translatable_entity' => $this->getTranslatableEntity(),
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new AdditionalAttrExtension()]]
+                [
+                    'form' => [
+                        new AdditionalAttrExtension(),
+                        new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    ],
+                ]
             )
         ];
     }
@@ -51,10 +62,19 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $country = new Country('US');
+        list($country, $region) = $this->getValidCountryAndRegion();
+        $countryCA = new Country('CA');
+
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
+            'OroAddressBundle:Country' => [
+                'CA' => $countryCA,
+                self::COUNTRY_WITH_REGION => $country,
+                self::COUNTRY_WITHOUT_REGION => new Country(self::COUNTRY_WITHOUT_REGION),
+            ],
+            'OroAddressBundle:Region' => [
+                self::REGION_WITH_COUNTRY => $region,
+                'CA-QC' => (new Region('CA-QC'))->setCountry($countryCA),
+            ],
         ];
 
         $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
@@ -86,6 +106,20 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                 }
             )
         );
+
         return $translatableEntity;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidCountryAndRegion()
+    {
+        $country = new Country(self::COUNTRY_WITH_REGION);
+        $region = new Region(self::REGION_WITH_COUNTRY);
+        $region->setCountry($country);
+        $country->addRegion($region);
+
+        return [$country, $region];
     }
 }

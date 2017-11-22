@@ -5,38 +5,17 @@ namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
 
 abstract class FrontendWebTestCase extends WebTestCase
 {
     /**
-     * @var WebsiteManager
-     */
-    protected $storedWebsiteManager;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function initClient(array $options = [], array $server = [], $force = false)
-    {
-        $client = parent::initClient($options, $server, $force);
-
-        if (!$this->storedWebsiteManager) {
-            $this->storedWebsiteManager = $this->client->getContainer()->get('oro_website.manager');
-        }
-
-        return $client;
-    }
-
-    /**
      * @after
      */
     public function afterFrontendTest()
     {
-        if ($this->storedWebsiteManager) {
-            $this->client->getContainer()->set('oro_website.manager', $this->storedWebsiteManager);
-            unset($this->storedWebsiteManager);
+        if (null !== $this->client) {
+            $this->getWebsiteManagerStub()->disableStub();
         }
     }
 
@@ -59,7 +38,8 @@ abstract class FrontendWebTestCase extends WebTestCase
      */
     public function setCurrentWebsite($websiteReference = null)
     {
-        $defaultWebsite = $this->storedWebsiteManager->getDefaultWebsite();
+        $websiteManagerStub = $this->getWebsiteManagerStub();
+        $defaultWebsite = $websiteManagerStub->getDefaultWebsite();
         if (!$websiteReference || $websiteReference === 'default') {
             $website = $defaultWebsite;
         } else {
@@ -71,7 +51,33 @@ abstract class FrontendWebTestCase extends WebTestCase
             $website = $this->getReference($websiteReference);
         }
 
-        $managerStub = new WebsiteManagerStub($website, $defaultWebsite);
-        $this->client->getContainer()->set('oro_website.manager', $managerStub);
+        $websiteManagerStub->enableStub();
+        $websiteManagerStub->setCurrentWebsiteStub($website);
+        $websiteManagerStub->setDefaultWebsiteStub($defaultWebsite);
+    }
+
+    /**
+     * @return int
+     */
+    protected function getDefaultWebsiteId()
+    {
+        return $this->getWebsiteManagerStub()->getDefaultWebsite()->getId();
+    }
+
+    /**
+     * @return WebsiteManagerStub
+     */
+    private function getWebsiteManagerStub()
+    {
+        $manager = $this->client->getContainer()->get('oro_website.manager');
+        if (!$manager instanceof WebsiteManagerStub) {
+            throw new \LogicException(sprintf(
+                'The service "oro_website.manager" should be instance of "%s", given "%s".',
+                WebsiteManagerStub::class,
+                get_class($manager)
+            ));
+        }
+
+        return $manager;
     }
 }

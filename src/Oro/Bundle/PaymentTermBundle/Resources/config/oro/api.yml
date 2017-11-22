@@ -1,0 +1,14 @@
+api:
+    entities:
+        Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+            documentation_resource: '@OroPaymentTermBundle/Resources/doc/api/payment_terms.md'
+
+        Oro\Bundle\CustomerBundle\Entity\Customer:
+            fields:
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e
+
+        Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+            fields:
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e

@@ -40,7 +40,7 @@ class OrderMapper implements MapperInterface
     }
 
     /** {@inheritdoc} */
-    public function map(Checkout $checkout, array $data = [])
+    public function map(Checkout $checkout, array $data = [], array $skipped = [])
     {
         $order = new Order();
         $data = array_merge($this->getData($checkout), $data);
@@ -60,7 +60,7 @@ class OrderMapper implements MapperInterface
             );
         }
 
-        $this->assignData($order, $data);
+        $this->assignData($order, $data, $skipped);
 
         if (!empty($data['paymentTerm'])) {
             $this->assignPaymentTerm($order, $data['paymentTerm']);
@@ -91,10 +91,14 @@ class OrderMapper implements MapperInterface
     /**
      * @param Order $entity
      * @param array $data
+     * @param array $skipped
      */
-    protected function assignData(Order $entity, array $data)
+    protected function assignData(Order $entity, array $data, array $skipped)
     {
         foreach ($data as $name => $value) {
+            if (!empty($skipped[$name])) {
+                continue;
+            }
             try {
                 $this->propertyAccessor->setValue($entity, $name, $value);
             } catch (NoSuchPropertyException $e) {

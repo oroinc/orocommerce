@@ -90,6 +90,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'slugPrototypes.English (Canada).value' => '',
         'featured' => '',
         'newArrival' => '',
+        'availability_date' => '',
     ];
 
     /**

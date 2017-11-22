@@ -94,6 +94,7 @@ oro.pricing:
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
+        entity_description: 'Price attributes are custom parameters where you can store the product price-related information (e.g. MRSP) that may be used in the rule-based price lists to calculate the price for the buyer.'
         name:
             label: 'Price Attribute'
             description: 'Price attribute name'

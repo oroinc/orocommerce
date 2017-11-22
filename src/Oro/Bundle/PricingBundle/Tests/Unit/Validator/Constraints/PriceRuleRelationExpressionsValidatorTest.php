@@ -16,6 +16,7 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
@@ -196,6 +197,25 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'qtyNode' => new RelationNode(Product::class, 'msrp', 'quantity')
             ],
         ];
+    }
+
+    public function testValidateWithSyntaxError()
+    {
+        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(ExecutionContextInterface::class);
+        $context->expects($this->never())
+            ->method($this->anything());
+        $this->validator->initialize($context);
+
+        $rule = new PriceRule();
+        $rule->setRule('product.msrp.value')
+            ->setProductUnitExpression('pricelist[1].');
+
+        $this->parser->expects($this->any())
+            ->method('parse')
+            ->willThrowException(new SyntaxError('Expected name around position 14.'));
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
     }
 
     /**
