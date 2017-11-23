@@ -4,14 +4,11 @@ layout:
             themes: 'default.html.twig'
         - '@addTree':
             items:
-                hero_promo_container:
-                    blockType: container
-                    prepend: true
                 hero_promo:
                     blockType: content_block
+                    prepend: true
                     options:
                         alias: home-page-slider
             tree:
                 page_content:
-                    hero_promo_container:
-                        hero_promo: ~
+                    hero_promo: ~
