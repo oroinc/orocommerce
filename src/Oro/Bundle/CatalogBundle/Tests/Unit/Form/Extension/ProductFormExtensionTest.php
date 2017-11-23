@@ -247,7 +247,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createCategory($id = null)
     {
-        return $this->createEntity('Oro\Bundle\CatalogBundle\Entity\Category', $id);
+        return $this->createEntity(\Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category::class, $id);
     }
 
     /**

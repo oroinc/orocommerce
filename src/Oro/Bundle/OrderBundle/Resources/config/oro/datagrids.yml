@@ -642,6 +642,7 @@ datagrids:
             type: orm
             query:
                 select:
+                    #will be altered by grouping filter to extract specific date
                     - calendarDate.date as cDate
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
@@ -668,12 +669,9 @@ datagrids:
                             alias: product
                             conditionType: WITH
                             condition: lineitem.product = product.id
-
+                #added to support sql_mode=only_full_group_by
                 groupBy: cDate, sku, product.id, unitCode
         columns:
-            cDate:
-                frontend_type: date
-                renderable: false
             dateGrouping:
                 label:         oro.report.datagrid.column.time_period.label
             sku:
@@ -689,10 +687,9 @@ datagrids:
             columns:
                 sku:
                     data_name: product.sku
-                cDate:
-                    data_name: cDate
                 dateGrouping:
                     data_name: cDate
+                    apply_callback: ['@oro_filter.date_grouping_filter', 'applyOrderBy']
                 qtySold:
                     data_name: qtySold
                 productName:
@@ -705,7 +702,7 @@ datagrids:
                 createdAt:
                     label:     oro.report.datagrid.column.time_period.label
                     type:      datetime
-                    data_name: calendarDate.date
+                    data_name: orderAlias.createdAt
                 sku:
                     type:      string
                     data_name: skuUppercase

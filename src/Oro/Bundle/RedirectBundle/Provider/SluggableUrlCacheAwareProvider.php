@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 
 /**
  * Get human readable URL by routeName, routeParameters and localizationId from Cache
@@ -10,7 +10,7 @@ use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
 {
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
     protected $cache;
 
@@ -20,9 +20,9 @@ class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
     protected $contextUrl;
 
     /**
-     * @param UrlStorageCache $cache
+     * @param UrlCacheInterface $cache
      */
-    public function __construct(UrlStorageCache $cache)
+    public function __construct(UrlCacheInterface $cache)
     {
         $this->cache = $cache;
     }
@@ -40,22 +40,17 @@ class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
      */
     public function getUrl($routeName, $routeParameters, $localizationId)
     {
-        $urlDataStorage = $this->cache->getUrlDataStorage(
-            $routeName,
-            $routeParameters
-        );
+        $url = false;
 
-        $url = null;
-
-        if ($urlDataStorage) {
+        if ($this->cache->has($routeName, $routeParameters, $localizationId)) {
             // For context aware URLs slug may be used as item part
-            if ($this->contextUrl && $slug = $urlDataStorage->getSlug($routeParameters, $localizationId)) {
+            if ($this->contextUrl && $slug = $this->cache->getSlug($routeName, $routeParameters, $localizationId)) {
                 $url = $slug;
             }
 
             // For URLs without context only full URL is acceptable
             if (!$url) {
-                $url = $urlDataStorage->getUrl($routeParameters, $localizationId);
+                $url = $this->cache->getUrl($routeName, $routeParameters, $localizationId);
             }
         }
 
