@@ -82,7 +82,7 @@ class LocalizedLinksDataProvider
     private function getAlternateUrlsBasedOnSystemUrl(SluggableInterface $data)
     {
         return [
-            new AlternateUrl($this->urlGenerator->getAbsoluteUrl($this->urlGenerator->getSystemUrl($data)))
+            new AlternateUrl($this->urlGenerator->getSystemUrl($data))
         ];
     }
 

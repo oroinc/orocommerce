@@ -172,21 +172,14 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
-        $systemUrl = '/some/entity/3';
+        $systemUrl = 'http://domain.com/some/entity/3';
         $this->urlGenerator
             ->expects($this->once())
             ->method('getSystemUrl')
             ->with($entity)
             ->willReturn($systemUrl);
 
-        $absoluteUrl = 'http://domain.com/some/entity/3';
-        $this->urlGenerator
-            ->expects($this->once())
-            ->method('getAbsoluteUrl')
-            ->with($systemUrl)
-            ->willReturn($absoluteUrl);
-
-        $expectedAlternateUrls = [new AlternateUrl($absoluteUrl)];
+        $expectedAlternateUrls = [new AlternateUrl($systemUrl)];
 
         $this->assertEquals($expectedAlternateUrls, $this->dataProvider->getAlternates($entity));
     }
