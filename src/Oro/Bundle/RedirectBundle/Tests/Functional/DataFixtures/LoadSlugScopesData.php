@@ -9,10 +9,25 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInterface
+class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const SCOPE_KEY = 'slug_scope';
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      * {@inheritdoc}
@@ -24,9 +39,9 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
         /** @var Customer $secondCustomer */
         $secondCustomer = $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1);
 
-        $scope = $this->createScopeWithCustomer($manager, $customer);
+        $scope = $this->createScopeWithCustomer($customer);
         $this->addReference(self::SCOPE_KEY, $scope);
-        $this->createScopeWithCustomer($manager, $secondCustomer);
+        $this->createScopeWithCustomer($secondCustomer);
 
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
@@ -55,18 +70,12 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
     }
 
     /**
-     * @param ObjectManager $manager
      * @param Customer $customer
      * @return Scope
      */
-    private function createScopeWithCustomer(ObjectManager $manager, Customer $customer)
+    protected function createScopeWithCustomer(Customer $customer)
     {
-        $scope = new Scope();
-        if (method_exists($scope, 'setCustomer')) {
-            $scope->setCustomer($customer);
-        }
-        $manager->persist($scope);
-
-        return $scope;
+        return $this->container->get('oro_scope.scope_manager')
+            ->findOrCreate('web_content', ['customer' => $customer]);
     }
 }
