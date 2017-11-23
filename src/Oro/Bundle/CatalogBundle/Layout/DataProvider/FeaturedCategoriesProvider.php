@@ -2,36 +2,46 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 class FeaturedCategoriesProvider
 {
-    /**
-     * @var Category[]
-     */
-    protected $categories;
+    use DataProviderCacheTrait;
 
     /**
      * @var CategoriesProvider
      */
-    protected $categoryTreeProvider;
+    private $categoryTreeProvider;
 
     /**
      * @var TokenStorageInterface
      */
-    protected $tokenStorage;
+    private $tokenStorage;
+
+    /**
+     * @var LocalizationHelper
+     */
+    private $localizationHelper;
 
     /**
      * @param CategoriesProvider $categoryTreeProvider
      * @param TokenStorageInterface $tokenStorage
+     * @param LocalizationHelper $localizationHelper
      */
-    public function __construct(CategoriesProvider $categoryTreeProvider, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        CategoriesProvider $categoryTreeProvider,
+        TokenStorageInterface $tokenStorage,
+        LocalizationHelper $localizationHelper
+    ) {
         $this->categoryTreeProvider = $categoryTreeProvider;
         $this->tokenStorage = $tokenStorage;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -40,37 +50,57 @@ class FeaturedCategoriesProvider
      */
     public function getAll(array $categoryIds = [])
     {
-        $this->setCategories($categoryIds);
+        $user = $this->getCurrentUser();
+        $this->initCache([
+            'featured_categories',
+            $user ? $user->getId() : 0,
+            $this->getCurrentLocalizationId(),
+            implode('_', $categoryIds),
+        ]);
 
-        return $this->categories;
+        return $this->getCategories($categoryIds);
     }
 
     /**
+     * Retrieve data in format [['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]
+     *
      * @param array $categoryIds
+     * @return Category[]
      */
-    protected function setCategories(array $categoryIds = [])
+    private function getCategories(array $categoryIds = [])
     {
-        if ($this->categories !== null) {
-            return;
+        $useCache = $this->isCacheUsed();
+        if (true === $useCache) {
+            $result = $this->getFromCache();
+            if ($result) {
+                return $result;
+            }
         }
 
-        $categories = $this->categoryTreeProvider->getCategories($this->getCurrentUser());
-        $this->categories = array_filter(
-            $categories,
-            function (Category $category) use ($categoryIds) {
-                if ($categoryIds && !in_array($category->getId(), $categoryIds, true)) {
-                    return false;
-                }
+        $data = [];
 
-                return $category->getLevel() !== 0;
+        $categories = $this->categoryTreeProvider->getCategories($this->getCurrentUser());
+        foreach ($categories as $category) {
+            if ($category->getLevel() !== 0 && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
+                $data[] = [
+                    'id' => $category->getId(),
+                    'title' => (string) $this->localizationHelper->getLocalizedValue($category->getTitles()),
+                    'small_image' => $category->getSmallImage(),
+                ];
             }
-        );
+        }
+
+        if (true === $useCache) {
+            $this->saveToCache($data);
+        }
+
+        return $data;
     }
 
     /**
      * @return CustomerUser|null
      */
-    protected function getCurrentUser()
+    private function getCurrentUser()
     {
         $token = $this->tokenStorage->getToken();
         if ($token && $token->getUser() instanceof CustomerUser) {
@@ -78,5 +108,16 @@ class FeaturedCategoriesProvider
         }
 
         return null;
+    }
+
+    /**
+     * @return int
+     */
+    private function getCurrentLocalizationId()
+    {
+        $localizationId = ($this->localizationHelper && $this->localizationHelper->getCurrentLocalization()) ?
+            $this->localizationHelper->getCurrentLocalization()->getId() : 0;
+
+        return $localizationId;
     }
 }

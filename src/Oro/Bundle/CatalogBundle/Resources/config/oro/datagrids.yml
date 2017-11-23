@@ -17,7 +17,7 @@ datagrids:
                         (
                             CASE WHEN (:category_id IS NOT NULL) THEN
                                 CASE WHEN
-                                    product MEMBER OF productCategory.products
+                                    product.category = :category_id
                                     OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
                                 THEN true ELSE false END
                             ELSE
@@ -29,11 +29,6 @@ datagrids:
                     - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
-                        -
-                            join: %oro_catalog.entity.category.class%
-                            alias: productCategory
-                            conditionType: WITH
-                            condition: 'productCategory = :category_id'
                         - { join: product.inventory_status, alias: productInventoryStatus}
             bind_parameters:
                 - category_id

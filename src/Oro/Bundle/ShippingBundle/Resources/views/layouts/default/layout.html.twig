@@ -59,7 +59,7 @@
                             />
                             <span class="custom-radio__text">
                                 <%= _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
-                                    'translatedMethodType': type.label,
+                                    'translatedMethodType': _.escape(type.label),
                                     'price': formatter.formatCurrency(type.price.value, type.price.currency)
                                 }) %>
                             </span>

@@ -4,3 +4,10 @@ services:
 
     oro_checkout.alias.mapper.order_mapper:
         alias: oro_checkout.mapper.order_mapper
+
+    oro_website.manager.stub:
+        class: Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub
+        decorates: oro_website.manager
+        decoration_priority: -256 # should be at the top of the decoration chain
+        arguments:
+            - '@oro_website.manager.stub.inner'

@@ -25,8 +25,8 @@ class UrlDataStorageTest extends \PHPUnit_Framework_TestCase
     {
         $storage = new UrlDataStorage();
         $parameters = ['someParameter' => 'someValue'];
-        $storage->setUrl($parameters, 'some_url', 'slug');
-        $this->assertEquals('some_url', $storage->getUrl($parameters));
+        $storage->setUrl($parameters, '/category/slug', 'slug');
+        $this->assertEquals('/category/slug', $storage->getUrl($parameters));
         $this->assertEquals('slug', $storage->getSlug($parameters));
     }
 
@@ -44,12 +44,12 @@ Oro\Bundle\RedirectBundle\Cache\UrlDataStorage::__set_state(array(
     array (
       0 => 
       array (
-        'u' => '/test/some_url',
+        'p' => '/test',
         's' => 'some_url',
       ),
       3 => 
       array (
-        'u' => '/test/some_url-en',
+        'p' => '/test',
         's' => 'some_url-en',
       ),
     ),
@@ -72,7 +72,7 @@ EOT;
     public function testGettersAndSetters()
     {
         $parameters = ['id' => 1];
-        $url = '/test';
+        $url = '/prefix/test';
         $slug = 'test';
         $localizationId = 42;
 
@@ -87,8 +87,8 @@ EOT;
         $this->assertEquals(
             [
                 '2f35704147e4489fb9b8aeb31dbabaef' => [
-                    0 => ['u' => $url, 's' => $slug],
-                    $localizationId => ['u' => $url, 's' => $slug]
+                    0 => ['p' => '/prefix', 's' => $slug],
+                    $localizationId => ['p' => '/prefix', 's' => $slug]
                 ]
             ],
             $storage->getData()
@@ -96,17 +96,17 @@ EOT;
 
         $storage->removeUrl($parameters);
         $this->assertArrayHasKey('2f35704147e4489fb9b8aeb31dbabaef', $storage->getData());
-        $this->assertNull($storage->getUrl($parameters));
-        $this->assertNull($storage->getSlug($parameters));
+        $this->assertFalse($storage->getUrl($parameters));
+        $this->assertFalse($storage->getSlug($parameters));
         $this->assertEquals($url, $storage->getUrl($parameters, $localizationId));
         $this->assertEquals($slug, $storage->getSlug($parameters, $localizationId));
 
         $storage->removeUrl($parameters, $localizationId);
         $this->assertArrayNotHasKey('2f35704147e4489fb9b8aeb31dbabaef', $storage->getData());
-        $this->assertNull($storage->getUrl($parameters));
-        $this->assertNull($storage->getSlug($parameters));
-        $this->assertNull($storage->getUrl($parameters, $localizationId));
-        $this->assertNull($storage->getSlug($parameters, $localizationId));
+        $this->assertFalse($storage->getUrl($parameters));
+        $this->assertFalse($storage->getSlug($parameters));
+        $this->assertFalse($storage->getUrl($parameters, $localizationId));
+        $this->assertFalse($storage->getSlug($parameters, $localizationId));
     }
 
     public function testSetState()

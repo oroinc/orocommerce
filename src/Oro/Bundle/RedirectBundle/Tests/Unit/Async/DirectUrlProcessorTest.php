@@ -8,11 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
@@ -50,24 +51,18 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $urlStorageCache;
+    private $urlCache;
 
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->generator = $this->getMockBuilder(SlugEntityGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->generator = $this->createMock(SlugEntityGenerator::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->databaseExceptionHelper = $this->createMock(DatabaseExceptionHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->urlStorageCache = $this->getMockBuilder(UrlStorageCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlCache = $this->createMock(UrlCacheInterface::class);
 
         $this->processor = new DirectUrlProcessor(
             $this->registry,
@@ -75,7 +70,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             $this->messageFactory,
             $this->databaseExceptionHelper,
             $this->logger,
-            $this->urlStorageCache
+            $this->urlCache
         );
     }
 
@@ -238,6 +233,32 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
     }
+
+    public function testProcessWithFlushableCache()
+    {
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+
+        $this->assertProcessorSuccessfulCalled($message, false);
+
+        /** @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject $urlCache */
+        $urlCache = $this->createMock(UrlCacheAllCapabilities::class);
+        $urlCache->expects($this->once())
+            ->method('flushAll');
+        $processor = new DirectUrlProcessor(
+            $this->registry,
+            $this->generator,
+            $this->messageFactory,
+            $this->databaseExceptionHelper,
+            $this->logger,
+            $urlCache
+        );
+
+        $this->assertEquals(DirectUrlProcessor::ACK, $processor->process($message, $session));
+    }
+
     /**
      * @return array
      */
@@ -298,9 +319,6 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
         $em->expects($this->once())
             ->method('commit');
-
-        $this->urlStorageCache->expects($this->once())
-            ->method('flush');
     }
 
     private function assertTransactionRollback()

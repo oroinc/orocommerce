@@ -64,7 +64,7 @@ class ProductRepositoryTest extends WebTestCase
         $query->setFrom('oro_product_WEBSITE_ID');
         $query->addWhere(Criteria::expr()->eq('text.category_path', 'null'));
 
-        $this->assertSame([], $this->getRepository()->getCategoryCountsByCategory($category, $query));
+        $this->assertEmpty($this->getRepository()->getCategoryCountsByCategory($category, $query));
     }
 
     /**

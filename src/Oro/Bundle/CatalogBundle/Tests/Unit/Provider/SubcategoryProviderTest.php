@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
