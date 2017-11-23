@@ -459,6 +459,9 @@ oro:
                     label: 'Product Listings'
                     none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
+                matrix_form_allow_empty:
+                    label: 'Allow to add empty products'
+                    tooltip: 'If enabled, the customers will be able to add empty configurable products to shopping lists'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

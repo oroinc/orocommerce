@@ -61,6 +61,7 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
     const MATRIX_FORM_ON_PRODUCT_LISTING_INLINE = 'inline';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
+    const MATRIX_FORM_ALLOW_TO_ADD_EMPTY = 'matrix_form_allow_empty';
 
     /**
      * {@inheritDoc}
@@ -142,6 +143,10 @@ class Configuration implements ConfigurationInterface
                 static::MATRIX_FORM_ON_PRODUCT_LISTING => [
                     'type' => 'string',
                     'value' => static::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE
+                ],
+                static::MATRIX_FORM_ALLOW_TO_ADD_EMPTY => [
+                    'type' => 'boolean',
+                    'value' => true,
                 ],
             ]
         );

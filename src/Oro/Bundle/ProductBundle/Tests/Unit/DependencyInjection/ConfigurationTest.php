@@ -196,6 +196,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 'inline',
                     'scope' => 'app',
                 ],
+                'matrix_form_allow_empty' => [
+                    'value' => true,
+                    'scope' => 'app',
+                ],
             ]
         ];
 
