@@ -3,10 +3,6 @@
 .promo-slider {
     overflow: hidden;
 
-    font-size: 0;
-
-    white-space: nowrap;
-
     &.slick-initialized {
         overflow: visible;
     }
