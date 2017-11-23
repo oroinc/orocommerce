@@ -110,7 +110,7 @@ class CategoryCountsExtension extends AbstractExtension
         }
 
         $parameters = $this->buildParameters();
-        $cacheKey = $this->getDataKey($config->getName(), $parameters->all());
+        $cacheKey = $this->getCacheKey($config->getName(), $parameters);
 
         $counts = $this->cache->getCounts($cacheKey);
         if ($counts === null) {
@@ -202,7 +202,7 @@ class CategoryCountsExtension extends AbstractExtension
     {
         $this->sort($parameters);
 
-        return sprintf('%s|%s', $gridName, json_encode($parameters));
+        return sprintf('%s|%s', $gridName, json_encode($parameters, JSON_NUMERIC_CHECK));
     }
 
     /**
@@ -214,5 +214,40 @@ class CategoryCountsExtension extends AbstractExtension
             ksort($parameters);
             array_walk($parameters, [$this, 'sort']);
         }
+    }
+
+    /**
+     * Get cache key by applicable parameters only to avoid redundant request
+     *
+     * @param string       $gridName
+     * @param ParameterBag $datagridParameters
+     *
+     * @return string
+     */
+    private function getCacheKey($gridName, ParameterBag $datagridParameters)
+    {
+        $parameters = clone $datagridParameters;
+        $applicableParameters = $this->getApplicableParameters();
+        foreach ($parameters->all() as $name => $value) {
+            if (!in_array($name, $applicableParameters, true)) {
+                $parameters->remove($name);
+            }
+        }
+
+        return $this->getDataKey($gridName, array_filter($parameters->all()));
+    }
+
+    /**
+     * Get array of parameters that should be taken into account for generating cache key
+     *
+     * @return array
+     */
+    private function getApplicableParameters()
+    {
+        return [
+            'categoryId',
+            self::SKIP_PARAM,
+            AbstractFilterExtension::FILTER_ROOT_PARAM
+        ];
     }
 }
