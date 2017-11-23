@@ -1,5 +1,7 @@
 styles:
     inputs:
         - 'bundles/orocatalog/blank/scss/variables/category-picture-config.scss'
-        - 'bundles/orocatalog/blank/scss/variables/hero-promo-item-config.scss'
         - 'bundles/orocatalog/blank/scss/styles.scss'
+
+        - 'bundles/orocatalog/blank/scss/variables/promo-slider-config.scss'
+        - 'bundles/orocatalog/blank/scss/components/promo-slider/promo-slider.scss'
