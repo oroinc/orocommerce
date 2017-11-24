@@ -11,9 +11,9 @@ class ProductImageResizeEvent extends Event
     const NAME = 'oro_product.product_image.resize';
 
     /**
-     * @var ProductImage
+     * @var int
      */
-    protected $productImage;
+    protected $productImageId;
 
     /**
      * @var bool
@@ -21,12 +21,12 @@ class ProductImageResizeEvent extends Event
     protected $forceOption;
 
     /**
-     * @param ProductImage $productImage
+     * @param int $productImageId
      * @param bool $forceOption
      */
-    public function __construct(ProductImage $productImage, $forceOption = false)
+    public function __construct($productImageId, $forceOption = false)
     {
-        $this->productImage = $productImage;
+        $this->productImageId = $productImageId;
         $this->forceOption = $forceOption;
     }
 
@@ -36,7 +36,7 @@ class ProductImageResizeEvent extends Event
     public function getData()
     {
         return [
-            'productImageId' => $this->productImage->getId(),
+            'productImageId' => $this->productImageId,
             'force' => $this->forceOption
         ];
     }

@@ -15,6 +15,7 @@ types:
         dimensions:
             - product_extra_large
             - product_small
+            - product_large
         max_number: 1
     additional:
         label: oro.product.productimage.type.additional.label
