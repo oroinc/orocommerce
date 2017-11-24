@@ -142,6 +142,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@product_C_111_name']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
+        newArrival: true
     product_C_121:
         type: 'simple'
         sku: 'PROD_C_2'

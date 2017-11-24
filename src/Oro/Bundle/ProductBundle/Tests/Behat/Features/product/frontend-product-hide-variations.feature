@@ -118,6 +118,7 @@ Feature: Check filter values for product grid on front store
       | SKU       |
       | CNF_A     |
       | PROD_B_12 |
+      | PROD_C_1  |
     And should not see the following products in the "New Arrivals Block":
       | SKU      |
       | PROD_A_2 |
@@ -175,6 +176,7 @@ Feature: Check filter values for product grid on front store
       | CNF_A     |
       | PROD_B_12 |
       | PROD_A_2  |
+      | PROD_C_1  |
     And I should see the following products in the "Featured Products Block":
       | SKU       |
       | CNF_A     |
