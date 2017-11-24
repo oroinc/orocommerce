@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class MatrixGridOrderController extends AbstractLineItemController
 {
@@ -48,6 +47,13 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $product,
                 $request->request->get('matrix_collection', [])
             );
+
+            if ($this->lineItemQuantitiesAreEmpty($lineItems)) {
+                $this->get('oro_shopping_list.action.add_configurable_product_to_shopping_list')->execute(
+                    $shoppingList,
+                    $product
+                );
+            }
 
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
@@ -95,5 +101,21 @@ class MatrixGridOrderController extends AbstractLineItemController
                 'label' => $shoppingList->getLabel()
             ]
         ];
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     *
+     * @return bool
+     */
+    private function lineItemQuantitiesAreEmpty(array $lineItems): bool
+    {
+        foreach ($lineItems as $item) {
+            if ($item->getQuantity() > 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

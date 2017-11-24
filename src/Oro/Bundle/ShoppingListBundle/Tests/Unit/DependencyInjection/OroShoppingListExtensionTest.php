@@ -31,6 +31,8 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
             'oro_shopping_list.shopping_list.manager',
             'oro_shopping_list.placeholder.filter',
             'oro_shopping_list.condition.rfp_allowed',
+            'oro_shopping_list.line_item.factory.configurable_product',
+            'oro_shopping_list.action.add_configurable_product_to_shopping_list',
 
             // Forms
             'oro_shopping_list.form.type.shopping_list',
