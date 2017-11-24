@@ -121,6 +121,11 @@ datagrids:
 
     products-select-grid:
         extends: products-select-grid-base
+        source:
+            query:
+                where:
+                    and:
+                        - product.type = 'simple'
 
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view
