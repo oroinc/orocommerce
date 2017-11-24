@@ -24,7 +24,8 @@
     * method `getCategory` was added
     * property `category_id` was added
 
-## 1.5.0 (Unreleased)
+## 1.5.0 (2017-11-30)
+[Show detailed list of changes](incompatibilities-1-5.md)
 
 ### Added
 #### CheckoutBundle
