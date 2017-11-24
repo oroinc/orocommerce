@@ -463,7 +463,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
                 choices:
-                    group: oro.product.system_configuration.fields.matrix_form_on_shopping_list.group.label
+                    none: oro.product.system_configuration.fields.matrix_form_on_shopping_list.none.label
                     inline: oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label
                     popup: oro.product.system_configuration.fields.matrix_form_on_shopping_list.popup.label
 

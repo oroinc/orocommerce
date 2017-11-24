@@ -452,7 +452,7 @@ oro:
                 matrix_form_on_shopping_list:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes in shopping lists.'
                     label: 'Shopping Lists'
-                    group.label: 'Group Single Products'
+                    none.label: 'Group Single Products'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_on_product_listing:

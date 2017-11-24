@@ -180,15 +180,15 @@
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
-                        {% set form = null %}
-                        {% if lineItem.form is defined %}
-                            {% set form = lineItem.form %}
+                        {% set matrixForm = null %}
+                        {% if lineItem.matrixForm is defined %}
+                            {% set matrixForm = lineItem.matrixForm %}
                         {% endif %}
 
                         {% set lineItem = lineItem.lineItems|first %}
 
                         {% do block|merge_context({
-                            'matrixForm': form
+                            'matrixForm': matrixForm
                         }) %}
 
                         {% do block|merge_context({
@@ -197,7 +197,7 @@
                             mainProduct: lineItem.parentProduct|default(lineItem.product),
                             parent: block.vars,
                             loop: loop,
-                            form: form,
+                            form: matrixForm,
                             productsAllPrices: productsAllPrices
                         }) %}
 

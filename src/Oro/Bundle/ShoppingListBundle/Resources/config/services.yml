@@ -184,6 +184,7 @@ services:
               - '@oro_shopping_list.layout.data_provider.matrix_order_form'
               - '@oro_product.layout.data_provider.product_form_availability'
               - '@oro_config.manager'
+              - '@oro_ui.user_agent_provider'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
 
