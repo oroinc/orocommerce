@@ -1,4 +1,6 @@
 {% block _matrix_collection_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set defaultColumns = form.rows[0].columns %}
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}

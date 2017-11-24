@@ -124,7 +124,7 @@ $matrix-order-widget-summary-label-offset-inner: 0 $offset-x-s 0 0 !default;
 
 //Summary inline modifier group variables
 $matrix-order-widget-summary-inline-display: inline-flex !default;
-$matrix-order-widget-summary-inline-align-items: baseline !default;
+$matrix-order-widget-summary-inline-align-items: flex-start !default;
 $matrix-order-widget-summary-inline-justify-content: flex-end !default;
 $matrix-order-widget-summary-inline-width: 100% !default;
 $matrix-order-widget-summary-inline-offset-bottom: 25px !default;

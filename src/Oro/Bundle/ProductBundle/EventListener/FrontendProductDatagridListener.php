@@ -95,6 +95,7 @@ class FrontendProductDatagridListener
         switch ($viewName) {
             case DataGridThemeHelper::VIEW_LIST:
                 // grid view same as default
+                $this->addImageToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_GRID:
                 $this->addImageToConfig($config);

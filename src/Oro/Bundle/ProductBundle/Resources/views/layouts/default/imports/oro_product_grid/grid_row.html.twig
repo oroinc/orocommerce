@@ -27,7 +27,11 @@
 
     {% set class_prefix = themeOptions.currentRowView %}
 
-    {% set matrixFormAvailable = product.matrixForm is not null and class_prefix != 'gallery-view' and blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
+    {% set matrixFormAvailable = product.matrixFormType == 'inline' and class_prefix != 'gallery-view' and blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
+
+    {% set modelAttr = layout_attr_defaults(product|default({}), {
+        'imageUrl': product.image
+    }) %}
 
     {% do block|merge_context({
         class_prefix: class_prefix,
@@ -40,7 +44,7 @@
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product|default({})
+            modelAttr: modelAttr
         },
         'data-layout': 'separate'
     }) %}
@@ -185,6 +189,14 @@
     {% if not is_configurable_product_type(product.type) %}
         <div {{ block('block_attributes') }}>
             <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _matrix_popup_line_item_buttons_widget %}
+    {% if (product.matrixFormType == 'popup' and isDesktopVersion()) or (product.matrixFormType != 'none' and isMobileVersion()) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
         </div>
     {% endif %}
 {% endblock %}

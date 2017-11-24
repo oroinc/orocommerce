@@ -15,6 +15,10 @@ layout:
             root: product_datagrid_cell_matrixForm
             namespace: product_datagrid_cell
 
+        -
+            id: line_item_buttons
+            root: product_datagrid_row_product_secondary_content_container
+            namespace: matrix_popup
     actions:
         - '@setBlockTheme':
             themes:
@@ -27,6 +31,19 @@ layout:
 
         - '@remove':
             id: product_datagrid_cell_matrixForm_value
+
+        - '@remove':
+            id: product_datagrid_cell_matrixFormType
+
+        - '@setOption':
+            id: __matrix_popup_line_item_form_buttons_shopping_list
+            optionName: attr.componentModule
+            optionValue: 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view'
+
+        - '@setOption':
+            id: __matrix_popup_line_item_form_buttons_shopping_list
+            optionName: productShoppingLists
+            optionValue: 'undefined'
 
         - '@setOption':
             id: product_datagrid
