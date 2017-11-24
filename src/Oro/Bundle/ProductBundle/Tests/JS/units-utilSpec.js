@@ -110,6 +110,13 @@ define(function(require) {
                 expect(getOptions($el)).toEqual(['--']);
             });
 
+            it('input widget should be disabled when there is only one option', function() {
+                model.set('product_units', {item: 0});
+                UnitsUtil.updateSelect(model, $el);
+
+                expect($el.prop('disabled')).toBeTruthy();
+            });
+
             it('input widget should be refreshed', function() {
                 $el.val('kg').change();
                 $el.inputWidget('create');
