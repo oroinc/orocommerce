@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var UnitsUtil = require('oroproduct/js/app/units-util');
-    var ProductHelper = require('oroproduct/js/app/product-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
@@ -78,8 +77,6 @@ define(function(require) {
             this.clearModel();
             this.clearSku();
             this.setUnits();
-
-            ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
         },
 
         initModel: function(options) {
@@ -224,6 +221,10 @@ define(function(require) {
 
         publishModelChanges: function() {
             mediator.trigger('quick-add-item:model-change', {item: this.model.attributes, $el: this.$el});
+
+            this.getElement('quantity')
+                .data('precision', this.model.get('product_units')[this.model.get('unit')])
+                .trigger('change');
         },
 
         showUnitError: function() {

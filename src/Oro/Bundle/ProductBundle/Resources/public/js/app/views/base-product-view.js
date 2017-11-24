@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
-    var ProductHelper = require('oroproduct/js/app/product-helper');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var $ = require('jquery');
@@ -43,7 +42,8 @@ define(function(require) {
         modelEvents: {
             'id': ['change', 'onProductChanged'],
             'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'unit_label': ['change', 'changeUnitLabel']
+            'unit_label': ['change', 'changeUnitLabel'],
+            'unit': ['change', 'onUnitChange']
         },
 
         originalProductId: null,
@@ -54,16 +54,13 @@ define(function(require) {
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
+            this.setPrecision();
 
             this.originalProductId = this.model.get('parentProduct');
 
             this.initializeSubviews({
                 productModel: this.model
             });
-
-            if (this.normalizeQuantityField) {
-                ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
-            }
         },
 
         initModel: function(options) {
@@ -97,6 +94,16 @@ define(function(require) {
 
         onQuantityChange: function(e) {
             this.setModelValueFromElement(e, 'quantity', 'quantity');
+        },
+
+        onUnitChange: function() {
+            this.setPrecision();
+        },
+
+        setPrecision: function() {
+            this.getElement('quantity')
+                .data('precision', this.model.get('product_units')[this.model.get('unit')])
+                .trigger('change');
         },
 
         changeUnitLabel: function() {
