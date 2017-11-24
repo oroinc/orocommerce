@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_4;
+namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_4;
 
 use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
