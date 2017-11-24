@@ -100,13 +100,11 @@
 
 {% block __oro_product_list_item__product_quick_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__quick-view-btn',
-        'data-toggle': 'modal',
-        'data-target': '#product',
+        '~class': ' btn btn--info'
     }) %}
-    <div {{ block('block_attributes') }}>
-        <span class="btn-info">Quick View</span>
-    </div>
+    <button {{ block('block_attributes') }}>
+        Quick View
+    </button>
 {% endblock %}
 
 {% block __oro_product_list_item__product_title_widget %}

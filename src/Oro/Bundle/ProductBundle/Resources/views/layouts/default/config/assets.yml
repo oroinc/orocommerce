@@ -1,8 +1,6 @@
 styles:
     inputs:
         - 'bundles/oroproduct/default/scss/variables/sku-config.scss'
-        - 'bundles/oroproduct/default/scss/variables/product-config.scss'
-        - 'bundles/oroproduct/default/scss/variables/product-item-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-list-config.scss'
         - 'bundles/oroproduct/default/scss/variables/buttons-inline-group-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-layout-config.scss'
@@ -19,8 +17,6 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/view-product-gallery-config.scss'
 
         - 'bundles/oroproduct/default/scss/components/filter-controls.scss'
-        - 'bundles/oroproduct/default/scss/components/product.scss'
-        - 'bundles/oroproduct/default/scss/components/product-item.scss'
         - 'bundles/oroproduct/default/scss/components/oro-more-info-toggler.scss'
 
         - 'bundles/oroproduct/default/scss/styles.scss'
