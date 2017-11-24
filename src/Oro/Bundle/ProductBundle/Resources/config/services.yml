@@ -491,6 +491,13 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
+    oro_product.event_listener.restrict.display_product_variations:
+            class: Oro\Bundle\ProductBundle\EventListener\Restrict\DisplayProductVariationsListener
+            arguments:
+                - '@oro_config.user'
+            tags:
+                - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
     oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
         arguments:
