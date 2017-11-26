@@ -80,13 +80,3 @@ services:
             - '@oro_layout.provider.image_type'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\AttachmentBundle\Entity\File }
-
-    oro_product.api.shared.process_image_types_collection:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImageTypesCollection
-        arguments:
-            - '@oro_api.doctrine_helper'
-            - "@oro_layout.provider.image_type"
-            - "@oro_product.helper.product_image_helper"
-        tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\ProductImage}
-            - { name: oro.api.processor, action: update, group: save_data, class: Oro\Bundle\ProductBundle\Entity\ProdductImage}

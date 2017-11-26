@@ -5,8 +5,8 @@ namespace Oro\Bundle\PromotionBundle\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Listener for modification of shipping prices according promotions discounts
@@ -34,7 +34,7 @@ class ShippingMethodsListener
         $methodCollection = $event->getMethodCollection();
         $sourceEntity = $event->getSourceEntity();
 
-        if (!$sourceEntity instanceof Checkout || !$sourceEntity->getSourceEntity() instanceof ShoppingList) {
+        if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {
             return;
         }
 

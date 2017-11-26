@@ -16,3 +16,13 @@
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
     {{ dataGrid.renderGrid('inventory-level-grid', {'productId': product.id}) }}
 {% endblock %}
+
+{% block oro_checkout_ship_until_widget %}
+    {{ block('oro_date_widget') }}
+    {% if disabled %}
+        <div class="notification--warning">
+            <i class="fa-exclamation-circle"></i>
+            <span class="notification__text">{{ 'oro.inventory.availability_date.warning'|trans }}</span>
+        </div>
+    {% endif %}
+{% endblock %}

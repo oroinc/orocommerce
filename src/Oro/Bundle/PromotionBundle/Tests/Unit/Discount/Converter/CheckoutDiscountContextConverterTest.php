@@ -11,6 +11,7 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterf
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
@@ -93,13 +94,21 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
                 'entity' => $this->getCheckout(),
                 'isSupported' => true
             ],
-            'supported entity but with not supported source entity' => [
+            'support all source entities except QuoteDemand' => [
                 'entity' => $this->getCheckout(\stdClass::class),
+                'isSupported' => true
+            ],
+            'not support QuoteDemand source' => [
+                'entity' => $this->getCheckout(QuoteDemand::class),
                 'isSupported' => false
             ],
             'not supported entity' => [
                 'entity' => new \stdClass(),
                 'isSupported' => false
+            ],
+            'supported without source entity' => [
+                'entity' => $this->getCheckout(null),
+                'isSupported' => true
             ],
         ];
     }
@@ -114,7 +123,7 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
         $source = $this->createMock(CheckoutSource::class);
         $source->expects($this->any())
             ->method('getEntity')
-            ->willReturn(new $sourceEntityClass);
+            ->willReturn($sourceEntityClass ? new $sourceEntityClass : null);
         $checkout = new Checkout();
         $checkout->setSource($source);
 

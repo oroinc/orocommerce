@@ -60,6 +60,17 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         systemOrganization: '@organization'
         primary: true
         organization: '@organization'
+    address2:
+        country: '@germany'
+        region: '@berlin'
+        label: 'label'
+        street: 'Fourth avenue'
+        city: 'Berlin'
+        postalCode: '10111'
+        organization: '@organization'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        systemOrganization: '@organization'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
     customerUserSetting:
@@ -72,6 +83,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
         address: '@address'
         type: '@billingType'
         default: true
+    billing2:
+        address: '@address2'
+        type: '@billingType'
     shipping:
         address: '@address'
         type: '@shippingType'

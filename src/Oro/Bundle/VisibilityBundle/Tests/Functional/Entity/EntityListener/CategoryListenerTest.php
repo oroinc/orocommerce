@@ -6,31 +6,35 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 class CategoryListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * @var EntityManager
      */
     protected $categoryManager;
 
-    /**
-     * @var MessageCollector
-     */
-    protected $messageProducer;
-
     protected function setUp()
     {
         $this->initClient();
 
-        $this->categoryManager = $this->getContainer()->get('doctrine')
+        $this->categoryManager = self::getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category');
 
-        $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
-        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
-        $this->messageProducer->clear();
+        $this->cleanScheduledMessages();
+    }
+
+    /**
+     * @return CategoryMessageHandler
+     */
+    protected function getMessageHandler()
+    {
+        return self::getContainer()->get('oro_visibility.model.category_message_handler');
     }
 
     /**
@@ -51,19 +55,17 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($parentCategory);
         $this->categoryManager->flush();
 
+        $this->cleanScheduledMessages();
+
         $newCategory->setParentCategory($parentCategory);
         $this->categoryManager->flush();
-        $this->messageProducer->clear();
 
-        $this->getContainer()->get('oro_visibility.model.category_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages = [
-            [
-                'topic' => 'oro_visibility.visibility.category_position_change',
-                'message' => ['id' => $newCategory->getId()]
-            ]
-        ];
-        $this->assertEquals($expectedMessages, $messages);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_visibility.visibility.category_position_change',
+            ['id' => $newCategory->getId()]
+        );
     }
 
     public function testPreRemove()
@@ -72,19 +74,17 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->persist($newCategory);
         $this->categoryManager->flush();
 
+        $this->cleanScheduledMessages();
+
         $id = $newCategory->getId();
         $this->categoryManager->remove($newCategory);
         $this->categoryManager->flush();
-        $this->messageProducer->clear();
 
-        $this->getContainer()->get('oro_visibility.model.category_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages = [
-            [
-                'topic' => 'oro_visibility.visibility.category_remove',
-                'message' => ['id' => $id]
-            ]
-        ];
-        $this->assertEquals($expectedMessages, $messages);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_visibility.visibility.category_remove',
+            ['id' => $id]
+        );
     }
 }

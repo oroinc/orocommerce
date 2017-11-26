@@ -7,13 +7,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 
 class ResizeAllProductImagesCommand extends ContainerAwareCommand
 {
     const COMMAND_NAME = 'product:image:resize-all';
     const OPTION_FORCE = 'force';
+    const BATCH_SIZE = 1000;
 
     /**
      * {@inheritdoc}
@@ -35,20 +36,19 @@ DESC
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$productImages = $this->getProductImages()) {
-            $output->writeln('No product images found.');
+        $iterator = $this->getProductImagesIterator();
+        $entitiesProcessed = 0;
+        $forceOption = $this->getForceOption($input);
 
-            return;
-        }
-
-        foreach ($productImages as $productImage) {
+        foreach ($iterator as $productImage) {
             $this->getEventDispatcher()->dispatch(
                 ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage, $this->getForceOption($input))
+                new ProductImageResizeEvent($productImage['id'], $forceOption)
             );
+            $entitiesProcessed++;
         }
 
-        $output->writeln(sprintf('%d product image(s) successfully queued for resize.', count($productImages)));
+        $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
     }
 
     /**
@@ -60,14 +60,23 @@ DESC
     }
 
     /**
-     * @return ProductImage[]
+     * @return BufferedIdentityQueryResultIterator
      */
-    protected function getProductImages()
+    protected function getProductImagesIterator()
     {
-        return $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass($this->getContainer()->getParameter('oro_product.entity.product_image.class'))
-            ->findAll();
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $className = $this->getContainer()->getParameter('oro_product.entity.product_image.class');
+        $queryBuilder =  $doctrineHelper
+            ->getEntityRepositoryForClass($className)
+            ->createQueryBuilder('productImage');
+
+        $identifierName = $doctrineHelper->getSingleEntityIdentifierFieldName($className);
+        $queryBuilder->select("productImage.$identifierName as id");
+
+        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
+        $iterator->setBufferSize(self::BATCH_SIZE);
+
+        return $iterator;
     }
 
     /**

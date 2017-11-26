@@ -33,12 +33,6 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
             )
             ->from('OroProductBundle:Product', 'product')
             ->leftJoin(
-                'OroCatalogBundle:Category',
-                'category',
-                Join::WITH,
-                $qb->expr()->isMemberOf('product', 'category.products')
-            )
-            ->leftJoin(
                 'OroVisibilityBundle:Visibility\ProductVisibility',
                 'productVisibility',
                 Join::WITH,
@@ -49,7 +43,7 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
             )
             ->where($qb->expr()->isNull('productVisibility.id'))
             ->setParameter('scope', $scope)
-            ->andWhere($qb->expr()->isNull('category.id'));
+            ->andWhere($qb->expr()->isNull('product.category'));
 
         if ($product) {
             $qb->andWhere('product = :product')

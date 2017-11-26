@@ -682,6 +682,8 @@ services:
         public: false
         arguments:
             - '@event_dispatcher'
+            - '@oro_layout.provider.image_type'
+            - '@oro_product.helper.product_image_helper'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
@@ -1089,7 +1091,7 @@ services:
         public: false
         arguments:
             - '@request_stack'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
@@ -1244,6 +1246,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 
+    oro_product.event_listener.entity_config:
+        class: 'Oro\Bundle\ProductBundle\Search\EventListener\WebsiteSearchEntityConfigListener'
+        arguments:
+            - '@oro_website_search.provider.search_mapping'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush, priority: -255 }
+
     oro_product.voter.guest_quick_order:
         parent: oro_customer.voter.anonymous_customer_user
         calls:
@@ -1310,3 +1319,21 @@ services:
             - '@oro_product.datagrid_theme_helper'
         tags:
             - { name: layout.data_provider, alias: oro_product_datagrid_row_view }
+
+    oro_product.event_listener.orm.new_arrival_index_listener:
+        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
+        public: false
+        arguments:
+            - 'oro_product'
+            - 'idx_oro_product_new_arrival'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
+
+    oro_product.event_listener.orm.featured_index_listener:
+        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
+        public: false
+        arguments:
+            - 'oro_product'
+            - 'idx_oro_product_featured'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }

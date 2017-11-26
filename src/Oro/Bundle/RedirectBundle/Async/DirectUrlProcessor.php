@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
+use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -45,9 +46,9 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
     private $logger;
 
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
-    private $urlStorageCache;
+    private $urlCache;
 
     /**
      * @param ManagerRegistry $registry
@@ -55,7 +56,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      * @param MessageFactoryInterface $messageFactory
      * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param LoggerInterface $logger
-     * @param UrlStorageCache $urlStorageCache
+     * @param UrlCacheInterface $urlCache
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -63,14 +64,14 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         MessageFactoryInterface $messageFactory,
         DatabaseExceptionHelper $databaseExceptionHelper,
         LoggerInterface $logger,
-        UrlStorageCache $urlStorageCache
+        UrlCacheInterface $urlCache
     ) {
         $this->registry = $registry;
         $this->generator = $generator;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
-        $this->urlStorageCache = $urlStorageCache;
+        $this->urlCache = $urlCache;
     }
 
     /**
@@ -95,7 +96,9 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
 
-            $this->urlStorageCache->flush();
+            if ($this->urlCache instanceof FlushableCache) {
+                $this->urlCache->flushAll();
+            }
         } catch (InvalidArgumentException $e) {
             if ($em) {
                 $em->rollback();

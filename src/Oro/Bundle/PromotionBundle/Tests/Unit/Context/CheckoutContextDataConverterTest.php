@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class CheckoutContextDataConverterTest extends \PHPUnit_Framework_TestCase
@@ -38,20 +39,43 @@ class CheckoutContextDataConverterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testSupportsForWrongEntity()
+    /**
+     * @dataProvider supportsDataProvider
+     * @param object $entity
+     * @param boolean $isSupported
+     */
+    public function testSupports($entity, $isSupported)
     {
-        $entity = new \stdClass();
-        $this->assertFalse($this->converter->supports($entity));
+        $this->assertSame($isSupported, $this->converter->supports($entity));
     }
 
-    public function testSupportsForCheckoutWithNonShoppingListAsSource()
+    /**
+     * @return array
+     */
+    public function supportsDataProvider()
     {
-        $this->assertFalse($this->converter->supports($this->getCheckout(\stdClass::class)));
-    }
-
-    public function testSupports()
-    {
-        $this->assertTrue($this->converter->supports($this->getCheckout()));
+        return [
+            'supported entity' => [
+                'entity' => $this->getCheckout(),
+                'isSupported' => true
+            ],
+            'support all source entities except QuoteDemand' => [
+                'entity' => $this->getCheckout(\stdClass::class),
+                'isSupported' => true
+            ],
+            'not support QuoteDemand source' => [
+                'entity' => $this->getCheckout(QuoteDemand::class),
+                'isSupported' => false
+            ],
+            'not supported entity' => [
+                'entity' => new \stdClass(),
+                'isSupported' => false
+            ],
+            'supported without source entity' => [
+                'entity' => $this->getCheckout(null),
+                'isSupported' => true
+            ],
+        ];
     }
 
     public function testGetContextDataWhenThrowsException()
@@ -94,7 +118,7 @@ class CheckoutContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource->expects($this->any())
             ->method('getEntity')
-            ->willReturn(new $sourceEntityClass);
+            ->willReturn($sourceEntityClass ? new $sourceEntityClass : null);
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
 

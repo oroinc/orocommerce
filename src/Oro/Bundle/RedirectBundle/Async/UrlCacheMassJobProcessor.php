@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Doctrine\Common\Cache\ClearableCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -38,7 +39,7 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
     private $logger;
 
     /**
-     * @var UrlStorageCache
+     * @var UrlCacheInterface
      */
     private $cache;
 
@@ -52,14 +53,14 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
      * @param MessageProducerInterface $producer
      * @param SlugRepository $slugRepository
      * @param LoggerInterface $logger
-     * @param UrlStorageCache $cache
+     * @param UrlCacheInterface $cache
      */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
         SlugRepository $slugRepository,
         LoggerInterface $logger,
-        UrlStorageCache $cache
+        UrlCacheInterface $cache
     ) {
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
@@ -87,7 +88,9 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $this->cache->deleteAll();
+            if ($this->cache instanceof ClearableCache) {
+                $this->cache->deleteAll();
+            }
 
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),

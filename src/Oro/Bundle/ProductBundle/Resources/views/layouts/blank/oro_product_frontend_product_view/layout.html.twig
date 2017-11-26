@@ -97,7 +97,31 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {{ block_widget(block)|oro_html_sanitize }}
+    </div>
+{% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' collapse-view collapse-view--overflow',
+        '~data-page-component-viewport': {
+            viewport: {
+                maxScreenType: 'tablet',
+            },
+            widgetModule: 'oroui/js/widget/collapse-widget',
+            animationSpeed: 0,
+            checkOverflow: true,
+            open: false
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="collapse-view__container" data-collapse-container>
+            {{ block_widget(block) }}
+        </div>
+        <a href="javascript:void(0)" class="collapse-view__trigger" data-collapse-trigger>
+            <i class="collapse-view__trigger-icon fa-chevron-down"></i>
+        </a>
     </div>
 {% endblock %}
 
@@ -127,12 +151,12 @@
         '~class': ' page-title'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+    <h1 {{ block('block_attributes') }}>{{ block_widget(block)|oro_tag_filter }}</h1>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     <p class="sku">
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block) }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block)|oro_tag_filter }}</span>
     </p>
 {% endblock %}
 

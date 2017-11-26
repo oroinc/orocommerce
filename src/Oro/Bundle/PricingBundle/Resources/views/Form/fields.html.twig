@@ -191,104 +191,114 @@
             expressionType: '.price-rule-item-currency-type-expression'
         } %}
         <div class="price_rule" data-content>
-            <div class="price_rule__row clearfix">
-                <span class="price_rule__title">{{ 'oro.pricing.pricerule.price_for_quantity.label'|trans }} </span>
-                <div
-                    data-layout="separate"
-                    data-page-component-module="oroui/js/app/components/view-component"
-                    data-page-component-options="{{ {
-                        view: 'oropricing/js/app/views/quantity-switcher',
-                        selectors: quantity,
-                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
-                            '%fieldName%': 'oro.pricing.pricerule.quantity.label'|trans
-                        })
-                    }|json_encode }}"
-                >
-                    <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">
-                        {{ form_widget(form.quantity) }}
+            <div class="control-group control-group-text">
+                <div class="control-label wrap">
+                    <label>{{ 'oro.pricing.pricerule.price_for_quantity.label'|trans }}</label>
+                </div>
+                <div class="controls">
+                    <div class="price_rule__row">
+                        <div
+                            data-layout="separate"
+                            data-page-component-module="oroui/js/app/components/view-component"
+                            data-page-component-options="{{ {
+                                view: 'oropricing/js/app/views/quantity-switcher',
+                                selectors: quantity,
+                                errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                                    '%fieldName%': 'oro.pricing.pricerule.quantity.label'|trans
+                                })
+                            }|json_encode }}"
+                        >
+                            <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">
+                                {{ form_widget(form.quantity) }}
+                            </div>
+                            <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
+                                {{ form_widget(form.quantityExpression) }}
+                            </div>
+                        </div>
+
+                        <div
+                            data-layout="separate"
+                            data-page-component-module="oroui/js/app/components/view-component"
+                            data-page-component-options="{{ {
+                                view: 'oropricing/js/app/views/expression-field-switcher',
+                                selectors: productUnit,
+                                errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                                    '%fieldName%': 'oro.pricing.pricerule.product_unit.label'|trans
+                                })
+                            }|json_encode }}"
+                        >
+                            <div class="price-rule-item-product-unit-type-field visible">
+                                <div class="price_rule__unit">
+                                    {{ form_widget(form.productUnit) }}
+                                </div>
+                                <a class="price-rule-item-product-unit-type-expression input-type-switcher" href="javascript: void(0);">
+                                    {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
+                                </a>
+                            </div>
+                            <div class="price-rule-item-product-unit-type-expression" style="display: none;">
+                                <div class="price_rule__unit">
+                                    {{ form_widget(form.productUnitExpression) }}
+                                </div>
+                                <a class="price-rule-item-product-unit-type-field input-type-switcher" href="javascript: void(0);">
+                                    {{ 'oro.pricing.pricerule.show_unit_fields.label'|trans }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <span class="price_rule__in"> {{ 'oro.pricing.pricerule.in_separator'|trans }}</span>
+                        <div
+                            data-layout="separate"
+                            data-page-component-module="oroui/js/app/components/view-component"
+                            data-page-component-options="{{ {
+                                view: 'oropricing/js/app/views/expression-field-switcher',
+                                selectors: currency,
+                                errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                                    '%fieldName%': 'oro.pricing.pricerule.currency.label'|trans
+                                })
+                            }|json_encode }}"
+                        >
+                            <div class="price-rule-item-currency-type-field visible">
+                                <div class="price_rule__currency">
+                                    {{ form_widget(form.currency) }}
+                                </div>
+                                <a class="price-rule-item-currency-type-expression input-type-switcher" href="javascript: void(0);">
+                                    {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
+                                </a>
+                            </div>
+                            <div class="price-rule-item-currency-type-expression input-type-switcher" style="display: none;">
+                                <div class="price_rule__currency">
+                                    {{ form_widget(form.currencyExpression) }}
+                                </div>
+                                <a class="price-rule-item-currency-type-field" href="javascript: void(0);">
+                                    {{ 'oro.pricing.pricerule.show_currency_fields.label'|trans }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
+                    </div>
+                    <div class="price-rule-item-quantity-type-field error-block">
                         {{ form_errors(form.quantity) }}
                     </div>
-                    <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
-                        {{ form_widget(form.quantityExpression) }}
+                    <div class="price-rule-item-quantity-type-expression error-block">
                         {{ form_errors(form.quantityExpression) }}
                     </div>
-                </div>
-
-                <div
-                    data-layout="separate"
-                    data-page-component-module="oroui/js/app/components/view-component"
-                    data-page-component-options="{{ {
-                        view: 'oropricing/js/app/views/expression-field-switcher',
-                        selectors: productUnit,
-                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
-                            '%fieldName%': 'oro.pricing.pricerule.product_unit.label'|trans
-                        })
-                    }|json_encode }}"
-                >
-                    <div class="price-rule-item-product-unit-type-field visible">
-                        <div class="price_rule__unit">
-                            {{ form_widget(form.productUnit) }}
-                        </div>
-                        <a class="price-rule-item-product-unit-type-expression input-type-switcher" href="javascript: void(0);">
-                            {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
-                        </a>
+                    <div class="price-rule-item-product-unit-type-field error-block">
+                        {{ form_errors(form.productUnit) }}
                     </div>
-                    <div class="price-rule-item-product-unit-type-expression" style="display: none;">
-                        <div class="price_rule__unit">
-                            {{ form_widget(form.productUnitExpression) }}
-                        </div>
-                        <a class="price-rule-item-product-unit-type-field input-type-switcher" href="javascript: void(0);">
-                            {{ 'oro.pricing.pricerule.show_unit_fields.label'|trans }}
-                        </a>
+                    <div class="price-rule-item-product-unit-type-expression error-block">
+                        {{ form_errors(form.productUnitExpression) }}
+                    </div>
+                    <div class="price-rule-item-currency-type-field visible error-block">
+                        {{ form_errors(form.currency) }}
+                    </div>
+                    <div class="price-rule-item-currency-type-expression error-block">
+                        {{ form_errors(form.currencyExpression) }}
                     </div>
                 </div>
-
-                <span class="price_rule__in"> {{ 'oro.pricing.pricerule.in_separator'|trans }}</span>
-                <div
-                    data-layout="separate"
-                    data-page-component-module="oroui/js/app/components/view-component"
-                    data-page-component-options="{{ {
-                        view: 'oropricing/js/app/views/expression-field-switcher',
-                        selectors: currency,
-                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
-                            '%fieldName%': 'oro.pricing.pricerule.currency.label'|trans
-                        })
-                    }|json_encode }}"
-                >
-                    <div class="price-rule-item-currency-type-field visible">
-                        <div class="price_rule__currency">
-                            {{ form_widget(form.currency) }}
-                        </div>
-                        <a class="price-rule-item-currency-type-expression input-type-switcher" href="javascript: void(0);">
-                            {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
-                        </a>
-                    </div>
-                    <div class="price-rule-item-currency-type-expression input-type-switcher" style="display: none;">
-                        <div class="price_rule__currency">
-                            {{ form_widget(form.currencyExpression) }}
-                        </div>
-                        <a class="price-rule-item-currency-type-field" href="javascript: void(0);">
-                            {{ 'oro.pricing.pricerule.show_currency_fields.label'|trans }}
-                        </a>
-                    </div>
-                </div>
-
-                <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
             </div>
-            <div class="price_rule__row clearfix price-rule-item-product-unit-type-field error-block">
-                {{ form_errors(form.productUnit) }}
-            </div>
-            <div class="price_rule__row clearfix price-rule-item-product-unit-type-expression error-block">
-                {{ form_errors(form.productUnitExpression) }}
-            </div>
-            <div class="price_rule__row clearfix price-rule-item-currency-type-field visible error-block">
-                {{ form_errors(form.currency) }}
-            </div>
-            <div class="price_rule__row clearfix price-rule-item-currency-type-expression error-block">
-                {{ form_errors(form.currencyExpression) }}
-            </div>
-            <div>{{ form_row(form.rule) }}</div>
-            <div>{{ form_row(form.ruleCondition) }}</div>
+            {{ form_row(form.rule) }}
+            {{ form_row(form.ruleCondition) }}
             <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
 
         </div>

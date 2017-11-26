@@ -173,7 +173,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
                             'type' => SubcategoryFilter::FILTER_TYPE_NAME,
                             'rootCategory' => $this->category,
                             'options' => [
-                                'categories' => [$subcategory1, $subcategory2]
+                                'choices' => [$subcategory1, $subcategory2]
                             ]
                         ]
                     ],

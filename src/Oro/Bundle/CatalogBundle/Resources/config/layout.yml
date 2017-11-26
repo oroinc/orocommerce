@@ -32,7 +32,7 @@ services:
         parent: oro.cache.abstract
         public: false
         calls:
-            - [ setNamespace, [ 'oro_catalog_category_tree' ] ]
+            - [ setNamespace, [ 'oro_catalog_category' ] ]
 
     oro_catalog.layout.data_provider.category.cache_cleaner:
         class: 'Oro\Component\Cache\Layout\DataProviderCacheCleaner'
@@ -57,6 +57,9 @@ services:
         arguments:
             - "@oro_catalog.provider.category_tree_provider"
             - "@security.token_storage"
+            - '@oro_locale.helper.localization'
+        calls:
+            - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: featured_categories }
 
@@ -66,6 +69,8 @@ services:
         arguments:
             - "@oro_catalog.repository.category"
             - "@oro_catalog.website_search.repository.product"
+        calls:
+            - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: categories_products }
 

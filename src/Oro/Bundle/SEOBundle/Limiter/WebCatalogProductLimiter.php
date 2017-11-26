@@ -90,7 +90,7 @@ class WebCatalogProductLimiter
         );
 
         $webCatalogCategoriesQueryBuilder = $this->getWebCatalogCategoriesQueryBuilder($website);
-        $categoriesProductIdsSQL = 'SELECT product_id, ? FROM oro_category_to_product WHERE category_id IN ('
+        $categoriesProductIdsSQL = 'SELECT id, ? FROM oro_product WHERE category_id IN ('
         . $webCatalogCategoriesQueryBuilder->getQuery()->getSQL()
         . ');';
 

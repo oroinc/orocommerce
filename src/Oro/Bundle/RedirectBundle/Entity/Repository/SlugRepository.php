@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\DBAL\Types\Type;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -169,6 +172,48 @@ class SlugRepository extends EntityRepository
             ->where($queryBuilder->expr()->in($slugIdField, $subQueryBuilder->getSQL()));
 
         $queryBuilder->execute();
+    }
+
+    /**
+     * Doctrine cannot handle searching by "array" columns, therefore
+     * we need a low-level query here.
+     *
+     * @param string $name
+     * @param array $parameters
+     * @param int $localizationId
+     * @return null|array
+     */
+    public function getRawSlug($name, $parameters, $localizationId)
+    {
+        /** @var Connection $connection */
+        $connection = $this->_em->getConnection();
+
+        $hashParameters = Slug::hashParameters($parameters);
+        $qb = $connection->createQueryBuilder()
+            ->select('slug.url', 'slug.slug_prototype', 'slug.localization_id')
+            ->from('oro_redirect_slug', 'slug')
+            ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
+            ->where('scope.slug_id IS NULL')
+            ->andWhere('slug.parameters_hash = :parametersHash')
+            ->andWhere('slug.route_name = :routeName')
+            ->andWhere('slug.route_parameters = :routeParameters')
+            ->andWhere('slug.localization_id = :localizationId OR slug.localization_id IS NULL')
+            ->setParameters(
+                [
+                    'parametersHash' => $hashParameters,
+                    'routeName' => $name,
+                    'routeParameters' => $parameters,
+                    'localizationId' => $localizationId
+                ],
+                [
+                    'parametersHash' => Type::STRING,
+                    'routeName' => Type::STRING,
+                    'routeParameters' => Type::TARRAY,
+                    'localizationId' => Type::INTEGER
+                ]
+            );
+
+        return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**

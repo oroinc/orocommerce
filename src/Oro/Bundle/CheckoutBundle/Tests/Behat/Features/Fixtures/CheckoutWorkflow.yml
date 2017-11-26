@@ -81,6 +81,11 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     property_path: checkout.customerNotes
                     options: {  }
                     label: oro.workflow.custom_checkout_workflow.attribute.customer_notes.label
+                payment_method:
+                    type: null
+                    property_path: checkout.paymentMethod
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.payment_method.label
 
             steps:
                 order_review:

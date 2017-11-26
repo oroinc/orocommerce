@@ -26,6 +26,12 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_catalog.provider.category_tree_provider'
 
+    oro_catalog.provider.category_entity_name:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository
@@ -181,7 +187,7 @@ services:
         public: false
         arguments:
             - '@request_stack'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
