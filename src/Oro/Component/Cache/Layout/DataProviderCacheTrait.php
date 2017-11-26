@@ -22,6 +22,9 @@ trait DataProviderCacheTrait
     /** @var CacheProvider */
     private $cache;
 
+    /**
+     * Disable cache on class initialization by default
+     */
     public function __construct()
     {
         $this->disableCache();
@@ -53,7 +56,6 @@ trait DataProviderCacheTrait
 
     /**
      * @param array $parts
-     * @return string
      */
     private function initCache(array $parts)
     {
@@ -74,14 +76,7 @@ trait DataProviderCacheTrait
             throw new \RuntimeException('Please init this cache first');
         }
 
-        $result = $this->cache->fetch($this->cacheKey);
-
-        if ($result) {
-            // serialize() is slow and memory hungry
-            $result = json_decode($result, true);
-        }
-
-        return $result;
+        return $this->cache->fetch($this->cacheKey);
     }
 
     /**
@@ -92,8 +87,6 @@ trait DataProviderCacheTrait
         if (!$this->cacheKey) {
             throw new \RuntimeException('Please init this cache first');
         }
-
-        $result = json_encode($result);
 
         $this->storeCacheKeyInBunch($this->cacheKey);
 

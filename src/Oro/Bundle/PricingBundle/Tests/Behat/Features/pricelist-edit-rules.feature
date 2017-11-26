@@ -1,3 +1,6 @@
+@skip
+#TODO: fix unstable feature
+
 Feature: Rule Editor with Autocomplete in Price List
 
   Scenario: Checking of autocomplete for Product Assignment Rule

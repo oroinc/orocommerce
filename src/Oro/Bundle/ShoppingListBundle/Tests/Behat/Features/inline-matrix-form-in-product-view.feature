@@ -336,3 +336,13 @@ Feature: Inline matrix for configurable products in product views
     And click "View Details" for "Configurable Product B" product
     Then I should not see an "Matrix Grid Form" element
     And I should see an "Configurable Product Shopping List Form" element
+
+  Scenario: Check that configurable product doesn't show on grid in select product type
+    Given I proceed as the Admin
+    And I go to Sales/ Shopping Lists
+    And I click "view" on first row in grid
+    And click "Add Line Item"
+    Then should see an "Add Line Item Popup" element
+    And I open select entity popup for field "Product"
+    Then there is no "Configurable Product B" in grid
+    Then there is no "Configurable Product A" in grid

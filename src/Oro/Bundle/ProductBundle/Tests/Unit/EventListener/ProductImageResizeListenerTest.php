@@ -62,6 +62,6 @@ class ProductImageResizeListenerTest extends \PHPUnit_Framework_TestCase
         $productImage = $this->prophesize(ProductImage::class);
         $productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
 
-        return new ProductImageResizeEvent($productImage->reveal(), self::FORCE_OPTION);
+        return new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, self::FORCE_OPTION);
     }
 }
