@@ -19,11 +19,6 @@ use PHPUnit\Framework\TestCase;
 class AddConfigurableProductToShoppingListActionTest extends TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $configManager;
-
-    /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $doctrineHelper;
@@ -40,30 +35,13 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
 
     protected function setUp()
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->lineItemFactory = $this->createMock(LineItemByShoppingListAndProductFactoryInterface::class);
 
         $this->action = new AddConfigurableProductToShoppingListAction(
-            $this->configManager,
             $this->doctrineHelper,
             $this->lineItemFactory
         );
-    }
-
-    public function testConfigurableProductIsNotAllowedInShoppingList()
-    {
-        $this->configManager
-            ->expects(static::once())
-            ->method('get')
-            ->with('oro_product.matrix_form_allow_empty')
-            ->willReturn(false);
-
-        $this->doctrineHelper
-            ->expects(static::never())
-            ->method('getEntityRepository');
-
-        $this->action->execute(new ShoppingList(), new Product());
     }
 
     public function testShoppingListHasProductVariants()
@@ -85,12 +63,6 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->setPrimaryUnitPrecision($unitPrecision)
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[0]))
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[1]));
-
-        $this->configManager
-            ->expects(static::once())
-            ->method('get')
-            ->with('oro_product.matrix_form_allow_empty')
-            ->willReturn(true);
 
         $repository = $this->createMock(EntityRepository::class);
         $repository
@@ -131,12 +103,6 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->setPrimaryUnitPrecision($unitPrecision)
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[0]))
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[1]));
-
-        $this->configManager
-            ->expects(static::once())
-            ->method('get')
-            ->with('oro_product.matrix_form_allow_empty')
-            ->willReturn(true);
 
         $repository = $this->createMock(EntityRepository::class);
         $repository
@@ -186,12 +152,6 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->setPrimaryUnitPrecision($unitPrecision)
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[0]))
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[1]));
-
-        $this->configManager
-            ->expects(static::once())
-            ->method('get')
-            ->with('oro_product.matrix_form_allow_empty')
-            ->willReturn(true);
 
         $repository = $this->createMock(EntityRepository::class);
         $repository

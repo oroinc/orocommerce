@@ -48,7 +48,7 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $request->request->get('matrix_collection', [])
             );
 
-            if ($this->lineItemQuantitiesAreEmpty($lineItems)) {
+            if ($this->lineItemQuantitiesAreEmpty($lineItems) && $this->isEmptyMatrixAllowed()) {
                 $this->get('oro_shopping_list.action.add_configurable_product_to_shopping_list')->execute(
                     $shoppingList,
                     $product
@@ -117,5 +117,13 @@ class MatrixGridOrderController extends AbstractLineItemController
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEmptyMatrixAllowed(): bool
+    {
+        return $this->get('oro_config.user')->get('oro_product.matrix_form_allow_empty');
     }
 }

@@ -413,6 +413,5 @@ services:
     oro_shopping_list.action.add_configurable_product_to_shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Action\AddConfigurableProductToShoppingListAction'
         arguments:
-            - '@oro_config.user'
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.line_item.factory.configurable_product'

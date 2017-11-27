@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Action;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -11,11 +10,6 @@ use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProd
 
 class AddConfigurableProductToShoppingListAction implements ShoppingListAndProductActionInterface
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
     /**
      * @var DoctrineHelper
      */
@@ -27,16 +21,13 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
     private $lineItemFactory;
 
     /**
-     * @param ConfigManager                                    $configManager
      * @param DoctrineHelper                                   $doctrineHelper
      * @param LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
      */
     public function __construct(
-        ConfigManager $configManager,
         DoctrineHelper $doctrineHelper,
         LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
     ) {
-        $this->configManager = $configManager;
         $this->doctrineHelper = $doctrineHelper;
         $this->lineItemFactory = $lineItemFactory;
     }
@@ -46,10 +37,6 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
      */
     public function execute(ShoppingList $shoppingList, Product $product)
     {
-        if (!$this->isConfigurableProductAllowedInShoppingList()) {
-            return;
-        }
-
         if ($this->isShoppingListHasProductVariants($shoppingList, $product)) {
             return;
         }
@@ -59,14 +46,6 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
         }
 
         $this->addConfigurableProductToShoppingList($shoppingList, $product);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isConfigurableProductAllowedInShoppingList(): bool
-    {
-        return $this->configManager->get('oro_product.matrix_form_allow_empty');
     }
 
     /**
