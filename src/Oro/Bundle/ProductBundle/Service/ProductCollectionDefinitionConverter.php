@@ -123,10 +123,7 @@ class ProductCollectionDefinitionConverter
     {
         $filters = [];
         if ($this->hasFilters($definition)) {
-            $filters = $definition['filters'];
-            if ($this->filtersPurifier) {
-                $filters = $this->filtersPurifier->purifyFilters($filters);
-            }
+            $filters = $this->filtersPurifier->purifyFilters($definition['filters']);
 
             if (!empty($filters)) {
                 $filters = [$filters];
