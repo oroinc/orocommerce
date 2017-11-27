@@ -1,0 +1,15 @@
+// @theme: blank;
+
+.embedded-products {
+    .slick-arrow {
+        top: $embedded-products-slider-arrow-top;
+    }
+}
+
+@include breakpoint('desktop') {
+    .embedded-products {
+        .slick-arrow {
+            top: $embedded-products-slider-arrow-top-desktop;
+        }
+    }
+}
