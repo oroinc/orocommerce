@@ -198,6 +198,10 @@
     &__title {
         a {
             color: get-color('additional', 'dark');
+
+            &:hover {
+                color: get-color('additional', 'dark');
+            }
         }
 
         &--gallery-view {
@@ -271,13 +275,6 @@
             .product-item__qty__current-grid {
                 @include clearfix();
             }
-            //font-size: 0;
-
-            //input[type="text"] {
-            //    height: 40px;
-            //
-            //    text-align: center;
-            //}
 
             .validation-failed {
                 position: absolute;
@@ -289,6 +286,10 @@
             .product-item__qty__current-grid {
                 margin-top: 1rem;
             }
+        }
+
+        &-input {
+            text-align: center;
         }
     }
 

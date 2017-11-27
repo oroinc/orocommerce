@@ -27,7 +27,9 @@
             <div {{ block('block_attributes') }}>
                 <div>
                     <div class="form-row {{ class_prefix }}">
-                        {{ form_widget(form.quantity) }}
+                        {{ form_widget(form.quantity, {attr: {
+                            'class': 'product-item__qty-input'
+                        }}) }}
                     </div>
                     <div class="form-row {{ class_prefix }}">
                         {{ form_widget(form.unit, {attr: {
