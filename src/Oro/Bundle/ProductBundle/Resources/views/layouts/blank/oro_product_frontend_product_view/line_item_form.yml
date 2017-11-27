@@ -49,4 +49,4 @@ layout:
         - '@setOption':
             id: line_item_form_buttons_shopping_list
             optionName: attr.componentModule
-            optionValue: '=context["is_mobile"] or data["oro_product_form_availability"].isPopupMatrixFormAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'
+            optionValue: '=(context["is_mobile"] and data["oro_product_form_availability"].isInlineMatrixFormAvailable(data["product"])) or data["oro_product_form_availability"].isPopupMatrixFormAvailable(data["product"]) ? "oroshoppinglist/js/app/views/matrix-grid-popup-button-view" : ""'
