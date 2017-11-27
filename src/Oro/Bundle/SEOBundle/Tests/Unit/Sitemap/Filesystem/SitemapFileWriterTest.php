@@ -70,7 +70,7 @@ class SitemapFileWriterTest extends \PHPUnit_Framework_TestCase
             ->with($ioExceptionMessage);
 
         $this->expectException(SitemapFileWriterException::class);
-        $this->expectExceptionMessage($ioExceptionMessage);
+        $this->expectExceptionMessage('An error occurred while writing sitemap to ' . $filePath);
 
         $this->sitemapFileWriter->saveSitemap('some_string_data', $filePath);
     }

@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -23,8 +23,8 @@ class CategoryHandlerTest extends FormHandlerTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->entity = $this->createMock('Oro\Bundle\CatalogBundle\Entity\Category');
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->entity = $this->createMock(Category::class);
         $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 

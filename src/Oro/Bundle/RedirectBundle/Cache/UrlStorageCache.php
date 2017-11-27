@@ -5,10 +5,18 @@ namespace Oro\Bundle\RedirectBundle\Cache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\ClearableCache;
 use Doctrine\Common\Cache\FileCache;
+use Doctrine\Common\Cache\FlushableCache;
 use Symfony\Component\Filesystem\Filesystem;
 
-class UrlStorageCache
+/**
+ * URL storage cache is designed to store caches in groups which decreases number of cached files and saves space and
+ * used inode count. $splitDeep should be adjusted based on number of cached keys, use 2 for numbers lower 1M and higher
+ * values for exceeding counts
+ */
+class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCache
 {
+    const DEFAULT_SPLIT_DEEP = 2;
+
     /**
      * @var Cache
      */
@@ -30,61 +38,40 @@ class UrlStorageCache
     private $usedKeys = [];
 
     /**
+     * @var int
+     */
+    private $splitDeep;
+
+    /**
      * @param Cache $persistentCache
      * @param Cache $localCache
      * @param Filesystem $filesystem
+     * @param int $splitDeep
      */
-    public function __construct(Cache $persistentCache, Cache $localCache, Filesystem $filesystem)
-    {
+    public function __construct(
+        Cache $persistentCache,
+        Cache $localCache,
+        Filesystem $filesystem,
+        $splitDeep = self::DEFAULT_SPLIT_DEEP
+    ) {
         $this->persistentCache = $persistentCache;
         $this->localCache = $localCache;
         $this->filesystem = $filesystem;
+        $this->splitDeep = $splitDeep > 0 ? $splitDeep : self::DEFAULT_SPLIT_DEEP;
     }
 
     /**
-     * @param string $routeName
-     * @param array $parameters
-     * @return string
+     * {@inheritdoc}
      */
-    public static function getCacheKey($routeName, $parameters)
+    public function has($routeName, $routeParameters, $localizationId = null): bool
     {
-        $diffKey = md5(serialize($parameters))[0];
+        $key = $this->getCacheKey($routeName, $routeParameters);
 
-        return implode('_', [$routeName, $diffKey]);
+        return $this->localCache->contains($key) || $this->persistentCache->contains($key);
     }
 
     /**
-     * Get UrlDataStorage instance.
-     *
-     * If it is not loaded and contains in persistent cache - instance from persistent cache will be returned.
-     * For already loaded storage instance stored in local cache will be returned.
-     *
-     * @param string $routeName
-     * @param array $routeParameters
-     * @return UrlDataStorage|false
-     */
-    public function getUrlDataStorage($routeName, $routeParameters)
-    {
-        $key = self::getCacheKey($routeName, $routeParameters);
-        $this->usedKeys[] = $key;
-        if (!$this->localCache->contains($key)) {
-            $storage = $this->persistentCache->fetch($key);
-
-            if (!$storage instanceof UrlDataStorage) {
-                $storage = new UrlDataStorage();
-            }
-
-            $this->localCache->save($key, $storage);
-        }
-
-        return $this->localCache->fetch($key);
-    }
-
-    /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
@@ -94,10 +81,7 @@ class UrlStorageCache
     }
 
     /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getSlug($routeName, $routeParameters, $localizationId = null)
     {
@@ -107,13 +91,7 @@ class UrlStorageCache
     }
 
     /**
-     * Set URL to local cache.To save changes to persistent cache call flush().
-     *
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param string $url
-     * @param string|null $slug
-     * @param null|int $localizationId
+     * {@inheritdoc}
      */
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
@@ -122,9 +100,7 @@ class UrlStorageCache
     }
 
     /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
+     * {@inheritdoc}
      */
     public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
@@ -133,9 +109,9 @@ class UrlStorageCache
     }
 
     /**
-     * Flush changes from local cache to persistent cache.
+     * {@inheritdoc}
      */
-    public function flush()
+    public function flushAll()
     {
         foreach ($this->usedKeys as $key) {
             if ($this->localCache->contains($key)) {
@@ -152,6 +128,9 @@ class UrlStorageCache
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function deleteAll()
     {
         if ($this->localCache instanceof ClearableCache) {
@@ -164,5 +143,44 @@ class UrlStorageCache
         } elseif ($this->persistentCache instanceof ClearableCache) {
             $this->persistentCache->deleteAll();
         }
+    }
+
+    /**
+     * @param string $routeName
+     * @param array $parameters
+     * @return string
+     */
+    protected function getCacheKey($routeName, $parameters)
+    {
+        $diffKey = substr(md5(serialize($parameters)), 0, $this->splitDeep);
+
+        return implode('_', [$routeName, $diffKey]);
+    }
+
+    /**
+     * Get UrlDataStorage instance.
+     *
+     * If it is not loaded and contains in persistent cache - instance from persistent cache will be returned.
+     * For already loaded storage instance stored in local cache will be returned.
+     *
+     * @param string $routeName
+     * @param array $routeParameters
+     * @return UrlDataStorage|false
+     */
+    protected function getUrlDataStorage($routeName, $routeParameters)
+    {
+        $key = $this->getCacheKey($routeName, $routeParameters);
+        $this->usedKeys[] = $key;
+        if (!$this->localCache->contains($key)) {
+            $storage = $this->persistentCache->fetch($key);
+
+            if (!$storage instanceof UrlDataStorage) {
+                $storage = new UrlDataStorage();
+            }
+
+            $this->localCache->save($key, $storage);
+        }
+
+        return $this->localCache->fetch($key);
     }
 }

@@ -192,8 +192,8 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $secondProduct = new Product();
 
         $category = $this->category;
-        $category->addProduct($firstProduct)
-            ->addProduct($secondProduct);
+        $category->addProduct($firstProduct);
+        $category->addProduct($secondProduct);
 
         $this->assertEquals(
             [0 => $firstProduct, 1 => $secondProduct],

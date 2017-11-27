@@ -16,6 +16,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
@@ -65,7 +66,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -100,7 +101,6 @@ class OroCatalogBundleInstaller implements
         /** Tables generation **/
         $this->createOroCatalogCategoryTable($schema);
         $this->createOroCatalogCategoryTitleTable($schema);
-        $this->createOroCategoryToProductTable($schema);
         $this->createOroCatalogCategoryShortDescriptionTable($schema);
         $this->createOroCatalogCategoryLongDescriptionTable($schema);
         $this->createOroCategoryDefaultProductOptionsTable($schema);
@@ -110,12 +110,13 @@ class OroCatalogBundleInstaller implements
         /** Foreign keys generation **/
         $this->addOroCatalogCategoryForeignKeys($schema);
         $this->addOroCatalogCategoryTitleForeignKeys($schema);
-        $this->addOroCategoryToProductForeignKeys($schema);
         $this->addOroCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroCatalogCategoryLongDescriptionForeignKeys($schema);
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage', self::MIME_TYPES);
         $this->addCategoryImageAssociation($schema, 'smallImage', self::MIME_TYPES);
+
+        $this->addCategoryProductRelation($schema);
 
         $this->addContentVariantTypes($schema);
     }
@@ -157,20 +158,6 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
-    }
-
-    /**
-     * Create oro_category_to_product table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroCategoryToProductTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_category_to_product');
-        $table->addColumn('category_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
-        $table->setPrimaryKey(['category_id', 'product_id']);
-        $table->addUniqueIndex(['product_id']);
     }
 
     /**
@@ -256,28 +243,6 @@ class OroCatalogBundleInstaller implements
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add oro_category_to_product foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroCategoryToProductForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_category_to_product');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_catalog_category'),
-            ['category_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -444,5 +409,59 @@ class OroCatalogBundleInstaller implements
                 ]
             );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addCategoryProductRelation(Schema $schema)
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $targetTable = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $targetTable,
+            'category',
+            $table,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => false],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            $targetTable,
+            'category',
+            $table,
+            'products',
+            ['name'],
+            ['name'],
+            ['name'],
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => false],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false]
+            ]
+        );
     }
 }

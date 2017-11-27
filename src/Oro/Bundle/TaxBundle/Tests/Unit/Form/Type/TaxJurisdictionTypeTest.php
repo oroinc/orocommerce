@@ -47,9 +47,6 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     {
         parent::setUp();
 
-        $this->country = new Country('US');
-        $this->region = (new Region('US-AL'))->setCountry($this->country);
-
         $this->formType = new TaxJurisdictionType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(static::DATA_CLASS);
     }
@@ -59,7 +56,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function tearDown()
     {
-        unset($this->formType, $this->country, $this->region);
+        unset($this->formType);
 
         parent::tearDown();
     }
@@ -128,9 +125,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
             ZipCodeTestHelper::getSingleValueZipCode('89')->setTaxJurisdiction($taxJurisdiction),
         ];
 
-        $countryUS = new Country('US');
-        $regionUSAL = new Region('US-AL');
-        $regionUSAL->setCountry($countryUS);
+        list($country, $region) = $this->getValidCountryAndRegion();
 
         return [
             'valid tax jurisdiction' => [
@@ -140,8 +135,8 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
                 'submittedData' => [
                     'code' => 'code',
                     'description' => 'description',
-                    'country' => 'US',
-                    'region' => 'US-AL',
+                    'country' => self::COUNTRY_WITH_REGION,
+                    'region' => self::REGION_WITH_COUNTRY,
                     'zipCodes' => [
                         [
                             'zipRangeStart' => '12',
@@ -164,8 +159,8 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
                 'expectedData' => [
                     'code' => 'code_stripped',
                     'description' => 'description',
-                    'country' => $countryUS,
-                    'region' => $regionUSAL,
+                    'country' => $country,
+                    'region' => $region,
                     'zipCodes' => new ArrayCollection($zipCodes),
                 ],
             ],

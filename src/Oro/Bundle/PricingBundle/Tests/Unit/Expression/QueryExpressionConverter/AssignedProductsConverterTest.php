@@ -133,8 +133,8 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertIn()
     {
-        $expected = 'EXISTS(SELECT 1 FROM Oro\Bundle\PricingBundle\Entity\PriceListToProduct _ap ' .
-            'WHERE _ap.product = pr AND _ap.priceList = pl4)';
+        $expected = 'EXISTS(SELECT 1 FROM Oro\Bundle\PricingBundle\Entity\PriceListToProduct _ap4 ' .
+            'WHERE _ap4.product = pr AND _ap4.priceList = pl4)';
 
         $expr = new Expr();
         $params = [];
@@ -154,8 +154,8 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertNotIn()
     {
-        $expected = 'NOT(EXISTS(SELECT 1 FROM Oro\Bundle\PricingBundle\Entity\PriceListToProduct _ap ' .
-            'WHERE _ap.product = pr AND _ap.priceList = pl4))';
+        $expected = 'NOT(EXISTS(SELECT 1 FROM Oro\Bundle\PricingBundle\Entity\PriceListToProduct _ap4 ' .
+            'WHERE _ap4.product = pr AND _ap4.priceList = pl4))';
 
         $expr = new Expr();
         $params = [];

@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
@@ -13,7 +13,6 @@ use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
-use Oro\Bundle\RedirectBundle\Routing\Router;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -38,7 +37,7 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $redirectGenerator;
 
     /**
-     * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $urlStorageCache;
 
@@ -50,15 +49,9 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
-        $this->slugResolver = $this->getMockBuilder(UniqueSlugResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->urlStorageCache = $this->getMockBuilder(UrlStorageCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->slugResolver = $this->createMock(UniqueSlugResolver::class);
+        $this->redirectGenerator = $this->createMock(RedirectGenerator::class);
+        $this->urlStorageCache = $this->createMock(UrlCacheInterface::class);
 
         $this->generator = new SlugEntityGenerator(
             $this->routingInformationProvider,

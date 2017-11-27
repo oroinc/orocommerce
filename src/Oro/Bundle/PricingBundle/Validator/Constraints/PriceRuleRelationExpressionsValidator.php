@@ -110,8 +110,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
             return null;
         } catch (SyntaxError $e) {
-            $this->addError($path, $e->getMessage());
-
+            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
             return null;
         }
     }

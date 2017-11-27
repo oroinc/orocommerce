@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
@@ -92,13 +93,21 @@ class FrontendShoppingListProductsProvider
      *   ]
      * ]
      *
-     * @param ShoppingList[] $shoppingLists
-     * @param int $productCount
+     * @param ShoppingList[]    $shoppingLists
+     * @param int               $productCount
+     * @param Localization|null $localization
      *
      * @return array
      */
-    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
-    {
-        return $this->lineItemRepository->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
+    public function getLastProductsGroupedByShoppingList(
+        array $shoppingLists,
+        $productCount,
+        Localization $localization = null
+    ) {
+        return $this->lineItemRepository->getLastProductsGroupedByShoppingList(
+            $shoppingLists,
+            $productCount,
+            $localization
+        );
     }
 }

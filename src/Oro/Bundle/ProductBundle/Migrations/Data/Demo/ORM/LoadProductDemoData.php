@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -189,7 +190,10 @@ class LoadProductDemoData extends AbstractFixture implements
             $slugRedirectGenerator->generate($product, true);
         }
 
-        $this->container->get('oro_redirect.url_storage_cache')->flush();
+        $cache = $this->container->get('oro_redirect.url_cache');
+        if ($cache instanceof FlushableCache) {
+            $cache->flushAll();
+        }
         $manager->flush();
     }
 

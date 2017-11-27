@@ -202,8 +202,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($category, $this->searchQuery)
             ->willReturn([1 => 2]);
 
-        $key = 'grid1|{"_filter":{"filter1":[]},"_minified":{"f":{"_":"%%","filter1":[]}},"categoryId":42,' .
-            '"includeSubcategories":true,"skipCategoryCountsExtension":true}';
+        $key = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"skipCategoryCountsExtension":true}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
@@ -228,7 +227,12 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($metadataArray, $metadata->toArray());
     }
 
-    public function testVisitMetadataFromCache()
+    /**
+     * @dataProvider getAdditionalParameters
+     *
+     * @param array $additionalParameters
+     */
+    public function testVisitMetadataFromCache(array $additionalParameters)
     {
         $category = new Category();
 
@@ -250,8 +254,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->productSearchRepository->expects($this->never())
             ->method('getCategoryCountsByCategory');
 
-        $key = 'grid1|{"_filter":{"filter1":[]},"_minified":{"f":{"_":"%%","filter1":[]}},"categoryId":42,' .
-            '"includeSubcategories":true,"skipCategoryCountsExtension":true}';
+        $key = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"skipCategoryCountsExtension":true}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
@@ -268,6 +271,9 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
         ];
         $metadata = MetadataObject::create($metadataArray);
 
+        $commonParameters = $this->extension->getParameters()->all();
+        $parameters = array_merge($commonParameters, $additionalParameters);
+        $this->extension->setParameters(new ParameterBag($parameters));
         $this->extension->visitMetadata($config, $metadata);
 
         $metadataArray['filters'][1]['counts'] = [1 => 2];
@@ -327,15 +333,19 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'empty parameters' => [
-                'parameters' => []
+                'parameters' => [
+                    'includeSubcategories' => true
+                ]
             ],
             'incorrect categoryId' => [
                 'parameters' => [
+                    'includeSubcategories' => true,
                     'categoryId' => 'none',
                 ]
             ],
             'negative categoryId' => [
                 'parameters' => [
+                    'includeSubcategories' => true,
                     'categoryId' => -42,
                 ]
             ],
@@ -343,6 +353,41 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
                 'parameters' => [
                     'categoryId' => 42,
                     'includeSubcategories' => null
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalParameters()
+    {
+        return [
+            'empty' => [
+                []
+            ],
+            'categoryId as string' => [
+                [
+                    'categoryId' => '42'
+                ]
+            ],
+            'pagination' => [
+                [
+                    '_pager' => [
+                        '_page' => 2, '_per_page' => 10
+                    ]
+                ]
+            ],
+            'sorting' => [
+                [
+                    '_sort_by' => [ 'field' => 'ASC' ]
+                ]
+            ],
+            'mixed' => [
+                [
+                    'originalRoute' => 'route_name',
+                    'unknownParameter' => 'value'
                 ]
             ]
         ];

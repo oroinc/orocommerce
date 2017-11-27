@@ -248,3 +248,12 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\BrandSelectType'
         tags:
             - { name: form.type, alias: oro_product_brand_select }
+
+    oro_product.form.type.extension.choices_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
+        arguments:
+            - 'unit'
+            - 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
