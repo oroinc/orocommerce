@@ -157,11 +157,11 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
     {
         $shoppingLists = [$this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')];
         $productCount = 1;
-
+        $localization = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization');
         $this->lineItemRepository->expects($this->once())
             ->method('getLastProductsGroupedByShoppingList')
-            ->with($shoppingLists, $productCount);
+            ->with($shoppingLists, $productCount, $localization);
 
-        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
+        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount, $localization);
     }
 }

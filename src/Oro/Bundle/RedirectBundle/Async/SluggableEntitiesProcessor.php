@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
 
 class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    const BATCH_SIZE = 1000;
+    const BATCH_SIZE = 10000;
 
     /**
      * @var ManagerRegistry

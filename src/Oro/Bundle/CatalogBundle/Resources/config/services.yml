@@ -187,7 +187,7 @@ services:
         public: false
         arguments:
             - '@request_stack'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }

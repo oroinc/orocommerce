@@ -177,7 +177,6 @@ class Slug
     public function setRouteName($routeName)
     {
         $this->routeName = $routeName;
-        $this->updateParametersHash();
 
         return $this;
     }
@@ -197,7 +196,7 @@ class Slug
     public function setRouteParameters(array $routeParameters)
     {
         $this->routeParameters = $routeParameters;
-        $this->updateParametersHash();
+        $this->parametersHash = self::hashParameters($routeParameters);
 
         return $this;
     }
@@ -308,7 +307,6 @@ class Slug
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
-        $this->updateParametersHash();
 
         return $this;
     }
@@ -341,45 +339,11 @@ class Slug
     }
 
     /**
-     * @param string $name
-     * @param array $parameters
-     * @param int $localizationId
+     * @param array|null $parameters
      * @return string
      */
-    public static function hashParameters($name, array $parameters, $localizationId)
+    public static function hashParameters(array $parameters = null)
     {
-        $key = [
-            $name,
-            base64_encode(serialize($parameters)),
-            $localizationId ?? 0
-        ];
-
-        return md5(implode("|", $key));
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->updateParametersHash();
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updateParametersHash();
-    }
-
-    protected function updateParametersHash()
-    {
-        $localizationId = $this->localization ? $this->localization->getId() : 0;
-        $this->parametersHash = static::hashParameters($this->routeName, $this->routeParameters, $localizationId);
+        return md5(base64_encode(serialize($parameters)));
     }
 }

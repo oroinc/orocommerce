@@ -122,6 +122,38 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName('CAD'), $crawler->html());
     }
 
+    public function testFieldNameValidator()
+    {
+        /** @var PriceAttributePriceList $priceAttributePriceList */
+        $priceAttributePriceList = $this->getReference('price_attribute_price_list_3');
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_pricing_price_attribute_price_list_update',
+                ['id' => $priceAttributePriceList->getId()]
+            )
+        );
+
+        $form = $crawler->selectButton('Save and Close')->form(
+            [
+                'oro_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT,
+                'oro_pricing_price_attribute_price_list[fieldName]' => '3',
+                'oro_pricing_price_attribute_price_list[currencies]' => 'CAD',
+            ]
+        );
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertContains(
+            'Field Name cannot contain special chars or spaces, and must contain at least one letter',
+            $crawler->html()
+        );
+    }
+
     public function testInfo()
     {
         /** @var PriceAttributePriceList $priceAttributePriceList */
