@@ -88,7 +88,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
         return [
             'id'     => $entity->getId(),
             'parent' => $entity->getParentCategory() ? $entity->getParentCategory()->getId() : null,
-            'text'   => $entity->getDefaultTitle()->getString(),
+            'text'   => $entity->getDenormalizedDefaultTitle(),
             'state'  => [
                 'opened' => $entity->getParentCategory() === null
             ]

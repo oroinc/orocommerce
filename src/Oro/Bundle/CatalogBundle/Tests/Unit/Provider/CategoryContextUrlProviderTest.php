@@ -5,7 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -22,7 +22,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
     private $requestStack;
 
     /**
-     * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $cache;
 
@@ -38,12 +38,8 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->cache = $this->getMockBuilder(UrlStorageCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->cache = $this->createMock(UrlCacheInterface::class);
         $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
 
         $this->provider = new CategoryContextUrlProvider(

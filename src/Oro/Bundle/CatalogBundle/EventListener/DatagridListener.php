@@ -40,7 +40,6 @@ class DatagridListener
      */
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
-        $this->addCategoryJoin($event->getConfig());
         $this->addCategoryInfo($event->getConfig());
     }
 
@@ -61,7 +60,7 @@ class DatagridListener
         $query = $config->getOrmQuery();
 
         // select
-        $query->addSelect('productCategory.denormalizedDefaultTitle as ' . self::CATEGORY_COLUMN);
+        $query->addSelect('IDENTITY(product.category) as ' . self::CATEGORY_COLUMN);
 
         // columns
         $categoryColumn = [
@@ -92,25 +91,6 @@ class DatagridListener
     }
 
     /**
-     * @param DatagridConfiguration $config
-     */
-    protected function addCategoryJoin(DatagridConfiguration $config)
-    {
-        $joinCategory = [
-            'join' => 'OroCatalogBundle:Category',
-            'alias' => 'productCategory',
-            'conditionType' => 'WITH',
-            'condition' => 'product MEMBER OF productCategory.products',
-        ];
-        $query = $config->getOrmQuery();
-        $leftJoins = $query->getLeftJoins();
-        if (!in_array($joinCategory, $leftJoins, true)) {
-            $leftJoins[] = $joinCategory;
-            $query->setLeftJoins($leftJoins);
-        }
-    }
-
-    /**
      * @param PreBuild $event
      */
     protected function addFilterForNonCategorizedProduct(PreBuild $event)
@@ -127,9 +107,7 @@ class DatagridListener
             '[options][urlParams][includeNotCategorizedProducts]',
             true
         );
-        $config->getOrmQuery()->addOrWhere('productCategory.id IS NULL');
-
-        $this->addCategoryJoin($event->getConfig());
+        $config->getOrmQuery()->addOrWhere('product.category IS NULL');
     }
 
     /**
@@ -166,14 +144,13 @@ class DatagridListener
             $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
 
-        $config->getOrmQuery()->addAndWhere('productCategory.id IN (:productCategoryIds)');
+        $config->getOrmQuery()->addAndWhere('product.category IN (:productCategoryIds)');
 
         $config->offsetSetByPath(
             DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
         );
         $event->getParameters()->set('productCategoryIds', $productCategoryIds);
-        $this->addCategoryJoin($event->getConfig());
     }
 
     /**

@@ -41,22 +41,22 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
             'IDENTITY(agpv.product)',
             'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string)CustomerGroupProductVisibilityResolved::SOURCE_CATEGORY,
-            'category.id'
+            'IDENTITY(product.category)'
         )
-        ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'agpv.product MEMBER OF category.products')
+        ->innerJoin('agpv.product', 'product')
         ->innerJoin('agpv.scope', 'scope')
         ->leftJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'scope.customerGroup = agcvr_scope.customerGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
             'agcvr',
             'WITH',
-            'agcvr.scope = agcvr_scope AND agcvr.category = category'
+            'agcvr.scope = agcvr_scope AND agcvr.category = product.category'
         )
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
-            'cvr.category = category'
+            'cvr.category = product.category'
         )
         ->andWhere('agpv.visibility = :categoryVisibility')
         ->setParameter('categoryVisibility', CustomerGroupProductVisibility::CATEGORY);

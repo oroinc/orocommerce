@@ -1,6 +1,9 @@
 parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
     oro_redirect.entity.redirect.class: Oro\Bundle\RedirectBundle\Entity\Redirect
+    oro_redirect.url_cache_type: 'storage'
+    oro_redirect.url_provider_type: 'database'
+    oro_redirect.url_storage_cache.split_deep: 2
 
 services:
     oro_redirect.routing.matched_url_decision_maker:
@@ -97,7 +100,7 @@ services:
             - '@oro_redirect.provider.routing_information_provider'
             - '@oro_redirect.generator.unique_slug_resolver'
             - '@oro_redirect.generator.redirect'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
 
     oro_redirect.generator.redirect:
         class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator
@@ -130,7 +133,7 @@ services:
             - '@oro_redirect.direct_url_message_factory'
             - '@oro_entity.database_exception_helper'
             - '@logger'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -178,7 +181,7 @@ services:
            - '@oro_message_queue.client.message_producer'
            - '@oro_redirect.repository.slug'
            - '@monolog.logger'
-           - '@oro_redirect.url_storage_cache'
+           - '@oro_redirect.url_cache'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -234,12 +237,12 @@ services:
         public: false
         arguments:
             - '@oro_redirect.repository.slug'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
 
     oro_redirect.routing.sluggable_url_generator:
         class: 'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator'
         arguments:
-            - '@oro_redirect.provider.sluggable_url_database'
+            - '@oro_redirect.url_provider'
             - '@oro_redirect.provider.context_url_provider_registry'
             - '@oro_frontend_localization.manager.user_localization'
 
@@ -247,15 +250,28 @@ services:
         public: false
         class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider'
         arguments:
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
 
     oro_redirect.provider.sluggable_url_database:
         public: false
         class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider'
         arguments:
             - '@oro_redirect.provider.sluggable_url_cache'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
             - '@doctrine'
+
+    oro_redirect.url_provider.factory:
+        class: Oro\Bundle\RedirectBundle\Provider\UrlProviderFactory
+        public: false
+        arguments: [ '%oro_redirect.url_provider_type%' ]
+        calls:
+            - ['registerProvider', ['cache', '@oro_redirect.provider.sluggable_url_cache'] ]
+            - ['registerProvider', ['database', '@oro_redirect.provider.sluggable_url_database'] ]
+
+    oro_redirect.url_provider:
+        public: false
+        class: Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider
+        factory: ['@oro_redirect.url_provider.factory', 'get']
 
     oro_redirect.routing.router:
         class: Oro\Bundle\RedirectBundle\Routing\Router
@@ -275,6 +291,12 @@ services:
         calls:
             - [ setNamespace, [ 'oro_slug_url' ] ]
 
+    oro_redirect.slug_url.cache.persistent_key_value:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_slug_kv' ] ]
+
     oro_redirect.slug_url.cache.local:
         parent: doctrine_cache.abstract.array
         public: false
@@ -286,6 +308,34 @@ services:
             - '@oro_redirect.slug_url.cache.persistent'
             - '@oro_redirect.slug_url.cache.local'
             - '@filesystem'
+            - '%oro_redirect.url_storage_cache.split_deep%'
+
+    oro_redirect.url_key_value_cache:
+        class: Oro\Bundle\RedirectBundle\Cache\UrlKeyValueCache
+        public: false
+        arguments:
+            - '@oro_redirect.slug_url.cache.persistent_key_value'
+            - '@oro_redirect.slug_url.cache.local'
+            - '@filesystem'
+
+    oro_redirect.url_local_cache:
+        class: Oro\Bundle\RedirectBundle\Cache\UrlLocalCache
+        public: false
+        arguments:
+            - '@oro_redirect.slug_url.cache.local'
+
+    oro_redirect.url_cache.factory:
+        class: Oro\Bundle\RedirectBundle\Cache\UrlCacheFactory
+        public: false
+        arguments: [ '%oro_redirect.url_cache_type%' ]
+        calls:
+            - ['registerCache', ['storage', '@oro_redirect.url_storage_cache'] ]
+            - ['registerCache', ['key_value', '@oro_redirect.url_key_value_cache'] ]
+            - ['registerCache', ['local', '@oro_redirect.url_local_cache'] ]
+
+    oro_redirect.url_cache:
+        class: Oro\Bundle\RedirectBundle\Cache\UrlStorageCache
+        factory: ['@oro_redirect.url_cache.factory', 'get']
 
     oro_redirect.cache.slug_url_cache_warmer:
         class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer
