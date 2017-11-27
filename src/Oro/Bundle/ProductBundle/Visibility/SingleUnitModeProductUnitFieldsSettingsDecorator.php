@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Exception\DefaultUnitNotFoundException;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFieldsSettingsInterface
@@ -75,6 +76,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
 
     /**
      * {@inheritdoc}
+     * @throws DefaultUnitNotFoundException
      */
     public function getAvailablePrimaryUnitChoices(Product $product = null)
     {
@@ -82,19 +84,24 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
             return $this->settings->getAvailablePrimaryUnitChoices($product);
         }
         $units = [];
+        $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
+        $defaultUnit = $this->doctrineHelper->getEntityRepository(ProductUnit::class)->find($defaultUnitCode);
+        if (!$defaultUnit) {
+            throw new DefaultUnitNotFoundException('There is no default product unit found in the system');
+        }
+
+        $units[] = $defaultUnit;
         if (!$product) {
             return $units;
         }
         $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
         if ($primaryUnitPrecision) {
-            $units[] = $primaryUnitPrecision->getUnit();
             $primaryUnitCode = $primaryUnitPrecision->getUnit()->getCode();
-            $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
-            $defaultUnit = $this->doctrineHelper->getEntityReference(ProductUnit::class, $defaultUnitCode);
-            if ($defaultUnit && $defaultUnitCode !== $primaryUnitCode) {
-                $units[] = $defaultUnit;
+            if ($defaultUnitCode !== $primaryUnitCode) {
+                $units[] = $primaryUnitPrecision->getUnit();
             }
         }
+
         return $units;
     }
 

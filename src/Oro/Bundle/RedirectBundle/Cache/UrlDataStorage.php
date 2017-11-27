@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-class UrlDataStorage
+class UrlDataStorage implements \JsonSerializable
 {
-    const SLUG_KEY = 's';
-    const URL_KEY = 'u';
-    const DEFAULT_LOCALIZATION_ID = 0;
+    const PREFIX_KEY = 'p';
 
     /**
      * @var array
@@ -50,10 +48,15 @@ class UrlDataStorage
      */
     public function setUrl($routeParameters, $url, $slug = null, $localizationId = null)
     {
+        if ($slug) {
+            $url = \substr($url, 0, -\strlen($slug));
+            $url = \rtrim($url, '/');
+        }
+
         $localizationId = (int)$localizationId;
         $this->data[self::getUrlKey($routeParameters)][$localizationId] = [
-            self::URL_KEY => $url,
-            self::SLUG_KEY => $slug
+            self::PREFIX_KEY => $url ?: null,
+            UrlCacheInterface::SLUG_KEY => $slug
         ];
     }
 
@@ -75,29 +78,38 @@ class UrlDataStorage
     /**
      * @param mixed $routeParameters
      * @param null|int $localizationId
-     * @return null|string
+     * @return bool|string
      */
     public function getUrl($routeParameters, $localizationId = null)
     {
         if ($data = $this->getLocalizedData($routeParameters, $localizationId)) {
-            return $data[self::URL_KEY];
+            if (array_key_exists(self::PREFIX_KEY, $data)) {
+                $url = $data[self::PREFIX_KEY];
+                if (!empty($data[UrlCacheInterface::SLUG_KEY])) {
+                    $url .= '/' . $data[UrlCacheInterface::SLUG_KEY];
+                }
+
+                return $url;
+            }
+
+            return $data[UrlCacheInterface::URL_KEY];
         }
 
-        return null;
+        return false;
     }
 
     /**
      * @param mixed $routeParameters
      * @param null|int $localizationId
-     * @return null|string
+     * @return bool|string
      */
     public function getSlug($routeParameters, $localizationId = null)
     {
         if ($data = $this->getLocalizedData($routeParameters, $localizationId)) {
-            return $data[self::SLUG_KEY];
+            return $data[UrlCacheInterface::SLUG_KEY];
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -129,13 +141,23 @@ class UrlDataStorage
         if (array_key_exists($key, $this->data)) {
             if (array_key_exists($localizationId, $this->data[$key])) { // current localization
                 return $this->data[$key][$localizationId];
-            } elseif (array_key_exists(self::DEFAULT_LOCALIZATION_ID, $this->data[$key])) { // default localization
-                return $this->data[$key][self::DEFAULT_LOCALIZATION_ID];
-            } elseif (array_key_exists(self::URL_KEY, $this->data)) { // Compatibility with older versions of cache
+            } elseif (array_key_exists(UrlCacheInterface::DEFAULT_LOCALIZATION_ID, $this->data[$key])) {
+                // default localization
+                return $this->data[$key][UrlCacheInterface::DEFAULT_LOCALIZATION_ID];
+            } elseif (array_key_exists(UrlCacheInterface::URL_KEY, $this->data)) {
+                // Compatibility with older versions of cache
                 return $this->data;
             }
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 }

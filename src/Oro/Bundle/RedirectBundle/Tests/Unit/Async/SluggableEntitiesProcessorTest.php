@@ -360,7 +360,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturnSelf();
         $idsQb->expects($this->any())
             ->method('setMaxResults')
-            ->with(1000)
+            ->with(SluggableEntitiesProcessor::BATCH_SIZE)
             ->willReturnSelf();
         $idsQb->expects($this->any())
             ->method('orderBy')

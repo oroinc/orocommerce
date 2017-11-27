@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category as BaseCategory;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class Category extends BaseCategory
@@ -18,6 +21,11 @@ class Category extends BaseCategory
     private $propertyAccessor;
 
     /**
+     * @var ArrayCollection
+     */
+    private $products;
+
+    /**
      * @var array
      */
     protected $localizedFields = [
@@ -25,6 +33,12 @@ class Category extends BaseCategory
         'shortDescription' => 'shortDescriptions',
         'longDescription' => 'longDescriptions',
     ];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->products = new ArrayCollection();
+    }
 
     /**
      * {@inheritdoc}
@@ -74,5 +88,31 @@ class Category extends BaseCategory
         }
 
         return $this->propertyAccessor;
+    }
+
+    /**
+     * @param Product $value
+     */
+    public function addProduct(Product $value)
+    {
+        if (!$this->products->contains($value)) {
+            $this->products->add($value);
+        }
+    }
+
+    /**
+     * @param Product $value
+     */
+    public function removeProduct(Product $value)
+    {
+        $this->products->removeElement($value);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }

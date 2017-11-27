@@ -141,7 +141,7 @@ class ProductControllerTest extends WebTestCase
             }
         }
 
-        $this->assertSame($foundParts, $expectedParts);
+        $this->assertEquals($expectedParts, $foundParts);
     }
 
     /**

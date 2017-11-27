@@ -32,7 +32,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_7';
     }
 
     /**

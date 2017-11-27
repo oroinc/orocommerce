@@ -17,13 +17,11 @@ class ProductImageResizeEventTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ProductImage
      */
-    protected $productImage;
+    protected $productImageId;
 
     public function setUp()
     {
-        $this->productImage = $this->prophesize(ProductImage::class);
-        $this->productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
-        $this->event = new ProductImageResizeEvent($this->productImage->reveal());
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID);
     }
 
     public function testGetData()
@@ -34,8 +32,11 @@ class ProductImageResizeEventTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expectedData, $this->event->getData());
+    }
 
-        $this->event = new ProductImageResizeEvent($this->productImage->reveal(), true);
+    public function testForceSetCorrect()
+    {
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, true);
         $this->assertTrue($this->event->getData()['force']);
     }
 }

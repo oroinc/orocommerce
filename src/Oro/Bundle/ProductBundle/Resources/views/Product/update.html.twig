@@ -71,12 +71,12 @@
         form_row(form.status),
         form_row(form.featured),
         form_row(form.newArrival),
-        form_row(form.brand)
+        form_row(form.brand),
+        form_row(form.primaryUnitPrecision)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible(entity) %}
         {% set generalData = generalData|merge([
-            form_row(form.primaryUnitPrecision),
             form_row(form.additionalUnitPrecisions)
         ]) %}
     {% endif %}

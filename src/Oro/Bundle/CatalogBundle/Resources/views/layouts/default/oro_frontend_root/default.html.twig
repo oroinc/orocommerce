@@ -23,12 +23,12 @@
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
-        alt: category.defaultTitle
+        alt: category.title
     }) %}
 
-    {% if category.smallImage %}
+    {% if category.small_image %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.url(category.smallImage, 'category_medium')
+            src: Image.url(category.small_image, 'category_medium')
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
@@ -52,7 +52,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__name'
     }) %}
-    <dt {{ block('block_attributes') }}>{{ category.defaultTitle }}</dt>
+    <dt {{ block('block_attributes') }}>{{ category.title }}</dt>
 {% endblock %}
 
 {% block _featured_category_products_widget %}
