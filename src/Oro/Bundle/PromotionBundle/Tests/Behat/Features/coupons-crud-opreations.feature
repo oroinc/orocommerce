@@ -1,3 +1,5 @@
+# TODO: unskip after BB-12921
+@skip
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes
   As an Administrator

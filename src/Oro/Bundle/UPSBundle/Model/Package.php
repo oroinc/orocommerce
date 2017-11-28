@@ -14,26 +14,6 @@ class Package
     /**
      * @var string
      */
-    protected $dimensionCode;
-
-    /**
-     * @var string
-     */
-    protected $dimensionLength;
-
-    /**
-     * @var string
-     */
-    protected $dimensionWidth;
-
-    /**
-     * @var string
-     */
-    protected $dimensionHeight;
-
-    /**
-     * @var string
-     */
     protected $weightCode;
 
     /**
@@ -52,36 +32,24 @@ class Package
             ],
             'PackageWeight' => [
                 'UnitOfMeasurement' => [
-                    'Code' => $this->weightCode,
+                    'Code' => (string)$this->weightCode,
                 ],
-                'Weight'            => $this->weight,
+                'Weight' => (string)$this->weight,
             ],
         ];
     }
 
     /**
-     * @param string $dimensionCode
-     * @param float $dimensionHeight
-     * @param float $dimensionWidth
-     * @param float $dimensionLength
      * @param string $unitOfWeight
      * @param float|int $weight
      * @return $this
      */
     public static function create(
-        $dimensionCode,
-        $dimensionHeight,
-        $dimensionWidth,
-        $dimensionLength,
         $unitOfWeight,
         $weight
     ) {
         return (new Package())
             ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
-            ->setDimensionCode($dimensionCode)
-            ->setDimensionHeight($dimensionHeight)
-            ->setDimensionWidth($dimensionWidth)
-            ->setDimensionLength($dimensionLength)
             ->setWeightCode($unitOfWeight)
             ->setWeight($weight)
         ;
@@ -110,82 +78,6 @@ class Package
     public function setPackagingTypeCode($packagingTypeCode)
     {
         $this->packagingTypeCode = $packagingTypeCode;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDimensionCode()
-    {
-        return $this->dimensionCode;
-    }
-
-    /**
-     * @param string $dimensionCode
-     * @return $this
-     */
-    public function setDimensionCode($dimensionCode)
-    {
-        $this->dimensionCode = $dimensionCode;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDimensionLength()
-    {
-        return $this->dimensionLength;
-    }
-
-    /**
-     * @param string $dimensionLength
-     * @return $this
-     */
-    public function setDimensionLength($dimensionLength)
-    {
-        $this->dimensionLength = $dimensionLength;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDimensionWidth()
-    {
-        return $this->dimensionWidth;
-    }
-
-    /**
-     * @param string $dimensionWidth
-     * @return $this
-     */
-    public function setDimensionWidth($dimensionWidth)
-    {
-        $this->dimensionWidth = $dimensionWidth;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDimensionHeight()
-    {
-        return $this->dimensionHeight;
-    }
-
-    /**
-     * @param string $dimensionHeight
-     * @return $this
-     */
-    public function setDimensionHeight($dimensionHeight)
-    {
-        $this->dimensionHeight = $dimensionHeight;
 
         return $this;
     }

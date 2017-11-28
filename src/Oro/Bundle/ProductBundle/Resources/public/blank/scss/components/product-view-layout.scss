@@ -49,6 +49,8 @@
     &__description {
         width: $product-view-description-width;
         padding: $product-view-description-inner-offset;
+
+        word-wrap: break-word;
     }
 
     &__additional {

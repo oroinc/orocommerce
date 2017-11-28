@@ -1,3 +1,6 @@
+@skip
+#TODO: unskip after BB-13064
+
 Feature: Rule Editor with Autocomplete in Price List
 
   Scenario: Checking of autocomplete for Product Assignment Rule

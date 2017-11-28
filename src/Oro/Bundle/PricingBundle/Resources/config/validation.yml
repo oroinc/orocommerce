@@ -42,9 +42,9 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
                 max: 255
         fieldName:
             - Regex:
-                pattern: '/^[a-zA-Z0-9_]+$/'
-                htmlPattern: '/^[a-zA-Z0-9_]+$/'
-                message: 'oro.pricing.validators.price_attrirute_price_list.fieldName.message'
+                pattern: '/^[a-zA-Z0-9_]*[a-zA-Z][a-zA-Z0-9_]*$/'
+                htmlPattern: '/^[a-zA-Z0-9_]*[a-zA-Z][a-zA-Z0-9_]*$/'
+                message: 'oro.pricing.validators.price_attribute_price_list.fieldName.message'
             - NotBlank: ~
             - Length:
                 max: 255
