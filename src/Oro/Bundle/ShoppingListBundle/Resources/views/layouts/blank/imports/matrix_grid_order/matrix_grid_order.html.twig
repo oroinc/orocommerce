@@ -14,7 +14,8 @@
         '~class': ' {{ class_prefix }}',
         '~data-page-component-view': {
             view: 'oropricing/js/app/views/base-product-matrix-view',
-            prices: prices
+            prices: prices,
+            emptyMatrixAllowed: oro_config_value('oro_product.matrix_form_allow_empty')
         }
     }) %}
 
