@@ -118,7 +118,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends \PHPUnit_Framework_Te
 
         $event->expects($this->once())
             ->method('log')
-            ->with('running changing visibility for all customers');
+            ->with('updating visibility for all customers');
 
         $event->expects($this->once())
             ->method('getObjectManager')

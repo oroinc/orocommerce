@@ -77,7 +77,7 @@ class BuildPricesDemoDataFixturesListener
 
         $this->listenerManager->enableListeners(self::LISTENERS);
 
-        $event->log('processing of all Price rules and combining all Price Lists');
+        $event->log('building all combined price lists');
 
         $this->buildPrices();
     }

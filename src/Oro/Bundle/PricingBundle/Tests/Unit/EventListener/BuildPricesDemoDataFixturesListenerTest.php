@@ -106,7 +106,7 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->event->expects($this->once())
             ->method('log')
-            ->with('processing of all Price rules and combining all Price Lists');
+            ->with('building all combined price lists');
 
         $priceList = $this->getEntity(PriceList::class, ['id' => 10]);
 

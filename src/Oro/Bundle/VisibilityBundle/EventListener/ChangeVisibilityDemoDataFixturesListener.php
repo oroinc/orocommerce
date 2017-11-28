@@ -58,7 +58,7 @@ class ChangeVisibilityDemoDataFixturesListener
      */
     protected function processCustomers(MigrationDataFixturesEvent $event)
     {
-        $event->log('running changing visibility for all customers');
+        $event->log('updating visibility for all customers');
 
         /* @var $customers Customer[] */
         $customers = $event->getObjectManager()->getRepository(Customer::class)->findAll();

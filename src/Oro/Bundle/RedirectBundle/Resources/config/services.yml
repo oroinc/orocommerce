@@ -72,6 +72,18 @@ services:
         class: Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry
         public: false
 
+    oro_redirect.migration.demo_data_fixtures_listener.update_marketing_list:
+        class: Oro\Bundle\RedirectBundle\EventListener\UpdateSlugsDemoDataFixturesListener
+        arguments:
+            - '@oro_platform.optional_listeners.manager'
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.url_storage_cache'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
     oro_redirect.event_listener.slug_prototype_change:
         class: Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener
         public: false

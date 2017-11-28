@@ -461,7 +461,6 @@ services:
 
     oro_visibility.entity.entity_listener.customer_listener:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\CustomerListener'
-        lazy: true
         arguments:
             - '@oro_visibility.customer_message_factory'
             - '@oro_message_queue.client.message_producer'
