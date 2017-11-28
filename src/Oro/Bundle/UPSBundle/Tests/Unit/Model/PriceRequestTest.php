@@ -74,10 +74,6 @@ class PriceRequestTest extends \PHPUnit_Framework_TestCase
     {
         $package = (new Package())
             ->setPackagingTypeCode(PackageTest::PACKAGING_TYPE_CODE)
-            ->setDimensionCode(PackageTest::DIMENSION_CODE)
-            ->setDimensionLength(PackageTest::DIMENSION_LENGTH)
-            ->setDimensionWidth(PackageTest::DIMENSION_WIDTH)
-            ->setDimensionHeight(PackageTest::DIMENSION_HEIGHT)
             ->setWeightCode(PackageTest::WEIGHT_CODE)
             ->setWeight(PackageTest::WEIGHT);
         $address = new AddressStub();
