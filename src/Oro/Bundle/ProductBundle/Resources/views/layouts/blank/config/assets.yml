@@ -18,4 +18,5 @@ styles:
 
         - 'bundles/oroproduct/blank/scss/components/product.scss'
         - 'bundles/oroproduct/blank/scss/components/product-item.scss'
+        - 'bundles/oroproduct/blank/scss/variables/embedded-products-config.scss'
         - 'bundles/oroproduct/blank/scss/styles.scss'
