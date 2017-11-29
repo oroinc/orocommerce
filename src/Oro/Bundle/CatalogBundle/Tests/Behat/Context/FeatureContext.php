@@ -30,7 +30,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             ->getPage()
             ->findAll(
                 'css',
-                'h1.product-item--category-title'
+                'h1.category-title--divide-content'
             );
         $expectedCategories = $table->getColumn(0);
         self::assertNotEmpty(
