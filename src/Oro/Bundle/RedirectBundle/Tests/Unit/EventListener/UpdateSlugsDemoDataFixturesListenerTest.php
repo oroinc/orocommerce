@@ -160,8 +160,8 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $this->doctrine->expects($this->once())
-            ->method('getEntityManager')
+        $this->event->expects($this->once())
+            ->method('getObjectManager')
             ->willReturn($this->entityManager);
 
         $this->doctrine->expects($this->any())

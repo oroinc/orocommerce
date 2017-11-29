@@ -39,9 +39,7 @@ class ReindexDemoDataFixturesListener
      */
     public function onPreLoad(MigrationDataFixturesEvent $event)
     {
-        if ($event->isDemoFixtures()) {
-            $this->listenerManager->disableListeners(self::LISTENERS);
-        }
+        $this->listenerManager->disableListeners(self::LISTENERS);
     }
 
     /**
@@ -49,14 +47,12 @@ class ReindexDemoDataFixturesListener
      */
     public function onPostLoad(MigrationDataFixturesEvent $event)
     {
-        if ($event->isDemoFixtures()) {
-            $this->listenerManager->enableListeners(self::LISTENERS);
+        $this->listenerManager->enableListeners(self::LISTENERS);
 
-            $event->log('running full reindexation of website index');
-            $this->dispatcher->dispatch(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([], [], [], false)
-            );
-        }
+        $event->log('running full reindexation of website index');
+        $this->dispatcher->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([], [], [], false)
+        );
     }
 }
