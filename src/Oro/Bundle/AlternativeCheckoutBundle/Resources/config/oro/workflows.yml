@@ -180,6 +180,7 @@ workflows:
                       page-component-module: oroshoppinglist/js/app/components/shoppinglist-matrix-create-order-button-component
                       page-component-options:
                           component_name: '[name$="[component]"]'
+                          shopping_list_has_empty_matrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
@@ -545,6 +546,11 @@ workflows:
                             class: $init_context.entityClass
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_shopping_list.provider.matrix
+                        method: hasEmptyMatrix
+                        method_parameters: [$.result.shoppingList]
+                        attribute: $.result.shoppingListHasEmptyMatrix
                 preconditions:
                    '@and':
                        - '@has_elements': $.result.shoppingList.lineItems

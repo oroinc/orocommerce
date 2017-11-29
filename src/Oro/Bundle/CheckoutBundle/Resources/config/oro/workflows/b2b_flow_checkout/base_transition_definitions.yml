@@ -52,6 +52,11 @@ workflows:
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
                         method: isAllowed
                         attribute: $isAllowed
+                    - '@call_service_method':
+                        service: oro_shopping_list.provider.matrix
+                        method: hasEmptyMatrix
+                        method_parameters: [$.result.shoppingList]
+                        attribute: $.result.shoppingListHasEmptyMatrix
                 preconditions:
                    '@and':
                        - '@extendable':

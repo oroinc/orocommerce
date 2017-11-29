@@ -17,6 +17,7 @@ workflows:
                       page-component-module: oroshoppinglist/js/app/components/shoppinglist-matrix-create-order-button-component
                       page-component-options:
                           component_name: '[name$="[component]"]'
+                          shopping_list_has_empty_matrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]

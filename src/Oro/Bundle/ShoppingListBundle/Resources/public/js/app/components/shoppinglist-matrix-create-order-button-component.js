@@ -13,6 +13,8 @@ define(function(require) {
     var ShoppingListMatrixCreateOrderButtonComponent;
 
     ShoppingListMatrixCreateOrderButtonComponent = ButtonComponent.extend({
+        shoppingListHasEmptyMatrix: false,
+
         /**
          * @type {Object}
          */
@@ -26,6 +28,18 @@ define(function(require) {
         matrix_selector: '[name=matrix_collection]',
         matrix_quantity_cell_selector: '[name*=quantity]',
 
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            ShoppingListMatrixCreateOrderButtonComponent.__super__.initialize.apply(this, arguments);
+
+            this.shoppingListHasEmptyMatrix = options.shopping_list_has_empty_matrix;
+        },
+
+        /**
+         * @inheritDoc
+         */
         _processButton: function() {
             var self = this;
             if (this.$button.data('enabled')) {
@@ -66,34 +80,10 @@ define(function(require) {
             }
         },
 
-        isEmptyMatrixExists: function ()
-        {
-            var self = this;
-            var isEmptyMatrixExists = false;
-
-            $(this.matrix_selector).each(function(){
-                if (isEmptyMatrixExists) {
-                    return;
-                }
-
-                var notZeroQuantityCells = $(this).find(self.matrix_quantity_cell_selector).filter(function() {
-                    return parseInt($(this).val(), 10) > 0;
-                });
-
-                if (0 < $(notZeroQuantityCells).length) {
-                    return;
-                }
-
-                isEmptyMatrixExists = true;
-            });
-
-            return isEmptyMatrixExists;
-        },
-
         showConfirmation: function(callback) {
             var confirmModal = new StandardConfirmation(this.messages);
 
-            if (false === this.isEmptyMatrixExists()) {
+            if (false === this.shoppingListHasEmptyMatrix) {
                 callback();
 
                 return;
