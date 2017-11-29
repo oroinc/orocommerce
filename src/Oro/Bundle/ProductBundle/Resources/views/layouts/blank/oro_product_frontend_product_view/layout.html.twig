@@ -97,11 +97,13 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block)|oro_html_sanitize }}
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
+    {% set description = translated_value|oro_html_sanitize|trim %}
+    {% if description %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' collapse-view collapse-view--overflow',
         '~data-page-component-viewport': {
@@ -117,12 +119,13 @@
 
     <div {{ block('block_attributes') }}>
         <div class="collapse-view__container" data-collapse-container>
-            {{ block_widget(block) }}
+            {{ description|raw }}
         </div>
         <a href="javascript:void(0)" class="collapse-view__trigger" data-collapse-trigger>
             <i class="collapse-view__trigger-icon fa-chevron-down"></i>
         </a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_brand_container_widget %}
@@ -151,12 +154,12 @@
         '~class': ' page-title'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ block_widget(block)|oro_tag_filter }}</h1>
+    <h1 {{ block('block_attributes') }}>{{ translated_value|oro_tag_filter }}</h1>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     <p class="sku">
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block)|oro_tag_filter }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ entity.sku|oro_tag_filter }}</span>
     </p>
 {% endblock %}
 

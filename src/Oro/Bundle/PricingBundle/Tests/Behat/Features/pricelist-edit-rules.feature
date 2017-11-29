@@ -1,5 +1,5 @@
 @skip
-#TODO: fix unstable feature
+#TODO: unskip after BB-13064
 
 Feature: Rule Editor with Autocomplete in Price List
 
