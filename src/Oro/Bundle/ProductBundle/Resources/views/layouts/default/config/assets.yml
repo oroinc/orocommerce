@@ -13,7 +13,6 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/page-templates/list-theme-config.scss'
         - 'bundles/oroproduct/default/scss/variables/page-templates/two-columns-theme-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-sticker-config.scss'
-        - 'bundles/oroproduct/default/scss/variables/view-product-gallery-config.scss'
 
         - 'bundles/oroproduct/default/scss/components/filter-controls.scss'
         - 'bundles/oroproduct/default/scss/components/oro-more-info-toggler.scss'
