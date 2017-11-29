@@ -87,6 +87,7 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaWhenSlugHasScopesThatNotMatches()
     {
+        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
 
@@ -131,6 +132,7 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
+        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);

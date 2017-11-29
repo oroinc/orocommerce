@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oropromotion/js/app/views/frontend-coupon-add-view': 'bundles/oropromotion/js/app/views/frontend-coupon-add-view.js'
