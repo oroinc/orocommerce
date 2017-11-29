@@ -2,27 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
+use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class BuildPricesDemoDataFixturesListener
+class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
     const LISTENERS = [
         'oro_pricing.entity_listener.product_price_cpl',
         'oro_pricing.entity_listener.price_list_to_product',
     ];
-
-    /** @var OptionalListenerManager */
-    protected $listenerManager;
-
-    /** @var RegistryInterface */
-    protected $doctrine;
 
     /** @var CombinedPriceListsBuilder */
     protected $priceListBuilder;
@@ -35,56 +29,39 @@ class BuildPricesDemoDataFixturesListener
 
     /**
      * @param OptionalListenerManager $listenerManager
-     * @param RegistryInterface $doctrine
      * @param CombinedPriceListsBuilder $priceListBuilder
      * @param ProductPriceBuilder $priceBuilder
      * @param PriceListProductAssignmentBuilder $assignmentBuilder
      */
     public function __construct(
         OptionalListenerManager $listenerManager,
-        RegistryInterface $doctrine,
         CombinedPriceListsBuilder $priceListBuilder,
         ProductPriceBuilder $priceBuilder,
         PriceListProductAssignmentBuilder $assignmentBuilder
     ) {
-        $this->listenerManager = $listenerManager;
-        $this->doctrine = $doctrine;
+        parent::__construct($listenerManager);
+
         $this->priceListBuilder = $priceListBuilder;
         $this->priceBuilder = $priceBuilder;
         $this->assignmentBuilder = $assignmentBuilder;
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * {@inheritDoc}
      */
-    public function onPreLoad(MigrationDataFixturesEvent $event)
+    protected function onPostLoadActions(MigrationDataFixturesEvent $event)
     {
-        if (!$event->isDemoFixtures()) {
-            return;
-        }
+        $event->log('building all combined price lists');
 
-        $this->listenerManager->disableListeners(self::LISTENERS);
+        $this->buildPrices($event->getObjectManager());
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * @param ObjectManager $manager
      */
-    public function onPostLoad(MigrationDataFixturesEvent $event)
+    protected function buildPrices(ObjectManager $manager)
     {
-        if (!$event->isDemoFixtures()) {
-            return;
-        }
-
-        $this->listenerManager->enableListeners(self::LISTENERS);
-
-        $event->log('building all combined price lists');
-
-        $this->buildPrices();
-    }
-
-    protected function buildPrices()
-    {
-        $priceLists = $this->getPriceListRepository()->getPriceListsWithRules();
+        $priceLists = $manager->getRepository(PriceList::class)->getPriceListsWithRules();
 
         foreach ($priceLists as $priceList) {
             $this->assignmentBuilder->buildByPriceList($priceList);
@@ -93,13 +70,5 @@ class BuildPricesDemoDataFixturesListener
 
         $now = new \DateTime();
         $this->priceListBuilder->build($now->getTimestamp());
-    }
-
-    /**
-     * @return PriceListRepository
-     */
-    protected function getPriceListRepository()
-    {
-        return $this->doctrine->getManagerForClass(PriceList::class)->getRepository(PriceList::class);
     }
 }

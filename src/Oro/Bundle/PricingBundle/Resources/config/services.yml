@@ -652,7 +652,6 @@ services:
         class: Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener
         arguments:
             - '@oro_platform.optional_listeners.manager'
-            - '@doctrine'
             - '@oro_pricing.builder.combined_price_list_builder'
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'

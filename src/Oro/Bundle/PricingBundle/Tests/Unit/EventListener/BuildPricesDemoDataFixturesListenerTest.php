@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,9 +19,6 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
     /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $listenerManager;
-
-    /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrine;
 
     /** @var CombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceListBuilder;
@@ -51,7 +47,6 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
     protected function setUp()
     {
         $this->listenerManager = $this->createMock(OptionalListenerManager::class);
-        $this->doctrine = $this->createMock(RegistryInterface::class);
         $this->priceListBuilder = $this->createMock(CombinedPriceListsBuilder::class);
         $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
@@ -62,7 +57,6 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listener = new BuildPricesDemoDataFixturesListener(
             $this->listenerManager,
-            $this->doctrine,
             $this->priceListBuilder,
             $this->priceBuilder,
             $this->assignmentBuilder
@@ -110,9 +104,8 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $priceList = $this->getEntity(PriceList::class, ['id' => 10]);
 
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
+        $this->event->expects($this->once())
+            ->method('getObjectManager')
             ->willReturn($this->objectManager);
 
         $this->objectManager->expects($this->once())
