@@ -9,6 +9,7 @@ define(function(require) {
     var ScrollView = require('orofrontend/js/app/views/scroll-view');
     var $ = require('jquery');
     var _ = require('underscore');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
@@ -59,6 +60,10 @@ define(function(require) {
 
             this.setEmptyMatrixAllowed(options);
             this.updateAddToShoppingListButtons();
+
+            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+                this.listenTo(collection, 'change', this.updateAddToShoppingListButtons);
+            }, this));
         },
 
         initModel: function(options) {
