@@ -9,6 +9,7 @@ define(function(require) {
     var ScrollView = require('orofrontend/js/app/views/scroll-view');
     var $ = require('jquery');
     var _ = require('underscore');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
@@ -18,7 +19,7 @@ define(function(require) {
             fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
             totalPrice: '[data-role="total-price"]',
-            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
+            submitButtons: '[data-shoppingList]'
         },
 
         elementsEvents: {
@@ -31,6 +32,8 @@ define(function(require) {
 
         minValue: 1,
 
+        emptyMatrixAllowed: true,
+
         /**
          * @inheritDoc
          */
@@ -39,6 +42,7 @@ define(function(require) {
             this.initModel(options);
             this.setPrices(options);
             this.initializeElements(options);
+
             if (_.isDesktop()) {
                 this.subview('scrollView', new ScrollView({
                     el: this.el
@@ -53,6 +57,13 @@ define(function(require) {
                 cells: {}
             };
             this.updateTotals();
+
+            this.setEmptyMatrixAllowed(options);
+            this.updateAddToShoppingListButtons();
+
+            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+                this.listenTo(collection, 'change', this.updateAddToShoppingListButtons);
+            }, this));
         },
 
         initModel: function(options) {
@@ -68,6 +79,7 @@ define(function(require) {
             delete this.prices;
             delete this.total;
             delete this.minValue;
+            delete this.emptyMatrixAllowed;
 
             this.disposeElements();
             BaseProductMatrixView.__super__.dispose.apply(this, arguments);
@@ -100,6 +112,7 @@ define(function(require) {
             }
 
             this.updateTotal($(event.currentTarget));
+            this.updateAddToShoppingListButtons();
             this.render();
         }, 150),
 
@@ -231,6 +244,26 @@ define(function(require) {
          */
         _isSafeNumber: function(value) {
             return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
+        },
+
+        setEmptyMatrixAllowed: function(options) {
+            this.emptyMatrixAllowed = options.emptyMatrixAllowed;
+        },
+
+        updateAddToShoppingListButtons: function() {
+            if (!this.emptyMatrixAllowed) {
+                var self = this;
+
+                this.$el.find(this.elements.submitButtons).each(function() {
+                    if (!$(this).data('intention')) {
+                        if (self.total.quantity > 0) {
+                            $(this).removeClass('disabled');
+                        } else {
+                            $(this).addClass('disabled');
+                        }
+                    }
+                });
+            }
         }
     }));
     return BaseProductMatrixView;
