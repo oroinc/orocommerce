@@ -44,10 +44,11 @@ class PriceRequestFactory
     }
 
     /**
-     * @param UPSTransport $transport
+     * @param UPSTransport             $transport
      * @param ShippingContextInterface $context
-     * @param string $requestOption
-     * @param ShippingService|null $shippingService
+     * @param string                   $requestOption
+     * @param ShippingService|null     $shippingService
+     *
      * @return PriceRequest|null
      * @throws \UnexpectedValueException
      */
@@ -74,7 +75,7 @@ class PriceRequestFactory
             ->setShipToAddress($context->getShippingAddress())
             ->setShipFromName($transport->getUpsShippingAccountName())
             ->setShipFromAddress($context->getShippingOrigin());
-        
+
         if (null !== $shippingService) {
             $priceRequest->setServiceCode($shippingService->getCode())
                 ->setServiceDescription($shippingService->getDescription());
@@ -90,15 +91,18 @@ class PriceRequestFactory
         $packages = $this->createPackages($context->getLineItems()->toArray(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
+
             return $priceRequest;
         }
+
         return null;
     }
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
-     * @param string $unitOfWeight
-     * @param int $weightLimit
+     * @param string                      $unitOfWeight
+     * @param int                         $weightLimit
+     *
      * @return Package[]|array
      * @throws \UnexpectedValueException
      */
@@ -110,53 +114,25 @@ class PriceRequestFactory
             return $packages;
         }
 
-        $productsParamsByUnit = $this->getProductsParamsByUnit($lineItems, $unitOfWeight);
-        if (count($productsParamsByUnit) > 0) {
-            /** @var array $productsParamsByWeightUnit */
-            foreach ($productsParamsByUnit as $dimensionUnit => $productsParamsByWeightUnit) {
-                $weight = 0;
-                $dimensionHeight = 0;
-                $dimensionWidth = 0;
-                $dimensionLength = 0;
+        $weightArray = $this->getAllItemsWeightArray($lineItems, $unitOfWeight);
 
-                /** @var array $productsParams */
-                foreach ($productsParamsByWeightUnit as $productsParams) {
-                    if ($productsParams['weight'] > $weightLimit) {
-                        return [];
-                    }
-                    if (($weight + $productsParams['weight']) > $weightLimit) {
-                        $packages[] = Package::create(
-                            (string)$dimensionUnit,
-                            (string)$dimensionHeight,
-                            (string)$dimensionWidth,
-                            (string)$dimensionLength,
-                            (string)$unitOfWeight,
-                            (string)$weight
-                        );
+        $packageWeight = 0;
 
-                        $weight = 0;
-                        $dimensionHeight = 0;
-                        $dimensionWidth = 0;
-                        $dimensionLength = 0;
-                    }
-
-                    $weight += $productsParams['weight'];
-                    $dimensionHeight += $productsParams['dimensionHeight'];
-                    $dimensionWidth += $productsParams['dimensionWidth'];
-                    $dimensionLength += $productsParams['dimensionLength'];
-                }
-
-                if ($weight > 0) {
-                    $packages[] = Package::create(
-                        (string)$dimensionUnit,
-                        (string)$dimensionHeight,
-                        (string)$dimensionWidth,
-                        (string)$dimensionLength,
-                        (string)$unitOfWeight,
-                        (string)$weight
-                    );
-                }
+        foreach ($weightArray as $itemWeight) {
+            if ($itemWeight > $weightLimit) {
+                return [];
             }
+            if (($packageWeight + $itemWeight) > $weightLimit) {
+                $packages[] = Package::create($unitOfWeight, $packageWeight);
+
+                $packageWeight = 0;
+            }
+
+            $packageWeight += $itemWeight;
+        }
+
+        if ($packageWeight > 0) {
+            $packages[] = Package::create($unitOfWeight, $packageWeight);
         }
 
         return $packages;
@@ -164,42 +140,25 @@ class PriceRequestFactory
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
-     * @param string $upsWeightUnit
+     * @param string                      $upsWeightUnit
      *
      * @return array
      */
-    protected function getProductsParamsByUnit(array $lineItems, $upsWeightUnit)
+    protected function getAllItemsWeightArray(array $lineItems, $upsWeightUnit): array
     {
         $productsParamsByUnit = [];
 
         foreach ($lineItems as $lineItem) {
-            $dimensions = $lineItem->getDimensions();
-
-            $dimensionUnit = null;
-
-            if ($dimensions !== null && $dimensions->getUnit()) {
-                $dimensionUnit = $dimensions->getUnit()->getCode();
-            }
-
             $upsWeight = $this->getLineItemWeightByUnit($lineItem, $upsWeightUnit);
 
-            if (!$upsWeight || !$dimensionUnit) {
+            if (!$upsWeight) {
                 return [];
             }
 
-            for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
-                $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][] = [
-                    'dimensionUnit' => $dimensionUnit,
-                    'dimensionHeight' => $dimensions->getValue()->getHeight(),
-                    'dimensionWidth' => $dimensions->getValue()->getWidth(),
-                    'dimensionLength' => $dimensions->getValue()->getLength(),
-                    'weightUnit' => $upsWeightUnit,
-                    'weight' => $upsWeight
-                ];
-            }
+            $productsParamsByUnit[] = array_fill(0, $lineItem->getQuantity(), $upsWeight);
         }
 
-        return $productsParamsByUnit;
+        return array_merge(...$productsParamsByUnit);
     }
 
     /**

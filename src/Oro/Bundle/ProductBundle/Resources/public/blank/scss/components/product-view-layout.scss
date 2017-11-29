@@ -55,6 +55,7 @@
         padding: $product-view-description-inner-offset;
 
         box-sizing: border-box;
+        word-wrap: break-word;
     }
 
     &__additional {
