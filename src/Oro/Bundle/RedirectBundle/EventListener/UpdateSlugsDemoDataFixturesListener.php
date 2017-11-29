@@ -82,16 +82,19 @@ class UpdateSlugsDemoDataFixturesListener
         $event->log('updating slugs');
 
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
-            $this->updateSlugEntities();
+            $this->updateSlugEntities($event->getObjectManager());
         }
         $this->updateSlugs();
 
         $this->listenerManager->enableListeners(self::LISTENERS);
     }
 
-    protected function updateSlugEntities()
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function updateSlugEntities(ObjectManager $manager)
     {
-        foreach ($this->getSluggableClasses() as $class) {
+        foreach ($this->getSluggableClasses($manager) as $class) {
             $repository = $this->getRepository($class);
 
             foreach ($repository->findAll() as $entity) {
@@ -138,16 +141,17 @@ class UpdateSlugsDemoDataFixturesListener
     }
 
     /**
+     * @param ObjectManager $manager
      * @return array
      */
-    protected function getSluggableClasses()
+    protected function getSluggableClasses(ObjectManager $manager)
     {
         $classes = array_filter(
             array_map(
                 function (ClassMetadata $metadata) {
                     return $metadata->getName();
                 },
-                $this->doctrine->getEntityManager()->getMetadataFactory()->getAllMetadata()
+                $manager->getMetadataFactory()->getAllMetadata()
             ),
             function ($class) {
                 return is_subclass_of($class, SluggableInterface::class);

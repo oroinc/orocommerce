@@ -28,57 +28,19 @@ class ReindexDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new ReindexDemoDataFixturesListener($this->listenerManager, $this->dispatcher);
     }
 
-    public function testOnPreLoadForNotDemoFixtures()
+    public function testOnPreLoad()
     {
-        $event = $this->createMock(MigrationDataFixturesEvent::class);
-        $event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(false);
-
-        $this->listenerManager->expects($this->never())
-            ->method('disableListeners');
-
-        $this->listener->onPreLoad($event);
-    }
-
-    public function testOnPreLoadForDemoFixtures()
-    {
-        $event = $this->createMock(MigrationDataFixturesEvent::class);
-        $event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(true);
-
         $this->listenerManager->expects($this->once())
             ->method('disableListeners')
             ->with(ReindexDemoDataFixturesListener::LISTENERS);
 
-        $this->listener->onPreLoad($event);
-    }
-
-    public function testOnPostLoadForNotDemoFixtures()
-    {
-        $event = $this->createMock(MigrationDataFixturesEvent::class);
-
-        $event->expects(self::once())
-            ->method('isDemoFixtures')
-            ->willReturn(false);
-        $this->listenerManager->expects($this->never())
-            ->method('enableListeners');
-        $event->expects(self::never())
-            ->method('log');
-        $this->dispatcher->expects(self::never())
-            ->method('dispatch');
-
-        $this->listener->onPostLoad($event);
+        $this->listener->onPreLoad($this->createMock(MigrationDataFixturesEvent::class));
     }
 
     public function testOnPostLoadForDemoFixtures()
     {
         $event = $this->createMock(MigrationDataFixturesEvent::class);
 
-        $event->expects(self::once())
-            ->method('isDemoFixtures')
-            ->willReturn(true);
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
             ->with(ReindexDemoDataFixturesListener::LISTENERS);

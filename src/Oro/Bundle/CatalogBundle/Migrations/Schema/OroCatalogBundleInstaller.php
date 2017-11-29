@@ -431,6 +431,8 @@ class OroCatalogBundleInstaller implements
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
+                    // option "noDetach" added possibility to disable force detach for relations
+                    'cascade' => ['persist', 'noDetach'],
                     'on_delete' => 'SET NULL',
                 ],
                 'datagrid' => ['is_visible' => false],
