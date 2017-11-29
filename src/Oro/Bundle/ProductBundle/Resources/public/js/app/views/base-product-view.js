@@ -101,9 +101,10 @@ define(function(require) {
         },
 
         setPrecision: function() {
+            var precision = this.model.get('product_units')[this.model.get('unit')];
             this.getElement('quantity')
-                .data('precision', this.model.get('product_units')[this.model.get('unit')])
-                .trigger('change');
+                .data('precision', precision)
+                .inputWidget('refresh');
         },
 
         changeUnitLabel: function() {
