@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpressionValidator;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
@@ -151,6 +152,26 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('parse')
             ->with($processedValue)
             ->willReturn($node);
+
+        $this->validator->validate($value, $constraint);
+    }
+
+    public function testValidateLogicalExpressionWithSyntaxError()
+    {
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = true;
+
+        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(ExecutionContextInterface::class);
+        $context->expects($this->never())
+            ->method($this->anything());
+        $this->validator->initialize($context);
+
+        $value = 'pricelist[1].';
+
+        $this->expressionParser->expects($this->once())
+            ->method('parse')
+            ->willThrowException(new SyntaxError('Expected name around position 14.'));
 
         $this->validator->validate($value, $constraint);
     }

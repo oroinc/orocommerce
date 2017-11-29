@@ -29,18 +29,8 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected static $expectedTemplate = [
         'source' => [
             'query' => [
-                'join' => [
-                    'left' => [
-                        [
-                            'join' => 'OroCatalogBundle:Category',
-                            'alias' => 'productCategory',
-                            'conditionType' => 'WITH',
-                            'condition' => 'product MEMBER OF productCategory.products'
-                        ],
-                    ]
-                ],
                 'select' => [
-                    'productCategory.denormalizedDefaultTitle as ' . DatagridListener::CATEGORY_COLUMN
+                    'IDENTITY(product.category) as ' . DatagridListener::CATEGORY_COLUMN
                 ]
             ],
         ],
@@ -147,7 +137,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedParameters, $event->getParameters()->all());
 
         $this->assertEquals(
-            [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)],
+            [sprintf('product.category IN (:%s)', self::CATEGORY_ID_ALIAS)],
             $event->getConfig()->offsetGetByPath(self::QUERY_AND_PATH)
         );
         $this->assertEquals(
@@ -163,9 +153,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             $includeSubcategoriesChoice,
             $event->getConfig()->offsetGetByPath(self::OPTIONS_SUBCATEGORY)
         );
-
-        $this->listener->onPreBuildProducts($event);
-        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
 
     public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithoutCategoryIdUserRequest()
@@ -178,14 +165,11 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPreBuildProducts($event);
 
         $this->assertEquals(
-            ['productCategory.id IS NULL'],
+            ['product.category IS NULL'],
             $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
         );
 
         $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
-
-        $this->listener->onPreBuildProducts($event);
-        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
 
     public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithoutCategoryId()
@@ -199,14 +183,11 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPreBuildProducts($event);
 
         $this->assertEquals(
-            ['productCategory.id IS NULL'],
+            ['product.category IS NULL'],
             $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
         );
 
         $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
-
-        $this->listener->onPreBuildProducts($event);
-        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
 
     public function testOnPreBuildWithIncludeNotCategorizedProductsAndWithCategoryId()
@@ -252,7 +233,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)],
+            [sprintf('product.category IN (:%s)', self::CATEGORY_ID_ALIAS)],
             $event->getConfig()->offsetGetByPath(self::QUERY_AND_PATH)
         );
         $this->assertEquals(
@@ -264,14 +245,11 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_SUBCATEGORY));
 
         $this->assertEquals(
-            ['productCategory.id IS NULL'],
+            ['product.category IS NULL'],
             $event->getConfig()->offsetGetByPath(self::QUERY_OR_PATH)
         );
 
         $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
-
-        $this->listener->onPreBuildProducts($event);
-        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
 
     /**

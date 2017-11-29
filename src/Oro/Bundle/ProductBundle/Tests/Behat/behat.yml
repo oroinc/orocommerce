@@ -768,6 +768,14 @@ oro_behat_extension:
        type: xpath
        locator: '//img[contains (@src,"no_image.png")]'
 
+    Unit Of Quantity:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product[primaryUnitPrecision][unit]"]'
+
+    Price Unit:
+      selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
@@ -787,6 +795,7 @@ oro_behat_extension:
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

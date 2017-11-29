@@ -8,4 +8,3 @@ config:
         'oropromotion/js/app/components/order-line-item-discounts-no-tax-component': 'bundles/oropromotion/js/app/components/order-line-item-discounts-no-tax-component.js'
         'oropromotion/js/app/views/coupon-add-view': 'bundles/oropromotion/js/app/views/coupon-add-view.js'
         'oropromotion/js/app/views/applied-coupon-collection-view': 'bundles/oropromotion/js/app/views/applied-coupon-collection-view.js'
-        'oropromotion/js/app/views/frontend-coupon-add-view': 'bundles/oropromotion/js/app/views/frontend-coupon-add-view.js'

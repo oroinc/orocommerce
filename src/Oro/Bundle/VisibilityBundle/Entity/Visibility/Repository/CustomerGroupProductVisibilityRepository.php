@@ -51,13 +51,7 @@ class CustomerGroupProductVisibilityRepository extends AbstractProductVisibility
             ->select('customerGroupProductVisibility.id')
             ->from($this->getEntityName(), 'customerGroupProductVisibility')
             ->leftJoin('customerGroupProductVisibility.product', 'product')
-            ->leftJoin(
-                'OroCatalogBundle:Category',
-                'category',
-                Join::WITH,
-                $qb->expr()->isMemberOf('product', 'category.products')
-            )
-            ->where($qb->expr()->isNull('category.id'))
+            ->where($qb->expr()->isNull('product.category'))
             ->andWhere($qb->expr()->eq('customerGroupProductVisibility.visibility', ':visibility'))
             ->setMaxResults(self::BATCH_SIZE)
             ->setParameter('visibility', CustomerGroupProductVisibility::CATEGORY)

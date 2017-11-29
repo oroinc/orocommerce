@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
@@ -91,7 +92,10 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.names.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])]],
+                    'options' => [
+                        'constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])],
+                        StripTagsExtension::OPTION_NAME => true,
+                    ],
                 ]
             )
             ->add(

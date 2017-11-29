@@ -22,6 +22,10 @@ use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSu
 
 abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
 {
+    const COUNTRY_WITHOUT_REGION = 'US';
+    const COUNTRY_WITH_REGION = 'RO';
+    const REGION_WITH_COUNTRY = 'RO-MS';
+
     /**
      * {@inheritdoc}
      */
@@ -58,12 +62,17 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $countryUS = new Country('US');
+        list($country, $region) = $this->getValidCountryAndRegion();
         $countryCA = new Country('CA');
+
         $choices = [
-            'OroAddressBundle:Country' => ['US' => $countryUS, 'CA' => $countryCA],
+            'OroAddressBundle:Country' => [
+                'CA' => $countryCA,
+                self::COUNTRY_WITH_REGION => $country,
+                self::COUNTRY_WITHOUT_REGION => new Country(self::COUNTRY_WITHOUT_REGION),
+            ],
             'OroAddressBundle:Region' => [
-                'US-AL' => (new Region('US-AL'))->setCountry($countryUS),
+                self::REGION_WITH_COUNTRY => $region,
                 'CA-QC' => (new Region('CA-QC'))->setCountry($countryCA),
             ],
         ];
@@ -97,6 +106,20 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                 }
             )
         );
+
         return $translatableEntity;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidCountryAndRegion()
+    {
+        $country = new Country(self::COUNTRY_WITH_REGION);
+        $region = new Region(self::REGION_WITH_COUNTRY);
+        $region->setCountry($country);
+        $country->addRegion($region);
+
+        return [$country, $region];
     }
 }

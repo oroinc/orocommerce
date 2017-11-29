@@ -51,7 +51,8 @@ class LogicalExpressionValidator extends ConstraintValidator
                 }
             }
         } catch (SyntaxError $ex) {
-            $this->context->addViolation($ex->getMessage());
+            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
+            return;
         }
     }
 }

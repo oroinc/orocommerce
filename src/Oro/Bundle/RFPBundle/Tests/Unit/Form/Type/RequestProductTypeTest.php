@@ -8,6 +8,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,6 +19,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -283,8 +285,8 @@ class RequestProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
-                'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
+                'expectedData'  => $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem])->setRequest(),
+                'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -302,7 +304,7 @@ class RequestProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
+                'expectedData'  => $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem]),
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
             ],
         ];
@@ -332,7 +334,7 @@ class RequestProductTypeTest extends AbstractTest
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
-                []
+                ['form' => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
             ),
             $this->getValidatorExtension(true),
         ];

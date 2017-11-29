@@ -27,13 +27,13 @@
             />
         </td>
         <td>
-            <label for="<%= 'possible_shipping_method_' + method.identifier + '_' + type.identifier %>"><%= _.__('oro.shipping.method_type.backend.method.label', {
+            <label for="<%= 'possible_shipping_method_' + method.identifier + '_' + type.identifier %>"><%- _.__('oro.shipping.method_type.backend.method.label', {
                 translatedMethod: _.__(method.label),
                 }) %></label>
         </td>
         <td>
             <% if (method.label !== type.label) { %>
-            <%= _.__('oro.shipping.method_type.backend.method_type.label', {
+            <%- _.__('oro.shipping.method_type.backend.method_type.label', {
             translatedMethodType: _.__(type.label),
             }) %>
             <% } %>
