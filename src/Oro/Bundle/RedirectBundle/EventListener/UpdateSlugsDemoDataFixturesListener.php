@@ -4,30 +4,18 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
+use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class UpdateSlugsDemoDataFixturesListener
+class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    const LISTENERS = [
-        'oro_redirect.event_listener.slug_prototype_change',
-        'oro_redirect.event_listener.slug_change',
-    ];
-
-    /** @var OptionalListenerManager */
-    protected $listenerManager;
-
-    /** @var RegistryInterface */
-    protected $doctrine;
-
     /** @var ConfigManager */
     protected $configManager;
 
@@ -39,54 +27,34 @@ class UpdateSlugsDemoDataFixturesListener
 
     /**
      * @param OptionalListenerManager $listenerManager
-     * @param RegistryInterface $doctrine
      * @param ConfigManager $configManager
      * @param SlugEntityGenerator $generator
      * @param UrlStorageCache $urlStorageCache
      */
     public function __construct(
         OptionalListenerManager $listenerManager,
-        RegistryInterface $doctrine,
         ConfigManager $configManager,
         SlugEntityGenerator $generator,
         UrlStorageCache $urlStorageCache
     ) {
-        $this->listenerManager = $listenerManager;
-        $this->doctrine = $doctrine;
+        parent::__construct($listenerManager);
+
         $this->configManager = $configManager;
         $this->generator = $generator;
         $this->urlStorageCache = $urlStorageCache;
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * {@inheritDoc}
      */
-    public function onPreLoad(MigrationDataFixturesEvent $event)
+    public function beforeEnableListeners(MigrationDataFixturesEvent $event)
     {
-        if (!$event->isDemoFixtures()) {
-            return;
-        }
-
-        $this->listenerManager->disableListeners(self::LISTENERS);
-    }
-
-    /**
-     * @param MigrationDataFixturesEvent $event
-     */
-    public function onPostLoad(MigrationDataFixturesEvent $event)
-    {
-        if (!$event->isDemoFixtures()) {
-            return;
-        }
-
         $event->log('updating slugs');
 
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
             $this->updateSlugEntities($event->getObjectManager());
         }
-        $this->updateSlugs();
-
-        $this->listenerManager->enableListeners(self::LISTENERS);
+        $this->updateSlugs($event->getObjectManager());
     }
 
     /**
@@ -95,7 +63,7 @@ class UpdateSlugsDemoDataFixturesListener
     protected function updateSlugEntities(ObjectManager $manager)
     {
         foreach ($this->getSluggableClasses($manager) as $class) {
-            $repository = $this->getRepository($class);
+            $repository = $manager->getRepository($class);
 
             foreach ($repository->findAll() as $entity) {
                 /* @var $entity SluggableInterface */
@@ -106,13 +74,15 @@ class UpdateSlugsDemoDataFixturesListener
         $this->urlStorageCache->flushAll();
     }
 
-    protected function updateSlugs()
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function updateSlugs(ObjectManager $manager)
     {
-        $manager = $this->getObjectManager(Redirect::class);
-        $repository = $this->getRepository(Redirect::class);
+        $repository = $manager->getRepository(Redirect::class);
 
         /* @var $slugs Slug[] */
-        $slugs = $this->getRepository(Slug::class)->findAll();
+        $slugs = $manager->getRepository(Slug::class)->findAll();
         foreach ($slugs as $slug) {
             $slugScopes = $slug->getScopes();
 
@@ -159,23 +129,5 @@ class UpdateSlugsDemoDataFixturesListener
         );
 
         return $classes;
-    }
-
-    /**
-     * @param string $className
-     * @return ObjectManager
-     */
-    protected function getObjectManager($className)
-    {
-        return $this->doctrine->getManagerForClass($className);
-    }
-
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
-    protected function getRepository($className)
-    {
-        return $this->getObjectManager($className)->getRepository($className);
     }
 }

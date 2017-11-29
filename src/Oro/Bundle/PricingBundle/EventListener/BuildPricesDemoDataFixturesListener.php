@@ -13,11 +13,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    const LISTENERS = [
-        'oro_pricing.entity_listener.product_price_cpl',
-        'oro_pricing.entity_listener.price_list_to_product',
-    ];
-
     /** @var CombinedPriceListsBuilder */
     protected $priceListBuilder;
 
@@ -49,7 +44,7 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
     /**
      * {@inheritDoc}
      */
-    protected function onPostLoadActions(MigrationDataFixturesEvent $event)
+    protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
         $event->log('building all combined price lists');
 

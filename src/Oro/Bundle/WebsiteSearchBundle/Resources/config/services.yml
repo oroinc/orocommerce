@@ -239,10 +239,12 @@ services:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onLocalizationSettingsChange }
 
     oro_website_search.migration.demo_data_fixtures_listener.reindex:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
         class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener
         arguments:
-            - '@oro_platform.optional_listeners.manager'
             - '@event_dispatcher'
+        calls:
+            - [disableListener, ['oro_website_search.reindex_request.listener']]
         tags:
             # do reindexation of website index after reindexation of search index
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }

@@ -20,17 +20,18 @@ use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const LISTENERS = [
+        'test_listener_1',
+        'test_listener_2',
+    ];
+
     use EntityTrait;
 
     /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $listenerManager;
-
-    /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrine;
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
@@ -68,7 +69,6 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
     protected function setUp()
     {
         $this->listenerManager = $this->createMock(OptionalListenerManager::class);
-        $this->doctrine = $this->createMock(RegistryInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->generator = $this->createMock(SlugEntityGenerator::class);
         $this->urlStorageCache = $this->createMock(UrlStorageCache::class);
@@ -82,11 +82,12 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listener = new UpdateSlugsDemoDataFixturesListener(
             $this->listenerManager,
-            $this->doctrine,
             $this->configManager,
             $this->generator,
             $this->urlStorageCache
         );
+        $this->listener->disableListener(self::LISTENERS[0]);
+        $this->listener->disableListener(self::LISTENERS[1]);
     }
 
     public function testOnPreLoad()
@@ -97,7 +98,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listenerManager->expects($this->once())
             ->method('disableListeners')
-            ->with(UpdateSlugsDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->listener->onPreLoad($this->event);
     }
@@ -160,12 +161,8 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getObjectManager')
-            ->willReturn($this->entityManager);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
         $this->entityManager->expects($this->once())
@@ -224,7 +221,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
-            ->with(UpdateSlugsDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->listener->onPostLoad($this->event);
     }
@@ -259,11 +256,8 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
-        $this->doctrine->expects($this->never())
-            ->method('getEntityManager');
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
+        $this->event->expects($this->any())
+            ->method('getObjectManager')
             ->willReturn($this->entityManager);
 
         $this->entityManager->expects($this->never())
@@ -306,7 +300,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
-            ->with(UpdateSlugsDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->listener->onPostLoad($this->event);
     }
@@ -321,9 +315,6 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
             ->method('log');
 
         $this->configManager->expects($this->never())
-            ->method($this->anything());
-
-        $this->doctrine->expects($this->never())
             ->method($this->anything());
 
         $this->listenerManager->expects($this->never())

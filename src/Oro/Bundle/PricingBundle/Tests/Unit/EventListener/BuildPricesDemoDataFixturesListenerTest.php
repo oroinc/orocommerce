@@ -15,6 +15,11 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const LISTENERS = [
+        'test_listener_1',
+        'test_listener_2',
+    ];
+
     use EntityTrait;
 
     /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -61,6 +66,8 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
             $this->priceBuilder,
             $this->assignmentBuilder
         );
+        $this->listener->disableListener(self::LISTENERS[0]);
+        $this->listener->disableListener(self::LISTENERS[1]);
     }
 
     public function testOnPreLoad()
@@ -71,7 +78,7 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listenerManager->expects($this->once())
             ->method('disableListeners')
-            ->with(BuildPricesDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->listener->onPreLoad($this->event);
     }
@@ -96,7 +103,7 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
-            ->with(BuildPricesDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->event->expects($this->once())
             ->method('log')

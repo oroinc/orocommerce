@@ -690,9 +690,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.migration.demo_data_fixtures_listener.product_image:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageDemoDataFixturesListener'
-        arguments:
-            - '@oro_platform.optional_listeners.manager'
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_product.event_listener.product_image_resize_listener']]
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }

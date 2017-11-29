@@ -13,6 +13,11 @@ use Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesLi
 
 class ChangeVisibilityDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const LISTENERS = [
+        'test_listener_1',
+        'test_listener_2',
+    ];
+
     use EntityTrait;
 
     /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -45,6 +50,8 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends \PHPUnit_Framework_Te
             $this->listenerManager,
             $this->partialUpdateDriver
         );
+        $this->listener->disableListener(self::LISTENERS[0]);
+        $this->listener->disableListener(self::LISTENERS[1]);
     }
 
     public function testOnPreLoadForNotDemoFixtures()
@@ -69,7 +76,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends \PHPUnit_Framework_Te
 
         $this->listenerManager->expects($this->once())
             ->method('disableListeners')
-            ->with(ChangeVisibilityDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $this->listener->onPreLoad($event);
     }
@@ -114,7 +121,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends \PHPUnit_Framework_Te
 
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
-            ->with(ChangeVisibilityDemoDataFixturesListener::LISTENERS);
+            ->with(self::LISTENERS);
 
         $event->expects($this->once())
             ->method('log')

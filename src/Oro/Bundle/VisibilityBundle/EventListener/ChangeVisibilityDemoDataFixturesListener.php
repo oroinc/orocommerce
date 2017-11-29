@@ -4,18 +4,12 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
+use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 
-class ChangeVisibilityDemoDataFixturesListener
+class ChangeVisibilityDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    const LISTENERS = [
-        'oro_visibility.entity.entity_listener.customer_listener',
-    ];
-
-    /** @var OptionalListenerManager */
-    protected $listenerManager;
-
     /** @var CustomerPartialUpdateDriverInterface */
     protected $partialUpdateDriver;
 
@@ -27,36 +21,15 @@ class ChangeVisibilityDemoDataFixturesListener
         OptionalListenerManager $listenerManager,
         CustomerPartialUpdateDriverInterface $partialUpdateDriver
     ) {
-        $this->listenerManager = $listenerManager;
+        parent::__construct($listenerManager);
+
         $this->partialUpdateDriver = $partialUpdateDriver;
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * {@inheritDoc}
      */
-    public function onPreLoad(MigrationDataFixturesEvent $event)
-    {
-        if ($event->isDemoFixtures()) {
-            $this->listenerManager->disableListeners(self::LISTENERS);
-        }
-    }
-
-    /**
-     * @param MigrationDataFixturesEvent $event
-     */
-    public function onPostLoad(MigrationDataFixturesEvent $event)
-    {
-        if ($event->isDemoFixtures()) {
-            $this->listenerManager->enableListeners(self::LISTENERS);
-
-            $this->processCustomers($event);
-        }
-    }
-
-    /**
-     * @param MigrationDataFixturesEvent $event
-     */
-    protected function processCustomers(MigrationDataFixturesEvent $event)
+    protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
         $event->log('updating visibility for all customers');
 

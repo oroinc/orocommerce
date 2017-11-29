@@ -2,54 +2,58 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
+use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Triggers full reindexation of website index after demo data are loaded.
  */
-class ReindexDemoDataFixturesListener
+class ReindexDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    const LISTENERS = [
-        'oro_website_search.reindex_request.listener',
-    ];
-
-    /** @var OptionalListenerManager */
-    private $listenerManager;
-
     /** @var EventDispatcherInterface */
-    private $dispatcher;
+    protected $dispatcher;
 
     /**
      * @param OptionalListenerManager $listenerManager
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(
-        OptionalListenerManager $listenerManager,
-        EventDispatcherInterface $dispatcher
-    ) {
-        $this->listenerManager = $listenerManager;
+    public function __construct(OptionalListenerManager $listenerManager, EventDispatcherInterface $dispatcher)
+    {
+        parent::__construct($listenerManager);
+
         $this->dispatcher = $dispatcher;
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * {@inheritDoc}
      */
     public function onPreLoad(MigrationDataFixturesEvent $event)
     {
-        $this->listenerManager->disableListeners(self::LISTENERS);
+        $this->beforeDisableListeners($event);
+        $this->listenerManager->disableListeners($this->listeners);
+        $this->afterDisableListeners($event);
     }
 
     /**
-     * @param MigrationDataFixturesEvent $event
+     * {@inheritDoc}
      */
     public function onPostLoad(MigrationDataFixturesEvent $event)
     {
-        $this->listenerManager->enableListeners(self::LISTENERS);
+        $this->beforeEnableListeners($event);
+        $this->listenerManager->enableListeners($this->listeners);
+        $this->afterEnableListeners($event);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function afterEnableListeners(MigrationDataFixturesEvent $event)
+    {
         $event->log('running full reindexation of website index');
+
         $this->dispatcher->dispatch(
             ReindexationRequestEvent::EVENT_NAME,
             new ReindexationRequestEvent([], [], [], false)
