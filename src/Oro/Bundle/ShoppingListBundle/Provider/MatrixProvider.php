@@ -21,4 +21,18 @@ class MatrixProvider
 
         return false;
     }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    public function removeEmptyMatricesFromShoppingList(ShoppingList $shoppingList)
+    {
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            if (false === $lineItem->getProduct()->isConfigurable()) {
+                continue;
+            }
+
+            $shoppingList->removeLineItem($lineItem);
+        }
+    }
 }

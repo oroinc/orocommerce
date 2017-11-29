@@ -551,6 +551,10 @@ workflows:
                         method: hasEmptyMatrix
                         method_parameters: [$.result.shoppingList]
                         attribute: $.result.shoppingListHasEmptyMatrix
+                    - '@call_service_method':
+                        service: oro_shopping_list.provider.matrix
+                        method: removeEmptyMatricesFromShoppingList
+                        method_parameters: [$.result.shoppingList]
                 preconditions:
                    '@and':
                        - '@has_elements': $.result.shoppingList.lineItems
