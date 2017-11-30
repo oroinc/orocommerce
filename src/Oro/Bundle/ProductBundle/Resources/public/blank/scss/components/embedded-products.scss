@@ -7,19 +7,25 @@
 }
 
 @include breakpoint('strict-tablet-small') {
-    .embedded-product {
-        width: (100% / $embedded-products-item-width-count-tablet-small);
+    .embedded-products {
+        &__item {
+            width: (100% / $embedded-products-item-width-count-tablet-small);
+        }
     }
 }
 
 @include breakpoint('strict-mobile-landscape') {
-    .embedded-product {
-        width: (100% / $embedded-products-item-count-mobile-landscape);
+    .embedded-products {
+        &__item {
+            width: (100% / $embedded-products-item-count-mobile-landscape);
+        }
     }
 }
 
 @include breakpoint('mobile') {
-    .embedded-product {
-        width: 100% / $embedded-products-item-count-mobile;
+    .embedded-products {
+        &__item {
+            width: 100% / $embedded-products-item-count-mobile;
+        }
     }
 }
