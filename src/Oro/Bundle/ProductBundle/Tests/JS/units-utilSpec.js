@@ -93,6 +93,7 @@ define(function(require) {
                 expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
                 expect(model.get('unit')).toEqual('item');
                 expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
             });
 
             it('we should see placeholder if units list is empty', function() {
@@ -110,11 +111,11 @@ define(function(require) {
                 expect(getOptions($el)).toEqual(['--']);
             });
 
-            it('input widget should be disabled when there is only one option', function() {
+            it('input widget should be readonly when there is only one option', function() {
                 model.set('product_units', {item: 0});
                 UnitsUtil.updateSelect(model, $el);
 
-                expect($el.prop('disabled')).toBeTruthy();
+                expect($el.prop('readonly')).toBeTruthy();
             });
 
             it('input widget should be refreshed', function() {

@@ -23,7 +23,8 @@ define(function(require) {
                     options.push(this.generateSelectOption(value, label));
                 }, this);
 
-                $el.prop('disabled', options.length <= 1);
+                $el.prop('disabled', false);
+                $el.prop('readonly', options.length <= 1);
             } else {
                 if (!model.has('unit_placeholder')) {
                     model.set('unit_placeholder', $el.find('option[value=""]').text() || '');
