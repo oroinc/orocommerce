@@ -12,7 +12,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
     const INCLUDED_IDS = '2,7';
 
     /**
-     * @var \Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
      */
     private $filtersPurifier;
 
