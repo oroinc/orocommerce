@@ -389,8 +389,6 @@ class ProductControllerTest extends ProductHelperTestCase
 
     public function testDuplicate()
     {
-        $this->markTestSkipped('skip until BB-11369 is resolved');
-
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
