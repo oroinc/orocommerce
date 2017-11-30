@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Service;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
-use Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentFiltersPurifier;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
 class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
     const INCLUDED_IDS = '2,7';
 
     /**
-     * @var ProductCollectionSegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
      */
     private $filtersPurifier;
 
@@ -26,7 +26,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
      */
     public function setUp()
     {
-        $this->filtersPurifier = $this->createMock(ProductCollectionSegmentFiltersPurifier::class);
+        $this->filtersPurifier = $this->createMock(SegmentFiltersPurifier::class);
         $this->definitionConverter = new ProductCollectionDefinitionConverter($this->filtersPurifier);
     }
 

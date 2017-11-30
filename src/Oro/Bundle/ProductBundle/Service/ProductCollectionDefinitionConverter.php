@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Service;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
 /**
  * Allow converting Segment definition into definition without excluded and included filters,
@@ -17,14 +18,14 @@ class ProductCollectionDefinitionConverter
     const EXCLUDED_FILTER_ALIAS = 'excl';
 
     /**
-     * @var ProductCollectionSegmentFiltersPurifier
+     * @var SegmentFiltersPurifier
      */
     private $filtersPurifier;
 
     /**
-     * @param ProductCollectionSegmentFiltersPurifier $filterDefinitionPurifier
+     * @param SegmentFiltersPurifier $filterDefinitionPurifier
      */
-    public function __construct(ProductCollectionSegmentFiltersPurifier $filterDefinitionPurifier)
+    public function __construct(SegmentFiltersPurifier $filterDefinitionPurifier)
     {
         $this->filtersPurifier = $filterDefinitionPurifier;
     }
