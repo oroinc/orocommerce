@@ -9,9 +9,9 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
+class LoadShoppingListCompletedCheckoutsData extends AbstractLoadCheckouts
 {
     use EnabledPaymentMethodIdentifierTrait;
 
@@ -28,7 +28,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
         return [
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
-                'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
+                'source' => LoadShoppingLists::SHOPPING_LIST_1,
                 'checkout' => ['payment_method' => $this->getPaymentMethodIdentifier($this->container)],
                 'completed' => true,
                 'completedData' => [
@@ -39,7 +39,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
                             'entityId' => ['id' => $order->getId()]
                         ]
                     ],
-                    'startedFrom' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
+                    'startedFrom' => LoadShoppingLists::SHOPPING_LIST_1,
                     'currency' => $order->getCurrency(),
                     'subtotal' => $order->getSubtotal(),
                     'total' => $order->getTotal()
@@ -69,7 +69,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
      */
     protected function getCheckoutSourceName()
     {
-        return 'quoteDemand';
+        return 'shoppingList';
     }
 
     /**
@@ -80,7 +80,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
         return array_merge(
             parent::getDependencies(),
             [
-                LoadQuoteProductDemandData::class,
+                LoadShoppingLists::class,
                 LoadOrders::class,
                 LoadPaymentTermData::class,
                 LoadPaymentMethodsConfigsRuleData::class,

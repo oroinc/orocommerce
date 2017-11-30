@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Testing\Unit\EntityTrait;
 

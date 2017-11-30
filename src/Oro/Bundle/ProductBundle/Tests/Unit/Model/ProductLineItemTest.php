@@ -35,5 +35,6 @@ class ProductLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::UNIT_CODE, $lineItem->getProductUnitCode());
         $lineItem->setProduct($product);
         $this->assertEquals(self::PRODUCT_SKU, $lineItem->getProductSku());
+        $this->assertNull($lineItem->getParentProduct());
     }
 }

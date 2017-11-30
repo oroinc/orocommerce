@@ -167,7 +167,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
         public: false
         arguments:
-             - '@oro_shopping_list.data_provider.frontend_product_prices'
+            - '@oro_pricing.provider.frontend_product_prices'
 
     oro_promotion.discount.order_line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter

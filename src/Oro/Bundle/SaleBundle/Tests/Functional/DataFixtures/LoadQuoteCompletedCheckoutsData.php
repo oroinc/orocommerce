@@ -1,52 +1,63 @@
 <?php
 
-namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
-class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
+class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
 {
     use EnabledPaymentMethodIdentifierTrait;
 
-    const CHECKOUT_1 = 'alternative.checkout.1';
-    const CHECKOUT_2 = 'alternative.checkout.2';
+    const CHECKOUT_1 = 'checkout.1';
 
     /**
      * {@inheritDoc}
      */
     protected function getData()
     {
-        $paymentMethodIdentifier = $this->getPaymentMethodIdentifier($this->container);
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
 
         return [
             self::CHECKOUT_1 => [
-                'customerUser' => LoadCustomerUserData::EMAIL,
-                'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => $paymentMethodIdentifier],
-            ],
-            self::CHECKOUT_2 => [
+                'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
-                'checkout' => ['payment_method' => $paymentMethodIdentifier],
-            ],
+                'checkout' => ['payment_method' => $this->getPaymentMethodIdentifier($this->container)],
+                'completed' => true,
+                'completedData' => [
+                    'itemsCount' => count($order->getLineItems()),
+                    'orders' => [
+                        [
+                            'entityAlias' => 'order',
+                            'entityId' => ['id' => $order->getId()]
+                        ]
+                    ],
+                    'startedFrom' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
+                    'currency' => $order->getCurrency(),
+                    'subtotal' => $order->getSubtotal(),
+                    'total' => $order->getTotal()
+                ]
+            ]
         ];
     }
 
     /**
-     * {@inheritDoc}
+     * @return string
      */
     protected function getWorkflowName()
     {
-        return 'b2b_flow_alternative_checkout';
+        return 'b2b_flow_checkout';
     }
 
     /**
-     * {@inheritDoc}
+     * @return Checkout
      */
     protected function createCheckout()
     {
@@ -70,6 +81,7 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
             parent::getDependencies(),
             [
                 LoadQuoteProductDemandData::class,
+                LoadOrders::class,
                 LoadPaymentTermData::class,
                 LoadPaymentMethodsConfigsRuleData::class,
             ]
