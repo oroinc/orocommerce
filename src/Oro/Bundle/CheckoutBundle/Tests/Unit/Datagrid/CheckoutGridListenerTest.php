@@ -16,16 +16,18 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const ENTITY_1 = 'Entity1';
     const ENTITY_2 = 'Entity2';
 
@@ -63,6 +65,11 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $entityNameResolver;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
     protected function setUp()
     {
         $metadata = $this->createMock(ClassMetadata::class);
@@ -92,12 +99,14 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->totalProcessor = $this->createMock(TotalProcessorProvider::class);
 
         $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
             $this->checkoutRepository,
             $this->totalProcessor,
-            $this->entityNameResolver
+            $this->entityNameResolver,
+            $this->doctrineHelper
         );
     }
 
@@ -181,23 +190,17 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildStartedFromColumn()
     {
-        $shoppingList = new ShoppingList();
-        $shoppingList->setLabel('test');
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42, 'label' => 'test']);
+
         $checkout1 = new Checkout();
         $source1 = (new CheckoutSourceStub())->setShoppingList($shoppingList);
         $checkout1->setSource($source1);
-
-        $quoteDemand = new QuoteDemand();
-        $quoteDemand->setQuote(new Quote());
-        $checkout2 = new Checkout();
-        $source2 = (new CheckoutSourceStub())->setQuoteDemand($quoteDemand);
-        $checkout2->setSource($source2);
 
         $this->checkoutRepository->expects($this->atLeastOnce())
             ->method('getCheckoutsByIds')
             ->willReturn([
                 3 => $checkout1,
-                2 => $checkout2,
                 5 => (new Checkout())->setSource(new CheckoutSourceStub())
             ]);
 
@@ -216,13 +219,21 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->entityNameResolver->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturnCallback(
-                function ($entity) use ($shoppingList, $quoteDemand) {
+                function ($entity) use ($shoppingList) {
                     if ($entity === $shoppingList) {
                         return $shoppingList->getLabel();
                     }
 
-                    if ($entity === $quoteDemand->getQuote()) {
-                        return 'Quote';
+                    return null;
+                }
+            );
+
+        $this->doctrineHelper->expects($this->atLeastOnce())
+            ->method('getSingleEntityIdentifier')
+            ->willReturnCallback(
+                function ($entity) use ($shoppingList) {
+                    if ($entity === $shoppingList) {
+                        return $shoppingList->getId();
                     }
 
                     return null;
@@ -244,18 +255,14 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $foundSources,
             $shoppingList->getLabel(),
             'shopping_list',
+            42,
             'Did not found any ShoppingList entity'
         );
         $this->assertCheckoutSource(
             $foundSources,
-            'Quote',
-            'quote',
-            'Did not found any Quote entity'
-        );
-        $this->assertCheckoutSource(
-            $foundSources,
             'started test',
-            'shopping_list',
+            null,
+            null,
             'Did not found any data from completed checkout'
         );
     }
@@ -264,16 +271,18 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $sources
      * @param string $expectedLabel
      * @param string $expectedType
+     * @param int $expectedId
      * @param string $message
      */
-    protected function assertCheckoutSource(array $sources, $expectedLabel, $expectedType, $message)
+    protected function assertCheckoutSource(array $sources, $expectedLabel, $expectedType, $expectedId, $message)
     {
         $found = false;
 
         foreach ($sources as $source) {
             $typeFound = isset($source['type']) && ($expectedType === $source['type']);
             $labelFound = isset($source['label']) && ($expectedLabel === $source['label']);
-            if (($source === $expectedLabel) || ($typeFound && $labelFound)) {
+            $idFound = isset($source['id']) && ($expectedId === $source['id']);
+            if (($source === $expectedLabel) || ($typeFound && $labelFound && $idFound)) {
                 $found = true;
                 break;
             }

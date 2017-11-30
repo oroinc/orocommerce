@@ -17,8 +17,9 @@ class CheckoutLineItemTest extends \PHPUnit_Framework_TestCase
 
     public function testProperties()
     {
+        $id = 123;
         $properties = [
-            ['id', '123'],
+            ['id', $id],
             ['checkout', new Checkout()],
             ['product', new Product()],
             //Allow null as product, required for Quote
@@ -44,6 +45,9 @@ class CheckoutLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($entity->isPriceFixed());
 
         $this->assertPropertyAccessors($entity, $properties);
+        $this->setValue($entity, 'id', $id);
+        $this->assertSame($id, $entity->getEntityIdentifier());
+        $this->assertSame($entity, $entity->getProductHolder());
     }
 
     public function testToString()

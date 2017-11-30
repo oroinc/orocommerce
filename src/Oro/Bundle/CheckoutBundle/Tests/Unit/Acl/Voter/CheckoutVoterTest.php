@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -161,7 +160,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function voteProvider()
     {
-        $object = $this->createMock(Quote::class);
+        $object = $this->createMock(CheckoutSourceEntityInterface::class);
 
         $permissionCreate = 'CREATE;entity:OroCheckoutBundle:Checkout';
 

@@ -120,6 +120,14 @@ services:
         tags:
             - { name: oro_entity.virtual_relation_provider, priority: 120 }
 
+    oro_pricing.provider.frontend_product_prices:
+        class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
+        public: false
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.model.price_list_request_handler'
+
     oro_pricing.pricing_strategy.abstract_price_combining_strategy:
         class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
         abstract: true

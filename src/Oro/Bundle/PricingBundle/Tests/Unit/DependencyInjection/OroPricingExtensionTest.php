@@ -49,6 +49,19 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.reset_price_rule_field_on_update',
             'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group',
             'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer',
+            'oro_pricing.importexport.normalizer.product_price',
+            'oro_pricing.importexport.data_converter.price_attribute_product_price',
+            'oro_pricing.importexport.normalizer.price_attribute_product_price',
+            'oro_pricing.importexport.configuration_provider.price_attribute_product_price',
+            'oro_pricing.importexport.template_fixture.price_attribute_product_price',
+            'oro_pricing.importexport.processor.export.price_attribute_product_price',
+            'oro_pricing.importexport.processor.export_template.price_attribute_product_price',
+            'oro_pricing.importexport.strategy.price_attribute_product_price.add_or_replace',
+            'oro_pricing.importexport.processor.import.price_attribute_product_price',
+            'oro_pricing.importexport.writer.price_attribute_product_price',
+            'oro_pricing.importexport.strategy.price_attribute_product_price.reset',
+            'oro_pricing.importexport.processor.import.price_attribute_product_price.reset',
+            'oro_pricing.importexport.configuration_provider.product_price',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

@@ -35,6 +35,10 @@ class BasePriceList implements DatesAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=10
      *          }
      *      }
      * )
