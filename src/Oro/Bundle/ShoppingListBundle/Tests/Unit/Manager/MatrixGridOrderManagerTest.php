@@ -234,6 +234,11 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $columnDiscountInSale->product = $simpleProductNoDiscountNotInSale;
         $columnNotDiscountNotInSale->product = $simpleProductNoDiscountInSale;
 
+        $columnDiscountInSale->quantity = null;
+        $columnDiscountNotInSale->quantity = null;
+        $columnNotDiscountInSale->quantity = null;
+        $columnNotDiscountNotInSale->quantity = null;
+
         $rowYes = new MatrixCollectionRow();
         $rowYes->label = 'Yes';
         $rowYes->columns = [$columnDiscountInSale, $columnDiscountNotInSale];

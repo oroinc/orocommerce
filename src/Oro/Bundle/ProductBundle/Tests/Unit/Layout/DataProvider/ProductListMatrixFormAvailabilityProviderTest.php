@@ -220,4 +220,63 @@ class ProductListMatrixFormAvailabilityProviderTest extends \PHPUnit_Framework_T
 
         return $product;
     }
+
+    /**
+     * @return array
+     */
+    public function isMatrixFormAvailableDataProvider()
+    {
+        return [
+            'inline matrix' => [
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+                'isMatrixFormAvailable' => true,
+                'isMobile' => false,
+                'expected' => true,
+            ],
+            'popup matrix' => [
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_POPUP,
+                'isMatrixFormAvailable' => true,
+                'isMobile' => false,
+                'expected' => true,
+            ],
+            'no matrix' => [
+                'matrixFormConfig' => Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+                'isMatrixFormAvailable' => false,
+                'isMobile' => false,
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $matrixFormConfig
+     * @param bool $isMatrixFormAvailable
+     * @param bool $isMobile
+     * @param bool $expected
+     * @dataProvider isMatrixFormAvailableDataProvider
+     */
+    public function testIsMatrixFormAvailable($matrixFormConfig, $isMatrixFormAvailable, $isMobile, $expected)
+    {
+        $configurableProduct = $this->getEntity(Product::class);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_LISTING))
+            ->willReturn($matrixFormConfig);
+
+        $this->productFormAvailabilityProvider->expects($this->once())
+            ->method('isMatrixFormAvailable')
+            ->with($configurableProduct)
+            ->willReturn($isMatrixFormAvailable);
+
+        $this->userAgentProvider->expects($this->any())
+            ->method('getUserAgent')
+            ->willReturn($this->userAgent);
+
+        $this->userAgent->expects($this->any())
+            ->method('isMobile')
+            ->willReturn($isMobile);
+
+        $this->assertEquals($expected, $this->provider->isMatrixFormAvailable($configurableProduct));
+    }
 }

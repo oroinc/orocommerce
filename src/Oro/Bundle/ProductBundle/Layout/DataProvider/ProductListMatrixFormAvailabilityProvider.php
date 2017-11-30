@@ -39,6 +39,18 @@ class ProductListMatrixFormAvailabilityProvider
 
     /**
      * @param Product $product
+     * @return bool
+     */
+    public function isMatrixFormAvailable(Product $product)
+    {
+        return in_array($this->getAvailableMatrixFormType($product), [
+            Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
+            Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_POPUP,
+        ]);
+    }
+
+    /**
+     * @param Product $product
      * @return string
      */
     public function getAvailableMatrixFormType(Product $product)

@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -47,6 +48,9 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
     private $datagridConfiguration;
 
+    /** @var MatrixGridOrderProvider|\PHPUnit_Framework_MockObject_MockObject */
+    private $matrixGridOrderProvider;
+
     /**
      * {@inheritdoc}
      */
@@ -61,6 +65,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
         $this->datagridConfiguration = $this->createMock(DatagridConfiguration::class);
+        $this->matrixGridOrderProvider = $this->createMock(MatrixGridOrderProvider::class);
 
         $this->gridExtension = new FrontendMatrixProductGridExtension(
             $this->doctrineHelper,
@@ -68,7 +73,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             $this->matrixGridOrderFormProvider,
             $this->productListMatrixFormAvailabilityProvider,
             $this->productVariantAvailabilityProvider,
-            $this->frontendProductPricesProvider
+            $this->frontendProductPricesProvider,
+            $this->matrixGridOrderProvider
         );
     }
 
@@ -153,6 +159,21 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE
             );
 
+        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
+            ->method('isMatrixFormAvailable')
+            ->withConsecutive([$product1], [$product2], [$product3])
+            ->willReturnOnConsecutiveCalls(true, false, false);
+
+        $this->matrixGridOrderProvider->expects($this->once())
+            ->method('getTotalQuantity')
+            ->with($product1)
+            ->willReturn(5);
+
+        $this->matrixGridOrderProvider->expects($this->once())
+            ->method('getTotalPriceFormatted')
+            ->with($product1)
+            ->willReturn('$12.34');
+
         $this->productVariantAvailabilityProvider->expects($this->once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product1)
@@ -183,17 +204,19 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             '1' => [
                 'matrixFormType' => 'inline',
                 'matrixForm' => 'form html',
-                'productPrices' => ['1' => ['unit' => 1]]
+                'productPrices' => ['1' => ['unit' => 1]],
+                'totalQuantity' => 5,
+                'totalPrice' => '$12.34',
             ],
             '2' => [
                 'matrixFormType' => 'none',
                 'matrixForm' => null,
-                'productPrices' => null
+                'productPrices' => null,
             ],
             '3' => [
                 'matrixFormType' => 'none',
                 'matrixForm' => null,
-                'productPrices' => null
+                'productPrices' => null,
             ],
         ];
 
@@ -207,6 +230,24 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 $data->getValue('productPrices'),
                 $expectedData[$data->getValue('id')]['productPrices']
             );
+
+            if (isset($expectedData[$data->getValue('id')]['totalQuantity'])) {
+                $this->assertEquals(
+                    $data->getValue('totalQuantity'),
+                    $expectedData[$data->getValue('id')]['totalQuantity']
+                );
+            } else {
+                $this->assertEmpty($data->getValue('totalQuantity'));
+            }
+
+            if (isset($expectedData[$data->getValue('id')]['totalPrice'])) {
+                $this->assertEquals(
+                    $data->getValue('totalPrice'),
+                    $expectedData[$data->getValue('id')]['totalPrice']
+                );
+            } else {
+                $this->assertEmpty($data->getValue('totalPrice'));
+            }
         }
     }
 
