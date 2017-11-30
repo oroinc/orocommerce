@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Converter;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CheckoutBundle\Converter\QuoteDemandLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;

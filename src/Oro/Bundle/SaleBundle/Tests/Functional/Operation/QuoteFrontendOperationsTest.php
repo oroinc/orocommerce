@@ -1,14 +1,17 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Operation;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\HttpFoundation\Response;
-
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCompletedCheckoutsData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Response;
 
 class QuoteFrontendOperationsTest extends FrontendActionTestCase
 {
@@ -17,10 +20,15 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
      */
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadCustomerUserData::LEVEL_1_EMAIL, LoadCustomerUserData::LEVEL_1_PASSWORD)
+        );
 
         $this->loadFixtures([
-            LoadQuoteData::class
+            LoadOrders::class,
+            LoadQuoteData::class,
+            LoadQuoteCompletedCheckoutsData::class,
         ]);
     }
 
@@ -47,7 +55,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $quote = $this->getReference(LoadQuoteData::QUOTE1);
 
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
-        $this->executeOperation($quote, 'oro_checkout_frontend_quote_submit_to_order', Response::HTTP_FORBIDDEN);
+        $this->executeOperation($quote, 'oro_sale_frontend_quote_submit_to_order', Response::HTTP_FORBIDDEN);
 
         $data = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -58,13 +66,31 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $this->assertEquals(['Quote #sale.quote.1 is no longer available'], $data['messages']);
     }
 
+    public function testCheckoutViewOrderOperation()
+    {
+        $checkout = $this->getReference(LoadQuoteCompletedCheckoutsData::CHECKOUT_1);
+
+        $this->executeViewCheckoutOperation($checkout, 'oro_checkout_frontend_view_order');
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('redirectUrl', $data);
+        $this->assertTrue($data['success']);
+
+        $crawler = $this->client->request('GET', $data['redirectUrl']);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $this->assertContains('Order #' . LoadOrders::ORDER_1, $crawler->html());
+    }
+
     /**
      * @param Quote $quote
      * @return Form
      */
     protected function startCheckout(Quote $quote)
     {
-        $this->executeOperation($quote, 'oro_checkout_frontend_quote_submit_to_order');
+        $this->executeOperation($quote, 'oro_sale_frontend_quote_submit_to_order');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -108,6 +134,20 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
             ['route' => 'oro_sale_quote_frontend_view'],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
             $statusCode
+        );
+    }
+
+    /**
+     * @param Checkout $checkout
+     * @param string $operationName
+     */
+    protected function executeViewCheckoutOperation(Checkout $checkout, $operationName)
+    {
+        $this->assertExecuteOperation(
+            $operationName,
+            $checkout->getId(),
+            Checkout::class,
+            ['datagrid' => 'frontend-checkouts-grid', 'group' => ['datagridRowAction']]
         );
     }
 }

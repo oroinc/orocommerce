@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Converter;
+namespace Oro\Bundle\SaleBundle\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;

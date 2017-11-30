@@ -1,18 +1,18 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -108,7 +108,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         $productUnit->setCode('test');
         $quantity = 100;
 
-        $lineItem = new LineItem();
+        $lineItem = new ProductLineItem('test');
         $lineItem->setProduct($product);
         $lineItem->setUnit($productUnit);
         $lineItem->setQuantity($quantity);

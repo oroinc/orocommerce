@@ -39,18 +39,6 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
             'amount' => 100,
             'valid' => true,
         ],
-        self::CHECKOUT_SUBTOTAL_4 => [
-            'checkout' => LoadQuoteCheckoutsData::CHECKOUT_1,
-            'currency' => 'USD',
-            'amount' => 600,
-            'valid' => true,
-        ],
-        self::CHECKOUT_SUBTOTAL_5 => [
-            'checkout' => LoadQuoteCheckoutsData::CHECKOUT_2,
-            'currency' => 'USD',
-            'amount' => 700,
-            'valid' => true,
-        ],
         self::CHECKOUT_SUBTOTAL_7 => [
             'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
             'currency' => 'USD',
@@ -89,7 +77,6 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
     {
         return [
             LoadShoppingListsCheckoutsData::class,
-            LoadQuoteCheckoutsData::class,
         ];
     }
 }

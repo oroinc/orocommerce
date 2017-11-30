@@ -17,13 +17,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
@@ -55,21 +54,29 @@ class CheckoutGridListener
     private $entityNameResolver;
 
     /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
      * @param UserCurrencyManager $currencyManager
      * @param CheckoutRepository $checkoutRepository
      * @param TotalProcessorProvider $totalProcessor
      * @param EntityNameResolver $entityNameResolver
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
         CheckoutRepository $checkoutRepository,
         TotalProcessorProvider $totalProcessor,
-        EntityNameResolver $entityNameResolver
+        EntityNameResolver $entityNameResolver,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->currencyManager = $currencyManager;
         $this->checkoutRepository = $checkoutRepository;
         $this->totalProcessor = $totalProcessor;
         $this->entityNameResolver = $entityNameResolver;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -182,18 +189,16 @@ class CheckoutGridListener
      */
     protected function getStartedFrom(CheckoutSourceEntityInterface $source)
     {
-        if ($source instanceof QuoteDemand) {
-            $source = $source->getQuote();
-        }
+        $sourceEntity = $source->getSourceDocument();
 
         // simplify type checking in twig
-        $type = $this->getShortClassName($source);
+        $type = $this->getShortClassName($sourceEntity);
 
         return [
             'entity' => $source,
             'type' => $type,
-            'label' => $this->entityNameResolver->getName($source),
-            'id' => $source->getId()
+            'label' => $this->entityNameResolver->getName($sourceEntity),
+            'id' => $this->doctrineHelper->getSingleEntityIdentifier($sourceEntity)
         ];
     }
 
