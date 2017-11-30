@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
-use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
+use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -19,20 +18,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
-use Oro\Component\Testing\Unit\EntityTrait;
 
-class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
+class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    const LISTENERS = [
-        'test_listener_1',
-        'test_listener_2',
-    ];
-
-    use EntityTrait;
-
-    /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $listenerManager;
-
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
 
@@ -57,62 +45,34 @@ class UpdateSlugsDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
     /** @var ClassMetadataFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $metadataFactory;
 
-    /** @var MigrationDataFixturesEvent|\PHPUnit_Framework_MockObject_MockObject */
-    protected $event;
-
-    /** @var UpdateSlugsDemoDataFixturesListener */
-    protected $listener;
-
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        $this->listenerManager = $this->createMock(OptionalListenerManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->generator = $this->createMock(SlugEntityGenerator::class);
         $this->urlStorageCache = $this->createMock(UrlStorageCache::class);
-
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->redirectRepository = $this->createMock(EntityRepository::class);
         $this->sluggableRepository = $this->createMock(EntityRepository::class);
         $this->slugRepository = $this->createMock(EntityRepository::class);
         $this->metadataFactory = $this->createMock(ClassMetadataFactory::class);
-        $this->event = $this->createMock(MigrationDataFixturesEvent::class);
 
-        $this->listener = new UpdateSlugsDemoDataFixturesListener(
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListener()
+    {
+        return new UpdateSlugsDemoDataFixturesListener(
             $this->listenerManager,
             $this->configManager,
             $this->generator,
             $this->urlStorageCache
         );
-        $this->listener->disableListener(self::LISTENERS[0]);
-        $this->listener->disableListener(self::LISTENERS[1]);
-    }
-
-    public function testOnPreLoad()
-    {
-        $this->event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(true);
-
-        $this->listenerManager->expects($this->once())
-            ->method('disableListeners')
-            ->with(self::LISTENERS);
-
-        $this->listener->onPreLoad($this->event);
-    }
-
-    public function testOnPreLoadWithNoDemoFixtures()
-    {
-        $this->event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(false);
-
-        $this->listenerManager->expects($this->never())
-            ->method('disableListeners');
-
-        $this->listener->onPreLoad($this->event);
     }
 
     /**

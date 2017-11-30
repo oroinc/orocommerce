@@ -3,28 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener;
-use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
-use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
+use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener;
 
-class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
+class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    const LISTENERS = [
-        'test_listener_1',
-        'test_listener_2',
-    ];
-
-    use EntityTrait;
-
-    /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $listenerManager;
-
     /** @var CombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceListBuilder;
 
@@ -40,59 +28,31 @@ class BuildPricesDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCas
     /** @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceListRepository;
 
-    /** @var MigrationDataFixturesEvent|\PHPUnit_Framework_MockObject_MockObject */
-    protected $event;
-
-    /** @var BuildPricesDemoDataFixturesListener */
-    protected $listener;
-
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        $this->listenerManager = $this->createMock(OptionalListenerManager::class);
         $this->priceListBuilder = $this->createMock(CombinedPriceListsBuilder::class);
         $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
-
         $this->objectManager = $this->createMock(ObjectManager::class);
         $this->priceListRepository = $this->createMock(PriceListRepository::class);
-        $this->event = $this->createMock(MigrationDataFixturesEvent::class);
 
-        $this->listener = new BuildPricesDemoDataFixturesListener(
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListener()
+    {
+        return new BuildPricesDemoDataFixturesListener(
             $this->listenerManager,
             $this->priceListBuilder,
             $this->priceBuilder,
             $this->assignmentBuilder
         );
-        $this->listener->disableListener(self::LISTENERS[0]);
-        $this->listener->disableListener(self::LISTENERS[1]);
-    }
-
-    public function testOnPreLoad()
-    {
-        $this->event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(true);
-
-        $this->listenerManager->expects($this->once())
-            ->method('disableListeners')
-            ->with(self::LISTENERS);
-
-        $this->listener->onPreLoad($this->event);
-    }
-
-    public function testOnPreLoadWithNoDemoFixtures()
-    {
-        $this->event->expects($this->once())
-            ->method('isDemoFixtures')
-            ->willReturn(false);
-
-        $this->listenerManager->expects($this->never())
-            ->method('disableListeners');
-
-        $this->listener->onPreLoad($this->event);
     }
 
     public function testOnPostLoad()
