@@ -60,3 +60,13 @@ services:
               type: import_validation
               entity: %oro_tax.entity.tax.class%
               alias:  oro_tax_tax
+
+    oro_tax.importexport.configuration_provider.tax_rule:
+        class: 'Oro\Bundle\TaxBundle\ImportExport\Configuration\TaxRuleImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_tax_rule }
+
+    oro_tax.importexport.configuration_provider.tax:
+        class: 'Oro\Bundle\TaxBundle\ImportExport\Configuration\TaxImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_tax }

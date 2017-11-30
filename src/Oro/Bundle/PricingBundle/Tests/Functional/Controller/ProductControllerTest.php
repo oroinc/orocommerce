@@ -491,6 +491,17 @@ class ProductControllerTest extends ProductHelperTestCase
         ];
     }
 
+    public function testIndexPageHasImportExportAttributePricesButtons()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
+        $result = $this->client->getResponse();
+
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        static::assertContains('Export Price Attribute Data', $crawler->html());
+        static::assertContains('Import file', $crawler->html());
+    }
+
     /**
      * @param string $operationName
      * @param mixed $entityId

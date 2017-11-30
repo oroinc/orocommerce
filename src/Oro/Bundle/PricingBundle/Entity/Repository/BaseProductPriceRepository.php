@@ -84,6 +84,18 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
     /**
      * @param BasePriceList $priceList
+     *
+     * @return int
+     */
+    public function deletePricesByPriceList(BasePriceList $priceList): int
+    {
+        return $this->getDeleteQbByPriceList($priceList)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param BasePriceList $priceList
      * @param Product|null $product
      * @return QueryBuilder
      */

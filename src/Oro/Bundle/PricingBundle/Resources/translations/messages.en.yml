@@ -21,6 +21,17 @@ oro.pricing:
             label: 'Unit'
             description: 'Unit related to a product price attribute value'
 
+        export:
+            button.label: 'Export Price Attribute Data'
+        import:
+            entity.label: 'Price Attributes Data'
+            popup.title: 'Import Price Attributes Data'
+            strategy:
+                tooltip: '<b>Add and Replace</b> strategy overrides the existing price attribute data (e.g. MAP, MSRP, etc.) with the new one from the imported file. <br> <b>Reset and Add</b> strategy removes the existing price attribute values for all the products (regardless of the currency) if the price attribute is listed in the file. For example, if an MSRP value is provided for a Product A, all the MSRP values in all the currencies are removed for all the products. If MAP is not mentioned it the file, the MAP values remain intact.'
+                reset_and_add_confirmation: 'The selected <b>Reset and Add</b> strategy implies removing the attribute data which is not listed in the imported file. Are you sure you want to proceed with importing?'
+        import_validation:
+            button.label: 'Validate Price Attributes Data File'
+
     priceAttribute:
         unit.label: Unit
         withoutPrice: N/A
@@ -158,7 +169,10 @@ oro.pricing:
             choose: Choose unit...
         unit_code.label: Unit
         price.label: Price
-        import: Import Product Prices
+        import:
+            strategy:
+                tooltip: '<b>Add and Replace</b> strategy overrides the existing price data with the new one from the imported file. <br> <b>Reset and Add</b> strategy removes all the prices for all the products and adds the prices from the file.'
+                reset_and_add_confirmation: 'The selected <b>Reset and Add</b> strategy implies replacing all prices with new price data. Are you sure you want to proceed with importing?'
         show_tier_prices.label: Show Tier Prices
         price_in_%currency%: 'Price (%currency%)'
         price_%unit%_in_%currency%: 'Price (%currency%/%unit%)'
@@ -296,5 +310,8 @@ oro:
     importexport:
         import:
             oro_pricing_product_price:
+                add_or_replace: Add and Replace
+                reset: Reset and Add
+            oro_pricing_product_price_attribute_price:
                 add_or_replace: Add and Replace
                 reset: Reset and Add
