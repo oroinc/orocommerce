@@ -63,3 +63,8 @@ services:
               type: export_template
               entity: '%oro_promotion.entity.coupon.class%'
               alias: oro_promotion_coupon_export_template
+
+    oro_promotion.importexport.configuration_provider.coupon:
+        class: 'Oro\Bundle\PromotionBundle\ImportExport\Configuration\CouponImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_coupon }

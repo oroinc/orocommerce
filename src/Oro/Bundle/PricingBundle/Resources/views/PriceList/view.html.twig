@@ -14,16 +14,9 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
-        entity_class: product_price_entity_class,
-        exportJob: 'price_list_product_prices_export_to_csv',
-        exportProcessor: 'oro_pricing_product_price',
-        exportTemplateProcessor: 'oro_pricing_product_price',
-        importProcessor: 'oro_pricing_product_price.add_or_replace',
-        importJob: 'price_list_product_prices_entity_import_from_csv',
-        importTitle: 'oro.pricing.productprice.import'|trans,
-        datagridName: 'price-list-product-prices-grid',
-        options: {'price_list_id': entity.id}
+    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+        'alias': 'oro_product_price',
+        'options': {'price_list_id': entity.id}
     } %}
 
     {{ parent() }}

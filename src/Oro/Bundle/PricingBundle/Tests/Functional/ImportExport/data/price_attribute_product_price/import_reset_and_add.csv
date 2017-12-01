@@ -1,0 +1,4 @@
+"Product SKU","Price Attribute","Unit Code",Currency,Price
+product-1,priceAttributePriceList1,bottle,EUR,100.5500
+product-2,priceAttributePriceList1,liter,USD,0
+product-3,priceAttributePriceList2,liter,USD,300

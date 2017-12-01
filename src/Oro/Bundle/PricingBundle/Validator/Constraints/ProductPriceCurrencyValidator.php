@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
