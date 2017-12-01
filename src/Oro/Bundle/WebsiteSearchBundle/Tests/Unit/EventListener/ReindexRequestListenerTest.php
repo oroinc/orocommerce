@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -85,6 +86,18 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->process($event);
     }
 
+    public function testProcessWithDisabledListener()
+    {
+        $this->regularIndexerMock->expects($this->never())
+            ->method('reindex');
+
+        $this->asyncIndexerMock->expects($this->never())
+            ->method('reindex');
+
+        $this->disableListener();
+        $this->listener->process(new ReindexationRequestEvent());
+    }
+
     public function testProcessAsync()
     {
         $event = new ReindexationRequestEvent(
@@ -110,5 +123,11 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->method('reindex');
 
         $this->listener->process($event);
+    }
+
+    protected function disableListener()
+    {
+        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
+        $this->listener->setEnabled(false);
     }
 }

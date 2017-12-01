@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
@@ -18,27 +19,38 @@ class ProductImageResizeListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var MessageProducerInterface
+     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $producer;
 
     public function setUp()
     {
-        $this->producer = $this->prophesize(MessageProducerInterface::class);
-        $this->listener = new ProductImageResizeListener($this->producer->reveal());
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->listener = new ProductImageResizeListener($this->producer);
     }
 
     public function testResizeProductImage()
     {
-        $event = $this->prepareEvent();
-        $this->producer->send(
-            ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
-            [
-                'productImageId' => self::PRODUCT_IMAGE_ID,
-                'force' => self::FORCE_OPTION
-            ]
-        )->shouldBeCalled();
+        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
 
+        $event = $this->prepareEvent();
+
+        $this->producer->expects($this->once())
+            ->method('send')
+            ->with(
+                ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
+                [
+                    'productImageId' => self::PRODUCT_IMAGE_ID,
+                    'force' => self::FORCE_OPTION
+                ]
+            );
+
+        // listener should be enabled by default
+        $this->listener->resizeProductImage($event);
+
+        $this->listener->setEnabled(false);
+
+        // producer should not be called because listener marked as disabled
         $this->listener->resizeProductImage($event);
     }
 
