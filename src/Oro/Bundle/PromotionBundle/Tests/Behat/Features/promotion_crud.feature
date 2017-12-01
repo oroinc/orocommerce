@@ -1,10 +1,10 @@
 @fixture-OroPromotionBundle:promotion_crud.yml
-Feature: Managing promotions
+Feature: Promotion CRUD
   In order to use promotions on front store
   As an Administrator
   I need to have an ability to create, view, update and delete promotion entity in admin area
 
-  Scenario: Promotion CRUD
+  Scenario: Create promotion
     Given I login as administrator
     When I go to Marketing / Promotions / Promotions
     And I click "Create Promotion"
