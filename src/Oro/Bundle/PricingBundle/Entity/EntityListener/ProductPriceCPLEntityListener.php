@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -13,8 +15,10 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class ProductPriceCPLEntityListener
+class ProductPriceCPLEntityListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var ExtraActionEntityStorageInterface
      */
@@ -69,6 +73,10 @@ class ProductPriceCPLEntityListener
      */
     protected function handleChanges(ProductPrice $productPrice)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();

@@ -450,9 +450,19 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_visibility.visibility.change_customer' }
 
+    oro_visibility.migration.demo_data_fixtures_listener.change_visibility:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        class: Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesListener
+        arguments:
+            - '@oro_website_search.driver.customer_partial_update_driver'
+        calls:
+            - [disableListener, ['oro_visibility.entity.entity_listener.customer_listener']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
     oro_visibility.entity.entity_listener.customer_listener:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\CustomerListener'
-        public: false
         arguments:
             - '@oro_visibility.customer_message_factory'
             - '@oro_message_queue.client.message_producer'
