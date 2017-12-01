@@ -333,7 +333,10 @@ class ProductRepository extends EntityRepository
      */
     public function getProductsByIds(array $ids)
     {
-        return $this->getProductsQueryBuilder($ids)->getQuery()->getResult();
+        $queryBuilder = $this->getProductsQueryBuilder($ids)
+            ->orderBy('p.id');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
