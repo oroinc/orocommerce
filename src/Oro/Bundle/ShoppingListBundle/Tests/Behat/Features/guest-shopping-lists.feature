@@ -78,7 +78,7 @@ Feature: Guest Shopping Lists
     When type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "Product3"
-    But I should not see "Add to Shopping list"
+    But I should not see "Add to Shopping List"
 
   Scenario: Configurable product variants and matrix button shouldn't be available on front store
     And I open product with sku "1GB83" on the store frontend
@@ -101,7 +101,7 @@ Feature: Guest Shopping Lists
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
     Then I should see an "Matrix Grid Form" element
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
 
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I am on homepage
@@ -109,10 +109,10 @@ Feature: Guest Shopping Lists
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
     When I click "View Details" for "PSKU1" product
-    Then I should see "Add to Shopping list"
-    When I click "Add to Shopping list"
+    Then I should see "Add to Shopping List"
+    When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
 

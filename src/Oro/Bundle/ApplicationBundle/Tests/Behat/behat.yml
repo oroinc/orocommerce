@@ -197,16 +197,16 @@ oro_behat_extension:
         locator: '//div[@class="shopping-lists"]'
         type: xpath
 
-    Update Shopping list button:
+    Update Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Update Shopping list"]'
+        locator: '//div/a[@title="Update Shopping List"]'
         type: xpath
 
     Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Add to Shopping list"]'
+        locator: '//div/a[@title="Add to Shopping List"]'
         type: xpath
 
     Gallery View:
@@ -262,13 +262,13 @@ oro_behat_extension:
     Add to Shopping List form Matrix Grid:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping list"]'
+        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping List"]'
         type: xpath
 
-    Add to Shopping list button:
+    Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//a[@title="Add to Shopping list"]'
+        locator: '//a[@title="Add to Shopping List"]'
         type: xpath
 
     Create New Shopping List popup:

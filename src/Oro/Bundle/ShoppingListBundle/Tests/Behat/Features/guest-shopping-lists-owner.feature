@@ -22,9 +22,9 @@ Feature: Guest shopping lists owner
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I should see "Product1"
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
     And I click "View Details" for "PSKU1" product
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message
     Then I should see "In shopping list"

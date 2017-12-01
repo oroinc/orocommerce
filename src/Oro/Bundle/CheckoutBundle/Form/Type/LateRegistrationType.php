@@ -76,12 +76,15 @@ class LateRegistrationType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => function (FormInterface $form) {
                 $data = $form->getData();
-                if (!$data['is_late_registration_enabled'] && $form->isSubmitted()) {
+                $lateRegistration = is_array($data)
+                    && array_key_exists('is_late_registration_enabled', $data)
+                    && $data['is_late_registration_enabled'];
+                if (!$lateRegistration && $form->isSubmitted()) {
                     return [];
                 } else {
                     return ['Default'];
                 }
-            },
+            }
         ]);
     }
 }

@@ -248,7 +248,7 @@ Feature: Inline matrix for configurable products in product views
       | Value 11 | 1 |
       | Value 14 | 1 |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
     Given type "Configurable Product B" in "search"
@@ -303,9 +303,9 @@ Feature: Inline matrix for configurable products in product views
     Then I should see an "Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
-    Then I should see "Product has been removed from \"Shopping list\""
-    And I click "Shopping list"
-    Then I should not see "Shopping list 2 Items"
+    Then I should see "Product has been removed from \"Shopping List\""
+    And I click "Shopping List"
+    Then I should not see "Shopping List 2 Items"
 
   Scenario: Check popup matrix form
     Given I proceed as the Admin
@@ -315,11 +315,12 @@ Feature: Inline matrix for configurable products in product views
     And I fill in "Display Matrix Form (where applicable)" with "Popup Matrix Form"
     And I save form
     Given I proceed as the User
-    Given type "Configurable Product B" in "search"
+    And type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
     Then I should not see an "Matrix Grid Form" element
-    And I press "Add to Shopping List"
+    And I click on "Shopping List Dropdown"
+    And I click "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
 
   Scenario: Check matrix form disabled

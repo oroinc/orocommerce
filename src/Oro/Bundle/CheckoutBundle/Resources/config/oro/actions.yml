@@ -336,18 +336,44 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
+            - '@get_active_visitor': [$visitor, false]
+            - '@tree':
+                conditions:
+                    '@not_equal': [null, $visitor]
+                actions:
+                    - '@assign_value': [$visitor.customerUser, null]
+                    - '@flush_entity': $visitor
+                    - '@assign_value': [$.checkout.registeredCustomerUser, null]
+                    - '@flush_entity': $.checkout
             - '@get_start_checkout_transition':
                 attribute: $.startTransition
-            - '@redirect':
+            - '@tree':
                 conditions:
-                    '@extendable':
-                        events: [extendable_condition.start_checkout]
-                        showErrors: $.showErrors
-                parameters:
-                    route: oro_checkout_frontend_checkout
-                    route_parameters:
-                        id: $.checkout.id
-                        transition: $.startTransition
+                    '@not_empty': $.startTransition
+                actions:
+                    - '@redirect':
+                        conditions:
+                            '@extendable':
+                                events: [extendable_condition.start_checkout]
+                                showErrors: $.showErrors
+                        parameters:
+                            route: oro_checkout_frontend_checkout
+                            route_parameters:
+                                id: $.checkout.id
+                                transition: $.startTransition
+            - '@tree':
+                conditions:
+                    '@empty': $.startTransition
+                actions:
+                    - '@redirect':
+                        conditions:
+                            '@extendable':
+                                events: [extendable_condition.start_checkout]
+                                showErrors: $.showErrors
+                        parameters:
+                            route: oro_checkout_frontend_checkout
+                            route_parameters:
+                                id: $.checkout.id
 
     find_checkout:
         parameters:

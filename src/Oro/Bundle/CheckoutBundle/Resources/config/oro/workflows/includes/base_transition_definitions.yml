@@ -61,7 +61,7 @@ workflows:
                             attribute: $.result.shoppingList
                     - '@call_service_method':
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowed
+                        method: isAllowedForAny
                         attribute: $isAllowed
                 preconditions:
                    '@and':

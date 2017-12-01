@@ -85,12 +85,16 @@ oro:
                     label: 'Visitor'
                 email:
                     label: 'Email'
+                late_registration:
+                    label: 'Late Registration Enabled'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
+                start_checkout_as_guest_system:
+                    label: Continue
                 start_from_shoppinglist:
                     label: 'Start Checkout From Shopping List'
                     button_label: 'Create Order'
@@ -98,7 +102,7 @@ oro:
                     warning_message: ''
                 start_from_shoppinglist_as_guest:
                     label: 'Start Guest Checkout From Shopping List'
-                    button_label: 'Create Order (As Guest)'
+                    button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
                 start_from_quickorderform:
@@ -108,7 +112,7 @@ oro:
                     warning_message: ''
                 start_from_quickorderform_as_guest:
                     label: 'Start Checkout From Quick Order Form'
-                    button_label: 'Create Order (As Guest)'
+                    button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
                 continue_to_shipping_address:
@@ -123,6 +127,8 @@ oro:
                             label: 'Billing address'
                         state_token:
                             label: ''
+                continue_checkout_as_guest:
+                    label: Continue
                 continue_to_shipping_method:
                     label: Continue
                     warning_message: ''
@@ -264,6 +270,8 @@ oro:
                     label: 'Visitor'
                 email:
                     label: 'Email'
+                late_registration:
+                    label: 'Late Registration Enabled'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
