@@ -171,7 +171,11 @@
     {% if matrixFormAvailable %}
         {% do block|merge_context({
             'prices': product.productPrices,
-            'matrixForm': product[column_name]
+            'matrixForm': product[column_name],
+            'totals': {
+                'quantity': product.totalQuantity,
+                'price': product.totalPrice
+            }
         }) %}
         {{- block('container_widget') -}}
     {% endif %}

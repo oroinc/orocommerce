@@ -15,6 +15,8 @@ define(function(require) {
         shoppingListId: null,
 
         initialize: function(options) {
+            this.model = this.model || options.productModel;
+
             var urlOptions = {
                 productId: this.model.get('id'),
                 shoppingListId: this.shoppingListId

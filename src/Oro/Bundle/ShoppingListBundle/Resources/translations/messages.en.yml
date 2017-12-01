@@ -183,6 +183,7 @@ oro:
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
             btn:
+                update: 'Update'
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'

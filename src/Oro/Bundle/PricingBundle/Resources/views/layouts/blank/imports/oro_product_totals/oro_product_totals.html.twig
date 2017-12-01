@@ -1,0 +1,48 @@
+{% block __oro_product_totals__totals_widget %}
+    {% set class_prefix = 'product-totals' %}
+
+    {% do block|merge_context({
+        class_prefix: class_prefix|default(''),
+        mode: mode|default('default'),
+        totals: totals|default({})
+    }) %}
+
+    <div class="{{ class_prefix }}{{ mode != 'default' ? '--' ~ mode : '' }}">
+        {{ block('container_widget') }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__totals_wrapper_widget %}
+    <div class="{{ class_prefix }}__wrapper{{ mode != 'default' ? '--' ~ mode : '' }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__quantity_widget %}
+    <div class="{{ class_prefix }}__total-quantity{{ mode != 'default' ? '--' ~ mode : '' }}">
+        <span class="{{ class_prefix }}__label {{ mode != 'default' ? class_prefix ~'__label--' ~ mode : '' }}">
+        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
+        </span>
+        <span class="{{ class_prefix }}__total-quantity-value" data-role="total-quantity">
+            {{ totals.quantity|default('') }}
+        </span>
+    </div>
+    {% if mode == 'inline' %}
+        <div class="{{ class_prefix }}__separator">|</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_totals__total_widget %}
+    <div class="{{ class_prefix }}__total-price{{ mode != 'default' ? '--' ~ mode : '' }}">
+        <span class="{{ class_prefix }}__label {{ mode != 'default' ? class_prefix ~'__label--' ~ mode : '' }}">
+            {% if mode == 'inline' %}
+                {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
+            {% else %}
+                {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}
+            {% endif %}
+        </span>
+        <span class="{{ class_prefix }}__total-price-value" data-role="total-price">
+            {{ totals.price|default('') }}
+        </span>
+    </div>
+{% endblock %}

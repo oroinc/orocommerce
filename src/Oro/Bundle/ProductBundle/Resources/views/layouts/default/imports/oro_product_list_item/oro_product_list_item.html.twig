@@ -92,7 +92,7 @@
         'class': 'product-item__preview-image'
     } %}
 
-    {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
+    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
 
     <picture {{ block('block_attributes') }}>
         <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">

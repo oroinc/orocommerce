@@ -180,25 +180,21 @@
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
-                        {% set matrixForm = null %}
-                        {% if lineItem.matrixForm is defined %}
-                            {% set matrixForm = lineItem.matrixForm %}
-                        {% endif %}
-
+                        {% set matrixForm = lineItem.matrixForm|default(null) %}
+                        {% set matrixFormType = lineItem.matrixFormType|default(null) %}
                         {% set lineItem = lineItem.lineItems|first %}
-
-                        {% do block|merge_context({
-                            'matrixForm': matrixForm
-                        }) %}
+                        {% set mainProduct = lineItem.parentProduct|default(lineItem.product) %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
                             lineItem: lineItem,
-                            mainProduct: lineItem.parentProduct|default(lineItem.product),
+                            mainProduct: mainProduct,
                             parent: block.vars,
                             loop: loop,
-                            form: matrixForm,
-                            productsAllPrices: productsAllPrices
+                            matrixForm: matrixForm,
+                            matrixFormType: matrixFormType,
+                            productsAllPrices: productsAllPrices,
+                            totals: totalPrices[mainProduct.id]
                         }) %}
 
                         {{ block('container_widget') }}
@@ -220,11 +216,8 @@
         {% do block|merge_context({
             product: mainProduct,
             shoppingList: shoppingList,
+            form: matrixForm,
             prices: productsAllPrices,
-            totals: {
-                quantity: 1,
-                price: 1
-            }
         }) %}
         <div {{ UI.renderPageComponentAttributes({
             view: 'oroshoppinglist/js/app/views/line-item-form-submit-view',
@@ -234,19 +227,53 @@
     {% endif %}
 {% endblock %}
 
+{% block _shopping_list_line_items_list_item_matrix_popup_button_widget %}
+    {% if (matrixFormType == 'popup' and isDesktopVersion()) or (matrixFormType != 'none' and isMobileVersion()) %}
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {{ UI.clientLink({
+            'aCss': 'btn btn--info btn--size-s shopping-list-line-items__matrix-popup-button',
+            'label' : 'oro.frontend.shoppinglist.btn.update'|trans,
+            'widget' : {
+                'type' : 'matrix-grid-order',
+                'options': {
+                    'shoppingListId': shoppingList.id
+                }
+            }
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block _matrix_shopping_list_totals_widget %}
+    {% if (matrixFormType == 'popup' and isDesktopVersion()) or (matrixFormType != 'none' and isMobileVersion()) %}
+        {{ parent_block_widget(block) }}
+    {% endif %}
+{% endblock %}
+
 {% block _shopping_list_line_items_list_row_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set class = matrixForm is null ?
         ' shopping-list-line-items__item' :
         'shopping-list-line-items__item--configurable'
     %}
+    {% set productImageData = mainProduct.imagesByType('listing').first.image|default(null) %}
+    {% set productImage = Image.image(productImageData, 'product_small') %}
+    {% set productImageUrl = Image.url(productImageData, 'product_small') %}
+    {% set modelAttr = mainProduct.jsonSerialize() %}
+    {% set modelAttr = modelAttr|merge({
+        'imageUrl': productImageUrl
+    }) %}
     {% set attr = attr|merge({class: class}) %}
+
+    {% do block|merge_context({
+        productImage: productImage
+    }) %}
 
     <div {{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
         module: 'oroui/js/app/components/view-component',
         options: {
             view: 'oroshoppinglist/js/app/views/line-item-view',
-            modelAttr: mainProduct,
+            modelAttr: modelAttr,
             lineItemId: lineItem.id,
             quantityComponentOptions: {
                 dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
@@ -283,10 +310,8 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_image_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     <div class="product-item__image-holder product-item__image-holder--in-cart">
-        {% set productImage = mainProduct.getImagesByType('listing')|length > 0  ? mainProduct.getImagesByType('listing').first.image : null %}
-        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ productImage }}</a>
     </div>
 {% endblock %}
 
@@ -317,7 +342,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
-    {% if matrixForm is null and parent.configurableProducts[lineItem.product.id] is defined %}
+    {% if matrixFormType == 'none' and parent.configurableProducts[lineItem.product.id] is defined %}
         {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}: {{ field.value }}</div>
         {% endfor %}
@@ -325,7 +350,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_specification_widget %}
-    {% if matrixForm is null %}
+    {% if matrixFormType == 'none' %}
         <div class="shopping-list-line-items__specification">
             {{ block('container_widget') }}
         </div>
@@ -610,9 +635,9 @@
 {% endblock %}
 
 {% block _shopping_list_totals_widget %}
-<div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
-    {{ block_widget(block) }}
-</div>
+    <div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}

@@ -1,4 +1,8 @@
 layout:
+    imports:
+        -
+            id: oro_product_totals
+            root: __form_summary
     actions:
         - '@setBlockTheme':
             themes: 'matrix_grid_order.html.twig'
@@ -25,19 +29,10 @@ layout:
                     blockType: form_end
                 __form_summary:
                     blockType: container
-                __form_summary_wrapper:
-                    blockType: container
-                __form_summary_quantity:
-                    blockType: block
-                __form_summary_total:
-                    blockType: block
             tree:
                 __root:
                     __wrapper:
                         __form_start: ~
                         __form_fields: ~
-                        __form_summary:
-                            __form_summary_wrapper:
-                                __form_summary_quantity: ~
-                                __form_summary_total: ~
+                        __form_summary: ~
                         __form_end: ~

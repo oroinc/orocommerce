@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_totals.html.twig'
+        - '@addTree':
+            items:
+                __totals:
+                    blockType: container
+                    options:
+                        vars:
+                            mode: default
+                __totals_wrapper:
+                    blockType: container
+                __quantity:
+                    blockType: block
+                __total:
+                    blockType: block
+            tree:
+                __root:
+                    __totals:
+                        __totals_wrapper:
+                            __quantity: ~
+                            __total: ~

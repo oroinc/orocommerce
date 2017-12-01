@@ -36,10 +36,13 @@ $shopping-list-line-items-status-color: get-color('secondary', 'lighten') !defau
 $shopping-list-line-items-line-item-price-min-width: 120px !default;
 $shopping-list-line-items-line-item-price-text-align: right !default;
 
-$shopping-list-line-items-item-flex-direction: column !default;
-$shopping-list-line-items-item-offset-right: 0 !default;
+$shopping-list-line-items-item-mobile-landscape-flex-direction: column !default;
+$shopping-list-line-items-item-mobile-landscape-offset-right: 0 !default;
 
-$shopping-list-line-items-specification-width: 100% !default;
-$shopping-list-line-items-specification-justify-content: space-between !default;
-$shopping-list-line-items-specification-offset-inner: 11px 0 0 11px !default;
-$shopping-list-line-items-specification-product-qty-container-width: 100% !default;
+$shopping-list-line-items-mobile-landscape-specification-width: 100% !default;
+$shopping-list-line-items-mobile-landscape-specification-justify-content: space-between !default;
+$shopping-list-line-items-mobile-landscape-specification-offset-inner: 11px 0 0 11px !default;
+$shopping-list-line-items-mobile-landscape-specification-product-qty-container-width: 100% !default;
+
+$shopping-list-line-items-matrix-popup-button-mobile-landscape-width: 100% !default;
+$shopping-list-line-items-matrix-popup-button-mobile-landscape-offset-top: 8px !default;

@@ -19,13 +19,15 @@ define(function(require) {
             LineItemView.__super__.initialize.apply(this, arguments);
             this.lineItemId = options.lineItemId;
 
-            var productQuantityView = new ProductQuantityView(_.extend({
-                el: this.$el.get(0),
-                model: this.model
-            }, options.quantityComponentOptions));
+            if (this.getElement('quantity').length) {
+                var productQuantityView = new ProductQuantityView(_.extend({
+                    el: this.$el.get(0),
+                    model: this.model
+                }, options.quantityComponentOptions));
 
-            this.subview('productQuantityView', productQuantityView);
-            this.listenTo(productQuantityView, 'product:quantity-unit:update', this.onQuantityUnitChange);
+                this.subview('productQuantityView', productQuantityView);
+                this.listenTo(productQuantityView, 'product:quantity-unit:update', this.onQuantityUnitChange);
+            }
         },
 
         onQuantityUnitChange: function(data) {
