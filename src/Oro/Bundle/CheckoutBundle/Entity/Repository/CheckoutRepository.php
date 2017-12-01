@@ -6,10 +6,8 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 
 class CheckoutRepository extends EntityRepository
@@ -96,38 +94,11 @@ class CheckoutRepository extends EntityRepository
     }
 
     /**
-     * @param Quote        $quote
-     * @param CustomerUser $customerUser
-     *
-     * @return Checkout
-     */
-    public function getCheckoutByQuote(Quote $quote, CustomerUser $customerUser)
-    {
-        $qb = $this->createQueryBuilder('checkout');
-
-        return $qb->addSelect(['source', 'qd', 'quote'])
-            ->innerJoin('checkout.source', 'source')
-            ->innerJoin('source.quoteDemand', 'qd')
-            ->innerJoin('qd.quote', 'quote')
-            ->where(
-                $qb->expr()->eq('quote', ':quote'),
-                $qb->expr()->eq('qd.customerUser', ':customerUser'),
-                $qb->expr()->eq('source.deleted', ':deleted'),
-                $qb->expr()->eq('checkout.deleted', ':deleted')
-            )
-            ->setParameter('quote', $quote)
-            ->setParameter('customerUser', $customerUser)
-            ->setParameter('deleted', false, Type::BOOLEAN)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    /**
      * @param CustomerUser $customerUser
      * @param array        $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string       $workflowName
      *
-     * @return array
+     * @return Checkout|null
      */
     public function findCheckoutByCustomerUserAndSourceCriteria(
         CustomerUser $customerUser,
@@ -193,7 +164,7 @@ class CheckoutRepository extends EntityRepository
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName
      *
-     * @return array
+     * @return Checkout|null
      */
     public function findCheckoutBySourceCriteria(
         array $sourceCriteria,

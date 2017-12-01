@@ -211,7 +211,7 @@ class SlugRepository extends EntityRepository
                     'routeParameters' => Type::TARRAY,
                     'localizationId' => Type::INTEGER
                 ]
-            );
+            )->addOrderBy('slug.localization_id', 'ASC');
 
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }

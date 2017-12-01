@@ -6,21 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  *
  * @ORM\Table(name="oro_quote_demand")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -48,7 +47,7 @@ class QuoteDemand implements
     ShippingAwareInterface,
     SubtotalAwareInterface,
     CustomerOwnerAwareInterface,
-    CheckoutLineItemsHolderInterface,
+    ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface
 {
     use AuditableFrontendCustomerUserAwareTrait;

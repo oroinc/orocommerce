@@ -7,6 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
@@ -15,6 +17,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_URL_USER = '/slug/customer';
     const SLUG_URL_PAGE = '/slug/page';
     const SLUG_URL_PAGE_2 = '/slug/page2';
+    const SLUG_URL_LOCALIZATION_1 = '/slug/en/page';
+    const SLUG_URL_LOCALIZATION_2 = '/slug/es/page';
     const SLUG_TEST_DUPLICATE_URL = '/slug/first';
     const SLUG_TEST_DUPLICATE_REFERENCE = 'reference:/slug/first';
     const SLUG_TEST_ONLY = '__test-only__';
@@ -55,6 +59,22 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
 
         $this->createSlug($manager, self::SLUG_TEST_ONLY, '__test__', []);
 
+        $this->createSlug(
+            $manager,
+            self::SLUG_URL_LOCALIZATION_1,
+            'oro_product_frontend_product_view',
+            ['id' => $page->getId()]
+        );
+
+        $this->createSlug(
+            $manager,
+            self::SLUG_URL_LOCALIZATION_2,
+            'oro_product_frontend_product_view',
+            ['id' => $page->getId()],
+            null,
+            $this->getReference('es')
+        );
+
         $manager->flush();
     }
 
@@ -64,14 +84,25 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
      * @param string $routeName
      * @param array $routeParameters
      * @param null|string $reference
+     * @param null|Localization $localization
      * @return Slug
      */
-    protected function createSlug(ObjectManager $manager, $url, $routeName, array $routeParameters, $reference = null)
-    {
+    protected function createSlug(
+        ObjectManager $manager,
+        $url,
+        $routeName,
+        array $routeParameters,
+        $reference = null,
+        Localization $localization = null
+    ) {
         $slug = new Slug();
         $slug->setUrl($url);
         $slug->setRouteName($routeName);
         $slug->setRouteParameters($routeParameters);
+
+        if (null !== $localization) {
+            $slug->setLocalization($localization);
+        }
 
         $manager->persist($slug);
         $this->addReference($reference ?: $url, $slug);
@@ -84,6 +115,9 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
      */
     public function getDependencies()
     {
-        return [LoadPageData::class];
+        return [
+            LoadPageData::class,
+            LoadLocalizationData::class
+        ];
     }
 }

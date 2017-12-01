@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Provider;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 /**
  * Service should provide some supporting information about line items
@@ -15,7 +14,7 @@ class CheckoutLineItemsProvider
     /**
      * Returns an array of ProductSku which were removed or have different quantity or unit
      *
-     * @param Collection|CheckoutLineItemInterface[] $lineItems
+     * @param Collection|ProductLineItemInterface[] $lineItems
      * @param Collection|ProductLineItemInterface[] $sourceLineItems
      * @return array
      */
