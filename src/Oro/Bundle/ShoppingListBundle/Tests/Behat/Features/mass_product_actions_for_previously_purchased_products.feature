@@ -1,3 +1,4 @@
+@regression
 @fixture-OroOrderBundle:previously-purchased.yml
 Feature: Mass Product Actions for Previously purchased products
   In order to add multiple products to a shopping list

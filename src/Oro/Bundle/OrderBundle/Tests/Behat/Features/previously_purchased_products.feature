@@ -1,4 +1,4 @@
-@regular
+@regression
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased.yml
 Feature: Previously purchased products

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-9215
 
 Feature: Product Images Import

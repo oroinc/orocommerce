@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-12736
 @fixture-OroProductBundle:ProductBrandFilterFixture.yml
 
