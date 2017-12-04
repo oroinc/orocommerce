@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPromotionBundle:coupons-promotions-on-order-page-validation.yml
 Feature: Coupons Promotions on Order page validation
   In order to find out why coupon not valid during applying it to the order

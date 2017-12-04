@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-12111
 @fixture-OroWebCatalogBundle:subcategories-filter.yml
 Feature: Sub-Categories filter

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-10050
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Guest Shopping Lists
