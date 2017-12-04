@@ -4,12 +4,12 @@
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 @fixture-OroCheckoutBundle:CheckoutWorkflow.yml
 
-Feature: JS validation on "Default" Checkout workflow
+Feature: Javascript validation on "Default" Checkout workflow
   In order to create order on front store
   As a buyer
   I want to start "Default" checkout and see validation errors
 
-  Scenario: Check js validation error
+  Scenario: Check validation error
     Given There is EUR currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
@@ -18,7 +18,7 @@ Feature: JS validation on "Default" Checkout workflow
     And I press "Continue"
     Then I should see "This value should not be blank."
 
-  Scenario: Check js validation without error
+  Scenario: Check validation without error
     Given I open page with shopping list List 1
     And I press "Create Order (Custom)"
     And I fill "Checkout Order Review Form" with:
