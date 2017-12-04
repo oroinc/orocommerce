@@ -184,6 +184,7 @@
                         {% set matrixFormType = lineItem.matrixFormType|default(null) %}
                         {% set lineItem = lineItem.lineItems|first %}
                         {% set mainProduct = lineItem.parentProduct|default(lineItem.product) %}
+                        {% set totals = totalPrices[mainProduct.id] is defined ? totalPrices[mainProduct.id] : null %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
@@ -194,7 +195,7 @@
                             matrixForm: matrixForm,
                             matrixFormType: matrixFormType,
                             productsAllPrices: productsAllPrices,
-                            totals: totalPrices[mainProduct.id]
+                            totals: totals
                         }) %}
 
                         {{ block('container_widget') }}
@@ -494,7 +495,7 @@
         successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
     } %}
 
-    {% if matrixForm is not null %}
+    {% if matrixForm != 'none' %}
         {% set moduleOptions = moduleOptions|merge({
             route: 'oro_shopping_list_frontend_remove_product',
             requestMethod: 'POST',
