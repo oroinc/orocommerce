@@ -7,8 +7,8 @@ use Oro\Bundle\CMSBundle\Migrations\Data\ORM\LoadHomePageSlider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 /**
- * This class converts relative paths for images in slider's content variant to absolute urls which is necessary in
- * case if application is installed in a subfolder.
+ * This class converts relative paths for images and links' urls in slider's content variant to absolute urls which is
+ * necessary in case if application is installed in a subfolder.
  */
 class HomePageSliderImagesSourceFixer
 {
@@ -51,7 +51,13 @@ EOQ;
             throw new \LogicException('No block for home page slider is found');
         }
 
-        $content = $this->process($variant['content']);
+        $subPath = $this->getSubPath();
+        if (!$subPath) {
+            return;
+        }
+
+        $content = $this->processImages($variant['content'], $subPath);
+        $content = $this->processLinks($content, $subPath);
 
         $this->connection->update(
             'oro_cms_text_content_variant',
@@ -61,24 +67,47 @@ EOQ;
     }
 
     /**
-     * @param string $content
-     * @return string
+     * @return string|null
      */
-    private function process($content)
+    private function getSubPath()
     {
         $url = $this->configManager->get('oro_ui.application_url');
 
         $matches = [];
         if (!preg_match('/^(?:https?\:\/\/)?[^\/\:]+(\/.+)$/', trim($url, '/'), $matches)) {
-            return $content;
+            return null;
         }
 
-        $subPath = $matches[1];
+        return $matches[1];
+    }
 
+    /**
+     * @param string $content
+     * @param string $subPath
+     * @return string
+     */
+    private function processImages(string $content, string $subPath): string
+    {
         return preg_replace_callback(
             '/"(\/bundles\/[^"]*\.jpg)"/',
             function ($matches) use ($subPath) {
                 return sprintf('"%s%s"', $subPath, $matches[1]);
+            },
+            $content
+        );
+    }
+
+    /**
+     * @param string $content
+     * @param string $subPath
+     * @return string
+     */
+    private function processLinks(string $content, string $subPath): string
+    {
+        return preg_replace_callback(
+            '/href=("|\')(\/[^"\']+)\1/',
+            function ($matches) use ($subPath) {
+                return sprintf('href=%1$s%2$s%3$s%1$s', $matches[1], $subPath, $matches[2]);
             },
             $content
         );
