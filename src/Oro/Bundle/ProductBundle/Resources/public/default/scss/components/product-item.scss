@@ -64,6 +64,7 @@
         align-self: center;
 
         margin-right: auto;
+        min-width: 50%;
 
         @include clearfix();
     }

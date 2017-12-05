@@ -7,12 +7,16 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'shopping_list_matrix_grid_order.html.twig'
+        - '@setOption':
+            id: __matrix_totals
+            optionName: vars.mode
+            optionValue: 'inline'
         - '@add':
             id: __matrix_form_actions_submit
             blockType: button
-            parentId: __matrix_form_summary
+            parentId: __matrix_totals
             options:
                 action: submit
                 text:
                     label: Update
-                style: auto
+                style: 'btn btn--info btn--size-s shopping-list-line-items__matrix-popup-button'

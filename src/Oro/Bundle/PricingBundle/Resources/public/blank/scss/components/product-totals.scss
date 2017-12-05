@@ -1,0 +1,84 @@
+// @theme: blank
+
+.product-totals {
+    display: $product-totals-display;
+    justify-content: $product-totals-justify-content;
+
+    min-width: $product-totals-min-width;
+    margin-left: $product-totals-offset-left;
+
+    font-family: $product-totals-font-family;
+    text-align: $product-totals-text-align;
+
+    &--inline {
+        display: $product-totals-inline-display;
+        align-items: $product-totals-inline-align-items;
+        justify-content: $product-totals-inline-justify-content;
+
+        width: $product-totals-inline-width;
+        margin-bottom: $product-totals-inline-offset-bottom;
+
+        .btn {
+            padding: $product-totals-inline--btn-offset-inner;
+        }
+    }
+
+    &__wrapper {
+        padding-right: $product-totals-wrapper-offset-inner-right;
+
+        &--inline {
+            display: $product-totals-inline-wrapper-display;
+            background: $product-totals-inline-wrapper-background;
+            padding: $product-totals-inline-wrapper-offset-inner;
+            border-radius: $product-totals-inline-wrapper-border-radius;
+            margin-right: $product-totals-inline-wrapper-offset-right;
+        }
+    }
+
+    &__label {
+        display: $product-totals-label-display;
+        min-width: $product-totals-label-min-width;
+        padding: $product-totals-label-offset-inner;
+
+        &--inline {
+            min-width: $product-totals-label-inline-min-width;
+        }
+    }
+
+    &__total-quantity,
+    &__total-price {
+        display: $product-totals-total-items-display;
+        justify-content: $product-totals-total-items-justify-content;
+    }
+
+    &__total-quantity {
+        margin-bottom: $product-totals-total-quantity-offset-bottom;
+    }
+
+    &__total-price {
+        margin: $product-totals-total-price-offset-inner;
+
+        font-size: $product-totals-total-price-font-size;
+    }
+
+    &__separator {
+        margin: $product-totals-total-separator-offset;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-totals {
+        &--inline {
+            flex-direction: $product-totals-inline-mobile-landscape-flex-direction;
+        }
+
+        &__wrapper {
+            &--inline {
+                justify-content: $product-totals-wrapper-inline-mobile-landscape-justify-content;
+
+                width: $product-totals-wrapper-inline-mobile-landscape-width;
+                margin: $product-totals-wrapper-inline-mobile-landscape-offset;
+            }
+        }
+    }
+}

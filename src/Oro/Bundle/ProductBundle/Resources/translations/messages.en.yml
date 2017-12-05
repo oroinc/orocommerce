@@ -452,13 +452,15 @@ oro:
                 matrix_form_on_shopping_list:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes in shopping lists.'
                     label: 'Shopping Lists'
-                    group.label: 'Group Single Products'
+                    none.label: 'Group Single Products'
                     inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
                 matrix_form_on_product_listing:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms on product listings. Applies only to list views; inline matrix is not supported in gallery view.'
                     label: 'Product Listings'
                     none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
                 matrix_form_allow_empty:
                     label: 'Allow to add empty products'
                     tooltip: 'If enabled, the customers will be able to add empty configurable products to shopping lists'

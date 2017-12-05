@@ -57,10 +57,13 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_ON_PRODUCT_VIEW_INLINE = 'inline';
     const MATRIX_FORM_ON_PRODUCT_VIEW_POPUP = 'popup';
     const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
+    const MATRIX_FORM_ON_SHOPPING_LIST_NONE = 'none';
     const MATRIX_FORM_ON_SHOPPING_LIST_INLINE = 'inline';
-    const MATRIX_FORM_ON_SHOPPING_LIST_GROUP = 'group';
-    const MATRIX_FORM_ON_PRODUCT_LISTING_INLINE = 'inline';
+    const MATRIX_FORM_ON_SHOPPING_LIST_POPUP = 'popup';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
+    const MATRIX_FORM_ON_PRODUCT_LISTING_NONE = 'none';
+    const MATRIX_FORM_ON_PRODUCT_LISTING_INLINE = 'inline';
+    const MATRIX_FORM_ON_PRODUCT_LISTING_POPUP = 'popup';
     const MATRIX_FORM_ALLOW_TO_ADD_EMPTY = 'matrix_form_allow_empty';
 
     /**

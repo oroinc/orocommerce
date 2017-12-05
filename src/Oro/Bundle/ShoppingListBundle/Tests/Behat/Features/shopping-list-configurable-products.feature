@@ -371,6 +371,87 @@ Feature: Inline matrix for configurable products in product views
     And check "Use default" for "Product Listings" field
     And I save form
 
+  Scenario: Popup matrix form in Product List View and Shopping Lists
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Product Listings" field
+    And I fill in "Product Listings" with "Popup Matrix Form"
+    And uncheck "Use default" for "Shopping Lists" field
+    And I fill in "Shopping Lists" with "Popup Matrix Form"
+    And I save form
+    Given I proceed as the User
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    And I click "List View"
+    Then I should see "Add to Shoppin..."
+    And I should not see an "Matrix Grid Form" element
+    And I click "Add to Shoppin..."
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Add to Shopping list"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should not see an "Matrix Grid Form" element
+    And I should see "Update"
+    And I click "Update"
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 1        |
+      |          |          |          |
+      |          |          | 1        |
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | -        | -        | -        |
+      | Value 12 | -        | -        | 3        |
+      | Value 13 | -        | -        | -        |
+      | Value 14 | -        | -        | -        |
+    And I click "Update Shopping list"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    And I should see "Update Shoppin..." for "CNF_B" product
+    And I click "Update Shoppin..."
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 3        |
+      |          |          |          |
+      |          |          | 1        |
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 5        | -        | -        |
+      | Value 12 | -        | -        | -        |
+      | Value 13 | -        | -        | -        |
+      | Value 14 | -        | -        | -        |
+    And I click "Update Shopping list"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    And I should see "Update"
+    And I click "Update"
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 5        | 1        |          |
+      | 1        |          | 3        |
+      |          |          |          |
+      |          |          | 1        |
+    And I click "Close"
+    And I click "Remove Line Item"
+    And I click "Yes, Delete"
+    Then I should see "The Shopping List is empty"
+    Then I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And check "Use default" for "Product Listings" field
+    And check "Use default" for "Shopping Lists" field
+    And I save form
+
   Scenario: Disabled matrix form in Shopping List View
     Given I proceed as the Admin
     And I go to System/ Configuration

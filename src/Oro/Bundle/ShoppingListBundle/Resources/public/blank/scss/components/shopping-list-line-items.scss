@@ -68,19 +68,24 @@
 @include breakpoint('mobile-landscape') {
     .shopping-list-line-items {
         &__item {
-            flex-direction: $shopping-list-line-items-item-flex-direction;
-            padding-right: $shopping-list-line-items-item-offset-right;
+            flex-direction: $shopping-list-line-items-item-mobile-landscape-flex-direction;
+            padding-right: $shopping-list-line-items-item-mobile-landscape-offset-right;
         }
 
         &__specification {
-            width: $shopping-list-line-items-specification-width;
-            justify-content: $shopping-list-line-items-specification-justify-content;
-            padding: $shopping-list-line-items-specification-offset-inner;
+            width: $shopping-list-line-items-mobile-landscape-specification-width;
+            justify-content: $shopping-list-line-items-mobile-landscape-specification-justify-content;
+            padding: $shopping-list-line-items-mobile-landscape-specification-offset-inner;
 
             //TODO: Should move all child of __specification block to the component
             .product__qty-container {
-                width: $shopping-list-line-items-specification-product-qty-container-width;
+                width: $shopping-list-line-items-mobile-landscape-specification-product-qty-container-width;
             }
+        }
+
+        &__matrix-popup-button {
+            width: $shopping-list-line-items-matrix-popup-button-mobile-landscape-width;
+            margin-top: $shopping-list-line-items-matrix-popup-button-mobile-landscape-offset-top;
         }
     }
 }

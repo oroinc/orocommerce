@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
 class MatrixFormShoppingListProvider
 {
@@ -20,19 +21,25 @@ class MatrixFormShoppingListProvider
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var UserAgentProvider */
+    private $userAgentProvider;
+
     /**
      * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
      * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
      * @param ConfigManager $configManager
+     * @param UserAgentProvider $userAgentProvider
      */
     public function __construct(
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
         ProductFormAvailabilityProvider $productFormAvailabilityProvider,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        UserAgentProvider $userAgentProvider
     ) {
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
         $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
         $this->configManager = $configManager;
+        $this->userAgentProvider = $userAgentProvider;
     }
 
     /**
@@ -49,13 +56,14 @@ class MatrixFormShoppingListProvider
             $lineItemKey = $this->getLineItemKey($product->getId(), $lineItem->getProductUnitCode());
 
             if (!isset($sortedLineItems[$lineItemKey])) {
-                if ($this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE
-                    && $this->productFormAvailabilityProvider->isMatrixFormAvailable($product)
-                    && $product->getPrimaryUnitPrecision()->getProductUnitCode() === $lineItem->getProductUnitCode()
-                ) {
+                $matrixFormType = $this->getAvailableMatrixFormType($product, $lineItem);
+
+                if ($matrixFormType === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE) {
                     // Add matrix form view to line item data for applicable configurable products
-                    $sortedLineItems[$lineItemKey]['form'] =
+                    $sortedLineItems[$lineItemKey]['matrixForm'] =
                         $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
+                } elseif ($matrixFormType === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP) {
+                    $sortedLineItems[$lineItemKey] = [];
                 } elseif ($lineItem->getParentProduct()) {
                     // If matrix form is not available for configurable product, group its variants together
                     $this->addLineItemData(
@@ -72,7 +80,7 @@ class MatrixFormShoppingListProvider
         }
 
         // Add grouped product variants to the beginning of the shopping list
-        foreach ($productVariants as $productVariant) {
+        foreach (array_reverse($productVariants) as $productVariant) {
             $sortedLineItems = $productVariant + $sortedLineItems;
         }
 
@@ -90,6 +98,7 @@ class MatrixFormShoppingListProvider
 
         $array[$lineItemKey]['lineItems'][] = $lineItem;
         $array[$lineItemKey]['product'] = $product;
+        $array[$lineItemKey]['matrixFormType'] = $this->getAvailableMatrixFormType($product, $lineItem);
     }
 
     /**
@@ -109,5 +118,26 @@ class MatrixFormShoppingListProvider
     protected function getLineItemKey($productId, $unit)
     {
         return sprintf('%s:%s', $productId, $unit);
+    }
+
+    /**
+     * @param Product $product
+     * @param LineItem $lineItem
+     * @return string
+     */
+    protected function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
+    {
+        if ($this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE
+            || !$this->productFormAvailabilityProvider->isMatrixFormAvailable($product)
+            || $product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()
+        ) {
+            return Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE;
+        }
+
+        if ($this->userAgentProvider->getUserAgent()->isMobile()) {
+            return Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP;
+        }
+
+        return $this->getMatrixFormConfig();
     }
 }
