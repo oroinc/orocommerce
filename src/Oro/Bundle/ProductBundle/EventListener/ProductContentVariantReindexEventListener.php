@@ -92,7 +92,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         $productIds = [];
         $websiteIds = [];
 
-        foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $this->collectChangedProductIds([$entity], $productIds, $unitOfWork);
             $this->collectWebsiteIds([$entity], $websiteIds);
             $this->collectChangedFields($entity, $productIds, $websiteIds);

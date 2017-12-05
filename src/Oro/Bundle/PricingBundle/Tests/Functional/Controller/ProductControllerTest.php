@@ -389,8 +389,6 @@ class ProductControllerTest extends ProductHelperTestCase
 
     public function testDuplicate()
     {
-        $this->markTestSkipped('skip until BB-11369 is resolved');
-
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
@@ -489,6 +487,17 @@ class ProductControllerTest extends ProductHelperTestCase
                 'expected' => ['product-1']
             ],
         ];
+    }
+
+    public function testIndexPageHasImportExportAttributePricesButtons()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
+        $result = $this->client->getResponse();
+
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        static::assertContains('Export Price Attribute Data', $crawler->html());
+        static::assertContains('Import file', $crawler->html());
     }
 
     /**

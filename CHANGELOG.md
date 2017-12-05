@@ -24,6 +24,12 @@
     * method `getCategory` was added
     * property `category_id` was added
 
+#### AlternativeCheckoutBundle
+* Operation `oro_accept_quote` renamed to `oro_sale_accept_quote` and moved to `SaleBundle`
+
+#### CheckoutBundle
+* Operation `oro_checkout_frontend_quote_submit_to_order` renamed to `oro_sale_frontend_quote_submit_to_order` and moved to `SaleBundle`
+
 ## 1.5.0 (2017-11-30)
 [Show detailed list of changes](incompatibilities-1-5.md)
 

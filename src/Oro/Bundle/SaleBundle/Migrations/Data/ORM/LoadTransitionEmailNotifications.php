@@ -66,7 +66,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
             $emailTemplate = $this->getEmailTemplate($manager, $emailTemplateName);
 
             $recipientList = new RecipientList();
-            $recipientList->setOwner(true);
+            $recipientList->setAdditionalEmailAssociations(['owner']);
 
             $manager->persist($recipientList);
 

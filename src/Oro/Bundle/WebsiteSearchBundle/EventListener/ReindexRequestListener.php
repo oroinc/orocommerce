@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ReindexRequestListener
+class ReindexRequestListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var IndexerInterface|null
      */
@@ -36,6 +40,10 @@ class ReindexRequestListener
      */
     public function process(ReindexationRequestEvent $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $indexer = $event->isScheduled() ? $this->asyncIndexer : $this->regularIndexer;
         if ($indexer !== null) {
             $this->processWithIndexer($event, $indexer);

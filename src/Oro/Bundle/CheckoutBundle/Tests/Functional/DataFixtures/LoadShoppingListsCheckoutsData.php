@@ -22,6 +22,8 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     const CHECKOUT_3 = 'checkout.3';
     const CHECKOUT_7 = 'checkout.7';
 
+    const PAYMENT_METHOD = 'payment_term';
+
     /**
      * {@inheritDoc}
      */
@@ -62,7 +64,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
             ],
             self::CHECKOUT_7 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_7,
-                'checkout' => ['payment_method' => $paymentTermIdentifier],
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD],
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'lineItems' => new ArrayCollection([$lineItem4]),
             ],

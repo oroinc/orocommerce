@@ -4,14 +4,18 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class SlugListener
+class SlugListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -37,6 +41,10 @@ class SlugListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         foreach ($this->getUpdatedSlugs($unitOfWork) as $changedSlug) {
             $this->synchronizeRedirectScopes($changedSlug);

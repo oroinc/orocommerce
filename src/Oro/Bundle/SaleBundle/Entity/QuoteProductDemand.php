@@ -6,9 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 /**
  * @ORM\Table(name="oro_quote_product_demand")
@@ -16,9 +15,8 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
  */
 class QuoteProductDemand implements
     PriceAwareInterface,
-    QuantityAwareInterface,
     PriceTypeAwareInterface,
-    CheckoutLineItemInterface
+    ProductLineItemInterface
 {
     /**
      * @var int
@@ -35,7 +33,7 @@ class QuoteProductDemand implements
      * @ORM\JoinColumn(name="quote_demand_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteDemand;
-    
+
     /**
      * @var QuoteProductOffer
      * @ORM\ManyToOne(targetEntity="QuoteProductOffer")
@@ -66,6 +64,22 @@ class QuoteProductDemand implements
         $this->quoteDemand = $quoteDemand;
         $this->quoteProductOffer = $quoteProductOffer;
         $this->quantity = $quantity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
     }
 
     /**
@@ -101,7 +115,7 @@ class QuoteProductDemand implements
     }
 
     /**
-     * @return Quote
+     * @return QuoteDemand
      */
     public function getQuoteDemand()
     {
@@ -109,7 +123,7 @@ class QuoteProductDemand implements
     }
 
     /**
-     * @param Quote $quoteDemand
+     * @param QuoteDemand $quoteDemand
      */
     public function setQuoteDemand($quoteDemand)
     {

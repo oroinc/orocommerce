@@ -162,7 +162,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
         arguments:
             - '@oro_shopping_list.repository.line_item'
-            - '@oro_shopping_list.data_provider.frontend_product_prices'
+            - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
         tags:
@@ -176,14 +176,6 @@ services:
               - '@oro_currency.formatter.number'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
-
-    oro_shopping_list.data_provider.frontend_product_prices:
-        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
-        public: false
-        arguments:
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
