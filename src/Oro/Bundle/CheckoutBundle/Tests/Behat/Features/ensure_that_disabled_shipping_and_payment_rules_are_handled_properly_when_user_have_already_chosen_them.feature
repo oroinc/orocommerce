@@ -8,6 +8,7 @@
 @community-edition-only
 
 Feature: Ensure that disabled shipping and payment rules are handled properly when user have already chosen them
+  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create two session
     Given sessions active:
