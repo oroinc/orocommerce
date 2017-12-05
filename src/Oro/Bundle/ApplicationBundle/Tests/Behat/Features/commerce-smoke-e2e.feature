@@ -1,6 +1,5 @@
 @regression
-@smoke
-@community-edition-only
+@smoke-community-edition-only
 Feature: Commerce smoke e2e
 
   Scenario: Create different window session
