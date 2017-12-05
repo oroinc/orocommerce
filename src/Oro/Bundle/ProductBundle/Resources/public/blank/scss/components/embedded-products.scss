@@ -4,6 +4,10 @@
     &__item {
         width: (100% / $embedded-products-item-count-desktop);
     }
+
+    .slick-arrow {
+        top: $embedded-products-slider-arrow-top;
+    }
 }
 
 @include breakpoint('strict-tablet-small') {

@@ -1,10 +1,4 @@
-// @theme: blank;
-
-.embedded-products {
-    .slick-arrow {
-        top: $embedded-products-slider-arrow-top;
-    }
-}
+// @theme: default;
 
 @include breakpoint('desktop') {
     .embedded-products {
