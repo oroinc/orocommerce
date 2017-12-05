@@ -8,7 +8,7 @@
 
         font-size: $base-font-size - 1px;
 
-        @include safe-area-padding($shopping-list-dropdown-item-inner-offset);
+        @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
 
         border-bottom: 1px solid get-color('additional', 'light');
     }
