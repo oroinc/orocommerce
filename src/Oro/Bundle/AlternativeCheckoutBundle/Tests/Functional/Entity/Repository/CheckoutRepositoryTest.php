@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData as BaseLoadQuoteCheckoutsData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAlternativeCheckoutsData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData as BaseLoadQuoteCheckoutsData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -20,7 +20,7 @@ class CheckoutRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                LoadQuoteCheckoutsData::class,
+                LoadQuoteAlternativeCheckoutsData::class,
                 BaseLoadQuoteCheckoutsData::class,
                 LoadCustomerUserData::class,
             ]
@@ -62,7 +62,7 @@ class CheckoutRepositoryTest extends WebTestCase
                 'b2b_flow_checkout',
             ],
             'alternative checkout' => [
-                LoadQuoteCheckoutsData::CHECKOUT_1,
+                LoadQuoteAlternativeCheckoutsData::CHECKOUT_1,
                 'b2b_flow_alternative_checkout',
             ],
         ];

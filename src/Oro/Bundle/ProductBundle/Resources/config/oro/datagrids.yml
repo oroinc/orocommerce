@@ -162,10 +162,10 @@ datagrids:
                     data_name: sku
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     type:      enum
-                    data_name: inventoryStatus
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
         properties:
             id: ~
@@ -174,9 +174,9 @@ datagrids:
                 sku:
                     data_name: sku
                 productName:
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
-                    data_name: inventoryStatus
+                    data_name: inventory_status
 
             toolbar_sorting: true
             disable_default_sorting: true

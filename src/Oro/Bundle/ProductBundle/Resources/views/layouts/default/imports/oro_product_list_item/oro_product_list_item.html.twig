@@ -43,7 +43,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview'
     }) %}
-    
+
     {% if popup_gallery and product.imagesByType('listing')|length > 0 %}
         {% set options = {
             ajaxMode: true,
@@ -168,7 +168,7 @@
     }) %}
 
     <div {{ block('block_attributes') }} >
-        <p>{{ product.shortDescription }}</p>
+        <p>{{ product.shortDescription|raw|oro_html_sanitize }}</p>
     </div>
 {% endblock %}
 

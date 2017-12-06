@@ -627,7 +627,7 @@ class QuoteControllerTest extends WebTestCase
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
         /* @var $quote Quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE13);
-        $operationName = 'oro_checkout_frontend_quote_submit_to_order';
+        $operationName = 'oro_sale_frontend_quote_submit_to_order';
         $entityId = $quote->getId();
         $entityClass = Quote::class;
         $operationExecuteParams = $this->getOperationExecuteParams($operationName, $entityId, $entityClass);

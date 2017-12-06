@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsSubtotalsData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
@@ -13,6 +11,8 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAlternativeCheckoutsData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAlternativeCheckoutsSubtotalsData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
 class OrderControllerTest extends FrontendWebTestCase
@@ -38,8 +38,8 @@ class OrderControllerTest extends FrontendWebTestCase
         $this->loadFixtures(
             [
                 LoadOrders::class,
-                LoadQuoteCheckoutsData::class,
-                LoadQuoteCheckoutsSubtotalsData::class,
+                LoadQuoteAlternativeCheckoutsData::class,
+                LoadQuoteAlternativeCheckoutsSubtotalsData::class,
                 LoadShoppingListsCheckoutsData::class,
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class

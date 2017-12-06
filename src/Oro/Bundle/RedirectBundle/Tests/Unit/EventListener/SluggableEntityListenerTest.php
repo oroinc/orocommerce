@@ -8,12 +8,16 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -88,6 +92,23 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntity')
             ->willReturn($entity);
 
+        $this->sluggableEntityListener->postPersist($args);
+        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+    }
+
+    public function testPostPersistWithDisabledListener()
+    {
+        $args = $this->createMock(LifecycleEventArgs::class);
+        $args->expects($this->never())
+            ->method('getEntity');
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+
+        $this->messageFactory->expects($this->never())
+            ->method('createMessage');
+
+        $this->disableListener();
         $this->sluggableEntityListener->postPersist($args);
         $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
     }
@@ -269,6 +290,23 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals([$message], 'messages', $this->sluggableEntityListener);
     }
 
+    public function testOnFlushWithDisabledListener()
+    {
+        $event = $this->createMock(OnFlushEventArgs::class);
+        $event->expects($this->never())
+            ->method('getEntityManager');
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+
+        $this->messageFactory->expects($this->never())
+            ->method('createMessage');
+
+        $this->disableListener();
+        $this->sluggableEntityListener->onFlush($event);
+        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+    }
+
     public function testPostFlush()
     {
         /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $args **/
@@ -366,5 +404,11 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('createMessage')
             ->with($entity)
             ->willReturn($message);
+    }
+
+    protected function disableListener()
+    {
+        $this->assertInstanceOf(OptionalListenerInterface::class, $this->sluggableEntityListener);
+        $this->sluggableEntityListener->setEnabled(false);
     }
 }

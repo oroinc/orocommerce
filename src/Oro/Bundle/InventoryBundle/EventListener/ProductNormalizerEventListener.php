@@ -22,6 +22,10 @@ class ProductNormalizerEventListener
     /** @param ProductNormalizerEvent $event */
     public function normalize(ProductNormalizerEvent $event)
     {
+        if (!$this->isApplicable($event->getContext())) {
+            return;
+        }
+
         $object = $event->getProduct();
         if ($this->productUpcomingProvider->isUpcoming($object)) {
             $data = $event->getPlainData();
@@ -32,5 +36,16 @@ class ProductNormalizerEventListener
             }
             $event->setPlainData($data);
         }
+    }
+
+    /**
+     * No need to normalize related products
+     *
+     * @param array $context
+     * @return bool
+     */
+    protected function isApplicable(array $context)
+    {
+        return !array_key_exists('fieldName', $context);
     }
 }

@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Converter;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;

@@ -77,6 +77,8 @@ oro:
             actions:
                 quote_expire: 'Expire Quote'
                 send_no_quote_alert: 'Send no Quote alert for the Request'
+                accept_quote: 'Accept Quote'
+                submit_to_order: 'Accept and Submit to Order'
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully marked as expired'

@@ -5,46 +5,52 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
+use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener;
 
 class ReindexDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    const LISTENERS = [
+        'test_listener_1',
+        'test_listener_2',
+    ];
+
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
+
+    /** @var OptionalListenerManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $listenerManager;
 
     /** @var ReindexDemoDataFixturesListener */
     protected $listener;
 
     protected function setUp()
     {
+        $this->listenerManager = $this->createMock(OptionalListenerManager::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->listener = new ReindexDemoDataFixturesListener($this->dispatcher);
+        $this->listener = new ReindexDemoDataFixturesListener($this->listenerManager, $this->dispatcher);
+        $this->listener->disableListener(self::LISTENERS[0]);
+        $this->listener->disableListener(self::LISTENERS[1]);
     }
 
-    public function testOnPostLoadForNotDemoFixtures()
+    public function testOnPreLoad()
+    {
+        $this->listenerManager->expects($this->once())
+            ->method('disableListeners')
+            ->with(self::LISTENERS);
+
+        $this->listener->onPreLoad($this->createMock(MigrationDataFixturesEvent::class));
+    }
+
+    public function testOnPostLoad()
     {
         $event = $this->createMock(MigrationDataFixturesEvent::class);
 
-        $event->expects(self::once())
-            ->method('isDemoFixtures')
-            ->willReturn(false);
-        $event->expects(self::never())
-            ->method('log');
-        $this->dispatcher->expects(self::never())
-            ->method('dispatch');
-
-        $this->listener->onPostLoad($event);
-    }
-
-    public function testOnPostLoadForDemoFixtures()
-    {
-        $event = $this->createMock(MigrationDataFixturesEvent::class);
-
-        $event->expects(self::once())
-            ->method('isDemoFixtures')
-            ->willReturn(true);
+        $this->listenerManager->expects($this->once())
+            ->method('enableListeners')
+            ->with(self::LISTENERS);
         $event->expects(self::once())
             ->method('log')
             ->with('running full reindexation of website index');
