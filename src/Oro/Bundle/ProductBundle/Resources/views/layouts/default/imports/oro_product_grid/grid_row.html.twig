@@ -121,7 +121,8 @@
     }) %}
 
     {% set attrImage = {
-        'class': ' product-item__preview-image'
+        'class': ' product-item__preview-image',
+        'itemprop': 'image'
     } %}
 
     {% set image = product.image is defined ? asset(product.image) : Image.url(null, 'product_large') %}
@@ -139,8 +140,9 @@
     <h3 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
+           itemprop="url"
         >
-            {{- block('container_widget') -}}
+            <span itemprop="name">{{- block('container_widget') -}}</span>
         </a>
     </h3>
 {% endblock %}

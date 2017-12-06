@@ -32,7 +32,9 @@
 
 {% block _product_view_primary_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__primary-wrapper'
+        '~class': ' product-view__primary-wrapper',
+        'itemscope': '',
+        'itemtype': 'http://schema.org/Product'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -93,7 +95,8 @@
 
 {% block _product_view_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__description'
+        '~class': ' product-view__description',
+        'itemprop': 'description'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -151,7 +154,8 @@
 
 {% block _product_view_attribute_group_general_attribute_localized_fallback_names_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title'
+        '~class': ' page-title',
+        'itemprop': 'name'
     }) %}
 
     <h1 {{ block('block_attributes') }}>{{ translated_value|oro_tag_filter }}</h1>
@@ -159,14 +163,14 @@
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     <p class="sku">
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ entity.sku|oro_tag_filter }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|oro_tag_filter }}</span>
     </p>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_brand_widget %}
-    <div class="brand">
+    <div class="brand" itemprop="brand" itemscope="itemscope" itemtype="http://schema.org/Brand">
         <span class="product-view-brand">{{ 'oro.product.brand.entity_label'|trans }}:</span>
-        <span class="product-view-brand-title">{{ block_widget(block) }}</span>
+        <span class="product-view-brand-title" itemprop="name">{{ block_widget(block) }}</span>
     </div>
 {% endblock %}
 
