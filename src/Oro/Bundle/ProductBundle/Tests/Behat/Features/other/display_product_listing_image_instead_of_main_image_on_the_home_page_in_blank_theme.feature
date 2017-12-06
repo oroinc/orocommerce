@@ -1,6 +1,7 @@
 @fixture-OroProductBundle:product_listing_images.yml
 @regression
 Feature: Display product listing image instead of main image on the home page
+  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Switch to blank theme
     Given I login as administrator
