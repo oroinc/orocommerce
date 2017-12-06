@@ -99,7 +99,6 @@ class ShoppingListControllerTest extends WebTestCase
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
-
     }
 
     /**
