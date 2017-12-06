@@ -21,6 +21,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
+        website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

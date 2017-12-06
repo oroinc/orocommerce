@@ -195,6 +195,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
        label: 'Guest Shopping List'
        website: '@website1'
        organization: '@organization'
+       website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
