@@ -1,6 +1,6 @@
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
-Feature: New Arrivals Block
+Feature: New Arrivals displayed on the main front page in blank theme
   In order to promote new arrivals on the store homepage
   As an Administrator
   I want to control what products are included in the "New Arrivals" block
