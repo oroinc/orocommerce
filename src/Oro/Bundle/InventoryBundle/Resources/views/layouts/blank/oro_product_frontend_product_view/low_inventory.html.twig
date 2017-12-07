@@ -1,9 +1,7 @@
 {% block _low_inventory_label_widget %}
     {% if (oro_is_low_inventory_product(product)) %}
-        <div class="grid">
-            <div class="grid__row product-low-inventory">
-               {{ "oro.inventory.low_inventory.label"|trans }}
-            </div>
-        </div>
+        <p class="product-low-inventory">
+           {{ "oro.inventory.low_inventory.label"|trans }}
+        </p>
     {% endif %}
 {% endblock %}
