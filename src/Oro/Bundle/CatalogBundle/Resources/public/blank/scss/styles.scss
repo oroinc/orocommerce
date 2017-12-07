@@ -1,2 +1,7 @@
-@import 'components/category-picture/category-picture.scss';
-@import 'components/category-title/category-title.scss';
+// @theme: blank;
+
+@import './components/category-picture/category-picture';
+@import './components/category-title/category-title';
+
+@import './components/featured-categories/featured-categories';
+@import './components/featured-category/featured-category';

@@ -82,6 +82,25 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertNotContains('Create Order', $crawler->html());
     }
 
+    public function testAccessDeniedForShoppingListsFromAnotherWebsite()
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            )
+        );
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        );
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
+    }
+
     /**
      * @dataProvider viewSelectedShoppingListDataProvider
      * @param string $shoppingList
