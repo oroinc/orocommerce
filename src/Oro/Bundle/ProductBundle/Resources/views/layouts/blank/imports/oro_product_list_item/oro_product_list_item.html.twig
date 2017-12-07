@@ -108,12 +108,12 @@
         Quick View
     </button>
 {% endblock %}
-
+`
 {% block __oro_product_list_item__product_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__title product-item__title--{{ class_prefix }}'
     }) %}
-    <h3 {{ block('block_attributes') }}>
+    <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
            class="view-product" itemprop="url"><span itemprop="name">{{ product.name }}</span></a>
     </h3>
@@ -167,9 +167,11 @@
         }|json_encode
     }) %}
 
-    <div {{ block('block_attributes') }} >
-        <p itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</p>
-    </div>
+    {% if (class_prefix == 'list-view') %}
+        <div {{ block('block_attributes') }} >
+            <p class="product__description-conent" itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</p>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_details_widget %}

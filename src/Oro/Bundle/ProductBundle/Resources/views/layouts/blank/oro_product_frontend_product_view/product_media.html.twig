@@ -81,7 +81,9 @@
 
         {% set popupGalleryAttr = {
             'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
-            'data-page-component-options': options|json_encode
+            'data-page-component-options': options|json_encode,
+            'itemprop': 'productID',
+            'content': product.id
         } %}
         <div {{ UI.attributes(popupGalleryAttr) }}>
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
@@ -104,7 +106,7 @@
             </div>
         </div>
     {% else %}
-        <div class="product-view-media-gallery">
+        <div class="product-view-media-gallery" itemprop="productID" content="{{ product.id}}">
             <div class="product-view-media-gallery__image-item">
                 <img class="product-view-media-gallery__image"
                      src="{{ Image.url(null, 'product_gallery_main') }}"
