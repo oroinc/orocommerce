@@ -8,14 +8,3 @@ layout:
             parentId: top_sticky_panel_content
             siblingId: sticky_header_row
             blockType: block
-
-        - '@add':
-            id: product_mass_actions_sticky_container
-            parentId: bottom_sticky_panel_content
-            prepend: true
-            blockType: block
-
-        - '@setOption':
-            id: product_mass_actions_sticky_container
-            optionName: visible
-            optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'

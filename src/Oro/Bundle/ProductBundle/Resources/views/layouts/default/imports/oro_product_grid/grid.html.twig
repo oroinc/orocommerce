@@ -1,16 +1,3 @@
-{% block _product_mass_actions_sticky_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': 'product-action-area hidden',
-        'data-mass-actions-sticky-container': '',
-        'data-sticky-target': 'bottom-sticky-panel',
-        'data-sticky': {
-            alwaysInSticky: true
-        }
-    }) %}
-
-    <div {{ block('block_attributes') }}></div>
-{% endblock %}
-
 {% block _sticky_element_toolbar_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky_element_toolbar',
