@@ -63,12 +63,12 @@
 
 {% block _product_mass_actions_sticky_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': 'product-action-area hidden',
-    'data-mass-actions-sticky-container': '',
-    'data-sticky-target': 'bottom-sticky-panel',
-    'data-sticky': {
-    alwaysInSticky: true
-    }
+        '~class': 'product-action-area hidden',
+        'data-mass-actions-sticky-container': '',
+        'data-sticky-target': 'bottom-sticky-panel',
+        'data-sticky': {
+            alwaysInSticky: true
+        }
     }) %}
 
     <div {{ block('block_attributes') }}></div>
