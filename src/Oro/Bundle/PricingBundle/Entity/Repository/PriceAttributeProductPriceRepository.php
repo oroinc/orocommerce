@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {

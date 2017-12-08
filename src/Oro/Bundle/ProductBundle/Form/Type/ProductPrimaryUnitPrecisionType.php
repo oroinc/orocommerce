@@ -40,8 +40,11 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
                 'precision',
                 IntegerType::class,
                 [
-                    'type' => 'text',
-                    'required' => false
+                    'type' => 'number',
+                    'required' => false,
+                    'attr' => [
+                        'data-precision' => 0
+                    ]
                 ]
             )
             ->add(

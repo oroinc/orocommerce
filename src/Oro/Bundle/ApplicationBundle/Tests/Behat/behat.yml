@@ -13,6 +13,7 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::FrontendProductGridContext
       paths:
         - '@OroApplicationBundle/Tests/Behat/Features'
   elements:

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Component\MessageQueue\Client\Message;
+use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
@@ -84,7 +83,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_SAVE, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_SAVE, new Message($expectedParams, MessagePriority::NORMAL));
 
         $this->indexer->save($entity, $context);
     }
@@ -119,7 +118,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_SAVE, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_SAVE, new Message($expectedParams, MessagePriority::NORMAL));
 
         $this->indexer->save([$entity1, $entity2], $context);
     }
@@ -144,7 +143,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_DELETE, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_DELETE, new Message($expectedParams, MessagePriority::NORMAL));
 
         $this->indexer->delete($entity, $context);
     }
@@ -179,7 +178,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_DELETE, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_DELETE, new Message($expectedParams, MessagePriority::NORMAL));
 
         $this->indexer->delete([$entity1, $entity2], $context);
     }
@@ -209,7 +208,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_RESET_INDEX, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_RESET_INDEX, new Message($expectedParams, MessagePriority::NORMAL));
 
         $this->indexer->resetIndex(Item::class, $context);
     }
@@ -240,7 +239,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_REINDEX, $expectedParams);
+            ->with(AsyncIndexer::TOPIC_REINDEX, new Message($expectedParams, AsyncIndexer::DEFAULT_PRIORITY_REINDEX));
 
         $this->indexer->reindex(Item::class, $context);
     }

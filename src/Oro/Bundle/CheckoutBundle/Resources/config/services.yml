@@ -141,6 +141,7 @@ services:
             - '@oro_checkout.repository.checkout'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
+            - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-checkouts-grid, method: onBuildAfter }
@@ -540,12 +541,6 @@ services:
         tags:
             - { name: oro.checkout.line_item.converter, alias: shopping_list }
 
-    oro_checkout.line_item.converter.quote_demand:
-        class: 'Oro\Bundle\CheckoutBundle\Converter\QuoteDemandLineItemConverter'
-        public: false
-        tags:
-            - { name: oro.checkout.line_item.converter, alias: quote_demand }
-
     oro_checkout.line_item.converter.order:
         class: 'Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter'
         arguments:
@@ -560,10 +555,10 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
         public: false
         arguments:
-             - '@oro_shopping_list.data_provider.frontend_product_prices'
-             - '@doctrine'
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@doctrine'
         tags:
-             - { name: checkout.data_provider.line_item }
+            - { name: checkout.data_provider.line_item }
 
     oro_checkout.provider.checkout_subtotal:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider'

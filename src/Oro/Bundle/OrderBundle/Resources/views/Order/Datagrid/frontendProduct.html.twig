@@ -8,7 +8,7 @@
         {% if record.getValue('parentProduct') %}
             {% set product = record.getValue('parentProduct') %}
         {% endif %}
-        <a href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.name }}</a>
+        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.name }}</a>
     {% endif %}
 </h3>
 {% if not isFreeFormProduct %}

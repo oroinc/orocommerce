@@ -1,25 +1,7 @@
-// @theme: default
+// @theme: default;
 
-$embedded-products-item-offset: 25px !default;
-$embedded-products-slider-arrow-top: 18% !default;
+$embedded-products-slider-arrow-top: 18%;
 
 // desktop
-$embedded-products-item-count-desktop: 4 !default;
 $embedded-products-item-image-height-desktop: 249px !default;
-$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) - ($embedded-list-slider-btn-arrow-height / 2) + $embedded-products-item-offset !default;
-$embedded-products-item-gap-desktop: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-count-desktop) !default;
-
-// Slider mode
-$embedded-product-slider-mode-offset: $embedded-products-item-offset $offset-x-m 0 $offset-x-m !default;
-
-// tablet-small
-$embedded-products-item-width-count-tablet-small: 3 !default;
-$embedded-products-item-gap-tablet-small: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-width-count-tablet-small) !default;
-
-// mobile-landscape
-$embedded-products-item-count-mobile-landscape: 2 !default;
-$embedded-products-mobile-landscape-slider-offset: 0 -#{$offset-y-s} !default;
-$embedded-products-item-gap-mobile-landscape: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-count-mobile-landscape) !default;
-
-// mobile
-$embedded-products-item-count-mobile: 1 !default;
+$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) - ($embedded-list-slider-btn-arrow-height / 2) !default;

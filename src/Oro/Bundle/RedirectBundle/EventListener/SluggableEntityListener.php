@@ -7,13 +7,17 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class SluggableEntityListener
+class SluggableEntityListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var MessageFactoryInterface
      */
@@ -54,6 +58,10 @@ class SluggableEntityListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $entity = $args->getEntity();
         if ($entity instanceof SluggableInterface) {
             $this->scheduleEntitySlugCalculation($entity);
@@ -65,6 +73,10 @@ class SluggableEntityListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         foreach ($this->getChangedSluggableEntities($unitOfWork) as $changedSluggableEntity) {
             $this->scheduleEntitySlugCalculation($changedSluggableEntity);

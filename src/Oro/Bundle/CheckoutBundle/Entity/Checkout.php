@@ -20,12 +20,11 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  * @ORM\Table(name="oro_checkout")
@@ -57,7 +56,7 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
  */
 class Checkout extends ExtendCheckout implements
     CheckoutInterface,
-    CheckoutLineItemsHolderInterface,
+    ProductLineItemsHolderInterface,
     OrganizationAwareInterface,
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
@@ -575,7 +574,7 @@ class Checkout extends ExtendCheckout implements
     {
         $sourceEntity = $this->getSourceEntity();
 
-        if ($sourceEntity instanceof ShoppingList) {
+        if ($sourceEntity instanceof CustomerVisitorOwnerAwareInterface) {
             return $sourceEntity->getVisitor();
         }
 

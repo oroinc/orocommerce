@@ -159,3 +159,17 @@ services:
             - [setDataConverter, ['@oro_product.importexport.inventory_status_converter']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product.inventory_status_only_template }
+
+    oro_product.importexport.configuration_provider.product:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\ProductImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }
+
+    oro_product.importexport.configuration_provider.product_images:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Configuration\ProductImageImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }

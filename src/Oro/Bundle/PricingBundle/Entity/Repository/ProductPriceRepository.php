@@ -318,6 +318,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->from(PriceListToProduct::class, 'productToPriceList')
             ->where('productToPriceList.product = :product')
             ->setParameter('product', $product)
+            ->orderBy('productToPriceList.priceList')
             ->getQuery()
             ->getScalarResult();
 

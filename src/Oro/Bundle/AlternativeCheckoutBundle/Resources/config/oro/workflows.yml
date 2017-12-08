@@ -1538,16 +1538,10 @@ workflows:
                         conditions:
                             '@not_empty': $.result.sourceEntity
                         actions:
-                            - '@assign_value':
-                                conditions:
-                                    '@instanceof': [$.result.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
-                                parameters:
-                                    attribute: $.result.sourceEntity
-                                    value: $.result.sourceEntity.quote
                             - '@call_service_method':
                                 service: oro_entity.entity_name_resolver
                                 method: getName
-                                method_parameters: [$.result.sourceEntity]
+                                method_parameters: [$.result.sourceEntity.sourceDocument]
                                 attribute: $checkout.completedData.startedFrom
                             - '@assign_value':
                                 - [$checkout.completedData.currency, $order.currency]

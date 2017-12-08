@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceAttributeProductPriceRepositoryTest extends WebTestCase
 {
     protected function setUp()
@@ -61,5 +65,17 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
         $this->assertCount(0, $result);
+    }
+
+    public function testDeletePricesByPriceList()
+    {
+        $priceList = $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1);
+
+        /** @var PriceAttributeProductPriceRepository $repository */
+        $repository = static::getContainer()
+            ->get('doctrine')
+            ->getRepository('OroPricingBundle:PriceAttributeProductPrice');
+
+        static::assertSame(8, $repository->deletePricesByPriceList($priceList));
     }
 }

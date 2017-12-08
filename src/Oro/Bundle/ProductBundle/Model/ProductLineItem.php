@@ -76,7 +76,7 @@ class ProductLineItem implements ProductLineItemInterface
     {
         return $this->getUnit();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -109,6 +109,14 @@ class ProductLineItem implements ProductLineItemInterface
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParentProduct()
+    {
+        return null;
     }
 
     /**

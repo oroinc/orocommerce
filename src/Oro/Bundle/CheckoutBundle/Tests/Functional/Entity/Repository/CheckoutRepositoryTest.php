@@ -3,12 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
@@ -28,7 +25,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
-                LoadQuoteCheckoutsData::class,
                 LoadShoppingListsCheckoutsData::class,
                 LoadCustomerUserData::class,
             ]
@@ -103,32 +99,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $this->assertEquals($withSource, $found);
     }
 
-    public function testGetCheckoutByQuote()
-    {
-        $quote = $this->getReference(LoadQuoteData::QUOTE1);
-        $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
-
-        $this->assertSame(
-            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
-            $this->getRepository()->getCheckoutByQuote($quote, $customerUser)
-        );
-    }
-
-    public function testFindCheckoutByCustomerUserAndSourceCriteriaByQuoteDemand()
-    {
-        $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
-        $criteria = ['quoteDemand' => $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1)];
-
-        $this->assertSame(
-            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
-                $customerUser,
-                $criteria,
-                'b2b_flow_checkout'
-            )
-        );
-    }
-
     public function testFindCheckoutByCustomerUserAndSourceCriteriaByShoppingList()
     {
         $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
@@ -138,19 +108,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
             $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
                 $customerUser,
-                $criteria,
-                'b2b_flow_checkout'
-            )
-        );
-    }
-
-    public function testFindCheckoutBySourceCriteriaByQuoteDemand()
-    {
-        $criteria = ['quoteDemand' => $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1)];
-
-        $this->assertSame(
-            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
-            $this->getRepository()->findCheckoutBySourceCriteria(
                 $criteria,
                 'b2b_flow_checkout'
             )
@@ -184,10 +141,9 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 
     public function testFindByType()
     {
-        $checkouts = $this->repository->findByPaymentMethod(LoadQuoteCheckoutsData::PAYMENT_METHOD);
+        $checkouts = $this->repository->findByPaymentMethod(LoadShoppingListsCheckoutsData::PAYMENT_METHOD);
 
-        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1), $checkouts);
-        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_2), $checkouts);
+        static::assertContains($this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7), $checkouts);
     }
 
     protected function deleteAllWorkflowItems()

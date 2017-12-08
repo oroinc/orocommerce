@@ -116,6 +116,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: akeneo_batch.step_execution_completed, method: onBatchStepCompleted }
 
+    oro_inventory.importexport.configuration_provider.inventory_level:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Configuration\InventoryLevelImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_inventory_level }
+
     oro_inventory.event_listener.product_data_converter:
         class: 'Oro\Bundle\InventoryBundle\EventListener\ProductDataConverterEventListener'
         tags:

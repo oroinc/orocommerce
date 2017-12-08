@@ -267,3 +267,8 @@ services:
         parent: oro_website_search.repository.abstract
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
+
+    oro_catalog.entity_metadata_builder.product:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\ProductMetadataBuilder'
+        tags:
+            - { name: oro_entity_extend.entity_metadata_builder }
