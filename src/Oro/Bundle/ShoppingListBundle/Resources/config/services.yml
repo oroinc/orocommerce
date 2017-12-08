@@ -175,6 +175,7 @@ services:
               - '@oro_shopping_list.provider.matrix_grid_order_manager'
               - '@oro_pricing.subtotal_processor.total_processor_provider'
               - '@oro_currency.formatter.number'
+              - '@oro_shopping_list.shopping_list.manager'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
 
@@ -184,6 +185,7 @@ services:
               - '@oro_shopping_list.layout.data_provider.matrix_order_form'
               - '@oro_product.layout.data_provider.product_form_availability'
               - '@oro_config.manager'
+              - '@oro_ui.user_agent_provider'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
 
@@ -403,5 +405,6 @@ services:
             - '@oro_product.layout.data_provider.product_list_matrix_form_availability'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_pricing.layout.data_provider.frontend_product_prices'
+            - '@oro_shopping_list.layout.data_provider.matrix_grid_order'
         tags:
             - { name: oro_datagrid.extension }

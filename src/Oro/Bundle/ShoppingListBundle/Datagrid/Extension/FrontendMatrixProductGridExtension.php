@@ -12,13 +12,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListMatrixFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendMatrixProductGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'frontend-product-search-grid';
+    const MATRIX_FORM_TYPE_COLUMN_NAME = 'matrixFormType';
     const MATRIX_FORM_COLUMN_NAME = 'matrixForm';
     const PRODUCT_PRICES_COLUMN_NAME = 'productPrices';
+    const TOTAL_QUANTITY_COLUMN_NAME = 'totalQuantity';
+    const TOTAL_PRICE_COLUMN_NAME = 'totalPrice';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
@@ -38,6 +42,9 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     /** @var FrontendProductPricesProvider */
     private $frontendProductPricesProvider;
 
+    /** @var MatrixGridOrderProvider */
+    private $matrixGridOrderProvider;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ShoppingListManager $shoppingListManager
@@ -45,6 +52,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      * @param ProductListMatrixFormAvailabilityProvider $productListMatrixFormAvailabilityProvider
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param FrontendProductPricesProvider $frontendProductPricesProvider
+     * @param MatrixGridOrderProvider $matrixGridOrderProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -52,7 +60,8 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
         ProductListMatrixFormAvailabilityProvider $productListMatrixFormAvailabilityProvider,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
-        FrontendProductPricesProvider $frontendProductPricesProvider
+        FrontendProductPricesProvider $frontendProductPricesProvider,
+        MatrixGridOrderProvider $matrixGridOrderProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->shoppingListManager = $shoppingListManager;
@@ -60,6 +69,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         $this->productListMatrixFormAvailabilityProvider = $productListMatrixFormAvailabilityProvider;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->frontendProductPricesProvider = $frontendProductPricesProvider;
+        $this->matrixGridOrderProvider = $matrixGridOrderProvider;
     }
 
     /**
@@ -96,6 +106,22 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
 
             if (!$product) {
                 continue;
+            }
+
+            $row->setValue(
+                self::MATRIX_FORM_TYPE_COLUMN_NAME,
+                $this->productListMatrixFormAvailabilityProvider->getAvailableMatrixFormType($product)
+            );
+
+            if ($this->productListMatrixFormAvailabilityProvider->isMatrixFormAvailable($product)) {
+                $row->setValue(
+                    self::TOTAL_QUANTITY_COLUMN_NAME,
+                    $this->matrixGridOrderProvider->getTotalQuantity($product)
+                );
+                $row->setValue(
+                    self::TOTAL_PRICE_COLUMN_NAME,
+                    $this->matrixGridOrderProvider->getTotalPriceFormatted($product)
+                );
             }
 
             if ($this->productListMatrixFormAvailabilityProvider->isInlineMatrixFormAvailable($product)) {

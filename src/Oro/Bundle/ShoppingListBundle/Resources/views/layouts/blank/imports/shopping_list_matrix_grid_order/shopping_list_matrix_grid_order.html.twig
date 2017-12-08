@@ -7,34 +7,3 @@
 
     {{ parent_block_widget(block) }}
 {% endblock %}
-
-{% block _shopping_list_matrix_form_summary_widget %}
-    <div class="{{ class_prefix }}__summary--inline">
-        {{ block('container_widget') }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_matrix_form_summary_wrapper_widget %}
-    <div class="{{ class_prefix }}__summary-wrapper--inline">
-        {{ block('container_widget') }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_matrix_form_summary_quantity_widget %}
-    <div class="{{ class_prefix }}__total-quantity-wrapper">
-        <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
-        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
-        </span>
-        <span class="{{ class_prefix }}__total-quantity-value" data-role="total-quantity"></span>
-    </div>
-    <div class="{{ class_prefix }}__total-separator">|</div>
-{% endblock %}
-
-{% block _shopping_list_matrix_form_summary_total_widget %}
-    <div class="{{ class_prefix }}__total-price-wrapper">
-        <span class="{{ class_prefix }}__summary-label {{ class_prefix }}__summary-label--inline">
-            {{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}
-        </span>
-        <span class="{{ class_prefix }}__total-price-value" data-role="total-price"></span>
-    </div>
-{% endblock %}

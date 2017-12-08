@@ -58,7 +58,10 @@ define(function(require) {
             this.originalProductId = this.model.get('parentProduct');
 
             this.initializeSubviews({
-                productModel: this.model
+                productModel: this.model,
+                options: {
+                    productModel: this.model
+                }
             });
 
             if (this.normalizeQuantityField) {

@@ -109,7 +109,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayNotHasKey('image', $result['data'][0]);
+        $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
             ProductController::GRID_NAME,

@@ -1,4 +1,6 @@
 {% block _matrix_collection_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set defaultColumns = form.rows[0].columns %}
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}
@@ -8,7 +10,7 @@
 
 {% block _matrix_collection_widget_body %}
     {% set rows = columnsCount > 1 ? form.rows : [form.rows[0]] %}
-    <div class="{{ class_prefix }}__grid fade-in">
+    <div class="{{ class_prefix }}__grid--mobile fade-in">
         {% for row in rows %}
             {% set rowIndex = loop.index %}
             {{ block('_matrix_collection_widget_body_row') }}
