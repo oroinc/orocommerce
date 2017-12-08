@@ -87,7 +87,8 @@ Feature: Duplicate Lists
       |SKU2|11      |item|
     And I should not see following buttons:
       |Duplicate List|
-    And open page with shopping list "My Shopping List"
+    And I hover on "Shopping Cart"
+    And click "My Shopping List"
     And click "Edit Shopping List Label"
     And type "Main Shopping List" in "value"
     And click "Save"
@@ -152,7 +153,8 @@ Feature: Duplicate Lists
     And click "Yes, Delete"
     And click "Delete"
     And click "Yes, Delete"
-    And open page with shopping list "Main Shopping List"
+    When I hover on "Shopping Cart"
+    And click "Main Shopping List"
     When click "Edit Shopping List Label"
     And type "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" in "value"
     And click "Save"
