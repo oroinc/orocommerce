@@ -19,4 +19,3 @@ layout:
             id: product_mass_actions_sticky_container
             optionName: visible
             optionValue: '=data["system_config_provider"].getValue("oro_shopping_list.mass_adding_on_product_listing_enabled") && (data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"])'
-            
