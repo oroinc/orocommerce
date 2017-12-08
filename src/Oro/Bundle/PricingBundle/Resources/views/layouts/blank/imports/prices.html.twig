@@ -202,11 +202,16 @@
                 prices: productPrices
             }
         },
-        '~class': ' product-prices__tbody',
-        'itemprop': 'offers',
-        'itemscope': '',
-        'itemtype':'http://schema.org/Offer'
+        '~class': ' product-prices__tbody'
     }) %}
+
+    {% if (productPrices|length) %}
+        {% set attr = layout_attr_defaults(attr, {
+            'itemprop': 'offers',
+            'itemscope': '',
+            'itemtype':'http://schema.org/Offer'
+        }) %}
+    {% endif %}
 
     <tbody {{ block('block_attributes') }}>
         {% set currentUnit = '' %}
