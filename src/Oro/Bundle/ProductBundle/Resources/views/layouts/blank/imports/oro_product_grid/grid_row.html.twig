@@ -147,11 +147,11 @@
 
 {% block __oro_product_grid__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__view-details-link product__view-details-link--{{ class_prefix }}"
+    '~class': " product__view-details-link product__view-details-link--{{ class_prefix }}"
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ product.view_link }}" class="view-product">
-            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
+        <a href="{{ product.view_link }}" class="link view-product">
+            {{ 'oro.product.frontend.index.view_details'|trans }}
         </a>
     </div>
 {% endblock %}
