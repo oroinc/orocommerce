@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Acl\Voter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class WebCatalogVoter extends AbstractEntityVoter
@@ -18,17 +18,17 @@ class WebCatalogVoter extends AbstractEntityVoter
     protected $object;
 
     /**
-     * @var WebCatalogUsageProvider
+     * @var WebCatalogUsageProviderInterface
      */
     protected $usageProvider;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param WebCatalogUsageProvider $usageProvider
+     * @param WebCatalogUsageProviderInterface $usageProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        WebCatalogUsageProvider $usageProvider
+        WebCatalogUsageProviderInterface $usageProvider
     ) {
         parent::__construct($doctrineHelper);
 
