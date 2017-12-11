@@ -26,6 +26,11 @@ class MatrixGridOrderManager
     private $variantAvailability;
 
     /**
+     * @var EmptyMatrixGridInterface
+     */
+    private $emptyMatrixGridManager;
+
+    /**
      * @var array|MatrixCollection[]
      */
     private $collectionCache = [];
@@ -33,13 +38,16 @@ class MatrixGridOrderManager
     /**
      * @param PropertyAccessor $propertyAccessor
      * @param ProductVariantAvailabilityProvider $variantAvailability
+     * @param EmptyMatrixGridInterface $emptyMatrixGridManager
      */
     public function __construct(
         PropertyAccessor $propertyAccessor,
-        ProductVariantAvailabilityProvider $variantAvailability
+        ProductVariantAvailabilityProvider $variantAvailability,
+        EmptyMatrixGridInterface $emptyMatrixGridManager
     ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->variantAvailability = $variantAvailability;
+        $this->emptyMatrixGridManager = $emptyMatrixGridManager;
     }
 
     /**
@@ -243,5 +251,17 @@ class MatrixGridOrderManager
         }
 
         return null;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param LineItem[] $lineItems
+     */
+    public function addEmptyMatrixIfAllowed(ShoppingList $shoppingList, Product $product, array $lineItems)
+    {
+        if ($this->emptyMatrixGridManager->isAddEmptyMatrixAllowed($lineItems)) {
+            $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product);
+        }
     }
 }

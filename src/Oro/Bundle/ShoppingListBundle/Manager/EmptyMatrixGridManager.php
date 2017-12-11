@@ -1,14 +1,16 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Action;
+namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
 
-class AddConfigurableProductToShoppingListAction implements ShoppingListAndProductActionInterface
+class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 {
     /**
      * @var DoctrineHelper
@@ -20,22 +22,27 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
      */
     private $lineItemFactory;
 
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param DoctrineHelper                                   $doctrineHelper
      * @param LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
+        LineItemByShoppingListAndProductFactoryInterface $lineItemFactory,
+        ConfigManager $configManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->lineItemFactory = $lineItemFactory;
+        $this->configManager = $configManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function execute(ShoppingList $shoppingList, Product $product)
+    public function addEmptyMatrix(ShoppingList $shoppingList, Product $product)
     {
         if ($this->isShoppingListHasProductVariants($shoppingList, $product)) {
             return;
@@ -88,5 +95,42 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
 
         $entityManager->persist($this->lineItemFactory->create($shoppingList, $product));
         $entityManager->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAddEmptyMatrixAllowed(array $lineItems)
+    {
+        if ($this->lineItemQuantitiesAreEmpty($lineItems) && $this->isEmptyMatrixConfig()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     *
+     * @return bool
+     */
+    private function lineItemQuantitiesAreEmpty(array $lineItems): bool
+    {
+        foreach ($lineItems as $item) {
+            if ($item->getQuantity() > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEmptyMatrixConfig(): bool
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ALLOW_TO_ADD_EMPTY));
     }
 }
