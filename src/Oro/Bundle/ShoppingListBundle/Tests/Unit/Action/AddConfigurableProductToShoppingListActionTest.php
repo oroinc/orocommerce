@@ -200,7 +200,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->method('getEntityRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
-        
+
         $this->doctrineHelper
             ->expects(static::once())
             ->method('getEntityManagerForClass')

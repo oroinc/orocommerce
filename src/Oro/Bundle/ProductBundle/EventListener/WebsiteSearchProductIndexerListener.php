@@ -131,6 +131,7 @@ class WebsiteSearchProductIndexerListener
             $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
+            $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
 
             $this->processImages($event, $productImages, $product->getId());
 
