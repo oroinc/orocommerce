@@ -135,10 +135,6 @@ oro:
             label: Status
             description: The enabled or disabled status of the product
 
-        variant_fields:
-            yes.label: Yes
-            no.label: No
-
         visibility:
             visible.label: Yes
             not_visible.label: No
@@ -550,8 +546,6 @@ oro:
             top_selling: 'Top Selling'
 
         brand:
-            owner:
-                label: Owner
             label:                Brand
             description:          Brand of the product
             entity_label:         Brand

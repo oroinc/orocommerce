@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_shopping_lists.html.twig'

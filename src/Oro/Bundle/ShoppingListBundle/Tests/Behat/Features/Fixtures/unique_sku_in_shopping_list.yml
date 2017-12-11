@@ -1,5 +1,5 @@
 include:
-    - @OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:

@@ -1,7 +1,7 @@
 Widgets at CMS page content
 ===========================
 
-**Notice:**
+**Note:**
 For now widgets are only supported by CMS page content but you can add support to any text variables 
 (see [How to support widgets in my content](#how-to-support-widgets-in-custom-content)).
  
@@ -15,7 +15,8 @@ Options should be simple scalar values that can be easily added by administrator
 
 You should register every widget at the service container with `oro_cms.widget` tag, each tag should provide user friendly `alias` that will be used by administrator for referencing to widgets during managing content that supports widgets.
  
- for example:
+**Example:**
+
  ````yml
  # AppBundle/Resources/config/services.yml
  
@@ -36,6 +37,7 @@ How to support widgets in custom content
 To support widgets in any text you should apply `render_content` filter to it at twig template.
  
  For example:
+ 
   ````twig
   {{ entity.content | render_content }}
   ````

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-12766
 @fixture-OroProductBundle:product_with_html.yml
 Feature: Quote Edit Product Selector

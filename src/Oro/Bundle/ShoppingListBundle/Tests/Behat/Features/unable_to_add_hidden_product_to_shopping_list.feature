@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Unable to add hidden product to shopping list
   ToDo: BAP-16103 Add missing descriptions to the Behat features

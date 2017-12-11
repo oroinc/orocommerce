@@ -12,6 +12,7 @@ use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
@@ -188,7 +189,7 @@ class SlugRepository extends EntityRepository
         /** @var Connection $connection */
         $connection = $this->_em->getConnection();
 
-        $hashParameters = Slug::hashParameters($parameters);
+        $hashParameters = UrlParameterHelper::hashParams($parameters);
         $qb = $connection->createQueryBuilder()
             ->select('slug.url', 'slug.slug_prototype', 'slug.localization_id')
             ->from('oro_redirect_slug', 'slug')

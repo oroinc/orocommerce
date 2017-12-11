@@ -340,6 +340,17 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
+    oro_shopping_list.voter.view_shopping_list_voter:
+        class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListViewVoter
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        public: false
+        calls:
+            - [setWebsiteManager, ['@oro_website.manager']]
+            - [setClassName, [%oro_shopping_list.entity.shopping_list.class%]]
+        tags:
+            - { name: security.voter }
+
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
         arguments:

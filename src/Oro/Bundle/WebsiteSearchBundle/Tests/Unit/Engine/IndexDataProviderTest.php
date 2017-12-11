@@ -22,22 +22,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var IndexDataProvider */
-    private $indexDataProvider;
+    protected $indexDataProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $eventDispatcher;
+    protected $eventDispatcher;
 
     /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
-    private $aliasResolver;
+    protected $aliasResolver;
 
     /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $placeholder;
+    protected $placeholder;
 
     /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $tagHelper;
+    protected $tagHelper;
 
     /** @var PlaceholderHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $placeholderHelper;
+    protected $placeholderHelper;
 
     protected function setUp()
     {
@@ -188,7 +188,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'indexData' => [
                     [1, 'title', '<p>SKU-01</p>', true],
                 ],
-                'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>', 'all_text' => 'SKU-01']]],
             ],
             'simple field with integer' => [
                 'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
@@ -215,7 +215,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01',
+                            'title_1' => '<p>SKU-01</p>',
                             'all_text' => 'SKU-01',
                             'all_text_5' => 'SKU-01',
                         ],
@@ -247,12 +247,12 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01 SKU-01-gb',
+                            'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
                             'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                             'all_text_5' => 'SKU-01 en_US',
                             'all_text_6' => 'SKU-01-gb en_GB',
-                            'descr_5' => 'en_US',
-                            'descr_6' => 'en_GB',
+                            'descr_5' => '<p>en_US</p>',
+                            'descr_6' => '<p>en_GB</p>',
                         ],
                     ],
                 ],
@@ -307,13 +307,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01 SKU-01-gb',
-                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB '.
+                            'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
+                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB ' .
                                 'title6 descr6 keywords6',
                             'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
                             'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
-                            'descr_5' => 'en_US',
-                            'descr_6' => 'en_GB',
+                            'descr_5' => '<p>en_US</p>',
+                            'descr_6' => '<p>en_GB</p>',
                         ],
                     ],
                 ],

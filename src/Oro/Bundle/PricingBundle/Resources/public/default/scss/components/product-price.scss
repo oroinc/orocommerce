@@ -13,8 +13,6 @@
     }
 
     &__hint {
-        display: $product-price-hint-display;
-
         width: $product-price-hint-width;
     }
 
@@ -37,18 +35,10 @@
         width: $product-price-label-width;
     }
 
-    &__unit-short {
-        display: $product-price-unit-short-display;
-    }
-
     //Modifier for simple view(only main price)
     &--simple & {
         &__main-box {
             float: $product-price-simple-main-box-float;
-        }
-
-        &__label {
-            display: $product-price-simple-label-display;
         }
 
         &__value {
@@ -77,19 +67,9 @@
 @include breakpoint('tablet') {
     .product-price {
         &--simple {
-            display: $product-price-simple-display-tablet;
-
             margin-top: $product-price-simple-margin-top-tablet;
 
             text-align: $product-price-simple-text-align-tablet;
-        }
-
-        &__unit-full {
-            display: $product-price-unit-full-display-tablet;
-        }
-
-        &__unit-short {
-            display: $product-price-unit-short-display-tablet;
         }
     }
 }

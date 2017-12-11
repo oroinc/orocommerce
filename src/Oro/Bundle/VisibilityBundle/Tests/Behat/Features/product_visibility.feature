@@ -1,3 +1,4 @@
+@regression
 @fixture-OroVisibilityBundle:category_tree_with_product_visibility.yml
 Feature: Product Visibility
   ToDo: BAP-16103 Add missing descriptions to the Behat features
