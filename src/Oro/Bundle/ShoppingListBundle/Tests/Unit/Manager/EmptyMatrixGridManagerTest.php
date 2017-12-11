@@ -1,22 +1,24 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Action;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
-use Oro\Bundle\ShoppingListBundle\Action\AddConfigurableProductToShoppingListAction;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
+use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 
-class AddConfigurableProductToShoppingListActionTest extends TestCase
+class EmptyMatrixGridManagerTest extends TestCase
 {
     use EntityTrait;
 
@@ -31,22 +33,29 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
     private $lineItemFactory;
 
     /**
-     * @var AddConfigurableProductToShoppingListAction
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $action;
+    private $configManager;
+
+    /**
+     * @var EmptyMatrixGridManager
+     */
+    private $manager;
 
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->lineItemFactory = $this->createMock(LineItemByShoppingListAndProductFactoryInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->action = new AddConfigurableProductToShoppingListAction(
+        $this->manager = new EmptyMatrixGridManager(
             $this->doctrineHelper,
-            $this->lineItemFactory
+            $this->lineItemFactory,
+            $this->configManager
         );
     }
 
-    public function testShoppingListHasProductVariants()
+    public function testAddEmptyMatrixShoppingListHasProductVariants()
     {
         $shoppingList = new ShoppingList();
         $unit = new ProductUnit();
@@ -87,10 +96,10 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->expects(static::never())
             ->method('getEntityManagerForClass');
 
-        $this->action->execute($shoppingList, $product);
+        $this->manager->addEmptyMatrix($shoppingList, $product);
     }
 
-    public function testShoppingListHasConfigurableProduct()
+    public function testAddEmptyMatrixShoppingListHasConfigurableProduct()
     {
         $shoppingList = new ShoppingList();
         $unit = new ProductUnit();
@@ -138,10 +147,10 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->expects(static::never())
             ->method('getEntityManagerForClass');
 
-        $this->action->execute($shoppingList, $product);
+        $this->manager->addEmptyMatrix($shoppingList, $product);
     }
 
-    public function testAddConfigurableProductToShoppingList()
+    public function testAddEmptyMatrix()
     {
         $shoppingList = new ShoppingList();
         $unit = new ProductUnit();
@@ -207,6 +216,63 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->with(LineItem::class)
             ->willReturn($entityManager);
 
-        $this->action->execute($shoppingList, $product);
+        $this->manager->addEmptyMatrix($shoppingList, $product);
+    }
+
+    /**
+     * @return array
+     */
+    public function isAddEmptyMatrixAllowedDataProvider()
+    {
+        return [
+            'empty line items, config disabled' => [
+                'lineItems' => [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'quantity' => 0]),
+                    $this->getEntity(LineItem::class, ['id' => 2, 'quantity' => 0]),
+                ],
+                'configAllowEmpty' => false,
+                'expected' => false
+            ],
+            'empty line items, config enabled' => [
+                'lineItems' => [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'quantity' => 0]),
+                    $this->getEntity(LineItem::class, ['id' => 2, 'quantity' => 0]),
+                ],
+                'configAllowEmpty' => true,
+                'expected' => true
+            ],
+            'not empty line items, config disabled' => [
+                'lineItems' => [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'quantity' => 0]),
+                    $this->getEntity(LineItem::class, ['id' => 2, 'quantity' => 1]),
+                ],
+                'configAllowEmpty' => false,
+                'expected' => false
+            ],
+            'not empty line items, config enabled' => [
+                'lineItems' => [
+                    $this->getEntity(LineItem::class, ['id' => 1, 'quantity' => 0]),
+                    $this->getEntity(LineItem::class, ['id' => 2, 'quantity' => 1]),
+                ],
+                'configAllowEmpty' => true,
+                'expected' => false
+            ],
+        ];
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     * @param bool $configAllowEmpty
+     * @param bool $expected
+     * @dataProvider isAddEmptyMatrixAllowedDataProvider
+     */
+    public function testIsAddEmptyMatrixAllowed(array $lineItems, $configAllowEmpty, $expected)
+    {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ALLOW_TO_ADD_EMPTY))
+            ->willReturn($configAllowEmpty);
+
+        $this->assertEquals($expected, $this->manager->isAddEmptyMatrixAllowed($lineItems));
     }
 }
