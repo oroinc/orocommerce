@@ -4,7 +4,7 @@
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}
 
-    <div class="{{ class_prefix }}__grid {{ columnsCount > 1 ? class_prefix ~ '__grid--multi-rows' }}">
+    <div class="{{ class_prefix }}__grid {{ columnsCount > 1 ? class_prefix ~ '__grid--multi-rows' }}" data-matrix-grid-container>
         {{ block('_matrix_collection_widget_head') }}
         {{ block('_matrix_collection_widget_side') }}
         {{ block('_matrix_collection_widget_body') }}
@@ -88,7 +88,7 @@
 {% block _matrix_collection_widget_body_row_cell %}
     {% set row = columnsCount > 1 ? row : cell %}
     {% set cell = columnsCount > 1 ? cell : row.columns[0] %}
-    <div class="{{ class_prefix }}__form__col">
+    <div class="{{ class_prefix }}__form__col" data-column>
         {{ block('_matrix_collection_widget_body_row_cell_widget') }}
     </div>
 {% endblock %}

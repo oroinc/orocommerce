@@ -7,11 +7,16 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var PricesHelper = require('oropricing/js/app/prices-helper');
     var ScrollView = require('orofrontend/js/app/views/scroll-view');
+    var FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
     var $ = require('jquery');
     var _ = require('underscore');
 
     BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
+
+        optionNames: BaseView.prototype.optionNames.concat([
+            'dimension'
+        ]),
 
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
@@ -31,6 +36,8 @@ define(function(require) {
 
         minValue: 1,
 
+        dimension: null,
+
         /**
          * @inheritDoc
          */
@@ -40,9 +47,15 @@ define(function(require) {
             this.setPrices(options);
             this.initializeElements(options);
             if (_.isDesktop()) {
-                this.subview('scrollView', new ScrollView({
-                    el: this.el
-                }));
+                if (this.dimension === 1) {
+                    this.subview('fitMatrixView', new FitMatrixView({
+                        el: this.el
+                    }));
+                } else {
+                    this.subview('scrollView', new ScrollView({
+                        el: this.el
+                    }));
+                }
             }
 
             this.total = {
