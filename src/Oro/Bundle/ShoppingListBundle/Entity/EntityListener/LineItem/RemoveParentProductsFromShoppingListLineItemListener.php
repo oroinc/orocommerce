@@ -15,13 +15,13 @@ class RemoveParentProductsFromShoppingListLineItemListener
     {
         $shoppingList = $lineItem->getShoppingList();
 
-        $configurableLineItems = $event->getEntityManager()->getRepository('OroShoppingListBundle:LineItem')->findBy([
+        $parentLineItems = $event->getEntityManager()->getRepository('OroShoppingListBundle:LineItem')->findBy([
             'shoppingList' => $shoppingList,
             'unit' => $lineItem->getProductUnit(),
-            'product' => $lineItem->getProduct()->getParentProducts(),
+            'product' => $lineItem->getParentProduct(),
         ]);
 
-        foreach ($configurableLineItems as $item) {
+        foreach ($parentLineItems as $item) {
             $shoppingList->removeLineItem($item);
         }
     }

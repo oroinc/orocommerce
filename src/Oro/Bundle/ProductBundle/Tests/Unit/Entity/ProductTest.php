@@ -495,36 +495,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
     }
 
-    public function testGetVariantProducts()
-    {
-        $variantProducts = [
-            new Product(),
-            new Product(),
-        ];
-
-        $product = new Product();
-        $product
-            ->addVariantLink(new ProductVariantLink($product, $variantProducts[0]))
-            ->addVariantLink(new ProductVariantLink($product, $variantProducts[1]));
-
-        static::assertSame($variantProducts, $product->getVariantProducts());
-    }
-
-    public function testGetParentProducts()
-    {
-        $parentProducts = [
-            new Product(),
-            new Product(),
-        ];
-
-        $product = new Product();
-        $product
-            ->addParentVariantLink(new ProductVariantLink($parentProducts[0], $product))
-            ->addParentVariantLink(new ProductVariantLink($parentProducts[1], $product));
-
-        static::assertEquals($parentProducts, $product->getParentProducts());
-    }
-
     /**
      * @param Product $product
      * @param string $name

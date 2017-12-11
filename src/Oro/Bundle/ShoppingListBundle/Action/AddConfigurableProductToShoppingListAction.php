@@ -59,7 +59,7 @@ class AddConfigurableProductToShoppingListAction implements ShoppingListAndProdu
         return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
             'shoppingList' => $shoppingList,
             'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-            'product' => $product->getVariantProducts(),
+            'parentProduct' => $product,
         ]) !== null;
     }
 

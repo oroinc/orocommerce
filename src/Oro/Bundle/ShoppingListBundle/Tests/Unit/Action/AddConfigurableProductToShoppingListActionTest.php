@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Action;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -14,10 +13,13 @@ use Oro\Bundle\ShoppingListBundle\Action\AddConfigurableProductToShoppingListAct
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 
 class AddConfigurableProductToShoppingListActionTest extends TestCase
 {
+    use EntityTrait;
+
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -52,11 +54,11 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($unit);
 
-        $product = new Product();
+        $product = $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]);
 
         $variantProducts = [
-            new Product(),
-            new Product(),
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]),
+            $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]),
         ];
 
         $product
@@ -71,7 +73,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->with([
                 'shoppingList' => $shoppingList,
                 'unit' => $unit,
-                'product' => $variantProducts,
+                'parentProduct' => $product,
             ])
             ->willReturn(new LineItem());
 
@@ -80,6 +82,10 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->method('getEntityRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
+
+        $this->doctrineHelper
+            ->expects(static::never())
+            ->method('getEntityManagerForClass');
 
         $this->action->execute($shoppingList, $product);
     }
@@ -92,11 +98,11 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($unit);
 
-        $product = new Product();
+        $product = $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]);
 
         $variantProducts = [
-            new Product(),
-            new Product(),
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]),
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]),
         ];
 
         $product
@@ -112,7 +118,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
                 [[
                     'shoppingList' => $shoppingList,
                     'unit' => $unit,
-                    'product' => $variantProducts,
+                    'parentProduct' => $product,
                 ]],
                 [[
                     'shoppingList' => $shoppingList,
@@ -127,6 +133,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->method('getEntityRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
+
         $this->doctrineHelper
             ->expects(static::never())
             ->method('getEntityManagerForClass');
@@ -143,11 +150,11 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
         $unitPrecision->setUnit($unit);
 
         $variantProducts = [
-            new Product(),
-            new Product(),
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]),
+            $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]),
         ];
 
-        $product = new Product();
+        $product = $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]);
         $product
             ->setPrimaryUnitPrecision($unitPrecision)
             ->addVariantLink(new ProductVariantLink($product, $variantProducts[0]))
@@ -161,7 +168,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
                 [[
                     'shoppingList' => $shoppingList,
                     'unit' => $unit,
-                    'product' => $variantProducts,
+                    'parentProduct' => $product,
                 ]],
                 [[
                     'shoppingList' => $shoppingList,
@@ -193,6 +200,7 @@ class AddConfigurableProductToShoppingListActionTest extends TestCase
             ->method('getEntityRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
+        
         $this->doctrineHelper
             ->expects(static::once())
             ->method('getEntityManagerForClass')

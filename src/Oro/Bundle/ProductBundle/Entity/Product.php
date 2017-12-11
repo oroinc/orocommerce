@@ -1494,30 +1494,4 @@ class Product extends ExtendProduct implements
     {
         return $this->denormalizedDefaultNameUppercase;
     }
-
-    /**
-     * @return Product[]
-     */
-    public function getVariantProducts(): array
-    {
-        $variants = [];
-        foreach ($this->getVariantLinks() as $variant) {
-            $variants[] = $variant->getProduct();
-        }
-
-        return $variants;
-    }
-
-    /**
-     * @return Product[]
-     */
-    public function getParentProducts(): array
-    {
-        $products = [];
-        foreach ($this->getParentVariantLinks() as $link) {
-            $products[] = $link->getParentProduct();
-        }
-
-        return $products;
-    }
 }
