@@ -2,4 +2,10 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
+                - 'grid.html.twig'
                 - 'grid_row.html.twig'
+        - '@add':
+            id: sticky_element_toolbar
+            parentId: top_sticky_panel_content
+            siblingId: sticky_header_row
+            blockType: block

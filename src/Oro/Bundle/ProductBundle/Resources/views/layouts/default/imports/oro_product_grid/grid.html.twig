@@ -1,0 +1,24 @@
+{% block _sticky_element_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'sticky_element_toolbar',
+        '~class': ' sticky-panel__toolbar toolbar-sticky-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_require_js_config_widget %}
+    {% if (not isMobileVersion()) %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-grid-toolbar': 'top',
+            'data-sticky-target': 'top-sticky-panel',
+            'data-proxy-data': 'true',
+            'data-sticky': {
+                'isSticky': true,
+                'autoWidth': true,
+                'toggleClass': 'toolbar-sticky-container',
+                'placeholderId': 'sticky_element_toolbar'
+            }
+        }) %}
+    {% endif %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
