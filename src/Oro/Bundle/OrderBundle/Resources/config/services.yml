@@ -35,7 +35,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
 
@@ -47,7 +47,7 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_security.token_accessor'
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 10 }
 

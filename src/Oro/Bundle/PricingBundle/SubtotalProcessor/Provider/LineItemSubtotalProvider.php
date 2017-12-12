@@ -14,7 +14,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
@@ -32,14 +31,14 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        UserCurrencyManager $currencyManager
+        SubtotalProviderConstructorArguments $arguments
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
         $this->translator = $translator;
         $this->rounding = $rounding;
     }
