@@ -18,11 +18,10 @@
         &:empty {
             display: none;
         }
+    }
 
-
-        .icon-selector {
-            @include fa-icon($product-action-toggle-icon-mobile, after);
-        }
+    .icon-selector {
+        @include fa-icon($product-action-toggle-icon-mobile, after);
     }
 
     &.in-sticky {
