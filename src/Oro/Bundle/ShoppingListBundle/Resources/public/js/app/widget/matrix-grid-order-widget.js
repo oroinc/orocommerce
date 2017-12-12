@@ -4,6 +4,7 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    var headerTemplate = require('tpl!oroproduct/templates/product-popup-header.html');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
@@ -37,18 +38,13 @@ define(function(require) {
             options.initLayoutOptions = {
                 productModel: this.model
             };
+            options.header = headerTemplate({
+                imageUrl: this.model.get('imageUrl'),
+                title: this.model.get('name'),
+                subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
+                    ': ' + this.model.get('sku')
+            });
 
-            this.fullscreenViewOptions = {
-                popupLabel: null,
-                headerContent: true,
-                footerContentOptions: {},
-                headerContentOptions: {
-                    imageUrl: this.model.get('imageUrl'),
-                    title: this.model.get('name'),
-                    subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
-                        ': ' + this.model.get('sku')
-                }
-            };
             this.options.fullscreenViewport = {
                 isMobile: true
             };
