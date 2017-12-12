@@ -279,18 +279,18 @@ class EmptyMatrixGridManagerTest extends TestCase
     public function testHasEmptyMatrixTrue()
     {
         $shoppingList = new ShoppingList();
-        $product = new Product();
-        $configurableProduct = (new Product())->setType(Product::TYPE_CONFIGURABLE);
+        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
+        $configurableProduct = $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]);
 
         $shoppingList
             ->addLineItem(
-                (new LineItem())->setProduct($product)
+                $this->getEntity(LineItem::class, ['id' => 1, 'product' => $product])
             )
             ->addLineItem(
-                (new LineItem())->setProduct($product)
+                $this->getEntity(LineItem::class, ['id' => 2, 'product' => $product])
             )
             ->addLineItem(
-                (new LineItem())->setProduct($configurableProduct)
+                $this->getEntity(LineItem::class, ['id' => 3, 'product' => $configurableProduct])
             );
 
         self::assertTrue($this->manager->hasEmptyMatrix($shoppingList));
@@ -299,17 +299,17 @@ class EmptyMatrixGridManagerTest extends TestCase
     public function testHasEmptyMatrixFalse()
     {
         $shoppingList = new ShoppingList();
-        $product = new Product();
+        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
 
         $shoppingList
             ->addLineItem(
-                (new LineItem())->setProduct($product)
+                $this->getEntity(LineItem::class, ['id' => 1, 'product' => $product])
             )
             ->addLineItem(
-                (new LineItem())->setProduct($product)
+                $this->getEntity(LineItem::class, ['id' => 2, 'product' => $product])
             )
             ->addLineItem(
-                (new LineItem())->setProduct($product)
+                $this->getEntity(LineItem::class, ['id' => 3, 'product' => $product])
             );
 
         self::assertFalse($this->manager->hasEmptyMatrix($shoppingList));
