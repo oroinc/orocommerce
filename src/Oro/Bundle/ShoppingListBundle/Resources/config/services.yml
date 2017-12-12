@@ -426,6 +426,3 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.line_item.class%', event: prePersist }
-
-    oro_shopping_list.provider.matrix:
-        class: 'Oro\Bundle\ShoppingListBundle\Provider\MatrixProvider'

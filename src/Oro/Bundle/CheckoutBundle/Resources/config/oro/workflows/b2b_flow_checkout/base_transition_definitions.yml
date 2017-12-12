@@ -53,7 +53,7 @@ workflows:
                         method: isAllowed
                         attribute: $isAllowed
                     - '@call_service_method':
-                        service: oro_shopping_list.provider.matrix
+                        service: oro_shopping_list.manager.empty_matrix_grid
                         method: hasEmptyMatrix
                         method_parameters: [$.result.shoppingList]
                         attribute: $.result.shoppingListHasEmptyMatrix

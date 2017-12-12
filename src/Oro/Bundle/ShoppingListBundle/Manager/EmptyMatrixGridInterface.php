@@ -11,7 +11,6 @@ interface EmptyMatrixGridInterface
     /**
      * @param ShoppingList $shoppingList
      * @param Product $product
-     * @return mixed
      */
     public function addEmptyMatrix(ShoppingList $shoppingList, Product $product);
 
@@ -19,5 +18,11 @@ interface EmptyMatrixGridInterface
      * @param LineItem[] $lineItems
      * @return bool
      */
-    public function isAddEmptyMatrixAllowed(array $lineItems);
+    public function isAddEmptyMatrixAllowed(array $lineItems): bool;
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return bool
+     */
+    public function hasEmptyMatrix(ShoppingList $shoppingList): bool;
 }

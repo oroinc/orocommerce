@@ -547,7 +547,7 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                     - '@call_service_method':
-                        service: oro_shopping_list.provider.matrix
+                        service: oro_shopping_list.manager.empty_matrix_grid
                         method: hasEmptyMatrix
                         method_parameters: [$.result.shoppingList]
                         attribute: $.result.shoppingListHasEmptyMatrix

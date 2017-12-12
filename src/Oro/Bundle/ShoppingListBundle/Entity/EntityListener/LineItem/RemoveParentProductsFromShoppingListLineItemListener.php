@@ -8,7 +8,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 class RemoveParentProductsFromShoppingListLineItemListener
 {
     /**
-     * @param LineItem           $lineItem
+     * @param LineItem $lineItem
      * @param LifecycleEventArgs $event
      */
     public function prePersist(LineItem $lineItem, LifecycleEventArgs $event)

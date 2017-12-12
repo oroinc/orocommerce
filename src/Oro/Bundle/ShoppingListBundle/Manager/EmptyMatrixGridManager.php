@@ -26,8 +26,9 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     private $configManager;
 
     /**
-     * @param DoctrineHelper                                   $doctrineHelper
+     * @param DoctrineHelper $doctrineHelper
      * @param LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
+     * @param ConfigManager $configManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -40,7 +41,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addEmptyMatrix(ShoppingList $shoppingList, Product $product)
     {
@@ -57,8 +58,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product      $product
-     *
+     * @param Product $product
      * @return bool
      */
     private function isShoppingListHasProductVariants(ShoppingList $shoppingList, Product $product): bool
@@ -72,8 +72,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product      $product
-     *
+     * @param Product $product
      * @return bool
      */
     private function isShoppingListHasConfigurableProduct(ShoppingList $shoppingList, Product $product): bool
@@ -87,7 +86,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product      $product
+     * @param Product $product
      */
     private function addConfigurableProductToShoppingList(ShoppingList $shoppingList, Product $product)
     {
@@ -98,9 +97,9 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function isAddEmptyMatrixAllowed(array $lineItems)
+    public function isAddEmptyMatrixAllowed(array $lineItems): bool
     {
         if ($this->lineItemQuantitiesAreEmpty($lineItems) && $this->isEmptyMatrixConfig()) {
             return true;
@@ -111,7 +110,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 
     /**
      * @param LineItem[] $lineItems
-     *
      * @return bool
      */
     private function lineItemQuantitiesAreEmpty(array $lineItems): bool
@@ -132,5 +130,19 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     {
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ALLOW_TO_ADD_EMPTY));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasEmptyMatrix(ShoppingList $shoppingList): bool
+    {
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            if ($lineItem->getProduct()->isConfigurable()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

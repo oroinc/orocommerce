@@ -275,4 +275,43 @@ class EmptyMatrixGridManagerTest extends TestCase
 
         $this->assertEquals($expected, $this->manager->isAddEmptyMatrixAllowed($lineItems));
     }
+
+    public function testHasEmptyMatrixTrue()
+    {
+        $shoppingList = new ShoppingList();
+        $product = new Product();
+        $configurableProduct = (new Product())->setType(Product::TYPE_CONFIGURABLE);
+
+        $shoppingList
+            ->addLineItem(
+                (new LineItem())->setProduct($product)
+            )
+            ->addLineItem(
+                (new LineItem())->setProduct($product)
+            )
+            ->addLineItem(
+                (new LineItem())->setProduct($configurableProduct)
+            );
+
+        self::assertTrue($this->manager->hasEmptyMatrix($shoppingList));
+    }
+
+    public function testHasEmptyMatrixFalse()
+    {
+        $shoppingList = new ShoppingList();
+        $product = new Product();
+
+        $shoppingList
+            ->addLineItem(
+                (new LineItem())->setProduct($product)
+            )
+            ->addLineItem(
+                (new LineItem())->setProduct($product)
+            )
+            ->addLineItem(
+                (new LineItem())->setProduct($product)
+            );
+
+        self::assertFalse($this->manager->hasEmptyMatrix($shoppingList));
+    }
 }
