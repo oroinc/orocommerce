@@ -458,8 +458,6 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
 
     ProductFrontendGridFilterManager:
-      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
       selector: 'div.oro-datagrid'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 

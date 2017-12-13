@@ -12,6 +12,8 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
+use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 
 class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +23,11 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
     private $currencyManager;
+
+    /**
+     * @var WebsiteCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteCurrencyProvider;
 
     /**
      * @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -50,13 +57,14 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
         $this->appliedDiscountsProvider = $this->createMock(AppliedDiscountsProvider::class);
         $this->rounding = $this->createMock(RoundingServiceInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->provider = new SubtotalProvider(
-            $this->currencyManager,
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
             $this->promotionExecutor,
             $this->appliedDiscountsProvider,
             $this->rounding,

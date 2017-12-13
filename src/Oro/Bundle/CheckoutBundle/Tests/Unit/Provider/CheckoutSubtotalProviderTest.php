@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -58,7 +59,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->roundingService,
             $this->productPriceProvider,
             $this->priceListTreeHandler,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 

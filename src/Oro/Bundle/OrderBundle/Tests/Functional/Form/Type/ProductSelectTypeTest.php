@@ -13,6 +13,7 @@ class ProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
         $this->setConfigPath('oro_order.backend_product_visibility');
 
         parent::setUp();
+
         $this->loadFixtures([LoadCategoryProductData::class]);
     }
 }

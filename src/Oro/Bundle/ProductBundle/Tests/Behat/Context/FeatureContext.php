@@ -497,8 +497,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->gridContext->clickActionInRow('Default Web Catalog', 'Edit Content Tree');
         $this->waitForAjax();
         $this->oroMainContext->iClickOn('Show Variants Dropdown');
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Add Product Collection');
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Content Variants');
+        $this->waitForAjax();
         $this->oroMainContext->assertPageContainsNumElements(1, 'Product Collection Variant Label');
     }
 
@@ -510,9 +513,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iSetMassActionLimitInProductCollectionsSettings($limit)
     {
         $this->iOnProductCollectionsSettingsPage();
+        $this->waitForAjax();
         $this->formContext->uncheckUseDefaultForField('Mass action limit', 'Use default');
+        $this->waitForAjax();
         $this->oroMainContext->fillField('Mass action limit', $limit);
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Save settings');
+        $this->waitForAjax();
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
 
@@ -524,7 +531,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
         $this->configContext->followLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
-        $this->waitForAjax();
     }
 
     /**
