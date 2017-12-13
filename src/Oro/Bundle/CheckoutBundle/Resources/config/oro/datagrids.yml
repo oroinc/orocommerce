@@ -6,6 +6,7 @@ datagrids:
         options:
             customerUserOwner:
                 customerUserColumn: customerUserName
+            frontend: true
         source:
             type: orm
             query:

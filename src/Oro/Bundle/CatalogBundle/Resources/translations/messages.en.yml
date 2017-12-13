@@ -3,7 +3,7 @@ oro:
         category:
             entity_label:                           'Category'
             entity_plural_label:                    'Categories'
-            entity_description:                     A category of the <a href="https://www.orocommerce.com/documentation/current/user-guide/master-catalog">master catalog</a>.
+            entity_description:                     A category of the <a href="https://www.oroinc.com/doc/orocommerce/current/user-guide/master-catalog">master catalog</a>.
             id.label:                               'ID'
             titles:
                 label:                              'Title'

@@ -35,11 +35,9 @@ Feature: Mass Product Actions for Previously purchased products
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
       | Quantity | 10   |
-      | Unit     | item |
     And I check PSKU2 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU2" in frontend product grid:
       | Quantity | 15   |
-      | Unit     | item |
     And I scroll to top
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element

@@ -10,7 +10,7 @@ Get a price rule by ID.
 
 ### get_list
 
-Get a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -111,7 +111,7 @@ Delete a price rule identified by ID.
 
 ### delete_list
 
-Delete a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 

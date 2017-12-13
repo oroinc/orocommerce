@@ -688,18 +688,22 @@ services:
             - '@oro_pricing.subtotal_processor.subtotal_provider_registry'
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.user_currency_manager'
-            - '@oro_currency.converter.rate'
-            - '@oro_currency.config.currency'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
+
+    oro_pricing.subtotal_processor.provider.arguments:
+        class: Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.provider.website_currency_provider'
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
@@ -709,7 +713,7 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.model.price_list_tree_handler'
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
@@ -960,6 +964,12 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
         public: false
+
+    oro_pricing.provider.website_currency_provider:
+        class: Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider
+        arguments:
+            - '@oro_currency.config.currency'
+            - '@oro_entity.doctrine_helper'
 
     oro_pricing.event_listener.quick_add_rows_collection_ready:
         class: 'Oro\Bundle\PricingBundle\EventListener\CalculatePriceForCollectionListener'

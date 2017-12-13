@@ -18,7 +18,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -76,7 +76,7 @@ class ShoppingList extends ExtendShoppingList implements
     LineItemsNotPricedAwareInterface,
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
-    WebsiteAwareInterface,
+    WebsiteBasedCurrencyAwareInterface,
     CheckoutSourceEntityInterface,
     \JsonSerializable,
     ProductLineItemsHolderInterface
