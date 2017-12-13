@@ -268,6 +268,10 @@
             padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
         }
 
+        .ui-widget-header {
+            padding: $matrix-order-widget-dialog-ui-widget-header-offset-inner;
+        }
+
         .ui-dialog-buttonpane {
             padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
         }

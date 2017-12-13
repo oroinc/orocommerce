@@ -17,7 +17,8 @@ $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top: 60px 
 $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner: 0 !default;
 $matrix-order-widget-dialog-ui-dialog-title-display: none !default;
 $matrix-order-widget-dialog-ui-dialog-titlebar-close-font-size: 0 !default;
-$matrix-order-widget-dialog-ui-widget-content-offset-inner: 40px 40px 0 !default;
+$matrix-order-widget-dialog-ui-widget-content-offset-inner: 0 40px !default;
+$matrix-order-widget-dialog-ui-widget-header-offset-inner: 20px 40px !default;
 $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner: 0 40px 20px !default;
 
 //Desktop variables

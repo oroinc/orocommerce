@@ -39,15 +39,8 @@ define(function(require) {
                 productModel: this.model
             };
             options.header = headerTemplate({
-                imageUrl: this.model.get('imageUrl'),
-                title: this.model.get('name'),
-                subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
-                    ': ' + this.model.get('sku')
+                product: this.model.attributes
             });
-
-            this.options.fullscreenViewport = {
-                isMobile: true
-            };
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },

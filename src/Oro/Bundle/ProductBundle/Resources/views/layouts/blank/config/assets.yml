@@ -13,4 +13,5 @@ styles:
         - 'bundles/oroproduct/blank/scss/variables/product-view-media/slider-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/sku-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-sticker-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-popup-header.scss'
         - 'bundles/oroproduct/blank/scss/styles.scss'

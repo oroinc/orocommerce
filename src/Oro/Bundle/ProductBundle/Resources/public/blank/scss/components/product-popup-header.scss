@@ -1,0 +1,21 @@
+.product-popup__header {
+    height: $product-popup-header-height;
+
+    display: $product-popup-header-display;
+    align-items: $product-popup-header-align-items;
+
+    &-img {
+        display: $product-popup-header-img-display;
+
+        width: $product-popup-header-img-width;
+        height: $product-popup-header-img-height;
+        margin: $product-popup-header-img-offset;
+        border: $product-popup-header-img-border;
+    }
+}
+
+.fullscreen-popup {
+    .product-popup__header {
+        padding: $fullscreen-product-popup-header-offset;
+    }
+}
