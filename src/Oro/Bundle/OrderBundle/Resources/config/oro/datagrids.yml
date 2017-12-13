@@ -47,6 +47,7 @@ datagrids:
         options:
             customerUserOwner:
                 customerUserColumn: customerUserName
+            frontend: true
         source:
             query:
                 select:
@@ -598,6 +599,7 @@ datagrids:
             toolbarOptions:
                 placement:
                     bottom: true
+            frontend: true
 
     order-shipping-trackings-grid:
         extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
