@@ -131,6 +131,7 @@ datagrids:
         acl_resource: oro_product_frontend_view
         options:
             entityHint:        products
+            frontend: true
         source:
             type: search
             search_index: website
@@ -180,7 +181,6 @@ datagrids:
 
             toolbar_sorting: true
             disable_default_sorting: true
-
 
     product-collection-base-grid:
         extends: products-select-grid-base
@@ -741,6 +741,7 @@ datagrids:
             requireJSModules:
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+            frontend: true
         source:
             type: search
             search_index: website
