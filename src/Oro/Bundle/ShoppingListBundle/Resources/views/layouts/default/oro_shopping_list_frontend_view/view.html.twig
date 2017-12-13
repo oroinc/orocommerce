@@ -297,7 +297,7 @@
 {% block _shopping_list_line_items_list_availability_inventory_status_widget %}
     <div>{{ mainProduct.InventoryStatus }}</div>
     {% if (oro_is_low_inventory_product(mainProduct)) %}
-        <div class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
+        <p class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</p>
     {% endif %}
 {% endblock %}
 

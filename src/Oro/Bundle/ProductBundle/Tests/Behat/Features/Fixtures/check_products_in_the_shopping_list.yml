@@ -1,5 +1,5 @@
 include:
-    - @OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
 
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
@@ -56,6 +56,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
         customerUser: '@CustomerUser_AmandaRCole'
+        website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

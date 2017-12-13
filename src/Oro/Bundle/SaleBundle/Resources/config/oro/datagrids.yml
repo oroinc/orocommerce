@@ -254,6 +254,7 @@ datagrids:
         acl_resource: oro_sale_quote_frontend_index
         extended_entity_name: %oro_sale.entity.quote.class%
         options:
+            frontend: true
             entityHint:        quotes
             entity_pagination: true
             customerUserOwner:

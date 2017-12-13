@@ -18,10 +18,10 @@ On the Product Attributes page, there is a grid of attributes created for the pr
 
 Detailed information about product attributes can be found in the OroCommerce user guide:
 
-* [Creating Product Attributes](https://www.orocommerce.com/documentation/current/user-guide/products/product-attributes#products-product-attributes)
-* [Understanding and Creating Product Families](https://www.orocommerce.com/documentation/current/user-guide/products/product-families#products-product-families)
-* [Using Product Attributes in Product Families](https://www.orocommerce.com/documentation/current/user-guide/products/product-families#products-product-families)
-* [Binding a Product to a Product Family](https://www.orocommerce.com/documentation/current/user-guide/products/products/bind-to-family)
+* [Creating Product Attributes](https://www.oroinc.com/doc/orocommerce/current/user-guide/products/product-attributes#products-product-attributes)
+* [Understanding and Creating Product Families](https://www.oroinc.com/doc/orocommerce/current/user-guide/products/product-families#products-product-families)
+* [Using Product Attributes in Product Families](https://www.oroinc.com/doc/orocommerce/current/user-guide/products/product-families#products-product-families)
+* [Binding a Product to a Product Family](https://www.oroinc.com/doc/orocommerce/current/user-guide/products/products/bind-to-family)
 
 
 

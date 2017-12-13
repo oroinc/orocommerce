@@ -30,4 +30,12 @@ class ProductPriceNormalizer extends ConfigurableEntityNormalizer
     {
         return $data instanceof ProductPrice;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    {
+        return false;
+    }
 }

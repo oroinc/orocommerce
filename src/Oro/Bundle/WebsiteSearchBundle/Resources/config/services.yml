@@ -22,7 +22,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
             - '@oro_website_search.engine.entity_dependencies_resolver'
-            - '@oro_website_search.engine.index_data'
+            - '@oro_website_search.engine.text_filtered_index_data'
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.indexer.input_validator'
 
@@ -143,6 +143,10 @@ services:
             - '@oro_website_search.placeholder_decorator'
             - '@oro_ui.html_tag_helper'
             - '@oro_website_search.helper.placeholder_helper'
+
+    oro_website_search.engine.text_filtered_index_data:
+        parent: oro_website_search.engine.index_data
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\TextFilteredIndexDataProvider'
 
     oro_website_search.helper.placeholder_helper:
         class: 'Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper'
