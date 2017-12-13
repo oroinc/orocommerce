@@ -12,6 +12,10 @@
         padding-top: $matrix-order-widget-grid-offset-inner-top;
 
         font-family: $matrix-order-widget-grid-font-family;
+
+        .fields-row-error {
+            margin: $matrix-order-widget-form-col-offset-inner;
+        }
     }
 
     &__grid--multi-rows & {

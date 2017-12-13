@@ -14,8 +14,7 @@
         '~class': ' {{ class_prefix }}',
         '~data-page-component-view': {
             view: 'oropricing/js/app/views/base-product-matrix-view',
-            prices: prices,
-            emptyMatrixAllowed: oro_config_value('oro_product.matrix_form_allow_empty')
+            prices: prices
         }
     }) %}
 
@@ -31,7 +30,7 @@
         shoppingListId: shoppingList.id
     }) %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form'
+        '~class': class_prefix ~ '__form fields-row'
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

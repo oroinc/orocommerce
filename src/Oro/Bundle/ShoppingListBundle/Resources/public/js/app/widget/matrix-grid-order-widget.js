@@ -56,6 +56,22 @@ define(function(require) {
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },
 
+        _onAdoptedFormSubmitClick: function($form) {
+            var emptyMatrixAllowed = $form.data('empty-matrix-allowed');
+
+            var isQuantity = $form.find('[data-name="field__quantity"]').filter(function() {
+                return this.value.length > 0;
+            }).length > 0;
+
+            if (!emptyMatrixAllowed && !isQuantity) {
+                var validator = $form.validate();
+                validator.showLabel($form[0], _.__('oro.product.validation.configurable.required'));
+                return false;
+            }
+
+            return MatrixGridOrderWidget.__super__._onAdoptedFormSubmitClick.apply(this, arguments);
+        },
+
         _onContentLoad: function(content) {
             if (_.isObject(content)) {
                 mediator.trigger('shopping-list:line-items:update-response', this.model, content);

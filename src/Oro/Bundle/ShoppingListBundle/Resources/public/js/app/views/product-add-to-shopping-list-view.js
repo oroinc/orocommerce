@@ -14,6 +14,7 @@ define(function(require) {
 
     ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
+            emptyMatrixAllowed: false,
             buttonTemplate: '',
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
@@ -253,10 +254,6 @@ define(function(require) {
             var ENTER_KEY_CODE = 13;
 
             if (e.keyCode === ENTER_KEY_CODE) {
-                if (!this.dropdownWidget.validateForm()) {
-                    return;
-                }
-
                 this.model.set({
                     quantity: parseInt($(e.target).val(), 10)
                 });
@@ -274,6 +271,10 @@ define(function(require) {
             return this.shoppingListCollection.find({id: id}).toJSON() || null;
         },
 
+        validate: function(intention, url, urlOptions, formData) {
+            return this.dropdownWidget.validateForm();
+        },
+
         onClick: function(e) {
             var $button = $(e.currentTarget);
             if ($button.data('disabled')) {
@@ -283,10 +284,6 @@ define(function(require) {
             var intention = $button.data('intention');
             var formData = this.$form.serialize();
 
-            if (!this.dropdownWidget.validateForm()) {
-                return;
-            }
-
             var urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
             };
@@ -295,6 +292,10 @@ define(function(require) {
                 if (this.model.has('parentProduct')) {
                     urlOptions.parentProductId = this.model.get('parentProduct');
                 }
+            }
+
+            if (!this.validate(intention, url, urlOptions, formData)) {
+                return;
             }
 
             if (intention === 'new') {
