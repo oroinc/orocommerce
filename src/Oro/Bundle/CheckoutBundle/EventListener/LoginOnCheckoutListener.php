@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Event\LoginOnCheckoutEvent;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use Psr\Log\LoggerInterface;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class LoginOnCheckoutListener
@@ -28,18 +31,26 @@ class LoginOnCheckoutListener
     private $checkoutManager;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @param LoggerInterface $logger
      * @param ConfigManager $configManager
      * @param CheckoutManager $checkoutManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigManager $configManager,
-        CheckoutManager $checkoutManager
+        CheckoutManager $checkoutManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->logger = $logger;
         $this->configManager = $configManager;
         $this->checkoutManager = $checkoutManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -71,5 +82,21 @@ class LoginOnCheckoutListener
         }
 
         $this->checkoutManager->updateCheckoutCustomerUser($checkout, $user);
+        $this->dispatchLoginOnCheckoutEvent($checkout);
+    }
+
+    /**
+     * @param Checkout $checkout
+     */
+    private function dispatchLoginOnCheckoutEvent(Checkout $checkout)
+    {
+        if (!$this->eventDispatcher->hasListeners(LoginOnCheckoutEvent::NAME)) {
+            return;
+        }
+
+        $event = new LoginOnCheckoutEvent();
+        $event->setSource($checkout->getSource());
+
+        $this->eventDispatcher->dispatch(LoginOnCheckoutEvent::NAME, $event);
     }
 }

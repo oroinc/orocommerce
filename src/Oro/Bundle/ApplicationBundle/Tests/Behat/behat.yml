@@ -399,6 +399,7 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
 
     Save on conf window:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

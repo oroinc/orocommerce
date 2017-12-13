@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Event\LoginOnCheckoutEvent;
 use Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -10,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Psr\Log\LoggerInterface;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +50,11 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $eventDispatcher;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -65,7 +73,14 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new LoginOnCheckoutListener($this->logger, $this->configManager, $this->checkoutManager);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->listener = new LoginOnCheckoutListener(
+            $this->logger,
+            $this->configManager,
+            $this->checkoutManager,
+            $this->eventDispatcher
+        );
 
         $this->request = new Request();
     }
@@ -162,6 +177,41 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $this->checkoutManager->expects($this->once())
             ->method('updateCheckoutCustomerUser')
             ->with($checkout, $customerUser);
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->listener->onInteractiveLogin($this->event);
+    }
+
+    public function testOnInteractiveLoginDispatchEvent()
+    {
+        $customerUser = new CustomerUser();
+        $this->configureToken($customerUser);
+        $this->request->request->add(['_checkout_id' => 777]);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $checkout       = new Checkout();
+        $checkoutSource = new CheckoutSource();
+        $checkout->setSource($checkoutSource);
+
+        $this->checkoutManager->expects($this->once())
+            ->method('getCheckoutById')
+            ->with(777)
+            ->willReturn($checkout);
+
+        $event = new LoginOnCheckoutEvent();
+        $event->setSource($checkoutSource);
+        $this->eventDispatcher->expects($this->once())
+            ->method('hasListeners')
+            ->with(LoginOnCheckoutEvent::NAME)
+            ->willReturn(true);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(LoginOnCheckoutEvent::NAME, $event);
 
         $this->listener->onInteractiveLogin($this->event);
     }

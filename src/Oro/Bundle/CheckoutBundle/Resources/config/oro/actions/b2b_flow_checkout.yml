@@ -429,9 +429,11 @@ action_groups:
 
             - '@remove_entity':
                 conditions:
-                    '@or':
-                        - '@equal': [$.auto_remove_source, true]
-                        - '@and':
+                    '@and':
+                        - '@not_equal': [$.checkout.sourceEntity, null]
+                        - '@or':
+                          - '@equal': [$.auto_remove_source, true]
+                          - '@and':
                             - '@equal': [$.allow_manual_source_remove, true]
                             - '@equal': [$.remove_source, true]
                 parameters: [$.checkout.sourceEntity]

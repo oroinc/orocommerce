@@ -384,3 +384,14 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.shopping_list.manager'
+
+    oro_shopping_list.event_listener.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener
+        arguments:
+          - '@oro_shopping_list.manager.shopping_list_limit'
+          - '@oro_entity.doctrine_helper'
+        calls:
+          - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }
