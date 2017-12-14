@@ -1339,3 +1339,20 @@ services:
             - 'idx_oro_product_featured'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: default }
+
+    oro_product.action.condition.at_least_one_available_product:
+        class: Oro\Bundle\ProductBundle\Action\Condition\AtLeastOneAvailableProduct
+        arguments:
+            - "@oro_product.repository.product"
+            - "@oro_product.product.manager"
+        tags:
+            - { name: oro_action.condition, alias: at_least_one_available_product }
+
+    oro_product.action.remove_restricted_products:
+        class: Oro\Bundle\ProductBundle\Action\RemoveRestrictedProducts
+        arguments:
+            - "@oro_product.repository.product"
+            - "@oro_product.product.manager"
+            - '@oro_action.expression.context_accessor'
+        tags:
+            - { name: oro_action.action, alias: remove_restricted_products }
