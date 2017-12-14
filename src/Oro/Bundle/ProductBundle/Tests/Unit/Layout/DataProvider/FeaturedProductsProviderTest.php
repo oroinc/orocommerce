@@ -2,173 +2,153 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
+
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
 use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
-use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
-use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
+class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 {
-    /**
-     * @var FeaturedProductsProvider
-     */
-    private $provider;
-
-    /**
-     * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $segmentManager;
-
-    /**
-     * @var ProductSegmentProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productSegmentProvider;
-
-    /**
-     * @var ProductManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productManager;
-
-    /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $configManager;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        $this->segmentManager = $this->createMock(SegmentManager::class);
-        $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
-        $this->productManager = $this->createMock(ProductManager::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
-
-        $this->provider = new FeaturedProductsProvider(
-            $this->segmentManager,
-            $this->productSegmentProvider,
-            $this->productManager,
-            $this->configManager
-        );
-    }
-
-    public function testGetAll()
+    public function testGetProducts()
     {
         $this->configManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
+            ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
 
-        $segment = new Segment();
-        $segment->setEntity(Product::class);
-
-        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-
-        $this->productSegmentProvider
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
             ->expects($this->once())
-            ->method('getProductSegmentById')
-            ->with(1)
-            ->willReturn($segment);
+            ->method('getToken')
+            ->willReturn($token);
 
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
             ->expects($this->once())
             ->method('getEntityQueryBuilder')
-            ->with($segment)
-            ->willReturn($qb);
-
-        $query = $this->getMockBuilder(AbstractQuery::class)->disableOriginalConstructor()->getMock();
-        $query->expects($this->once())
-            ->method('getResult')
-            ->willReturn(['result']);
-
-        $restrictionQB = $this->createMock(QueryBuilder::class);
-        $restrictionQB->expects($this->once())
-            ->method('getQuery')
-            ->willReturn($query);
-
+            ->willReturn($queryBuilder);
         $this->productManager
             ->expects($this->once())
             ->method('restrictQueryBuilder')
-            ->with($qb, [])
-            ->willReturn($restrictionQB);
+            ->with($queryBuilder, [])
+            ->willReturn($queryBuilder);
 
-        $this->assertEquals(['result'], $this->provider->getProducts());
+        $this->getProducts($queryBuilder);
     }
 
-    public function testGetAllWithoutConfig()
+    public function testGetProductsWithCache()
     {
         $this->configManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
-            ->willReturn(null);
-
-        $this->productSegmentProvider
-            ->expects($this->never())
-            ->method('getProductSegmentById');
-
-        $this->segmentManager
-            ->expects($this->never())
-            ->method('getEntityQueryBuilder');
-
-        $this->assertEquals([], $this->provider->getProducts());
-    }
-
-    public function testGetCollectionWithoutSegment()
-    {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
+            ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
 
-        $this->productSegmentProvider
-            ->expects($this->once())
-            ->method('getProductSegmentById')
-            ->with(1)
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
             ->willReturn(null);
+        $this->tokenStorage
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
 
-        $this->segmentManager
-            ->expects($this->never())
-            ->method('getEntityQueryBuilder');
-
-        $this->assertEquals([], $this->provider->getProducts());
+        $this->getProductsWithCache();
     }
 
-    public function testGetAllWithoutQueryBuilder()
+    public function testGetProductsWithDisabledCache()
     {
         $this->configManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
+            ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
 
-        $segment = new Segment();
-        $segment->setEntity(Product::class);
-
-        $this->productSegmentProvider
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
             ->expects($this->once())
-            ->method('getProductSegmentById')
-            ->with(1)
-            ->willReturn($segment);
+            ->method('getToken')
+            ->willReturn($token);
 
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
             ->expects($this->once())
             ->method('getEntityQueryBuilder')
-            ->with($segment)
-            ->willReturn(null);
-
+            ->willReturn($queryBuilder);
         $this->productManager
-            ->expects($this->never())
-            ->method('restrictQueryBuilder');
+            ->expects($this->once())
+            ->method('restrictQueryBuilder')
+            ->with($queryBuilder, [])
+            ->willReturn($queryBuilder);
 
-        $this->assertEquals([], $this->provider->getProducts());
+        $this->segmentProductsProvider->disableCache();
+        $this->getProductsWithDisabledCache($queryBuilder);
+    }
+
+    public function testGetProductsWithoutSegment()
+    {
+        $this->configManager
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with('oro_product.featured_products_segment_id')
+            ->willReturn(1);
+
+        $this->getProductsWithoutSegment();
+    }
+
+    public function testGetProductsQueryBuilderIsNull()
+    {
+        $this->configManager
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with('oro_product.featured_products_segment_id')
+            ->willReturn(1);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->getProductsQueryBuilderIsNull();
+    }
+
+    /**
+     * @param RegistryInterface $registry
+     */
+    protected function createSegmentProvider(RegistryInterface $registry)
+    {
+        $this->segmentProductsProvider = new FeaturedProductsProvider(
+            $this->segmentManager,
+            $this->productSegmentProvider,
+            $this->productManager,
+            $this->configManager,
+            $registry,
+            $this->tokenStorage
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCacheKey()
+    {
+        return 'cacheVal_featured_products_0_';
     }
 }

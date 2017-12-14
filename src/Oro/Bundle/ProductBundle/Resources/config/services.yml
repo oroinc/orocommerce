@@ -657,6 +657,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
 
+    oro_product.layout.data_provider.cache:
+        parent: oro.cache.abstract
+        public: false
+        calls:
+            - [ setNamespace, [ 'oro_product' ] ]
+
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
@@ -664,7 +670,10 @@ services:
             - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
             - '@oro_config.manager'
-            - '@oro.cache.memory_cache_chain'
+            - '@doctrine'
+            - '@security.token_storage'
+        calls:
+            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -1171,6 +1180,10 @@ services:
             - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
             - '@oro_config.manager'
+            - '@doctrine'
+            - '@security.token_storage'
+        calls:
+            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: new_arrivals }
 
