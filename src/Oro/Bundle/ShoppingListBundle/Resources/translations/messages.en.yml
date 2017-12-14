@@ -181,6 +181,7 @@ oro:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
+                cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
                 must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
             btn:
                 update: 'Update'
