@@ -177,10 +177,10 @@ workflows:
                     icon: fa-briefcase
                     data:
                       component_name: oro_shopping_list_matrix_to_create_order
-                      page-component-module: oroshoppinglist/js/app/components/shoppinglist-matrix-create-order-button-component
+                      page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
                       page-component-options:
                           component_name: '[name$="[component]"]'
-                          shopping_list_has_empty_matrix: $.result.shoppingListHasEmptyMatrix
+                          hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
