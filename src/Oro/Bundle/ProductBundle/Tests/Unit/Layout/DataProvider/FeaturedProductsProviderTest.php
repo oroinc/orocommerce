@@ -13,21 +13,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 {
     public function testGetProducts()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
-            ->method('get')
-            ->with('oro_product.featured_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
@@ -45,42 +31,14 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsWithCache()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
-            ->method('get')
-            ->with('oro_product.featured_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $this->getProductsWithCache();
     }
 
     public function testGetProductsWithDisabledCache()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
-            ->method('get')
-            ->with('oro_product.featured_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
@@ -110,21 +68,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsQueryBuilderIsNull()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
-            ->method('get')
-            ->with('oro_product.featured_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $this->getProductsQueryBuilderIsNull();
     }
@@ -150,5 +94,24 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
     protected function getCacheKey()
     {
         return 'cacheVal_featured_products_0_';
+    }
+
+    private function prepare()
+    {
+        $this->configManager
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with('oro_product.featured_products_segment_id')
+            ->willReturn(1);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
     }
 }

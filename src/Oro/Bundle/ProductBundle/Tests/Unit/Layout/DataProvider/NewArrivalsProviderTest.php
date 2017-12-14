@@ -13,27 +13,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 {
     public function testGetProducts()
     {
-        $this->configManager
-            ->expects($this->at(0))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        $this->configManager
-            ->expects($this->at(1))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
@@ -51,54 +31,14 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsWithCache()
     {
-        $this->configManager
-            ->expects($this->at(0))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        $this->configManager
-            ->expects($this->at(1))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $this->getProductsWithCache();
     }
 
     public function testGetProductsWithDisabledCache()
     {
-        $this->configManager
-            ->expects($this->at(0))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        $this->configManager
-            ->expects($this->at(1))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->segmentManager
@@ -134,27 +74,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 
     public function testGetProductsQueryBuilderIsNull()
     {
-        $this->configManager
-            ->expects($this->at(0))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        $this->configManager
-            ->expects($this->at(1))
-            ->method('get')
-            ->with('oro_product.new_arrivals_products_segment_id')
-            ->willReturn(1);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $this->prepare();
 
         $this->getProductsQueryBuilderIsNull();
     }
@@ -180,5 +100,30 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
     protected function getCacheKey()
     {
         return 'cacheVal_new_arrivals_products_0_';
+    }
+
+    private function prepare()
+    {
+        $this->configManager
+            ->expects($this->at(0))
+            ->method('get')
+            ->with('oro_product.new_arrivals_products_segment_id')
+            ->willReturn(1);
+
+        $this->configManager
+            ->expects($this->at(1))
+            ->method('get')
+            ->with('oro_product.new_arrivals_products_segment_id')
+            ->willReturn(1);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
     }
 }
