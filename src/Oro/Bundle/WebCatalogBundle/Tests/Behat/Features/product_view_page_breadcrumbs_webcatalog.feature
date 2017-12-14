@@ -1,7 +1,9 @@
 @regression
 @fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml
-Feature: Product view page breadcrumbs
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+Feature: Product view page breadcrumbs webcatalog
+  As a User
+  I want be sure
+  That breadcrumbs for the webcatalog are work correctly
 
   Scenario: Create content nodes in web catalog and mark web catalog as default
     Given I login as administrator
