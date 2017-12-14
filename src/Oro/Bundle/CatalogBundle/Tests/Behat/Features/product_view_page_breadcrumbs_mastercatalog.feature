@@ -1,6 +1,6 @@
 @regression
 @fixture-OroCatalogBundle:category_for_breadcrumbs.yml
-Feature: Product view page breadcrumbs
+Feature: Product view page breadcrumbs mastercatalog
   As a User
   I want be sure
   That breadcrumbs for the mastercatalog are work correctly
