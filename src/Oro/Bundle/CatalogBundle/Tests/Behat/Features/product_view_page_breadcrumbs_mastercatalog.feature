@@ -1,7 +1,9 @@
 @regression
 @fixture-OroCatalogBundle:category_for_breadcrumbs.yml
 Feature: Product view page breadcrumbs
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  As a User
+  I want be sure
+  That breadcrumbs for the mastercatalog are work correctly
 
   Scenario: Breadcrumbs should be built based on category
     Given I am on the homepage
