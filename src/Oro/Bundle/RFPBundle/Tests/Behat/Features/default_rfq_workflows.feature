@@ -1,3 +1,4 @@
+@skip
 @fixture-OroRFPBundle:RFQWorkflows.yml
 @ticket-BB-7962
 @regression
