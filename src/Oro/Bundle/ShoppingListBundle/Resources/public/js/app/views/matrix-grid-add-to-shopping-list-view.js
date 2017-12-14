@@ -24,11 +24,11 @@ define(function(require) {
                 return true;
             }
 
-            var isQuantity = this.$form.find('[data-name="field__quantity"]').filter(function() {
-                return this.value.length > 0;
-            }).length > 0;
+            var isFormEmpty = _.every(this.$form.find('[data-name="field__quantity"]:enabled'), function(field) {
+                return _.isEmpty(field.value);
+            });
 
-            if (!isQuantity) {
+            if (isFormEmpty) {
                 var validator = this.$form.validate();
                 validator.showLabel(this.$form[0], _.__('oro.product.validation.configurable.required'));
                 return false;
