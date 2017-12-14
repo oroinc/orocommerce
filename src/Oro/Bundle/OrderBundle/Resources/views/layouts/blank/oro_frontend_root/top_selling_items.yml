@@ -12,7 +12,7 @@ layout:
         - '@setOption':
             id: top_selling_products
             optionName: items_data.stickers
-            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getProducts())'
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["top_selling_items"].getProducts())'
         - '@setOption':
             id: top_selling_products
             optionName: label
