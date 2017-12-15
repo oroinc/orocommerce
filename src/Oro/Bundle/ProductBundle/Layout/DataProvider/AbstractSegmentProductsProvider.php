@@ -117,6 +117,14 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     }
 
     /**
+     * @return RegistryInterface
+     */
+    public function getRegistry()
+    {
+        return $this->registry;
+    }
+
+    /**
      * @return ProductManager
      */
     protected function getProductManager()
@@ -149,6 +157,16 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     }
 
     /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function getResult(array $data)
+    {
+        return $this->getRegistry()->getEntityManager()->createQuery($data['dql'])->execute($data['parameters']);
+    }
+
+    /**
      * @param string $dql
      * @param Parameter[] $parameters
      *
@@ -167,15 +185,5 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $result['parameters'] = $resultParameters;
 
         return $result;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    private function getResult(array $data)
-    {
-        return $this->registry->getEntityManager()->createQuery($data['dql'])->execute($data['parameters']);
     }
 }

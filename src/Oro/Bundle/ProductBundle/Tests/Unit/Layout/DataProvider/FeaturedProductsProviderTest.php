@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -15,18 +13,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
     {
         $this->prepare();
 
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->segmentManager
-            ->expects($this->once())
-            ->method('getEntityQueryBuilder')
-            ->willReturn($queryBuilder);
-        $this->productManager
-            ->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder, [])
-            ->willReturn($queryBuilder);
-
-        $this->getProducts($queryBuilder);
+        $this->getProducts($this->getQueryBuilder());
     }
 
     public function testGetProductsWithCache()
@@ -40,19 +27,8 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
     {
         $this->prepare();
 
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->segmentManager
-            ->expects($this->once())
-            ->method('getEntityQueryBuilder')
-            ->willReturn($queryBuilder);
-        $this->productManager
-            ->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder, [])
-            ->willReturn($queryBuilder);
-
         $this->segmentProductsProvider->disableCache();
-        $this->getProductsWithDisabledCache($queryBuilder);
+        $this->getProductsWithDisabledCache($this->getQueryBuilder());
     }
 
     public function testGetProductsWithoutSegment()
