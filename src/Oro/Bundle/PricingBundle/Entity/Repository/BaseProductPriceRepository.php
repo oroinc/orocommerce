@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -442,12 +442,12 @@ abstract class BaseProductPriceRepository extends EntityRepository
     /**
      * @param BasePriceList $sourcePriceList
      * @param BasePriceList $targetPriceList
-     * @param InsertFromSelectShardQueryExecutor $insertQueryExecutor
+     * @param ShardQueryExecutorInterface $insertQueryExecutor
      */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
-        InsertFromSelectShardQueryExecutor $insertQueryExecutor
+        ShardQueryExecutorInterface $insertQueryExecutor
     ) {
         $qb = $this->createQBForCopy($sourcePriceList, $targetPriceList);
 

@@ -134,7 +134,7 @@ services:
         public: false
         arguments:
             - '@doctrine'
-            - '@oro_pricing.orm.insert_from_select_query_executor'
+            - '@oro_pricing.orm.multi_insert_shard_query_executor'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.pricing_strategy.merge_price_combining_strategy:
@@ -1066,6 +1066,12 @@ services:
         arguments:
             - '@oro_entity.orm.native_query_executor_helper'
             - '@oro_pricing.shard_manager'
+
+    oro_pricing.orm.multi_insert_shard_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor
+        arguments:
+           - '@oro_entity.orm.native_query_executor_helper'
+           - '@oro_pricing.shard_manager'
 
     oro_pricing.orm_walker.price_shard_walker_hint_provider:
         class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalkerHintProvider

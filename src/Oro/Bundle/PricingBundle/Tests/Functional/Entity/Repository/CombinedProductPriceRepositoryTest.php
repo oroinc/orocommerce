@@ -40,7 +40,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ]
         );
         $this->insertFromSelectQueryExecutor = $this->getContainer()
-            ->get('oro_pricing.orm.insert_from_select_query_executor');
+            ->get('oro_pricing.orm.multi_insert_shard_query_executor');
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
