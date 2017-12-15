@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -27,7 +27,7 @@ class ProductPriceBuilder
     protected $registry;
 
     /**
-     * @var InsertFromSelectShardQueryExecutor
+     * @var ShardQueryExecutorInterface
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -48,14 +48,14 @@ class ProductPriceBuilder
 
     /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
      * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param ShardManager $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
         PriceListTriggerHandler $priceListTriggerHandler,
         ShardManager $shardManager
