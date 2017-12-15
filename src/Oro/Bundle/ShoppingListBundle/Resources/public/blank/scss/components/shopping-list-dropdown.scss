@@ -1,7 +1,5 @@
 // @theme: blank;
 
-$shopping-list-dropdown-radio-width: 20px;
-
 .shopping-list-dropdown {
     min-width: 280px;
 
@@ -10,7 +8,7 @@ $shopping-list-dropdown-radio-width: 20px;
 
         font-size: $base-font-size - 1px;
 
-        padding: 10px 9px;
+        @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
 
         border-bottom: 1px solid get-color('additional', 'light');
     }
