@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,6 +16,10 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
      */
     public function getProducts()
     {
+        if (!$this->isMinAndMaxLimitsValid()) {
+            return [];
+        }
+
         return $this->applyMinItemsLimit(parent::getProducts());
     }
 
@@ -50,12 +54,6 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
 
         if ($qb) {
             $qb = $this->getProductManager()->restrictQueryBuilder($qb, []);
-
-            $this->setMaxItemsLimit($qb);
-
-            if (!$this->isMinAndMaxLimitsValid()) {
-                return null;
-            }
         }
 
         return $qb;
@@ -90,12 +88,12 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
     }
 
     /**
-     * @param QueryBuilder $qb
+     * @param Query $query
      */
-    private function setMaxItemsLimit(QueryBuilder $qb)
+    private function setMaxItemsLimit($query)
     {
         if (is_int($this->getMaxItemsLimit())) {
-            $qb->setMaxResults($this->getMaxItemsLimit());
+            $query->setMaxResults($this->getMaxItemsLimit());
         }
     }
 
@@ -124,7 +122,19 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
         // if min limit is null, then we can operate it like zero
         $minLimit = (int)$this->getMinItemsLimit();
 
-        return $maxLimit === null
-        || ($maxLimit > 0 && $minLimit <= $maxLimit);
+        return $maxLimit === null || ($maxLimit > 0 && $minLimit <= $maxLimit);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function getResult(array $data)
+    {
+        $query = $this->getRegistry()->getEntityManager()->createQuery($data['dql']);
+        $this->setMaxItemsLimit($query);
+
+        return $query->execute($data['parameters']);
     }
 }

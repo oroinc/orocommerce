@@ -257,4 +257,21 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
 
         $this->assertEquals([], $this->segmentProductsProvider->getProducts());
     }
+
+    /**
+     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getQueryBuilder()
+    {
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->segmentManager->expects($this->once())
+            ->method('getEntityQueryBuilder')
+            ->willReturn($queryBuilder);
+        $this->productManager->expects($this->once())
+            ->method('restrictQueryBuilder')
+            ->with($queryBuilder, [])
+            ->willReturn($queryBuilder);
+
+        return $queryBuilder;
+    }
 }
