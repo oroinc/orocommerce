@@ -1,4 +1,7 @@
 @fixture-OroProductBundle:configurable_products.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Checkout.yml
 @regression
 @ticket-BB-10500
 
@@ -244,9 +247,121 @@ Feature: Inline matrix for configurable products in product views
     And I save form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Matrix form with single attribute
+  Scenario: Order empty matrix form
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    Then I should see an "Matrix Grid Form" element
+    And I click "Add to Shopping List"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      |          |          |          |
+      |          |          |          |
+      |          |          |          |
+      |          |          |          |
+    Given I click "Create Order"
+    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    And I click "Proceed"
+    Then I should see "Shopping list"
+    Then I should see "Cannot create order because Shopping List has no items" flash message
+
+  Scenario: Order empty matrix form and a simple product
+    Given type "SKU123" in "search"
+    And click "Search Button"
+    And I click "Add to Shopping List"
+    And I should see "Product has been added to \"Shopping list\""
+    And I click "Shopping list"
+    Given I click "Create Order"
+    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    And I click "Proceed"
+    Then I should see "Some products have not been added to this order." flash message
+    And I should see "Checkout"
+    And I should see "400-Watt Bulb Work Light"
+    And I should not see "Configurable Product B"
+
+  Scenario: Update empty matrix form in the shopping list and create order
+    Given I open shopping list widget
+    And I click "View Details"
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Update"
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 1        |
+      |          |          |          |
+      |          |          | 1        |
+    And I click "Create Order"
+    Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    And I should see "Checkout"
+    And I should see "Configurable Product B"
+    And I open shopping list widget
+    And I click "View Details"
+    And I click "Remove Line Item"
+    And I click "Yes, Delete"
+    And I click "Remove Line Item"
+    And I click "Yes, Delete"
+    Then I should see "The Shopping List is empty"
+
+  Scenario: Empty matrix form disabled
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Allow to add empty products" field
+    And I uncheck "Allow to add empty products"
+    And I save form
+    Given I proceed as the User
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      |          |          |          |
+      |          |          |          |
+      |          |          |          |
+      |          |          |          |
+    And I click "Add to Shoppin..."
+    Then I should see "Please provide at least one value before adding the product to your shopping list"
+    Then I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click "Add to Shoppin..."
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        |          |
+      | 1        |          | 1        |
+      |          |          |          |
+      |          |          | 1        |
+    Given I click "Create Order"
+    Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    And I should see "Checkout"
+    And I should see "Configurable Product B"
+    And I open shopping list widget
+    And I click "View Details"
+    And I click "Remove Line Item"
+    And I click "Yes, Delete"
+    Then I should see "The Shopping List is empty"
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And check "Use default" for "Allow to add empty products" field
+    And I save form
+
+  Scenario: Matrix form with single attribute
+    Given I proceed as the User
     And type "Configurable Product A" in "search"
     And click "Search Button"
     And I click "List View"
@@ -258,7 +373,7 @@ Feature: Inline matrix for configurable products in product views
     And I fill "Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click "Add to Shoppin..."
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
     Then I should see an "Matrix Grid Form" element
