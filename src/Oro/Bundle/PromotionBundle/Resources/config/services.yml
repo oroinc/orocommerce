@@ -371,7 +371,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
         public: false
         arguments:
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_promotion.promotion_executor'
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'

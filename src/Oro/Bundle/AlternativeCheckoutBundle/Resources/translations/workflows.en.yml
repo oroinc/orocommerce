@@ -226,15 +226,3 @@ oro:
                 back_to_shipping_address_on_fail_address:
                     label: 'Edit Shipping Information'
                     warning_message: ''
-                finish_checkout:
-                    label: 'Finish checkout'
-                    warning_message: ''
-                payment_error:
-                    label: 'Payment error'
-                    warning_message: ''
-                verify_payment:
-                    label: 'Verify Payment'
-                    warning_message: ''
-                back_to_shipping_address_on_fail_address:
-                    label: 'Edit Shipping Information'
-                    warning_message: ''

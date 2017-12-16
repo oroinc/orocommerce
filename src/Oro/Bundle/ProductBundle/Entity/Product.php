@@ -668,6 +668,14 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->getStatus() === self::STATUS_ENABLED;
+    }
+
+    /**
      * @return array
      */
     public static function getTypes()

@@ -135,6 +135,7 @@ oro:
             duplicate_shopping_list.label: Duplicate
         duplicate:
             success.message: 'The shopping list has been duplicated'
+            restricted_products.message: 'Some products are not available and cannot be added to shopping list'
             list.label: Duplicate List
 
         visitors.label: 'Visitors'

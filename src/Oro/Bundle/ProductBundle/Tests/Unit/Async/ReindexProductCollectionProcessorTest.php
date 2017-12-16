@@ -12,6 +12,8 @@ use Oro\Bundle\SegmentBundle\Provider\SegmentSnapshotDeltaProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
+use Oro\Component\MessageQueue\Client\Message;
+use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\Job;
@@ -190,8 +192,14 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
         $this->producer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [AsyncIndexer::TOPIC_REINDEX, array_merge($messageOne, ['jobId' => 6])],
-                [AsyncIndexer::TOPIC_REINDEX, array_merge($messageTwo, ['jobId' => 7])]
+                [
+                    AsyncIndexer::TOPIC_REINDEX,
+                    new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                ],
+                [
+                    AsyncIndexer::TOPIC_REINDEX,
+                    new Message(array_merge($messageTwo, ['jobId' => 7]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                ]
             );
 
         $result = $this->processor->process($message, $this->getSession());
@@ -345,7 +353,10 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
             });
         $this->producer->expects($this->once())
             ->method('send')
-            ->with(AsyncIndexer::TOPIC_REINDEX, array_merge($messageOne, ['jobId' => 6]));
+            ->with(
+                AsyncIndexer::TOPIC_REINDEX,
+                new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+            );
     }
 
     /**

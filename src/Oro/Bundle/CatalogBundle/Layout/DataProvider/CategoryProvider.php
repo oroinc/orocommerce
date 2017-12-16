@@ -123,8 +123,6 @@ class CategoryProvider
             $this->getCategoryTree($user)
         );
 
-        $result = $this->sortCategoryTreeArray($result);
-
         if (true === $useCache) {
             $this->saveToCache($result);
         }
@@ -213,28 +211,6 @@ class CategoryProvider
         }
 
         return $data;
-    }
-
-    /**
-     * @param $categoryTreeArray
-     * @return ArrayCollection
-     */
-    protected function sortCategoryTreeArray($categoryTreeArray)
-    {
-        if (empty($categoryTreeArray)) {
-            return $categoryTreeArray;
-        }
-
-        $sorter = array_column($categoryTreeArray, 'title');
-        array_multisort($sorter, SORT_ASC, $categoryTreeArray);
-
-        foreach ($categoryTreeArray as &$item) {
-            if (!empty($item['childCategories'])) {
-                $item['childCategories'] = $this->sortCategoryTreeArray($item['childCategories']);
-            }
-        }
-
-        return $categoryTreeArray;
     }
 
     /**

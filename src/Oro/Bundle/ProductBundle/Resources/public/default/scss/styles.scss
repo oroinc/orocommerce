@@ -2,8 +2,7 @@
 
 //Components
 @import './components/buttons-inline-group';
-@import './components/embedded-products/embedded-products';
-@import './components/embedded-products/embedded-product';
+@import './components/embedded-products';
 @import './components/quick-order/quick-order';
 @import './components/quick-order-add/quick-order-add';
 @import './components/quick-order-copy-paste/quick-order-copy-paste';
@@ -14,9 +13,7 @@
 @import './components/product-view-desc';
 @import './components/product-view-brand';
 @import './components/prices-hint-content';
-@import './components/product-list';
 @import './components/product-sticker';
-@import './components/view-product-gallery';
 
 //Page templates of product page
 @import './components/page-templates/two-columns-theme';

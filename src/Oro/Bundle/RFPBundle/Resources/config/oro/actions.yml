@@ -176,6 +176,7 @@ action_groups:
                 attribute: $.requestCopy
                 settings:
                     - [[setNull], [propertyName, [id]]]
+                    - [[keep], [propertyName, [website]]]
                     - [[keep], [propertyName, [customerUser]]]
                     - [[keep], [propertyName, [customer]]]
                     - [[keep], [propertyName, [organization]]]
