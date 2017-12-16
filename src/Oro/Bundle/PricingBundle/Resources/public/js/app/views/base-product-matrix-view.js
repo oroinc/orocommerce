@@ -20,14 +20,16 @@ define(function(require) {
 
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
-            fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
             totalPrice: '[data-role="total-price"]',
-            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
+            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]',
+            clearButton: '[data-role="clear"]'
         },
 
         elementsEvents: {
-            'fields': ['input', '_onQuantityChange']
+            'fields input': ['input', '_onQuantityChange'],
+            'fields change': ['change', '_onQuantityChange'],
+            'clearButton': ['click', 'clearForm']
         },
 
         total: null,
@@ -58,13 +60,7 @@ define(function(require) {
                 }
             }
 
-            this.total = {
-                price: 0,
-                quantity: 0,
-                rows: {},
-                columns: {},
-                cells: {}
-            };
+            this.setDefaultTotals();
             this.updateTotals();
         },
 
@@ -87,6 +83,19 @@ define(function(require) {
         },
 
         /**
+         * Set default data for totals
+         */
+        setDefaultTotals: function() {
+            this.total = {
+                price: 0,
+                quantity: 0,
+                rows: {},
+                columns: {},
+                cells: {}
+            };
+        },
+
+        /**
          * Refactoring prices object model
          */
         setPrices: function(options) {
@@ -106,7 +115,7 @@ define(function(require) {
          *
          * @param {Event} event
          */
-        _onQuantityChange: _.debounce(function(event) {
+        _onQuantityChange: function(event) {
             if (!this._isSafeNumber(event.currentTarget.value)) {
                 event.preventDefault();
                 return false;
@@ -114,7 +123,7 @@ define(function(require) {
 
             this.updateTotal($(event.currentTarget));
             this.render();
-        }, 150),
+        },
 
         /**
          * Update all totals
@@ -211,6 +220,7 @@ define(function(require) {
          * Update totals
          */
         render: function() {
+            this.checkClearButtonVisibility();
             this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
@@ -244,6 +254,26 @@ define(function(require) {
          */
         _isSafeNumber: function(value) {
             return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
+        },
+
+        /**
+         * Toggle visibility of clear button
+         */
+        checkClearButtonVisibility: function() {
+            var isFieldsEmpty = _.every(this.getElement('fields'), function(field) {
+                return _.isEmpty(field.value);
+            });
+
+            this.getElement('clearButton').toggleClass('disabled', isFieldsEmpty);
+        },
+
+        /**
+         * Clear matrix form fields and totals info
+         */
+        clearForm: function() {
+            this.getElement('fields').filter(function() {
+                return this.value.length > 0;
+            }).val('').trigger('change');
         }
     }));
     return BaseProductMatrixView;

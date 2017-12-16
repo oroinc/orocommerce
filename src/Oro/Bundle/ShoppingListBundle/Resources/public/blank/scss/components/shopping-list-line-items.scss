@@ -59,6 +59,14 @@
         color: $shopping-list-line-items-status-color;
     }
 
+    &__note {
+        clear: $shopping-list-line-items-note-clear;
+    }
+
+    & &__action-button { //Should overide .btn class property
+        padding: $shopping-list-line-items-action-button-offset-inner;
+    }
+
     .line-item-price {
         min-width: $shopping-list-line-items-line-item-price-min-width;
         text-align: $shopping-list-line-items-line-item-price-text-align;
@@ -69,7 +77,9 @@
     .shopping-list-line-items {
         &__item {
             flex-direction: $shopping-list-line-items-item-mobile-landscape-flex-direction;
-            padding-right: $shopping-list-line-items-item-mobile-landscape-offset-right;
+
+            margin-bottom: $shopping-list-line-items-item-mobile-landscape-offset-bottom;
+            padding-right: $shopping-list-line-items-item-mobile-landscape-offset-inner-right;
         }
 
         &__specification {
@@ -83,9 +93,8 @@
             }
         }
 
-        &__matrix-popup-button {
-            width: $shopping-list-line-items-matrix-popup-button-mobile-landscape-width;
-            margin-top: $shopping-list-line-items-matrix-popup-button-mobile-landscape-offset-top;
+        &__action-button {
+            width: $shopping-list-line-items-action-button-mobile-landscape-width;
         }
     }
 }

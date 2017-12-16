@@ -8,7 +8,7 @@ layout:
         - '@add':
             id: matrix_grid_order_form_actions_submit
             blockType: button
-            parentId: widget_actions
+            parentId: matrix_grid_order_totals
             options:
                 action: submit
                 text:

@@ -17,8 +17,7 @@ layout:
                 visible: '=!context["is_mobile"] and data["oro_product_form_availability"].isInlineMatrixFormAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
         - '@move':
             id: matrix_grid_order_line_item_buttons
-            parentId: matrix_grid_order_wrapper
-            siblingId: matrix_grid_order_form_summary
+            parentId: matrix_grid_order_totals
             prepend: false
 
         - '@setOption':

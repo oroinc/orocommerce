@@ -6,18 +6,34 @@ layout:
             items:
                 __totals:
                     blockType: container
-                    options:
-                        vars:
-                            mode: default
                 __totals_wrapper:
                     blockType: container
                 __quantity:
-                    blockType: block
+                    blockType: container
+                __quantity_value:
+                  blockType: block
+                __quantity_text:
+                    blockType: text
+                    options:
+                        text: 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'
+                __separator:
+                  blockType: block
                 __total:
-                    blockType: block
+                    blockType: container
+                __total_value:
+                  blockType: block
+                __total_text:
+                    blockType: text
+                    options:
+                        text: 'oro.frontend.shoppinglist.matrix_grid_order.total'
             tree:
                 __root:
                     __totals:
                         __totals_wrapper:
-                            __quantity: ~
-                            __total: ~
+                            __quantity:
+                                __quantity_text: ~
+                                __quantity_value: ~
+                            __separator: ~
+                            __total:
+                                __total_text: ~
+                                __total_value: ~

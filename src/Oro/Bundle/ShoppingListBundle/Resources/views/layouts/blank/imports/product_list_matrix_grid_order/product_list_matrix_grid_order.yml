@@ -9,15 +9,13 @@ layout:
             root: __matrix_form_summary
             namespace: matrix
     actions:
+        - '@setBlockTheme':
+            themes: 'product_list_matrix_grid_order.html.twig'
         - '@move':
             id: __matrix_line_item_buttons
             parentId: __matrix_totals
             prepend: false
 
-        - '@setOption':
-            id: __matrix_totals
-            optionName: vars.mode
-            optionValue: 'inline'
         - '@setOption':
             id: __matrix_wrapper
             optionName: form

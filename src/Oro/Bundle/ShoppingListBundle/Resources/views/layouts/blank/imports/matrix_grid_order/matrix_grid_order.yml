@@ -8,6 +8,19 @@ layout:
             themes: 'matrix_grid_order.html.twig'
         - '@setFormTheme':
             themes: 'matrix_grid_order_form.html.twig'
+        - '@add':
+            id: __matrix_form_clear_button
+            blockType: button
+            parentId: __totals
+            prepend: true
+            options:
+                icon: times
+                style: 'btn btn--link disabled clear-button'
+                attr:
+                    title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
+                    data-role: 'clear'
+                text:
+                    label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
         - '@addTree':
             items:
                 __wrapper:

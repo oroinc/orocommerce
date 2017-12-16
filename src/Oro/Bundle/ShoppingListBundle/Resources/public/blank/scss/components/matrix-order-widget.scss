@@ -7,6 +7,9 @@
     margin: $matrix-order-widget-offset;
 
     &__grid {
+        overflow: $matrix-order-widget-grid-overflow;
+        position: $matrix-order-widget-grid-position;
+
         width: $matrix-order-widget-grid-width;
         margin-bottom: $matrix-order-widget-grid-offset-bottom;
         padding-top: $matrix-order-widget-grid-offset-inner-top;
@@ -17,18 +20,57 @@
     &__grid--multi-rows & {
         border-bottom: $matrix-order-widget-grid-multi-rows-border-bottom;
 
-        &__grid-head,
-        &__grid-body,
-        &__grid-footer {
-            &-wrapper {
-                margin-left: $matrix-order-widget-grid-multi-rows-items-wrapper-offset-left;
+        &__grid-head {
+            display: $matrix-order-widget-grid-multi-rows-grid-head-display;
+
+            position: $matrix-order-widget-grid-multi-rows-grid-head-position;
+            background: $matrix-order-widget-grid-multi-rows-grid-head-background;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-head-z-index;
+
+            &:after {
+                position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                align-self: $matrix-order-widget-grid-multi-rows-grid-head-after-align-self;
+
+                width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-border-bottom;
+
+                content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
+                z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
             }
         }
 
-        &__grid-head {
-            border-top: $matrix-order-widget-grid-multi-rows-grid-head-border-top;
-            border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-border-bottom;
-            background: $matrix-order-widget-grid-multi-rows-grid-head-background;
+        &__grid-footer {
+            position: $matrix-order-widget-grid-multi-rows-grid-footer-position;
+
+            border-bottom: $matrix-order-widget-grid-multi-rows-grid-footer-border-bottom;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-footer-z-index;
+        }
+
+        &__grid-footer-label,
+        &__grid-head-label {
+            overflow: $matrix-order-widget-grid-multi-rows-grid-area-items-label-overflow;
+
+            &:before,
+            &:after {
+                position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-position;
+
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-background;
+                width: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-width;
+                height: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-height;
+                top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-top;
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-left;
+
+                content: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-content;
+                z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-z-index;
+            }
+
+            &:after {
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-left;
+                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-right;
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background;
+            }
         }
     }
 
@@ -38,8 +80,22 @@
         overflow: $matrix-order-widget-grid-body-overflow;
 
         .form-row {
-            width: $matrix-order-widget-grid-body-form-row-width;
+            min-width: $matrix-order-widget-grid-body-form-row-min-width;
+            max-width: $matrix-order-widget-grid-body-form-row-max-width;
             margin: $matrix-order-widget-grid-body-form-offset;
+        }
+    }
+
+    &__grid-body & {
+        &__form__row:not(:last-child):after {
+            position: $matrix-order-widget-form-row-not-last-child-position;
+            align-self: $matrix-order-widget-form-row-not-last-child-align-self;
+
+            border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+            width: $matrix-order-widget-form-row-not-last-child-width;
+
+            content: $matrix-order-widget-form-row-not-last-child-content;
+            z-index: $matrix-order-widget-form-row-not-last-child-z-index;
         }
     }
 
@@ -48,28 +104,38 @@
         &-wrapper {
             overflow: $matrix-order-widget-grid-area-items-wrapper-overflow;
 
+            width: $matrix-order-widget-grid-area-items-wrapper-width;
+
             white-space: $matrix-order-widget-grid-area-items-wrapper-white-space;
             text-align: $matrix-order-widget-grid-area-items-wrapper-text-align;
         }
 
         &-label {
-            float: $matrix-order-widget-grid-area-items-label-float;
-
             width: $matrix-order-widget-grid-area-items-label-width;
+            max-width: $matrix-order-widget-grid-area-items-label-max-width;
+            height: $matrix-order-widget-grid-footer-label-height;
 
+            line-height: $matrix-order-widget-grid-footer-label-line-height;
             text-align: $matrix-order-widget-grid-area-items-label-text-align;
         }
     }
 
     &__grid-footer {
+        display: $matrix-order-widget-grid-footer-display;
+        position: $matrix-order-widget-grid-footer-position;
+
         background: $matrix-order-widget-grid-footer-background;
-        border-top: $matrix-order-widget-grid-footer-border-top;
 
-        &-label {
-            height: $matrix-order-widget-grid-footer-label-height;
+        &:after, &:before {
+            position: $matrix-order-widget-grid-footer-pseudo-classes-position;
+            align-self: $matrix-order-widget-grid-footer-pseudo-classes-align-self;
 
-            line-height: $matrix-order-widget-grid-footer-label-line-height;
-            text-transform: $matrix-order-widget-grid-footer-label-text-transform;
+            border-top: $matrix-order-widget-grid-footer-pseudo-classes-border-top; //Changed
+            width: $matrix-order-widget-grid-footer-pseudo-classes-width;
+            top: $matrix-order-widget-grid-footer-pseudo-classes-top;
+
+            content: $matrix-order-widget-grid-footer-pseudo-classes-content;
+            z-index: $matrix-order-widget-grid-footer-pseudo-classes-z-index;
         }
 
         &-total {
@@ -89,6 +155,30 @@
         width: $matrix-order-widget-grid-side-width;
 
         overflow: $matrix-order-widget-grid-side-overflow;
+
+        &-wrapper {
+            overflow: $matrix-order-widget-grid-side-wrapper-overflow;
+        }
+
+        &:before,
+        &:after {
+            position: $matrix-order-widget-grid-side-pseudo-classes-position;
+
+            background: $matrix-order-widget-grid-side-pseudo-classes-background;
+            width: $matrix-order-widget-grid-side-pseudo-classes-width;
+            height: $matrix-order-widget-grid-side-pseudo-classes-height;
+            top: $matrix-order-widget-grid-side-pseudo-classes-top;
+            left: $matrix-order-widget-grid-side-pseudo-classes-left;
+
+            content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
+        }
+
+        &:after {
+            left: $matrix-order-widget-grid-side-pseudo-class-after-left;
+            right: $matrix-order-widget-grid-side-pseudo-class-after-right;
+            background: $matrix-order-widget-grid-side-pseudo-class-after-background;
+        }
     }
 
     &__grid-side & {
@@ -98,11 +188,16 @@
             overflow: $matrix-order-widget-grid-side-form-row-overflow;
 
             margin: $matrix-order-widget-grid-side-form-row-offset;
+            padding: $matrix-order-widget-grid-side-form-row-offset-inner;
 
             text-align: $matrix-order-widget-grid-side-form-row-text-align;
             white-space: $matrix-order-widget-grid-side-form-row-white-space;
             word-break: $matrix-order-widget-grid-side-form-row-word-break;
             line-height: $matrix-order-widget-grid-side-form-row-line-height;
+
+            &:not(:last-child) {
+                border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+            }
         }
     }
 
@@ -110,18 +205,51 @@
         display: $matrix-order-widget-grid-scrollable-area-display;
     }
 
+    &__form {
+        &--inline {
+            float: $matrix-order-widget-form-inline-float;
+            margin-bottom: $matrix-order-widget-form-inline-offset-bottom;
+        }
+
+        &--colored {
+            background: $matrix-order-widget-form-colored-background;
+            border-radius: $matrix-order-widget-form-colored-border-radius;
+
+            margin: $matrix-order-widget-form-colored-offset;
+            padding-bottom: $matrix-order-widget-form-colored-offset-inner;
+        }
+    }
+
+    &__form--colored & {
+        &__grid {
+            padding-top: $matrix-order-widget-form-colored-grid-offset-inner;
+        }
+
+        &__grid-head {
+            border-top: $matrix-order-widget-form-colored-grid-border-top;
+        }
+
+        &__grid-side {
+            &:before,
+            &:after {
+                background: $matrix-order-widget-form-colored-grid-side-before-background;
+            }
+
+            &:after {
+                background: $matrix-order-widget-form-colored-grid-side-after-background;
+            }
+        }
+    }
+
     &__form__row {
         display: $matrix-order-widget-form-row-display;
         align-items: $matrix-order-widget-form-row-align-items;
+        position: $matrix-order-widget-form-row-position;
 
         height: $matrix-order-widget-form-row-height;
         min-width: $matrix-order-widget-form-row-min-width;
 
         white-space: $matrix-order-widget-form-row-white-space;
-
-        &:not(:last-child) {
-            border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
-        }
     }
 
     &__form__col {
@@ -130,7 +258,9 @@
 
         margin: $matrix-order-widget-form-col-offset;
         padding: $matrix-order-widget-form-col-offset-inner;
-        width: $matrix-order-widget-form-col-width;
+        width: 100%;
+        min-width: $matrix-order-widget-form-col-min-width;
+        color: $matrix-order-widget-form-col-color;
         border: $matrix-order-widget-form-col-border;
 
         line-height: $matrix-order-widget-form-col-line-height;
@@ -142,6 +272,7 @@
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
 
             margin: $matrix-order-widget-form-col-wrapper-offset;
+            color: $matrix-order-widget-form-col-wrapper-color;
 
             white-space: $matrix-order-widget-form-col-wrapper-white-space;
             word-break: $matrix-order-widget-form-col-wrapper-word-break;
@@ -266,6 +397,7 @@
 
         .ui-widget-content {
             padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
+            margin-top: $matrix-order-widget-dialog-ui-widget-content-offset-top;
         }
 
         .ui-widget-header {
@@ -301,24 +433,17 @@
             padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
         }
     }
+
+    .clear-button {
+        &.disabled {
+            color: $matrix-order-widget-form-col-color;
+        }
+    }
 }
 
 @include breakpoint('strict-desktop') {
     .matrix-order-widget {
-        &__form {
-            &--inline {
-                display: $matrix-order-widget-form-inline-strict-desktop-display;
-                width: $matrix-order-widget-form-inline-strict-desktop-width;
-            }
-        }
-
         &__form--inline & {
-            &__grid {
-                width: $matrix-order-widget-form-inline-grid-strict-desktop-width;
-                max-width: $matrix-order-widget-form-inline-grid-strict-desktop-max-width;
-                padding-right: $matrix-order-widget-form-inline-grid-strict-desktop-offset-inner-right;
-            }
-
             &__summary--inline {
                 margin-top: $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top;
             }
@@ -365,6 +490,10 @@
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis;
             }
+        }
+
+        .pinned-dropdown {
+            max-width: $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width;
         }
     }
 }

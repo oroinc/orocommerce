@@ -13,9 +13,9 @@ layout:
             themes: 'view.html.twig'
 
         - '@setOption':
-            id: matrix_shopping_list_totals
-            optionName: vars.mode
-            optionValue: 'inline'
+            id:  matrix_shopping_list_total_text
+            optionName: text
+            optionValue: 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'
         - '@setOption':
             id: title
             optionName: params
@@ -169,7 +169,6 @@ layout:
                                                 shopping_list_line_items_list_item_sku: ~
                                                 shopping_list_line_items_list_item_inventory_status: ~
                                                 shopping_list_line_items_list_item_configurable_products: ~
-                                            shopping_list_line_items_list_item_inline_matrix_form: ~
                                         shopping_list_line_items_list_specification_wrapper:
                                             shopping_list_line_items_list_specification:
                                                 shopping_list_line_items_list_quantity_form: ~
@@ -177,6 +176,7 @@ layout:
                                                     shopping_list_line_items_list_price_info: ~
                                         shopping_list_line_items_list_actions:
                                             shopping_list_line_items_list_actions_remove: ~
+                                        shopping_list_line_items_list_item_inline_matrix_form: ~
                                     shopping_list_line_items_list_errors: ~
                                     shopping_list_line_items_list_notes: ~
                                 shopping_list_line_items_empty: ~

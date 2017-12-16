@@ -15,7 +15,7 @@
 {% block _matrix_collection_widget_head %}
     {% set cells = columnsCount > 1 ? defaultColumns : form.rows %}
     <div class="{{ class_prefix }}__grid-head">
-        <div class="{{ class_prefix }}__grid-header-label"></div>
+        <div class="{{ class_prefix }}__grid-head-label"></div>
         <div class="{{ class_prefix }}__grid-head-wrapper">
             <div class="{{ class_prefix }}__grid-scrollable-area" data-scroll-view-follow="x">
                 {% for cell in cells %}
@@ -94,22 +94,28 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_cell_widget %}
-    {{ form_widget(cell, {
-        'attr': {
-            'data-product-id': cell.vars.productId,
-            'data-index': {
-                'row': rowIndex,
-                'column': cellIndex
-            }|json_encode
-        },
-    }) }}
+    {% if cell.vars.productId == null %}
+        {{ 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans }}
+    {% else %}
+        {{ form_widget(cell, {
+            'attr': {
+                'data-product-id': cell.vars.productId,
+                'data-index': {
+                    'row': rowIndex,
+                    'column': cellIndex
+                }|json_encode
+            },
+        }) }}
+    {% endif %}
 {% endblock %}
 
 {% block _matrix_collection_widget_footer %}
     {% if columnsCount > 1 %}
     {% set cells = defaultColumns %}
     <div class="{{ class_prefix }}__grid-footer">
-        <div class="{{ class_prefix }}__grid-footer-label">Qty</div>
+        <div class="{{ class_prefix }}__grid-footer-label">
+            {{ 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans }}
+        </div>
         <div class="{{ class_prefix }}__grid-footer-wrapper">
             <div class="{{ class_prefix }}__grid-scrollable-area" data-scroll-view-follow="x">
                 {% for cell in cells %}

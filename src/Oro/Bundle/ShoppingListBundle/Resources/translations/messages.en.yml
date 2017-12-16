@@ -190,10 +190,15 @@ oro:
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
+                qty: 'QTY'
                 total_qty: 'Total QTY'
-                total: 'TOTAL'
+                total: 'Total'
                 subtotal: 'Subtotal'
+                not_available: 'N/A'
                 close: 'Close'
+                clear:
+                    text: 'Clear All'
+                    tooltip: 'Clear all entered values in the matrix'
             lineitem:
                 product:
                     added.label: 'Product has been added to "%shoppinglist%"'

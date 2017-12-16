@@ -23,6 +23,10 @@ define(function(require) {
                 shoppingListId: this.shoppingListId
             };
 
+            if (_.isDesktop()) {
+                options.actionsEl = '.product-totals';
+                options.moveAdoptedActions = false;
+            }
             options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
             options.preventModelRemoval = true;
             options.regionEnabled = false;
