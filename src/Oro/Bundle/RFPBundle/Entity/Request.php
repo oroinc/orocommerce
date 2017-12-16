@@ -727,7 +727,7 @@ class Request extends ExtendRequest implements
      * @param Website $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 
