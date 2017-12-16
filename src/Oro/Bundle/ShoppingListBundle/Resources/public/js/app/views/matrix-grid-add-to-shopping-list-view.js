@@ -30,6 +30,7 @@ define(function(require) {
 
             if (isFormEmpty) {
                 var validator = this.$form.validate();
+                validator.errorsFor(this.$form[0]).remove();
                 validator.showLabel(this.$form[0], _.__('oro.product.validation.configurable.required'));
                 return false;
             }

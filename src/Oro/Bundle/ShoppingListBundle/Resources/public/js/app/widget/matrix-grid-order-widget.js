@@ -65,6 +65,7 @@ define(function(require) {
 
             if (!emptyMatrixAllowed && !isQuantity) {
                 var validator = $form.validate();
+                validator.errorsFor($form[0]).remove();
                 validator.showLabel($form[0], _.__('oro.product.validation.configurable.required'));
                 return false;
             }
