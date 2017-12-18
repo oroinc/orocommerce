@@ -131,6 +131,7 @@ datagrids:
         acl_resource: oro_product_frontend_view
         options:
             entityHint:        products
+            frontend: true
         source:
             type: search
             search_index: website
@@ -162,10 +163,10 @@ datagrids:
                     data_name: sku
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     type:      enum
-                    data_name: inventoryStatus
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
         properties:
             id: ~
@@ -174,13 +175,12 @@ datagrids:
                 sku:
                     data_name: sku
                 productName:
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
-                    data_name: inventoryStatus
+                    data_name: inventory_status
 
             toolbar_sorting: true
             disable_default_sorting: true
-
 
     product-collection-base-grid:
         extends: products-select-grid-base
@@ -741,6 +741,7 @@ datagrids:
             requireJSModules:
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+            frontend: true
         source:
             type: search
             search_index: website

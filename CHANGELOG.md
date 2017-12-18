@@ -24,6 +24,12 @@
     * method `getCategory` was added
     * property `category_id` was added
 
+#### AlternativeCheckoutBundle
+* Operation `oro_accept_quote` renamed to `oro_sale_accept_quote` and moved to `SaleBundle`
+
+#### CheckoutBundle
+* Operation `oro_checkout_frontend_quote_submit_to_order` renamed to `oro_sale_frontend_quote_submit_to_order` and moved to `SaleBundle`
+
 ## 1.5.0 (2017-11-30)
 [Show detailed list of changes](incompatibilities-1-5.md)
 
@@ -107,7 +113,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 ### Added
 #### PricingBundle
 * Class `BaseProductPriceRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup> got an abstract method:
-    * `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers witch contains price for given product
+    * `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers which contains price for given product
 * Api for `ProductPrice`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Entity/ProductPrice.php "Oro\Bundle\PricingBundle\Entity\ProductPrice")</sup> entity was added. In sharding mode product prices can't be managed without `priceList` field, that's why in `get_list` action `priceList` filter is required and in all actions ID of entities has format `ProductPriceID-PriceListID`.
     * Class `PriceManagerDeleteHandler`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Api/ProductPrice/Delete/PriceManagerDeleteHandler.php "Oro\Bundle\PricingBundle\Api\ProductPrice\Delete\PriceManagerDeleteHandler")</sup> was added to correctly remove prices in sharding mode
     * Interface `PriceListIDContextStorageInterface`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Api/ProductPrice/PriceListIDContextStorageInterface.php "Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface")</sup> was added to abstract the way of storing price list id in an api context

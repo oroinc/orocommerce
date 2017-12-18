@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter

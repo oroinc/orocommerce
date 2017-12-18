@@ -46,7 +46,6 @@ oro:
             product_unit_code.label: 'Product Unit Code'
             quantity.label: 'Invoiced Quantity'
             invoice.label: 'Invoice'
-            product.label: 'Product'
             product_unit.label: 'Product Unit'
             price.label: 'Price'
             price_type.label: 'Price Type'

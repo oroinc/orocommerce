@@ -10,7 +10,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -37,15 +37,15 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        UserCurrencyManager $currencyManager
+        SubtotalProviderConstructorArguments $arguments
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;

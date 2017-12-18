@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 
 class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -68,7 +69,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->roundingService,
             $this->lineItemSubtotal,
             $this->tokenAccessor,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 

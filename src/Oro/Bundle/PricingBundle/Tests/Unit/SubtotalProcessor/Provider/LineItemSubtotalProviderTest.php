@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -46,7 +47,7 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->provider = new LineItemSubtotalProvider(
             $this->translator,
             $this->roundingService,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 

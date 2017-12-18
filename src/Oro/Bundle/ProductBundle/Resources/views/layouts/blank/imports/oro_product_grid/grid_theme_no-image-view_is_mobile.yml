@@ -1,0 +1,8 @@
+layout:
+    actions:
+    - '@move':
+        id: product_item_select_row
+        parentId: product_datagrid_row_product_box
+        prepend: true
+
+    conditions: 'context.has("theme_name") && context["theme_name"] == "no-image-view" && context["is_mobile"]'

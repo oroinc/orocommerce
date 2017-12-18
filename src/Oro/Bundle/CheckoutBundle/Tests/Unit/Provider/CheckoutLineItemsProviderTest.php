@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,11 +42,11 @@ class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return CheckoutLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCheckoutLineItem($productSku, $productUnitCode, $quantity)
     {
-        return $this->getLineItem(CheckoutLineItemInterface::class, $productSku, $productUnitCode, $quantity);
+        return $this->getLineItem(ProductLineItemInterface::class, $productSku, $productUnitCode, $quantity);
     }
 
     /**

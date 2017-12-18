@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 /**
  * @ORM\Table(
@@ -55,8 +54,7 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 class LineItem extends ExtendLineItem implements
     OrganizationAwareInterface,
     CustomerVisitorOwnerAwareInterface,
-    ProductLineItemInterface,
-    CheckoutLineItemInterface
+    ProductLineItemInterface
 {
     use UserAwareTrait;
 

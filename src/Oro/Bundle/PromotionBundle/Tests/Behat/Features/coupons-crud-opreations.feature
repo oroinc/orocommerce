@@ -1,3 +1,5 @@
+# TODO: unskip after BB-12921
+@skip
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes
   As an Administrator
@@ -32,8 +34,6 @@ Feature: CRUD operations for Coupons codes
       |Valid From           | Jul 1, 2017, 12:00 AM    |
       |Valid Until          | Jul 1, 2018, 12:00 AM    |
 
-  # TODO: unskip after BB-12921
-  @skip
   Scenario: Save coupon with validFrom greater than validUntil
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"

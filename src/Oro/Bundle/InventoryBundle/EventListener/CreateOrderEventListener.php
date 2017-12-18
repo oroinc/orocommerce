@@ -14,12 +14,12 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListener
 {
@@ -157,7 +157,7 @@ class CreateOrderEventListener
         return ($context instanceof WorkflowItem
             && $context->getEntity() instanceof Checkout
             && $context->getEntity()->getSource() instanceof CheckoutSource
-            && $context->getEntity()->getSource()->getEntity() instanceof CheckoutLineItemsHolderInterface
+            && $context->getEntity()->getSource()->getEntity() instanceof ProductLineItemsHolderInterface
         );
     }
 }

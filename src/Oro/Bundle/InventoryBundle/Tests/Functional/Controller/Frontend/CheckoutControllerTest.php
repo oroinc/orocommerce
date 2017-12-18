@@ -5,8 +5,10 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Frontend;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -293,5 +295,46 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $product->setMaximumQuantityToOrder($entityFallback2);
         $this->registry->getManagerForClass(Product::class)->flush();
         $this->emFallback->flush();
+    }
+
+    /**
+     * @param QuoteDemand $quoteDemand
+     */
+    protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
+    {
+        $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
+    }
+
+
+    /**
+     * @param QuoteDemand $quoteDemand
+     * @return array
+     */
+    protected function getCheckoutFromQuoteDemandData(QuoteDemand $quoteDemand)
+    {
+        return [
+            'context' => new ActionData([]),
+            'options' => [
+                'parameters_mapping' => [
+                    'sourceCriteria' => [
+                        'quoteDemand' => $quoteDemand,
+                    ],
+                ],
+                'action_group' => 'start_checkout',
+                'results' => [
+                    'redirectUrl' => new PropertyPath('redirectUrl'),
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInventoryFixtures()
+    {
+        return [
+            LoadQuoteProductDemandData::class,
+        ];
     }
 }

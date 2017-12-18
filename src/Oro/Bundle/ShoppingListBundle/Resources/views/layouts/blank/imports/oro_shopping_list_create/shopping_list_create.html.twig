@@ -1,0 +1,36 @@
+{% extends 'OroUIBundle:layouts:blank/dialog/dialog.html.twig' %}
+
+{% block _widget_content_widget %}
+    {% set shoppingListLink %}
+        <a href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">{{ shoppingList.label }}</a>
+    {% endset %}
+
+    {% set shoppinglistCreatedMessage =  'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)}) %}
+    {% set pageComponentOptions = {
+        savedId: savedId|default(null),
+        shoppingListCreateEnabled: shoppingListCreateEnabled,
+        messages: [shoppinglistCreatedMessage]|merge(messages)
+    } %}
+    {% set attr = {
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shopping-list-create-component',
+    }|merge(attr)|merge({
+        'data-page-component-options': pageComponentOptions|merge(attr['data-page-component-options']|default({})),
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block _form_comment_widget %}
+    <i>
+        {{ 'oro.shoppinglist.create_new_form.comment'|trans }}<br/>
+        {{ 'oro.shoppinglist.create_new_form.comment_cancel'|trans }}
+    </i>
+{% endblock %}
+
+{% block _form_actions_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " widget-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

@@ -106,6 +106,7 @@ class ChangeCategoryProductRelation implements
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
+                    'cascade' => ['persist'],
                     'on_delete' => 'SET NULL',
                 ]
             ]

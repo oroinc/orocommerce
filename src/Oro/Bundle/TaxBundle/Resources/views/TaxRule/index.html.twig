@@ -6,13 +6,10 @@
 {% set pageTitle = 'oro.tax.taxrule.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
-        entity_class: entity_class,
-        exportProcessor: 'oro_tax_tax_rule',
-        importProcessor: 'oro_tax_tax_rule',
-        importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.tax.taxrule.entity_plural_label'|trans}),
-        dataGridName: gridName
+    {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
+        'alias': 'oro_tax_rule'
     } %}
+
     {% if is_granted('oro_tax_rule_create') %}
         <div class="btn-group">
             {{ UI.addButton({

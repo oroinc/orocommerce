@@ -13,18 +13,22 @@ class QuoteProductDemandTest extends AbstractTest
     {
         $productOffer = new QuoteProductOffer();
         $productOffer->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT);
+        $id = 123;
         $quantity = 777;
         $demand = new QuoteDemand();
         $productDemand = new QuoteProductDemand($demand, $productOffer, $quantity);
         $productDemand->setQuantity($quantity);
         $productDemand->setQuoteDemand($demand);
         $productDemand->setQuoteProductOffer($productOffer);
+        $this->setProperty($productDemand, 'id', $id);
         $this->assertSame($productDemand->getQuoteDemand(), $demand);
         $this->assertSame($productDemand->getQuantity(), $quantity);
         $this->assertSame($productDemand->getQuantity(), $quantity);
         $this->assertSame($productDemand->getPrice(), $productOffer->getPrice());
         $this->assertSame($productDemand->getPriceType(), $productOffer->getPriceType());
         $this->assertSame($productDemand->getQuoteProductOffer(), $productOffer);
+        $this->assertSame($id, $productDemand->getEntityIdentifier());
+        $this->assertSame($productDemand, $productDemand->getProductHolder());
     }
 
     /**

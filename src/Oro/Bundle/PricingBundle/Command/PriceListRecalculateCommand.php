@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -29,6 +30,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const PRICE_LIST = 'price-list';
     const DISABLE_TRIGGERS = 'disable-triggers';
     const VERBOSE = 'verbose';
+    const USE_INSERT_SELECT = 'use-insert-select';
 
     /**
      * {@inheritdoc}
@@ -72,6 +74,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 InputOption::VALUE_NONE,
                 'disables ALL triggers before the operation, allowing faster reindexation of bigger data'
             )
+            ->addOption(
+                self::USE_INSERT_SELECT,
+                null,
+                InputOption::VALUE_NONE,
+                'Use INSERT SELECT queries instead multi INSERTS'
+            )
             ->setDescription('Recalculate combined price list and combined product prices');
     }
 
@@ -88,6 +96,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         if (true === $disableTriggers) {
             $this->disableAllTriggers($output);
         }
+        $this->prepareBuilders($input);
         $optionAll = (bool)$input->getOption(self::ALL);
         if ($optionAll) {
             $this->processAllPriceLists($output);
@@ -324,5 +333,20 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $container              = $this->getContainer();
         $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
         $databaseTriggerManager->enable();
+    }
+
+    /**
+     * @param InputInterface $input
+     */
+    private function prepareBuilders(InputInterface $input)
+    {
+        $container = $this->getContainer();
+        $currentStrategy = $container->get('oro_pricing.pricing_strategy.strategy_register')->getCurrentStrategy();
+        if ($input->getOption(self::USE_INSERT_SELECT)
+            && $currentStrategy instanceof InsertFromSelectExecutorAwareInterface
+        ) {
+            $queryExecutor = $container->get('oro_pricing.orm.insert_from_select_query_executor');
+            $currentStrategy->setInsertSelectExecutor($queryExecutor);
+        }
     }
 }

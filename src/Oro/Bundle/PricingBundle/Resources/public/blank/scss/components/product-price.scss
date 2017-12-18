@@ -9,7 +9,35 @@
     }
 
     &__hint {
+        display: $product-price-hint-display;
+
         margin-bottom: $product-price-hint-margin-bottom;
         padding-bottom: $product-price-hint-padding-bottom;
+    }
+
+    &__unit-short {
+        display: $product-price-unit-short-display;
+    }
+
+    &--simple & {
+        &__label {
+            display: $product-price-simple-label-display;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-price {
+        &--simple {
+            display: $product-price-simple-display-tablet;
+        }
+
+        &__unit-full {
+            display: $product-price-unit-full-display-tablet;
+        }
+
+        &__unit-short {
+            display: $product-price-unit-short-display-tablet;
+        }
     }
 }

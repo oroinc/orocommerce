@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
@@ -39,9 +40,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $priceListToProduct->setProduct($product);
         $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
-
+        $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
 
@@ -66,6 +65,24 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         );
     }
 
+    public function testPostPersistWidthDisabledListener()
+    {
+        $this->disableListener();
+
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getEntityManager();
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->sendScheduledMessages();
+
+        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+    }
+
     public function testPreUpdate()
     {
         // Create PriceListToProduct
@@ -74,9 +91,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $priceListToProduct->setProduct($product);
         $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
-
+        $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
 
@@ -123,6 +138,34 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         );
     }
 
+    public function testPreUpdateWithDisabledListener()
+    {
+        // Create PriceListToProduct
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_7);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getEntityManager();
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->cleanScheduledMessages();
+
+        $this->disableListener();
+
+        // Edit PriceListToProduct
+        $changedProduct = $this->getReference(LoadProductData::PRODUCT_6);
+        $priceListToProduct->setProduct($changedProduct);
+
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->sendScheduledMessages();
+
+        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+    }
+
     public function testPostRemove()
     {
         // Create PriceListToProduct
@@ -131,9 +174,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $priceListToProduct->setProduct($product);
         $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
-
+        $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
 
@@ -154,6 +195,31 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         );
     }
 
+    public function testPostRemoveWithDisabledListener()
+    {
+        // Create PriceListToProduct
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_7);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getEntityManager();
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->cleanScheduledMessages();
+
+        $this->disableListener();
+
+        // Remove created PriceListToProduct
+        $em->remove($priceListToProduct);
+        $em->flush();
+
+        $this->sendScheduledMessages();
+
+        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+    }
+
     public function testOnAssignmentRuleBuilderBuild()
     {
         $priceListToProduct = new PriceListToProduct();
@@ -161,9 +227,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $priceListToProduct->setProduct($product);
         $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
-
+        $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
 
@@ -186,5 +250,39 @@ class PriceListToProductEntityListenerTest extends WebTestCase
                 PriceListTriggerFactory::PRODUCT => $product->getId()
             ]
         );
+    }
+
+    public function testOnAssignmentRuleBuilderBuildWithDisabledListener()
+    {
+        $this->disableListener();
+
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceListToProduct::class);
+
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->sendScheduledMessages();
+
+        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+    }
+
+    protected function disableListener()
+    {
+        $this->getContainer()->get('oro_pricing.entity_listener.price_list_to_product')->setEnabled(false);
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceListToProduct::class);
     }
 }

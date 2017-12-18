@@ -86,7 +86,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->doctrineHelper,
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
-            $this->getContainer()->get('oro_website_search.engine.index_data'),
+            $this->getContainer()->get('oro_website_search.engine.text_filtered_index_data'),
             $this->getContainer()->get('oro_website_search.placeholder_decorator'),
             $inputValidator
         );

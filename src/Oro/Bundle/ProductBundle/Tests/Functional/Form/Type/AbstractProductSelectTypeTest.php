@@ -18,6 +18,9 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /** @var string */
     protected $datagridIndexPath = 'oro_datagrid_index';
 
+    /** @var string */
+    protected $datagridName = 'products-select-grid';
+
     /** @var array */
     protected $dataParameters = [];
 
@@ -67,7 +70,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             'GET',
             $this->getUrl(
                 $this->datagridIndexPath,
-                ['gridName' => 'products-select-grid']
+                ['gridName' => $this->datagridName]
             ),
             [
                 ProductSelectType::DATA_PARAMETERS => $this->dataParameters,
@@ -134,6 +137,14 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
         foreach ($actualProducts as $product) {
             $this->assertContains($product, $expectedProducts);
         }
+    }
+
+    /**
+     * @param string $datagridName
+     */
+    public function setDatagridName($datagridName)
+    {
+        $this->datagridName = $datagridName;
     }
 
     /**

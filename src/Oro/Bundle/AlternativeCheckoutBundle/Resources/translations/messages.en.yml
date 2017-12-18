@@ -46,9 +46,6 @@ oro:
                     back_to_order_review.label: Back To Order Review
                     back_to_request_approval.label: Back To Request Approval
 
-        actions:
-            accept_quote: 'Accept Quote'
-
         messages:
             waiting_for_approve: Pending approval
             approved_at: Approved at

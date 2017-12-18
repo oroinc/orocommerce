@@ -7,7 +7,26 @@ parameters:
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
-        arguments: ['@oro_config.manager', '@doctrine']
+        public: false
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+
+    oro_web_catalog.cacheable_web_catalog_usage_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider
+        public: false
+        decorates: 'oro_web_catalog.provider.web_catalog_usage_provider'
+        decoration_priority: -255 # the cacheable provider should be at the top of the decoration chain
+        arguments:
+            - '@oro_web_catalog.cacheable_web_catalog_usage_provider.inner'
+
+    oro_web_catalog.web_catalog_usage_listener:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogUsageListener
+        arguments:
+            - '@oro_web_catalog.cacheable_web_catalog_usage_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
+            - { name: doctrine.event_listener, event: onFlush, priority: -255 }
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
@@ -86,7 +105,8 @@ services:
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
-        arguments: ['@event_dispatcher']
+        arguments:
+            - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
 
