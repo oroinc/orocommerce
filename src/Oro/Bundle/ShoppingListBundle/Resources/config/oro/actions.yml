@@ -318,6 +318,9 @@ operations:
         button_options:
             class: btn--action
             icon: fa-clone
+        preconditions:
+            '@and':
+                - '@at_least_one_available_product': $.data.lineItems
         actions:
             - '@call_service_method':
                 service: oro_locale.formatter.date_time
@@ -354,6 +357,14 @@ operations:
                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                   - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
                   - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+            - '@remove_restricted_products':
+                attribute: $.removedProducts
+                productHolderPath: $.newShoppingList.lineItems
+            - '@flash_message':
+                conditions:
+                    '@not_empty': $.removedProducts
+                message: oro.shoppinglist.duplicate.restricted_products.message
+                type: 'warning'
             - '@assign_value': [$.newShoppingList.label, $.newName]
             - '@assign_value': [$.newShoppingList.current, false]
             - '@flush_entity': $.newShoppingList

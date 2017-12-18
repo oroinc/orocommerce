@@ -23,7 +23,9 @@
 
 {% block __oro_product_list_item__product_content_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__content product-item__content--{{ class_prefix }}'
+        '~class': ' product-item__content product-item__content--{{ class_prefix }}',
+        'itemscope': '',
+        'itemtype': 'http://schema.org/Product'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -94,7 +96,7 @@
     {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}" itemprop="image">
     </picture>
 {% endblock %}
 
@@ -111,9 +113,9 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__title product-item__title--{{ class_prefix }}'
     }) %}
-    <h3 {{ block('block_attributes') }}>
+    <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product">{{ product.name }}</a>
+           class="view-product" itemprop="url"><span itemprop="name">{{ product.name }}</span></a>
     </h3>
 {% endblock %}
 
@@ -141,7 +143,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {%- spaceless -%}
-            {{ 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value">{{- product.sku -}}</span>
+            {{ 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
         {%- endspaceless -%}
     </div>
 {% endblock %}
@@ -165,18 +167,20 @@
         }|json_encode
     }) %}
 
-    <div {{ block('block_attributes') }} >
-        <p>{{ product.shortDescription|raw|oro_html_sanitize }}</p>
-    </div>
+    {% if (class_prefix == 'list-view') %}
+        <div {{ block('block_attributes') }} >
+            <p class="product__description-conent" itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</p>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
+    '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product">
-            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="link view-product">
+            {{ 'oro.product.frontend.index.view_details'|trans }}
         </a>
     </div>
 {% endblock %}

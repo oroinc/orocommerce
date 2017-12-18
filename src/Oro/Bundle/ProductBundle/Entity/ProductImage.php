@@ -227,7 +227,9 @@ class ProductImage extends ExtendProductImage
      */
     public function __toString()
     {
-        return $this->getImage() ? $this->getImage()->getFilename() : sprintf('ProductImage #%d', $this->getId());
+        return $this->getImage()
+            ? (string)$this->getImage()->getFilename()
+            : sprintf('ProductImage #%d', $this->getId());
     }
 
     public function __clone()
