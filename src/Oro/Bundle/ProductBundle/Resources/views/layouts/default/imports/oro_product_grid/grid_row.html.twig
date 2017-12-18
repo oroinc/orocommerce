@@ -27,7 +27,7 @@
 
     {% set class_prefix = themeOptions.currentRowView %}
 
-    {% set matrixFormAvailable = product.matrixFormType == 'inline' and class_prefix != 'gallery-view' and blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
+    {% set matrixFormAvailable = product.matrixForm.type == 'inline' and class_prefix != 'gallery-view' and blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
 
     {% set modelAttr = layout_attr_defaults(product|default({}), {
         'imageUrl': product.image
@@ -171,11 +171,9 @@
     {% if matrixFormAvailable %}
         {% do block|merge_context({
             'prices': product.productPrices,
-            'matrixForm': product[column_name],
-            'totals': {
-                'quantity': product.totalQuantity,
-                'price': product.totalPrice
-            }
+            'matrixForm': product.matrixForm.form,
+            'rows': product.matrixForm.rows,
+            'totals': product.matrixForm.totals
         }) %}
         {{- block('container_widget') -}}
     {% endif %}
@@ -198,7 +196,7 @@
 {% endblock %}
 
 {% block _matrix_popup_line_item_buttons_widget %}
-    {% if (product.matrixFormType == 'popup' and isDesktopVersion()) or (product.matrixFormType != 'none' and isMobileVersion()) %}
+    {% if product.matrixForm.type == 'popup' %}
         <div {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </div>

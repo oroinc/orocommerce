@@ -1,11 +1,19 @@
 {% block __matrix_grid_order__wrapper_widget %}
     {% set class_prefix = 'matrix-order-widget' %}
 
+    {% if rows is not defined %}
+        {% set rows = [
+            form.rows|length,
+            form.rows[0].columns|length
+        ] %}
+    {% endif %}
+
     {% do block|merge_context({
         class_prefix: class_prefix,
         form: form,
         product: product,
         shoppingList: shoppingList,
+        rows: rows,
         totals: totals,
         prices: prices
     }) %}
@@ -15,7 +23,7 @@
         '~data-page-component-view': {
             view: 'oropricing/js/app/views/base-product-matrix-view',
             prices: prices,
-            dimension: form.rows[0].columns|length
+            dimension: rows[1]
         }
     }) %}
 

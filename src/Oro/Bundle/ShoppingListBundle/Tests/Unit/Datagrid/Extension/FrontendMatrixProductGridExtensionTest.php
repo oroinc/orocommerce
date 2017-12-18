@@ -145,12 +145,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 return $products[$productId];
             });
 
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
-            ->method('isInlineMatrixFormAvailable')
-            ->withConsecutive([$product1], [$product2], [$product3])
-            ->willReturnOnConsecutiveCalls(true, false, false);
-
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
+        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(1))
             ->method('getAvailableMatrixFormType')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(
@@ -189,65 +184,47 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->with([$simpleProduct, $simpleProduct2])
             ->willReturn(['1' => ['unit' => 1]]);
 
-        $this->datagridConfiguration->expects($this->once())
-            ->method('addColumn')
-            ->with('productPrices', [
-                'frontend_type' => 'array',
-                'type' => 'field',
-                'renderable' => false,
-                'translatable' => true,
-            ]);
+        $this->datagridConfiguration->expects($this->exactly(2))
+            ->method('offsetAddToArrayByPath');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
         $expectedData = [
             '1' => [
-                'matrixFormType' => 'inline',
-                'matrixForm' => 'form html',
+                'matrixForm' => [
+                    'type' => 'inline',
+                    'form' => 'form html',
+                    'totals' => [
+                        'quantity' => 5,
+                        'price' => '$12.34',
+                    ],
+                    'rows' => [0, 0],
+                ],
                 'productPrices' => ['1' => ['unit' => 1]],
-                'totalQuantity' => 5,
-                'totalPrice' => '$12.34',
             ],
             '2' => [
-                'matrixFormType' => 'none',
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null,
             ],
             '3' => [
-                'matrixFormType' => 'none',
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null,
             ],
         ];
 
         foreach ($resultObject->getData() as $data) {
             $this->assertEquals(
-                $data->getValue('matrixFormType'),
-                $expectedData[$data->getValue('id')]['matrixFormType']
+                $data->getValue('matrixForm'),
+                $expectedData[$data->getValue('id')]['matrixForm']
             );
-            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
             $this->assertEquals(
                 $data->getValue('productPrices'),
                 $expectedData[$data->getValue('id')]['productPrices']
             );
-
-            if (isset($expectedData[$data->getValue('id')]['totalQuantity'])) {
-                $this->assertEquals(
-                    $data->getValue('totalQuantity'),
-                    $expectedData[$data->getValue('id')]['totalQuantity']
-                );
-            } else {
-                $this->assertEmpty($data->getValue('totalQuantity'));
-            }
-
-            if (isset($expectedData[$data->getValue('id')]['totalPrice'])) {
-                $this->assertEquals(
-                    $data->getValue('totalPrice'),
-                    $expectedData[$data->getValue('id')]['totalPrice']
-                );
-            } else {
-                $this->assertEmpty($data->getValue('totalPrice'));
-            }
         }
     }
 
@@ -276,36 +253,27 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(null);
 
         $this->productListMatrixFormAvailabilityProvider->expects($this->never())
-            ->method('isInlineMatrixFormAvailable');
-
-        $this->productListMatrixFormAvailabilityProvider->expects($this->never())
             ->method('getAvailableMatrixFormType');
 
-        $this->datagridConfiguration->expects($this->once())
-            ->method('addColumn')
-            ->with('productPrices', [
-                'frontend_type' => 'array',
-                'type' => 'field',
-                'renderable' => false,
-                'translatable' => true,
-            ]);
+        $this->datagridConfiguration->expects($this->exactly(2))
+            ->method('offsetAddToArrayByPath');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
         $expectedData = [
             '1' => [
-                'matrixFormType' => null,
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null
             ],
         ];
 
         foreach ($resultObject->getData() as $data) {
             $this->assertEquals(
-                $data->getValue('matrixFormType'),
-                $expectedData[$data->getValue('id')]['matrixFormType']
+                $data->getValue('matrixForm'),
+                $expectedData[$data->getValue('id')]['matrixForm']
             );
-            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
             $this->assertEquals(
                 $data->getValue('productPrices'),
                 $expectedData[$data->getValue('id')]['productPrices']
@@ -352,18 +320,9 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             });
 
         $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
-            ->method('isInlineMatrixFormAvailable')
+            ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(false, false, false);
-
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
-            ->method('getAvailableMatrixFormType')
-            ->withConsecutive([$product1], [$product2], [$product3])
-            ->willReturnOnConsecutiveCalls(
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE,
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE,
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE
-            );
 
         $this->productVariantAvailabilityProvider->expects($this->never())
             ->method('getSimpleProductsByVariantFields');
@@ -374,41 +333,37 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->frontendProductPricesProvider->expects($this->never())
             ->method('getByProducts');
 
-        $this->datagridConfiguration->expects($this->once())
-            ->method('addColumn')
-            ->with('productPrices', [
-                'frontend_type' => 'array',
-                'type' => 'field',
-                'renderable' => false,
-                'translatable' => true,
-            ]);
+        $this->datagridConfiguration->expects($this->exactly(2))
+            ->method('offsetAddToArrayByPath');
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
         $expectedData = [
             '1' => [
-                'matrixFormType' => 'none',
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null
             ],
             '2' => [
-                'matrixFormType' => 'none',
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null
             ],
             '3' => [
-                'matrixFormType' => 'none',
-                'matrixForm' => null,
+                'matrixForm' => [
+                    'type' => 'none',
+                ],
                 'productPrices' => null
             ],
         ];
 
         foreach ($resultObject->getData() as $data) {
             $this->assertEquals(
-                $data->getValue('matrixFormType'),
-                $expectedData[$data->getValue('id')]['matrixFormType']
+                $data->getValue('matrixForm'),
+                $expectedData[$data->getValue('id')]['matrixForm']
             );
-            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
             $this->assertEquals(
                 $data->getValue('productPrices'),
                 $expectedData[$data->getValue('id')]['productPrices']

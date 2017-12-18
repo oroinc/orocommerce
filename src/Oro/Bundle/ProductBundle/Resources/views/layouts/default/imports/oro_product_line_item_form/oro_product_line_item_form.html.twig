@@ -44,7 +44,7 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_widget %}
-    {% if product.matrixFormType|default('none') == 'none' %}
+    {% if product.matrixForm.type|default('none') == 'none' %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
 
         {% set attr = layout_attr_defaults(attr, {

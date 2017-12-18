@@ -6,6 +6,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,11 +19,9 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 class FrontendMatrixProductGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'frontend-product-search-grid';
-    const MATRIX_FORM_TYPE_COLUMN_NAME = 'matrixFormType';
+    //const MATRIX_FORM_TYPE_COLUMN_NAME = 'matrixFormType';
     const MATRIX_FORM_COLUMN_NAME = 'matrixForm';
     const PRODUCT_PRICES_COLUMN_NAME = 'productPrices';
-    const TOTAL_QUANTITY_COLUMN_NAME = 'totalQuantity';
-    const TOTAL_PRICE_COLUMN_NAME = 'totalPrice';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
@@ -104,41 +103,57 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
             /** @var Product $product */
             $product = $productRepository->find($productId);
 
-            if (!$product) {
-                continue;
-            }
+            $matrixFormData = [
+                'type' => 'none',
+            ];
 
-            $row->setValue(
-                self::MATRIX_FORM_TYPE_COLUMN_NAME,
-                $this->productListMatrixFormAvailabilityProvider->getAvailableMatrixFormType($product)
-            );
+            if ($product && $this->productListMatrixFormAvailabilityProvider->isMatrixFormAvailable($product)) {
+                $matrixFormData['type'] = $this->productListMatrixFormAvailabilityProvider
+                    ->getAvailableMatrixFormType($product);
+                $matrixFormData['totals'] = [
+                    'quantity' => $this->matrixGridOrderProvider->getTotalQuantity($product),
+                    'price' => $this->matrixGridOrderProvider->getTotalPriceFormatted($product),
+                ];
 
-            if ($this->productListMatrixFormAvailabilityProvider->isMatrixFormAvailable($product)) {
-                $row->setValue(
-                    self::TOTAL_QUANTITY_COLUMN_NAME,
-                    $this->matrixGridOrderProvider->getTotalQuantity($product)
-                );
-                $row->setValue(
-                    self::TOTAL_PRICE_COLUMN_NAME,
-                    $this->matrixGridOrderProvider->getTotalPriceFormatted($product)
-                );
-            }
+                $simpleProducts = $this->productVariantAvailabilityProvider
+                    ->getSimpleProductsByVariantFields($product);
 
-            if ($this->productListMatrixFormAvailabilityProvider->isInlineMatrixFormAvailable($product)) {
-                $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-                $formHtml = $this->matrixGridOrderFormProvider->getMatrixOrderFormHtml($product, $shoppingList);
+                if ($matrixFormData['type'] === 'inline') {
+                    $formHtml = $this->matrixGridOrderFormProvider->getMatrixOrderFormHtml($product, $shoppingList);
+                    $matrixFormData['form'] = $formHtml;
 
-                $row->setValue(self::MATRIX_FORM_COLUMN_NAME, $formHtml);
+                    $form = $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
+                    $matrixFormData['rows'][] = count($form['rows']);
+                    $matrixFormData['rows'][] = count($form['rows'][0]['columns']);
+                }
+
                 $row->setValue(
                     self::PRODUCT_PRICES_COLUMN_NAME,
                     $this->frontendProductPricesProvider->getByProducts($simpleProducts)
                 );
             }
+
+            $row->setValue(self::MATRIX_FORM_COLUMN_NAME, $matrixFormData);
         }
 
-        $config->addColumn(
-            self::PRODUCT_PRICES_COLUMN_NAME,
-            ['frontend_type' => 'array', 'type' => 'field', 'renderable' => false, 'translatable' => true]
+        $config->offsetAddToArrayByPath(
+            '[properties]',
+            [
+                self::PRODUCT_PRICES_COLUMN_NAME => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ]
+            ]
+        );
+
+        $config->offsetAddToArrayByPath(
+            '[properties]',
+            [
+                self::MATRIX_FORM_COLUMN_NAME => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ]
+            ]
         );
     }
 }
