@@ -16,7 +16,9 @@ define(function(require) {
         template: template,
 
         popupHandlerSelector: '[data-role="fullscreen-sorting"]',
+
         popupContentSelector: '[data-role="fullscreen-sorting-content"]',
+
         sortingSwitcherSelector: '[data-role="fullscreen-sorting-switcher"]',
 
         /**
@@ -38,13 +40,15 @@ define(function(require) {
             this.$popupHandler.on({
                 click: _.bind(this.onFullscreenPopup, this)
             });
-            this.$sortingSwitcher.on({
-                change: _.bind(this.onChange, this)
-            });
         },
 
         onFullscreenPopup: function(e) {
             e.preventDefault();
+
+            this.$sortingSwitcher.on({
+                change: _.bind(this.onChange, this)
+            });
+
             this.fullscreenView = new FullscreenPopupView({
                 content: this.$popupContent,
                 popupIcon: 'fa-chevron-left'
@@ -57,6 +61,8 @@ define(function(require) {
             if (this.fullscreenView) {
                 this.fullscreenView.dispose();
                 delete this.fullscreenView;
+
+                this.$sortingSwitcher.off();
             }
         },
 
@@ -94,7 +100,6 @@ define(function(require) {
         dispose: function() {
             this.onClosePopup();
             this.$popupHandler.off();
-            this.$sortingSwitcher.off();
             this.$view.remove();
             this.$el.removeClass('hidden');
 
@@ -102,6 +107,7 @@ define(function(require) {
             delete this.$popupHandler;
             delete this.$popupContent;
             delete this.$sortingSwitcher;
+
             FullscreenSorting.__super__.dispose.call(this);
         }
     });

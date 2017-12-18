@@ -7,7 +7,7 @@
     <div class="sorting-popup__list">
         <% _.each(itemsList, function(item) { %>
         <div class="sorting-popup__item">
-            <label class="sorting-popup__radio">
+            <label class="custom-radio sorting-popup__radio">
                 <input type="radio" name="<%= item.name %>" class="custom-radio__control" data-role="fullscreen-sorting-switcher" value="<%= item.value %>"<% if (item.checked) { %> checked<% } %>>
                 <span class="custom-radio__text"><%= item.title %></span>
             </label>
