@@ -167,6 +167,8 @@ class ShoppingListControllerTest extends WebTestCase
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
+                    'N/A',
+                    'N/A',
                 ],
                 'atLeastOneAvailableProduct' => true,
             ],

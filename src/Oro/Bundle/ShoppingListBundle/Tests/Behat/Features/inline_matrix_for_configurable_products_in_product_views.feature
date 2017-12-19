@@ -276,6 +276,11 @@ Feature: Inline matrix for configurable products in product views
     And I click "Product B Shopping List"
     Then I should see "Attribute_1: Value 12 Attribute_2: Value 23"
 
+  Scenario: Check product name in shopping list dropdown in front store
+    Given I open shopping list widget
+    Then I should see "Configurable Product B" in the "ShoppingListWidget" element
+    And I should not see "Product C 232" in the "ShoppingListWidget" element
+
   Scenario: Order with regular variant selectors
     Given type "Configurable Product C" in "search"
     And click "Search Button"
