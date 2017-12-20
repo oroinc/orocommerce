@@ -40,9 +40,9 @@ class ReportGridControllerTest extends WebTestCase
         $this->assertContains('10 Liters', $content);
         $this->assertContains('15 Liters', $content);
         $this->assertContains('20 Liters', $content);
-        $this->assertContains('"dateGrouping":"2-1-2000"', $content);
-        $this->assertContains('"dateGrouping":"3-1-2000"', $content);
-        $this->assertContains('"dateGrouping":"2-2-2000"', $content);
+        $this->assertContains('"timePeriod":"2-1-2000"', $content);
+        $this->assertContains('"timePeriod":"3-1-2000"', $content);
+        $this->assertContains('"timePeriod":"2-2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByMonth()
@@ -54,8 +54,8 @@ class ReportGridControllerTest extends WebTestCase
 
         $this->assertContains('20 Liters', $content);
         $this->assertContains('25 Liters', $content);
-        $this->assertContains('"dateGrouping":"1-2000"', $content);
-        $this->assertContains('"dateGrouping":"2-2000"', $content);
+        $this->assertContains('"timePeriod":"1-2000"', $content);
+        $this->assertContains('"timePeriod":"2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByQuarter()
@@ -66,7 +66,7 @@ class ReportGridControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         $this->assertContains('45 Liters', $content);
-        $this->assertContains('"dateGrouping":"1-2000"', $content);
+        $this->assertContains('"timePeriod":"1-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYear()
@@ -77,7 +77,7 @@ class ReportGridControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         $this->assertContains('45 Liters', $content);
-        $this->assertContains('"dateGrouping":"2000"', $content);
+        $this->assertContains('"timePeriod":"2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYearAndNoDates()
@@ -86,7 +86,7 @@ class ReportGridControllerTest extends WebTestCase
 
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(0, $result['data']);
+        $this->assertCount(1, $result['data']);
     }
 
     /**
@@ -107,7 +107,7 @@ class ReportGridControllerTest extends WebTestCase
                 'best-selling-products[_filter][grouping][value]' => $groupingBy,
                 'best-selling-products[_filter][sku][type]' => 1,
                 'best-selling-products[_filter][sku][value]' => 'product',
-                'best-selling-products[_sort_by][dateGrouping]' => 'DESC',
+                'best-selling-products[_sort_by][timePeriod]' => 'DESC',
                 'best-selling-products[_sort_by][sku]' => 'DESC',
             ]
         );
