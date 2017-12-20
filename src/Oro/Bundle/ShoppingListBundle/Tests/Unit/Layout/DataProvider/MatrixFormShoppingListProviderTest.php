@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -12,8 +11,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixFormShoppingListProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
-use Oro\Bundle\UIBundle\Provider\UserAgent;
-use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormView;
 
@@ -27,17 +24,8 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
     /** @var ProductFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $productFormAvailabilityProvider;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    private $configManager;
-
     /** @var MatrixFormShoppingListProvider */
     private $provider;
-
-    /** @var UserAgentProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $userAgentProvider;
-
-    /** @var UserAgent|\PHPUnit_Framework_MockObject_MockObject */
-    private $userAgent;
 
     /**
      * {@inheritdoc}
@@ -46,15 +34,10 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->matrixGridOrderFormProvider = $this->createMock(MatrixGridOrderFormProvider::class);
         $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
-        $this->userAgentProvider = $this->createMock(UserAgentProvider::class);
-        $this->userAgent = $this->createMock(UserAgent::class);
 
         $this->provider = new MatrixFormShoppingListProvider(
             $this->matrixGridOrderFormProvider,
-            $this->productFormAvailabilityProvider,
-            $this->configManager,
-            $this->userAgentProvider
+            $this->productFormAvailabilityProvider
         );
     }
 
@@ -62,8 +45,8 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
      * @param Product[] $products
      * @param LineItem[] $lineItems
      * @param FormView|\PHPUnit_Framework_MockObject_MockObject $formView
-     * @param bool $matrixFormOption
-     * @param string $isMatrixFormAvailable
+     * @param bool $formOption
+     * @param string $isFormAvailable
      * @param bool $isMobile
      * @param array $expected
      * @dataProvider getSortedLineItemsProvider
@@ -72,8 +55,8 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
         $products,
         $lineItems,
         $formView,
-        $matrixFormOption,
-        $isMatrixFormAvailable,
+        $formOption,
+        $isFormAvailable,
         $isMobile,
         $expected
     ) {
@@ -83,29 +66,21 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->productFormAvailabilityProvider->expects($this->any())
-            ->method('isMatrixFormAvailable')
-            ->willReturnCallback(function (Product $product) use ($isMatrixFormAvailable) {
-                return $product->getType() === Product::TYPE_CONFIGURABLE ? $isMatrixFormAvailable : false;
+            ->method('getAvailableMatrixFormType')
+            ->willReturnCallback(function (Product $product) use ($formOption, $isFormAvailable, $isMobile) {
+                if ($product->getType() === Product::TYPE_CONFIGURABLE && $isFormAvailable) {
+                    return $isMobile ? Configuration::MATRIX_FORM_POPUP : $formOption;
+                } else {
+                    return Configuration::MATRIX_FORM_NONE;
+                }
             });
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_product.matrix_form_on_shopping_list')
-            ->willReturn($matrixFormOption);
 
         $this->matrixGridOrderFormProvider->expects($this->any())
             ->method('getMatrixOrderFormView')
             ->with($products['parentProduct'], $shoppingList)
             ->willReturn($formView);
 
-        $this->userAgentProvider->expects($this->any())
-            ->method('getUserAgent')
-            ->willReturn($this->userAgent);
-
-        $this->userAgent->expects($this->any())
-            ->method('isMobile')
-            ->willReturn($isMobile);
-
+        $this->provider->getSortedLineItems($shoppingList);
         $this->assertSame($expected, $this->provider->getSortedLineItems($shoppingList));
     }
 
@@ -217,34 +192,34 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE,
+                'matrixFormOption' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => false,
                 'isMobile' => false,
                 'expected' => [
                     '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                 ],
             ],
@@ -252,30 +227,30 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE,
+                'matrixFormOption' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => true,
                 'isMobile' => false,
                 'expected' => [
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '1:each' => [
                         'matrixForm' => $formView,
                         'lineItems' => [$lineItems['lineItem2'], $lineItems['lineItem4']],
                         'product' => $products['parentProduct'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_INLINE,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ]
                 ],
             ],
@@ -283,34 +258,34 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                'matrixFormOption' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => false,
                 'isMobile' => false,
                 'expected' => [
                     '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                 ],
             ],
@@ -318,29 +293,29 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                'matrixFormOption' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => true,
                 'isMobile' => false,
                 'expected' => [
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '1:each' => [
                         'lineItems' => [$lineItems['lineItem2'], $lineItems['lineItem4']],
                         'product' => $products['parentProduct'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                        'matrixFormType' => Configuration::MATRIX_FORM_POPUP,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ]
                 ],
             ],
@@ -348,34 +323,34 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                'matrixFormOption' => Configuration::MATRIX_FORM_NONE,
                 'isMatrixFormAvailable' => true,
                 'isMobile' => false,
                 'expected' => [
                     '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                 ],
             ],
@@ -383,29 +358,29 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE,
+                'matrixFormOption' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => true,
                 'isMobile' => true,
                 'expected' => [
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '1:each' => [
                         'lineItems' => [$lineItems['lineItem2'], $lineItems['lineItem4']],
                         'product' => $products['parentProduct'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                        'matrixFormType' => Configuration::MATRIX_FORM_POPUP,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ]
                 ],
             ],
@@ -413,34 +388,34 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE,
+                'matrixFormOption' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => false,
                 'isMobile' => true,
                 'expected' => [
                     '11:each' => [
                         'lineItems' => [$lineItems['lineItem2']],
                         'product' => $products['variantProduct1'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '12:each' => [
                         'lineItems' => [$lineItems['lineItem4']],
                         'product' => $products['variantProduct2'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ]
                 ],
             ],
@@ -448,29 +423,29 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
                 'products' => $products,
                 'lineItems' => $lineItems,
                 'formView' => $formView,
-                'matrixFormOption' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                'matrixFormOption' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => true,
                 'isMobile' => true,
                 'expected' => [
                     '16:item' => [
                         'lineItems' => [$lineItems['lineItem5']],
                         'product' => $products['variantProductWrongUnits'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '13:item' => [
                         'lineItems' => [$lineItems['lineItem1']],
                         'product' => $products['simpleProduct3'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ],
                     '1:each' => [
                         'lineItems' => [$lineItems['lineItem2'], $lineItems['lineItem4']],
                         'product' => $products['parentProduct'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP,
+                        'matrixFormType' => Configuration::MATRIX_FORM_POPUP,
                     ],
                     '14:item' => [
                         'lineItems' => [$lineItems['lineItem3']],
                         'product' => $products['simpleProduct4'],
-                        'matrixFormType' => Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE,
+                        'matrixFormType' => Configuration::MATRIX_FORM_NONE,
                     ]
                 ],
             ],

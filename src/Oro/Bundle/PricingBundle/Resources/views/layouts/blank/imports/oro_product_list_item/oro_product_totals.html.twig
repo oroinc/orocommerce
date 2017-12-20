@@ -1,0 +1,10 @@
+{% block __oro_product_list_item__totals_widget %}
+    {% if matrixFormType == 'popup' and totals.quantity > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col"
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}

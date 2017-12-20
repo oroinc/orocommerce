@@ -5,33 +5,50 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
+use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
 class ProductFormAvailabilityProvider
 {
-    const MATRIX_AVAILABILITY_COUNT = 2;
-
-    /** @var ProductVariantAvailabilityProvider */
-    private $variantAvailability;
-
     /** @var ConfigManager */
     private $configManager;
 
-    /** @var array */
-    private $cache;
+    /** @var ProductMatrixAvailabilityProvider */
+    private $productMatrixAvailabilityProvider;
+
+    /** @var UserAgentProvider */
+    private $userAgentProvider;
+
+    /** @var string */
+    private $matrixFormConfig;
+
+    const POPUP_PRODUCT_VIEWS = ['gallery-view'];
+
+    public function __construct(
+        ConfigManager $configManager,
+        ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
+        UserAgentProvider $userAgentProvider
+    ) {
+        $this->configManager = $configManager;
+        $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
+        $this->userAgentProvider = $userAgentProvider;
+    }
 
     /**
-     * @param ProductVariantAvailabilityProvider $variantAvailability
-     * @param ConfigManager $configManager
+     * @param string $matrixFormConfig
      */
-    public function __construct(
-        ProductVariantAvailabilityProvider $variantAvailability,
-        ConfigManager $configManager
-    ) {
-        $this->variantAvailability = $variantAvailability;
-        $this->configManager = $configManager;
+    public function setMatrixFormConfig($matrixFormConfig)
+    {
+        $this->matrixFormConfig = $matrixFormConfig;
+    }
+
+    /**
+       * @param Product $product
+       * @return bool
+       */
+    public function isSimpleFormAvailable(Product $product)
+    {
+        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_NONE;
     }
 
     /**
@@ -40,8 +57,7 @@ class ProductFormAvailabilityProvider
      */
     public function isInlineMatrixFormAvailable(Product $product)
     {
-        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
-            && $this->isMatrixFormAvailable($product);
+        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_INLINE;
     }
 
     /**
@@ -50,27 +66,7 @@ class ProductFormAvailabilityProvider
      */
     public function isPopupMatrixFormAvailable(Product $product)
     {
-        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_POPUP
-            && $this->isMatrixFormAvailable($product);
-    }
-
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isSimpleFormAvailable(Product $product)
-    {
-        return $this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_PRODUCT_VIEW_NONE
-            || !$this->isMatrixFormAvailable($product);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getMatrixFormConfig()
-    {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_VIEW));
+        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_POPUP;
     }
 
     /**
@@ -79,62 +75,54 @@ class ProductFormAvailabilityProvider
      */
     public function isMatrixFormAvailable(Product $product)
     {
-        if ($product->isSimple()) {
-            return false;
-        }
-
-        if (isset($this->cache[$product->getId()])) {
-            return $this->cache[$product->getId()];
-        }
-
-        $availability = $this->getMatrixAvailability($product);
-        $this->cache[$product->getId()] = $availability;
-
-        return $availability;
+        return in_array($this->getAvailableMatrixFormType($product), [
+            Configuration::MATRIX_FORM_INLINE,
+            Configuration::MATRIX_FORM_POPUP,
+        ]);
     }
 
     /**
      * @param Product $product
-     * @return bool
+     * @param string $productView
+     * @return string
      */
-    protected function getMatrixAvailability(Product $product)
+    public function getAvailableMatrixFormType(Product $product, $productView = "")
     {
-        $variants = $this->variantAvailability->getVariantFieldsAvailability($product);
-
-        $variantsCount = count($variants);
-        if ($variantsCount === 0 || $variantsCount > self::MATRIX_AVAILABILITY_COUNT) {
-            return false;
+        $config = $this->getMatrixFormOnProductListingConfig();
+        if ($config === Configuration::MATRIX_FORM_NONE
+            || !$this->productMatrixAvailabilityProvider->isMatrixFormAvailable($product)
+        ) {
+            return Configuration::MATRIX_FORM_NONE;
         }
 
-        $simpleProducts = $this->variantAvailability->getSimpleProductsByVariantFields($product);
-        if (!$simpleProducts) {
-            return false;
+        if ($this->userAgentProvider->getUserAgent()->isMobile() ||
+            in_array($productView, self::POPUP_PRODUCT_VIEWS)) {
+            return Configuration::MATRIX_FORM_POPUP;
         }
 
-        $configurableUnit = $product->getPrimaryUnitPrecision()->getUnit();
-
-        foreach ($simpleProducts as $simpleProduct) {
-            if (!$this->isProductSupportsUnit($simpleProduct, $configurableUnit)) {
-                return false;
-            }
-        }
-
-        return true;
+        return $config;
     }
 
     /**
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @return bool
+     * @param Product[] $products
+     * @param string $productView
+     * @return array
      */
-    private function isProductSupportsUnit(Product $product, ProductUnit $unit)
+    public function getAvailableMatrixFormTypes(array $products, $productView = "")
     {
-        $productUnits = $product->getUnitPrecisions()->map(
-            function (ProductUnitPrecision $unitPrecision) {
-                return $unitPrecision->getUnit();
-            }
-        );
+        $data = [];
+        foreach ($products as $product) {
+            $data[$product->getId()] = $this->getAvailableMatrixFormType($product, $productView);
+        }
+        return $data;
+    }
 
-        return $productUnits->contains($unit);
+    /**
+     * @return string
+     */
+    private function getMatrixFormOnProductListingConfig()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, $this->matrixFormConfig));
     }
 }

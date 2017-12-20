@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
 class MatrixFormShoppingListProvider
 {
@@ -18,28 +16,16 @@ class MatrixFormShoppingListProvider
     /** @var ProductFormAvailabilityProvider */
     private $productFormAvailabilityProvider;
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var UserAgentProvider */
-    private $userAgentProvider;
-
     /**
      * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
      * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
-     * @param ConfigManager $configManager
-     * @param UserAgentProvider $userAgentProvider
      */
     public function __construct(
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
-        ProductFormAvailabilityProvider $productFormAvailabilityProvider,
-        ConfigManager $configManager,
-        UserAgentProvider $userAgentProvider
+        ProductFormAvailabilityProvider $productFormAvailabilityProvider
     ) {
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
         $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
-        $this->configManager = $configManager;
-        $this->userAgentProvider = $userAgentProvider;
     }
 
     /**
@@ -58,11 +44,11 @@ class MatrixFormShoppingListProvider
             if (!isset($sortedLineItems[$lineItemKey])) {
                 $matrixFormType = $this->getAvailableMatrixFormType($product, $lineItem);
 
-                if ($matrixFormType === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_INLINE) {
+                if ($matrixFormType === Configuration::MATRIX_FORM_INLINE) {
                     // Add matrix form view to line item data for applicable configurable products
                     $sortedLineItems[$lineItemKey]['matrixForm'] =
                         $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
-                } elseif ($matrixFormType === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP) {
+                } elseif ($matrixFormType === Configuration::MATRIX_FORM_POPUP) {
                     $sortedLineItems[$lineItemKey] = [];
                 } elseif ($lineItem->getParentProduct()) {
                     // If matrix form is not available for configurable product, group its variants together
@@ -102,15 +88,6 @@ class MatrixFormShoppingListProvider
     }
 
     /**
-     * @return string
-     */
-    protected function getMatrixFormConfig()
-    {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_SHOPPING_LIST));
-    }
-
-    /**
      * @param int $productId
      * @param string $unit
      * @return string
@@ -127,17 +104,13 @@ class MatrixFormShoppingListProvider
      */
     protected function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
     {
-        if ($this->getMatrixFormConfig() === Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE
-            || !$this->productFormAvailabilityProvider->isMatrixFormAvailable($product)
+        $type = $this->productFormAvailabilityProvider->getAvailableMatrixFormType($product);
+        if ($type === Configuration::MATRIX_FORM_NONE
             || $product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()
         ) {
-            return Configuration::MATRIX_FORM_ON_SHOPPING_LIST_NONE;
+            return Configuration::MATRIX_FORM_NONE;
         }
 
-        if ($this->userAgentProvider->getUserAgent()->isMobile()) {
-            return Configuration::MATRIX_FORM_ON_SHOPPING_LIST_POPUP;
-        }
-
-        return $this->getMatrixFormConfig();
+        return $type;
     }
 }

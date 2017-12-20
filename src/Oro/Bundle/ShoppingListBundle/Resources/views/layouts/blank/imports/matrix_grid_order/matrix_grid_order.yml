@@ -26,7 +26,7 @@ layout:
                 __wrapper:
                     blockType: matrix_grid_order
                     options:
-                        visible: '=data.offsetExists("product") ? data["oro_product_form_availability"].isMatrixFormAvailable(product) : true'
+                        visible: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].isMatrixFormAvailable(product) : true'
                         product: '=data.offsetExists("product") ? data["product"]'
                         shoppingList: '=data.offsetExists("shoppingList") ? data["shoppingList"] : data["oro_shopping_list_customer_user_shopping_lists"].getCurrent()'
                         form: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(product, shoppingList)'

@@ -56,6 +56,24 @@
     }
 }
 
+.product-item__qty,
+.line-item-form {
+    .product-totals {
+        font-size: $product-totals-line-item-font-size;
+
+        &__wrapper {
+            width: $product-totals-line-item-wrapper-width;
+            margin: $product-totals-line-item-wrapper-offset;
+            padding: $product-totals-line-item-wrapper-offset-inner;
+        }
+
+        &__total-quantity,
+        &__total-price {
+            width: $product-totals-line-item-total-width;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .product-totals {
         flex-direction: $product-totals-mobile-landscape-flex-direction;

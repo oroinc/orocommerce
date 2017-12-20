@@ -6,6 +6,8 @@ layout:
             items:
                 __totals:
                     blockType: container
+                    options:
+                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp") || context["is_logged_in"]'
                 __totals_wrapper:
                     blockType: container
                 __quantity:

@@ -229,7 +229,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_matrix_popup_button_widget %}
-    {% if (matrixFormType == 'popup' and isDesktopVersion()) or (matrixFormType != 'none' and isMobileVersion()) %}
+    {% if matrixFormType == 'popup' %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.clientLink({
             'aCss': 'btn btn--info btn--size-s shopping-list-line-items__action-button',
@@ -245,7 +245,7 @@
 {% endblock %}
 
 {% block _matrix_shopping_list_totals_widget %}
-    {% if (matrixFormType == 'popup' and isDesktopVersion()) or (matrixFormType != 'none' and isMobileVersion()) %}
+    {% if matrixFormType == 'popup' %}
         {{ parent_block_widget(block) }}
     {% endif %}
 {% endblock %}

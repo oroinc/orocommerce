@@ -227,6 +227,7 @@
 
             .product-item__secondary-half--no-image-view {
                 width: 45%;
+                min-height: 1px;
 
                 &:last-child {
                     width: 55%;

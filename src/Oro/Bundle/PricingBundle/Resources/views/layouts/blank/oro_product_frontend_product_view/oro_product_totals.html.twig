@@ -1,0 +1,13 @@
+{% block _line_item_form_totals_widget %}
+    {% if totals.quantity > 0 %}
+        {% do block|merge_context({
+            totals: totals
+        }) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col"
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}

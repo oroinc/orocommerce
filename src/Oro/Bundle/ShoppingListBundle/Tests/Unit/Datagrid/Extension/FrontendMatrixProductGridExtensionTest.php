@@ -11,7 +11,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListMatrixFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -33,7 +33,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var MatrixGridOrderFormProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $matrixGridOrderFormProvider;
 
-    /** @var ProductListMatrixFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $productListMatrixFormAvailabilityProvider;
 
     /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -60,7 +60,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->matrixGridOrderFormProvider = $this->createMock(MatrixGridOrderFormProvider::class);
         $this->productListMatrixFormAvailabilityProvider = $this->createMock(
-            ProductListMatrixFormAvailabilityProvider::class
+            ProductFormAvailabilityProvider::class
         );
         $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
@@ -149,9 +149,9 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getAvailableMatrixFormType')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_INLINE,
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE,
-                Configuration::MATRIX_FORM_ON_PRODUCT_LISTING_NONE
+                Configuration::MATRIX_FORM_INLINE,
+                Configuration::MATRIX_FORM_NONE,
+                Configuration::MATRIX_FORM_NONE
             );
 
         $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
