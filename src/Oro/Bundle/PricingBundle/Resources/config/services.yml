@@ -1141,3 +1141,12 @@ services:
         arguments:
             - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
+
+    oro_pricing.entity_listener.remove_price_list_from_configuration:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\RemoveFromConfigurationPriceListEntityListener'
+        public: false
+        arguments:
+            - '@oro_config.global'
+            - '@oro_pricing.system_config_converter'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
