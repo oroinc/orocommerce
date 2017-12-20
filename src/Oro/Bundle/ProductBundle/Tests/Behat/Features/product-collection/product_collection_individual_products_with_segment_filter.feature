@@ -107,7 +107,21 @@ Feature: Product collection individual products with segment filter
       | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
 
+  Scenario: Adding product manually is possible when filter is not complete
+    When I drag and drop "Field Condition" on "Drop condition here"
+    And I click "Choose a field.."
+    And I click on "Inventory Status"
+    When I click "All Added"
+    And I click Exclude on PSKU11 in grid "Active Grid"
+    When I click "All Added"
+    Then I should see following "Active Grid" grid:
+      | SKU   | NAME        |
+      | PSKU12 | Product 12 |
+      | PSKU10 | Product 10 |
+      | PSKU1  | Product 1  |
+
   Scenario: No records found if grid filter is empty and no Manually added products exist
     When I click on "Remove Filter Button"
+    And I click on "Remove Filter Button"
     And I click on "Preview Results"
     Then I should see "No records found"
