@@ -87,6 +87,7 @@ operations:
             - preconditions
         routes:
             - oro_product_view
+            - oro_product_update
         datagrids:
             - products-grid
         preconditions:
