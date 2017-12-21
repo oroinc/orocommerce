@@ -44,6 +44,16 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
+{% block __matrix_grid_order__form_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__totals '
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __matrix_grid_order__form_end_widget %}
     {% if renderCache is not defined %}
         {% set renderCache %}
