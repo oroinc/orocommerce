@@ -165,6 +165,7 @@ datagrids:
                 columnName:
                     - visibility
                 selector: '#customer-product-visibility-changeset'
+            frontend: true
         properties:
             id: ~
 

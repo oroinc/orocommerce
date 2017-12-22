@@ -4,6 +4,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
+use Oro\Component\MessageQueue\Client\Message;
+use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexer implements IndexerInterface
@@ -12,6 +14,8 @@ class AsyncIndexer implements IndexerInterface
     const TOPIC_DELETE = 'oro.website.search.indexer.delete';
     const TOPIC_RESET_INDEX = 'oro.website.search.indexer.reset_index';
     const TOPIC_REINDEX = 'oro.website.search.indexer.reindex';
+
+    const DEFAULT_PRIORITY_REINDEX = MessagePriority::LOW;
 
     /**
      * @var IndexerInterface
@@ -129,22 +133,24 @@ class AsyncIndexer implements IndexerInterface
         foreach ($reindexMsgData as $msgData) {
             $this->sendAsyncIndexerMessage(
                 self::TOPIC_REINDEX,
-                $msgData
+                $msgData,
+                self::DEFAULT_PRIORITY_REINDEX
             );
         }
     }
 
     /**
-     * Send a message to a que using message producer
+     * Send a message to a queue using message producer
      *
      * @param $topic
      * @param array $data
+     * @param string $priority
      */
-    private function sendAsyncIndexerMessage($topic, array $data)
+    private function sendAsyncIndexerMessage($topic, array $data, $priority = MessagePriority::NORMAL)
     {
         $this->messageProducer->send(
             $topic,
-            $data
+            new Message($data, $priority)
         );
     }
 

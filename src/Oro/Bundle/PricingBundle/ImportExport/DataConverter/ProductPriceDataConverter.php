@@ -9,7 +9,7 @@ use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 class ProductPriceDataConverter extends ConfigurableTableDataConverter implements ContextAwareInterface
 {
     /**
-     * @var ContextInterface
+     * @var ContextInterface|null
      */
     protected $context;
 
@@ -26,10 +26,38 @@ class ProductPriceDataConverter extends ConfigurableTableDataConverter implement
      */
     public function convertToImportFormat(array $importedRecord, $skipNullValues = true)
     {
-        if (empty($importedRecord['price_list_id'])) {
+        if ($this->context && empty($importedRecord['price_list_id'])) {
             $importedRecord['priceList:id'] = (int)$this->context->getOption('price_list_id');
         }
 
         return parent::convertToImportFormat($importedRecord, $skipNullValues);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHeaderConversionRules()
+    {
+        return [
+            'Product SKU' => 'product:sku',
+            'Quantity' => 'quantity',
+            'Unit Code' => 'unit:code',
+            'Price' => 'value',
+            'Currency' => 'currency',
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getBackendHeader()
+    {
+        return [
+            'product:sku',
+            'quantity',
+            'unit:code',
+            'value',
+            'currency',
+        ];
     }
 }

@@ -14,24 +14,20 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
 {
     const SETTINGS_KEY = 'oro_web_catalog.web_catalog';
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    /** @var ConfigManager */
+    private $configManager;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $managerRegistry;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     /**
      * @param ConfigManager   $configManager
-     * @param ManagerRegistry $managerRegistry
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(ConfigManager $configManager, ManagerRegistry $managerRegistry)
+    public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine)
     {
         $this->configManager = $configManager;
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -39,18 +35,15 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
      */
     public function isInUse(WebCatalogInterface $webCatalog)
     {
-        $usedWebCatalogId = (int)$this->configManager->get(static::SETTINGS_KEY);
-
-        return $usedWebCatalogId === $webCatalog->getId();
+        return $this->getWebCatalogId() === $webCatalog->getId();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAssignedWebCatalogs(array $entities = [])
+    public function getAssignedWebCatalogs()
     {
-        $webCatalogId = (int)$this->configManager->get(static::SETTINGS_KEY);
-
+        $webCatalogId = $this->getWebCatalogId();
         if (!$webCatalogId) {
             return [];
         }
@@ -61,11 +54,18 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
     }
 
     /**
+     * @return int
+     */
+    private function getWebCatalogId()
+    {
+        return (int)$this->configManager->get(self::SETTINGS_KEY);
+    }
+
+    /**
      * @return WebsiteRepository
      */
-    protected function getWebsiteRepository()
+    private function getWebsiteRepository()
     {
-        /** @var WebsiteRepository $websiteRepository */
-        return $this->managerRegistry->getManagerForClass(Website::class)->getRepository(Website::class);
+        return $this->doctrine->getManagerForClass(Website::class)->getRepository(Website::class);
     }
 }

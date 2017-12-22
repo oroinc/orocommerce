@@ -10,7 +10,7 @@ Get details of the price list to customer relation by its ID.
 
 ### get_list
 
-Get the collection of price list to customer details. A collection may contain all relations or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get the collection of price list to customer details. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -93,7 +93,7 @@ Delete a price list to customer relation identified by ID.
 
 ### delete_list
 
-Delete a collection of price list to customer relations. A collection may contain all relations or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list to customer relations. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 

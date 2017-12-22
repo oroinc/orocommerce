@@ -10,7 +10,7 @@ use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * @ORM\Table(name="oro_checkout_line_item")
@@ -19,7 +19,7 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInterface, CheckoutLineItemInterface
+class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInterface, ProductLineItemInterface
 {
     /**
      * @var int
@@ -153,6 +153,22 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
     }
 
     /**

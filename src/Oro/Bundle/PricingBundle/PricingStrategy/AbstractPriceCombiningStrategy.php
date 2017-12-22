@@ -10,12 +10,15 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyInterface
+abstract class AbstractPriceCombiningStrategy implements
+    PriceCombiningStrategyInterface,
+    InsertFromSelectExecutorAwareInterface
 {
 
     /**
@@ -59,12 +62,12 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
 
     /**
      * @param Registry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
      */
     public function __construct(
         Registry $registry,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->registry = $registry;
@@ -210,4 +213,20 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
         CombinedPriceListToPriceList $priceListRelation,
         Product $product = null
     );
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setInsertSelectExecutor(ShardQueryExecutorInterface $queryExecutor)
+    {
+        $this->insertFromSelectQueryExecutor = $queryExecutor;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInsertSelectExecutor()
+    {
+        return $this->insertFromSelectQueryExecutor;
+    }
 }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -42,22 +42,10 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
 
     public function setUp()
     {
-        $this->lineItemRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->frontendProductPricesDataProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shoppingListLineItemsDataProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->productPriceFormatter = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
-            ->disableOriginalConstructor()->getMock();
+        $this->lineItemRepository = $this->createMock(LineItemRepository::class);
+        $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
+        $this->shoppingListLineItemsDataProvider = $this->createMock(ShoppingListLineItemsDataProvider::class);
+        $this->productPriceFormatter = $this->createMock(ProductPriceFormatter::class);
 
         $this->provider = new FrontendShoppingListProductsProvider(
             $this->lineItemRepository,
@@ -157,11 +145,11 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
     {
         $shoppingLists = [$this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')];
         $productCount = 1;
-
+        $localization = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization');
         $this->lineItemRepository->expects($this->once())
             ->method('getLastProductsGroupedByShoppingList')
-            ->with($shoppingLists, $productCount);
+            ->with($shoppingLists, $productCount, $localization);
 
-        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
+        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount, $localization);
     }
 }

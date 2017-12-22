@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -127,6 +128,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $productUnit->setCode('item');
 
         $product = $this->getProductEntity($sku, $productUnit);
+        $product->setStatus(Product::STATUS_ENABLED);
         $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
         $product->setInventoryStatus($inventoryStatus);
 
@@ -177,6 +179,42 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $product = $this->getProductEntity($sku, $productUnit);
         $inventoryStatus = new StubEnumValue('out_of_stock', 'Out of stock');
+        $product->setInventoryStatus($inventoryStatus);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_rfp.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
+        $this->assertMetadataCalled();
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
+
+        $this->extension->buildForm($this->getBuilderMock(true), []);
+
+        $this->assertEmpty($this->entity->getRequestProducts());
+    }
+
+    public function testTheIsNoDisabledProductsInRequestProductsAfterExtensionBuild()
+    {
+        $sku = 'TEST';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => 3,
+                ],
+            ],
+        ];
+        $this->entity = new RFPRequest();
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $product = $this->getProductEntity($sku, $productUnit);
+        $product->setStatus(Product::STATUS_DISABLED);
+        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->configManager->expects($this->once())

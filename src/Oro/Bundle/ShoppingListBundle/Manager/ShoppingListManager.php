@@ -331,7 +331,7 @@ class ShoppingListManager
 
         $shoppingList = null;
         if ($shoppingListId) {
-            $shoppingList = $repository->findByUserAndId($this->aclHelper, $shoppingListId);
+            $shoppingList = $repository->findByUserAndId($this->aclHelper, $shoppingListId, $this->getWebsiteId());
         }
 
         if (!$shoppingList instanceof ShoppingList) {
@@ -352,8 +352,14 @@ class ShoppingListManager
         /** @var EntityManager $em */
         $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
 
-        if ($customerVisitor->getShoppingLists()->first()) {
-            return $customerVisitor->getShoppingLists()->first()->setCurrent(true);
+        /** @var ShoppingList $shoppingList */
+        foreach ($customerVisitor->getShoppingLists() as $shoppingList) {
+            if (!$website = $shoppingList->getWebsite()) {
+                continue;
+            }
+            if ($website->getId() === $this->getWebsiteId()) {
+                return $shoppingList->setCurrent(true);
+            }
         }
 
         //Create new SL if no one still exists
@@ -397,10 +403,10 @@ class ShoppingListManager
         $currentListId = $this->cache->fetch($this->getCustomerUser()->getId());
         $shoppingList = null;
         if ($currentListId) {
-            $shoppingList = $repository->findByUserAndId($this->aclHelper, $currentListId);
+            $shoppingList = $repository->findByUserAndId($this->aclHelper, $currentListId, $this->getWebsiteId());
         }
         if (!$shoppingList) {
-            $shoppingList  = $repository->findAvailableForCustomerUser($this->aclHelper);
+            $shoppingList  = $repository->findAvailableForCustomerUser($this->aclHelper, false, $this->getWebsiteId());
         }
         if ($create && !$shoppingList instanceof ShoppingList) {
             $label = $this->translator->trans($label ?: 'oro.shoppinglist.default.label');
@@ -424,7 +430,7 @@ class ShoppingListManager
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findByUser($this->aclHelper, $sortCriteria);
+        return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
     }
 
     /**
@@ -441,7 +447,12 @@ class ShoppingListManager
         if ($currentShoppingList) {
             /* @var $repository ShoppingListRepository */
             $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
-            $shoppingLists = $repository->findByUser($this->aclHelper, $sortCriteria, $currentShoppingList);
+            $shoppingLists = $repository->findByUser(
+                $this->aclHelper,
+                $sortCriteria,
+                $currentShoppingList,
+                $this->getWebsiteId()
+            );
             $shoppingLists = array_merge([$currentShoppingList], $shoppingLists);
         }
         return $shoppingLists;
@@ -574,5 +585,16 @@ class ShoppingListManager
         $this->totalManager->recalculateTotals($shoppingList, false);
 
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    protected function getWebsiteId()
+    {
+        if (!$website = $this->websiteManager->getCurrentWebsite()) {
+            return null;
+        }
+        return $website->getId();
     }
 }

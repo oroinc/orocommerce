@@ -165,7 +165,7 @@ class ProductImageListener
 
         $this->eventDispatcher->dispatch(
             ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, true)
+            new ProductImageResizeEvent($productImage->getId(), true)
         );
     }
 }

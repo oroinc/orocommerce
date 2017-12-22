@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -127,12 +127,12 @@ class ProductPriceRepository extends BaseProductPriceRepository
     /**
      * @param BasePriceList $sourcePriceList
      * @param BasePriceList $targetPriceList
-     * @param InsertFromSelectShardQueryExecutor $insertQueryExecutor
+     * @param ShardQueryExecutorInterface $insertQueryExecutor
      */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
-        InsertFromSelectShardQueryExecutor $insertQueryExecutor
+        ShardQueryExecutorInterface $insertQueryExecutor
     ) {
         $qb = $this->createQBForCopy($sourcePriceList, $targetPriceList);
         $qb->addSelect('UUID()');
@@ -318,6 +318,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->from(PriceListToProduct::class, 'productToPriceList')
             ->where('productToPriceList.product = :product')
             ->setParameter('product', $product)
+            ->orderBy('productToPriceList.priceList')
             ->getQuery()
             ->getScalarResult();
 

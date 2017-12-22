@@ -14,12 +14,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  * @ORM\Table(
@@ -76,10 +76,10 @@ class ShoppingList extends ExtendShoppingList implements
     LineItemsNotPricedAwareInterface,
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
-    WebsiteAwareInterface,
+    WebsiteBasedCurrencyAwareInterface,
     CheckoutSourceEntityInterface,
     \JsonSerializable,
-    CheckoutLineItemsHolderInterface
+    ProductLineItemsHolderInterface
 {
     use DatesAwareTrait;
     use FrontendCustomerUserAwareTrait;
@@ -261,6 +261,14 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function removeLineItem(LineItem $item)
     {
+        if ($item->getId() === null) {
+            if ($this->lineItems->contains($item)) {
+                $this->lineItems->removeElement($item);
+            }
+
+            return $this;
+        }
+
         foreach ($this->lineItems as $lineItem) {
             if ($item->getId() === $lineItem->getId()) {
                 $this->lineItems->removeElement($lineItem);

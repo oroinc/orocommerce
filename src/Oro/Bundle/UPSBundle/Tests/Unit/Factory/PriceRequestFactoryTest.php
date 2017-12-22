@@ -1,9 +1,7 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\Factory;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
@@ -13,10 +11,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
@@ -75,7 +70,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'upsShippingAccountName' => 'some name',
                 'upsPickupType' => '01',
                 'upsCountry' => new Country('US'),
-                'applicableShippingServices' => [new ShippingService()]
+                'applicableShippingServices' => [new ShippingService()],
             ]
         );
 
@@ -84,6 +79,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->measureUnitConversion->expects(static::any())->method('convert')->willReturnCallback(
             function () {
                 $args = func_get_args();
+
                 return $args[0];
             }
         );
@@ -104,9 +100,9 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $lineItemCnt
-     * @param int $productWeight
-     * @param string $unitOfWeight
+     * @param int               $lineItemCnt
+     * @param int               $productWeight
+     * @param string            $unitOfWeight
      * @param PriceRequest|null $expectedRequest
      *
      * @dataProvider packagesDataProvider
@@ -122,7 +118,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->transport->setUpsUnitOfWeight($unitOfWeight);
 
         $lineItems = [];
-        $allProductsShippingOptions = [];
         for ($i = 1; $i <= $lineItemCnt; $i++) {
             /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
@@ -136,30 +131,11 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 ),
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
                 ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
-                ))
+                )),
             ]);
-
-            /** @var ProductShippingOptions $productShippingOptions */
-            $allProductsShippingOptions[] = $this->getEntity(
-                ProductShippingOptions::class,
-                [
-                    'id' => 42,
-                    'product' => $product,
-                    'productUnit' => $this->getEntity(
-                        ProductUnit::class,
-                        ['code' => 'test1']
-                    ),
-                    'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                    'weight' => Weight::create($productWeight, $this->getEntity(
-                        WeightUnit::class,
-                        ['code' => 'kg']
-                    ))
-                ]
-            );
         }
 
         $context = new ShippingContext([
@@ -169,14 +145,8 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
             ShippingContext::FIELD_PAYMENT_METHOD => '',
             ShippingContext::FIELD_CURRENCY => 'USD',
-            ShippingContext::FIELD_SUBTOTAL => new Price()
+            ShippingContext::FIELD_SUBTOTAL => new Price(),
         ]);
-
-        $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
-        $repository->expects(self::any())->method('findBy')->willReturn($allProductsShippingOptions);
-
-        $manager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $manager->expects(self::any())->method('getRepository')->willReturn($repository);
 
         $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
 
@@ -194,39 +164,39 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'productWeight' => 30,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_LBS,
                 'expectedRequest' => $this->createRequest([
-                    $this->createPackage(14, 14, 14, 60, UPSTransport::UNIT_OF_WEIGHT_LBS)
-                ])
+                    $this->createPackage(60, UPSTransport::UNIT_OF_WEIGHT_LBS),
+                ]),
             ],
             'TwoPackages-LBS' => [
                 'lineItemCnt' => 3,
                 'productWeight' => 50,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_LBS,
                 'expectedRequest' => $this->createRequest([
-                    $this->createPackage(21, 21, 21, 150, UPSTransport::UNIT_OF_WEIGHT_LBS),
-                ])
+                    $this->createPackage(150, UPSTransport::UNIT_OF_WEIGHT_LBS),
+                ]),
             ],
             'OnePackage-KGS' => [
                 'lineItemCnt' => 2,
                 'productWeight' => 30,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_KGS,
                 'expectedRequest' => $this->createRequest([
-                    $this->createPackage(14, 14, 14, 60, UPSTransport::UNIT_OF_WEIGHT_KGS)
-                ])
+                    $this->createPackage(60, UPSTransport::UNIT_OF_WEIGHT_KGS),
+                ]),
             ],
             'TwoPackages-KGS' => [
                 'lineItemCnt' => 3,
                 'productWeight' => 30,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_KGS,
                 'expectedRequest' => $this->createRequest([
-                    $this->createPackage(14, 14, 14, 60, UPSTransport::UNIT_OF_WEIGHT_KGS),
-                    $this->createPackage(7, 7, 7, 30, UPSTransport::UNIT_OF_WEIGHT_KGS),
-                ])
+                    $this->createPackage(60, UPSTransport::UNIT_OF_WEIGHT_KGS),
+                    $this->createPackage(30, UPSTransport::UNIT_OF_WEIGHT_KGS),
+                ]),
             ],
             'NoPackages' => [
                 'lineItemCnt' => 0,
                 'productWeight' => 30,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_KGS,
-                'expectedRequest' => null
+                'expectedRequest' => null,
             ],
         ];
     }
@@ -239,22 +209,16 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $length
-     * @param int $width
-     * @param int $height
-     * @param int $weight
+     * @param int    $weight
      * @param string $unitOfWeight
+     *
      * @return Package
      */
-    protected function createPackage($length, $width, $height, $weight, $unitOfWeight)
+    protected function createPackage($weight, $unitOfWeight)
     {
         $expectedPackage = new Package();
         $expectedPackage
             ->setPackagingTypeCode('00')
-            ->setDimensionLength((string)$length)
-            ->setDimensionWidth((string)$width)
-            ->setDimensionHeight((string)$height)
-            ->setDimensionCode('IN')
             ->setWeight((string)$weight)
             ->setWeightCode($unitOfWeight);
 
@@ -263,6 +227,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $expectedPackages
+     *
      * @return PriceRequest
      */
     protected function createRequest($expectedPackages)
@@ -275,7 +240,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->setShipFrom('some name', new AddressStub())
             ->setShipTo(null, new AddressStub())
             ->setPackages($expectedPackages);
-        
+
         return $expectedRequest;
     }
 }

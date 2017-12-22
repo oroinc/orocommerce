@@ -9,3 +9,6 @@ $product-action-area-in-sticky-inner-bg-color: get-color('additional', 'base') !
 
 $product-action-in-sticky-width: 50% !default;
 $product-action-in-sticky-offset: $offset-x-m !default;
+
+// Mobile
+$product-action-toggle-icon-mobile: $fa-var-plus-square-o !default;

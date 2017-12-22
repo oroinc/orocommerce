@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -14,8 +16,10 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class PriceListToProductEntityListener
+class PriceListToProductEntityListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     const FIELD_PRICE_LIST = 'priceList';
     const FIELD_PRODUCT = 'product';
 
@@ -99,6 +103,10 @@ class PriceListToProductEntityListener
      */
     protected function scheduleDependentPriceListsUpdate(PriceList $priceList, Product $product = null)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $lexemes = $this->priceRuleLexemeTriggerHandler
             ->findEntityLexemes(PriceList::class, ['assignedProducts'], $priceList->getId());
         $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
@@ -110,6 +118,10 @@ class PriceListToProductEntityListener
      */
     protected function schedulePriceListRecalculations(PriceList $priceList, Product $product = null)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
         $this->scheduleDependentPriceListsUpdate($priceList, $product);
     }

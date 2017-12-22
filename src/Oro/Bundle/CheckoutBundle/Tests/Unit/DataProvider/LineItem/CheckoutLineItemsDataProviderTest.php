@@ -8,9 +8,9 @@ use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvide
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase

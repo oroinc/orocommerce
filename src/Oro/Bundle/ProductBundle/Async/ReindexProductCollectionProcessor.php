@@ -10,6 +10,7 @@ use Oro\Bundle\SegmentBundle\Provider\SegmentSnapshotDeltaProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
+use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -107,7 +108,8 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
                                 sprintf('%s:reindex:%s', $job->getName(), ++$i),
                                 function (JobRunner $jobRunner, Job $child) use ($msgData) {
                                     $msgData['jobId'] = $child->getId();
-                                    $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $msgData);
+                                    $message = new Message($msgData, AsyncIndexer::DEFAULT_PRIORITY_REINDEX);
+                                    $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
                                 }
                             );
                         }

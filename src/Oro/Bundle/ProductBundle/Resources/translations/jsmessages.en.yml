@@ -7,7 +7,7 @@ oro:
                     asc: ascending
                     desc: descending
                 pagination:
-                    label: %start%-%end% out of %total%
+                    label: "%start%-%end% out of %total%"
             select_product: 'Select Item'
 
         productunit:

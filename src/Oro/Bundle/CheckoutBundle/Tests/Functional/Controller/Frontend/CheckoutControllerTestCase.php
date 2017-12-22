@@ -20,8 +20,6 @@ use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethod
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -83,7 +81,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
-            LoadQuoteProductDemandData::class,
         ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -116,14 +113,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     }
 
     /**
-     * @param QuoteDemand $quoteDemand
-     */
-    protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
-    {
-        $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
-    }
-
-    /**
      * @param ShoppingList $shoppingList
      * @return array
      */
@@ -137,28 +126,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
                     'shoppingList' => $shoppingList,
                     'showErrors' => true,
                 ],
-                'results' => [
-                    'redirectUrl' => new PropertyPath('redirectUrl'),
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @param QuoteDemand $quoteDemand
-     * @return array
-     */
-    protected function getCheckoutFromQuoteDemandData(QuoteDemand $quoteDemand)
-    {
-        return [
-            'context' => new ActionData([]),
-            'options' => [
-                'parameters_mapping' => [
-                    'sourceCriteria' => [
-                        'quoteDemand' => $quoteDemand,
-                    ],
-                ],
-                'action_group' => 'start_checkout',
                 'results' => [
                     'redirectUrl' => new PropertyPath('redirectUrl'),
                 ]

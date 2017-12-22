@@ -268,12 +268,12 @@
 
 {% block _shopping_list_line_items_list_item_name_widget %}
     <h3 class="product-item__title product-item__title--in-cart">
-        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_tag_filter }}</a>
     </h3>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
-    <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="product-item__sku-value">{{ mainProduct.sku }}</span></div>
+    <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="product-item__sku-value">{{ mainProduct.sku|oro_tag_filter }}</span></div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_inventory_status_widget %}
@@ -297,7 +297,7 @@
 {% block _shopping_list_line_items_list_availability_inventory_status_widget %}
     <div>{{ mainProduct.InventoryStatus }}</div>
     {% if (oro_is_low_inventory_product(mainProduct)) %}
-        <div class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
+        <p class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</p>
     {% endif %}
 {% endblock %}
 

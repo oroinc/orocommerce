@@ -518,7 +518,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.free_form_product.blank'
+                    required: __('oro.sale.quoteproduct.free_form_product.blank')
                 }
             });
 
@@ -530,7 +530,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.free_form_product.blank'
+                    required: __('oro.sale.quoteproduct.free_form_product.blank')
                 }
             });
 
@@ -542,7 +542,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.product.blank'
+                    required: __('oro.sale.quoteproduct.product.blank')
                 }
             });
 
@@ -554,7 +554,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.product.blank'
+                    required: __('oro.sale.quoteproduct.product.blank')
                 }
             });
         },

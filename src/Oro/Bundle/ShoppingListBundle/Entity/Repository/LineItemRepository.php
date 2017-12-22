@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -124,26 +125,26 @@ class LineItemRepository extends EntityRepository
      *   ]
      * ]
      *
-     * @param ShoppingList[] $shoppingLists
-     * @param int $productCount
+     * @param ShoppingList[]    $shoppingLists
+     * @param int               $productCount
+     * @param Localization|null $localization
      *
      * @return array
      */
-    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
-    {
+    public function getLastProductsGroupedByShoppingList(
+        array $shoppingLists,
+        $productCount,
+        Localization $localization = null
+    ) {
         $dql = <<<DQL
-SELECT li, list, product, names
+SELECT li
 FROM OroShoppingListBundle:LineItem AS li
-INNER JOIN li.shoppingList list
-INNER JOIN li.product product
-INNER JOIN product.names names
 WHERE li.shoppingList IN (:shoppingLists) AND (
     SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
-    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id
+    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id AND li2.parentProduct IS NULL
 ) <= :productCount
 ORDER BY li.shoppingList DESC, li.id DESC
 DQL;
-
         $shoppingListIds = array_map(
             function (ShoppingList $shoppingList) {
                 return $shoppingList->getId();
@@ -159,14 +160,47 @@ DQL;
             ->getResult();
 
         $result = [];
-        foreach ($lineItems as $lineItem) {
-            $shoppingListId = $lineItem->getShoppingList()->getId();
-            $productName = $lineItem->getProduct()->getName()->getString();
 
-            $result[$shoppingListId][] = [
-                'name' => $productName
-            ];
+        $productsIds = array_map(
+            function (LineItem $lineItem) {
+                return $lineItem->getProduct()->getId();
+            },
+            $lineItems
+        );
+        if (count($productsIds) > 0) {
+            $qb = $this->_em->createQueryBuilder();
+            /** @var Product[] $products */
+            $products = $qb->select('product, names')
+                ->from(Product::class, 'product')
+                ->join('product.names', 'names')
+                ->where('product IN (:products)')
+                ->setParameter('products', $productsIds)
+                ->getQuery()
+                ->getResult();
+            $organizedProducts = [];
+            foreach ($products as $product) {
+                $organizedProducts[$product->getId()] = $product;
+            }
+            foreach ($lineItems as $lineItem) {
+                $shoppingListId = $lineItem->getShoppingList()->getId();
+                $product = $organizedProducts[$lineItem->getProduct()->getId()];
+                if ($product !== null) {
+                    if ($lineItem->getParentProduct()) {
+                        $result[$shoppingListId][$lineItem->getParentProduct()->getId()] = [
+                            'name' => $lineItem->getParentProduct()->getName($localization)->getString()
+                        ];
+                    } else {
+                        $result[$shoppingListId][$lineItem->getProduct()->getId()] = [
+                            'name' => $product->getName($localization)->getString()
+                        ];
+                    }
+                }
+            }
         }
+
+        $result = array_map(function (array $lineItemsByShoppingList) use ($productCount) {
+            return array_slice($lineItemsByShoppingList, 0, $productCount);
+        }, $result);
 
         return $result;
     }

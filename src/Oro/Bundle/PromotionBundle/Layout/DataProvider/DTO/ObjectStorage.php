@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO;
 
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * The ObjectStorage class provides a map from objects to data.
@@ -29,12 +28,11 @@ class ObjectStorage implements \Countable
      */
     private function getOffset($object): string
     {
-        if (!$object instanceof CheckoutLineItemInterface && !$object instanceof OrderLineItem) {
+        if (!$object instanceof ProductLineItemInterface) {
             throw new UnsupportedObjectException(
                 sprintf(
-                    'Only instances of %s or %s are supported. %s given',
-                    CheckoutLineItemInterface::class,
-                    OrderLineItem::class,
+                    'Only instances of %s are supported. %s given',
+                    ProductLineItemInterface::class,
                     get_class($object)
                 )
             );

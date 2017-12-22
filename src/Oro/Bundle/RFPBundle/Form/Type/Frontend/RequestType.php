@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
@@ -73,8 +75,28 @@ class RequestType extends AbstractType
             ])
             ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
                 'label' => 'oro.frontend.rfp.request.assigned_customer_users.label',
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+    }
+
+    /**
+     * Remove empty requestProducts
+     *
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+        if (!array_key_exists('requestProducts', $data)) {
+            return;
+        }
+        foreach ($data['requestProducts'] as $key => $requestProduct) {
+            if (!$requestProduct['product']) {
+                unset($data['requestProducts'][$key]);
+            }
+        }
+        $event->setData($data);
     }
 
     /**

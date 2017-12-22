@@ -274,6 +274,7 @@ datagrids:
         acl_resource: oro_rfp_frontend_request_view
         extended_entity_name: %oro_rfp.entity.request.class%
         options:
+            frontend: true
             entityHint:        requests
             entity_pagination: true
             customerUserOwner:
