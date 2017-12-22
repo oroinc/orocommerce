@@ -20,6 +20,7 @@ config:
         'oropricing/js/app/views/abstract-switcher': 'bundles/oropricing/js/app/views/abstract-switcher.js'
         'oropricing/js/app/views/quantity-switcher': 'bundles/oropricing/js/app/views/quantity-switcher.js'
         'oropricing/js/app/views/expression-field-switcher': 'bundles/oropricing/js/app/views/expression-field-switcher.js'
+        'oropricing/js/app/modules/entity-filter-preset-module': 'bundles/oropricing/js/app/modules/entity-filter-preset-module.js'
 
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'
     map:
@@ -27,3 +28,4 @@ config:
             'oro/filter/price-attribute-product-price-filter': 'oro/filter/product-price-filter'
     appmodules:
         - oropricing/js/app/modules/validator-constraints-module
+        - oropricing/js/app/modules/entity-filter-preset-module
