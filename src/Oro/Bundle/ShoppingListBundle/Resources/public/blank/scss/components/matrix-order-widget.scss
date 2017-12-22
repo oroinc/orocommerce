@@ -1,10 +1,28 @@
 // @theme: blank;
 
+@mixin matrix-design-for-not-available () {
+    .matrix-order-widget__item-not-available {
+        width: 100%;
+
+        line-height: $matrix-order-widget-not-available-line-height;
+
+        background-color: $matrix-order-widget-not-available-background-color;
+        border-radius: $matrix-order-widget-not-available-border-radius;
+    }
+}
+
 .matrix-order-widget {
     clear: $matrix-order-widget-clear;
 
     max-width: $matrix-order-widget-max-width;
     margin: $matrix-order-widget-offset;
+
+    @include clearfix();
+
+    &__one-line {
+        display: flex;
+        align-items: center;
+    }
 
     &__grid {
         overflow: $matrix-order-widget-grid-overflow;
@@ -15,6 +33,62 @@
         padding-top: $matrix-order-widget-grid-offset-inner-top;
 
         font-family: $matrix-order-widget-grid-font-family;
+
+        &.state-multiline {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__one-line {
+                padding: $offset-y-s $offset-x $offset-y-s 0;
+            }
+
+            .matrix-order-widget__form__row {
+                display: flex;
+                flex-wrap: wrap;
+                height: auto;
+
+                white-space: normal;
+            }
+
+            .matrix-order-widget__form__col {
+                padding: 0;
+
+                min-width: $matrix-order-widget-state-multiline-form-col-width;
+                max-width: $matrix-order-widget-state-multiline-form-col-width;
+            }
+
+            .matrix-order-widget__label-wrap {
+                display: inline-block;
+                min-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                max-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                padding-right: $offset-x;
+
+                word-break: break-word;
+            }
+
+            @include matrix-design-for-not-available();
+        }
+
+        &.state-labels-above {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__form__row {
+                height: auto;
+            }
+
+            .matrix-order-widget__one-line {
+                flex-direction: column;
+            }
+
+            .matrix-order-widget__label-wrap {
+                margin-bottom: $offset-x-m;
+            }
+
+            @include matrix-design-for-not-available();
+        }
     }
 
     &__grid--multi-rows & {
@@ -239,7 +313,6 @@
 
     &__form {
         &--inline {
-            float: $matrix-order-widget-form-inline-float;
             margin-bottom: $matrix-order-widget-form-inline-offset-bottom;
         }
 
