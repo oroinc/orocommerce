@@ -1,0 +1,249 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        role: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+    branda:
+        email: 'BrandaJSanborn@example.org'
+        username: 'BrandaJSanborn@example.org'
+        password: 'y12bJY3cVtGLKLAfR+CuegOlw9bZBbLa5DPSJpkyD0APjybCxCDG2YZNr3NePQIQrev7FGOesraw2IP70y5a/w=='
+        salt: 'alm84p22l2osog8kksw0g4ckc4cgcwc'
+        firstName: 'Branda'
+        lastName: 'Sanborn'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        role: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: 'set'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: '5GN30'
+        primaryUnitPrecision: '@precision1'
+        addUnitPrecision: ['@precision1', '@precision2']
+        addName: ['@locValue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+    product2:
+        sku: '9OL25'
+        primaryUnitPrecision: '@precision2'
+        addUnitPrecision: ['@precision1', '@precision2']
+        addName: ['@locValue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValue1:
+        string: 'Physician’s 5-Pocket Lab Coat'
+        text: 'Physician’s 5-Pocket Lab Coat'
+    locValue2:
+        string: 'Women’s White Slip-On Clogs'
+        text: 'Women’s White Slip-On Clogs'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.01.2016 11:00")>'
+        updatedAt: '<date("01.01.2016 11:00")>'
+    order2:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.01.2016 11:00")>'
+        updatedAt: '<date("01.01.2016 11:00")>'
+    order3:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.01.2016 13:00")>'
+        updatedAt: '<date("01.01.2016 13:00")>'
+    order4:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.01.2016 13:00")>'
+        updatedAt: '<date("01.01.2016 13:00")>'
+    order5:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("02.01.2016 11:00")>'
+        updatedAt: '<date("02.01.2016 11:00")>'
+    order6:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("03.01.2016 11:00")>'
+        updatedAt: '<date("03.01.2016 11:00")>'
+    order7:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("03.01.2016 11:00")>'
+        updatedAt: '<date("03.01.2016 11:00")>'
+    order8:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("03.01.2016 11:00")>'
+        updatedAt: '<date("03.01.2016 11:00")>'
+    order9:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.02.2016 11:00")>'
+        updatedAt: '<date("01.02.2016 11:00")>'
+    order10:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.02.2016 11:00")>'
+        updatedAt: '<date("01.02.2016 11:00")>'
+    order11:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.05.2016 11:00")>'
+        updatedAt: '<date("01.05.2016 11:00")>'
+    order12:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.05.2016 11:00")>'
+        updatedAt: '<date("01.05.2016 11:00")>'
+    order13:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.06.2016 11:00")>'
+        updatedAt: '<date("01.06.2016 11:00")>'
+    order14:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.06.2016 11:00")>'
+        updatedAt: '<date("01.06.2016 11:00")>'
+    order15:
+        organization: '@organization'
+        customerUser: '@branda'
+        createdAt: '<date("01.01.2017 11:00")>'
+        updatedAt: '<date("01.01.2017 11:00")>'
+    order16:
+        organization: '@organization'
+        customerUser: '@amanda'
+        createdAt: '<date("01.01.2017 11:00")>'
+        updatedAt: '<date("01.01.2017 11:00")>'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    lineitem1:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '20'
+        productUnit: '@item'
+        order: '@order1'
+    lineitem2:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '15'
+        productUnit: 'set'
+        order: '@order2'
+    lineitem3:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '5'
+        productUnit: '@item'
+        order: '@order3'
+    lineitem4:
+        product: '@product1'
+        productSku: '5GN30'
+        quantity: '5'
+        productUnit: '@item'
+        order: '@order4'
+    lineitem5:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '16'
+        productUnit: '@item'
+        order: '@order5'
+    lineitem6:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '41'
+        productUnit: '@item'
+        order: '@order6'
+    lineitem7:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '40'
+        productUnit: 'set'
+        order: '@order7'
+    lineitem8:
+        product: '@product1'
+        productSku: '5GN30'
+        quantity: '11'
+        productUnit: 'set'
+        order: '@order8'
+    lineitem9:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '21'
+        productUnit: '@item'
+        order: '@order9'
+    lineitem10:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '17'
+        productUnit: 'set'
+        order: '@order10'
+    lineitem11:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '30'
+        productUnit: '@item'
+        order: '@order11'
+    lineitem12:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '44'
+        productUnit: 'set'
+        order: '@order12'
+    lineitem13:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '4'
+        productUnit: '@item'
+        order: '@order13'
+    lineitem14:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '56'
+        productUnit: 'set'
+        order: '@order14'
+    lineitem15:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '20'
+        productUnit: '@item'
+        order: '@order15'
+    lineitem16:
+        product: '@product2'
+        productSku: '9OL25'
+        quantity: '10'
+        productUnit: 'set'
+        order: '@order16'
