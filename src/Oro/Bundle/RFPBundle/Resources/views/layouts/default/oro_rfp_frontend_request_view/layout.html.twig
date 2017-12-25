@@ -83,7 +83,7 @@
                         {% if request.assignedCustomerUsers|length %}
                             <tr>
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.rfp.request.assigned_customer_users.label'|trans }}</td>
-                                <td class="customer-info-grid__element-content customer-rfp_request-assigned_users">
+                                <td class="customer-info-grid__element-content">
                                     {{ UI.entityViewLinks(request.assignedCustomerUsers, 'fullName', 'oro_customer_frontend_customer_user_view') }}
                                 </td>
                             </tr>
