@@ -39,7 +39,7 @@
         shoppingListId: shoppingList.id
     }) %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form'
+        '~class': class_prefix ~ '__form fields-row'
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

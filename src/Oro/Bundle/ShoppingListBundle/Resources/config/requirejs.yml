@@ -4,5 +4,6 @@ config:
         'oroshoppinglist/js/validator/decimal-precision': 'bundles/oroshoppinglist/js/app/validator/decimal-precision.js'
         'oroshoppinglist/js/app/modules/validator-constraints-module': 'bundles/oroshoppinglist/js/app/modules/validator-constraints-module.js'
         'oroshoppinglist/js/app/views/line-item-form-submit-view': 'bundles/oroshoppinglist/js/app/views/line-item-form-submit-view.js'
+        'oroshoppinglist/js/app/components/shoppinglist-create-order-button-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-create-order-button-component.js'
     appmodules:
         - oroshoppinglist/js/app/modules/validator-constraints-module

@@ -11,6 +11,7 @@
         {{ block('_matrix_collection_widget_side') }}
         {{ block('_matrix_collection_widget_body') }}
         {{ block('_matrix_collection_widget_footer') }}
+        {{ block('_matrix_collection_widget_errors') }}
     </div>
 {% endblock %}
 
@@ -145,4 +146,8 @@
     <div class="{{ class_prefix }}__form__col">
         <div class="{{ class_prefix }}__grid-footer-total" data-columns-quantity="{{ cellIndex }}">0</div>
     </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_errors %}
+    <div class="fields-row-error"></div>
 {% endblock %}

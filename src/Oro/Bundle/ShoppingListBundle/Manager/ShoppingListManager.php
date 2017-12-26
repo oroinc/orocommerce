@@ -261,15 +261,13 @@ class ShoppingListManager
         /** @var LineItemRepository $repository */
         $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
+        $products = [];
         if ($product->isConfigurable()) {
-            $simpleProducts = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
-            if (!$simpleProducts) {
-                return 0;
-            }
-        } else {
-            $simpleProducts = [$product];
+            $products = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
         }
-        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, $simpleProducts);
+        $products[] = $product;
+
+        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, $products);
 
         foreach ($lineItems as $lineItem) {
             $shoppingList->removeLineItem($lineItem);

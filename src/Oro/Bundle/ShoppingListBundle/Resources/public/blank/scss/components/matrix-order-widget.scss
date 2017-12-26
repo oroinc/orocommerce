@@ -34,6 +34,10 @@
 
         font-family: $matrix-order-widget-grid-font-family;
 
+        .fields-row-error {
+            margin: $matrix-order-widget-form-col-offset-inner;
+        }
+
         &.state-multiline {
             .matrix-order-widget__grid-body {
                 overflow: inherit;
@@ -257,7 +261,7 @@
             height: $matrix-order-widget-grid-side-pseudo-classes-height;
             top: $matrix-order-widget-grid-side-pseudo-classes-top;
             left: $matrix-order-widget-grid-side-pseudo-classes-left;
-            
+
             z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
         }
 

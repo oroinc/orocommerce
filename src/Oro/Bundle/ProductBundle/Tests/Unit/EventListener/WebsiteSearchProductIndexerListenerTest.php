@@ -262,6 +262,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'sku_uppercase' => [['value' => 'SKU123', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
+            'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [
                 [

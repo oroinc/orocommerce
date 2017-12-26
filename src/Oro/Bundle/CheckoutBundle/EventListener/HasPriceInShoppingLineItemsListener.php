@@ -73,6 +73,14 @@ class HasPriceInShoppingLineItemsListener
             return;
         }
 
+        if (!$this->isThereAQuantityPresent($lineItems)) {
+            $conditionEvent->addError(
+                'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_quantity'
+            );
+
+            return;
+        }
+
         if (!$this->isThereAPricePresent($lineItemsWithNotFixedPrice)) {
             $conditionEvent->addError(
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'
@@ -119,5 +127,20 @@ class HasPriceInShoppingLineItemsListener
         );
 
         return !empty(array_filter($prices));
+    }
+
+    /**
+     * @param Collection|CheckoutLineItem[] $lineItems
+     * @return boolean
+     */
+    private function isThereAQuantityPresent(Collection $lineItems)
+    {
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem->getQuantity()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

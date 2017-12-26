@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridInterface;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -25,16 +26,21 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $variantAvailability;
 
+    /** @var EmptyMatrixGridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $emptyMatrixGridManager;
+
     /** @var MatrixGridOrderManager */
     private $manager;
 
     protected function setUp()
     {
         $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->emptyMatrixGridManager = $this->createMock(EmptyMatrixGridInterface::class);
 
         $this->manager = new MatrixGridOrderManager(
             $this->getPropertyAccessor(),
-            $this->variantAvailability
+            $this->variantAvailability,
+            $this->emptyMatrixGridManager
         );
     }
 
@@ -492,5 +498,46 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+    }
+
+    public function testAddEmptyMatrixIfAllowed()
+    {
+        $shoppingList = new ShoppingList();
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $lineItems = [
+            $this->getEntity(LineItem::class, ['id' => 1]),
+            $this->getEntity(LineItem::class, ['id' => 2]),
+        ];
+
+        $this->emptyMatrixGridManager->expects($this->once())
+            ->method('isAddEmptyMatrixAllowed')
+            ->with($lineItems)
+            ->willReturn(true);
+
+        $this->emptyMatrixGridManager->expects($this->once())
+            ->method('addEmptyMatrix')
+            ->with($shoppingList, $product);
+
+        $this->manager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+    }
+
+    public function testAddEmptyMatrixIfNotAllowed()
+    {
+        $shoppingList = new ShoppingList();
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $lineItems = [
+            $this->getEntity(LineItem::class, ['id' => 1]),
+            $this->getEntity(LineItem::class, ['id' => 2]),
+        ];
+
+        $this->emptyMatrixGridManager->expects($this->once())
+            ->method('isAddEmptyMatrixAllowed')
+            ->with($lineItems)
+            ->willReturn(false);
+
+        $this->emptyMatrixGridManager->expects($this->never())
+            ->method('addEmptyMatrix');
+
+        $this->manager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
     }
 }

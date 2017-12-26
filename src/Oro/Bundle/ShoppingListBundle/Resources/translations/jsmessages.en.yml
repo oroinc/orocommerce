@@ -19,6 +19,11 @@ oro:
             in_shopping_list: In Shopping List
             update_shopping_list: Update {{ shoppingList }}
             shopping_list_set_as_default: Shopping list {{ shoppingList }} has been set as default.
+        create_order_confirmation:
+            title: 'Confirmation'
+            message: 'This shopping list contains configurable products with no variations. Proceed to checkout without these products?'
+            accept_button_title: 'Proceed'
+            cancel_button_title: 'Cancel'
     frontend:
         shoppinglist:
             messages:

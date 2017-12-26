@@ -2,6 +2,7 @@
 
 .product-view-quantity {
     display: $product-view-quantity-display;
+    flex-wrap: $product-view-quantity-flex-wrap;
 
     margin-bottom: $product-view-quantity-margin-bottom;
 
@@ -19,5 +20,9 @@
         padding: $product-view-quantity-value-input-inner-offset;
 
         text-align: $product-view-quantity-value-input-text-align;
+    }
+
+    .fields-row-error {
+        width: $product-view-quantity-error-width;
     }
 }
