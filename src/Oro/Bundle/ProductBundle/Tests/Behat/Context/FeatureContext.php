@@ -131,6 +131,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $configManager = $this->getContainer()->get('oro_config.global');
             $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
             $configManager->flush();
+            $configManager->set('oro_inventory.manage_inventory', true);
+            $configManager->flush();
         } else {
             $inventoryLevelEntityManager->persist($inventoryLevel);
             $inventoryLevelEntityManager->flush();
