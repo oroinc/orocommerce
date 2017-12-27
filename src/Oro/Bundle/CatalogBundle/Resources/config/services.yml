@@ -187,7 +187,7 @@ services:
         public: false
         arguments:
             - '@request_stack'
-            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
@@ -267,3 +267,8 @@ services:
         parent: oro_website_search.repository.abstract
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
+
+    oro_catalog.entity_metadata_builder.product:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\ProductMetadataBuilder'
+        tags:
+            - { name: oro_entity_extend.entity_metadata_builder }

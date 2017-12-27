@@ -167,7 +167,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
         public: false
         arguments:
-             - '@oro_shopping_list.data_provider.frontend_product_prices'
+            - '@oro_pricing.provider.frontend_product_prices'
 
     oro_promotion.discount.order_line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
@@ -371,7 +371,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
         public: false
         arguments:
-            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_promotion.promotion_executor'
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'

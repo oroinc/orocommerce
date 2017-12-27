@@ -5,9 +5,11 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
@@ -177,7 +179,6 @@ class Slug
     public function setRouteName($routeName)
     {
         $this->routeName = $routeName;
-        $this->updateParametersHash();
 
         return $this;
     }
@@ -196,8 +197,9 @@ class Slug
      */
     public function setRouteParameters(array $routeParameters)
     {
+        UrlParameterHelper::normalizeNumericTypes($routeParameters);
         $this->routeParameters = $routeParameters;
-        $this->updateParametersHash();
+        $this->parametersHash = UrlParameterHelper::hashParams($routeParameters);
 
         return $this;
     }
@@ -308,7 +310,6 @@ class Slug
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
-        $this->updateParametersHash();
 
         return $this;
     }
@@ -338,48 +339,5 @@ class Slug
     public function getParametersHash()
     {
         return $this->parametersHash;
-    }
-
-    /**
-     * @param string $name
-     * @param array $parameters
-     * @param int $localizationId
-     * @return string
-     */
-    public static function hashParameters($name, array $parameters, $localizationId)
-    {
-        $key = [
-            $name,
-            base64_encode(serialize($parameters)),
-            $localizationId ?? 0
-        ];
-
-        return md5(implode("|", $key));
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->updateParametersHash();
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updateParametersHash();
-    }
-
-    protected function updateParametersHash()
-    {
-        $localizationId = $this->localization ? $this->localization->getId() : 0;
-        $this->parametersHash = static::hashParameters($this->routeName, $this->routeParameters, $localizationId);
     }
 }

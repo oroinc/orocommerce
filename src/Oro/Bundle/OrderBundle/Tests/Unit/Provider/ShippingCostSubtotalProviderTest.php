@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -44,7 +45,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->provider = new ShippingCostSubtotalProvider(
             $this->translator,
             $this->roundingService,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 

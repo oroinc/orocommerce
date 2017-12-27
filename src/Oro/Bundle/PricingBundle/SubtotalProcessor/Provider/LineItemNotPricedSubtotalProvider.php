@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -56,7 +55,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param ProductPriceProvider $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListTreeHandler $priceListTreeHandler ,
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -64,9 +63,9 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         ProductPriceProvider $productPriceProvider,
         DoctrineHelper $doctrineHelper,
         PriceListTreeHandler $priceListTreeHandler,
-        UserCurrencyManager $currencyManager
+        SubtotalProviderConstructorArguments $arguments
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
 
         $this->translator = $translator;
         $this->rounding = $rounding;

@@ -24,6 +24,8 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     const LINE_ITEM_7 = 'shopping_list_line_item.7';
     const LINE_ITEM_8 = 'shopping_list_line_item.8';
     const LINE_ITEM_9 = 'shopping_list_line_item.9';
+    const LINE_ITEM_10 = 'shopping_list_lin_item.10';
+    const LINE_ITEM_11 = 'shopping_list_lin_item.11';
 
     /** @var array */
     protected static $lineItems = [
@@ -75,6 +77,20 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.bottle',
             'quantity' => 3
         ],
+        self::LINE_ITEM_10 => [
+            'product' => LoadProductData::PRODUCT_3,
+            'parentProduct' => LoadProductData::PRODUCT_8,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.milliliter',
+            'quantity' => 3
+        ],
+        self::LINE_ITEM_11 => [
+            'product' => LoadProductData::PRODUCT_4,
+            'parentProduct' => LoadProductData::PRODUCT_8,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.milliliter',
+            'quantity' => 4
+        ],
     ];
 
     /**
@@ -103,7 +119,21 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             /** @var Product $product */
             $product = $this->getReference($lineItem['product']);
 
-            $this->createLineItem($manager, $shoppingList, $unit, $product, $lineItem['quantity'], $name);
+            /** @var Product $product */
+            $parentProduct = null;
+            if (isset($lineItem['parentProduct'])) {
+                $parentProduct = $this->getReference($lineItem['parentProduct']);
+            }
+
+            $this->createLineItem(
+                $manager,
+                $shoppingList,
+                $unit,
+                $product,
+                $lineItem['quantity'],
+                $name,
+                $parentProduct
+            );
         }
 
         $manager->flush();
@@ -116,6 +146,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
      * @param Product $product
      * @param float $quantity
      * @param string $referenceName
+     * @param Product $parentProduct
      */
     protected function createLineItem(
         ObjectManager $manager,
@@ -123,7 +154,8 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
         ProductUnit $unit,
         Product $product,
         $quantity,
-        $referenceName
+        $referenceName,
+        Product $parentProduct = null
     ) {
         $owner = $this->getFirstUser($manager);
         $item = new LineItem();
@@ -135,6 +167,10 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             ->setUnit($unit)
             ->setProduct($product)
             ->setQuantity($quantity);
+
+        if ($parentProduct) {
+            $item->setParentProduct($parentProduct);
+        }
 
         $manager->persist($item);
         $this->addReference($referenceName, $item);

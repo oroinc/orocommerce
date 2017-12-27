@@ -4,6 +4,14 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
       selector: '#shopping_list_view_container_content'
 
+    ShoppingListWidgetContainer:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-widget__container'
+
+    ShoppingListWidgetItemName:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-dropdown__item span.shopping-list-dropdown__name-inner'
+
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Service;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
 /**
  * Allow converting Segment definition into definition without excluded and included filters,
@@ -15,6 +16,19 @@ class ProductCollectionDefinitionConverter
     const DEFINITION_KEY = 'definition';
     const INCLUDED_FILTER_ALIAS = 'incl';
     const EXCLUDED_FILTER_ALIAS = 'excl';
+
+    /**
+     * @var SegmentFiltersPurifier
+     */
+    private $filtersPurifier;
+
+    /**
+     * @param SegmentFiltersPurifier $filterDefinitionPurifier
+     */
+    public function __construct(SegmentFiltersPurifier $filterDefinitionPurifier)
+    {
+        $this->filtersPurifier = $filterDefinitionPurifier;
+    }
 
     /**
      * Put excluded or\and included filters into definition.
@@ -30,9 +44,7 @@ class ProductCollectionDefinitionConverter
     {
         $definition = $this->normalizeDefinition($rawDefinition);
 
-        if ($this->hasFilters($definition)) {
-            $definition['filters'] = [$definition['filters']];
-        }
+        $definition['filters'] = $this->normalizeFilters($definition);
 
         if ($included) {
             if ($this->hasFilters($definition)) {
@@ -102,6 +114,24 @@ class ProductCollectionDefinitionConverter
         }
 
         return !empty($definition['filters']);
+    }
+
+    /**
+     * @param array $definition
+     * @return array
+     */
+    private function normalizeFilters(array $definition): array
+    {
+        $filters = [];
+        if ($this->hasFilters($definition)) {
+            $filters = $this->filtersPurifier->purifyFilters($definition['filters']);
+
+            if (!empty($filters)) {
+                $filters = [$filters];
+            }
+        }
+
+        return $filters;
     }
 
     /**

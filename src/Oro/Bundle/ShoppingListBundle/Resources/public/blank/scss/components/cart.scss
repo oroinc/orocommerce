@@ -1,0 +1,50 @@
+// @theme: blank;
+
+.cart-table {
+    .price-table {
+        width: 100%;
+
+        tbody {
+            td {
+                padding: 0 $offset-y-s 0 0;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .cart-table {
+        .status-cell {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .cart-table {
+        thead {
+            display: none;
+        }
+
+        table,
+        tbody,
+        tr,
+        td:first-child {
+            display: block;
+        }
+
+        td {
+            &:not(:first-child) {
+                padding-top: 0;
+            }
+
+            &.line-item-price {
+                padding: 0 0 $offset-y;
+            }
+        }
+
+        &__form {
+            margin-left: -12px;
+        }
+    }
+}

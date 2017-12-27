@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -22,13 +22,13 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
     /**
      * MinimalPricesCombiningStrategy constructor.
      * @param Registry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
      * @param ShardManager $shardManager
      */
     public function __construct(
         Registry $registry,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceListTriggerHandler $triggerHandler,
         ShardManager $shardManager
     ) {

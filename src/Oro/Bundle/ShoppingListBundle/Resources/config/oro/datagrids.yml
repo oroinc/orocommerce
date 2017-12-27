@@ -24,8 +24,7 @@ datagrids:
                     left:
                         - { join: shopping_list.customer, alias: shopping_list_customer }
                         - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
-                        - { join: %oro_customer.entity.customer_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.customerUser and userSettings.website = shopping_list.website" }
-                        - { join: %oro_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = COALESCE(userSettings.currency, '@oro_pricing.user_currency_manager->getDefaultCurrency()')" }
+                        - { join: %oro_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
 
         columns:
             id:

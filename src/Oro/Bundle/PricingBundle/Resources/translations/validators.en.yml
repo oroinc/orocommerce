@@ -1,8 +1,8 @@
 oro:
     pricing:
           validators:
-              price_attrirute_price_list:
-                  fieldName.message: 'Field Name cannot contains special chars or spaces'
+              price_attribute_price_list:
+                  fieldName.message: 'Field Name cannot contain special chars or spaces, and must contain at least one letter'
               price_list:
                   product_price_currency.message: 'Cannot remove "%invalidCurrency%" currency. Please delete all prices points in "%invalidCurrency%" first.'
                   unique_price_list.message: 'Price list is duplicated.'

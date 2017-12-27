@@ -91,7 +91,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $categories = [];
         $websiteIds = [];
 
-        foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $this->collectChangedCategories([$entity], $categories, $unitOfWork);
             $this->collectWebsiteIds([$entity], $websiteIds);
             $this->collectChangedFields($entity, $categories, $websiteIds);

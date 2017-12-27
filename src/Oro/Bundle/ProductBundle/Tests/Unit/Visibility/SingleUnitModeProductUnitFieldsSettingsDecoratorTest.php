@@ -3,10 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Visibility;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Exception\DefaultUnitNotFoundException;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Bundle\ProductBundle\Visibility\SingleUnitModeProductUnitFieldsSettingsDecorator;
@@ -39,10 +43,17 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
      */
     private $settings;
 
+    /**
+     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productUnitRepo;
+
     public function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()->getMock();
+        $this->productUnitRepo = $this->createMock(EntityRepository::class);
+        $this->doctrineHelper->method('getEntityRepository')->willReturn($this->productUnitRepo);
 
         $this->singleUnitService = $this->getMockBuilder(SingleUnitModeServiceInterface::class)
             ->disableOriginalConstructor()->getMock();
@@ -317,14 +328,16 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
 
         $this->decoratedSettings->expects($this->never())
             ->method('getAvailablePrimaryUnitChoices');
+        $this->expectException(DefaultUnitNotFoundException::class);
 
         $this->assertSame([], $this->settings->getAvailablePrimaryUnitChoices());
     }
 
     public function testGetAvailablePrimaryUnitChoicesNullPrimary()
     {
+        $this->expectException(DefaultUnitNotFoundException::class);
         $product = $this->createMock(Product::class);
-        $product->expects($this->once())
+        $product->expects($this->never())
             ->method('getPrimaryUnitPrecision')
             ->willReturn(null);
 
@@ -338,27 +351,13 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
         $this->assertSame([], $this->settings->getAvailablePrimaryUnitChoices($product));
     }
 
-    public function testGetAvailablePrimaryUnitChoicesNullReference()
-    {
-        list($product, $unit) = $this->prepareProduct(self::TEST_UNIT_CODE);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(ProductUnit::class, self::TEST_UNIT_CODE)
-            ->willReturn(null);
-
-        $this->decoratedSettings->expects($this->never())
-            ->method('getAvailablePrimaryUnitChoices');
-        $this->assertSame([$unit], $this->settings->getAvailablePrimaryUnitChoices($product));
-    }
-
     public function testGetAvailablePrimaryUnitChoicesPrimaryDefault()
     {
         list($product, $unit) = $this->prepareProduct(self::TEST_UNIT_CODE);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(ProductUnit::class, self::TEST_UNIT_CODE)
+        $this->productUnitRepo->expects($this->once())
+            ->method('find')
+            ->with(self::TEST_UNIT_CODE)
             ->willReturn($unit);
 
         $this->decoratedSettings->expects($this->never())
@@ -372,14 +371,14 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
 
         $defaultUnit = $this->createMock(ProductUnit::class);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(ProductUnit::class, self::TEST_DEFAULT_UNIT_CODE)
+        $this->productUnitRepo->expects($this->once())
+            ->method('find')
+            ->with(self::TEST_DEFAULT_UNIT_CODE)
             ->willReturn($defaultUnit);
 
         $this->decoratedSettings->expects($this->never())
             ->method('getAvailablePrimaryUnitChoices');
-        $this->assertSame([$unit, $defaultUnit], $this->settings->getAvailablePrimaryUnitChoices($product));
+        $this->assertSame([$defaultUnit, $unit], $this->settings->getAvailablePrimaryUnitChoices($product));
     }
 
     /**

@@ -74,4 +74,9 @@ class CategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
         $result = $this->categoryFallbackProvider->getFallbackHolderEntity($product, 'test');
         $this->assertSame(123, $result);
     }
+
+    public function testGetFallbackEntityClass()
+    {
+        $this->assertSame(Category::class, $this->categoryFallbackProvider->getFallbackEntityClass());
+    }
 }

@@ -6,12 +6,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
 /**
  * Provide info to build collection of line items by given source entity.
- * Source entity should implement CheckoutLineItemsHolderInterface.
+ * Source entity should implement ProductLineItemsHolderInterface.
  */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 {

@@ -79,13 +79,16 @@ class RuleFiltrationServiceTest extends WebTestCase
     {
         // this actually gets the decorated oro_rule.rule_filtration.service which cannot be accessed directly
         // because of privacy "public = false"
-        $ruleFiltrationService = $this->getContainer()->get('oro_rule.rule_filtration.expression_language_decorator');
+        $ruleFiltrationService = $this->getContainer()->get('oro_rule.rule_filtration.enabled_decorator');
 
         $actualFilteredRules = $ruleFiltrationService->getFilteredRuleOwners($ruleOwners, $context);
 
         $this->assertEquals($expectedFilteredRules, $actualFilteredRules);
     }
 
+    /**
+     * @return array
+     */
     public function ruleFiltrationProvider()
     {
         return [

@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -76,9 +77,9 @@ class FrontendShoppingListProductsProvider
         if (!$shoppingList) {
             return null;
         }
-        
+
         $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
-        
+
         return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
 
@@ -93,14 +94,22 @@ class FrontendShoppingListProductsProvider
      *   ]
      * ]
      *
-     * @param ShoppingList[] $shoppingLists
-     * @param int $productCount
+     * @param ShoppingList[]    $shoppingLists
+     * @param int               $productCount
+     * @param Localization|null $localization
      *
      * @return array
      */
-    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
-    {
-        return $this->lineItemRepository->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
+    public function getLastProductsGroupedByShoppingList(
+        array $shoppingLists,
+        $productCount,
+        Localization $localization = null
+    ) {
+        return $this->lineItemRepository->getLastProductsGroupedByShoppingList(
+            $shoppingLists,
+            $productCount,
+            $localization
+        );
     }
 
     /**

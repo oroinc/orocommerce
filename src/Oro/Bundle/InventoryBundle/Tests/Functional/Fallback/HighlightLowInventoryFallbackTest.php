@@ -4,6 +4,9 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Fallback;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
+/**
+ * @group CommunityEdition
+ */
 class HighlightLowInventoryFallbackTest extends InventoryFallbackTest
 {
     const VIEW_MANAGED_INVENTORY_XPATH =

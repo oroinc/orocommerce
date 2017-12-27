@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+
+use Gaufrette\Adapter\Local;
+use Gaufrette\File;
+use Gaufrette\Filesystem;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -45,6 +50,11 @@ class LoadProductDemoData extends AbstractFixture implements
      * @var array
      */
     protected $productUnits = [];
+
+    /**
+     * @var array|Filesystem[]
+     */
+    protected $filesystems = [];
 
     /**
      * {@inheritDoc}
@@ -189,7 +199,10 @@ class LoadProductDemoData extends AbstractFixture implements
             $slugRedirectGenerator->generate($product, true);
         }
 
-        $this->container->get('oro_redirect.url_storage_cache')->flush();
+        $cache = $this->container->get('oro_redirect.url_cache');
+        if ($cache instanceof FlushableCache) {
+            $cache->flushAll();
+        }
         $manager->flush();
     }
 
@@ -292,7 +305,6 @@ class LoadProductDemoData extends AbstractFixture implements
         $sku,
         $allImageTypes
     ) {
-        $imageResizer = $this->container->get('oro_attachment.image_resizer');
         $attachmentManager = $this->container->get('oro_attachment.manager');
         $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
 
@@ -302,13 +314,17 @@ class LoadProductDemoData extends AbstractFixture implements
             $product->addImage($productImage);
 
             foreach ($imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
-                $image = $productImage->getImage();
                 $filterName = $dimension->getName();
-                $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
+                $filesystem = $this->getFilesystem($locator, $filterName);
 
-                if ($filteredImage = $imageResizer->resizeImage($image, $filterName)) {
-                    $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+                $filteredImage = $this->getResizedProductImageFile($filesystem, $sku);
+                if (!$filteredImage) {
+                    continue;
                 }
+
+                $imagePath = $attachmentManager->getFilteredImageUrl($productImage->getImage(), $filterName);
+
+                $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
             }
         }
     }
@@ -328,5 +344,45 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         return $this;
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     * @param string $sku
+     * @return null|File
+     */
+    protected function getResizedProductImageFile(Filesystem $filesystem, $sku)
+    {
+        $file = null;
+
+        try {
+            $file = $filesystem->get(sprintf('%s.jpeg', $sku));
+        } catch (\Exception $e) {
+            //image not found
+        }
+
+        return $file;
+    }
+
+    /**
+     * @param FileLocator $locator
+     * @param string $filterName
+     * @return Filesystem
+     */
+    protected function getFilesystem(FileLocator $locator, $filterName)
+    {
+        if (!array_key_exists($filterName, $this->filesystems)) {
+            $rootPath = $locator->locate(
+                sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/resized/%s', $filterName)
+            );
+
+            if (is_array($rootPath)) {
+                $rootPath = current($rootPath);
+            }
+
+            $this->filesystems[$filterName] = new Filesystem(new Local($rootPath, false, 0600));
+        }
+
+        return $this->filesystems[$filterName];
     }
 }

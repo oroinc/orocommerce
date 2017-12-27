@@ -16,6 +16,7 @@ config:
         'oroproduct/js/app/views/variant-fields-view': 'bundles/oroproduct/js/app/views/variant-fields-view.js'
         'oroproduct/js/app/components/related-items-tabs-component': 'bundles/oroproduct/js/app/components/related-items-tabs-component.js'
         'oroproduct/js/app/components/product-variant-component': 'bundles/oroproduct/js/app/components/product-variant-component.js'
+        'oroproduct/js/app/components/config-single-unit-component': 'bundles/oroproduct/js/app/components/config-single-unit-component.js'
     shim:
         'oroproduct/js/app/components/product-unit-selection-limitations-component':
             deps:

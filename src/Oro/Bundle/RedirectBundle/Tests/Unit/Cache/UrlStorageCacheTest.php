@@ -44,7 +44,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storageCache = new UrlStorageCache($this->persistentCache, $this->localCache, $this->filesystem);
+        $this->storageCache = new UrlStorageCache($this->persistentCache, $this->localCache, $this->filesystem, 1);
     }
 
     public function testDeleteAllNonClearableLocal()
@@ -103,47 +103,39 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $storageCache->deleteAll();
     }
 
-    public function testGetCacheKey()
-    {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-
-        $this->assertEquals(
-            'test_2',
-            UrlStorageCache::getCacheKey($routeName, $routeParameters)
-        );
-    }
-
-    public function testGetUrlDataStorageFromLocalCache()
+    public function testHasInLocalCache()
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
         $key = 'test_2';
 
-        $storage = new UrlDataStorage();
-
-        $this->configureLocalCacheWithValue($key, $storage);
+        $this->localCache->expects($this->once())
+            ->method('contains')
+            ->with($key)
+            ->willReturn(true);
         $this->persistentCache->expects($this->never())
             ->method($this->anything());
 
-        $this->assertEquals($storage, $this->storageCache->getUrlDataStorage($routeName, $routeParameters));
+        $this->assertTrue($this->storageCache->has($routeName, $routeParameters));
     }
 
-    public function testGetUrlDataStorageFromPersistentCache()
+    public function testHasInPersistentCache()
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
         $key = 'test_2';
 
-        $storage = new UrlDataStorage();
-        $this->assertLocalCacheNotContainsValue($key, $storage);
+        $this->localCache->expects($this->once())
+            ->method('contains')
+            ->with($key)
+            ->willReturn(false);
 
         $this->persistentCache->expects($this->once())
-            ->method('fetch')
+            ->method('contains')
             ->with($key)
-            ->willReturn($storage);
+            ->willReturn(true);
 
-        $this->assertEquals($storage, $this->storageCache->getUrlDataStorage($routeName, $routeParameters));
+        $this->assertTrue($this->storageCache->has($routeName, $routeParameters));
     }
 
     public function testGetUrlDataStorageCreateNew()
@@ -160,7 +152,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
             ->with($key)
             ->willReturn(false);
 
-        $this->assertEquals($storage, $this->storageCache->getUrlDataStorage($routeName, $routeParameters));
+        $this->assertFalse($this->storageCache->getUrl($routeName, $routeParameters));
     }
 
     public function testGetUrl()
@@ -285,7 +277,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCacheUpdateAndFlush($key, $oldStorage);
 
-        $this->storageCache->flush();
+        $this->storageCache->flushAll();
     }
 
     public function testFlushNotInPersistentCache()
@@ -317,7 +309,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCacheUpdateAndFlush($key, $storage);
 
-        $this->storageCache->flush();
+        $this->storageCache->flushAll();
     }
 
     /**

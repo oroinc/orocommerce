@@ -149,9 +149,11 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     public function validateSuccessDataProvider()
     {
         return [
-            ['', []],
-            [null, []],
-            ['product.msrp.value + 1', ['value']],
+            'Empty string' => ['', []],
+            'Null' => [null, []],
+            'Valid formula' => ['product.msrp.value + 1', ['value']],
+            'Syntax error 1' => ['xxx', []],
+            'Syntax error 2' => ['product.sku == SKU"', ['sku', 'msrp']],
         ];
     }
 
@@ -161,9 +163,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     public function validateErrorDataProvider()
     {
         return [
-            ['xxx', []],
-            ['product.sku == SKU"', ['sku', 'msrp']],
-            ['product.msrp.value + 1', []],
+            'Unsupported field' => ['product.msrp.value + 1', []],
         ];
     }
 }

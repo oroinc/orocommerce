@@ -33,8 +33,12 @@ define(function(require) {
             }, this));
         },
 
-        addValidationError: function() {
-            this.field.append($('<span></span>').addClass('validation-failed').text(this.options.errorMessage));
+        addValidationError: function($identifier) {
+            var $field = this.$el.closest('.price_rule')
+                .find('div.error-block' + $identifier);
+
+            $field.addClass(this.visibleClass).append($('<span></span>')
+                .addClass('validation-failed').text(this.options.errorMessage).show());
         },
 
         initSwitcher: function() {

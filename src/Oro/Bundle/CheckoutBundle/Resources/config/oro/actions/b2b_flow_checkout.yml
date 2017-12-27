@@ -408,16 +408,10 @@ action_groups:
                 conditions:
                     '@not_empty': $.sourceEntity
                 actions:
-                    - '@assign_value':
-                        conditions:
-                            '@instanceof': [$.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
-                        parameters:
-                            attribute: $.sourceEntity
-                            value: $.sourceEntity.quote
                     - '@call_service_method':
                         service: oro_entity.entity_name_resolver
                         method: getName
-                        method_parameters: [$.sourceEntity]
+                        method_parameters: [$.sourceEntity.sourceDocument]
                         attribute: $.checkout.completedData.startedFrom
                     - '@assign_value':
                         - [$.checkout.completedData.currency, $.order.currency]

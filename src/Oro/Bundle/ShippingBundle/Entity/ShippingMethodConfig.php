@@ -95,7 +95,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
      */
     public function __toString()
     {
-        return $this->getMethod();
+        return (string)$this->getMethod();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Routing;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
@@ -55,6 +56,8 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
+        UrlParameterHelper::normalizeNumericTypes($parameters);
+
         if ($referenceType === self::ABSOLUTE_PATH || $referenceType === false) {
             return $this->generateSluggableUrl($name, $parameters);
         }

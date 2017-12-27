@@ -6,6 +6,8 @@ oro_behat_extension:
       selector: "select[name='oro_product[primaryUnitPrecision][unit]']"
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
+    ProductAdditionalPrecisionField:
+      selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
@@ -148,7 +150,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Manage Inventory  Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
+          Manage Inventory Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
           Inventory Threshold Default: 'product_options[oro_inventory___inventory_threshold][use_parent_scope_value]'
           Backorders Default: 'product_options[oro_inventory___backorders][use_parent_scope_value]'
           Decrement Inventory Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
@@ -404,6 +406,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
 
+    Inventory Status:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
+
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -454,8 +461,6 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
 
     ProductFrontendGridFilterManager:
-      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
       selector: 'div.oro-datagrid'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
@@ -492,7 +497,7 @@ oro_behat_extension:
       selector: '.product-view__upsell-products .embedded-list-slider'
 
     ProductRelatedItem:
-      selector: '.embedded-product'
+      selector: '.product-item'
 
     ProductFrontendRow:
       selector: '.product-list .product-item.grid-row'
@@ -669,22 +674,22 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="New Arrivals"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="New Arrivals"]/../../div'
 
     Featured Products Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Featured Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
 
     Related Products Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Related Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
 
     EmbeddedProduct:
-      selector: 'div.embedded-product'
+      selector: 'div.product-item'
 
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
@@ -774,6 +779,14 @@ oro_behat_extension:
        type: xpath
        locator: '//img[contains (@src,"no_image.png")]'
 
+    Unit Of Quantity:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product[primaryUnitPrecision][unit]"]'
+
+    Price Unit:
+      selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
@@ -793,6 +806,7 @@ oro_behat_extension:
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

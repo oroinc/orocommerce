@@ -17,13 +17,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -315,6 +315,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         return $event;
     }
 
+    /**
+     * @return ExtendableConditionEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected function prepareConditionEvent()
     {
         $numberOfItems = 5;
@@ -324,10 +327,10 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
         $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $checkoutLineItemsHolder = $this->createMock(CheckoutLineItemsHolderInterface::class);
+        $checkoutLineItemsHolder = $this->createMock(ProductLineItemsHolderInterface::class);
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
-        $lineItem = $this->createMock(CheckoutLineItemInterface::class);
+        $lineItem = $this->createMock(ProductLineItemInterface::class);
         $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);

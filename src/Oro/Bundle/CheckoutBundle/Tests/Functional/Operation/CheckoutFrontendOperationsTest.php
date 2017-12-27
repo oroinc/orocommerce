@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCompletedCheckoutsData;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListCompletedCheckoutsData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
@@ -22,14 +22,14 @@ class CheckoutFrontendOperationsTest extends FrontendActionTestCase
         $this->loadFixtures(
             [
                 LoadCustomerUserData::class,
-                LoadQuoteCompletedCheckoutsData::class
+                LoadShoppingListCompletedCheckoutsData::class
             ]
         );
     }
 
     public function testCheckoutViewOrderOperation()
     {
-        $checkout = $this->getReference(LoadQuoteCompletedCheckoutsData::CHECKOUT_1);
+        $checkout = $this->getReference(LoadShoppingListCompletedCheckoutsData::CHECKOUT_1);
 
         $this->executeOperation($checkout, 'oro_checkout_frontend_view_order');
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);

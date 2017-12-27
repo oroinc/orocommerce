@@ -135,10 +135,6 @@ oro:
             label: Status
             description: The enabled or disabled status of the product
 
-        variant_fields:
-            yes.label: Yes
-            no.label: No
-
         visibility:
             visible.label: Yes
             not_visible.label: No
@@ -548,6 +544,12 @@ oro:
 
         export:
             inventory_status_only: "Inventory statuses only"
+            button.label: 'Export Products'
+        import:
+            popup.title: 'Import Products'
+            entity.label: 'Products'
+        import_validation:
+            button.label: 'Validate Products File'
 
         variant_field:
             default.tooltip: "Enable the fields to be able to group products by these fields"
@@ -568,8 +570,6 @@ oro:
             top_selling: 'Top Selling'
 
         brand:
-            owner:
-                label: Owner
             label:                Brand
             description:          Brand of the product
             entity_label:         Brand

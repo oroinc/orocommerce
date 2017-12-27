@@ -324,21 +324,21 @@
 
 {% block _shopping_list_line_items_list_item_name_widget %}
     <h3 class="product-item__title product-item__title--in-cart">
-        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_tag_filter }}</a>
     </h3>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
     <div>
         {{ 'oro.frontend.shoppinglist.view.item.label'|trans }}
-        <span class="product-item__sku-value">{{ mainProduct.sku }}</span>
+        <span class="product-item__sku-value">{{ mainProduct.sku|oro_tag_filter }}</span>
     </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_inventory_status_widget %}
     <div class="shopping-list-line-items__status">{{ mainProduct.InventoryStatus }}</div>
     {% if (oro_is_low_inventory_product(mainProduct)) %}
-        <div class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
+        <p class="product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</p>
     {% endif %}
 {% endblock %}
 
@@ -598,7 +598,7 @@
                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                     </label>
                 </div>
-                <div data-role="editor">
+                <div data-role="editor" class="editable__editor-container">
                     <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                               placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                 </div>

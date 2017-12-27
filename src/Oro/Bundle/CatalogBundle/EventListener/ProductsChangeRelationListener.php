@@ -3,13 +3,12 @@
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\PersistentCollection;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Doctrine\ORM\UnitOfWork;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductsChangeRelationListener
 {
@@ -30,20 +29,31 @@ class ProductsChangeRelationListener
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        $collections = $unitOfWork->getScheduledCollectionUpdates();
-        foreach ($collections as $collection) {
-            if ($collection instanceof PersistentCollection
-                && $collection->getMapping()['fieldName'] === Category::FIELD_PRODUCTS
-                && $collection->isDirty() && $collection->isInitialized()
-            ) {
-                /** @var Product[] $productsChangedRelation */
-                $productsChangedRelation = array_merge($collection->getInsertDiff(), $collection->getDeleteDiff());
+        $productsChangedRelation = [];
 
-                if ($productsChangedRelation) {
-                    $event = new ProductsChangeRelationEvent($productsChangedRelation);
-                    $this->eventDispatcher->dispatch(ProductsChangeRelationEvent::NAME, $event);
-                }
+        /** @var Product $entity */
+        foreach ((array) $unitOfWork->getScheduledEntityUpdates() as $entity) {
+            if ($entity instanceof Product && $this->isCategoryChanged($unitOfWork, $entity)) {
+                $productsChangedRelation[] = $entity;
             }
         }
+
+        if ($productsChangedRelation) {
+            $event = new ProductsChangeRelationEvent($productsChangedRelation);
+            $this->eventDispatcher->dispatch(ProductsChangeRelationEvent::NAME, $event);
+        }
+    }
+
+    /**
+     * @param UnitOfWork $unitOfWork
+     * @param Product $entity
+     *
+     * @return bool
+     */
+    private function isCategoryChanged(UnitOfWork $unitOfWork, Product $entity)
+    {
+        $changeSet = $unitOfWork->getEntityChangeSet($entity);
+
+        return isset($changeSet['category']) ? true : false;
     }
 }

@@ -37,7 +37,7 @@ class IndexDataProvider
     private $placeholder;
 
     /** @var HtmlTagHelper */
-    private $htmlTagHelper;
+    protected $htmlTagHelper;
 
     /** @var PlaceholderHelper */
     private $placeholderHelper;
@@ -223,7 +223,7 @@ class IndexDataProvider
             return;
         }
 
-        $value = $this->clearValue($type, $value);
+        $value = $this->clearValue($type, $fieldName, $value);
 
         if ($value === null || $value === '') {
             return;
@@ -319,14 +319,16 @@ class IndexDataProvider
     }
 
     /**
-     * Checks if value is text type and applies stripping tags
+     * Keep HTML in text fields except all_text* fields
+     *
      * @param string $type
-     * @param string $value
-     * @return string
+     * @param string $fieldName
+     * @param mixed $value
+     * @return mixed|string
      */
-    private function clearValue($type, $value)
+    protected function clearValue($type, $fieldName, $value)
     {
-        if ($type === Query::TYPE_TEXT) {
+        if ($type === Query::TYPE_TEXT && strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
         }
 

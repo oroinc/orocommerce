@@ -163,7 +163,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
         arguments:
             - '@oro_shopping_list.repository.line_item'
-            - '@oro_shopping_list.data_provider.frontend_product_prices'
+            - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
         tags:
@@ -188,15 +188,6 @@ services:
               - '@oro_ui.user_agent_provider'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
-
-    oro_shopping_list.data_provider.frontend_product_prices:
-        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
-        public: false
-        arguments:
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
-            - '@oro_shopping_list.data_provider.shopping_list_line_items'
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
@@ -362,6 +353,17 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
+    oro_shopping_list.voter.view_shopping_list_voter:
+        class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListViewVoter
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        public: false
+        calls:
+            - [setWebsiteManager, ['@oro_website.manager']]
+            - [setClassName, [%oro_shopping_list.entity.shopping_list.class%]]
+        tags:
+            - { name: security.voter }
+
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
         arguments:
@@ -387,6 +389,12 @@ services:
             - '@oro_dataaudit.listener.send_changed_entities_to_message_queue'
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
+
+    oro_shopping_list.datagrid.total_currency_helper:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper
+        arguments:
+            - '@oro_currency.config.currency'
+            - '@oro_pricing.provider.website_currency_provider'
 
     oro_shopping_list.manager.guest_shopping_list_migration:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager'

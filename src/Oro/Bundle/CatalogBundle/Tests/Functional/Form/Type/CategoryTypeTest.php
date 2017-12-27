@@ -54,9 +54,9 @@ class CategoryTypeTest extends WebTestCase
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
         /** @var Product[] $appendedProducts */
-        $appendedProducts = $productRepository->findBy([], [], 2, 0);
+        $appendedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 0);
         /** @var Product[] $removedProducts */
-        $removedProducts = $productRepository->findBy([], [], 2, 2);
+        $removedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 2);
 
         $defaultTitle = 'Default Title';
         $defaultShortDescription = 'Default Short Description';

@@ -23,6 +23,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -83,6 +84,7 @@ class Order extends ExtendOrder implements
     MultiCurrencyHolderInterface,
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
+    ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface
 {
     use AuditableUserAwareTrait;

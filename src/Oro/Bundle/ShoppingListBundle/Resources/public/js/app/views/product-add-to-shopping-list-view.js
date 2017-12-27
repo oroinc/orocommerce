@@ -364,6 +364,7 @@ define(function(require) {
                 //quantity precision depend on unit, set unit first
                 this.model.set('unit', this.editLineItem.unit);
                 this.model.set('quantity', this.editLineItem.quantity);
+                this.model.set('quantity_changed_manually', true);//prevent quantity change in other components
             }
         },
 
