@@ -800,16 +800,14 @@ datagrids:
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
                     - { table: %oro_product.entity.brand.class%, alias: brand }
         columns:
-            brandName:
+            defaultTitle:
                 label: oro.product.brand.names.label
         properties:
             id: ~
-            brandName:
-                type: localized_value
-                data_name: names
             status:
                 label:         oro.product.brand.names.label
                 frontend_type: select
@@ -826,13 +824,13 @@ datagrids:
                     - id
         sorters:
             columns:
-                brandName:
-                    data_name: brandName
+                defaultTitle:
+                    data_name: brand.defaultTitle
         filters:
             columns:
                 brandName:
                     type:      string
-                    data_name: brandName
+                    data_name: brand.defaultTitle
         actions:
             update:
                 acl_resource:  oro_product_brand_update

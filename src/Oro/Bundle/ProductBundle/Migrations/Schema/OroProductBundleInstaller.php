@@ -89,7 +89,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_15';
     }
 
     /**
@@ -705,9 +705,11 @@ class OroProductBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('status', 'string', ['length' => 16]);
+        $table->addColumn('default_title', 'string', ['length' => 255, 'notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_brand_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_brand_updated_at', []);
+        $table->addIndex(['default_title'], 'idx_oro_brand_default_title', []);
     }
 
     /**
