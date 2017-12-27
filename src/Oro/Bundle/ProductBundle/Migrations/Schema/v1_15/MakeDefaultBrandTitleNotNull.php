@@ -3,13 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_15;
 
 use Doctrine\DBAL\Schema\Schema;
-
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class MakeDefaultCategoryTitleNotNull implements
+class MakeDefaultBrandTitleNotNull implements
     Migration,
     OrderedMigrationInterface
 {
