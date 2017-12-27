@@ -126,8 +126,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42, 'productId' => 1],
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100, 'productId' => 1],
                         ]
                     ]
                 ]
@@ -146,8 +146,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'ShoppingList 2',
                         'is_current' => true,
                         'line_items' => [
-                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['id' => 2,'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42, 'productId' => 1],
+                            ['id' => 2,'unit' => 'code2', 'quantity' => 100, 'productId' => 1],
                         ]
                     ],
                     [
@@ -155,7 +155,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'ShoppingList 3',
                         'is_current' => false,
                         'line_items' => [
-                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
+                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30, 'productId' => 1],
                         ]
                     ]
                 ]
@@ -173,7 +173,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'ShoppingList 2',
                         'is_current' => true,
                         'line_items' => [
-                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42, 'productId' => 1],
                         ]
                     ],
                     [
@@ -181,7 +181,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'ShoppingList 3',
                         'is_current' => false,
                         'line_items' => [
-                            ['id' => 2, 'unit' => 'code2', 'quantity' => 30],
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 30, 'productId' => 1],
                         ]
                     ]
                 ]
@@ -237,7 +237,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     'label' => 'ShoppingList 1',
                     'is_current' => true,
                     'line_items' => [
-                        ['id' => 1, 'unit' => 'each', 'quantity' => 10],
+                        ['id' => 1, 'unit' => 'each', 'quantity' => 10, 'productId' => 11],
                     ]
                 ]
             ],
@@ -247,8 +247,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     'label' => 'ShoppingList 1',
                     'is_current' => true,
                     'line_items' => [
-                        ['id' => 1, 'unit' => 'each', 'quantity' => 10],
-                        ['id' => 2, 'unit' => 'each', 'quantity' => 100],
+                        ['id' => 1, 'unit' => 'each', 'quantity' => 10, 'productId' => 11],
+                        ['id' => 2, 'unit' => 'each', 'quantity' => 100, 'productId' => 41],
                     ]
                 ]
             ],
@@ -258,7 +258,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     'label' => 'ShoppingList 2',
                     'is_current' => false,
                     'line_items' => [
-                        ['id' => 3, 'unit' => 'each', 'quantity' => 1],
+                        ['id' => 3, 'unit' => 'each', 'quantity' => 1, 'productId' => 31],
                     ]
                 ]
             ],
@@ -268,7 +268,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     'label' => 'ShoppingList 1',
                     'is_current' => true,
                     'line_items' => [
-                        ['id' => 2, 'unit' => 'each', 'quantity' => 100],
+                        ['id' => 2, 'unit' => 'each', 'quantity' => 100, 'productId' => 41],
                     ]
                 ]
             ]

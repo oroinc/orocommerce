@@ -22,7 +22,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     const SUPPORTED_GRID = 'frontend-product-search-grid';
     const MATRIX_FORM_TYPE_COLUMN_NAME = 'matrixFormType';
     const MATRIX_FORM_COLUMN_NAME = 'matrixForm';
-    const PRODUCT_PRICES_COLUMN_NAME = 'productPrices';
+    const PRODUCT_PRICES_COLUMN_NAME = 'prices';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;

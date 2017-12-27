@@ -17,6 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridEx
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -51,6 +52,9 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var MatrixGridOrderProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $matrixGridOrderProvider;
 
+    /** @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $dataGridThemeHelper;
+
     /**
      * {@inheritdoc}
      */
@@ -66,6 +70,11 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
         $this->datagridConfiguration = $this->createMock(DatagridConfiguration::class);
         $this->matrixGridOrderProvider = $this->createMock(MatrixGridOrderProvider::class);
+        $this->dataGridThemeHelper = $this->createMock(DataGridThemeHelper::class);
+
+        $this->dataGridThemeHelper->expects($this->any())
+            ->method('getTheme')
+            ->willReturn('list-view');
 
         $this->gridExtension = new FrontendMatrixProductGridExtension(
             $this->doctrineHelper,
@@ -74,7 +83,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             $this->productListMatrixFormAvailabilityProvider,
             $this->productVariantAvailabilityProvider,
             $this->frontendProductPricesProvider,
-            $this->matrixGridOrderProvider
+            $this->matrixGridOrderProvider,
+            $this->dataGridThemeHelper
         );
     }
 
@@ -200,19 +210,19 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                     ],
                     'rows' => [0, 0],
                 ],
-                'productPrices' => ['1' => ['unit' => 1]],
+                'prices' => ['1' => ['unit' => 1]],
             ],
             '2' => [
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null,
+                'prices' => null,
             ],
             '3' => [
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null,
+                'prices' => null,
             ],
         ];
 
@@ -222,8 +232,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 $expectedData[$data->getValue('id')]['matrixForm']
             );
             $this->assertEquals(
-                $data->getValue('productPrices'),
-                $expectedData[$data->getValue('id')]['productPrices']
+                $data->getValue('prices'),
+                $expectedData[$data->getValue('id')]['prices']
             );
         }
     }
@@ -265,7 +275,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null
+                'prices' => null
             ],
         ];
 
@@ -275,8 +285,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 $expectedData[$data->getValue('id')]['matrixForm']
             );
             $this->assertEquals(
-                $data->getValue('productPrices'),
-                $expectedData[$data->getValue('id')]['productPrices']
+                $data->getValue('prices'),
+                $expectedData[$data->getValue('id')]['prices']
             );
         }
     }
@@ -343,19 +353,19 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null
+                'prices' => null
             ],
             '2' => [
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null
+                'prices' => null
             ],
             '3' => [
                 'matrixForm' => [
                     'type' => 'none',
                 ],
-                'productPrices' => null
+                'prices' => null
             ],
         ];
 
@@ -365,8 +375,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 $expectedData[$data->getValue('id')]['matrixForm']
             );
             $this->assertEquals(
-                $data->getValue('productPrices'),
-                $expectedData[$data->getValue('id')]['productPrices']
+                $data->getValue('prices'),
+                $expectedData[$data->getValue('id')]['prices']
             );
         }
     }

@@ -14,7 +14,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                visible: '=data["product_view_form_availability_provider"].isPopupMatrixFormAvailable(data["product"]) and data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"]) > 0'
+                visible: '=data["product_view_form_availability_provider"].isPopupMatrixFormAvailable(data["product"])'
                 vars:
                     totals:
                         quantity: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'

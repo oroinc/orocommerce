@@ -179,7 +179,7 @@
 {% block _product_datagrid_cell_matrixForm_widget %}
     {% if matrixFormType == 'inline' %}
         {% do block|merge_context({
-            'prices': product.productPrices,
+            'prices': product.prices,
             'matrixForm': matrixForm.form,
             'rows': matrixForm.rows
         }) %}

@@ -103,17 +103,6 @@ class FrontendProductPricesProvider
     }
 
     /**
-     * @param Product $product
-     * @return array
-     */
-    public function getSimpleByConfigurable($product)
-    {
-        $products = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-
-        return $this->getByProducts($products);
-    }
-
-    /**
      * @param Product[] $products
      */
     protected function setProductsPrices($products)
@@ -125,6 +114,16 @@ class FrontendProductPricesProvider
         if (!$products) {
             return;
         }
+
+        $configurableProducts = [];
+        foreach ($products as $product) {
+            if ($product->isConfigurable()) {
+                $configurableProducts[$product->getId()] = $this->productVariantAvailabilityProvider
+                    ->getSimpleProductsByVariantFields($product);
+                $products = array_merge($products, $configurableProducts[$product->getId()]);
+            }
+        }
+        $products = array_unique($products);
 
         $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         $productsIds = array_map(
@@ -174,6 +173,14 @@ class FrontendProductPricesProvider
                     return !empty($unitsToSell[$price['unit']]);
                 }
             );
+        }
+
+        foreach ($configurableProducts as $configurableId => $simpleProducts) {
+            foreach ($simpleProducts as $product) {
+                if ($this->productPrices[$product->getId()]) {
+                    $this->productPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
+                }
+            }
         }
     }
 }
