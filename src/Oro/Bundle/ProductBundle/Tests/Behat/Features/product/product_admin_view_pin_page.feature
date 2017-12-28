@@ -1,7 +1,7 @@
 @regression
 @ticket-BB-13303
 @fixture-OroProductBundle:Products_view_page_templates.yml
-Feature: Pin product admin view page page
+Feature: Product admin view pin page
   In order to have fast access to some product view pages
   As administrator
   I need to make sure that the pinned product view page is available to fast acess
