@@ -46,19 +46,24 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->from('OroProductBundle:Product', 'p')
             ->select('p')
-            ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedItem = p.id')
-            ->where('rp_r.product = :id')
             ->setParameter(':id', $id)
             ->orderBy('p.id')
             ->groupBy('p.id');
-
+        $subQb = $this->getEntityManager()->createQueryBuilder()
+            ->select('rp_r.id')
+            ->from(RelatedProduct::class, 'rp_r')
+            ->where('rp_r.relatedItem = p.id and rp_r.product = :id');
+        $qb->where($qb->expr()->exists($subQb->getDQL()));
         if ($limit) {
             $qb->setMaxResults($limit);
         }
 
         if ($bidirectional) {
-            $qb->leftJoin(RelatedProduct::class, 'rp_l', Join::WITH, 'rp_l.product = p.id')
-                ->orWhere('rp_l.relatedItem = :id');
+            $subQb = $this->getEntityManager()->createQueryBuilder()
+                ->select('rp_l.id')
+                ->from(RelatedProduct::class, 'rp_l')
+                ->where('rp_l.product = p.id and rp_l.relatedItem = :id');
+            $qb->orWhere($qb->expr()->exists($subQb->getDQL()));
         }
 
         return $qb->getQuery()->execute();
