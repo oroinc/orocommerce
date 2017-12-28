@@ -39,14 +39,12 @@ define(function(require) {
 
         render: function() {
             var totals = this._calcTotals();
-            if (totals) {
-                this.$el.toggleClass('hide', totals.quantity === 0);
 
-                this.getElement('totalQty').text(totals.quantity);
-                this.getElement('totalPrice').text(
-                    NumberFormatter.formatCurrency(totals.price)
-                );
-            }
+            this.$el.toggleClass('hide', totals.quantity === 0);
+            this.getElement('totalQty').text(totals.quantity);
+            this.getElement('totalPrice').text(
+                NumberFormatter.formatCurrency(totals.price)
+            );
         },
 
         /**
@@ -74,10 +72,14 @@ define(function(require) {
         },
 
         _calcTotals: function() {
-            var totals;
+            var totals = {
+                price: 0,
+                quantity: 0
+            };
+
             var lineItems = this._getCurrentLineItems();
             if (_.isNull(lineItems)) {
-                return;
+                return totals;
             }
 
             totals = _.reduce(lineItems.line_items, function(memo, lineItem) {
@@ -87,10 +89,7 @@ define(function(require) {
                 memo.quantity += lineItem.quantity;
 
                 return memo;
-            }, {
-                price: 0,
-                quantity: 0
-            }, this);
+            }, totals, this);
 
             return totals;
         }
