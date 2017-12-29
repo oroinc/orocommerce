@@ -44,28 +44,40 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
     public function findRelated($id, $bidirectional, $limit = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->from('OroProductBundle:Product', 'p')
-            ->select('p')
+            ->select('DISTINCT IDENTITY(rp.relatedItem) as id')
+            ->from(RelatedProduct::class, 'rp')
+            ->where('rp.product = :id')
             ->setParameter(':id', $id)
-            ->orderBy('p.id')
-            ->groupBy('p.id');
-        $subQb = $this->getEntityManager()->createQueryBuilder()
-            ->select('rp_r.id')
-            ->from(RelatedProduct::class, 'rp_r')
-            ->where('rp_r.relatedItem = p.id and rp_r.product = :id');
-        $qb->where($qb->expr()->exists($subQb->getDQL()));
+            ->orderBy('rp.relatedItem');
         if ($limit) {
             $qb->setMaxResults($limit);
         }
-
+        $productIds = $qb->getQuery()->getArrayResult();
+        $productIds = array_column($productIds, 'id');
+        $products = [];
         if ($bidirectional) {
-            $subQb = $this->getEntityManager()->createQueryBuilder()
-                ->select('rp_l.id')
-                ->from(RelatedProduct::class, 'rp_l')
-                ->where('rp_l.product = p.id and rp_l.relatedItem = :id');
-            $qb->orWhere($qb->expr()->exists($subQb->getDQL()));
+            if ($limit === null || count($productIds) < $limit) {
+                $qb = $this->getEntityManager()->createQueryBuilder()
+                    ->select('DISTINCT IDENTITY(rp.product) as id')
+                    ->from(RelatedProduct::class, 'rp')
+                    ->where('rp.relatedItem = :id')
+                    ->setParameter(':id', $id)
+                    ->orderBy('rp.product');
+                if ($limit) {
+                    $qb->setMaxResults($limit);
+                }
+                $biProductIds = $qb->getQuery()->getArrayResult();
+                $biProductIds = array_column($biProductIds, 'id');
+                $productIds = array_merge($productIds, $biProductIds);
+            }
         }
 
-        return $qb->getQuery()->execute();
+        if ($productIds) {
+            $products = $this->getEntityManager()
+                ->getRepository(Product::class)
+                ->findBy(['id' => $productIds], ['id' => 'ASC'], $limit);
+        }
+
+        return $products;
     }
 }
