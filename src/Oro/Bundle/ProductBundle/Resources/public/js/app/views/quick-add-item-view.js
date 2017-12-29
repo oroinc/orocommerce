@@ -142,7 +142,7 @@ define(function(require) {
                 mediator.trigger('quick-add-copy-paste-form:update-product', obj);
             }
 
-            this.updateUI();
+            this.updateUI(true);
         },
 
         updateModel: function(data) {
@@ -179,7 +179,7 @@ define(function(require) {
             this.model.set({
                 'skuHiddenField': obj.sku
             });
-            this.updateUI();
+            this.updateUI(true);
         },
 
         clearSku: function() {
@@ -252,8 +252,11 @@ define(function(require) {
                 !_.has(this.model.get('product_units'), this.model.get('unit'));
         },
 
-        updateUI: function() {
-            this.getElement('sku').trigger('blur');
+        updateUI: function(triggerBlur) {
+            if (triggerBlur) {
+                this.getElement('sku').trigger('blur');
+            }
+
             this.getElement('unit').inputWidget('refresh');
 
             if (this.model.get('sku') && this.unitInvalid()) {
