@@ -145,6 +145,7 @@ class ProductShoppingListsDataProvider
 
         $productShoppingLists[$shoppingListId]['line_items'][] = [
             'id' => $lineItem->getId(),
+            'productId' => $lineItem->getProduct()->getId(),
             'unit' => $lineItem->getProductUnitCode(),
             'quantity' => $lineItem->getQuantity()
         ];

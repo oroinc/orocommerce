@@ -1,0 +1,15 @@
+{% block __oro_product_list_item__totals_widget %}
+    {% if matrixFormType == 'popup' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col" ~ (totals.quantity == 0 ? " hide"),
+            'data-page-component-view': {
+                view: 'oropricing/js/app/views/product-total-price-view',
+                totals: totals
+            }
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}

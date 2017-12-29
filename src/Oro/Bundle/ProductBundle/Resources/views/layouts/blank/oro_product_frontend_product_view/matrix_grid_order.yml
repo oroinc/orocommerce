@@ -14,14 +14,8 @@ layout:
             parentId: product_view_content_container
             blockType: container
             options:
-                visible: '=!context["is_mobile"] and data["oro_product_form_availability"].isInlineMatrixFormAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
+                visible: '=data["product_view_form_availability_provider"].isInlineMatrixFormAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'
         - '@move':
             id: matrix_grid_order_line_item_buttons
-            parentId: matrix_grid_order_wrapper
-            siblingId: matrix_grid_order_form_summary
+            parentId: matrix_grid_order_totals
             prepend: false
-
-        - '@setOption':
-            id: matrix_grid_order_line_item_form_buttons_shopping_list
-            optionName: attr.componentModule
-            optionValue: 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view'

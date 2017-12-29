@@ -36,3 +36,8 @@ layout:
             id: __product
             optionName: class_prefix
             optionValue: gallery-view
+        - '@setOption':
+            id: __products
+            optionName: items_data.matrixFormType
+            optionValue:
+                '=data["product_list_form_availability_provider"].getAvailableMatrixFormTypes(items, "gallery-view")'

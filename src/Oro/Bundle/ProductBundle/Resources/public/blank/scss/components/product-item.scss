@@ -42,6 +42,7 @@
 
     &--no-image-view {
         display: table;
+        table-layout: fixed;
         width: 100%;
         padding: 0 0 15px;
         margin: 0 0 15px;
@@ -75,6 +76,8 @@
     }
 
     &__content {
+        max-width: 100%;
+
         @include clearfix();
 
         &--no-image-view {
@@ -201,6 +204,7 @@
 
             .product-item__secondary-half--no-image-view {
                 width: 45%;
+                min-height: 1px;
 
                 &:last-child {
                     width: 55%;

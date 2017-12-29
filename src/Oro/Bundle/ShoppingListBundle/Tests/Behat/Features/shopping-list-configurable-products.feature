@@ -303,7 +303,20 @@ Feature: Inline matrix for configurable products in product views
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
     And I should see "Configurable Product B"
-    And I open shopping list widget
+
+  Scenario: Create request for quote with configurable product
+    Given I open shopping list widget
+    And I click "View Details"
+    And I click "Request Quote"
+    Then I should see "Request A Quote"
+    And I should see "400-Watt Bulb Work Light" in the "RequestAQuoteProducts" element
+    And I should see "Product B 11" in the "RequestAQuoteProducts" element
+    And I should see "Product B 12" in the "RequestAQuoteProducts" element
+    And I should see "Product B 21" in the "RequestAQuoteProducts" element
+    And I should see "Product B 23" in the "RequestAQuoteProducts" element
+    And I should see "Product B 43" in the "RequestAQuoteProducts" element
+    And I should not see "Configurable Product B" in the "RequestAQuoteProducts" element
+    Then I open shopping list widget
     And I click "View Details"
     And I click "Remove Line Item"
     And I click "Yes, Delete"

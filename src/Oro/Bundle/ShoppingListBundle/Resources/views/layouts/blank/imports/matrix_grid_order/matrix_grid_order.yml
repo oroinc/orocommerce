@@ -8,16 +8,29 @@ layout:
             themes: 'matrix_grid_order.html.twig'
         - '@setFormTheme':
             themes: 'matrix_grid_order_form.html.twig'
+        - '@add':
+            id: __matrix_form_clear_button
+            blockType: button
+            parentId: __totals
+            prepend: true
+            options:
+                icon: times
+                style: 'btn btn--link disabled clear-button'
+                attr:
+                    title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
+                    data-role: 'clear'
+                text:
+                    label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
         - '@addTree':
             items:
                 __wrapper:
                     blockType: matrix_grid_order
                     options:
-                        visible: '=data.offsetExists("product") ? data["oro_product_form_availability"].isMatrixFormAvailable(product) : true'
+                        visible: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].isMatrixFormAvailable(product) : true'
                         product: '=data.offsetExists("product") ? data["product"]'
                         shoppingList: '=data.offsetExists("shoppingList") ? data["shoppingList"] : data["oro_shopping_list_customer_user_shopping_lists"].getCurrent()'
                         form: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(product, shoppingList)'
-                        prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getSimpleByConfigurable(product)'
+                        prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getByProduct(product)'
                         totals:
                             quantity: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(product)'
                             price: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(product)'

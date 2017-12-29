@@ -4,7 +4,7 @@
     {% endif %}
     {% if productPrices is not null %}
         {% do block|merge_context({
-            productPrices: productPrices,
+            productPrices: is_configurable_product_type(product.type) ? [] : productPrices,
             product: product,
             isPriceUnitsVisible: isPriceUnitsVisible
         }) %}
