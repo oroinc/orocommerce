@@ -354,13 +354,13 @@ define(function(require) {
                 this.editLineItem = _.findWhere(currentShoppingListInModel.line_items, {id: lineItemId});
             } else if (setFirstLineItem) {
                 this.editLineItem = currentShoppingListInModel.line_items[0] || null;
-            } else {
+            } else if (!this.model.get('quantity_changed_manually')) {
                 this.editLineItem = _.findWhere(
                     currentShoppingListInModel.line_items, {unit: this.model.get('unit')}
                     ) || null;
             }
 
-            if (this.editLineItem && (lineItemId || setFirstLineItem)) {
+            if (this.editLineItem) {
                 //quantity precision depend on unit, set unit first
                 this.model.set('unit', this.editLineItem.unit);
                 this.model.set('quantity', this.editLineItem.quantity);

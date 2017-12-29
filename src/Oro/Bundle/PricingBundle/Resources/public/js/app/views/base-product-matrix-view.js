@@ -7,22 +7,29 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var PricesHelper = require('oropricing/js/app/prices-helper');
     var ScrollView = require('orofrontend/js/app/views/scroll-view');
+    var FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
     var $ = require('jquery');
     var _ = require('underscore');
 
     BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
 
+        optionNames: BaseView.prototype.optionNames.concat([
+            'dimension'
+        ]),
+
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
-            fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
             totalPrice: '[data-role="total-price"]',
-            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
+            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]',
+            clearButton: '[data-role="clear"]'
         },
 
         elementsEvents: {
-            'fields': ['input', '_onQuantityChange']
+            'fields input': ['input', '_onQuantityChange'],
+            'fields change': ['change', '_onQuantityChange'],
+            'clearButton': ['click', 'clearForm']
         },
 
         total: null,
@@ -30,6 +37,8 @@ define(function(require) {
         prices: null,
 
         minValue: 1,
+
+        dimension: null,
 
         /**
          * @inheritDoc
@@ -40,18 +49,18 @@ define(function(require) {
             this.setPrices(options);
             this.initializeElements(options);
             if (_.isDesktop()) {
-                this.subview('scrollView', new ScrollView({
-                    el: this.el
-                }));
+                if (this.dimension === 1) {
+                    this.subview('fitMatrixView', new FitMatrixView({
+                        el: this.el
+                    }));
+                } else {
+                    this.subview('scrollView', new ScrollView({
+                        el: this.el
+                    }));
+                }
             }
 
-            this.total = {
-                price: 0,
-                quantity: 0,
-                rows: {},
-                columns: {},
-                cells: {}
-            };
+            this.setDefaultTotals();
             this.updateTotals();
         },
 
@@ -74,6 +83,19 @@ define(function(require) {
         },
 
         /**
+         * Set default data for totals
+         */
+        setDefaultTotals: function() {
+            this.total = {
+                price: 0,
+                quantity: 0,
+                rows: {},
+                columns: {},
+                cells: {}
+            };
+        },
+
+        /**
          * Refactoring prices object model
          */
         setPrices: function(options) {
@@ -93,7 +115,7 @@ define(function(require) {
          *
          * @param {Event} event
          */
-        _onQuantityChange: _.debounce(function(event) {
+        _onQuantityChange: function(event) {
             if (!this._isSafeNumber(event.currentTarget.value)) {
                 event.preventDefault();
                 return false;
@@ -101,7 +123,7 @@ define(function(require) {
 
             this.updateTotal($(event.currentTarget));
             this.render();
-        }, 150),
+        },
 
         /**
          * Update all totals
@@ -198,6 +220,7 @@ define(function(require) {
          * Update totals
          */
         render: function() {
+            this.checkClearButtonVisibility();
             this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
@@ -231,6 +254,26 @@ define(function(require) {
          */
         _isSafeNumber: function(value) {
             return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
+        },
+
+        /**
+         * Toggle visibility of clear button
+         */
+        checkClearButtonVisibility: function() {
+            var isFieldsEmpty = _.every(this.getElement('fields'), function(field) {
+                return _.isEmpty(field.value);
+            });
+
+            this.getElement('clearButton').toggleClass('disabled', isFieldsEmpty);
+        },
+
+        /**
+         * Clear matrix form fields and totals info
+         */
+        clearForm: function() {
+            this.getElement('fields').filter(function() {
+                return this.value.length > 0;
+            }).val('').trigger('change');
         }
     }));
     return BaseProductMatrixView;

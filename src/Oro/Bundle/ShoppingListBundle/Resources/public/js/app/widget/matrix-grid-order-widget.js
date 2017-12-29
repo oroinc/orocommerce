@@ -4,6 +4,7 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    var headerTemplate = require('tpl!oroproduct/templates/product-popup-header.html');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
@@ -22,6 +23,10 @@ define(function(require) {
                 shoppingListId: this.shoppingListId
             };
 
+            if (_.isDesktop()) {
+                options.actionsEl = '.product-totals';
+                options.moveAdoptedActions = false;
+            }
             options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
             options.preventModelRemoval = true;
             options.regionEnabled = false;
@@ -37,21 +42,9 @@ define(function(require) {
             options.initLayoutOptions = {
                 productModel: this.model
             };
-
-            this.fullscreenViewOptions = {
-                popupLabel: null,
-                headerContent: true,
-                footerContentOptions: {},
-                headerContentOptions: {
-                    imageUrl: this.model.get('imageUrl'),
-                    title: this.model.get('name'),
-                    subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
-                        ': ' + this.model.get('sku')
-                }
-            };
-            this.options.fullscreenViewport = {
-                isMobile: true
-            };
+            options.header = headerTemplate({
+                product: this.model.attributes
+            });
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },

@@ -64,7 +64,7 @@ class ProductController extends Controller
 
         $ignoreProductVariants = $request->get('ignoreProductVariant', false);
         $isSimpleFormAvailable = $this
-            ->get('oro_product.layout.data_provider.product_form_availability')
+            ->get('oro_product.layout.data_provider.product_view_form_availability_provider')
             ->isSimpleFormAvailable($product);
 
         if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {

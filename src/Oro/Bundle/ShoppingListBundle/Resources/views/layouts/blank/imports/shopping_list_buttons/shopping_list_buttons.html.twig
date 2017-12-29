@@ -1,26 +1,38 @@
 {% block __shopping_list_buttons__line_item_form_buttons_shopping_list_widget %}
-    {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
-    {% set buttonOptions = {
-        dataUrl: 'oro_shopping_list_frontend_add_product',
-        dataAttributes: {},
-        'aCss': 'btn--info '
-    } %}
-    {% set removeOptions = buttonOptions|merge({
-        dataUrl: 'oro_shopping_list_frontend_remove_product',
-        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans
-    }) %}
-    {% set options = layout_attr_defaults(attr, {
-        '~new': buttonOptions,
-        '~current': buttonOptions,
-        '~existing': buttonOptions,
-        shoppingLists: shoppingLists,
-        '~remove': removeOptions,
-        '~componentOptions': {
-            modelAttr: {
-                shopping_lists: productShoppingLists
-            }
-        },
-        '~singleButtonACss': 'btn--info'
-    } ) %}
-    {{ buttons.getButtonsHtml(options) }}
+    {% if not is_configurable_product_type(product.type) or matrixFormType != 'none' %}
+        {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+
+        {% set view = 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view' %}
+        {% if matrixFormType == 'popup' %}
+            {% set view = 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view' %}
+        {% elseif matrixFormType == 'inline' %}
+            {% set view = 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view' %}
+        {% endif %}
+
+        {% set buttonOptions = {
+            dataUrl: 'oro_shopping_list_frontend_add_product',
+            dataAttributes: {},
+            'aCss': 'btn--info '
+        } %}
+        {% set removeOptions = buttonOptions|merge({
+            dataUrl: 'oro_shopping_list_frontend_remove_product',
+            actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans
+        }) %}
+
+        {% set options = layout_attr_defaults(attr, {
+            '~new': buttonOptions,
+            '~current': buttonOptions,
+            '~existing': buttonOptions,
+            shoppingLists: shoppingLists,
+            '~remove': removeOptions,
+            '~componentModule': view,
+            '~componentOptions': {
+                modelAttr: {
+                    shopping_lists: productShoppingLists
+                }
+            },
+            '~singleButtonACss': 'btn--info'
+        } ) %}
+        {{ buttons.getButtonsHtml(options) }}
+    {% endif %}
 {% endblock %}

@@ -2,6 +2,14 @@ layout:
     actions:
         - '@setFormTheme':
             themes: 'mobile_matrix_grid_order_form.html.twig'
+        - '@move':
+            id: matrix_grid_order_form_actions_submit
+            parentId: widget_actions
+        - '@move':
+            id: widget_actions
+            parentId: matrix_grid_order_wrapper
+            siblingId: matrix_grid_order_form_end
+            prepend: true
         - '@remove':
             id: matrix_grid_order_form_summary
         - '@add':

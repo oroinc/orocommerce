@@ -615,22 +615,32 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
-    oro_product.layout.data_provider.product_form_availability:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider'
+    oro_product.provider.product_matrix_availability_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider'
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
-            - '@oro_config.manager'
-        tags:
-            - { name: layout.data_provider, alias: oro_product_form_availability }
 
-    oro_product.layout.data_provider.product_list_matrix_form_availability:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListMatrixFormAvailabilityProvider'
+    oro_product.layout.data_provider.product_form_availability_provider:
+        abstract: true
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider'
         arguments:
             - '@oro_config.manager'
-            - '@oro_product.layout.data_provider.product_form_availability'
+            - '@oro_product.provider.product_matrix_availability_provider'
             - '@oro_ui.user_agent_provider'
+
+    oro_product.layout.data_provider.product_view_form_availability_provider:
+        parent: oro_product.layout.data_provider.product_form_availability_provider
+        calls:
+            - [setMatrixFormConfig, ['matrix_form_on_product_view']]
         tags:
-            - { name: layout.data_provider, alias: oro_product_list_matrix_form_availability }
+            - { name: layout.data_provider, alias: product_view_form_availability_provider }
+
+    oro_product.layout.data_provider.product_list_form_availability_provider:
+        parent: oro_product.layout.data_provider.product_form_availability_provider
+        calls:
+            - [setMatrixFormConfig, ['matrix_form_on_product_listing']]
+        tags:
+            - { name: layout.data_provider, alias: product_list_form_availability_provider }
 
     oro_product.layout.data_provider.product_variant:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider'
