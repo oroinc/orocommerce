@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class CheckoutRepository extends EntityRepository
 {
@@ -213,6 +214,7 @@ class CheckoutRepository extends EntityRepository
             ->setParameter('workflowName', $workflowName);
 
         foreach ($sourceCriteria as $field => $value) {
+            QueryBuilderUtil::checkIdentifier($field);
             $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))
                 ->setParameter($field, $value);
         }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ProductShippingOptionsRepository extends EntityRepository
 {
@@ -27,6 +28,7 @@ class ProductShippingOptionsRepository extends EntityRepository
         $expressions = [];
 
         foreach ($unitsByProductIds as $productId => $unit) {
+            QueryBuilderUtil::checkIdentifier($productId);
             $productIdParamName = 'product_id_'.$productId;
 
             $productExpr = $expr->eq('product.id', ':'.$productIdParamName);

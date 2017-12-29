@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class SearchHandler extends BaseSearchHandler
 {
@@ -14,13 +15,18 @@ class SearchHandler extends BaseSearchHandler
         $queryBuilder = $this->entityRepository->createQueryBuilder('e');
 
         if ($search) {
+            $idx = 0;
             foreach ($this->getProperties() as $fieldName) {
+                QueryBuilderUtil::checkIdentifier($fieldName);
+                $paramName = 'search' . $idx;
                 $queryBuilder->andWhere(
                     $queryBuilder->expr()->like(
                         $queryBuilder->expr()->lower('e.' . $fieldName),
-                        $queryBuilder->expr()->lower($queryBuilder->expr()->literal('%' . $search . '%'))
+                        $queryBuilder->expr()->lower(':' . $paramName)
                     )
                 );
+                $queryBuilder->setParameter($paramName, '%' . $search . '%');
+                $idx++;
             }
         }
 
