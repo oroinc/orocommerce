@@ -67,6 +67,9 @@ api:
                                     - NotBlank: ~
         Oro\Bundle\ProductBundle\Entity\Brand:
             documentation_resource: '@OroProductBundle/Resources/doc/api/brand.md'
+            fields:
+                defaultTitle:
+                    exclude: true
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
         Oro\Bundle\AttachmentBundle\Entity\File:
