@@ -161,14 +161,17 @@ class CouponGenerator implements CouponGeneratorInterface
     }
 
     /**
-     * @param array $codes
+     * @param array|string[] $codes
      * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function filter(array $codes): array
     {
-        $statement = $this->getConnection()
-            ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
-        $statement->execute();
+        $statement = $this->getConnection()->executeQuery(
+            'SELECT code FROM oro_promotion_coupon WHERE code IN (?)',
+            [$codes],
+            [Connection::PARAM_STR_ARRAY]
+        );
 
         $assocCodes = array_flip($codes);
 
