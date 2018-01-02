@@ -11,7 +11,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
 {
     use AbsenceBootstrap3ClassesTrait;
-    use EnabledPaymentMethodIdentifierTrait;
+    use EnabledPaymentMethodIdentifierTrait {
+        getReference as protected;
+    }
 
     public function testStartCheckout()
     {

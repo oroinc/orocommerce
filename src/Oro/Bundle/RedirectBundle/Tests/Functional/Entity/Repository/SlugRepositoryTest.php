@@ -358,7 +358,6 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetRawRedirectSlugLocalized()
     {
-        $this->markTestSkipped('Fix in scope of BAP-16106');
         /** @var Slug $expected */
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
 

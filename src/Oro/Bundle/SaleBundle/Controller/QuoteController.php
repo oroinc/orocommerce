@@ -84,9 +84,11 @@ class QuoteController extends Controller
             return $this->update($quote, $request);
         }
 
-        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
-
         $this->createForm(QuoteType::NAME, $quote);
+
+        if (!$quote->getWebsite()) {
+            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+        }
 
         $quoteClass = $this->container->getParameter('oro_sale.entity.quote.class');
         $em = $this->get('doctrine')->getManagerForClass($quoteClass);

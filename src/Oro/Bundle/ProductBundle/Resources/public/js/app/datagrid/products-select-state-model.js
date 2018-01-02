@@ -19,9 +19,15 @@ define(function(require) {
         },
 
         hasRow: function(model) {
-            return _.find(this.get('rows'), function(item) {
-                return item.id !== model.get('id');
-            }) !== undefined;
+            var rows = this.get('rows');
+
+            if (rows.length) {
+                return _.find(rows, function(item) {
+                    return _.isEqual(item.get('id'), model.get('id'));
+                }, this) !== undefined;
+            } else {
+                return false;
+            }
         }
 
     });

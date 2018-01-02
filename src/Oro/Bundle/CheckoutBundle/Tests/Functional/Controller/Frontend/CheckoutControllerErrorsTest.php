@@ -27,7 +27,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
-    use EnabledPaymentMethodIdentifierTrait;
+    use EnabledPaymentMethodIdentifierTrait {
+        getReference as protected;
+    }
 
     public function setUp()
     {
