@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Filter;
 
 use Doctrine\ORM\Query\Expr\Join;
 
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
@@ -107,6 +108,7 @@ class ProductPriceFilter extends NumberRangeFilter
 
         $currency = $this->get('data_name');
 
+        QueryBuilderUtil::checkIdentifier($productPriceAlias);
         $qb->innerJoin(
             $this->productPriceClass,
             $productPriceAlias,

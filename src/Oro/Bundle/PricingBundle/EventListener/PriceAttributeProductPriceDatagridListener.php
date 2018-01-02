@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class PriceAttributeProductPriceDatagridListener
 {
@@ -232,6 +233,8 @@ class PriceAttributeProductPriceDatagridListener
      */
     protected function buildJoinAlias($columnName)
     {
+        QueryBuilderUtil::checkIdentifier($columnName);
+
         return $columnName.'_table';
     }
 

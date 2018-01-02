@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
@@ -36,7 +36,8 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
             ->setParameter('productIds', $productIds);
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
+            QueryBuilderUtil::checkIdentifier($orderDirection);
+            $qb->addOrderBy(QueryBuilderUtil::getField('price', $fieldName), $orderDirection);
         }
 
         return $qb->getQuery()->getResult();

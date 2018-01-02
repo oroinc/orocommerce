@@ -80,11 +80,16 @@ class CategoryRepository extends EntityRepository
             ->orderBy('category.id');
 
         if ($visibility === CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
-            $condition = sprintf('cvr.visibility IS NULL OR cvr.visibility = %s', $visibility);
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('cvr.visibility'),
+                    $qb->expr()->eq('cvr.visibility', ':visibility')
+                )
+            );
         } else {
-            $condition = sprintf('cvr.visibility = %s', $visibility);
+            $qb->andWhere($qb->expr()->eq('cvr.visibility', ':visibility'));
         }
-        $qb->andWhere($condition);
+        $qb->setParameter('visibility', $visibility);
 
         return array_map('current', $qb->getQuery()->getArrayResult());
     }
@@ -147,15 +152,16 @@ class CategoryRepository extends EntityRepository
         }
 
         $sourceCondition = sprintf(
-            'CASE WHEN c.parentCategory IS NOT NULL THEN %s ELSE %s END',
+            'CASE WHEN c.parentCategory IS NOT NULL THEN %d ELSE %d END',
             CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             CategoryVisibilityResolved::SOURCE_STATIC
         );
 
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
             ->select(
                 'c.id',
-                (string)$visibility,
+                (string)$queryBuilder->expr()->literal($visibility),
                 $sourceCondition,
                 (string)$scope->getId()
             )
