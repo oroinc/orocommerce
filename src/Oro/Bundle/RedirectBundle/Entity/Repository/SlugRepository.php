@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -189,6 +190,10 @@ class SlugRepository extends EntityRepository
         /** @var Connection $connection */
         $connection = $this->_em->getConnection();
 
+        $localizationIdSortOrder = 'DESC';
+        if ($this->_em->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+            $localizationIdSortOrder .= ' NULLS LAST';
+        }
         $hashParameters = UrlParameterHelper::hashParams($parameters);
         $qb = $connection->createQueryBuilder()
             ->select('slug.url', 'slug.slug_prototype', 'slug.localization_id')
@@ -212,7 +217,7 @@ class SlugRepository extends EntityRepository
                     'routeParameters' => Type::TARRAY,
                     'localizationId' => Type::INTEGER
                 ]
-            )->addOrderBy('slug.localization_id', 'ASC');
+            )->addOrderBy('slug.localization_id', $localizationIdSortOrder);
 
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
