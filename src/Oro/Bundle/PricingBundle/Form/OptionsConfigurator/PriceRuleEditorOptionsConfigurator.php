@@ -45,9 +45,17 @@ class PriceRuleEditorOptionsConfigurator
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('numericOnly', false);
+        $resolver->setDefault('dataProviderConfig', []);
         $resolver->setDefault('entities', []);
         $resolver->setDefault('dataSource', []);
         $resolver->setAllowedTypes('numericOnly', 'bool');
+
+        $resolver->setNormalizer('dataProviderConfig', function (Options $options, $dataProviderConfig) {
+            if (empty($dataProviderConfig)) {
+                return $this->autocompleteFieldsProvider->getDataProviderConfig($options['numericOnly']);
+            }
+            return $dataProviderConfig;
+        });
 
         $resolver->setNormalizer('entities', function (Options $options, $entities) {
             if (empty($entities)) {

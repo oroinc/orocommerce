@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
-use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -20,7 +20,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         'integer' => self::TYPE_INTEGER,
         'float' => self::TYPE_FLOAT,
         'money' => self::TYPE_FLOAT,
-        'double' => self::TYPE_FLOAT,
+        'decimal' => self::TYPE_FLOAT,
         'datetime' => self::TYPE_DATETIME,
         'date' => self::TYPE_DATE,
         'manyToMany' => self::TYPE_RELATION,
@@ -36,7 +36,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     protected $expressionParser;
 
     /**
-     * @var FieldsProviderInterface
+     * @var FieldsProvider
      */
     protected $fieldsProvider;
 
@@ -52,12 +52,12 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
 
     /**
      * @param ExpressionParser $expressionParser
-     * @param FieldsProviderInterface $fieldsProvider
+     * @param FieldsProvider $fieldsProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
         ExpressionParser $expressionParser,
-        FieldsProviderInterface $fieldsProvider,
+        FieldsProvider $fieldsProvider,
         TranslatorInterface $translator
     ) {
         $this->expressionParser = $expressionParser;
@@ -99,6 +99,52 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
+    {
+        $typeRelation = self::TYPE_RELATION;
+        $scalarTypes = array_filter(self::$typesMap, function ($type) use ($typeRelation) {
+            return $type !== $typeRelation;
+        });
+
+        $include = [];
+        $optionsFilter = [
+            'unidirectional' => false,
+            'exclude' => false,
+        ];
+
+        if ($numericalOnly) {
+            // identifier fields should not be available for math operations
+            $optionsFilter['identifier'] = false;
+            $include = array_merge($include, array_map(function ($type) {
+                return ['type' => $type];
+            }, $this->fieldsProvider->getSupportedNumericTypes()));
+        } else {
+            $include = array_merge($include, array_map(function ($type) {
+                return ['type' => $type];
+            }, array_keys($scalarTypes)));
+        }
+
+        if ($withRelations) {
+            $include = array_merge($include, array_map(function ($type) {
+                return ['type' => $type];
+            }, $this->fieldsProvider->getSupportedRelationTypes()));
+        } else {
+            $optionsFilter['relation'] = false;
+        }
+
+        $dataProviderConfig = [
+            'optionsFilter' => $optionsFilter,
+            'include' => $include,
+            'fieldsFilterWhitelist' => $this->fieldsProvider->getFieldsWhiteList(),
+            'fieldsFilterBlacklist' => $this->fieldsProvider->getFieldsBlackList(),
+        ];
+
+        return $dataProviderConfig;
+    }
+
+    /**
      * @return array
      */
     protected function getRootEntities()
@@ -128,7 +174,9 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         foreach ($data as &$fields) {
             $fields = array_map(
                 function (array $item) {
-                    $item['label'] = $this->translator->trans($item['label']);
+                    if (!empty($item['label'])) {
+                        $item['label'] = $this->translator->trans($item['label']);
+                    }
 
                     return $item;
                 },

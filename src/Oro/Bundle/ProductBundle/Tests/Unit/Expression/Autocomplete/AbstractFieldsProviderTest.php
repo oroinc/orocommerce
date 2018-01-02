@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
-use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
@@ -18,7 +18,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
     protected $expressionParser;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldsProvider;
 
@@ -32,7 +32,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
     }
 

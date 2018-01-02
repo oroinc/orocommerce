@@ -29,4 +29,11 @@ interface AutocompleteFieldsProviderInterface
      * @return array
      */
     public function getAutocompleteData($numericalOnly = false, $withRelations = true);
+
+    /**
+     * @param bool $numericalOnly
+     * @param bool $withRelations
+     * @return array
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true);
 }

@@ -53,4 +53,27 @@ class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
             }
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
+    {
+        $whitelist = [];
+
+        $entitiesData = $this->getFieldsData($numericalOnly, $withRelations);
+        foreach ($entitiesData as $className => $fieldsData) {
+            foreach ($fieldsData as $fieldName => $fieldInfo) {
+                $whitelist[$className][$fieldName] = true;
+            }
+        }
+
+        $dataProviderConfig = [
+            'fieldsFilterWhitelist' => $whitelist,
+            'isRestrictiveWhitelist' => true,
+            'fieldsDataUpdate' => $this->translateLabels($this->specialFieldsInformation),
+        ];
+
+        return $dataProviderConfig;
+    }
 }

@@ -51,4 +51,17 @@ class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
             }
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
+    {
+        $dataProviderConfig = parent::getDataProviderConfig($numericalOnly, $withRelations);
+
+        $dataProviderConfig['fieldsDataUpdate'] =
+            $numericalOnly ? [] : $this->translateLabels($this->specialFieldsInformation);
+
+        return $dataProviderConfig;
+    }
 }

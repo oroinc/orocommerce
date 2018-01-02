@@ -62,8 +62,8 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'numericOnly' => false,
             'entities' => null,
+            'dataProviderConfig' => null,
             'dataSource' => [],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve([]));
     }
@@ -83,10 +83,16 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
         $this->autocompleteFieldsProvider->expects($this->never())
             ->method('getAutocompleteData');
 
+        $this->autocompleteFieldsProvider->expects($this->never())
+            ->method('getDataProviderConfig');
+
         $options = [
             'numericOnly' => false,
             'entities' => [
                 AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            ],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
             ],
             'dataSource' => [],
         ];
@@ -96,10 +102,12 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
             'entities' => [
                 AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
             ],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']]
+            ],
             'dataSource' => [
                 'price_list' => $selectHtml
             ],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve($options));
     }
@@ -123,9 +131,17 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
                 [AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']]
             );
 
+        $this->autocompleteFieldsProvider->expects($this->once())
+            ->method('getDataProviderConfig')
+            ->with(false)
+            ->willReturn(
+                ['include' => [['type' => 'integer']]]
+            );
+
         $options = [
             'numericOnly' => false,
             'entities' => [],
+            'dataProviderConfig' => [],
             'dataSource' => [],
         ];
 
@@ -134,10 +150,12 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
             'entities' => [
                 AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
             ],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']]
+            ],
             'dataSource' => [
                 'price_list' => $selectHtml
             ],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve($options));
     }
@@ -158,6 +176,9 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
             'entities' => [
                 AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
             ],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
+            ],
             'dataSource' => [],
         ];
 
@@ -165,6 +186,9 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
             'numericOnly' => false,
             'entities' => [
                 AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            ],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
             ],
             'dataSource' => [],
 
