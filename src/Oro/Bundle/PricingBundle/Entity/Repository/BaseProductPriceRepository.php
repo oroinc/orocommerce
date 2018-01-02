@@ -293,8 +293,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
         }
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            QueryBuilderUtil::checkIdentifier($orderDirection);
-            $qb->addOrderBy(QueryBuilderUtil::getField('price', $fieldName), $orderDirection);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('price', $fieldName),
+                QueryBuilderUtil::getSortOrder($orderDirection)
+            );
         }
 
         return $qb;
@@ -550,8 +552,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
             }
         }
         foreach ($orderBy as $field => $order) {
-            QueryBuilderUtil::checkIdentifier($order);
-            $qb->addOrderBy(QueryBuilderUtil::getField('prices', $field), $order);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('prices', $field),
+                QueryBuilderUtil::getSortOrder($order)
+            );
         }
         if ($limit !== null) {
             $qb->setMaxResults($limit);
