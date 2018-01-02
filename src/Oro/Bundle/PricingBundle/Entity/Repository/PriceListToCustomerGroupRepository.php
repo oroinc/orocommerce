@@ -41,13 +41,12 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
      */
     public function getPriceLists($customerGroup, Website $website, $sortOrder = Criteria::ASC)
     {
-        QueryBuilderUtil::checkIdentifier($sortOrder);
         $qb = $this->createQueryBuilder('relation');
         $qb->innerJoin('relation.priceList', 'priceList')
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.sortOrder', $sortOrder)
+            ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
             ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();

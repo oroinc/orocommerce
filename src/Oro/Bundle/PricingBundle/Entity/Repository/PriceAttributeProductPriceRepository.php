@@ -36,8 +36,10 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
             ->setParameter('productIds', $productIds);
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            QueryBuilderUtil::checkIdentifier($orderDirection);
-            $qb->addOrderBy(QueryBuilderUtil::getField('price', $fieldName), $orderDirection);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('price', $fieldName),
+                QueryBuilderUtil::getSortOrder($orderDirection)
+            );
         }
 
         return $qb->getQuery()->getResult();

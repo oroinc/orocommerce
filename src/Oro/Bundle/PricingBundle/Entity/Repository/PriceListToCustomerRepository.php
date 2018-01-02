@@ -46,13 +46,12 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      */
     public function getPriceLists($customer, Website $website, $sortOrder = Criteria::ASC)
     {
-        QueryBuilderUtil::checkIdentifier($sortOrder);
         $qb = $this->createQueryBuilder('relation');
         $qb->innerJoin('relation.priceList', 'priceList')
             ->where($qb->expr()->eq('relation.customer', ':customer'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.sortOrder', $sortOrder)
+            ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
             ->setParameters(['customer' => $customer, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
