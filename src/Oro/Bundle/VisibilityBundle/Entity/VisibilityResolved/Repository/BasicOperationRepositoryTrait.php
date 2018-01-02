@@ -6,6 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * @method ClassMetadataInfo getClassMetadata()
@@ -62,7 +63,7 @@ trait BasicOperationRepositoryTrait
         foreach ($set as $field => $value) {
             $parameterIndex++;
             $parameterName = 'parameter' . $parameterIndex;
-            $queryBuilder->set('entity.' . $field, ':' . $parameterName)
+            $queryBuilder->set(QueryBuilderUtil::getField('entity', $field), ':' . $parameterName)
                 ->setParameter($parameterName, $value);
         }
 
@@ -117,8 +118,10 @@ trait BasicOperationRepositoryTrait
         foreach ($where as $field => $value) {
             $parameterIndex++;
             $parameterName = 'parameter' . $parameterIndex;
-            $queryBuilder->andWhere(sprintf('entity.%s = :%s', $field, $parameterName))
-                ->setParameter($parameterName, $value);
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->eq(QueryBuilderUtil::getField('entity', $field), $parameterName)
+            )
+            ->setParameter($parameterName, $value);
         }
     }
 
