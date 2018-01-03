@@ -37,7 +37,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      * {@inheritdoc}
      * If parameters `bidirectional` and `limit` are not passed - default values from configuration will be used
      */
-    public function find(Product $product, $bidirectional = null, $limit = null)
+    public function find(Product $product, $bidirectional = false, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
@@ -46,8 +46,8 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
         return $this->getRelatedProductsRepository()
             ->findRelated(
                 $product->getId(),
-                $bidirectional === null ? $this->configProvider->isBidirectional() : $bidirectional,
-                $limit === null ? $this->configProvider->getLimit() : $limit
+                $bidirectional,
+                $limit
             );
     }
 
