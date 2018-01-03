@@ -455,6 +455,17 @@ class ProductRepository extends EntityRepository
      */
     public function getProductIdsByAttribute(FieldConfigModel $attribute)
     {
+        return $this->getProductIdsByAttributeId($attribute->getId());
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param int $attributeId
+     * @return array
+     */
+    public function getProductIdsByAttributeId($attributeId)
+    {
         $qb = $this->createQueryBuilder('p');
 
         $result = $qb
@@ -464,7 +475,7 @@ class ProductRepository extends EntityRepository
             ->innerJoin('f.attributeGroups', 'g')
             ->innerJoin('g.attributeRelations', 'r')
             ->where('r.entityConfigFieldId = :id')
-            ->setParameter('id', $attribute->getId())
+            ->setParameter('id', $attributeId)
             ->orderBy('p.id')
             ->getQuery()
             ->getArrayResult();
