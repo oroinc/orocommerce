@@ -1,5 +1,5 @@
 @ticket-BB-4362
-
+@skip
 Feature: Best Selling Products
   In order to understand what products have been sold best in specific periods of time
   As an Administrator
