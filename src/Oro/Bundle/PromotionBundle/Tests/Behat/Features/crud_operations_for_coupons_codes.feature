@@ -1,5 +1,3 @@
-# TODO: unskip after BB-12921
-@skip
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes
   As an Administrator
@@ -15,7 +13,7 @@ Feature: CRUD operations for Coupons codes
     And I should see "line Item Discount Promotion"
     And I should see "order Discount Promotion"
     And I should not see "shipping Discount Promotion"
-    When I fill form with:
+    When I fill "Coupon Form" with:
       |Coupon Code          | 12345                            |
       |Promotion            | order Discount Promotion         |
       |Enabled              | true                             |
@@ -39,7 +37,7 @@ Feature: CRUD operations for Coupons codes
     And I click "Coupons Actions"
     And I click "Create Coupon"
     And I type "Promotion" in "Promotion"
-    When I fill form with:
+    When I fill "Coupon Form" with:
       |Coupon Code          | 55555                            |
       |Promotion            | order Discount Promotion         |
       |Uses per Coupon      | 1                                |
@@ -92,7 +90,7 @@ Feature: CRUD operations for Coupons codes
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Create Coupon"
-    And I fill form with:
+    And I fill "Coupon Form" with:
       |Code              | 54321    |
       |Uses per Coupon   | 10       |
     And I type "10" in "Uses per Person"
@@ -141,7 +139,7 @@ Feature: CRUD operations for Coupons codes
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Create Coupon"
-    And I fill form with:
+    And I fill "Coupon Form" with:
       |Code               | 54321    |
     When I save and close form
     Then I should see validation errors:
@@ -151,7 +149,7 @@ Feature: CRUD operations for Coupons codes
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Create Coupon"
-    And I fill form with:
+    And I fill "Coupon Form" with:
       |Coupon Code       | 22222   |
       |Uses per Coupon   |         |
     And I type "" in "Uses per Person"

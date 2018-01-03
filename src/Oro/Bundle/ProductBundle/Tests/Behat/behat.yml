@@ -150,7 +150,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Manage Inventory  Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
+          Manage Inventory Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
           Inventory Threshold Default: 'product_options[oro_inventory___inventory_threshold][use_parent_scope_value]'
           Backorders Default: 'product_options[oro_inventory___backorders][use_parent_scope_value]'
           Decrement Inventory Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
@@ -407,6 +407,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
+
+    Inventory Status:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
 
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'

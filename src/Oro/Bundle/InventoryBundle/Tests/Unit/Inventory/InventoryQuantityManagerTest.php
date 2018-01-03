@@ -132,19 +132,29 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldDecrementReturnTrue()
     {
+        $product = $this->createMock(Product::class);
         $this->entityFallbackResolver->expects($this->at(0))
             ->method('getFallbackValue')
+            ->with($product, 'manageInventory')
             ->willReturn(true);
-        $product = $this->createMock(Product::class);
+        $this->entityFallbackResolver->expects($this->at(1))
+            ->method('getFallbackValue')
+            ->with($product, 'decrementQuantity')
+            ->willReturn(true);
         $this->assertTrue($this->inventoryQuantityManager->shouldDecrement($product));
     }
 
     public function testShouldDecrementReturnFalse()
     {
+        $product = $this->createMock(Product::class);
         $this->entityFallbackResolver->expects($this->at(0))
             ->method('getFallbackValue')
+            ->with($product, 'manageInventory')
+            ->willReturn(true);
+        $this->entityFallbackResolver->expects($this->at(1))
+            ->method('getFallbackValue')
+            ->with($product, 'decrementQuantity')
             ->willReturn(false);
-        $product = $this->createMock(Product::class);
         $this->assertFalse($this->inventoryQuantityManager->shouldDecrement($product));
         $this->assertFalse($this->inventoryQuantityManager->shouldDecrement(null));
     }
@@ -157,9 +167,10 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getProduct')
             ->willReturn($product);
 
-        $this->entityFallbackResolver->expects($this->exactly(3))
+        $this->entityFallbackResolver->expects($this->exactly(4))
             ->method('getFallbackValue')
             ->willReturnMap([
+                [$product, 'manageInventory', 1, true],
                 [$product, 'decrementQuantity', 1, true],
                 [$product, 'backOrder', 1, false],
                 [$product, 'inventoryThreshold', 1, 3],
@@ -207,9 +218,10 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getProduct')
             ->willReturn($product);
 
-        $this->entityFallbackResolver->expects($this->exactly(2))
+        $this->entityFallbackResolver->expects($this->exactly(3))
             ->method('getFallbackValue')
             ->willReturnMap([
+                [$product, 'manageInventory', 1, true],
                 [$product, 'decrementQuantity', 1, true],
                 [$product, 'backOrder', 1, true],
             ]);

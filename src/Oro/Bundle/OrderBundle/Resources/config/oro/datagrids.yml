@@ -644,14 +644,11 @@ datagrids:
             type: orm
             query:
                 select:
-                    #will be altered by grouping filter to extract specific date
-                    - calendarDate.date as cDate
-                    - lineitem.productUnitCode as unitCode
+                    - product.id AS productId
+                    - product.sku AS productSku
+                    - product.denormalizedDefaultName AS productName
                     - SUM (lineitem.quantity) as qtySold
-                    - product.sku as sku
-                    - product.skuUppercase as skuUppercase
-                    - product.denormalizedDefaultName as productName
-                    - product.denormalizedDefaultNameUppercase as productNameUppercase
+                    - lineitem.productUnitCode as unitCode
                 from:
                     - { table: %oro_report.calendar_date.entity.class%, alias: calendarDate }
                 join:
@@ -662,21 +659,16 @@ datagrids:
                             conditionType: WITH
                             condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
                         -
-                            join: %oro_order.entity.order_line_item.class%
+                            join: orderAlias.lineItems
                             alias: lineitem
-                            conditionType: WITH
-                            condition: orderAlias.id = lineitem.order
                         -
-                            join: %oro_product.entity.product.class%
+                            join: lineitem.product
                             alias: product
-                            conditionType: WITH
-                            condition: lineitem.product = product.id
-                #added to support sql_mode=only_full_group_by
-                groupBy: cDate, sku, product.id, unitCode
+                groupBy: productId, unitCode
         columns:
-            dateGrouping:
+            timePeriod:
                 label:         oro.report.datagrid.column.time_period.label
-            sku:
+            productSku:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
@@ -687,48 +679,58 @@ datagrids:
                 frontend_type: html
         sorters:
             columns:
-                sku:
-                    data_name: product.sku
-                dateGrouping:
-                    data_name: cDate
+                timePeriod:
+                    data_name: timePeriod
                     apply_callback: ['@oro_filter.date_grouping_filter', 'applyOrderBy']
-                qtySold:
-                    data_name: qtySold
+                productSku:
+                    data_name: productSku
                 productName:
                     data_name: productName
+                qtySold:
+                    data_name: qtySold
             default:
-                dateGrouping: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                timePeriod: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                createdAt:
-                    label:     oro.report.datagrid.column.time_period.label
-                    type:      datetime
-                    data_name: orderAlias.createdAt
-                sku:
-                    type:      string
-                    data_name: skuUppercase
-                    case_insensitive: false
-                    value_conversion: mb_strtoupper
+                timePeriod:
+                    label:              oro.report.datagrid.column.time_period.label
+                    type:               datetime
+                    data_name:          orderAlias.createdAt
+                productSku:
+                    type:               string
+                    data_name:          productSku
                 productName:
-                    type:      string
-                    data_name: productNameUppercase
-                    case_insensitive: false
-                    value_conversion: mb_strtoupper
+                    type:               string
+                    data_name:          productName
                 skip_empty_periods:
-                    type:      skip_empty_periods
-                    data_name: calendarDate.date
-                    label:     oro.report.filter.skip_empty_periods.label
-                    not_nullable_field: product.id
+                    label:              oro.report.filter.skip_empty_periods.label
+                    type:               skip_empty_periods
+                    data_name:          productId
+                    options:
+                        field_options:
+                            choices:
+                                0: No
+                                1: Yes
+                        default_value: Yes
                 grouping:
-                    type:      date_grouping
-                    data_name: calendarDate.date
-                    label:     oro.report.filter.grouping.label
-                    column_name: dateGrouping
-                    calendar_entity: %oro_report.calendar_date.entity.class%
-                    target_entity: %oro_order.entity.order.class%
+                    label:              oro.report.filter.grouping.label
+                    type:               date_grouping
+                    data_name:          calendarDate.date
+                    column_name:        timePeriod
+                    calendar_entity:    %oro_report.calendar_date.entity.class%
+                    target_entity:      %oro_order.entity.order.class%
                     not_nullable_field: product.id
-                    joined_column: createdAt
+                    joined_column:      createdAt
+                    joined_table:       joinedTableAlias
+                    options:
+                        field_options:
+                            choices:
+                                day:     Day
+                                month:   Month
+                                quarter: Quarter
+                                year:    Year
+                        default_value: Day
             default:
                 grouping:
                     value: day

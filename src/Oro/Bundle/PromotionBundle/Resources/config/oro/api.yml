@@ -1,0 +1,27 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            fields:
+                discount:
+                    data_type: float
+                    form_options:
+                        mapped: false
+                    description: The aggregated amount of the promotion discounts applied to the order.
+                shippingDiscount:
+                    data_type: float
+                    form_options:
+                        mapped: false
+                    description: The aggregated amount of the promotion shipping discounts applied to the order.
+            actions:
+                create:
+                    fields:
+                        discount:
+                            exclude: true
+                        shippingDiscount:
+                            exclude: true
+                update:
+                    fields:
+                        discount:
+                            exclude: true
+                        shippingDiscount:
+                            exclude: true

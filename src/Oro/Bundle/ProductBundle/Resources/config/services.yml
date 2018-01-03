@@ -1149,6 +1149,8 @@ services:
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
         public: false
+        arguments:
+            - '@oro_query_designer.query_designer.segment_filters_purifier'
 
     oro_product.event_listener.product_collection_datagrid_parameters_for_selected_products_grid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
@@ -1241,8 +1243,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
         arguments:
             - '@request_stack'
-            - '@doctrine'
-            - '@event_dispatcher'
+            - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
 
@@ -1385,3 +1386,13 @@ services:
             - '@oro_action.expression.context_accessor'
         tags:
             - { name: oro_action.action, alias: remove_restricted_products }
+
+    oro_product.async.reindex_products_by_attribute_processor:
+        class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributeProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
+            - '@event_dispatcher'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attribute' }

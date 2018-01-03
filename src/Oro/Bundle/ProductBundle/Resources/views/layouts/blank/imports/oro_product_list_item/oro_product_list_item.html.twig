@@ -169,7 +169,7 @@
 
     {% if (class_prefix == 'list-view') %}
         <div {{ block('block_attributes') }} >
-            <p class="product__description-conent" itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</p>
+            <div class="product__description-content tiny-container" itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</div>
         </div>
     {% endif %}
 {% endblock %}
