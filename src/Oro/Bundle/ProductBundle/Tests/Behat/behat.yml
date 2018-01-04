@@ -787,6 +787,11 @@ oro_behat_extension:
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
 
+  pages:
+    Product View:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
+      route: 'oro_product_view'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
