@@ -56,7 +56,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension'
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.form.section.provider'
             - 'oro_order_line_item'
