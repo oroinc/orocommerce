@@ -310,12 +310,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved', 'agpvr')
-            ->set('agpvr.visibility', $visibility)
+            ->set('agpvr.visibility', ':visibility')
             ->where($qb->expr()->eq('agpvr.category', ':category'))
             ->andWhere($qb->expr()->in('agpvr.scope', ':scopes'))
             ->setParameters([
                 'scopes' => $scopes,
-                'category' => $category
+                'category' => $category,
+                'visibility' => $visibility
             ]);
 
         $qb->getQuery()->execute();
@@ -344,12 +345,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved', 'apvr')
-            ->set('apvr.visibility', $visibility)
+            ->set('apvr.visibility', ':visibility')
             ->where($qb->expr()->eq('apvr.category', ':category'))
             ->andWhere($qb->expr()->in('apvr.scope', ':scopes'))
             ->setParameters([
                 'scopes' => $scopes,
-                'category' => $category
+                'category' => $category,
+                'visibility' => $visibility
             ]);
 
         $qb->getQuery()->execute();
@@ -379,12 +381,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved', 'acvr')
-            ->set('acvr.visibility', $visibility)
+            ->set('acvr.visibility', ':visibility')
             ->where($qb->expr()->eq('acvr.category', ':category'))
             ->andWhere($qb->expr()->in('acvr.scope', ':scopes'))
             ->setParameters([
                 'scopes' => $scopes,
-                'category' => $category
+                'category' => $category,
+                'visibility' => $visibility
             ]);
 
         $qb->getQuery()->execute();
@@ -416,12 +419,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved', 'agcvr')
-            ->set('agcvr.visibility', $visibility)
+            ->set('agcvr.visibility', ':visibility')
             ->where($qb->expr()->eq('agcvr.category', ':category'))
             ->andWhere($qb->expr()->in('agcvr.scope', ':scopes'))
             ->setParameters([
                 'scopes' => $scopes,
-                'category' => $category
+                'category' => $category,
+                'visibility' => $visibility
             ]);
 
         $qb->getQuery()->execute();

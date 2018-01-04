@@ -73,10 +73,10 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved', 'apvr')
-            ->set('apvr.visibility', $visibility)
+            ->set('apvr.visibility', ':visibility')
             ->where($qb->expr()->in('apvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(apvr.category)', ':categoryIds'))
-            ->setParameters(['scopes' => $productScopes, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scopes' => $productScopes, 'categoryIds' => $categoryIds, ':visibility' => $visibility]);
 
         $qb->getQuery()->execute();
     }

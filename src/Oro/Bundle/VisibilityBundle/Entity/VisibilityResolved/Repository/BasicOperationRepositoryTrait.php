@@ -119,7 +119,7 @@ trait BasicOperationRepositoryTrait
             $parameterIndex++;
             $parameterName = 'parameter' . $parameterIndex;
             $queryBuilder->andWhere(
-                $queryBuilder->expr()->eq(QueryBuilderUtil::getField('entity', $field), $parameterName)
+                $queryBuilder->expr()->eq(QueryBuilderUtil::getField('entity', $field), ':' . $parameterName)
             )
             ->setParameter($parameterName, $value);
         }

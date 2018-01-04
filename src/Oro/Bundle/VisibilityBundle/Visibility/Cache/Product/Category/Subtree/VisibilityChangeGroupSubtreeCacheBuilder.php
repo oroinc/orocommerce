@@ -64,10 +64,10 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved', 'agcvr')
-            ->set('agcvr.visibility', $visibility)
+            ->set('agcvr.visibility', ':visibility')
             ->where($qb->expr()->eq('agcvr.scope', ':scope'))
             ->andWhere($qb->expr()->in('IDENTITY(agcvr.category)', ':categoryIds'))
-            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds, 'visibility' => $visibility]);
 
         $qb->getQuery()->execute();
     }
@@ -200,10 +200,10 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved', 'agpvr')
-            ->set('agpvr.visibility', $visibility)
+            ->set('agpvr.visibility', ':visibility')
             ->where($qb->expr()->in('agpvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(agpvr.category)', ':categoryIds'))
-            ->setParameters(['scopes' => $scopes, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scopes' => $scopes, 'categoryIds' => $categoryIds, 'visibility' => $visibility]);
 
         $qb->getQuery()->execute();
     }
