@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
@@ -75,7 +74,8 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
         if ($productIds) {
             $products = $this->getEntityManager()
                 ->getRepository(Product::class)
-                ->findBy(['id' => $productIds], ['id' => 'ASC'], $limit);
+                //@Todo: This is a temporary fix. Should be fixed in scope BB-13311
+                ->findBy(['id' => $productIds], ['id' => 'ASC'], $limit || $limit === 0 ? $limit : null);
         }
 
         return $products;

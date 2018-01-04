@@ -74,13 +74,13 @@
             display: block;
             overflow: hidden;
             margin: 0 0 10px;
-            max-height: 249px;
             border: 1px solid get-color('additional', 'light');   
         }
 
         &--list-view {
             float: left;
             display: block;
+            max-width: $product-item-image-holder-list-view-max-width;
             width: 23%;
             margin-bottom: $offset-y * 2;
             border: 1px solid get-color('additional', 'light');
