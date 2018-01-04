@@ -52,50 +52,75 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
+     * @param bool $isMobile
+     * @param string $matrixFormConfig
+     * @param bool $isMatrixFormAvailable
+     * @param string $productView
+     * @param string $expectedAvailableMatrixFormType
+     * @param bool $expectedIsMatrixFormAvailable
+     * @param bool $expectedIsInlineMatrixFormAvailable
+     *
+     * @dataProvider getAvailableMatrixFormTypeDataProvider
      */
-    public function isInlineMatrixFormAvailableDataProvider()
-    {
-        return [
-            'is mobile' => [
-                'isMobile' => true,
-                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
-                'isMatrixFormAvailable' => true,
-                'expected' => false,
-            ],
-            'config not inline' => [
-                'isMobile' => false,
-                'matrixFormConfig' => Configuration::MATRIX_FORM_NONE,
-                'isMatrixFormAvailable' => true,
-                'expected' => false,
-            ],
-            'matrix form not available' => [
-                'isMobile' => false,
-                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
-                'isMatrixFormAvailable' => false,
-                'expected' => false,
-            ],
-            'matrix form available' => [
-                'isMobile' => false,
-                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
-                'isMatrixFormAvailable' => true,
-                'expected' => true,
-            ],
-        ];
+    public function testIsInlineMatrixFormAvailable(
+        $isMobile,
+        $matrixFormConfig,
+        $isMatrixFormAvailable,
+        $productView,
+        $expectedAvailableMatrixFormType,
+        $expectedIsMatrixFormAvailable,
+        $expectedIsInlineMatrixFormAvailable
+    ) {
+        $product = $this->prepareProvider($isMobile, $matrixFormConfig, $isMatrixFormAvailable);
+
+        if ($productView) {
+            $this->assertEquals(
+                $expectedIsInlineMatrixFormAvailable,
+                $this->provider->isInlineMatrixFormAvailable($product, $productView)
+            );
+        } else {
+            $this->assertEquals(
+                $expectedIsInlineMatrixFormAvailable,
+                $this->provider->isInlineMatrixFormAvailable($product)
+            );
+        }
     }
 
     /**
      * @param bool $isMobile
      * @param string $matrixFormConfig
      * @param bool $isMatrixFormAvailable
-     * @param bool $expected
-     * @dataProvider isInlineMatrixFormAvailableDataProvider
+     * @param string $productView
+     * @param string $expectedAvailableMatrixFormType
+     * @param bool $expectedIsMatrixFormAvailable
+     * @param bool $expectedIsInlineMatrixFormAvailable
+     * @param bool $expectedIsPopupMatrixFormAvailable
+     *
+     * @dataProvider getAvailableMatrixFormTypeDataProvider
      */
-    public function testIsInlineMatrixFormAvailable($isMobile, $matrixFormConfig, $isMatrixFormAvailable, $expected)
-    {
+    public function testIsPopupMatrixFormAvailable(
+        $isMobile,
+        $matrixFormConfig,
+        $isMatrixFormAvailable,
+        $productView,
+        $expectedAvailableMatrixFormType,
+        $expectedIsMatrixFormAvailable,
+        $expectedIsInlineMatrixFormAvailable,
+        $expectedIsPopupMatrixFormAvailable
+    ) {
         $product = $this->prepareProvider($isMobile, $matrixFormConfig, $isMatrixFormAvailable);
 
-        $this->assertEquals($expected, $this->provider->isInlineMatrixFormAvailable($product));
+        if ($productView) {
+            $this->assertEquals(
+                $expectedIsPopupMatrixFormAvailable,
+                $this->provider->isPopupMatrixFormAvailable($product, $productView)
+            );
+        } else {
+            $this->assertEquals(
+                $expectedIsPopupMatrixFormAvailable,
+                $this->provider->isPopupMatrixFormAvailable($product)
+            );
+        }
     }
 
     /**
@@ -108,73 +133,131 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_NONE,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'desktop, config none, matrix available' => [
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_NONE,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'desktop, config popup, matrix not available' => [
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'desktop, config popup, matrix available' => [
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_POPUP,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_POPUP,
+                'expectedIsMatrixFormAvailable' => true,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => true,
             ],
             'desktop, config inline, matrix not available' => [
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'desktop, config inline, matrix available' => [
                 'isMobile' => false,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_INLINE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_INLINE,
+                'expectedIsMatrixFormAvailable' => true,
+                'expectedIsInlineMatrixFormAvailable' => true,
+                'expectedIsPopupMatrixFormAvailable' => false,
+            ],
+            'desktop, config inline, matrix available, gallery-view' => [
+                'isMobile' => false,
+                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
+                'isMatrixFormAvailable' => true,
+                'productView' => 'gallery-view',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_POPUP,
+                'expectedIsMatrixFormAvailable' => true,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => true,
             ],
             'mobile, config none, matrix not available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_NONE,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'mobile, config none, matrix available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_NONE,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'mobile, config popup, matrix not available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'mobile, config popup, matrix available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_POPUP,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_POPUP,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_POPUP,
+                'expectedIsMatrixFormAvailable' => true,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => true,
             ],
             'mobile, config inline, matrix not available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => false,
-                'expected' => Configuration::MATRIX_FORM_NONE,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_NONE,
+                'expectedIsMatrixFormAvailable' => false,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => false,
             ],
             'mobile, config inline, matrix available' => [
                 'isMobile' => true,
                 'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
                 'isMatrixFormAvailable' => true,
-                'expected' => Configuration::MATRIX_FORM_POPUP,
+                'productView' => '',
+                'expectedAvailableMatrixFormType' => Configuration::MATRIX_FORM_POPUP,
+                'expectedIsMatrixFormAvailable' => true,
+                'expectedIsInlineMatrixFormAvailable' => false,
+                'expectedIsPopupMatrixFormAvailable' => true,
             ],
         ];
     }
@@ -183,14 +266,62 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
      * @param bool $isMobile
      * @param string $matrixFormConfig
      * @param bool $isMatrixFormAvailable
-     * @param bool $expected
+     * @param string $productView
+     * @param bool $expectedAvailableMatrixFormType
+     *
      * @dataProvider getAvailableMatrixFormTypeDataProvider
      */
-    public function testGetAvailableMatrixFormType($isMobile, $matrixFormConfig, $isMatrixFormAvailable, $expected)
-    {
+    public function testGetAvailableMatrixFormType(
+        $isMobile,
+        $matrixFormConfig,
+        $isMatrixFormAvailable,
+        $productView,
+        $expectedAvailableMatrixFormType
+    ) {
         $product = $this->prepareProvider($isMobile, $matrixFormConfig, $isMatrixFormAvailable);
 
-        $this->assertEquals($expected, $this->provider->getAvailableMatrixFormType($product));
+        if ($productView) {
+            $this->assertEquals(
+                $expectedAvailableMatrixFormType,
+                $this->provider->getAvailableMatrixFormType($product, $productView)
+            );
+        } else {
+            $this->assertEquals(
+                $expectedAvailableMatrixFormType,
+                $this->provider->getAvailableMatrixFormType($product)
+            );
+        }
+    }
+
+    /**
+     * @param bool $isMobile
+     * @param string $matrixFormConfig
+     * @param bool $isMatrixFormAvailable
+     * @param string $productView
+     * @param bool $expectedAvailableMatrixFormType
+     *
+     * @dataProvider getAvailableMatrixFormTypeDataProvider
+     */
+    public function testGetAvailableMatrixFormTypes(
+        $isMobile,
+        $matrixFormConfig,
+        $isMatrixFormAvailable,
+        $productView,
+        $expectedAvailableMatrixFormType
+    ) {
+        $product = $this->prepareProvider($isMobile, $matrixFormConfig, $isMatrixFormAvailable);
+
+        if ($productView) {
+            $this->assertEquals(
+                [123 => $expectedAvailableMatrixFormType],
+                $this->provider->getAvailableMatrixFormTypes([$product], $productView)
+            );
+        } else {
+            $this->assertEquals(
+                [123 => $expectedAvailableMatrixFormType],
+                $this->provider->getAvailableMatrixFormTypes([$product])
+            );
+        }
     }
 
     /**
@@ -214,7 +345,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_VIEW))
             ->willReturn($matrixFormConfig);
 
-        $product = $this->getEntity(Product::class);
+        $product = $this->getEntity(Product::class, ['id' => 123]);
 
         $this->productMatrixAvailabilityProvider->expects($this->any())
             ->method('isMatrixFormAvailable')
@@ -225,62 +356,43 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
-     */
-    public function isMatrixFormAvailableDataProvider()
-    {
-        return [
-            'inline matrix' => [
-                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
-                'isMatrixFormAvailable' => true,
-                'isMobile' => false,
-                'expected' => true,
-            ],
-            'popup matrix' => [
-                'matrixFormConfig' => Configuration::MATRIX_FORM_POPUP,
-                'isMatrixFormAvailable' => true,
-                'isMobile' => false,
-                'expected' => true,
-            ],
-            'no matrix' => [
-                'matrixFormConfig' => Configuration::MATRIX_FORM_INLINE,
-                'isMatrixFormAvailable' => false,
-                'isMobile' => false,
-                'expected' => false,
-            ],
-        ];
-    }
-
-    /**
+     * @param bool $isMobile
      * @param string $matrixFormConfig
      * @param bool $isMatrixFormAvailable
-     * @param bool $isMobile
-     * @param bool $expected
-     * @dataProvider isMatrixFormAvailableDataProvider
+     * @param string $productView
+     * @param string $expectedAvailableMatrixFormType
+     * @param bool $expectedIsMatrixFormAvailable
+     *
+     * @dataProvider getAvailableMatrixFormTypeDataProvider
      */
-    public function testIsMatrixFormAvailable($matrixFormConfig, $isMatrixFormAvailable, $isMobile, $expected)
-    {
-        $configurableProduct = $this->getEntity(Product::class);
+    public function testIsMatrixFormAvailable(
+        $isMobile,
+        $matrixFormConfig,
+        $isMatrixFormAvailable,
+        $productView,
+        $expectedAvailableMatrixFormType,
+        $expectedIsMatrixFormAvailable
+    ) {
+        $product = $this->prepareProvider($isMobile, $matrixFormConfig, $isMatrixFormAvailable);
 
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_PRODUCT_VIEW))
-            ->willReturn($matrixFormConfig);
-
-        $this->productMatrixAvailabilityProvider->expects($this->exactly(2))
-            ->method('isMatrixFormAvailable')
-            ->with($configurableProduct)
-            ->willReturn($isMatrixFormAvailable);
-
-        $this->userAgentProvider->expects($this->any())
-            ->method('getUserAgent')
-            ->willReturn($this->userAgent);
-
-        $this->userAgent->expects($this->any())
-            ->method('isMobile')
-            ->willReturn($isMobile);
-
-        $this->assertEquals($expected, $this->provider->isMatrixFormAvailable($configurableProduct));
-        $this->assertEquals(!$expected, $this->provider->isSimpleFormAvailable($configurableProduct));
+        if ($productView) {
+            $this->assertEquals(
+                $expectedIsMatrixFormAvailable,
+                $this->provider->isMatrixFormAvailable($product, $productView)
+            );
+            $this->assertEquals(
+                !$expectedIsMatrixFormAvailable,
+                $this->provider->isSimpleFormAvailable($product, $productView)
+            );
+        } else {
+            $this->assertEquals(
+                $expectedIsMatrixFormAvailable,
+                $this->provider->isMatrixFormAvailable($product)
+            );
+            $this->assertEquals(
+                !$expectedIsMatrixFormAvailable,
+                $this->provider->isSimpleFormAvailable($product)
+            );
+        }
     }
 }

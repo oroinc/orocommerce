@@ -34,7 +34,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     private $matrixGridOrderFormProvider;
 
     /** @var ProductFormAvailabilityProvider */
-    private $productListMatrixFormAvailabilityProvider;
+    private $productFormAvailabilityProvider;
 
     /** @var ProductVariantAvailabilityProvider */
     private $productVariantAvailabilityProvider;
@@ -52,7 +52,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      * @param DoctrineHelper $doctrineHelper
      * @param ShoppingListManager $shoppingListManager
      * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
-     * @param ProductFormAvailabilityProvider $productListMatrixFormAvailabilityProvider
+     * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param FrontendProductPricesProvider $frontendProductPricesProvider
      * @param MatrixGridOrderProvider $matrixGridOrderProvider
@@ -62,7 +62,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         DoctrineHelper $doctrineHelper,
         ShoppingListManager $shoppingListManager,
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
-        ProductFormAvailabilityProvider $productListMatrixFormAvailabilityProvider,
+        ProductFormAvailabilityProvider $productFormAvailabilityProvider,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         FrontendProductPricesProvider $frontendProductPricesProvider,
         MatrixGridOrderProvider $matrixGridOrderProvider,
@@ -71,7 +71,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         $this->doctrineHelper = $doctrineHelper;
         $this->shoppingListManager = $shoppingListManager;
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
-        $this->productListMatrixFormAvailabilityProvider = $productListMatrixFormAvailabilityProvider;
+        $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->frontendProductPricesProvider = $frontendProductPricesProvider;
         $this->matrixGridOrderProvider = $matrixGridOrderProvider;
@@ -114,9 +114,9 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                 'type' => 'none',
             ];
 
-            if ($product && $this->productListMatrixFormAvailabilityProvider->isMatrixFormAvailable($product)) {
+            if ($product && $this->productFormAvailabilityProvider->isMatrixFormAvailable($product)) {
                 $productView = $this->dataGridThemeHelper->getTheme($config->getName());
-                $matrixFormData['type'] = $this->productListMatrixFormAvailabilityProvider
+                $matrixFormData['type'] = $this->productFormAvailabilityProvider
                     ->getAvailableMatrixFormType($product, $productView);
                 $matrixFormData['totals'] = [
                     'quantity' => $this->matrixGridOrderProvider->getTotalQuantity($product),

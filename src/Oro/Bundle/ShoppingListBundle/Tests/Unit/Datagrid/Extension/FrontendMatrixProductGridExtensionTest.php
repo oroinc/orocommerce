@@ -35,7 +35,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
     private $matrixGridOrderFormProvider;
 
     /** @var ProductFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $productListMatrixFormAvailabilityProvider;
+    private $productFormAvailabilityProvider;
 
     /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $productVariantAvailabilityProvider;
@@ -63,7 +63,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->matrixGridOrderFormProvider = $this->createMock(MatrixGridOrderFormProvider::class);
-        $this->productListMatrixFormAvailabilityProvider = $this->createMock(
+        $this->productFormAvailabilityProvider = $this->createMock(
             ProductFormAvailabilityProvider::class
         );
         $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
@@ -80,7 +80,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             $this->doctrineHelper,
             $this->shoppingListManager,
             $this->matrixGridOrderFormProvider,
-            $this->productListMatrixFormAvailabilityProvider,
+            $this->productFormAvailabilityProvider,
             $this->productVariantAvailabilityProvider,
             $this->frontendProductPricesProvider,
             $this->matrixGridOrderProvider,
@@ -155,7 +155,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 return $products[$productId];
             });
 
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(1))
+        $this->productFormAvailabilityProvider->expects($this->exactly(1))
             ->method('getAvailableMatrixFormType')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(
@@ -164,7 +164,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 Configuration::MATRIX_FORM_NONE
             );
 
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
+        $this->productFormAvailabilityProvider->expects($this->exactly(3))
             ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(true, false, false);
@@ -262,7 +262,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->willReturn(null);
 
-        $this->productListMatrixFormAvailabilityProvider->expects($this->never())
+        $this->productFormAvailabilityProvider->expects($this->never())
             ->method('getAvailableMatrixFormType');
 
         $this->datagridConfiguration->expects($this->exactly(2))
@@ -329,7 +329,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 return $products[$productId];
             });
 
-        $this->productListMatrixFormAvailabilityProvider->expects($this->exactly(3))
+        $this->productFormAvailabilityProvider->expects($this->exactly(3))
             ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(false, false, false);

@@ -24,6 +24,11 @@ class ProductFormAvailabilityProvider
 
     const POPUP_PRODUCT_VIEWS = ['gallery-view'];
 
+    /**
+     * @param ConfigManager $configManager
+     * @param ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider
+     * @param UserAgentProvider $userAgentProvider
+     */
     public function __construct(
         ConfigManager $configManager,
         ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
@@ -43,42 +48,46 @@ class ProductFormAvailabilityProvider
     }
 
     /**
-       * @param Product $product
-       * @return bool
-       */
-    public function isSimpleFormAvailable(Product $product)
+     * @param Product $product
+     * @param string $productView
+     * @return bool
+     */
+    public function isSimpleFormAvailable(Product $product, $productView = '')
     {
-        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_NONE;
+        return $this->getAvailableMatrixFormType($product, $productView) === Configuration::MATRIX_FORM_NONE;
     }
 
     /**
      * @param Product $product
+     * @param string $productView
      * @return bool
      */
-    public function isInlineMatrixFormAvailable(Product $product)
+    public function isInlineMatrixFormAvailable(Product $product, $productView = '')
     {
-        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_INLINE;
+        return $this->getAvailableMatrixFormType($product, $productView) === Configuration::MATRIX_FORM_INLINE;
     }
 
     /**
      * @param Product $product
+     * @param string $productView
      * @return bool
      */
-    public function isPopupMatrixFormAvailable(Product $product)
+    public function isPopupMatrixFormAvailable(Product $product, $productView = '')
     {
-        return $this->getAvailableMatrixFormType($product) === Configuration::MATRIX_FORM_POPUP;
+        return $this->getAvailableMatrixFormType($product, $productView) === Configuration::MATRIX_FORM_POPUP;
     }
 
     /**
      * @param Product $product
+     * @param string $productView
      * @return bool
      */
-    public function isMatrixFormAvailable(Product $product)
+    public function isMatrixFormAvailable(Product $product, $productView = '')
     {
-        return in_array($this->getAvailableMatrixFormType($product), [
+        return in_array($this->getAvailableMatrixFormType($product, $productView), [
             Configuration::MATRIX_FORM_INLINE,
             Configuration::MATRIX_FORM_POPUP,
-        ]);
+        ], true);
     }
 
     /**
@@ -96,7 +105,8 @@ class ProductFormAvailabilityProvider
         }
 
         if ($this->userAgentProvider->getUserAgent()->isMobile() ||
-            in_array($productView, self::POPUP_PRODUCT_VIEWS)) {
+            in_array($productView, self::POPUP_PRODUCT_VIEWS, true)
+        ) {
             return Configuration::MATRIX_FORM_POPUP;
         }
 
@@ -108,7 +118,7 @@ class ProductFormAvailabilityProvider
      * @param string $productView
      * @return array
      */
-    public function getAvailableMatrixFormTypes(array $products, $productView = "")
+    public function getAvailableMatrixFormTypes(array $products, $productView = '')
     {
         $data = [];
         foreach ($products as $product) {

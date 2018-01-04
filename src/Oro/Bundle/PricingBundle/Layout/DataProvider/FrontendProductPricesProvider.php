@@ -74,10 +74,6 @@ class FrontendProductPricesProvider
      */
     public function getByProduct(Product $product)
     {
-        if (!$product) {
-            return null;
-        }
-
         $this->setProductsPrices([$product]);
 
         return $this->productPrices[$product->getId()];
@@ -123,7 +119,14 @@ class FrontendProductPricesProvider
                 $products = array_merge($products, $configurableProducts[$product->getId()]);
             }
         }
-        $products = array_unique($products);
+
+        // Can't use array_unique here, because it uses __toString() for comparison which uses LocalizedFallbackValue
+        // And array_unique with SORT_REGULAR option leads to nesting level error on complex objects
+        $uniqueProducts = [];
+        foreach ($products as $product) {
+            $uniqueProducts[$product->getId()] = $product;
+        }
+        $products = array_values($uniqueProducts);
 
         $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         $productsIds = array_map(
