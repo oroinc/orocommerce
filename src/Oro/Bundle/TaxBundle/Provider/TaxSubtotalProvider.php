@@ -9,7 +9,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
@@ -24,9 +23,9 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     protected $translator;
 
     /**
-     * @var TaxManager
+     * @var TaxProviderRegistry
      */
-    protected $taxManager;
+    protected $taxProviderRegistry;
 
     /**
      * @var TaxFactory
@@ -35,13 +34,16 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
 
     /**
      * @param TranslatorInterface $translator
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      * @param TaxFactory $taxFactory
      */
-    public function __construct(TranslatorInterface $translator, TaxManager $taxManager, TaxFactory $taxFactory)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        TaxProviderRegistry $taxProviderRegistry,
+        TaxFactory $taxFactory
+    ) {
         $this->translator = $translator;
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxFactory = $taxFactory;
     }
 
@@ -61,7 +63,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal = $this->createSubtotal();
 
         try {
-            $tax = $this->taxManager->getTax($entity);
+            $tax = $this->getProvider()->getTax($entity);
             $this->fillSubtotal($subtotal, $tax);
         } catch (TaxationDisabledException $e) {
         }
@@ -76,7 +78,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     {
         $subtotal = $this->createSubtotal();
         try {
-            $tax = $this->taxManager->loadTax($entity);
+            $tax = $this->getProvider()->loadTax($entity);
             $this->fillSubtotal($subtotal, $tax);
         } catch (TaxationDisabledException $e) {
         }
@@ -127,5 +129,13 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     public function supportsCachedSubtotal($entity)
     {
         return $this->taxFactory->supports($entity);
+    }
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

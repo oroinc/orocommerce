@@ -46,7 +46,8 @@ class RelatedItemDataProvider implements RelatedItemDataProviderInterface
     public function getRelatedItems(Product $product)
     {
         /** @var Product[] $relatedProducts */
-        $relatedProducts = $this->finderStrategy->find($product);
+        $relatedProducts = $this->finderStrategy
+            ->find($product, $this->configProvider->isBidirectional(), $this->configProvider->getLimit());
 
         if (!$this->hasMoreThanRequiredMinimum($relatedProducts)) {
             return [];
