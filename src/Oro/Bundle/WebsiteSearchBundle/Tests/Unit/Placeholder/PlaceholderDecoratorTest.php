@@ -43,6 +43,8 @@ class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
     public function testReplace()
     {
         $placeholder1 = $this->createMock(PlaceholderInterface::class);
+        $placeholder1->expects($this->once())->method('getPlaceholder')
+            ->willReturn('PLACEHOLDER1');
         $placeholder1->expects($this->once())->method('replace')
             ->with(
                 'string_PLACEHOLDER1_PLACEHOLDER2',
@@ -51,6 +53,8 @@ class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
             ->willReturn('string_value1_PLACEHOLDER2');
 
         $placeholder2 = $this->createMock(PlaceholderInterface::class);
+        $placeholder2->expects($this->once())->method('getPlaceholder')
+            ->willReturn('PLACEHOLDER2');
         $placeholder2->expects($this->once())->method('replace')
             ->with(
                 'string_value1_PLACEHOLDER2',
@@ -58,7 +62,13 @@ class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn('string_value1_value2');
 
-        $this->registry->expects($this->once())->method('getPlaceholders')->willReturn([$placeholder1, $placeholder2]);
+        $this->registry->expects($this->at(0))->method('getPlaceholders')->willReturn([$placeholder1, $placeholder2]);
+        $this->registry->expects($this->at(1))->method('getPlaceholder')
+            ->with('PLACEHOLDER1')
+            ->willReturn($placeholder1);
+        $this->registry->expects($this->at(2))->method('getPlaceholder')
+            ->with('PLACEHOLDER2')
+            ->willReturn($placeholder2);
 
         $this->assertEquals(
             'string_value1_value2',
@@ -87,5 +97,16 @@ class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
             'string_value1_value2',
             $this->placeholder->replaceDefault('string_PLACEHOLDER1_PLACEHOLDER2')
         );
+    }
+
+    public function testReplaceWithNull()
+    {
+        $this->registry->expects($this->once())->method('getPlaceholders')->willReturn(
+            []
+        );
+
+        $result = $this->placeholder->replace(null, []);
+
+        $this->assertSame('', $result);
     }
 }
