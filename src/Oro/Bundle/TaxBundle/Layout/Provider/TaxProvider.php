@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\TaxBundle\Layout\Provider;
 
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProvider
 {
-    /** @var TaxManager */
-    protected $taxManager;
+    /** @var TaxProviderRegistry */
+    private $taxProviderRegistry;
 
     /**
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      */
-    public function __construct(TaxManager $taxManager)
+    public function __construct(TaxProviderRegistry $taxProviderRegistry)
     {
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
     }
 
     /**
@@ -25,6 +25,8 @@ class TaxProvider
      */
     public function getTax($order)
     {
-        return $this->taxManager->loadTax($order);
+        $provider = $this->taxProviderRegistry->getEnabledProvider();
+
+        return $provider->loadTax($order);
     }
 }

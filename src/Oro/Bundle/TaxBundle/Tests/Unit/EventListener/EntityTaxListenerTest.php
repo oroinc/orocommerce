@@ -8,23 +8,20 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
-use Oro\Bundle\TaxBundle\Model\Result;
-use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $taxManager;
+    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $taxProvider;
 
     /** @var EntityTaxListener */
     protected $listener;
@@ -37,13 +34,18 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->createMock(TaxManager::class);
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
+
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->metadata = $this->createMock(ClassMetadata::class);
 
         $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
 
-        $this->listener = new EntityTaxListener($this->taxManager);
+        $this->listener = new EntityTaxListener($taxProviderRegistry);
     }
 
     protected function tearDown()
@@ -79,7 +81,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->taxManager->expects($this->exactly((int) $expected))
+        $this->taxProvider->expects($this->exactly((int) $expected))
             ->method('createTaxValue')
             ->with($order)
             ->willReturn($taxValue);
@@ -111,7 +113,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->taxManager->expects($this->never())->method('createTaxValue');
+        $this->taxProvider->expects($this->never())->method('createTaxValue');
         $this->metadata->expects($this->exactly((int) $expected))->method('getIdentifierValues')->willReturn([1]);
 
         $this->listener->prePersist($order, $event);
@@ -132,7 +134,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         $order = new Order();
-        $this->taxManager->expects($this->exactly((int) $expected))->method('removeTax')->with($order);
+        $this->taxProvider->expects($this->exactly((int) $expected))->method('removeTax')->with($order);
 
         $this->listener->preRemove($order);
     }
@@ -172,7 +174,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = new LifecycleEventArgs($order, $entityManager);
 
-        $this->taxManager->expects($this->once())->method('createTaxValue')->with($order)->willReturn($taxValue);
+        $this->taxProvider->expects($this->once())->method('createTaxValue')->with($order)->willReturn($taxValue);
 
         $entityManager->expects($this->once())->method('persist')->with($taxValue);
 
@@ -254,110 +256,22 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->entityManager->expects($this->never())->method('getClassMetadata');
         $this->entityManager->expects($this->never())->method('getUnitOfWork');
-        $this->taxManager->expects($this->never())->method('getTaxValue');
-        $this->taxManager->expects($this->never())->method('loadTax');
-        $this->taxManager->expects($this->never())->method('getTax');
-        $this->taxManager->expects($this->never())->method('saveTax');
+        $this->taxProvider->expects($this->never())->method('saveTax');
         $this->metadata->expects($this->never())->method('getIdentifierValues');
 
         $this->listener->preFlush($taxValue, $event);
     }
 
-    public function testPreFlushOnEntityWithoutSavedTaxValue()
+    public function testPreFlush()
     {
-        $orderId = 1;
-        /** @var Order $order */
-        $order = $this->getEntity(Order::class, ['id' => $orderId]);
-
+        $order = new Order();
         $event = new PreFlushEventArgs($this->entityManager);
 
-        $taxValue = new TaxValue();
-        $this->taxManager->expects($this->once())
-            ->method('getTaxValue')
-            ->with($order)
-            ->willReturn($taxValue);
-
-        $this->taxManager->expects($this->never())
-            ->method('loadTax');
-
-        $this->taxManager->expects($this->never())
-            ->method('getTax');
-
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('saveTax')
-            ->with($order, false);
+            ->with($order);
 
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
-
-        $this->listener->preFlush($order, $event);
-    }
-
-    public function testPreFlushWithSameTaxResults()
-    {
-        $orderId = 1;
-        /** @var Order $order */
-        $order = $this->getEntity(Order::class, ['id' => $orderId]);
-
-        $event = new PreFlushEventArgs($this->entityManager);
-
-        $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
-        $this->taxManager->expects($this->once())
-            ->method('getTaxValue')
-            ->with($order)
-            ->willReturn($taxValue);
-
-        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
-        $this->taxManager->expects($this->once())
-            ->method('loadTax')
-            ->with($order)
-            ->willReturn($loadedResult);
-
-        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
-        $this->taxManager->expects($this->once())
-            ->method('getTax')
-            ->with($order)
-            ->willReturn($calculatedResult);
-
-        $this->taxManager->expects($this->never())
-            ->method('saveTax')
-            ->with($order, false);
-
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
-
-        $this->listener->preFlush($order, $event);
-    }
-
-    public function testPreFlushWithDifferentTaxResults()
-    {
-        $orderId = 1;
-        /** @var Order $order */
-        $order = $this->getEntity(Order::class, ['id' => $orderId]);
-
-        $event = new PreFlushEventArgs($this->entityManager);
-
-        $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
-        $this->taxManager->expects($this->once())
-            ->method('getTaxValue')
-            ->with($order)
-            ->willReturn($taxValue);
-
-        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
-        $this->taxManager->expects($this->once())
-            ->method('loadTax')
-            ->with($order)
-            ->willReturn($loadedResult);
-
-        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(1, 1)]);
-        $this->taxManager->expects($this->once())
-            ->method('getTax')
-            ->with($order)
-            ->willReturn($calculatedResult);
-
-        $this->taxManager->expects($this->once())
-            ->method('saveTax')
-            ->with($order, false);
-
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
+        $this->metadata->expects($this->once())->method('getIdentifierValues')->willReturn([1]);
 
         $this->listener->preFlush($order, $event);
     }

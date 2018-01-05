@@ -18,5 +18,5 @@ interface FinderStrategyInterface
      * @param int|null  $limit
      * @return Product[]
      */
-    public function find(Product $product, $bidirectional = null, $limit = null);
+    public function find(Product $product, $bidirectional = false, $limit = null);
 }
