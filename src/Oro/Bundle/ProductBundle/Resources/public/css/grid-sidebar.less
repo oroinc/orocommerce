@@ -6,6 +6,10 @@
 
   .input-append,
   .input-prepend {
-    width: calc(~ "100%" - @select2IconBtnWidth + @borderWidth);
+    width: calc(100% ~ "-" @select2IconBtnWidth ~ "+" @borderWidth);
+
+    .select2-container {
+        width: 100%;
+    }
   }
 }
