@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Transforms id from request in 'guid-priceListId' format back to 'guid' and save 'priceListId' to context
+ * Transforms id from request in 'guid-priceListId' format back to 'guid'
+ * and save 'priceListId' to the Context.
  */
 class NormalizeInputProductPriceIdProcessor implements ProcessorInterface
 {
