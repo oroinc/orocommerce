@@ -75,6 +75,8 @@ class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
             foreach ($fieldsData as $fieldName => $fieldInfo) {
                 if ($fieldInfo['type'] === self::TYPE_STRING) {
                     $fieldsDataUpdate[$className][$fieldName]['type'] = self::TYPE_STRING;
+                    $fieldsDataUpdate[$className][$fieldName]['relationType'] = null;
+                    $fieldsDataUpdate[$className][$fieldName]['relatedEntityName'] = '';
                 }
                 $whitelist[$className][$fieldName] = true;
             }
