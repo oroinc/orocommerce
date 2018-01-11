@@ -59,7 +59,7 @@ class MatrixGridOrderProvider
      */
     public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null)
     {
-        $shoppingList = $shoppingList ?: $this->shoppingListManager->getForCurrentUser();
+        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
 
         $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 
@@ -80,7 +80,7 @@ class MatrixGridOrderProvider
      */
     public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null)
     {
-        $shoppingList = $shoppingList ?: $this->shoppingListManager->getForCurrentUser();
+        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
 
         $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 

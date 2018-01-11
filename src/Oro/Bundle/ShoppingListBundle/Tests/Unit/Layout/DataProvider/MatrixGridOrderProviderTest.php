@@ -73,7 +73,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $collection->rows[0]->columns[1]->quantity = 3;
 
         $this->shoppingListManager->expects($this->never())
-            ->method('getForCurrentUser');
+            ->method('getCurrent');
 
         $this->matrixGridManager->expects($this->once())
             ->method('getMatrixCollection')
@@ -97,7 +97,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $collection->rows[0]->columns[1]->quantity = 3;
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->matrixGridManager->expects($this->once())
@@ -131,7 +131,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class);
 
         $this->shoppingListManager->expects($this->never())
-            ->method('getForCurrentUser');
+            ->method('getCurrent');
 
         $this->matrixGridManager->expects($this->once())
             ->method('getMatrixCollection')
@@ -191,7 +191,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->matrixGridManager->expects($this->once())
@@ -400,7 +400,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class);
 
         $this->shoppingListManager->expects($this->exactly(6))
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $preparedData = $this->getTotalsQuantityPricePrepareData();
@@ -417,7 +417,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class);
 
         $this->shoppingListManager->expects($this->never())
-            ->method('getForCurrentUser');
+            ->method('getCurrent');
 
         $preparedData = $this->getTotalsQuantityPricePrepareData();
 

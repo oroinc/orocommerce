@@ -146,7 +146,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->exactly(3))
@@ -255,7 +255,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->once())
@@ -320,7 +320,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->exactly(3))

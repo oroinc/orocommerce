@@ -102,7 +102,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         /** @var ResultRecord[] $rows */
         $rows = $result->getData();
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $shoppingList = $this->shoppingListManager->getForCurrentUser();
+        $shoppingList = $this->shoppingListManager->getCurrent();
 
         foreach ($rows as $row) {
             $productId = $row->getValue('id');

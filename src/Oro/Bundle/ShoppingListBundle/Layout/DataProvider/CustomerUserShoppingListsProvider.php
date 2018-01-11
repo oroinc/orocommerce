@@ -52,7 +52,7 @@ class CustomerUserShoppingListsProvider
      */
     public function getCurrent()
     {
-        return $this->shoppingListManager->getForCurrentUser();
+        return $this->shoppingListManager->getCurrent();
     }
 
     /**
@@ -61,8 +61,6 @@ class CustomerUserShoppingListsProvider
     public function getShoppingLists()
     {
         if (!array_key_exists('shoppingLists', $this->options)) {
-            //todo: create current SL if not exist, bug, when matrix form creates current SL, remove in BB-12367
-            $this->getCurrent();
             $shoppingLists = $this->shoppingListManager->getShoppingListsWithCurrentFirst($this->getSortOrder());
             $this->totalManager->setSubtotals($shoppingLists, false);
             $this->options['shoppingLists'] = $shoppingLists;
