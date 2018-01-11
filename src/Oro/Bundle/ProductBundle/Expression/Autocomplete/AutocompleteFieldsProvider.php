@@ -59,8 +59,9 @@ class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
     {
         $dataProviderConfig = parent::getDataProviderConfig($numericalOnly, $withRelations);
 
-        $dataProviderConfig['fieldsDataUpdate'] =
-            $numericalOnly ? [] : $this->translateLabels($this->specialFieldsInformation);
+        if (!$numericalOnly) {
+            $dataProviderConfig['fieldsDataUpdate'] = $this->translateLabels($this->specialFieldsInformation);
+        }
 
         return $dataProviderConfig;
     }

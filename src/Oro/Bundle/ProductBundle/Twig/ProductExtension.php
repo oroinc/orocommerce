@@ -39,10 +39,6 @@ class ProductExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction(
-                'oro_product_expression_autocomplete_data',
-                [$this, 'getAutocompleteData']
-            ),
-            new \Twig_SimpleFunction(
                 'is_configurable_product_type',
                 [$this, 'isConfigurableType']
             ),
@@ -105,17 +101,6 @@ class ProductExtension extends \Twig_Extension
     public function isConfigurableType($productType)
     {
         return $productType === Product::TYPE_CONFIGURABLE;
-    }
-
-    /**
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     *
-     * @return array
-     */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true)
-    {
-        return $this->getAutocompleteFieldsProvider()->getAutocompleteData($numericalOnly, $withRelations);
     }
 
     /**

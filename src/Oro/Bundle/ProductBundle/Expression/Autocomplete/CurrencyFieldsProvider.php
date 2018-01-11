@@ -71,8 +71,11 @@ class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
         $dataProviderConfig = [
             'fieldsFilterWhitelist' => $whitelist,
             'isRestrictiveWhitelist' => true,
-            'fieldsDataUpdate' => $this->translateLabels($this->specialFieldsInformation),
         ];
+
+        if (!empty($this->specialFieldsInformation)) {
+            $dataProviderConfig['fieldsDataUpdate'] = $this->translateLabels($this->specialFieldsInformation);
+        }
 
         return $dataProviderConfig;
     }

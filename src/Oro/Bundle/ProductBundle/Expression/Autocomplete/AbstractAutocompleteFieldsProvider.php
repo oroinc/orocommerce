@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
-use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsProviderInterface
@@ -83,24 +82,6 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     /**
      * {@inheritdoc}
      */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true)
-    {
-        $data = [
-            self::ROOT_ENTITIES_KEY => $this->getRootEntities(),
-            self::FIELDS_DATA_KEY => $this->translateLabels(
-                ArrayUtil::arrayMergeRecursiveDistinct(
-                    $this->getFieldsData($numericalOnly, $withRelations),
-                    ($numericalOnly ? [] : $this->specialFieldsInformation)
-                )
-            )
-        ];
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
     {
         $typeRelation = self::TYPE_RELATION;
@@ -108,11 +89,11 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
             return $type !== $typeRelation;
         });
 
-        $include = [];
         $optionsFilter = [
             'unidirectional' => false,
             'exclude' => false,
         ];
+        $include = [];
 
         if ($numericalOnly) {
             // identifier fields should not be available for math operations
@@ -136,18 +117,29 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
 
         $dataProviderConfig = [
             'optionsFilter' => $optionsFilter,
-            'include' => $include,
-            'fieldsFilterWhitelist' => $this->fieldsProvider->getFieldsWhiteList(),
-            'fieldsFilterBlacklist' => $this->fieldsProvider->getFieldsBlackList(),
         ];
+
+        if (!empty($include)) {
+            $dataProviderConfig['include'] = $include;
+        }
+
+        $fieldsFilterWhitelist = $this->fieldsProvider->getFieldsWhiteList();
+        if (!empty($fieldsFilterWhitelist)) {
+            $dataProviderConfig['fieldsFilterWhitelist'] = $fieldsFilterWhitelist;
+        }
+
+        $fieldsFilterBlacklist = $this->fieldsProvider->getFieldsBlackList();
+        if (!empty($fieldsFilterBlacklist)) {
+            $dataProviderConfig['fieldsFilterBlacklist'] = $fieldsFilterBlacklist;
+        }
 
         return $dataProviderConfig;
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getRootEntities()
+    public function getRootEntities()
     {
         return $this->expressionParser->getReverseNameMapping();
     }

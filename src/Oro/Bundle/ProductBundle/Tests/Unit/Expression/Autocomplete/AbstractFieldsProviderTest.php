@@ -11,6 +11,8 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
     const CLASS_NAME = 'className';
     const IS_RELATION = 'isRelation';
     const FIELDS = 'fields';
+    const NUMERIC_TYPES = ['integer', 'float'];
+    const RELATION_TYPES = ['ref-one'];
 
     /**
      * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
@@ -80,5 +82,11 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $this->fieldsProvider->expects($this->any())
             ->method('getDetailedFieldsInformation')
             ->willReturnMap($this->getMap($fieldsData, $numericalOnly, $withRelations));
+        $this->fieldsProvider->expects($this->any())
+            ->method('getSupportedNumericTypes')
+            ->willReturn(self::NUMERIC_TYPES);
+        $this->fieldsProvider->expects($this->any())
+            ->method('getSupportedRelationTypes')
+            ->willReturn(self::RELATION_TYPES);
     }
 }

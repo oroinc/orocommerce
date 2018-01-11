@@ -85,8 +85,11 @@ class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
         $dataProviderConfig = [
             'fieldsFilterWhitelist' => $whitelist,
             'isRestrictiveWhitelist' => true,
-            'fieldsDataUpdate' => $fieldsDataUpdate,
         ];
+
+        if (!empty($fieldsDataUpdate)) {
+            $dataProviderConfig['fieldsDataUpdate'] = $fieldsDataUpdate;
+        }
 
         return $dataProviderConfig;
     }
