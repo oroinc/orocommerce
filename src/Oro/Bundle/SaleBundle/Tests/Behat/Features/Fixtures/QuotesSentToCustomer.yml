@@ -1,0 +1,39 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote{1..15}:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        poNumber: 'PO<current()>'
+        qid: '<current()>'
+        website: '@website1'
+        internal_status: sent_to_customer
+    quote{16..23}:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@nancy'
+        poNumber: 'PO<current()>'
+        qid: '<current()>'
+        website: '@website1'
+        internal_status: sent_to_customer
+    quote{24..29}:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer4'
+        customerUser: '@marlene'
+        poNumber: 'PO<current()>'
+        qid: '<current()>'
+        website: '@website1'
+        internal_status: sent_to_customer
+    quoteWithoutCustomerUser:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        poNumber: 'POWithoutCustomerUser'
+        qid: '30'
+        website: '@website1'
+        internal_status: sent_to_customer

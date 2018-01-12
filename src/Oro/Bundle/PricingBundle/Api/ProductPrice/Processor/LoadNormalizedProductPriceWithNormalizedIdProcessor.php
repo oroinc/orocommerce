@@ -9,7 +9,8 @@ use Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerI
 use Oro\Component\ChainProcessor\ActionProcessorInterface;
 
 /**
- * After update/create "get" request happens and to properly send context id we modify it back to guid-pricelist format
+ * After update/create "get" request happens and to properly send context id
+ * we modify it back to guid-pricelist format.
  */
 class LoadNormalizedProductPriceWithNormalizedIdProcessor extends ParentLoadNormalizedEntity
 {
