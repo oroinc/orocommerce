@@ -104,6 +104,7 @@ class OrderController extends AbstractOrderController
     {
         $order = new Order();
         $order->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+        $this->get('oro_order.handler.order_currency_handler')->setOrderCurrency($order);
         return $this->update($order, $request);
     }
 

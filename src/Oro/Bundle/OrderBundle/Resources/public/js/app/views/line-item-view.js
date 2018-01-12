@@ -24,7 +24,8 @@ define(function(require) {
                 unitSelector: '.order-line-item-quantity select',
                 productSku: '.order-line-item-sku .order-line-item-type-product',
                 productType: '.order-line-item-type-product',
-                freeFormType: '.order-line-item-type-free-form'
+                freeFormType: '.order-line-item-type-free-form',
+                currency: '[name$="[price][currency]"]'
             },
             freeFormUnits: null
         },
@@ -100,7 +101,17 @@ define(function(require) {
 
             this.initTypeSwitcher();
 
+            this.fieldsByName.currency.on('change', _.bind(this.onOrderCurrencyChanged, this));
+
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
+        },
+
+        onOrderCurrencyChanged: function(event) {
+            var orderCurrencySelect = $(event.target);
+            var currency = this.$el.find(this.options.selectors.currency);
+            if (currency) {
+                currency.val(orderCurrencySelect.val());
+            }
         },
 
         initTypeSwitcher: function() {
