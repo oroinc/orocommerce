@@ -20,8 +20,10 @@
     @include clearfix();
 
     &__one-line {
+        min-width: $matrix-order-widget-one-line-form-col-width;
         display: flex;
         align-items: center;
+        flex-shrink: $matrix-order-widget-one-line-flex-shrink;
     }
 
     &__one-line & {
