@@ -8,6 +8,6 @@ layout:
         - '@setBlockTheme':
             themes: 'oro_product_totals.html.twig'
         - '@move':
-            id: __oro_product_totals
+            id: __product_totals
             parentId: __product_line_item_form
             prepend: true

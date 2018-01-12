@@ -39,7 +39,8 @@
         shoppingListId: shoppingList is not empty ? shoppingList.id : null
     }) %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form fields-row'
+        '~class': class_prefix ~ '__form fields-row',
+        'novalidate': 'novalidate'
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

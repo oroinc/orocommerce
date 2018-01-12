@@ -344,13 +344,13 @@
             padding: 20px 0;
         }
 
-        &--remainder-width {
-            width: 77%;
-        }
-
         &__primary-content {
             &--list-view {
                 width: calc(77% - 240px);
+            }
+
+            &--remainder-width {
+                width: 77%;
             }
         }
 
