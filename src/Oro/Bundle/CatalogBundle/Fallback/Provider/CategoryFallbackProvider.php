@@ -26,6 +26,7 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param SystemConfigFallbackProvider $systemConfigFallbackProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -63,5 +64,13 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
     public function getFallbackLabel()
     {
         return 'oro.catalog.fallback.category.label';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFallbackEntityClass()
+    {
+        return Category::class;
     }
 }

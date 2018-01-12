@@ -1,4 +1,5 @@
-// @theme: default
+// @theme: default;
+
 @include breakpoint('desktop') {
     .product-view__specification {
         &--colored {

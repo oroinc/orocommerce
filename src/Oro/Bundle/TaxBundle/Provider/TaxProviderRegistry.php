@@ -2,12 +2,27 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 class TaxProviderRegistry
 {
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
     /**
      * @var TaxProviderInterface[]
      */
     protected $providers = [];
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
 
     /**
      * Add provider to the registry
@@ -21,7 +36,10 @@ class TaxProviderRegistry
                 sprintf('Tax provider with name "%s" already registered', $provider->getName())
             );
         }
-        $this->providers[$provider->getName()] = $provider;
+
+        if ($provider->isApplicable()) {
+            $this->providers[$provider->getName()] = $provider;
+        }
     }
 
     /**
@@ -48,5 +66,17 @@ class TaxProviderRegistry
         }
 
         return $this->providers[$name];
+    }
+
+    /**
+     * Retrieve tax provider, currently enabled in system config
+     *
+     * @return TaxProviderInterface
+     */
+    public function getEnabledProvider()
+    {
+        $name = $this->configManager->get('oro_tax.tax_provider');
+
+        return $this->getProvider($name);
     }
 }
