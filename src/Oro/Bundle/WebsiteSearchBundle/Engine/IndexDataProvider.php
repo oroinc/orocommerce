@@ -27,6 +27,9 @@ class IndexDataProvider
     const ALL_TEXT_FIELD = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
+    /** @var array */
+    private $cache;
+
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
@@ -286,6 +289,12 @@ class IndexDataProvider
      */
     private function getFieldConfig(array $entityConfig, $fieldName, $configName, $default = null)
     {
+        $cacheKey = md5(json_encode($entityConfig)) . $fieldName . $configName;
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $fields = array_filter($entityConfig['fields'], function ($fieldConfig) use ($fieldName, $configName) {
             if (!array_key_exists('name', $fieldConfig)) {
                 return false;
@@ -315,7 +324,11 @@ class IndexDataProvider
 
         $field = end($fields);
 
-        return $field[$configName];
+        $result = $field[$configName];
+
+        $this->cache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**

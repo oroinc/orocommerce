@@ -181,14 +181,30 @@ services:
             - { name: oro.api.processor, action: get_list, group: normalize_input, priority: -120, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: delete_list, group: normalize_input, priority: -120, class: '%oro_pricing.entity.product_price.class%' }
 
+    oro_pricing.api.build_single_item_query:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+            - '@oro_api.entity_id_helper'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: 10, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: delete, group: load_data, priority: 10, class: '%oro_pricing.entity.product_price.class%' }
+
+    oro_pricing.api.load_entity_by_orm_query:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: delete, group: load_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
+
     oro_pricing.api.enabled_price_sharding_on_query:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnQueryProcessor'
         arguments:
           - '@oro_pricing.shard_manager'
           - '@oro_pricing.api.price_list_id_in_context_storage'
         tags:
-            - { name: oro.api.processor, action: update, group: load_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
-            - { name: oro.api.processor, action: delete, group: build_query, priority: -255, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: 5, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: delete, group: load_data, priority: 5, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: delete_list, group: build_query, priority: -255, class: '%oro_pricing.entity.product_price.class%' }
 
     oro_pricing.api.enable_price_sharding_on_config:
