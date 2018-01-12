@@ -721,6 +721,16 @@ oro_behat_extension:
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
 
+    Brand Filter:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/..'
+
+    Brand Filter Toggle Icon:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'        
+
     Product Item Preview:
       selector: '.product-item .product-item__preview'
 
@@ -780,6 +790,11 @@ oro_behat_extension:
 
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
+
+  pages:
+    Product View:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
+      route: 'oro_product_view'
 
   suites:
     # Revert by OPI-52

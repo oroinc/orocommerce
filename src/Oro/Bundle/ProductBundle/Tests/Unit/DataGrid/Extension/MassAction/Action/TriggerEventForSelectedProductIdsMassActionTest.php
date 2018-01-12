@@ -55,7 +55,9 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit_Framework
                     'event_name' => 'event_name',
                     'reloadData' => false,
                     'route' => 'oro_datagrid_mass_action',
-                    'route_parameters' => []
+                    'route_parameters' => [],
+                    'allowedRequestTypes' => ['POST'],
+                    'requestType' => 'POST'
                 ],
             ],
             'just default options' => [
@@ -72,7 +74,9 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit_Framework
                     'event_name' => 'event_name',
                     'reloadData' => false,
                     'route' => 'oro_datagrid_mass_action',
-                    'route_parameters' => []
+                    'route_parameters' => [],
+                    'allowedRequestTypes' => ['POST'],
+                    'requestType' => 'POST'
                 ],
             ],
         ];

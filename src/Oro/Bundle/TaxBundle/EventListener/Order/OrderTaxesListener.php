@@ -6,15 +6,16 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class OrderTaxesListener
 {
-    /** @var TaxManager */
-    protected $taxManager;
+    /** @var TaxProviderRegistry */
+    protected $taxProviderRegistry;
 
     /** @var TaxationSettingsProvider */
     protected $taxationSettingsProvider;
@@ -23,16 +24,16 @@ class OrderTaxesListener
     protected $priceMatcher;
 
     /**
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param PriceMatcher $priceMatcher
      */
     public function __construct(
-        TaxManager $taxManager,
+        TaxProviderRegistry $taxProviderRegistry,
         TaxationSettingsProvider $taxationSettingsProvider,
         PriceMatcher $priceMatcher
     ) {
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->priceMatcher = $priceMatcher;
     }
@@ -51,7 +52,7 @@ class OrderTaxesListener
 
         $this->addMatchedPriceToOrderLineItems($order, $data);
 
-        $result = $this->taxManager->getTax($order);
+        $result = $this->getProvider()->getTax($order);
         $taxItems = array_map(
             function (Result $lineItem) {
                 return [
@@ -87,5 +88,13 @@ class OrderTaxesListener
         }
 
         $this->priceMatcher->fillMatchingPrices($order, $matchedPrices);
+    }
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

@@ -167,7 +167,7 @@ services:
     oro_sale.event_listener.datagrid.frontend_quote:
         class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.frontend-quotes-grid, method: onResultBeforeQuery }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-quotes-grid, method: onBuildAfter }
 
     oro_sale.provider.quote_entity_name:
           class: Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider

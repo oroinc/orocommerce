@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
@@ -24,7 +25,7 @@ class Configuration implements ConfigurationInterface
      */
     public static function getMaximumQuantityToOrderFullConfigurationName()
     {
-        return OroInventoryExtension::ALIAS . '.' . self::MAXIMUM_QUANTITY_TO_ORDER;
+        return self::getConfigKeyByName(self::MAXIMUM_QUANTITY_TO_ORDER);
     }
 
     /**
@@ -32,7 +33,7 @@ class Configuration implements ConfigurationInterface
      */
     public static function getMinimumQuantityToOrderFullConfigurationName()
     {
-        return OroInventoryExtension::ALIAS . '.' . self::MINIMUM_QUANTITY_TO_ORDER;
+        return self::getConfigKeyByName(self::MINIMUM_QUANTITY_TO_ORDER);
     }
 
     /**
@@ -60,5 +61,16 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
+    }
+
+    /**
+     * Returns the full config path key (with namespace) by the config name
+     *
+     * @param $name string last part of the key name (one of the class const can be used)
+     * @return string full config path key
+     */
+    public static function getConfigKeyByName($name)
+    {
+        return OroInventoryExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $name;
     }
 }
