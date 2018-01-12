@@ -1,5 +1,5 @@
-#@regression
-#@ticket-BB-13273
+@regression
+@ticket-BB-13273
 Feature: Product attributes import
   In order to effectively manage attributes for Product entity
   As an Administrator
