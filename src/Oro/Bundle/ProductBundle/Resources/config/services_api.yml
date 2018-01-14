@@ -81,11 +81,6 @@ services:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 5}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
 
-    oro_product.api.shared.add_image_path_config:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig
-        tags:
-            - { name: oro.api.processor, action: get_config,  class: Oro\Bundle\AttachmentBundle\Entity\File }
-
     oro_product.api.shared.add_image_path:
         class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths
         arguments:
