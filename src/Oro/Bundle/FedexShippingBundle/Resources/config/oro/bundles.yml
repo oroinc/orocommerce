@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\FedexShippingBundle\OroFedexShippingBundle, priority: 210, kernel: true }

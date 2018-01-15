@@ -107,6 +107,10 @@ class MeasureUnitConversion
      */
     public function isDimensionsEnabled(Dimensions $unit)
     {
+        if (!$unit->getUnit()) {
+            return false;
+        }
+
         return in_array($unit->getUnit()->getCode(), $this->configManager->get($this->lengthConfigEntryName), null);
     }
 
@@ -116,6 +120,10 @@ class MeasureUnitConversion
      */
     public function isWeightEnabled(Weight $unit)
     {
+        if (!$unit->getUnit()) {
+            return false;
+        }
+
         return in_array($unit->getUnit()->getCode(), $this->configManager->get($this->weightConfigEntryName), null);
     }
 }
