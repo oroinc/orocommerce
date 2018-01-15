@@ -52,7 +52,6 @@ define(function(require) {
 
             this.setDefaultTotals();
             this.updateTotals();
-            console.timeEnd('matrix-' + this.$el.parents('.product-item').index());
         },
 
         initModel: function(options) {
