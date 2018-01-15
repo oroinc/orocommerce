@@ -234,15 +234,47 @@ class IndexDataProvider
 
         if ($type === Query::TYPE_TEXT) {
             $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
-            $value = explode(' ', $value);
-            if ($existingValues) {
-                $value = array_merge($existingValues, $value);
+            if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+                $value = $this->updateAllTextFieldValue($existingValues, $value);
+            } else {
+                $value = $this->updateRegularTextFieldValue($existingValues, $value);
             }
-
-            $value = array_unique($value);
         }
 
         $preparedIndexData[$entityId][$type][$fieldName] = $value;
+    }
+
+    /**
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
+     */
+    private function updateAllTextFieldValue(&$existingValues, string $value)
+    {
+        $value = explode(' ', $value);
+        if ($existingValues) {
+            $value = array_merge($existingValues, $value);
+        }
+
+        return array_unique($value);
+    }
+
+    /**
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
+     */
+    private function updateRegularTextFieldValue($existingValues, string $value)
+    {
+        if ($existingValues) {
+            $existingValues[] = $value;
+
+            return $existingValues;
+        }
+
+        return [$value];
     }
 
     /**

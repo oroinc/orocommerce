@@ -141,17 +141,8 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
-            ->withConsecutive(
-                [
-                    IndexEntityEvent::NAME,
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ],
-                [
-                    IndexEntityEvent::NAME.'.std',
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ]
-            )
+        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
+            ->with(IndexEntityEvent::NAME, $this->isInstanceOf(IndexEntityEvent::class))
             ->willReturnCallback(
                 function ($name, IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
@@ -160,6 +151,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     }
                 }
             );
+
+        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
+            ->with(IndexEntityEvent::NAME.'.std', $this->isInstanceOf(IndexEntityEvent::class));
 
         $this->assertEquals(
             $expected,
@@ -186,9 +180,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             'simple field with duplicates' => [
                 'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
-                    [1, 'description', 'Duplicated string string', false],
+                    [1, 'description', 'Handheld Flashlight Handheld', false],
                 ],
-                'expected' => [1 => ['text' => ['description' => 'Duplicated string']]],
+                'expected' => [1 => ['text' => ['description' => 'Handheld Flashlight Handheld']]],
             ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
