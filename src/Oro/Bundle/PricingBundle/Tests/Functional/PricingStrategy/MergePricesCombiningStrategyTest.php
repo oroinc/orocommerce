@@ -72,7 +72,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $this->assertEquals($expectedPrices, $actualPrices);
 
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        $this->assertCount(4, $messages);
+        $this->assertCount(1, $messages);
 
         /** @var Message $message */
         $message = $messages[0]['message'];
