@@ -183,6 +183,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
             ],
+            'simple field with duplicates' => [
+                'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
+                'indexData' => [
+                    [1, 'description', 'Duplicated string string', false],
+                ],
+                'expected' => [1 => ['text' => ['description' => 'Duplicated string']]],
+            ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
@@ -350,6 +357,33 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                         ],
                         'decimal' => [
                             'decimal_2' => 1.1
+                        ],
+                    ],
+                ],
+            ],
+            'multiple fields with duplicates in all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'description',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', true],
+                    [1, 'description', 'The quick brown fox jumps over the lazy dog', true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'description' => 'The quick brown fox jumps over the lazy dog',
+                            'all_text' => 'The fox quick brown jumps over the lazy dog',
                         ],
                     ],
                 ],

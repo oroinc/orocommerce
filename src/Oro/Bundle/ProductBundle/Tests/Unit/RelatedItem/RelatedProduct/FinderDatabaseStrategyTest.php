@@ -18,7 +18,6 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
-        $this->andShouldHaveLimit(3);
         $this->andShouldNotBeBidirectional();
 
         $this->assertSame(
@@ -42,16 +41,15 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
-        $expectedResult =[$productB, $productC];
+        $expectedResult = [$productB, $productC];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
-        $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->find($productA, false, 2)
         );
     }
 
@@ -64,12 +62,10 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
-        $this->andShouldHaveLimit(2);
-        $this->andShouldBeBidirectional();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->find($productA, true)
         );
     }
 
@@ -82,7 +78,6 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
-        $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
 
         $this->assertSame(
@@ -126,6 +121,9 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
             ->willReturn($related);
     }
 
+    /**
+     * @return FinderDatabaseStrategy
+     */
     public function createFinderStrategy()
     {
         return new FinderDatabaseStrategy(
@@ -134,6 +132,9 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createRepositoryMock()
     {
         return $this->createMock(RelatedProductRepository::class);

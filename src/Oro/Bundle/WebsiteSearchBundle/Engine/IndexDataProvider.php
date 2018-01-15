@@ -27,6 +27,9 @@ class IndexDataProvider
     const ALL_TEXT_FIELD = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
+    /** @var array */
+    private $cache;
+
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
@@ -231,44 +234,22 @@ class IndexDataProvider
 
         if ($type === Query::TYPE_TEXT) {
             $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
+            $value = explode(' ', $value);
             if ($existingValues) {
-                if ($this->discoverAndUpdateValue($existingValues, $value)) {
-                    $value = $existingValues;
-                } else {
-                    $value = array_merge($existingValues, [$value]);
-                }
-            } else {
-                $value = [$value];
+                $value = array_merge($existingValues, $value);
             }
+
+            $value = array_unique($value);
         }
 
         $preparedIndexData[$entityId][$type][$fieldName] = $value;
     }
 
     /**
-     * @param array $existingValues
-     * @param string $testedValue
-     * @return bool
-     */
-    private function discoverAndUpdateValue(array &$existingValues, $testedValue)
-    {
-        foreach ($existingValues as $key => $value) {
-            if (strpos($value, $testedValue) !== false) {
-                return true;
-            } elseif (strpos($testedValue, $value)) {
-                $existingValues[$key] = $testedValue;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param array $preparedIndexData
      * @param int $entityId
      * @param string $fieldName
-     * @return string
+     * @return string|array
      */
     private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName)
     {
@@ -286,6 +267,12 @@ class IndexDataProvider
      */
     private function getFieldConfig(array $entityConfig, $fieldName, $configName, $default = null)
     {
+        $cacheKey = md5(json_encode($entityConfig)) . $fieldName . $configName;
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $fields = array_filter($entityConfig['fields'], function ($fieldConfig) use ($fieldName, $configName) {
             if (!array_key_exists('name', $fieldConfig)) {
                 return false;
@@ -315,7 +302,11 @@ class IndexDataProvider
 
         $field = end($fields);
 
-        return $field[$configName];
+        $result = $field[$configName];
+
+        $this->cache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**

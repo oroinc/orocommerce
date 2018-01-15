@@ -38,7 +38,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function find(Product $product, $bidirectional = null, $limit = null)
+    public function find(Product $product, $bidirectional = false, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
@@ -47,7 +47,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
         return $this->getUpsellProductRepository()
             ->findUpsell(
                 $product->getId(),
-                $limit === null ? $this->configProvider->getLimit() : $limit
+                $limit
             );
     }
 

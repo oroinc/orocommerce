@@ -1,6 +1,6 @@
-<%= label %>
+<%- label %>
 <% if (isCustomerDefault) { %>
-    (<%= _.__('oro.paymentterm.autocomplete.customer') %>)
+    (<%- _.__('oro.paymentterm.autocomplete.customer') %>)
 <% } else if (isCustomerGroupDefault) { %>
-    (<%= _.__('oro.paymentterm.autocomplete.customer_group') %>)
+    (<%- _.__('oro.paymentterm.autocomplete.customer_group') %>)
 <% } %>
