@@ -234,44 +234,22 @@ class IndexDataProvider
 
         if ($type === Query::TYPE_TEXT) {
             $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
+            $value = explode(' ', $value);
             if ($existingValues) {
-                if ($this->discoverAndUpdateValue($existingValues, $value)) {
-                    $value = $existingValues;
-                } else {
-                    $value = array_merge($existingValues, [$value]);
-                }
-            } else {
-                $value = [$value];
+                $value = array_merge($existingValues, $value);
             }
+
+            $value = array_unique($value);
         }
 
         $preparedIndexData[$entityId][$type][$fieldName] = $value;
     }
 
     /**
-     * @param array $existingValues
-     * @param string $testedValue
-     * @return bool
-     */
-    private function discoverAndUpdateValue(array &$existingValues, $testedValue)
-    {
-        foreach ($existingValues as $key => $value) {
-            if (strpos($value, $testedValue) !== false) {
-                return true;
-            } elseif (strpos($testedValue, $value)) {
-                $existingValues[$key] = $testedValue;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param array $preparedIndexData
      * @param int $entityId
      * @param string $fieldName
-     * @return string
+     * @return string|array
      */
     private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName)
     {

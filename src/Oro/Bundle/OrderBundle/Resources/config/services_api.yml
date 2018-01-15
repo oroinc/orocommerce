@@ -20,7 +20,7 @@ services:
             - { name: oro.api.processor, action: update, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
 
     oro_order.api.set_price_by_value_and_currency:
-        class: 'Oro\Bundle\CurrencyBundle\Api\Processor\SetPriceByValueAndCurrencyProcessor'
+        class: 'Oro\Bundle\CurrencyBundle\Api\Processor\SetPriceByValueAndCurrency'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }

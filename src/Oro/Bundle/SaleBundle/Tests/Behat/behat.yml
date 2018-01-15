@@ -20,6 +20,7 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroRFPBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
