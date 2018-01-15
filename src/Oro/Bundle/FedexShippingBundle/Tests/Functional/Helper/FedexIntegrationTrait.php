@@ -11,6 +11,9 @@ trait FedexIntegrationTrait
 {
     use AdminUserTrait;
 
+    /**
+     * @param bool $enabled
+     */
     protected function createFedexIntegrationSettings(bool $enabled = true)
     {
         $admin = $this->getAdminUser();

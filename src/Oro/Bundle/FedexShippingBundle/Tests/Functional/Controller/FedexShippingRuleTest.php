@@ -13,9 +13,6 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
-/**
- * @dbIsolationPerTest
- */
 class FedexShippingRuleTest extends WebTestCase
 {
     use FedexIntegrationTrait;
@@ -31,12 +28,14 @@ class FedexShippingRuleTest extends WebTestCase
     {
         static::getContainer()->get('doctrine')->getManager()->clear();
 
+        $methodIdentifier = $this->getMethodIdentifier();
+
         $crawler = $this->client->request(
             'POST',
             $this->getUrl('oro_shipping_methods_configs_rule_create'),
             [
                 'oro_shipping_methods_configs_rule' => [
-                    'methodConfigs' => [['method' => $this->getMethodIdentifier()]],
+                    'methodConfigs' => [['method' => $methodIdentifier]],
                 ],
                 'update_methods_flag' => true,
             ]
@@ -61,7 +60,7 @@ class FedexShippingRuleTest extends WebTestCase
             'currency' => 'USD',
             'methodConfigs' => [
                 [
-                    'method' => $this->getMethodIdentifier(),
+                    'method' => $methodIdentifier,
                     'options' => ['surcharge' => 10],
                     'typeConfigs' => [
                         [
@@ -104,7 +103,7 @@ class FedexShippingRuleTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         static::assertContains('Shipping rule has been saved', $this->client->getResponse()->getContent());
 
-        $config = $this->getMethodConfig();
+        $config = $this->getMethodConfig($methodIdentifier);
 
         $this->assertMethodConfigCorrect($config, $configData);
     }
@@ -223,15 +222,16 @@ class FedexShippingRuleTest extends WebTestCase
     }
 
     /**
+     * @param string $methodIdentifier
      * @return ShippingMethodConfig|null
      */
-    private function getMethodConfig()
+    private function getMethodConfig(string $methodIdentifier)
     {
         $config = static::getContainer()
             ->get('doctrine')
             ->getManager()
             ->getRepository('OroShippingBundle:ShippingMethodConfig')
-            ->findAll();
+            ->findByMethod($methodIdentifier);
 
         if (empty($config)) {
             return null;
