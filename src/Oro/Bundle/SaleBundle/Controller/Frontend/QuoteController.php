@@ -87,13 +87,12 @@ class QuoteController extends Controller
         $quote = $quoteDemand->getQuote();
 
         if (!$quote->isAcceptable()) {
-            $this->get('session')->getFlashBag()->add(
-                'info',
-                $this->get('translator')->trans(
+            $this->get('oro_ui.flash_message_helper')
+                ->addFlashMessage(
+                    'info',
                     'oro.frontend.sale.message.quote.not_available',
                     ['%qid%' => $quote->getQid()]
-                )
-            );
+                );
 
             return $this->redirectToRoute('oro_sale_quote_frontend_index');
         }
