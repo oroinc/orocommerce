@@ -50,6 +50,35 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseContains($this->getAliceFolderName().'/get_list.yml', $response);
     }
 
+    public function testGetListWithTotalCount()
+    {
+        $parameters = [
+            'filter' => [
+                'priceList' => ['@price_list_1->id'],
+            ],
+            'page' => ['size' => 1],
+            'sort' => 'product',
+        ];
+        $response = $this->cget(
+            ['entity' => $this->getEntityName()],
+            $parameters,
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => $this->getEntityName(),
+                        'id' => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>',
+                    ]
+                ]
+            ],
+            $response
+        );
+        self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
+    }
+
     public function testGetListWithoutPriceListFilter()
     {
         $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);

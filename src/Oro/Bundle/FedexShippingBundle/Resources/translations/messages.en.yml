@@ -1,0 +1,36 @@
+oro:
+    fedex:
+        integration:
+            channel.label: 'FedEx'
+            settings:
+                label: 'FedEx Transport Settings'
+                test_mode.label: 'Test Mode'
+                key.label: 'User Credential Key'
+                password.label: 'User Credential Password'
+                account_number.label: 'Shipping Account Number'
+                meter_number.label: 'Meter Number'
+                pickup_type:
+                    label: 'Pickup Type'
+                    regular.label: 'Regular Pickup'
+                    request_courier.label: 'Request Courier'
+                    drop_box.label: 'Drop Box'
+                    business_service_center.label: 'Business Service Center'
+                    station.label: 'Station'
+                unit_of_weight:
+                    label: 'Unit Of Weight'
+                    kg.label: 'Kilogram'
+                    lb.label: 'Pound'
+                labels.label: 'Label'
+                shipping_services.label: 'Shipping Services'
+        shipping_method_options:
+            surcharge.label: Surcharge
+            surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
+
+        connection_validation:
+            button.text: Check FedEx Connection
+            result:
+                authorization_error.message: 'Authentication error has occurred'
+                no_services_error.message: 'No services are available for current configuration, make sure that Shipping Origin configuration is correct in System Configuration -> Shipping -> Shipping Origin'
+                no_shipping_origin_error.message: 'No shipping origin options provided. Please, fill them in System Configuration -> Shipping -> Shipping Origin'
+                success.message: 'Connection is valid'
+                connection_error.message: 'Connection error has occurred. Please, try again later'

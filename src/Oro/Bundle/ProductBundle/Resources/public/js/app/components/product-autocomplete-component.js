@@ -50,7 +50,7 @@ define(function(require) {
 
             this.updateProduct();
 
-            this.$el.on('blur' + this.eventNamespace(), _.bind(this.onBlur, this));
+            this.$el.on('blur' + this.eventNamespace(), _.debounce(_.bind(this.onBlur, this), 150));
         },
 
         eventNamespace: function() {

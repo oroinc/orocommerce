@@ -2,7 +2,7 @@ data:
     type: orderdiscounts
     attributes:
         description: 'New Discount'
-        percent: 20.1
+        percent: 0.201
         amount: 180
         orderDiscountType: 'oro_order_discount_item_type_amount'
     relationships:

@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
-use Oro\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,8 +22,8 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     /** @var OrderTaxesListener */
     protected $listener;
 
-    /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $taxManager;
+    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $taxProvider;
 
     /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $event;
@@ -35,9 +36,11 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
 
         $this->event = $this->getMockBuilder('Oro\Bundle\OrderBundle\Event\OrderEvent')
             ->disableOriginalConstructor()
@@ -53,7 +56,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->listener = new OrderTaxesListener(
-            $this->taxManager,
+            $taxProviderRegistry,
             $this->taxationSettingsProvider,
             $this->priceMatcher
         );
@@ -76,7 +79,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $prices = [MatchingPriceEventListener::MATCHED_PRICES_KEY => ['price1' => []]];
         $data = new \ArrayObject($prices);
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->with($order)
             ->willReturn($result);
@@ -102,7 +105,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEventTaxationDisabled()
     {
-        $this->taxManager->expects($this->never())->method($this->anything());
+        $this->taxProvider->expects($this->never())->method($this->anything());
         $this->event->expects($this->never())->method($this->anything());
 
         $this->taxationSettingsProvider->expects($this->once())
@@ -169,7 +172,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $data = new \ArrayObject();
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->with($order)
             ->willReturn(new Result());
@@ -196,7 +199,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $data = new \ArrayObject([MatchingPriceEventListener::MATCHED_PRICES_KEY => []]);
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->with($order)
             ->willReturn(new Result());

@@ -1,6 +1,6 @@
 ## FROM 1.5.0 to 1.6.0
-
-Relation between Category and Product has been changed in database. Join table has been removed. Please, make sure that you have fresh database backup before updating application.
+* Changed minimum required php version to 7.1
+* Relation between Category and Product has been changed in database. Join table has been removed. Please, make sure that you have fresh database backup before updating application.
 
 ## FROM 1.4.0 to 1.5.0
 
