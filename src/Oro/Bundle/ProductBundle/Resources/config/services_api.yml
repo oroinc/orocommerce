@@ -69,6 +69,8 @@ services:
 
     oro_product.api.delete.related_product.load_entity_by_orm_query:
         class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
+        arguments:
+            - '@oro_entity.query_hint_resolver'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 0 }
 
