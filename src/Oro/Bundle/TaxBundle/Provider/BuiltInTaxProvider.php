@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
-use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 
 class BuiltInTaxProvider implements TaxProviderInterface
@@ -87,7 +86,7 @@ class BuiltInTaxProvider implements TaxProviderInterface
 
         // Compare result objects by serializing results
         // it allows to compare only significant fields
-        if ($storedTaxResult->jsonSerialize() !== $calculatedTaxResult->jsonSerialize()) {
+        if (json_encode($storedTaxResult) !== json_encode($calculatedTaxResult)) {
             $result = $this->taxManager->saveTax($object, false);
             return $result ?: null;
         }
