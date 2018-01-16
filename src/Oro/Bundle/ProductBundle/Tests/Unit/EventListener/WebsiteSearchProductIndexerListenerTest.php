@@ -152,30 +152,23 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->with([777])
             ->willReturn([777 => ['item', 'set']]);
 
-        $attributeId1 = 1001;
-        $attributeId2 = 1002;
-        $attributeId3 = 1003;
-        $attributeId4 = 1004;
-        $attributeId5 = 1005;
-        $attributeId6 = 1006;
-
-        $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId1, 'fieldName' => 'sku']);
-        $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId2, 'fieldName' => 'newArrival']);
-        $attribute3 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId3, 'fieldName' => 'descriptions']);
-        $attribute4 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId4, 'fieldName' => 'createdAt']);
-        $attribute5 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId5, 'fieldName' => 'skipped']);
-        $attribute6 = $this->getEntity(FieldConfigModel::class, ['id' => $attributeId6, 'fieldName' => 'system']);
+        $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1001, 'fieldName' => 'sku']);
+        $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => 1002, 'fieldName' => 'newArrival']);
+        $attribute3 = $this->getEntity(FieldConfigModel::class, ['id' => 1003, 'fieldName' => 'descriptions']);
+        $attribute4 = $this->getEntity(FieldConfigModel::class, ['id' => 1004, 'fieldName' => 'createdAt']);
+        $attribute5 = $this->getEntity(FieldConfigModel::class, ['id' => 1005, 'fieldName' => 'skipped']);
+        $attribute6 = $this->getEntity(FieldConfigModel::class, ['id' => 1006, 'fieldName' => 'system']);
 
         $attributeFamilyRepository->expects($this->once())
             ->method('getFamilyIdsForAttributes')
             ->with([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6])
             ->willReturn(
                 [
-                    $attributeId1 => [$attributeFamilyId],
-                    $attributeId2 => [$attributeFamilyId],
-                    $attributeId3 => [$attributeFamilyId],
-                    $attributeId4 => [$attributeFamilyId],
-                    $attributeId5 => [500],
+                    $attribute1->getId() => [$attributeFamilyId],
+                    $attribute2->getId() => [$attributeFamilyId],
+                    $attribute3->getId() => [$attributeFamilyId],
+                    $attribute4->getId() => [$attributeFamilyId],
+                    $attribute5->getId() => [500],
                 ]
             );
 
@@ -229,6 +222,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         );
         $model5 = new ProductIndexDataModel('createdAt', $product->getCreatedAt(), [], false, false);
         $model6 = new ProductIndexDataModel('system', 'system', [], false, false);
+        $model7 = new ProductIndexDataModel('descriptions', $this->createMultiControlCharString(), [], true, false);
 
         $this->dataProvider
             ->expects($this->exactly(5))
@@ -236,8 +230,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->willReturnMap(
                 [
                     [$product, $attribute1, [$firstLocale, $secondLocale], [$model1]],
-                    [$product, $attribute3, [$firstLocale, $secondLocale], [$model2]],
-                    [$product, $attribute2, [$firstLocale, $secondLocale], [$model3, $model4]],
+                    [$product, $attribute2, [$firstLocale, $secondLocale], [$model2]],
+                    [$product, $attribute3, [$firstLocale, $secondLocale], [$model3, $model4, $model7]],
                     [$product, $attribute4, [$firstLocale, $secondLocale], [$model5]],
                     [$product, $attribute6, [$firstLocale, $secondLocale], [$model6]],
                 ]
@@ -297,10 +291,35 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     'value'    => 'system',
                     'all_text' => false
                 ]
+            ],
+            'descriptions' => [
+                [
+                    'value' => new PlaceholderValue(
+                        'ASDF123 ASDF456 ASDF789',
+                        []
+                    ),
+                    'all_text' => false
+                ]
             ]
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
+    }
+
+    /**
+     * Create string with not printable control symbols
+     *
+     * @return string
+     */
+    private function createMultiControlCharString()
+    {
+        $multicharText = 'ASDF123';
+
+        for ($control = 0; $control < 32; $control++) {
+            $multicharText .= chr($control);
+        }
+
+        return $multicharText . 'ASDF456' . chr(127) . 'ASDF789';
     }
 
     /**
