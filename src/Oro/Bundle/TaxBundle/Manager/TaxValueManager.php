@@ -157,9 +157,10 @@ class TaxValueManager
 
         $em->persist($taxValue);
 
-        if ($flush) {
-            $em->flush($taxValue);
-        }
+        // TODO: Uncomment and fix. Quick fix to temporary unlock OIS-116
+//        if ($flush) {
+//            $em->flush($taxValue);
+//        }
     }
 
     /**
