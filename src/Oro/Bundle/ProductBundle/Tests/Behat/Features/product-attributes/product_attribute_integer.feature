@@ -45,6 +45,7 @@ Feature: Product attribute integer
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer
+    And I am on the homepage
     When I type "32167" in "search"
     And I click "Search Button"
     Then I should not see "SKU123" product
