@@ -28,7 +28,6 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
      */
     private $twig;
 
-
     /**
      * @var EntityAliasResolver
      */
@@ -46,9 +45,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
         $this->twig = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->entityAliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityAliasResolver = $this->createMock(EntityAliasResolver::class);
 
         $this->configurator = new PriceRuleEditorOptionsConfigurator(
             $this->autocompleteFieldsProvider,

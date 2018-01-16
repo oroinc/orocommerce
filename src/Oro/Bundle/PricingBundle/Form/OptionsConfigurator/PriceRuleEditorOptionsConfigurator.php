@@ -80,7 +80,7 @@ class PriceRuleEditorOptionsConfigurator
                 return $dataSource;
             }
             $entityAlias = $this->entityAliasResolver->getAlias(PriceList::class);
-            if (in_array($entityAlias, $options['rootEntities'])) {
+            if (in_array($entityAlias, $options['rootEntities'], true)) {
                 $priceListSelectView = $this->formFactory
                     ->createNamed(
                         uniqid('price_list_select___name___', false),
