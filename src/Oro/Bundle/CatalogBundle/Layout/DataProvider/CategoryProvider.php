@@ -164,11 +164,12 @@ class CategoryProvider
     }
 
     /**
+     * @param null|bool $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice()
+    public function getIncludeSubcategoriesChoice($defaultValue = null)
     {
-        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }
 
     /**

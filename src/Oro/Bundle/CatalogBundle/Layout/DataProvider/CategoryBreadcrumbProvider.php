@@ -69,7 +69,7 @@ class CategoryBreadcrumbProvider
                     [
                         'categoryId'           => $category->getId(),
                         'includeSubcategories' =>
-                            $this->categoryProvider->getIncludeSubcategoriesChoice()
+                            $this->categoryProvider->getIncludeSubcategoriesChoice(true)
                     ]
                 );
             }

@@ -176,6 +176,16 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testGetIncludeSubcategoriesChoiceWithTrueOption()
+    {
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
+            ->willReturn(true);
+        $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice(true);
+        $this->assertTrue($actual);
+    }
+
     /**
      * @dataProvider getIncludeNotCategorizedProductsChoiceDataProvider
      *
