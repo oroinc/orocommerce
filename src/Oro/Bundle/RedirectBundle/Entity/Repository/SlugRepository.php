@@ -222,7 +222,7 @@ class SlugRepository extends EntityRepository
                     'localizationId' => Type::INTEGER
                 ]
             )
-            ->addOrderBy('slug.localization_id', $localizationIdSortOrder)
+            ->setMaxResults(1)->addOrderBy('slug.localization_id', $localizationIdSortOrder)
             ->setMaxResults(1);
 
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
