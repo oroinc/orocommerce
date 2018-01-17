@@ -45,10 +45,3 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist_configurable'
         organization: '@organization'
-
-Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
-    productVariant1:
-        parentProduct: '@product_configurable'
-        product: '@product2'
-        visible: true
-

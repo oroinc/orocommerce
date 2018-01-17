@@ -181,15 +181,13 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ]);
 
-        $this->variantAvailability->expects($this->at(1))
+        $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
-            ->with('discount')
-            ->willReturn([true => 'Yes', false => 'No']);
-
-        $this->variantAvailability->expects($this->at(2))
-            ->method('getVariantFieldValues')
-            ->with('inSale')
-            ->willReturn([true => 'Yes', false => 'No']);
+            ->withConsecutive(['discount'], ['inSale'])
+            ->willReturnOnConsecutiveCalls(
+                [true => 'Yes', false => 'No'],
+                [true => 'Yes', false => 'No']
+            );
 
         $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(false);
         $simpleProductNoDiscountInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(true);

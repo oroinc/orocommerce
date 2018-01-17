@@ -74,7 +74,7 @@ class FrontendProductPricesProvider
      */
     public function getByProduct(Product $product)
     {
-        $this->setProductsPrices([$product]);
+        $this->prepareAndSetProductsPrices([$product]);
 
         return $this->productPrices[$product->getId()];
     }
@@ -85,7 +85,7 @@ class FrontendProductPricesProvider
      */
     public function getByProducts($products)
     {
-        $this->setProductsPrices($products);
+        $this->prepareAndSetProductsPrices($products);
         $productPrices = [];
 
         foreach ($products as $product) {
@@ -101,7 +101,7 @@ class FrontendProductPricesProvider
     /**
      * @param Product[] $products
      */
-    protected function setProductsPrices($products)
+    protected function prepareAndSetProductsPrices($products)
     {
         $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->productPrices);
@@ -152,6 +152,23 @@ class FrontendProductPricesProvider
             ]
         );
 
+        $this->setProductsPrices($products, $prices);
+
+        foreach ($configurableProducts as $configurableId => $simpleProducts) {
+            foreach ($simpleProducts as $product) {
+                if ($this->productPrices[$product->getId()]) {
+                    $this->productPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Product[] $products
+     * @param ProductPrice[] $prices
+     */
+    protected function setProductsPrices($products, $prices)
+    {
         $productsPrices = [];
         foreach ($prices as $price) {
             $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
@@ -176,14 +193,6 @@ class FrontendProductPricesProvider
                     return !empty($unitsToSell[$price['unit']]);
                 }
             );
-        }
-
-        foreach ($configurableProducts as $configurableId => $simpleProducts) {
-            foreach ($simpleProducts as $product) {
-                if ($this->productPrices[$product->getId()]) {
-                    $this->productPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
-                }
-            }
         }
     }
 }

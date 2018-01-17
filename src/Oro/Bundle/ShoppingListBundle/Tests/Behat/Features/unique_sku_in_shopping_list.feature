@@ -102,4 +102,4 @@ Feature: Unique SKU in shopping list
     Then I should see an "Matrix Grid Form" element
     And "Shirt_102 Matrix Grid Order Form" must contains values:
       | Green Yes Quantity | 10 |
-    And I should see "Add to Shoppin..."
+    And I should see "Add to Shopping list"

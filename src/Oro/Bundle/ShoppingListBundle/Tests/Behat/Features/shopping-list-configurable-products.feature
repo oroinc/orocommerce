@@ -259,10 +259,10 @@ Feature: Inline matrix for configurable products in product views
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      |          |          |          |
-      |          |          |          |
-      |          |          |          |
-      |          |          |          |
+      |          |          | N/A      |
+      |          | N/A      |          |
+      |          |          | N/A      |
+      | N/A      | N/A      |          |
     Given I click "Create Order"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I click "Proceed"
@@ -295,10 +295,10 @@ Feature: Inline matrix for configurable products in product views
     And I click "Update"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 1        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
@@ -337,11 +337,11 @@ Feature: Inline matrix for configurable products in product views
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      |          |          |          |
-      |          |          |          |
-      |          |          |          |
-      |          |          |          |
-    And I click "Add to Shoppin..."
+      |          |          | N/A      |
+      |          | N/A      |          |
+      |          |          | N/A      |
+      | N/A      | N/A      |          |
+    And I click "Add to Shopping list" for "CNF_B" product
     Then I should see "Please provide at least one value before adding the product to your shopping list"
     Then I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -349,15 +349,15 @@ Feature: Inline matrix for configurable products in product views
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shoppin..."
+    And I click "Add to Shopping list" for "CNF_B" product
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 1        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     Given I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
@@ -378,42 +378,42 @@ Feature: Inline matrix for configurable products in product views
     And type "Configurable Product A" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should see "Matrix Grid Form" for "CNF_A" product
+    Then I should see "One Dimensional Matrix Grid Form" for "CNF_A" product
     And I click "No Image View"
-    Then I should see "Matrix Grid Form" for "CNF_A" product
+    Then I should see "One Dimensional Matrix Grid Form" for "CNF_A" product
     And click "View Details" for "CNF_A" product
-    Then I should see an "Matrix Grid Form" element
-    And I fill "Matrix Grid Form" with:
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shoppin..."
+    And I click "Add to Shopping list"
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
-      | 1        |          |          | 1        |
-    And I fill "Matrix Grid Form" with:
+      | 1        |          | N/A      | 1        |
+    And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | -        | 2        | -        |          |
     And I click "Update"
     And I click "Configurable Product A"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
-      | 1        | 2        |          |          |
+      | 1        | 2        | N/A      |          |
     And type "CNF_A" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
-      | 1        | 2        |          |          |
+      | 1        | 2        | N/A      |          |
     And I click "No Image View"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
-      | 1        | 2        |          |          |
+      | 1        | 2        | N/A      |          |
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
     Then I should see "Product has been removed from \"Shopping list\""
@@ -441,10 +441,10 @@ Feature: Inline matrix for configurable products in product views
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 1        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I click "Remove Line Item"
     And I click "Yes, Delete"
     Then I should see "The Shopping List is empty"
@@ -512,9 +512,9 @@ Feature: Inline matrix for configurable products in product views
     And type "CNF_B" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should see "Add to Shoppin..."
+    Then I should see "Add to Shopping list" for "CNF_B" product
     And I should not see an "Matrix Grid Form" element
-    And I click "Add to Shoppin..."
+    And I click "Add to Shopping list" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -530,10 +530,10 @@ Feature: Inline matrix for configurable products in product views
     And I click "Update"
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 1        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | -        | -        | -        |
@@ -544,14 +544,14 @@ Feature: Inline matrix for configurable products in product views
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And type "CNF_B" in "search"
     And click "Search Button"
-    And I should see "Update Shoppin..." for "CNF_B" product
-    And I click "Update Shoppin..."
+    And I should see "Update Shopping list" for "CNF_B" product
+    And I click "Update Shopping list"
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 3        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 3        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 5        | -        | -        |
@@ -565,10 +565,10 @@ Feature: Inline matrix for configurable products in product views
     And I click "Update"
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 5        | 1        |          |
-      | 1        |          | 3        |
-      |          |          |          |
-      |          |          | 1        |
+      | 5        | 1        | N/A      |
+      | 1        | N/A      | 3        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I click "Close"
     And I click "Remove Line Item"
     And I click "Yes, Delete"
@@ -656,16 +656,16 @@ Feature: Inline matrix for configurable products in product views
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shoppin..."
+    And I click "Add to Shopping list" for "CNF_B" product
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 1        |          |
-      | 1        |          | 1        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
 
   Scenario: Update order with matrix form in Product List View
     Given type "CNF_B" in "search"
@@ -677,13 +677,13 @@ Feature: Inline matrix for configurable products in product views
       | Value 12 | -        | -        | 3        |
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
-    And I click "Update Shoppin..."
+    And I click "Update Shopping list"
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
-      | 1        | 2        |          |
-      | 1        |          | 3        |
-      |          |          |          |
-      |          |          | 1        |
+      | 1        | 2        | N/A      |
+      | 1        | N/A      | 3        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |

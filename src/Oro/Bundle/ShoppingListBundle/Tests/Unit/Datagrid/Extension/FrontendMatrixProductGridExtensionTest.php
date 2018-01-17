@@ -199,7 +199,20 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
-        $expectedData = [
+        $expectedData = $this->getVisitResultExpectedData();
+
+        foreach ($resultObject->getData() as $data) {
+            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
+            $this->assertEquals($data->getValue('prices'), $expectedData[$data->getValue('id')]['prices']);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function getVisitResultExpectedData()
+    {
+        return [
             '1' => [
                 'matrixForm' => [
                     'type' => 'inline',
@@ -225,17 +238,6 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 'prices' => null,
             ],
         ];
-
-        foreach ($resultObject->getData() as $data) {
-            $this->assertEquals(
-                $data->getValue('matrixForm'),
-                $expectedData[$data->getValue('id')]['matrixForm']
-            );
-            $this->assertEquals(
-                $data->getValue('prices'),
-                $expectedData[$data->getValue('id')]['prices']
-            );
-        }
     }
 
     public function testVisitResultWhenCanNotGetProduct()

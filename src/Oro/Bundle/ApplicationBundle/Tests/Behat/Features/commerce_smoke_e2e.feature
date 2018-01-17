@@ -612,7 +612,7 @@ Feature: Commerce smoke e2e
       |       | L | M |
       | Black | 2 | 3 |
       | White | 1 | 5 |
-    And click "Add to Shoppin..."
+    And click "Add to Shopping list"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
     And click "Shopping list"
