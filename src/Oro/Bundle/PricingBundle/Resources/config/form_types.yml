@@ -213,3 +213,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: form.type_extension, alias: oro_pricing_price_list_select_with_priority }
+
+    oro_pricing.form.extension.price_type.frontend:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\FrontendPriceFormExtension'
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\CurrencyBundle\Form\Type\PriceType' }
