@@ -32,11 +32,6 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
     private $baseIndexer;
 
     /**
-     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $granularizer;
-
-    /**
      * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject
      */
     private $inputValidator;
@@ -58,8 +53,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
         $this->indexer = new AsyncIndexer(
             $this->baseIndexer,
             $this->messageProducer,
-            $this->inputValidator,
-            $this->granularizer
+            $this->inputValidator
         );
     }
 
@@ -221,7 +215,8 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
             'class' => Item::class,
             'context' => [
                 'test'
-            ]
+            ],
+            'granulize' => true
         ];
 
         $this->inputValidator->method('validateReindexRequest')
@@ -229,13 +224,6 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
                             [Item::class],
                             [self::WEBSITE_ID]
                          ]);
-
-        $this->granularizer->expects($this->atLeastOnce())
-            ->method('process')
-            ->with([Item::class], [self::WEBSITE_ID], $context)
-            ->willReturn(
-                [$expectedParams]
-            );
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')

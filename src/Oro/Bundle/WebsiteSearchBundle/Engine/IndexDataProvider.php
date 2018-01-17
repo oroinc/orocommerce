@@ -234,14 +234,10 @@ class IndexDataProvider
 
         if ($type === Query::TYPE_TEXT) {
             $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
-            if ($existingValues) {
-                if ($this->discoverAndUpdateValue($existingValues, $value)) {
-                    $value = $existingValues;
-                } else {
-                    $value = array_merge($existingValues, [$value]);
-                }
+            if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+                $value = $this->updateAllTextFieldValue($existingValues, $value);
             } else {
-                $value = [$value];
+                $value = $this->updateRegularTextFieldValue($existingValues, $value);
             }
         }
 
@@ -249,29 +245,43 @@ class IndexDataProvider
     }
 
     /**
-     * @param array $existingValues
-     * @param string $testedValue
-     * @return bool
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
      */
-    private function discoverAndUpdateValue(array &$existingValues, $testedValue)
+    private function updateAllTextFieldValue(&$existingValues, string $value)
     {
-        foreach ($existingValues as $key => $value) {
-            if (strpos($value, $testedValue) !== false) {
-                return true;
-            } elseif (strpos($testedValue, $value)) {
-                $existingValues[$key] = $testedValue;
-                return true;
-            }
+        $value = explode(' ', $value);
+        if ($existingValues) {
+            $value = array_merge($existingValues, $value);
         }
 
-        return false;
+        return array_unique($value);
+    }
+
+    /**
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
+     */
+    private function updateRegularTextFieldValue($existingValues, string $value)
+    {
+        if ($existingValues) {
+            $existingValues[] = $value;
+
+            return $existingValues;
+        }
+
+        return [$value];
     }
 
     /**
      * @param array $preparedIndexData
      * @param int $entityId
      * @param string $fieldName
-     * @return string
+     * @return string|array
      */
     private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName)
     {

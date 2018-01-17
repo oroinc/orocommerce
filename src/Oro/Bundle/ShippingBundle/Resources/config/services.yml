@@ -121,6 +121,7 @@ services:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
 
     oro_shipping.repository.product_shipping_options:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_shipping.entity.product_shipping_options.class%'
@@ -514,3 +515,7 @@ services:
         arguments:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
+
+    oro_shipping.factory.shipping_package_options:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
+        public: false

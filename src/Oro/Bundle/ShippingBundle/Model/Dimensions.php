@@ -12,7 +12,7 @@ class Dimensions
     protected $value;
 
     /**
-     * @var LengthUnit
+     * @var LengthUnit|null
      */
     protected $unit;
 
@@ -20,7 +20,7 @@ class Dimensions
      * @param float $length
      * @param float $width
      * @param float $height
-     * @param LengthUnit $unit
+     * @param LengthUnit|null $unit
      *
      * @return Dimensions
      */
@@ -56,7 +56,7 @@ class Dimensions
     }
 
     /**
-     * @return LengthUnit
+     * @return LengthUnit|null
      */
     public function getUnit()
     {
@@ -64,7 +64,7 @@ class Dimensions
     }
 
     /**
-     * @param LengthUnit $unit
+     * @param LengthUnit|null $unit
      *
      * @return $this
      */

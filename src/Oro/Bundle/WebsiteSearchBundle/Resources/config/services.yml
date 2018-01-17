@@ -170,6 +170,8 @@ services:
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
+        arguments:
+            - '@oro_website_search.entity_identifier_repository'
         public: false
 
     oro_website_search.async.indexer:
@@ -178,13 +180,15 @@ services:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.indexer.input_validator'
-            - '@oro_website_search.async.indexer.message_granularizer.reindex'
 
     oro_website_search.async_messaging.search_message.processor:
         class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor
         arguments:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_website_search.indexer.input_validator'
+            - '@oro_website_search.async.indexer.message_granularizer.reindex'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
@@ -286,3 +290,9 @@ services:
             - '@oro_entity.manager.dictionary.api'
         tags:
             - { name: oro_search.extension.search_filter.filter, type: multi-enum, datasource: search }
+
+    oro_website_search.entity_identifier_repository:
+        class: Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        public: false
