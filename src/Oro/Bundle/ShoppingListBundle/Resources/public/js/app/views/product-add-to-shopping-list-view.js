@@ -258,7 +258,13 @@ define(function(require) {
                     quantity: parseInt($(e.target).val(), 10)
                 });
 
-                this.findMainButton().click();
+                var mainButton = this.findMainButton();
+
+                if (!mainButton.length) {
+                    mainButton = this.findAllButtons();
+                }
+
+                mainButton.click();
             }
         },
 
