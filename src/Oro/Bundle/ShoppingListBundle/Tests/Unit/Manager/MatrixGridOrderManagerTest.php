@@ -159,6 +159,38 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
+    public function testGetMatrixCollectionNoVariantFields()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productUnit = new ProductUnit();
+        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getVariantFieldsAvailability')
+            ->with($product)
+            ->willReturn([]);
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getVariantFieldValues');
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([]);
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getVariantFieldScalarValue');
+
+        $expectedCollection = new MatrixCollection();
+        $expectedCollection->unit = $productUnit;
+
+        $shoppingList = $this->getEntity(ShoppingList::class);
+
+        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+    }
+
     public function testGetMatrixCollectionWithBoolean()
     {
         /** @var Product $product */

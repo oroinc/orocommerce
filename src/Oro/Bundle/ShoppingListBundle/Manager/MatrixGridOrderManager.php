@@ -69,6 +69,10 @@ class MatrixGridOrderManager
         $collection = new MatrixCollection();
         $collection->unit = $product->getPrimaryUnitPrecision()->getUnit();
 
+        if (!isset($variantFields[0])) {
+            return $collection;
+        }
+
         foreach ($variantFields[0]['values'] as $firstValue) {
             $row = new MatrixCollectionRow();
             $row->label = $firstValue['label'];
