@@ -221,7 +221,7 @@ class WebsiteSearchProductIndexerListener
      */
     private function cleanUpString($string)
     {
-        return is_string($string) ? preg_replace('/[[:cntrl:]]/', '', $string) : $string;
+        return is_string($string) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $string) : $string;
     }
 
     /**

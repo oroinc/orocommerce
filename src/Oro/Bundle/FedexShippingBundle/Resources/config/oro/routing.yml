@@ -1,0 +1,4 @@
+oro_fedex_shipping:
+    resource:     "@OroFedexShippingBundle/Controller/"
+    type:         annotation
+    prefix:       /fedex-shipping

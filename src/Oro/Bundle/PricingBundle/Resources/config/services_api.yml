@@ -193,6 +193,8 @@ services:
 
     oro_pricing.api.load_entity_by_orm_query:
         class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
+        arguments:
+            - '@oro_entity.query_hint_resolver'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: delete, group: load_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
