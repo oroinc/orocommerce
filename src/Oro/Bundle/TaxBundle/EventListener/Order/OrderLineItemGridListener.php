@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class OrderLineItemGridListener
 {
@@ -89,7 +90,7 @@ class OrderLineItemGridListener
                 ),
                 $this->expressionBuilder->eq(
                     sprintf('%s.entityId', self::ALIAS),
-                    sprintf('%s.id', $this->fromPart['alias'])
+                    QueryBuilderUtil::getField($this->fromPart['alias'], 'id')
                 )
             )
         );

@@ -474,7 +474,8 @@ class ProductVisibilityProvider
 
         $queryBuilder
             ->select('product.id as productId')
-            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, $defaultVisibility))
+            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, ':defaultVisibility'))
+            ->setParameter('defaultVisibility', $defaultVisibility)
             ->addOrderBy('product.id');
 
         $productsResult = $queryBuilder->getQuery()->getArrayResult();
