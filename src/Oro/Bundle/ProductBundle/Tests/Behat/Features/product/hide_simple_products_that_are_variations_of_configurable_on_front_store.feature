@@ -2,7 +2,7 @@
 @ticket-BB-11940
 @regression
 
-Feature: Check filter values for product grid on front store
+Feature: Hide simple products that are variations of configurable on front store
   In order to clean up search result and product listings from unnecessary clutter
   As an Admin
   I want to hide simple products created as variations of a configurable product

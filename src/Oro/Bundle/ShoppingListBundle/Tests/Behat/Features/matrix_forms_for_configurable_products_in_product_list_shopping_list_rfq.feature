@@ -5,8 +5,8 @@
 @regression
 @ticket-BB-10500
 
-Feature: Inline matrix for configurable products in product views
-  In order to quickly add specific configurations of a complex product to the shopping list
+Feature: Matrix forms for configurable products in product list, shopping list, RFQ
+  In order to quickly add and update specific configurations of a complex product to the shopping list and RFQ
   As a Buyer
   I want to add a complex product to the shopping list via matrix form displayed in the product views
 
