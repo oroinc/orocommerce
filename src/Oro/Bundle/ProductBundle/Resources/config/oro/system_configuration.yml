@@ -85,6 +85,7 @@ system_configuration:
         oro_product.max_number_of_related_products:
             data_type: integer
             type: integer
+            search_type: text
             priority: 80
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
@@ -95,15 +96,16 @@ system_configuration:
                         min: 1
 
         oro_product.upsell_products_enabled:
-                data_type: boolean
-                type: oro_config_checkbox
-                priority: 90
-                options:
-                    label: oro.product.system_configuration.fields.enable_upsell_products.label
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 90
+            options:
+                label: oro.product.system_configuration.fields.enable_upsell_products.label
 
         oro_product.max_number_of_upsell_products:
             data_type: integer
             type: integer
+            search_type: text
             priority: 80
             options:
                 label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
@@ -116,6 +118,7 @@ system_configuration:
         oro_product.related_products_max_items:
             data_type: integer
             type: integer
+            search_type: text
             priority: 70
             options:
                 label: oro.product.system_configuration.fields.related_products_max_items.label
@@ -128,6 +131,7 @@ system_configuration:
         oro_product.related_products_min_items:
             data_type: integer
             type: integer
+            search_type: text
             priority: 60
             options:
                 label: oro.product.system_configuration.fields.related_products_min_items.label
@@ -156,6 +160,7 @@ system_configuration:
         oro_product.upsell_products_max_items:
             data_type: integer
             type: integer
+            search_type: text
             priority: 70
             options:
                 label: oro.product.system_configuration.fields.upsell_products_max_items.label
@@ -168,6 +173,7 @@ system_configuration:
         oro_product.upsell_products_min_items:
             data_type: integer
             type: integer
+            search_type: text
             priority: 60
             options:
                 label: oro.product.system_configuration.fields.upsell_products_min_items.label
@@ -196,6 +202,7 @@ system_configuration:
         oro_product.unit_rounding_type:
             data_type: string
             type: choice
+            search_type: choice
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.unit_rounding_type.label
@@ -245,6 +252,7 @@ system_configuration:
         oro_product.default_unit_precision:
             data_type: integer
             type: integer
+            search_type: text
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
@@ -262,6 +270,7 @@ system_configuration:
         oro_product.product_image_watermark_size:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_size.label
@@ -275,6 +284,7 @@ system_configuration:
         oro_product.product_image_watermark_position:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            search_type: choice
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
@@ -315,6 +325,7 @@ system_configuration:
         oro_product.product_direct_url_prefix:
             data_type: string
             type: oro_redirect_sluggable_prefix
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.product_direct_url_prefix.label
                 data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
@@ -325,6 +336,7 @@ system_configuration:
         oro_product.brand_direct_url_prefix:
             data_type: string
             type: oro_redirect_sluggable_prefix
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.brand_direct_url_prefix.label
                 data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
@@ -335,6 +347,7 @@ system_configuration:
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.label
                 tooltip: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.tooltip
@@ -349,6 +362,7 @@ system_configuration:
         oro_product.product_collections_mass_action_limitation:
             data_type: integer
             type: integer
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
                 tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
@@ -361,6 +375,7 @@ system_configuration:
         oro_product.product_promotion_show_on_product_view:
             data_type: boolean
             type: choice
+            search_type: choice
             options:
                 label: oro.product.system_configuration.fields.show_on_product_view.label
                 tooltip: oro.product.form.tooltip.show_on_product_view
@@ -384,6 +399,7 @@ system_configuration:
         oro_product.new_arrivals_max_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_max_items.label
@@ -396,6 +412,7 @@ system_configuration:
         oro_product.new_arrivals_min_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_min_items.label
@@ -432,6 +449,7 @@ system_configuration:
         oro_product.matrix_form_on_product_view:
             data_type: string
             type: choice
+            search_type: choice
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.matrix_form_on_product_view.label

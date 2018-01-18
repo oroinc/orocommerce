@@ -42,206 +42,43 @@ class UrlKeyValueCacheTest extends \PHPUnit_Framework_TestCase
         $this->urlCache = new UrlKeyValueCache($this->persistentCache, $this->localCache, $this->filesystem);
     }
 
-    public function testHasNoForNonDefaultLocalization()
+    /**
+     * @dataProvider hasDataProvider
+     * @param bool $hasInLocal
+     * @param bool $hasInPersistent
+     * @param bool $expected
+     */
+    public function testHas($hasInLocal, $hasInPersistent, $expected)
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
         $localization = 1;
         $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
-        $keyDefault = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u';
 
-        $this->localCache->expects($this->exactly(2))
+        $this->localCache->expects($this->any())
             ->method('contains')
-            ->withConsecutive(
-                [$keyLocalization],
-                [$keyDefault]
-            )
-            ->willReturn(false);
+            ->with($keyLocalization)
+            ->willReturn($hasInLocal);
 
-        $this->localCache->expects($this->exactly(2))
-            ->method('fetch')
-            ->withConsecutive(
-                [$keyDefault],
-                [$keyLocalization]
-            )
-            ->willReturn(false);
-        $this->localCache->expects($this->never())
-            ->method('save');
+        $this->persistentCache->expects($this->any())
+            ->method('contains')
+            ->with($keyLocalization)
+            ->willReturn($hasInPersistent);
 
-        $this->persistentCache->expects($this->exactly(2))
-            ->method('fetch')
-            ->withConsecutive(
-                [$keyLocalization],
-                [$keyDefault]
-            )
-            ->willReturn(false);
-
-        $this->assertFalse($this->urlCache->has($routeName, $routeParameters, $localization));
+        $this->assertSame($expected, $this->urlCache->has($routeName, $routeParameters, $localization));
     }
 
-    public function testHasInLocalCache()
+    /**
+     * @return array
+     */
+    public function hasDataProvider()
     {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-        $localization = 1;
-        $url = '/test';
-        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
-
-        $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(true);
-
-        $this->localCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyLocalization)
-            ->willReturn($url);
-
-        $this->persistentCache->expects($this->never())
-            ->method($this->anything());
-
-        $this->assertTrue($this->urlCache->has($routeName, $routeParameters, $localization));
-    }
-
-    public function testHasInLocalCacheForDefaultLocalization()
-    {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-        $localization = 1;
-        $url = '/test';
-        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
-        $keyDefault = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u';
-
-        $this->localCache->expects($this->exactly(2))
-            ->method('contains')
-            ->withConsecutive(
-                [$keyLocalization],
-                [$keyDefault]
-            )
-            ->willReturnOnConsecutiveCalls(
-                false,
-                true
-            );
-
-        $this->localCache->expects($this->exactly(2))
-            ->method('fetch')
-            ->withConsecutive(
-                [$keyDefault],
-                [$keyLocalization]
-            )
-            ->willReturn($url);
-        $this->localCache->expects($this->once())
-            ->method('save')
-            ->with($keyLocalization, $url);
-
-        $this->persistentCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyLocalization)
-            ->willReturn(false);
-
-        $this->assertTrue($this->urlCache->has($routeName, $routeParameters, $localization));
-    }
-
-    public function testHasInPersistentCache()
-    {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-        $localization = 1;
-        $url = '/test';
-        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
-        $keyDefault = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u';
-
-        $this->localCache->expects($this->exactly(2))
-            ->method('contains')
-            ->withConsecutive(
-                [$keyLocalization],
-                [$keyDefault]
-            )
-            ->willReturn(false);
-
-        $this->localCache->expects($this->exactly(2))
-            ->method('fetch')
-            ->withConsecutive(
-                [$keyDefault],
-                [$keyLocalization]
-            )
-            ->willReturn($url);
-        $this->localCache->expects($this->exactly(2))
-            ->method('save')
-            ->withConsecutive(
-                [$keyDefault, $url],
-                [$keyLocalization, $url]
-            );
-
-        $this->persistentCache->expects($this->exactly(2))
-            ->method('fetch')
-            ->withConsecutive(
-                [$keyLocalization],
-                [$keyDefault]
-            )
-            ->willReturnOnConsecutiveCalls(
-                false,
-                $url
-            );
-
-        $this->assertTrue($this->urlCache->has($routeName, $routeParameters, $localization));
-    }
-
-    public function testHasInPersistentCacheForDefaultLocalization()
-    {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-        $localization = 1;
-        $url = '/test';
-        $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
-
-        $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyLocalization)
-            ->willReturn(false);
-
-        $this->localCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyLocalization)
-            ->willReturn($url);
-
-        $this->localCache->expects($this->once())
-            ->method('save')
-            ->with($keyLocalization, $url);
-
-        $this->persistentCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyLocalization)
-            ->willReturn($url);
-
-        $this->assertTrue($this->urlCache->has($routeName, $routeParameters, $localization));
-    }
-
-    public function testHasNoForDefaultLocalization()
-    {
-        $routeName = 'test';
-        $routeParameters = ['id' => 1];
-        $localization = UrlKeyValueCache::DEFAULT_LOCALIZATION_ID;
-        $keyDefault = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u';
-
-        $this->localCache->expects($this->once())
-            ->method('contains')
-            ->with($keyDefault)
-            ->willReturn(false);
-
-        $this->localCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyDefault)
-            ->willReturn(false);
-        $this->localCache->expects($this->never())
-            ->method('save');
-
-        $this->persistentCache->expects($this->once())
-            ->method('fetch')
-            ->with($keyDefault)
-            ->willReturn(false);
-
-        $this->assertFalse($this->urlCache->has($routeName, $routeParameters, $localization));
+        return [
+            'do not contains' => [false, false, false],
+            'has in local no in persistent' => [true, false, true],
+            'has in persistent no in local' => [false, true, true],
+            'has in both' => [true, true, true],
+        ];
     }
 
     public function testGetUrl()

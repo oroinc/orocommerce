@@ -275,7 +275,9 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
             ->method('merge')
             ->with($storage);
 
-        $this->assertCacheUpdateAndFlush($key, $oldStorage);
+        $this->persistentCache->expects($this->once())
+            ->method('save')
+            ->with($key, $oldStorage);
 
         $this->storageCache->flushAll();
     }
@@ -307,7 +309,9 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
             ->with($key);
 
-        $this->assertCacheUpdateAndFlush($key, $storage);
+        $this->persistentCache->expects($this->once())
+            ->method('save')
+            ->with($key, $storage);
 
         $this->storageCache->flushAll();
     }
@@ -345,19 +349,5 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
             ->with($key)
             ->willReturn($storage);
-    }
-
-    /**
-     * @param $key
-     * @param $oldStorage
-     */
-    private function assertCacheUpdateAndFlush($key, $oldStorage)
-    {
-        $this->persistentCache->expects($this->once())
-            ->method('save')
-            ->with($key, $oldStorage);
-        $this->localCache->expects($this->once())
-            ->method('delete')
-            ->with($key);
     }
 }
