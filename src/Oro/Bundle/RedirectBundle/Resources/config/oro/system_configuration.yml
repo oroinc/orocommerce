@@ -15,6 +15,7 @@ system_configuration:
         oro_redirect.canonical_url_type:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            search_type: choice
             priority: 300
             options:
                 label: oro.redirect.system_configuration.fields.canonical_url_type.label
@@ -25,6 +26,7 @@ system_configuration:
         oro_redirect.redirect_generation_strategy:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            search_type: choice
             priority: 200
             options:
                 label: oro.redirect.system_configuration.fields.redirect_generation_strategy.label
@@ -36,6 +38,7 @@ system_configuration:
         oro_redirect.canonical_url_security_type:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            search_type: choice
             priority: 200
             options:
                 label: oro.redirect.system_configuration.fields.canonical_url_security_type.label
