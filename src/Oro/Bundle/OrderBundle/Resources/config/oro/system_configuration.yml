@@ -74,6 +74,7 @@ system_configuration:
         oro_order.order_previously_purchased_period:
             data_type: integer
             type: integer
+            search_type: text
             options:
                 label: oro.order.system_configuration.fields.order_previously_purchased_period.title
                 tooltip: oro.order.system_configuration.fields.order_previously_purchased_period.tooltip

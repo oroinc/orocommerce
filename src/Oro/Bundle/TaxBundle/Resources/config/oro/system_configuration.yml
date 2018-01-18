@@ -46,6 +46,7 @@ system_configuration:
         oro_tax.start_calculation_with:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.start_calculation_with.label
                 required: true
@@ -58,6 +59,7 @@ system_configuration:
         oro_tax.start_calculation_on:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.start_calculation_on.label
                 required: true
@@ -77,6 +79,7 @@ system_configuration:
         oro_tax.use_as_base_by_default:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.use_as_base.default.label
                 required: true
@@ -90,6 +93,7 @@ system_configuration:
         oro_tax.address_resolver_granularity:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.address_resolver_granularity.label
                 required: true
@@ -111,6 +115,7 @@ system_configuration:
         oro_tax.destination:
             data_type: string
             type: choice
+            search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.destination.label
                 required: true
