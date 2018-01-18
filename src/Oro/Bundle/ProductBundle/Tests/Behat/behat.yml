@@ -802,6 +802,7 @@ oro_behat_extension:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
+        - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext

@@ -271,12 +271,43 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnDelete()
     {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $this->assertPriceListToProductCount($priceList, $product, 1);
+
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_1));
-        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
+
+        $this->assertPriceListToProductCount($priceList, $product, 1);
         static::cleanScheduledMessages();
         $priceManager->flush();
         static::assertMessageSent('oro_pricing.price_lists.cpl.resolve_prices');
+        $this->assertPriceListToProductCount($priceList, $product, 1);
+
+        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
+        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_7));
+        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_10));
+
+        $this->assertPriceListToProductCount($priceList, $product, 1);
+        static::cleanScheduledMessages();
+        $priceManager->flush();
+        static::assertMessageSent('oro_pricing.price_lists.cpl.resolve_prices');
+        $this->assertPriceListToProductCount($priceList, $product, 0);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param int $count
+     */
+    protected function assertPriceListToProductCount(PriceList $priceList, Product $product, int $count)
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $repository = $em->getRepository(PriceListToProduct::class);
+
+        $this->assertCount($count, $repository->findBy(['priceList' => $priceList, 'product' => $product]));
     }
 
     public function testOnDeleteWithDisabledListener()

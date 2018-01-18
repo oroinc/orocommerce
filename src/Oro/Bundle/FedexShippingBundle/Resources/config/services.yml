@@ -1,0 +1,215 @@
+parameters:
+    oro_fedex_shipping.integration.channel.type: 'fedex'
+    oro_fedex_shipping.integration.transport.type: 'fedex'
+    oro_fedex_shipping.shipping_rule.method_template: 'OroFedexShippingBundle::FedexMethodWithOptions.html.twig'
+
+services:
+    oro_fedex_shipping.integration.channel:
+        class: 'Oro\Bundle\FedexShippingBundle\Integration\FedexChannel'
+        public: false
+        tags:
+            - { name: oro_integration.channel, type: '%oro_fedex_shipping.integration.channel.type%' }
+
+    oro_fedex_shipping.integration.transport:
+        class: 'Oro\Bundle\FedexShippingBundle\Integration\FedexTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: '%oro_fedex_shipping.integration.transport.type%', channel_type: '%oro_fedex_shipping.integration.channel.type%' }
+
+    oro_fedex_shipping.integration.identifier_generator:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+
+    oro_fedex_shipping.client.rate_service.response.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory'
+        public: false
+
+    oro_fedex_shipping.client.rate_service.soap_settings:
+        class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
+        public: false
+        factory: 'oro_soap.client.factory.settings:create'
+        arguments:
+            - '%fedex_root_dir%Resources/wsdl/RateService_v20.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
+            - 'getRates'
+            - connection_timeout: 3
+
+    oro_fedex_shipping.client.rate_service.soap_test_settings:
+        class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
+        public: false
+        factory: 'oro_soap.client.factory.settings:create'
+        arguments:
+            - '%fedex_root_dir%Resources/wsdl/RateService_v20_test_mode.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
+            - 'getRates'
+            - connection_timeout: 3
+
+    oro_fedex_shipping.client.rate_service:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
+        arguments:
+            - '@oro_soap.client'
+            - '@oro_fedex_shipping.client.rate_service.response.factory'
+            - '@oro_fedex_shipping.client.rate_service.soap_settings'
+            - '@oro_fedex_shipping.client.rate_service.soap_test_settings'
+
+    oro_fedex_shipping.client.rate_service.request.settings.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactory'
+        public: false
+
+    oro_fedex_shipping.client.rate_service.request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule'
+            - '@oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings'
+            - '@oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection'
+
+    oro_fedex_shipping.transfomer.shipping_dimensions_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingDimensionsUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.transfomer.shipping_weight_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingWeightUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection:
+        class: 'Oro\Bundle\FedexShippingBundle\Modifier\ConvertToFedexUnitsShippingLineItemCollectionModifier'
+        public: false
+        arguments:
+            - '@oro_shipping.provider.measure_units.conversion'
+            - '@oro_fedex_shipping.transfomer.shipping_weight_unit'
+            - '@oro_fedex_shipping.transfomer.shipping_dimensions_unit'
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_shipping.line_item.factory_basic'
+
+    oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactory'
+        public: false
+
+    oro_fedex_shipping.factory.fedex_package_by_shipping_package_options:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageByShippingPackageOptionsFactory'
+        public: false
+
+    oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.builder.shipping_packages_by_line_item'
+            - '@oro_fedex_shipping.factory.fedex_package_by_shipping_package_options'
+
+    oro_fedex_shipping.builder.shipping_packages_by_line_item:
+        class: 'Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilder'
+        public: false
+        arguments:
+            - '@oro_shipping.factory.shipping_package_options'
+            - '@oro_fedex_shipping.expression_language'
+
+    oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_shipping.shipping_origin.provider'
+
+    oro_fedex_shipping.shipping_method.method_type_identifier_generator:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
+        public: false
+
+    oro_fedex_shipping.shipping_method.factory.method_type:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodTypeFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+            - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
+            - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service_cached'
+
+    oro_fedex_shipping.shipping_method.factory.method:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'
+            - '@oro_fedex_shipping.shipping_method.factory.method_type'
+            - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
+            - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service_cached'
+
+    oro_fedex_shipping.shipping_method.provider:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Provider\FedexShippingMethodProvider'
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_fedex_shipping.shipping_method.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+
+    oro_fedex_shipping.event_listener.remove_integration:
+        parent: oro_shipping.remove_integration_listener
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_shipping.method.event.dispatcher.method_removal'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
+
+    oro_fedex_shipping.event_listener.shipping_method_config_data:
+        parent: oro_shipping.admin_view.method_template.listener
+        arguments:
+            - '%oro_fedex_shipping.shipping_rule.method_template%'
+            - '@oro_fedex_shipping.shipping_method.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_fedex_shipping.event_listener.disable_integration:
+        parent: oro_shipping.disable_integration_listener
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_shipping.method_disable_handler.decorator'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
+
+    oro_fedex_shipping.entity_listener.delete_integration_settings_services:
+        class: 'Oro\Bundle\FedexShippingBundle\Entity\EntityListener\FedexDeleteIntegrationSettingsServicesEntityListener'
+        arguments:
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+            - '@oro_shipping.method.event.dispatcher.type_removal'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings', event: postUpdate }
+
+    oro_fedex_shipping.cache.cache_key_factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactory'
+        public: false
+
+    oro_fedex_shipping.cache:
+        public: false
+        parent: oro.cache.abstract
+
+    oro_fedex_shipping.cache.response:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.cache'
+
+    oro_fedex_shipping.client.rate_service_cached:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceCachedClient'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.client.rate_service'
+            - '@oro_fedex_shipping.cache.response'
+            - '@oro_fedex_shipping.cache.cache_key_factory'
+
+    oro_fedex_shipping.validator.remove_used_shipping_service:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator'
+        arguments:
+            - '@oro_fedex_shipping.shipping_method.factory.method'
+            - '@oro_shipping.method_validator.main'
+            - 'shippingServices'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_fedex_shipping_remove_used_shipping_service_validator }
+
+    oro_fedex_shipping.expression_language:
+        class: 'Symfony\Component\ExpressionLanguage\ExpressionLanguage'

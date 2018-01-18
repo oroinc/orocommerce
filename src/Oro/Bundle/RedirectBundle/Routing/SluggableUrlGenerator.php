@@ -12,6 +12,7 @@ use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {
+    const DEFAULT_LOCALIZATION_ID = 0;
     const CONTEXT_DELIMITER = '_item';
     const CONTEXT_TYPE = 'context_type';
     const CONTEXT_DATA = 'context_data';
@@ -80,6 +81,10 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         $this->sluggableUrlProvider->setContextUrl($contextUrl);
 
         $url = $this->sluggableUrlProvider->getUrl($name, $parameters, $localizationId);
+        // Fallback to default localization
+        if (!$url) {
+            $url = $this->sluggableUrlProvider->getUrl($name, $parameters, self::DEFAULT_LOCALIZATION_ID);
+        }
 
         // If no Slug based URL is available - generate URL with base generator logic
         if (!$url) {

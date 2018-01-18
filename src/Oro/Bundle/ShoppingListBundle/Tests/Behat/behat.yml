@@ -173,6 +173,10 @@ oro_behat_extension:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
+    Shopping list Line items Grid:
+      selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:

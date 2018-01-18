@@ -12,13 +12,13 @@ class Weight
     protected $value;
 
     /**
-     * @var WeightUnit
+     * @var WeightUnit|null
      */
     protected $unit;
 
     /**
      * @param float $value
-     * @param WeightUnit $unit
+     * @param WeightUnit|null $unit
      * @return Weight
      */
     public static function create($value, WeightUnit $unit = null)
@@ -50,7 +50,7 @@ class Weight
     }
 
     /**
-     * @return WeightUnit
+     * @return WeightUnit|null
      */
     public function getUnit()
     {
@@ -58,7 +58,7 @@ class Weight
     }
 
     /**
-     * @param WeightUnit $unit
+     * @param WeightUnit|null $unit
      * @return $this
      */
     public function setUnit(WeightUnit $unit = null)

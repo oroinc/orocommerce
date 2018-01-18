@@ -134,12 +134,13 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
-    public function testGetApplicableMethodsViewsWithSuccessor()
+    public function testGetApplicableMethodsViewsWithSuccessorNotEmpty()
     {
         $quoteDemandMock = $this->getQuoteDemandMock();
         $checkoutMock = $this->getCheckoutMock();
         $expectedMethods = (new ShippingMethodViewCollection())
-            ->addMethodView('flat_rate', ['identifier' => 'flat_rate']);
+            ->addMethodView('flat_rate', ['identifier' => 'flat_rate'])
+            ->addMethodTypeView('flat_rate', 'flat_rate_1', ['identifier' => 'flat_rate_1']);
 
         $successorMock = $this->getSuccessorMock();
         $this->testedMethodsProvider->setSuccessor($successorMock);
