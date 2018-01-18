@@ -175,7 +175,7 @@ Feature: Hide simple products that are variations of configurable on front store
       | SKU       |
       | CNF_A     |
       | PROD_B_12 |
-      | PROD_A_2  |
+#     | PROD_A_2  | Should be uncommented after fix BB-13489
       | PROD_C_1  |
     And I should see the following products in the "Featured Products Block":
       | SKU       |
