@@ -5,10 +5,14 @@ layout:
             root: widget_content
             namespace: matrix_grid_order
     actions:
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: attr.data-empty-matrix-allowed
+            optionValue: '=data["system_config_provider"].getValue("oro_product.matrix_form_allow_empty") || data["hasLineItems"]'
         - '@add':
-            id: form_actions_submit
+            id: matrix_grid_order_form_actions_submit
             blockType: button
-            parentId: widget_actions
+            parentId: matrix_grid_order_totals
             options:
                 action: submit
                 text:

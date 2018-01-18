@@ -63,8 +63,15 @@ Feature: Promotions in Shopping List
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Size] |
+    And I check SKU2 record in grid
     And I save form
     Then I should see "Product has been saved" flash message
+
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Shopping Lists" field
+    And I fill in "Shopping Lists" with "Group Single Products"
+    And I save form
 
   Scenario: Check line item and subtotal discount in Shopping List with configurable product
     Given I operate as the Buyer

@@ -755,6 +755,7 @@ datagrids:
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
                     - text.product_units as product_units
+                    - text.primary_unit as unit
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -782,6 +783,7 @@ datagrids:
                 route: oro_product_frontend_product_view
                 params: [ id ]
             newArrival: ~
+            unit: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true

@@ -45,6 +45,8 @@ Feature: Mass Product Actions for Guest user
     When I click "List View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
+# TODO: unskip in BB-13411
+  @skip
   Scenario: Guest should be able to add products with help of mass actions
     Given I proceed as the Guest
     When I type "rtsh_m" in "search"
@@ -53,7 +55,7 @@ Feature: Mass Product Actions for Guest user
     And I fill line item with "rtsh_m" in frontend product grid:
       | Quantity | 3    |
       | Unit     | item |
-    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping list" link from mass action dropdown in "Product Frontend Grid"
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element
     And I click "View Shopping List Details"

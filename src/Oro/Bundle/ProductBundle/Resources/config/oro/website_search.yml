@@ -14,6 +14,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: type
             type: text
         -
+            name: is_variant
+            type: integer
+        -
             name:  all_text
             type:  text
             store: false
@@ -33,6 +36,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
         -
             name: product_units
+            type: text
+
+        -
+            name: primary_unit
             type: text
 
 Oro\Bundle\ProductBundle\Entity\Brand:
