@@ -176,6 +176,10 @@ oro_behat_extension:
     Remove Line Item:
       selector: 'button.item-remove'
 
+    Shopping list Line items Grid:
+      selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:
