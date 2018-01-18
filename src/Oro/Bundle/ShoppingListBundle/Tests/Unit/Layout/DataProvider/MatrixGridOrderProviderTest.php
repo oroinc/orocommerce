@@ -194,11 +194,6 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        $this->matrixGridManager->expects($this->once())
-            ->method('getMatrixCollection')
-            ->with($product, $shoppingList)
-            ->willReturn($collection);
-
         $lineItem00 = $this->getEntity(LineItem::class, [
             'product' => $simpleProduct00,
             'unit' => $productUnit,
@@ -213,6 +208,11 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $tempShoppingList = $this->getEntity(ShoppingList::class, [
             'lineItems' => [$lineItem00, $lineItem10]
         ]);
+
+        $this->matrixGridManager->expects($this->once())
+            ->method('getMatrixCollection')
+            ->with($product, $shoppingList)
+            ->willReturn($collection);
 
         $subtotal = new Subtotal();
         $subtotal->setAmount(5);

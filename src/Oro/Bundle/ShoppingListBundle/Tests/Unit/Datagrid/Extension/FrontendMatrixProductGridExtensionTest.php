@@ -307,14 +307,14 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $product2 = $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]);
         $product3 = $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_SIMPLE]);
 
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $repository = $this->createMock(EntityRepository::class);
+
         $products = [
             1 => $product1,
             2 => $product2,
             3 => $product3
         ];
-
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $repository = $this->createMock(EntityRepository::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
