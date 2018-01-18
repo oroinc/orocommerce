@@ -98,6 +98,44 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $this->assertEquals($manualRelation->getId(), $actual[0]->getId());
     }
 
+    public function testDeleteManualRelations()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
+        $priceList = new PriceList();
+        $priceList->setName('test price list');
+        $em->persist($priceList);
+
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $generatedRelation = $this->createRelation($priceList, $product1, false);
+        $em->persist($generatedRelation);
+
+        //not manual relations
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $manualRelatio1 = $this->createRelation($priceList, $product2, true);
+        $em->persist($manualRelatio1);
+
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $manualRelatio2 = $this->createRelation($priceList, $product3, true);
+        $em->persist($manualRelatio2);
+
+        $em->flush();
+
+        $this->repository->deleteManualRelations($priceList, $product2);
+        /** @var PriceListToProduct[] $actual */
+        $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
+        $this->assertCount(2, $actual);
+        $this->assertEquals($generatedRelation->getId(), array_shift($actual)->getId());
+        $this->assertEquals($manualRelatio2->getId(), array_shift($actual)->getId());
+
+        $this->repository->deleteManualRelations($priceList);
+        $actual = $this->repository->findBy(['priceList' => $priceList]);
+        $this->assertCount(1, $actual);
+        $this->assertEquals($generatedRelation->getId(), array_shift($actual)->getId());
+    }
+
     public function testCopyRelations()
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceListToProduct::class);

@@ -1,0 +1,43 @@
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 7
+    price2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 11
+    price3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 13
+    price4:
+        product: '@product4'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 19
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+    priceRelation3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+    priceRelation4:
+        product: '@product4'
+        priceList: '@defaultPriceList'
