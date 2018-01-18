@@ -54,7 +54,9 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
      */
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
-        return false !== $this->getUrl($routeName, $routeParameters, $localizationId);
+        $cacheKey = $this->getCacheKey(self::URL_KEY, $routeName, $routeParameters, $localizationId);
+
+        return $this->localCache->contains($cacheKey) || $this->persistentCache->contains($cacheKey);
     }
 
     /**
@@ -162,11 +164,6 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
         $cacheKey = $this->getCacheKey($type, $routeName, $routeParameters, $localizationId);
         if (!$this->localCache->contains($cacheKey)) {
             $url = $this->persistentCache->fetch($cacheKey);
-
-            // Fallback to default localization
-            if (!$url && $localizationId !== self::DEFAULT_LOCALIZATION_ID) {
-                $url = $this->getFromCacheByType($type, $routeName, $routeParameters, self::DEFAULT_LOCALIZATION_ID);
-            }
 
             if ($url) {
                 $this->localCache->save($cacheKey, $url);

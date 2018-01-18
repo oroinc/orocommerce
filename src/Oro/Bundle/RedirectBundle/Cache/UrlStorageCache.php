@@ -113,7 +113,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
      */
     public function flushAll()
     {
-        foreach ($this->usedKeys as $key) {
+        foreach (array_keys($this->usedKeys) as $key) {
             if ($this->localCache->contains($key)) {
                 $localStorage = $this->localCache->fetch($key);
                 if ($this->persistentCache->contains($key)) {
@@ -123,9 +123,9 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
                 }
 
                 $this->persistentCache->save($key, $localStorage);
-                $this->localCache->delete($key);
             }
         }
+        $this->usedKeys = [];
     }
 
     /**
@@ -170,7 +170,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     protected function getUrlDataStorage($routeName, $routeParameters)
     {
         $key = $this->getCacheKey($routeName, $routeParameters);
-        $this->usedKeys[] = $key;
+        $this->usedKeys[$key] = true;
         if (!$this->localCache->contains($key)) {
             $storage = $this->persistentCache->fetch($key);
 

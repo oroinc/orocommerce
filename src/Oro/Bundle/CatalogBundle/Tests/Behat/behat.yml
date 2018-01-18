@@ -56,6 +56,15 @@ oro_behat_extension:
           French Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
           French: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
 
+    Category URL Slug Form:
+      selector: 'form[name="oro_catalog_category"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Default Value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          French Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
+          French: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+
     Product1:
       selector:
         type: xpath
