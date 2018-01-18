@@ -142,7 +142,7 @@
                     <dl class="request-form-amount">
                         <dt class="request-form-amount__piece">
                             <span class="request-form-amount__label">{{ 'oro.rfp.requestproductitem.price.label'|trans|e('html')|raw }}</span>
-                            <span class="request-form-amount__total"><%= formatter.formatCurrency(line.price) %></span>
+                            <span class="request-form-amount__total"><%= formatter.formatCurrency(line.price, line.currency) %></span>
                         </dt>
                     </dl>
                 </div>
@@ -152,7 +152,7 @@
                             <span class="request-form-amount__label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans|e('html')|raw }}</span>
                             <span class="request-form-amount__total">
                             <% if (line.found_price) { %>
-                                <%= formatter.formatCurrency(line.found_price.price) %>
+                                <%= formatter.formatCurrency(line.found_price.price, line.currency) %>
                             <% } else { %>
                                 <%= _.__("N/A") %>
                             <% } %>
