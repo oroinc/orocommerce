@@ -169,13 +169,14 @@ Feature: Hide simple products that are variations of configurable on front store
     Then I should see "PROD_A_1" product
     Then I should see "PROD_A_3" product
 
+# Should be uncommented after fix BB-13489
 #  Scenario: Simple prooduct variations made visible at homepage
 #    Given I am on the homepage
 #    Then I should see the following products in the "New Arrivals Block":
 #      | SKU       |
 #      | CNF_A     |
 #      | PROD_B_12 |
-#     | PROD_A_2  | Should be uncommented after fix BB-13489
+#      | PROD_A_2  |
 #      | PROD_C_1  |
 #    And I should see the following products in the "Featured Products Block":
 #      | SKU       |
