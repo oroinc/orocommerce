@@ -1,3 +1,33 @@
+## 1.7.0 (Unreleased)
+
+### Added
+#### ProductBundle
+* Added public method `getDataProviderConfig` to `AutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AutocompleteFieldsProvider.php)
+* Added public method `getDataProviderConfig` to `CurrencyFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/CurrencyFieldsProvider.php)
+* Added public method `getDataProviderConfig` to `UnitFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/UnitFieldsProvider.php)
+* Added public methods `getSupportedNumericTypes`, `getSupportedRelationTypes`, `getFieldsWhiteList`, `getFieldsBlackList` to `FieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/FieldsProvider.php)
+* Added public method `getDataProviderConfig` to `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
+#### Expression Component
+* added methods to interface `Oro\Component\Expression\FieldsProviderInterface` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Component/Expression/FieldsProviderInterface.php)
+    * `getSupportedNumericTypes`
+    * `getSupportedRelationTypes`
+    * `getFieldsWhiteList`
+    * `getFieldsBlackList`
+
+### Changed
+#### PricingBundle
+* Added dependency to `PriceRuleEditorOptionsConfigurator` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/PricingBundle/Form/OptionsConfigurator/PriceRuleEditorOptionsConfigurator.php) on `EntityAliasResolver` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/EntityBundle/ORM/EntityAliasResolver.php)
+
+#### ProductBundle
+* Class `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
+	- Method `getRootEntities` became public
+
+### Removed
+
+#### ProductBundle
+* Removed method `getAutocompleteData` from `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
+* Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
+
 ## 1.6.0 (Unreleased)
 
 ### Added
@@ -11,12 +41,6 @@
     * method `setCategory` was added
     * method `getCategory` was added
     * property `category_id` was added
-* Added public method `getDataProviderConfig` to `AutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AutocompleteFieldsProvider.php)
-* Added public method `getDataProviderConfig` to `CurrencyFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/CurrencyFieldsProvider.php)
-
-* Added public method `getDataProviderConfig` to `UnitFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/UnitFieldsProvider.php)
-* Added public methods `getSupportedNumericTypes`, `getSupportedRelationTypes`, `getFieldsWhiteList`, `getFieldsBlackList` to `FieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/FieldsProvider.php)
-* Added public method `getDataProviderConfig` to `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
 
 ### Changed
 #### AlternativeCheckoutBundle
@@ -35,13 +59,6 @@
 #### CheckoutBundle
 * Operation `oro_checkout_frontend_quote_submit_to_order` renamed to `oro_sale_frontend_quote_submit_to_order` and moved to `SaleBundle`
 
-#### PricingBundle
-* Added dependency to `PriceRuleEditorOptionsConfigurator` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/PricingBundle/Form/OptionsConfigurator/PriceRuleEditorOptionsConfigurator.php) on `EntityAliasResolver` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/EntityBundle/ORM/EntityAliasResolver.php)
-
-#### ProductBundle
-* Class `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
-	- Method `getRootEntities` became public
-
 #### TaxBundle
 * Now enabled tax provider in system config is a main point for tax calculation instead of TaxManager (look at the TaxProviderInterface). Read more in documentation [how to setup custom tax provider](./src/Oro/Bundle/TaxBundle/README.md#create-custom-tax-provider).
 
@@ -52,10 +69,6 @@
 ### Removed
 #### CatalogBundle
 * Removed `oro_category_to_product` joining table.
-
-#### ProductBundle
-* Removed method `getAutocompleteData` from `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
-* Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/orocommerce/orocommerce/tree/1.6.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
 
 ## 1.5.0 (2017-11-30)
 [Show detailed list of changes](incompatibilities-1-5.md)
