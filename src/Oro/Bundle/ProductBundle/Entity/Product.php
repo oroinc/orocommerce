@@ -1106,13 +1106,20 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
-
     /**
      * @return Collection|ProductVariantLink[]
      */
     public function getParentVariantLinks()
     {
         return $this->parentVariantLinks;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVariant(): bool
+    {
+        return $this->isSimple() && count($this->parentVariantLinks) > 0;
     }
 
     /**
@@ -1312,6 +1319,7 @@ class Product extends ExtendProduct implements
             'product_units' => $this->getAvailableUnitsPrecision(),
             'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
+            'sku' => $this->getSku(),
         ];
     }
 

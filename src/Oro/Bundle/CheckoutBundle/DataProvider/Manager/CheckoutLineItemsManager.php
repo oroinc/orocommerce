@@ -111,6 +111,25 @@ class CheckoutLineItemsManager
     }
 
     /**
+     * @param CheckoutInterface $checkout
+     * @return Collection|OrderLineItem[]
+     */
+    public function getLineItemsWithoutQuantity(CheckoutInterface $checkout)
+    {
+        $lineItems = $this->getData($checkout, true);
+        $lineItemsWithoutQuantity = new ArrayCollection();
+
+        foreach ($lineItems as $key => $lineItem) {
+            // quantity == 0
+            if (abs($lineItem->getQuantity()) <= 1e-6) {
+                $lineItemsWithoutQuantity->add($lineItem);
+            }
+        }
+
+        return $lineItemsWithoutQuantity;
+    }
+
+    /**
      * @param string $configVisibilityPath
      * @return array
      */

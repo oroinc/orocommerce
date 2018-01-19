@@ -95,6 +95,7 @@ class FrontendProductDatagridListener
         switch ($viewName) {
             case DataGridThemeHelper::VIEW_LIST:
                 // grid view same as default
+                $this->addImageToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_GRID:
                 $this->addImageToConfig($config);
@@ -174,6 +175,9 @@ class FrontendProductDatagridListener
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);
         switch ($theme) {
+            case DataGridThemeHelper::VIEW_LIST:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
+                break;
             case DataGridThemeHelper::VIEW_GRID:
                 $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
                 break;

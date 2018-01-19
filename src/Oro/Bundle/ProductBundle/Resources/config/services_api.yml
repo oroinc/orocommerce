@@ -69,6 +69,8 @@ services:
 
     oro_product.api.delete.related_product.load_entity_by_orm_query:
         class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
+        arguments:
+            - '@oro_entity.query_hint_resolver'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 0 }
 
@@ -80,11 +82,6 @@ services:
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 5}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
-
-    oro_product.api.shared.add_image_path_config:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig
-        tags:
-            - { name: oro.api.processor, action: get_config,  class: Oro\Bundle\AttachmentBundle\Entity\File }
 
     oro_product.api.shared.add_image_path:
         class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths

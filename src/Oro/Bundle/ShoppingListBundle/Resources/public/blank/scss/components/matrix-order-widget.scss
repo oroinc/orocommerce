@@ -1,44 +1,251 @@
 // @theme: blank;
 
+@mixin matrix-design-for-not-available () {
+    .matrix-order-widget__item-not-available {
+        width: 100%;
+
+        line-height: $matrix-order-widget-not-available-line-height;
+
+        background-color: $matrix-order-widget-not-available-background-color;
+        border-radius: $matrix-order-widget-not-available-border-radius;
+    }
+}
+
 .matrix-order-widget {
-    max-width: $matrix-order-widget-max-width;
+    clear: $matrix-order-widget-clear;
+
+    width: $matrix-order-widget-width;
     margin: $matrix-order-widget-offset;
 
+    @include clearfix();
+
+    &__one-line {
+        min-width: $matrix-order-widget-one-line-form-col-width;
+        display: flex;
+        align-items: center;
+        flex-shrink: $matrix-order-widget-one-line-flex-shrink;
+    }
+
+    &__one-line & {
+        &__form__col {
+            width: $matrix-order-widget-one-line-form-col-width;
+        }
+    }
+
     &__grid {
+        overflow: $matrix-order-widget-grid-overflow;
+        position: $matrix-order-widget-grid-position;
+
         width: $matrix-order-widget-grid-width;
         margin-bottom: $matrix-order-widget-grid-offset-bottom;
+        padding-top: $matrix-order-widget-grid-offset-inner-top;
 
         font-family: $matrix-order-widget-grid-font-family;
 
-        border-bottom: $matrix-order-widget-grid-border-bottom;
+        .fields-row-error {
+            margin: $matrix-order-widget-form-col-offset-inner;
+        }
+
+        &.state-multiline {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__one-line {
+                padding: $offset-y-s $offset-x $offset-y-s 0;
+            }
+
+            .matrix-order-widget__form__row {
+                display: flex;
+                flex-wrap: wrap;
+                height: auto;
+
+                white-space: normal;
+            }
+
+            .matrix-order-widget__form__col {
+                padding: 0;
+
+                min-width: $matrix-order-widget-state-multiline-form-col-width;
+                max-width: $matrix-order-widget-state-multiline-form-col-width;
+            }
+
+            .matrix-order-widget__label-wrap {
+                display: inline-block;
+                min-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                max-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                padding-right: $offset-x;
+
+                word-break: break-word;
+            }
+
+            @include matrix-design-for-not-available();
+        }
+
+        &.state-labels-above {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__form__row {
+                height: auto;
+            }
+
+            .matrix-order-widget__form__col {
+                width: $matrix-order-widget-grid-multi-rows-grid-form-row-width;
+            }
+
+            .matrix-order-widget__one-line {
+                width: $matrix-order-widget-form-col-width;
+                flex-direction: column;
+            }
+
+            .matrix-order-widget__label-wrap {
+                margin-bottom: $offset-x-m;
+            }
+
+            @include matrix-design-for-not-available();
+        }
     }
 
     &__grid--multi-rows & {
-        &__grid-head,
-        &__grid-body,
-        &__grid-footer {
-            &-wrapper {
-                margin-left: $matrix-order-widget-grid-multi-rows-items-wrapper-offset-left;
-            }
+        border-bottom: $matrix-order-widget-grid-multi-rows-border-bottom;
+
+        &__form__row {
+            width: $matrix-order-widget-grid-multi-rows-grid-form-row-width;
         }
 
         &__grid-head {
-            border-top: $matrix-order-widget-grid-multi-rows-grid-head-border-top;
-            border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-border-bottom;
-            background: $matrix-order-widget-grid-multi-rows-grid-head-background;
+            display: $matrix-order-widget-grid-multi-rows-grid-head-display;
+
+            position: $matrix-order-widget-grid-multi-rows-grid-head-position;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-head-z-index;
+        }
+
+        &__grid-footer {
+            position: $matrix-order-widget-grid-multi-rows-grid-footer-position;
+            background: $matrix-order-widget-grid-multi-rows-grid-footer-background;
+            clear: $matrix-order-widget-grid-multi-rows-grid-footer-clear;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-footer-z-index;
+        }
+
+        &__grid-footer-label,
+        &__grid-head-label {
+            background: $matrix-order-widget-form-colored-background;
+            overflow: $matrix-order-widget-grid-multi-rows-grid-area-items-label-overflow;
+
+            border-bottom: $matrix-order-widget-grid-multi-rows-grid-footer-border-bottom;
+
+            &:before,
+            &:after {
+                position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-position;
+
+                box-sizing: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-box-sizing;
+
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-background;
+                width: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-width;
+                height: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-height;
+                top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-top;
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-left;
+
+                z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-z-index;
+            }
+
+            &:after {
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-left;
+                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-right;
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background;
+            }
+        }
+        
+        &__grid-head-label {
+            &:before,
+            &:after {
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-bottom;
+            }
+        }
+        &__grid-footer-label {
+            &:before,
+            &:after {
+                border-top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-top;
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-border-bottom;
+            }
+        }
+
+        &__grid-head-wrapper,
+        &__grid-footer-wrapper {
+            display: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display;
+            position: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position;
+            
+            .matrix-order-widget__form__col {
+                background: $matrix-order-widget-form-colored-background;
+
+                &:after {
+                    position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
+                    bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-bottom;
+
+                    width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
+                    border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-border-bottom;
+
+                    content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
+                    z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
+                }
+            }
+        }
+
+        &__grid-footer-wrapper {
+            .matrix-order-widget__form__col {
+                &:before {
+                    position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                    top: $matrix-order-widget-grid-multi-rows-grid-head-after-top;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
+
+                    width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
+                    border-top: $matrix-order-widget-grid-multi-rows-grid-head-after-border-top;
+
+                    content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
+                    z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
+                }
+            }
+        }
+
+        &__grid-footer-label {
+            border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
         }
     }
 
     &__grid-body {
         display: $matrix-order-widget-grid-body-display;
 
-        max-height: $matrix-order-widget-grid-body-max-height;
-
         overflow: $matrix-order-widget-grid-body-overflow;
 
         .form-row {
-            width: $matrix-order-widget-grid-body-form-row-width;
+            min-width: $matrix-order-widget-grid-body-form-row-min-width;
+            max-width: $matrix-order-widget-grid-body-form-row-max-width;
             margin: $matrix-order-widget-grid-body-form-offset;
+        }
+    }
+
+    &__grid-body & {
+        &__form__row {
+            align-items: $matrix-order-widget-grid-body-form-row-align-items;
+
+            &:not(:last-child) {
+                .matrix-order-widget__form__col:after {
+                    position: $matrix-order-widget-form-row-not-last-child-position;
+
+                    border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+                    width: $matrix-order-widget-form-row-not-last-child-width;
+                    left: $matrix-order-widget-form-row-not-last-child-left;
+                    bottom: $matrix-order-widget-form-row-not-last-child-bottom;
+
+                    content: $matrix-order-widget-form-row-not-last-child-content;
+                    z-index: $matrix-order-widget-form-row-not-last-child-z-index;
+                }
+            }
         }
     }
 
@@ -47,29 +254,29 @@
         &-wrapper {
             overflow: $matrix-order-widget-grid-area-items-wrapper-overflow;
 
+            width: $matrix-order-widget-grid-area-items-wrapper-width;
+
             white-space: $matrix-order-widget-grid-area-items-wrapper-white-space;
             text-align: $matrix-order-widget-grid-area-items-wrapper-text-align;
         }
 
         &-label {
-            float: $matrix-order-widget-grid-area-items-label-float;
-
             width: $matrix-order-widget-grid-area-items-label-width;
+            max-width: $matrix-order-widget-grid-area-items-label-max-width;
+            height: $matrix-order-widget-grid-footer-label-height;
 
+            line-height: $matrix-order-widget-grid-footer-label-line-height;
             text-align: $matrix-order-widget-grid-area-items-label-text-align;
+
+            flex-shrink: $matrix-order-widget-grid-area-items-label-flex-shrink;
         }
     }
 
     &__grid-footer {
+        display: $matrix-order-widget-grid-footer-display;
+        position: $matrix-order-widget-grid-footer-position;
+
         background: $matrix-order-widget-grid-footer-background;
-        border-top: $matrix-order-widget-grid-footer-border-top;
-
-        &-label {
-            height: $matrix-order-widget-grid-footer-label-height;
-
-            line-height: $matrix-order-widget-grid-footer-label-line-height;
-            text-transform: $matrix-order-widget-grid-footer-label-text-transform;
-        }
 
         &-total {
             padding: $matrix-order-widget-grid-footer-total-offset-inner;
@@ -86,9 +293,57 @@
         float: $matrix-order-widget-grid-side-float;
 
         width: $matrix-order-widget-grid-side-width;
-        max-height: $matrix-order-widget-grid-side-max-height;
 
         overflow: $matrix-order-widget-grid-side-overflow;
+
+        &-wrapper {
+            overflow: $matrix-order-widget-grid-side-wrapper-overflow;
+        }
+
+        &:before,
+        &:after {
+            position: $matrix-order-widget-grid-side-pseudo-classes-position;
+
+            background: $matrix-order-widget-grid-side-pseudo-classes-background;
+            width: $matrix-order-widget-grid-side-pseudo-classes-width;
+            height: $matrix-order-widget-grid-side-pseudo-classes-height;
+            top: $matrix-order-widget-grid-side-pseudo-classes-top;
+            left: $matrix-order-widget-grid-side-pseudo-classes-left;
+
+            z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
+        }
+
+        &:after {
+            left: $matrix-order-widget-grid-side-pseudo-class-after-left;
+            right: $matrix-order-widget-grid-side-pseudo-class-after-right;
+            background: $matrix-order-widget-grid-side-pseudo-class-after-background;
+        }
+    }
+
+    &.has-x-scroll & {
+        &__grid--multi-rows {
+            .matrix-order-widget__grid-footer-label,
+            .matrix-order-widget__grid-head-label {
+                &:before,
+                &:after {
+                    content: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-classes-content;
+                }
+            }
+        }
+
+        &__grid-side {
+            &:before {
+                content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            }
+        }
+    }
+
+    &.has-x-scroll:not(.has-y-scroll) & {
+        &__grid-side {
+            &:after {
+                content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            }
+        }
     }
 
     &__grid-side & {
@@ -98,38 +353,99 @@
             overflow: $matrix-order-widget-grid-side-form-row-overflow;
 
             margin: $matrix-order-widget-grid-side-form-row-offset;
+            padding: $matrix-order-widget-grid-side-form-row-offset-inner;
 
             text-align: $matrix-order-widget-grid-side-form-row-text-align;
             white-space: $matrix-order-widget-grid-side-form-row-white-space;
             word-break: $matrix-order-widget-grid-side-form-row-word-break;
             line-height: $matrix-order-widget-grid-side-form-row-line-height;
+
+            &:not(:last-child) {
+                border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+            }
         }
     }
 
     &__grid-scrollable-area {
         display: $matrix-order-widget-grid-scrollable-area-display;
+        min-height: $matrix-order-widget-grid-scrollable-area-min-height;
+        flex-grow: $matrix-order-widget-grid-scrollable-area-flex-grow;
+    }
+
+    &__form {
+        &--inline {
+            margin-bottom: $matrix-order-widget-form-inline-offset-bottom;
+        }
+
+        &--colored {
+            border-radius: $matrix-order-widget-form-colored-border-radius;
+
+            margin: $matrix-order-widget-form-colored-offset;
+            padding-bottom: $matrix-order-widget-form-colored-offset-inner;
+        }
+    }
+
+    &__form--colored & {
+        &__grid {
+            padding-top: $matrix-order-widget-form-colored-grid-offset-inner;
+
+            &:before {
+                content: '';
+
+                background: $matrix-order-widget-form-colored-background;
+
+                position: $matrix-order-widget-form-colored-grid-before-position;
+                top: $matrix-order-widget-form-colored-grid-before-top;
+                bottom: $matrix-order-widget-form-colored-grid-before-bottom;
+                left: $matrix-order-widget-form-colored-grid-before-left;
+
+                width: $matrix-order-widget-grid-side-width;
+            }
+        }
+
+        &__grid-head {
+            border-top: $matrix-order-widget-form-colored-grid-border-top;
+        }
+
+        &__grid-side {
+            background: $matrix-order-widget-form-colored-background;
+
+            &:before,
+            &:after {
+                background: $matrix-order-widget-form-colored-grid-side-before-background;
+            }
+
+            &:after {
+                background: $matrix-order-widget-form-colored-grid-side-after-background;
+            }
+        }
+
+        &__form__col {
+            background: $matrix-order-widget-form-colored-background;
+        }
     }
 
     &__form__row {
         display: $matrix-order-widget-form-row-display;
         align-items: $matrix-order-widget-form-row-align-items;
+        position: $matrix-order-widget-form-row-position;
 
         height: $matrix-order-widget-form-row-height;
-        min-width: $matrix-order-widget-form-row-min-width;
 
         white-space: $matrix-order-widget-form-row-white-space;
-
-        &:not(:last-child) {
-            border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
-        }
     }
 
     &__form__col {
         display: $matrix-order-widget-form-col-display;
+        align-items: $matrix-order-widget-form-col-align-items;
         justify-content: $matrix-order-widget-form-col-justify-content;
+        position: $matrix-order-widget-form-col-position;
 
         margin: $matrix-order-widget-form-col-offset;
+        padding: $matrix-order-widget-form-col-offset-inner;
         width: $matrix-order-widget-form-col-width;
+        min-width: $matrix-order-widget-form-col-min-width;
+        color: $matrix-order-widget-form-col-color;
         border: $matrix-order-widget-form-col-border;
 
         line-height: $matrix-order-widget-form-col-line-height;
@@ -141,6 +457,7 @@
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
 
             margin: $matrix-order-widget-form-col-wrapper-offset;
+            color: $matrix-order-widget-form-col-wrapper-color;
 
             white-space: $matrix-order-widget-form-col-wrapper-white-space;
             word-break: $matrix-order-widget-form-col-wrapper-word-break;
@@ -150,43 +467,6 @@
             font-family: $matrix-order-widget-form-col-form-field-quantity-font-family;
             text-align: $matrix-order-widget-form-col-form-field-quantity-text-align;
         }
-    }
-
-    &__summary {
-        display: $matrix-order-widget-summary-display;
-        justify-content: $matrix-order-widget-summary-justify-content;
-
-        min-width: $matrix-order-widget-summary-min-width;
-        margin-left: $matrix-order-widget-summary-offset-left;
-
-        font-family: $matrix-order-widget-summary-font-family;
-        text-align: $matrix-order-widget-summary-text-align;
-    }
-
-    &__summary-wrapper {
-        padding-right: $matrix-order-widget-summary-wrapper-offset-inner-right;
-    }
-
-    &__summary-label {
-        display: $matrix-order-widget-summary-label-display;
-        min-width: $matrix-order-widget-summary-label-min-width;
-        padding: $matrix-order-widget-summary-label-offset-inner;
-    }
-
-    &__total-quantity,
-    &__total-price {
-        display: $matrix-order-widget-total-items-display;
-        justify-content: $matrix-order-widget-total-items-justify-content;
-    }
-
-    &__total-quantity {
-        margin-bottom: $matrix-order-widget-total-quantity-offset-bottom;
-    }
-
-    &__total-price {
-        margin: $matrix-order-widget-total-price-offset-inner;
-
-        font-size: $matrix-order-widget-total-price-font-size;
     }
 
     &__item {
@@ -217,7 +497,10 @@
 
         &-icon-wrapper {
             position: $matrix-order-widget-item-icon-wrapper-position;
+            display: $matrix-order-widget-item-icon-wrapper-display;
+            align-items: $matrix-order-widget-item-icon-wrapper-align-items;
 
+            margin-top: $matrix-order-widget-item-item-icon-wrapper-offset-top;
             right: $matrix-order-widget-item-icon-wrapper-right;
             top: $matrix-order-widget-item-item-icon-wrapper-top;
         }
@@ -225,6 +508,7 @@
         &-label {
             min-width: $matrix-order-widget-item-label-min-width;
             margin: $matrix-order-widget-item-label-offset;
+
             word-break: $matrix-order-widget-item-label-word-break;
             line-height: $matrix-order-widget-item-label-line-height;
             align-self: $matrix-order-widget-item-label-align-self;
@@ -244,6 +528,7 @@
 
         &-info {
             display: $matrix-order-widget-item-info-display;
+            position: $matrix-order-widget-item-info-position;
             flex-direction: $matrix-order-widget-item-info-flex-direction;
             justify-content: $matrix-order-widget-item-info-justify-content;
 
@@ -252,6 +537,8 @@
 
             &-wrapper {
                 display: $matrix-order-widget-item-info-wrapper-display;
+                align-items: $matrix-order-widget-item-info-wrapper-align-items;
+                word-break: $matrix-order-widget-item-info-wrapper-word-break;
             }
         }
 
@@ -295,8 +582,40 @@
             padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
         }
 
+        .ui-widget-header {
+            padding: $matrix-order-widget-dialog-ui-widget-header-offset-inner;
+        }
+
         .ui-dialog-buttonpane {
             padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
+        }
+    }
+
+    &--dialog & {
+        max-width: $matrix-order-widget-dialog-max-width;
+
+        &__grid {
+            &.state-labels-above {
+                .matrix-order-widget__one-line {
+                    flex-grow: $matrix-order-widget-dialog-state-labels-above-one-line-flex-grow;
+                }
+            }
+
+            .matrix-order-widget__grid-body {
+                overflow: $matrix-order-widget-dialog-grid-body-overflow;
+            }
+        }
+
+        &__grid-body {
+            max-height: $matrix-order-widget-dialog-grid-body-max-height;
+        }
+
+        &__grid-side {
+            max-height: $matrix-order-widget-dialog-grid-side-max-height;
+        }
+
+        &__form__col {
+            flex-grow: $matrix-order-widget-dialog-form-col-flex-grow;
         }
     }
 
@@ -312,12 +631,20 @@
             padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
         }
     }
+
+    .clear-button {
+        &.disabled {
+            color: $matrix-order-widget-form-col-color;
+        }
+    }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('strict-desktop') {
     .matrix-order-widget {
-        &--dialog {
-            width: $matrix-order-widget-dialog-width !important;
+        &__form--inline & {
+            &__summary--inline {
+                margin-top: $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top;
+            }
         }
     }
 }
@@ -361,6 +688,10 @@
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis;
             }
+        }
+
+        .pinned-dropdown {
+            max-width: $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width;
         }
     }
 }

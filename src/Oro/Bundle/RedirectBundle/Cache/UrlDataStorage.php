@@ -141,9 +141,6 @@ class UrlDataStorage implements \JsonSerializable
         if (array_key_exists($key, $this->data)) {
             if (array_key_exists($localizationId, $this->data[$key])) { // current localization
                 return $this->data[$key][$localizationId];
-            } elseif (array_key_exists(UrlCacheInterface::DEFAULT_LOCALIZATION_ID, $this->data[$key])) {
-                // default localization
-                return $this->data[$key][UrlCacheInterface::DEFAULT_LOCALIZATION_ID];
             } elseif (array_key_exists(UrlCacheInterface::URL_KEY, $this->data)) {
                 // Compatibility with older versions of cache
                 return $this->data;

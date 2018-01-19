@@ -1,0 +1,38 @@
+{% block  __shopping_list_matrix_grid_order__form_start_widget %}
+    {% if form.rows[0].columns|length == 1 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': class_prefix ~ '__form--inline '
+        }) %}
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': class_prefix ~ '__form--colored '
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block  __shopping_list_matrix_grid_order__totals_widget %}
+    {% if form.rows[0].columns|length != 1 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': 'product-totals--nested '
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block  __shopping_list_matrix_grid_order__totals_wrapper_widget %}
+    {% if form.rows[0].columns|length == 1 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': class_prefix ~ '__wrapper--narrow '
+        }) %}
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': class_prefix ~ '__wrapper--transparent '
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+

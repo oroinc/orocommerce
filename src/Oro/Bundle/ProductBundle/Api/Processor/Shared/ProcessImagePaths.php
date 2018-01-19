@@ -15,17 +15,14 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
  */
 class ProcessImagePaths implements ProcessorInterface
 {
-    const CONFIG_FILE_PATH = 'filePath';
-    const CONFIG_MIME_TYPE = 'mimeType';
-
     /** @var AttachmentManager */
-    protected $attachmentManager;
+    private $attachmentManager;
 
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var ImageTypeProvider */
-    protected $typeProvider;
+    private $typeProvider;
 
     /**
      * @param AttachmentManager $attachmentManager
@@ -89,9 +86,9 @@ class ProcessImagePaths implements ProcessorInterface
      * @param string $mimeType
      * @param int    $fileId
      *
-     * @return array|null
+     * @return string[]|null [dimension => path, ...]
      */
-    protected function getFilePaths($mimeType, $fileId)
+    private function getFilePaths($mimeType, $fileId)
     {
         if (!$this->attachmentManager->isImageType($mimeType)) {
             return null;

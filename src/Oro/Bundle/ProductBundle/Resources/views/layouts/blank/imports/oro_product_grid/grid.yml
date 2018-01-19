@@ -10,11 +10,21 @@ layout:
             root: product_datagrid_row
             namespace: product_datagrid_row
 
+        -
+            id: product_list_matrix_grid_order
+            root: product_datagrid_cell_matrixForm
+            namespace: product_datagrid_cell
+
     actions:
         - '@setBlockTheme':
             themes:
                 - 'grid.html.twig'
                 - 'grid_row.html.twig'
+
+        - '@add':
+            id: product_datagrid_cell_matrixForm
+            parentId: product_datagrid_row_product_primary_content_container
+            blockType: container
 
         - '@setOption':
             id: product_datagrid

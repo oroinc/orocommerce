@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -109,5 +110,25 @@ class FrontendShoppingListProductsProvider
             $productCount,
             $localization
         );
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return Product[]
+     */
+    public function getConfigurableProductsFromShoppingList(ShoppingList $shoppingList)
+    {
+        $products = [];
+
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            if (!$lineItem->getParentProduct()) {
+                continue;
+            }
+
+            $parentProduct = $lineItem->getParentProduct();
+            $products[$parentProduct->getId()] = $parentProduct;
+        }
+
+        return $products;
     }
 }

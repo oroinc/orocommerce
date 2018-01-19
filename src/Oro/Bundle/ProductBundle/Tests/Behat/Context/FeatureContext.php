@@ -772,11 +772,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      */
-    public function shouldSeeForLineItem($elementName, $SKU)
+    public function shouldSeeForLineItem($elementName, $SKU, $element)
     {
-        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        $productItem = $this->findElementContains($element, $SKU);
         self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
 
         if ($this->isElementVisible($elementName, $productItem)) {
@@ -794,11 +794,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      */
-    public function shouldNotSeeForLineItem($elementName, $SKU)
+    public function shouldNotSeeForLineItem($elementName, $SKU, $element)
     {
-        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        $productItem = $this->findElementContains($element, $SKU);
         self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)

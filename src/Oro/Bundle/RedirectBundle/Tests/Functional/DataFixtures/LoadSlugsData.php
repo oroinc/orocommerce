@@ -22,6 +22,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_TEST_DUPLICATE_URL = '/slug/first';
     const SLUG_TEST_DUPLICATE_REFERENCE = 'reference:/slug/first';
     const SLUG_TEST_ONLY = '__test-only__';
+    const PAGE_3_DEFAULT = '/localized-slug/en/page3';
+    const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
 
     /**
      * {@inheritdoc}
@@ -32,6 +34,9 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $page = $this->getReference(LoadPageData::PAGE_1);
         /** @var Page $page2 */
         $page2 = $this->getReference(LoadPageData::PAGE_2);
+        /** @var Page $page3 */
+        $page3 = $this->getReference(LoadPageData::PAGE_3);
+
         $anonymousSlug = $this
             ->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
         $anonymousSlug->setSlugPrototype('anonymous');
@@ -73,6 +78,21 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
             ['id' => $page->getId()],
             null,
             $this->getReference('es')
+        );
+
+        $this->createSlug(
+            $manager,
+            self::PAGE_3_DEFAULT,
+            'oro_cms_frontend_page_view',
+            ['id' => $page3->getId()]
+        );
+        $this->createSlug(
+            $manager,
+            self::PAGE_3_LOCALIZED_EN_CA,
+            'oro_cms_frontend_page_view',
+            ['id' => $page3->getId()],
+            null,
+            $this->getReference('en_CA')
         );
 
         $manager->flush();

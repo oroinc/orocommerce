@@ -96,7 +96,7 @@ oro.pricing:
               disabled: Price List was disabled successfully
         recalculate:
             label: Recalculate
-            message: Price List Rules were Recalculates successfull
+            message: Price List Rules were Recalculates successful
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
