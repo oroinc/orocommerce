@@ -33,9 +33,9 @@ class PriceListProvider implements ColumnInformationProviderInterface
     protected function convertNameNode(NameNode $node, array &$addedColumns, array &$definition)
     {
         if ($node->getContainer() === PriceList::class) {
-            $priceListKey = 'pricelist|' . $node->getContainerId();
+            $priceListKey = 'pricelist|' . (int)$node->getContainerId();
             if (empty($addedColumns[$priceListKey])) {
-                $definition['price_lists'][] = $node->getContainerId();
+                $definition['price_lists'][] = (int)$node->getContainerId();
                 $addedColumns[$priceListKey] = true;
             }
 
