@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
@@ -34,23 +36,35 @@ class SluggableEntityListener implements OptionalListenerInterface
     private $configManager;
 
     /**
-     * @var array
+     * @var DoctrineHelper
      */
-    private $messages = [];
+    private $doctrineHelper;
+
+    /**
+     * @var array
+     * [
+     *      '<entityName>' => [<id1>, <id2>, ...],
+     *       ...
+     * ]
+     */
+    private $sluggableEntities = [];
 
     /**
      * @param MessageFactoryInterface $messageFactory
      * @param MessageProducerInterface $messageProducer
      * @param ConfigManager $configManager
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         MessageFactoryInterface $messageFactory,
         MessageProducerInterface $messageProducer,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->messageFactory = $messageFactory;
         $this->messageProducer = $messageProducer;
         $this->configManager = $configManager;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -85,11 +99,13 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     public function postFlush()
     {
-        foreach ($this->messages as $message) {
+        foreach ($this->sluggableEntities as $entityClass => $ids) {
+            $message = $this->messageFactory->createMassMessage($entityClass, $ids, false);
+
             $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
         }
 
-        $this->messages = [];
+        $this->sluggableEntities = [];
     }
 
     /**
@@ -155,7 +171,8 @@ class SluggableEntityListener implements OptionalListenerInterface
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
-            $this->messages[] = $this->messageFactory->createMessage($entity);
+            $entityClass = ClassUtils::getClass($entity);
+            $this->sluggableEntities[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
         }
     }
 }
