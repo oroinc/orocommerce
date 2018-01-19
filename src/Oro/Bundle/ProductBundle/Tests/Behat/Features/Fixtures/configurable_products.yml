@@ -1,0 +1,1306 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    attribute_family_label:
+        string: 'Attribute Family'
+    configurable_product_A_name:
+        string: 'Configurable Product A'
+    product_A_1_name:
+        string: 'Product A 1'
+    product_A_2_name:
+        string: 'Product A 2'
+    product_A_3_name:
+        string: 'Product A 3'
+    product_A_4_name:
+        string: 'Product A 4'
+    configurable_product_B_name:
+        string: 'Configurable Product B'
+    product_B_11_name:
+        string: 'Product B 11'
+    product_B_12_name:
+        string: 'Product B 12'
+    product_B_13_name:
+        string: 'Product B 13'
+    product_B_21_name:
+        string: 'Product B 21'
+    product_B_22_name:
+        string: 'Product B 22'
+    product_B_23_name:
+        string: 'Product B 23'
+    product_B_31_name:
+        string: 'Product B 31'
+    product_B_32_name:
+        string: 'Product B 32'
+    product_B_33_name:
+        string: 'Product B 33'
+    product_B_41_name:
+        string: 'Product B 41'
+    product_B_42_name:
+        string: 'Product B 42'
+    product_B_43_name:
+        string: 'Product B 43'
+    configurable_product_C_name:
+        string: 'Configurable Product C'
+    product_C_111_name:
+        string: 'Product C 111'
+    product_C_121_name:
+        string: 'Product C 121'
+    product_C_131_name:
+        string: 'Product C 131'
+    product_C_211_name:
+        string: 'Product C 211'
+    product_C_221_name:
+        string: 'Product C 221'
+    product_C_231_name:
+        string: 'Product C 231'
+    product_C_311_name:
+        string: 'Product C 311'
+    product_C_321_name:
+        string: 'Product C 321'
+    product_C_331_name:
+        string: 'Product C 331'
+    product_C_411_name:
+        string: 'Product C 411'
+    product_C_421_name:
+        string: 'Product C 421'
+    product_C_431_name:
+        string: 'Product C 431'
+    product_C_112_name:
+        string: 'Product C 112'
+    product_C_122_name:
+        string: 'Product C 122'
+    product_C_132_name:
+        string: 'Product C 132'
+    product_C_212_name:
+        string: 'Product C 212'
+    product_C_222_name:
+        string: 'Product C 222'
+    product_C_232_name:
+        string: 'Product C 232'
+    product_C_312_name:
+        string: 'Product C 312'
+    product_C_322_name:
+        string: 'Product C 322'
+    product_C_332_name:
+        string: 'Product C 332'
+    product_C_412_name:
+        string: 'Product C 412'
+    product_C_422_name:
+        string: 'Product C 422'
+    product_C_432_name:
+        string: 'Product C 432'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    attribute_family:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'family'
+        addLabel: ['@attribute_family_label']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precisionA:
+        unit: '@item'
+        precision: '1'
+    unit_precisionA1:
+        unit: '@item'
+        precision: '1'
+    unit_precisionA2:
+        unit: '@item'
+        precision: '1'
+    unit_precisionA3:
+        unit: '@item'
+        precision: '1'
+    unit_precisionA4:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB11:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB12:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB13:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB21:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB22:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB23:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB31:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB32:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB33:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB41:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB42:
+        unit: '@item'
+        precision: '1'
+    unit_precisionB43:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC111:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC121:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC131:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC211:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC221:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC231:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC311:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC321:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC331:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC411:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC421:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC431:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC112:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC122:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC132:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC212:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC222:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC232:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC312:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC322:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC332:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC412:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC422:
+        unit: '@item'
+        precision: '1'
+    unit_precisionC432:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    configurable_product_A:
+        type: 'configurable'
+        sku: 'CNF_A'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionA'
+        addName: ['@configurable_product_A_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product_B:
+        type: 'configurable'
+        sku: 'CNF_B'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB'
+        addName: ['@configurable_product_B_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product_C:
+        type: 'configurable'
+        sku: 'CNF_C'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC'
+        addName: ['@configurable_product_C_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_A_1:
+        type: 'simple'
+        sku: 'PROD_A_1'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionA1'
+        addName: ['@product_A_1_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_A_2:
+        type: 'simple'
+        sku: 'PROD_A_2'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionA2'
+        addName: ['@product_A_2_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_A_3:
+        type: 'simple'
+        sku: 'PROD_A_3'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionA3'
+        addName: ['@product_A_3_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_A_4:
+        type: 'simple'
+        sku: 'PROD_A_4'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionA4'
+        addName: ['@product_A_4_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_11:
+        type: 'simple'
+        sku: 'PROD_B_11'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB11'
+        addName: ['@product_B_11_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_12:
+        type: 'simple'
+        sku: 'PROD_B_12'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB12'
+        addName: ['@product_B_12_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_13:
+        type: 'simple'
+        sku: 'PROD_B_13'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB13'
+        addName: ['@product_B_13_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_21:
+        type: 'simple'
+        sku: 'PROD_B_21'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB21'
+        addName: ['@product_B_21_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_22:
+        type: 'simple'
+        sku: 'PROD_B_22'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB22'
+        addName: ['@product_B_22_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_23:
+        type: 'simple'
+        sku: 'PROD_B_23'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB23'
+        addName: ['@product_B_23_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_31:
+        type: 'simple'
+        sku: 'PROD_B_31'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB31'
+        addName: ['@product_B_31_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_32:
+        type: 'simple'
+        sku: 'PROD_B_32'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB32'
+        addName: ['@product_B_32_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_33:
+        type: 'simple'
+        sku: 'PROD_B_33'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB33'
+        addName: ['@product_B_33_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_41:
+        type: 'simple'
+        sku: 'PROD_B_41'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB41'
+        addName: ['@product_B_41_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_42:
+        type: 'simple'
+        sku: 'PROD_B_42'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB42'
+        addName: ['@product_B_42_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_B_43:
+        type: 'simple'
+        sku: 'PROD_B_43'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionB43'
+        addName: ['@product_B_43_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_111:
+        type: 'simple'
+        sku: 'PROD_C_111'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC111'
+        addName: ['@product_C_111_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_121:
+        type: 'simple'
+        sku: 'PROD_C_121'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC121'
+        addName: ['@product_C_121_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_131:
+        type: 'simple'
+        sku: 'PROD_C_131'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC131'
+        addName: ['@product_C_131_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_211:
+        type: 'simple'
+        sku: 'PROD_C_211'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC211'
+        addName: ['@product_C_211_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_221:
+        type: 'simple'
+        sku: 'PROD_C_221'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC221'
+        addName: ['@product_C_221_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_231:
+        type: 'simple'
+        sku: 'PROD_C_231'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC231'
+        addName: ['@product_C_231_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_311:
+        type: 'simple'
+        sku: 'PROD_C_311'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC311'
+        addName: ['@product_C_311_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_321:
+        type: 'simple'
+        sku: 'PROD_C_321'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC321'
+        addName: ['@product_C_321_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_331:
+        type: 'simple'
+        sku: 'PROD_C_331'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC331'
+        addName: ['@product_C_331_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_411:
+        type: 'simple'
+        sku: 'PROD_C_411'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC411'
+        addName: ['@product_C_411_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_421:
+        type: 'simple'
+        sku: 'PROD_C_421'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC421'
+        addName: ['@product_C_421_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_431:
+        type: 'simple'
+        sku: 'PROD_C_431'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC431'
+        addName: ['@product_C_431_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_112:
+        type: 'simple'
+        sku: 'PROD_C_112'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC112'
+        addName: ['@product_C_112_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_122:
+        type: 'simple'
+        sku: 'PROD_C_122'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC122'
+        addName: ['@product_C_122_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_132:
+        type: 'simple'
+        sku: 'PROD_C_132'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC132'
+        addName: ['@product_C_132_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_212:
+        type: 'simple'
+        sku: 'PROD_C_212'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC212'
+        addName: ['@product_C_212_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_222:
+        type: 'simple'
+        sku: 'PROD_C_222'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC222'
+        addName: ['@product_C_222_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_232:
+        type: 'simple'
+        sku: 'PROD_C_232'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC232'
+        addName: ['@product_C_232_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_312:
+        type: 'simple'
+        sku: 'PROD_C_312'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC312'
+        addName: ['@product_C_312_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_322:
+        type: 'simple'
+        sku: 'PROD_C_322'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC322'
+        addName: ['@product_C_322_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_332:
+        type: 'simple'
+        sku: 'PROD_C_332'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC332'
+        addName: ['@product_C_332_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_412:
+        type: 'simple'
+        sku: 'PROD_C_412'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC412'
+        addName: ['@product_C_412_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_422:
+        type: 'simple'
+        sku: 'PROD_C_422'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC422'
+        addName: ['@product_C_422_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product_C_432:
+        type: 'simple'
+        sku: 'PROD_C_432'
+        organization: '@organization'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@unit_precisionC432'
+        addName: ['@product_C_432_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_A_1:
+        product: '@product_A_1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_A_2:
+        product: '@product_A_2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_A_3:
+        product: '@product_A_3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_A_4:
+        product: '@product_A_4'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_11:
+        product: '@product_B_11'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_12:
+        product: '@product_B_12'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_13:
+        product: '@product_B_13'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_21:
+        product: '@product_B_21'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_22:
+        product: '@product_B_22'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_23:
+        product: '@product_B_23'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_31:
+        product: '@product_B_31'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_32:
+        product: '@product_B_32'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_33:
+        product: '@product_B_33'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_41:
+        product: '@product_B_41'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_42:
+        product: '@product_B_42'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_B_43:
+        product: '@product_B_43'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_111:
+        product: '@product_C_111'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_121:
+        product: '@product_C_121'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_131:
+        product: '@product_C_131'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_211:
+        product: '@product_C_211'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_221:
+        product: '@product_C_221'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_231:
+        product: '@product_C_231'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_311:
+        product: '@product_C_311'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_321:
+        product: '@product_C_321'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_331:
+        product: '@product_C_331'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_411:
+        product: '@product_C_411'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_421:
+        product: '@product_C_421'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_431:
+        product: '@product_C_431'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_112:
+        product: '@product_C_112'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_122:
+        product: '@product_C_122'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_132:
+        product: '@product_C_132'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_212:
+        product: '@product_C_212'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_222:
+        product: '@product_C_222'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_232:
+        product: '@product_C_232'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_312:
+        product: '@product_C_312'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_322:
+        product: '@product_C_322'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_332:
+        product: '@product_C_332'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_412:
+        product: '@product_C_412'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_422:
+        product: '@product_C_422'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price_C_432:
+        product: '@product_C_432'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation_A_1:
+        product: '@product_A_1'
+        priceList: '@defaultPriceList'
+    priceRelation_A_2:
+        product: '@product_A_2'
+        priceList: '@defaultPriceList'
+    priceRelation_A_3:
+        product: '@product_A_3'
+        priceList: '@defaultPriceList'
+    priceRelation_A_4:
+        product: '@product_A_4'
+        priceList: '@defaultPriceList'
+    priceRelation_B_11:
+        product: '@product_B_11'
+        priceList: '@defaultPriceList'
+    priceRelation_B_12:
+        product: '@product_B_12'
+        priceList: '@defaultPriceList'
+    priceRelation_B_13:
+        product: '@product_B_13'
+        priceList: '@defaultPriceList'
+    priceRelation_B_21:
+        product: '@product_B_21'
+        priceList: '@defaultPriceList'
+    priceRelation_B_22:
+        product: '@product_B_22'
+        priceList: '@defaultPriceList'
+    priceRelation_B_23:
+        product: '@product_B_23'
+        priceList: '@defaultPriceList'
+    priceRelation_B_31:
+        product: '@product_B_31'
+        priceList: '@defaultPriceList'
+    priceRelation_B_32:
+        product: '@product_B_32'
+        priceList: '@defaultPriceList'
+    priceRelation_B_33:
+        product: '@product_B_33'
+        priceList: '@defaultPriceList'
+    priceRelation_B_41:
+        product: '@product_B_41'
+        priceList: '@defaultPriceList'
+    priceRelation_B_42:
+        product: '@product_B_42'
+        priceList: '@defaultPriceList'
+    priceRelation_B_43:
+        product: '@product_B_43'
+        priceList: '@defaultPriceList'
+    priceRelation_C_111:
+        product: '@product_C_111'
+        priceList: '@defaultPriceList'
+    priceRelation_C_121:
+        product: '@product_C_121'
+        priceList: '@defaultPriceList'
+    priceRelation_C_131:
+        product: '@product_C_131'
+        priceList: '@defaultPriceList'
+    priceRelation_C_211:
+        product: '@product_C_211'
+        priceList: '@defaultPriceList'
+    priceRelation_C_221:
+        product: '@product_C_221'
+        priceList: '@defaultPriceList'
+    priceRelation_C_231:
+        product: '@product_C_231'
+        priceList: '@defaultPriceList'
+    priceRelation_C_311:
+        product: '@product_C_311'
+        priceList: '@defaultPriceList'
+    priceRelation_C_321:
+        product: '@product_C_321'
+        priceList: '@defaultPriceList'
+    priceRelation_C_331:
+        product: '@product_C_331'
+        priceList: '@defaultPriceList'
+    priceRelation_C_411:
+        product: '@product_C_411'
+        priceList: '@defaultPriceList'
+    priceRelation_C_421:
+        product: '@product_C_421'
+        priceList: '@defaultPriceList'
+    priceRelation_C_431:
+        product: '@product_C_431'
+        priceList: '@defaultPriceList'
+    priceRelation_C_112:
+        product: '@product_C_112'
+        priceList: '@defaultPriceList'
+    priceRelation_C_122:
+        product: '@product_C_122'
+        priceList: '@defaultPriceList'
+    priceRelation_C_132:
+        product: '@product_C_132'
+        priceList: '@defaultPriceList'
+    priceRelation_C_212:
+        product: '@product_C_212'
+        priceList: '@defaultPriceList'
+    priceRelation_C_222:
+        product: '@product_C_222'
+        priceList: '@defaultPriceList'
+    priceRelation_C_232:
+        product: '@product_C_232'
+        priceList: '@defaultPriceList'
+    priceRelation_C_312:
+        product: '@product_C_312'
+        priceList: '@defaultPriceList'
+    priceRelation_C_322:
+        product: '@product_C_322'
+        priceList: '@defaultPriceList'
+    priceRelation_C_332:
+        product: '@product_C_332'
+        priceList: '@defaultPriceList'
+    priceRelation_C_412:
+        product: '@product_C_412'
+        priceList: '@defaultPriceList'
+    priceRelation_C_422:
+        product: '@product_C_422'
+        priceList: '@defaultPriceList'
+    priceRelation_C_432:
+        product: '@product_C_432'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProductPrice_A_1:
+        product: '@product_A_1'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_A_2:
+        product: '@product_A_2'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_A_3:
+        product: '@product_A_3'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_A_4:
+        product: '@product_A_4'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_11:
+        product: '@product_B_11'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_12:
+        product: '@product_B_12'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_13:
+        product: '@product_B_13'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_21:
+        product: '@product_B_21'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_22:
+        product: '@product_B_22'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_23:
+        product: '@product_B_23'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_31:
+        product: '@product_B_31'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_32:
+        product: '@product_B_32'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_33:
+        product: '@product_B_33'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_41:
+        product: '@product_B_41'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_42:
+        product: '@product_B_42'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_B_43:
+        product: '@product_B_43'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_111:
+        product: '@product_C_111'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_121:
+        product: '@product_C_121'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_131:
+        product: '@product_C_131'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_211:
+        product: '@product_C_211'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_221:
+        product: '@product_C_221'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_231:
+        product: '@product_C_231'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_311:
+        product: '@product_C_311'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_321:
+        product: '@product_C_321'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_331:
+        product: '@product_C_331'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_411:
+        product: '@product_C_411'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_421:
+        product: '@product_C_421'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_431:
+        product: '@product_C_431'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_112:
+        product: '@product_C_112'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_122:
+        product: '@product_C_122'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_132:
+        product: '@product_C_132'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_212:
+        product: '@product_C_212'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_222:
+        product: '@product_C_222'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_232:
+        product: '@product_C_232'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_312:
+        product: '@product_C_312'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_322:
+        product: '@product_C_322'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_332:
+        product: '@product_C_332'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_412:
+        product: '@product_C_412'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_422:
+        product: '@product_C_422'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_C_432:
+        product: '@product_C_432'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12

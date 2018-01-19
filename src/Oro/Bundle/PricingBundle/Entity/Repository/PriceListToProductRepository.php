@@ -66,20 +66,45 @@ class PriceListToProductRepository extends EntityRepository
     /**
      * @param PriceList $priceList
      * @param Product|null $product
+     * @return QueryBuilder
      */
-    public function deleteGeneratedRelations(PriceList $priceList, Product $product = null)
+    protected function getDeleteRelationsQueryBuilder(PriceList $priceList, Product $product = null): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(PriceListToProduct::class, 'pltp')
             ->where($qb->expr()->eq('pltp.priceList', ':priceList'))
-            ->andWhere($qb->expr()->neq('pltp.manual', ':isManual'))
-            ->setParameter('priceList', $priceList)
-            ->setParameter('isManual', true);
+            ->setParameter('priceList', $priceList);
 
         if ($product) {
             $qb->andWhere($qb->expr()->eq('pltp.product', ':product'))
                 ->setParameter('product', $product);
         }
+
+        return $qb;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product|null $product
+     */
+    public function deleteGeneratedRelations(PriceList $priceList, Product $product = null)
+    {
+        $qb = $this->getDeleteRelationsQueryBuilder($priceList, $product);
+        $qb->andWhere($qb->expr()->neq('pltp.manual', ':isManual'))
+            ->setParameter('isManual', true);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product|null $product
+     */
+    public function deleteManualRelations(PriceList $priceList, Product $product = null)
+    {
+        $qb = $this->getDeleteRelationsQueryBuilder($priceList, $product);
+        $qb->andWhere($qb->expr()->eq('pltp.manual', ':isManual'))
+            ->setParameter('isManual', true);
 
         $qb->getQuery()->execute();
     }

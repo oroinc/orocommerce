@@ -11,9 +11,10 @@ config:
         'oropricing/js/app/views/base-product-prices-view': 'bundles/oropricing/js/app/views/base-product-prices-view.js'
         'oropricing/js/app/views/line-item-product-prices-view': 'bundles/oropricing/js/app/views/line-item-product-prices-view.js'
         'oropricing/js/app/views/product-prices-editable-view': 'bundles/oropricing/js/app/views/product-prices-editable-view.js'
+        'oropricing/js/app/views/product-total-price-view': 'bundles/oropricing/js/app/views/product-total-price-view.js'
         'oropricing/js/app/views/quick-add-item-price-view': 'bundles/oropricing/js/app/views/quick-add-item-price-view.js'
         'oropricing/js/app/views/abstract-switcher': 'bundles/oropricing/js/app/views/abstract-switcher.js'
-        'oropricing/js/app/views/product-prices-matrix-view': 'bundles/oropricing/js/app/views/product-prices-matrix-view.js'
+        'oropricing/js/app/views/base-product-matrix-view': 'bundles/oropricing/js/app/views/base-product-matrix-view.js'
 
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/oropricing/js/filter/frontend-product-price-filter.js'

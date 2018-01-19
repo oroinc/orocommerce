@@ -27,6 +27,7 @@ system_configuration:
         oro_sale.contact_details:
             data_type: string
             type: textarea
+            search_type: text
             priority: 30
             options:
                 required: false
@@ -74,6 +75,7 @@ system_configuration:
         oro_sale.contact_info_manual_text:
             data_type: string
             type: oro_sale_contact_info_manual_text
+            search_type: text
             priority: 30
             options:
                 required: false
@@ -86,6 +88,7 @@ system_configuration:
         oro_sale.guest_contact_info_text:
             data_type: string
             type: textarea
+            search_type: text
             priority: 0
             options:
                 required: false

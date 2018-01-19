@@ -95,6 +95,7 @@
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
                  createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
                  shoppingListCreateEnabled: feature_enabled('shopping_list_create'),
+                 emptyMatrixAllowed: oro_config_value('oro_product.matrix_form_allow_empty')
              }|merge(options.componentOptions|default({}))
          }) }}
         >

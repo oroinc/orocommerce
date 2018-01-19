@@ -58,16 +58,16 @@ oro_behat_extension:
 
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: '#shopping_list_view_container_content > div.cart-table > table'
+      selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
-      selector: 'tbody.line_item'
+      selector: '.shopping-list-line-items__item-wrapper'
 
     Shopping List Line Item 1 Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       selector:
-        locator: '(//tbody[@class="line_item"])[1]//form'
+        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
         type: xpath
       options:
         mapping:
@@ -84,7 +84,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//div[text()[contains(.,"SKU #:")]]/span'
+          locator: '//span[@class="product-item__sku-value"]'
 
     Shopping List Dropdown:
       selector:
@@ -172,6 +172,13 @@ oro_behat_extension:
       options:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
+    Remove Line Item:
+      selector: 'button.item-remove'
+
+    Shopping list Line items Grid:
+      selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
   suites:
     OroShoppingListBundle:

@@ -14,6 +14,7 @@ define(function(require) {
 
     ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
+            emptyMatrixAllowed: false,
             buttonTemplate: '',
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
@@ -250,30 +251,20 @@ define(function(require) {
         },
 
         _onQuantityEnter: function(e) {
-            if (e.keyCode === 13) {
-                if (!this.dropdownWidget.validateForm()) {
-                    return;
-                }
+            var ENTER_KEY_CODE = 13;
 
+            if (e.keyCode === ENTER_KEY_CODE) {
                 this.model.set({
                     quantity: parseInt($(e.target).val(), 10)
                 });
 
-                var $button = this.findMainButton();
-                var url = $button.data('url');
-                var intention = $button.data('intention');
-                var currentShoppingList = this.findCurrentShoppingList();
-                var formData = this.$form.serialize();
-                var urlOptions = {
-                    shoppingListId: currentShoppingList.id,
-                    productId: this.model.get('id')
-                };
+                var mainButton = this.findMainButton();
 
-                if (this.model.has('parentProduct')) {
-                    urlOptions.parentProductId = this.model.get('parentProduct');
+                if (!mainButton.length) {
+                    mainButton = this.findAllButtons();
                 }
 
-                this._saveToShoppingList(url, urlOptions, formData, intention);
+                mainButton.click();
             }
         },
 
@@ -286,6 +277,10 @@ define(function(require) {
             return this.shoppingListCollection.find({id: id}).toJSON() || null;
         },
 
+        validate: function(intention, url, urlOptions, formData) {
+            return this.dropdownWidget.validateForm();
+        },
+
         onClick: function(e) {
             var $button = $(e.currentTarget);
             if ($button.data('disabled')) {
@@ -294,10 +289,6 @@ define(function(require) {
             var url = $button.data('url');
             var intention = $button.data('intention');
             var formData = this.$form.serialize();
-
-            if (!this.dropdownWidget.validateForm()) {
-                return;
-            }
 
             var urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
@@ -309,7 +300,19 @@ define(function(require) {
                 }
             }
 
-            this._saveToShoppingList(url, urlOptions, formData, intention);
+            if (!this.validate(intention, url, urlOptions, formData)) {
+                return;
+            }
+
+            if (intention === 'new') {
+                this._createNewShoppingList(url, urlOptions, formData);
+            } else if (intention === 'update') {
+                this._saveLineItem(url, urlOptions, formData);
+            } else if (intention === 'remove') {
+                this._removeLineItem(url, urlOptions, formData);
+            } else {
+                this._addLineItem(url, urlOptions, formData);
+            }
         },
 
         updateLabel: function($button, shoppingList, hasLineItems) {
@@ -339,34 +342,6 @@ define(function(require) {
             return $button;
         },
 
-        /**
-         * Save quantity product to shopping list
-         * Create new shopping list
-         * Update/Add to shopping list
-         * Remove from shopping list
-         *
-         * @param {String} url
-         * @param {Object} urlOptions
-         * @param {Object} formData
-         * @param {String} action
-         * @private
-         */
-        _saveToShoppingList: function(url, urlOptions, formData, action) {
-            switch (action) {
-                case 'new':
-                    this._createNewShoppingList(url, urlOptions, formData);
-                    break;
-                case 'update':
-                    this._saveLineItem(url, urlOptions, formData);
-                    break;
-                case 'remove':
-                    this._removeLineItem(url, urlOptions, formData);
-                    break;
-                default:
-                    this._addLineItem(url, urlOptions, formData);
-            }
-        },
-
         _setEditLineItem: function(lineItemId, setFirstLineItem) {
             this.editLineItem = null;
 
@@ -385,13 +360,13 @@ define(function(require) {
                 this.editLineItem = _.findWhere(currentShoppingListInModel.line_items, {id: lineItemId});
             } else if (setFirstLineItem) {
                 this.editLineItem = currentShoppingListInModel.line_items[0] || null;
-            } else {
+            } else if (!this.model.get('quantity_changed_manually')) {
                 this.editLineItem = _.findWhere(
                     currentShoppingListInModel.line_items, {unit: this.model.get('unit')}
                     ) || null;
             }
 
-            if (this.editLineItem && (lineItemId || setFirstLineItem)) {
+            if (this.editLineItem) {
                 //quantity precision depend on unit, set unit first
                 this.model.set('unit', this.editLineItem.unit);
                 this.model.set('quantity', this.editLineItem.quantity);
