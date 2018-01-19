@@ -7,7 +7,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
@@ -36,11 +35,6 @@ class SluggableEntityListener implements OptionalListenerInterface
     private $configManager;
 
     /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
      * @var array
      * [
      *      '<entityName>' => [<id1>, <id2>, ...],
@@ -53,18 +47,15 @@ class SluggableEntityListener implements OptionalListenerInterface
      * @param MessageFactoryInterface $messageFactory
      * @param MessageProducerInterface $messageProducer
      * @param ConfigManager $configManager
-     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         MessageFactoryInterface $messageFactory,
         MessageProducerInterface $messageProducer,
-        ConfigManager $configManager,
-        DoctrineHelper $doctrineHelper
+        ConfigManager $configManager
     ) {
         $this->messageFactory = $messageFactory;
         $this->messageProducer = $messageProducer;
         $this->configManager = $configManager;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -172,7 +163,7 @@ class SluggableEntityListener implements OptionalListenerInterface
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
             $entityClass = ClassUtils::getClass($entity);
-            $this->sluggableEntities[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            $this->sluggableEntities[$entityClass][] = $entity->getId();
         }
     }
 }

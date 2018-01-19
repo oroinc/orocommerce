@@ -7,7 +7,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\RedirectBundle\Async\Topics;
@@ -41,23 +40,16 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $sluggableEntityListener;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
-
     protected function setUp()
     {
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->sluggableEntityListener = new SluggableEntityListener(
             $this->messageFactory,
             $this->messageProducer,
-            $this->configManager,
-            $this->doctrineHelper
+            $this->configManager
         );
     }
 
@@ -127,18 +119,16 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var SluggableInterface $entity */
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
 
         $entetyId = 1;
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->willReturn($entetyId);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -268,19 +258,19 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityId = 1;
+
         $entity = $this->prepareSluggableEntity($event);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
 
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $sluggableEntities = [get_class($entity) => [1]];
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->willReturn(1);
+        $sluggableEntities = [get_class($entity) => [$entityId]];
 
         $this->sluggableEntityListener->onFlush($event);
 
@@ -295,6 +285,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entityId = 1;
 
         /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
@@ -310,6 +301,10 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with($prototype)
             ->willReturn(true);
 
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
+
         $uow->expects($this->any())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
@@ -322,12 +317,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $sluggableEntities = [get_class($entity) => [1]];
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->willReturn(1);
+        $sluggableEntities = [get_class($entity) => [$entityId]];
 
         $this->sluggableEntityListener->onFlush($event);
 
@@ -362,8 +352,14 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var SluggableInterface $entity */
+        $entityId = 1;
+
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
+
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
@@ -374,19 +370,14 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $message = [
-            'id' => [1],
+            'id' => [$entityId],
             'class' => get_class($entity),
             'createRedirect' => false
         ];
         $this->messageFactory->expects($this->once())
             ->method('createMassMessage')
-            ->with(get_class($entity), [1], false)
+            ->with(get_class($entity), [$entityId], false)
             ->willReturn($message);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->willReturn(1);
 
         $this->sluggableEntityListener->postPersist($args);
 
