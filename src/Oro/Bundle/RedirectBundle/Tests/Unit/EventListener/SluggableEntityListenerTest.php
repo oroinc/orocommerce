@@ -44,9 +44,8 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->sluggableEntityListener = new SluggableEntityListener(
             $this->messageFactory,
             $this->messageProducer,
@@ -72,7 +71,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->sluggableEntityListener->postPersist($args);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testPostPersistNotSluggableEntity()
@@ -93,7 +92,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entity);
 
         $this->sluggableEntityListener->postPersist($args);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testPostPersistWithDisabledListener()
@@ -110,7 +109,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->disableListener();
         $this->sluggableEntityListener->postPersist($args);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testPostPersist()
@@ -120,17 +119,28 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var SluggableInterface $entity */
+        $entetyId = 1;
+
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entetyId);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
 
-        $message = ['class' => get_class($entity), 'id' => 1];
-        $this->assertScheduleMessageCalled($entity, $message);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
 
         $this->sluggableEntityListener->postPersist($args);
-        $this->assertAttributeEquals([$message], 'messages', $this->sluggableEntityListener);
+        $this->assertAttributeEquals(
+            [get_class($entity) => [$entetyId]],
+            'sluggableEntities',
+            $this->sluggableEntityListener
+        );
     }
 
     public function testOnFlushDisabledDirectUrl()
@@ -148,7 +158,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->prepareSluggableEntity($event);
 
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testOnFlushNoChangedSlugs()
@@ -192,7 +202,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testOnFlushChangedSlugWithoutChangedPrototypesUp()
@@ -238,7 +248,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testOnFlushChangedSlugWithChangedPrototypesIns()
@@ -248,19 +258,33 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityId = 1;
         $entity = $this->prepareSluggableEntity($event);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
 
-        $message = ['class' => get_class($entity), 'id' => 1];
-        $this->assertScheduleMessageCalled($entity, $message);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
+
+        $sluggableEntities = [get_class($entity) => [$entityId]];
 
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEquals([$message], 'messages', $this->sluggableEntityListener);
+
+        $this->assertAttributeEquals(
+            $sluggableEntities,
+            'sluggableEntities',
+            $this->sluggableEntityListener
+        );
     }
 
     public function testOnFlushChangedSlugWithChangedPrototypesDel()
     {
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entityId = 1;
 
         /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
@@ -276,6 +300,10 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with($prototype)
             ->willReturn(true);
 
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
+
         $uow->expects($this->any())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
@@ -283,11 +311,20 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getScheduledEntityDeletions')
             ->willReturn([$prototype]);
 
-        $message = ['class' => get_class($entity), 'id' => 1];
-        $this->assertScheduleMessageCalled($entity, $message);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
+
+        $sluggableEntities = [get_class($entity) => [$entityId]];
 
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEquals([$message], 'messages', $this->sluggableEntityListener);
+
+        $this->assertAttributeEquals(
+            $sluggableEntities,
+            'sluggableEntities',
+            $this->sluggableEntityListener
+        );
     }
 
     public function testOnFlushWithDisabledListener()
@@ -304,7 +341,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->disableListener();
         $this->sluggableEntityListener->onFlush($event);
-        $this->assertAttributeEmpty('messages', $this->sluggableEntityListener);
+        $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
     public function testPostFlush()
@@ -314,14 +351,31 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var SluggableInterface $entity */
+        $entityId = 1;
+
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
+        $entity->expects($this->once())
+            ->method('getId')
+            ->willReturn($entityId);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
 
-        $message = ['class' => get_class($entity), 'id' => 1];
-        $this->assertScheduleMessageCalled($entity, $message);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
+
+        $message = [
+            'id' => [$entityId],
+            'class' => get_class($entity),
+            'createRedirect' => false
+        ];
+        $this->messageFactory->expects($this->once())
+            ->method('createMassMessage')
+            ->with(get_class($entity), [$entityId], false)
+            ->willReturn($message);
 
         $this->sluggableEntityListener->postPersist($args);
 
@@ -388,22 +442,6 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ]);
 
         return $uow;
-    }
-
-    /**
-     * @param object $entity
-     * @param array $message
-     */
-    private function assertScheduleMessageCalled($entity, array $message)
-    {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(true);
-        $this->messageFactory->expects($this->once())
-            ->method('createMessage')
-            ->with($entity)
-            ->willReturn($message);
     }
 
     protected function disableListener()

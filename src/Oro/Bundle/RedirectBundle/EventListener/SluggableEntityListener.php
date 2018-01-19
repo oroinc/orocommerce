@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -38,8 +39,12 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     /**
      * @var array
+     * [
+     *      '<entityName>' => [<id1>, <id2>, ...],
+     *       ...
+     * ]
      */
-    private $messages = [];
+    private $sluggableEntities = [];
 
     /**
      * @param MessageFactoryInterface $messageFactory
@@ -88,11 +93,13 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     public function postFlush()
     {
-        foreach ($this->messages as $message) {
+        foreach ($this->sluggableEntities as $entityClass => $ids) {
+            $message = $this->messageFactory->createMassMessage($entityClass, $ids, false);
+
             $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
         }
 
-        $this->messages = [];
+        $this->sluggableEntities = [];
     }
 
     /**
@@ -158,7 +165,8 @@ class SluggableEntityListener implements OptionalListenerInterface
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
-            $this->messages[] = $this->messageFactory->createMessage($entity);
+            $entityClass = ClassUtils::getClass($entity);
+            $this->sluggableEntities[$entityClass][] = $entity->getId();
         }
     }
 }
