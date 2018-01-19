@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: __products
+            optionName: items_data.totals
+            optionValue: '=data["oro_shopping_list_matrix_grid_order"].getTotalsQuantityPrice(items)'

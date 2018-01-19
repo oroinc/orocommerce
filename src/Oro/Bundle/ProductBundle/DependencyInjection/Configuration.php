@@ -53,9 +53,15 @@ class Configuration implements ConfigurationInterface
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
     const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
-    const MATRIX_FORM_ON_PRODUCT_VIEW_NONE = 'none';
-    const MATRIX_FORM_ON_PRODUCT_VIEW_INLINE = 'inline';
-    const MATRIX_FORM_ON_PRODUCT_VIEW_POPUP = 'popup';
+    const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
+    const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
+    const MATRIX_FORM_NONE = 'none';
+    const MATRIX_FORM_INLINE = 'inline';
+    const MATRIX_FORM_POPUP = 'popup';
+    const MATRIX_FORM_ALLOW_TO_ADD_EMPTY = 'matrix_form_allow_empty';
+    const DISPLAY_SIMPLE_VARIATIONS = 'display_simple_variations';
+    const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
+    const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
 
     /**
      * {@inheritDoc}
@@ -128,7 +134,23 @@ class Configuration implements ConfigurationInterface
                 static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
                     'type' => 'string',
-                    'value' => static::MATRIX_FORM_ON_PRODUCT_VIEW_INLINE
+                    'value' => static::MATRIX_FORM_INLINE
+                ],
+                self::MATRIX_FORM_ON_SHOPPING_LIST => [
+                    'type' => 'string',
+                    'value' => static::MATRIX_FORM_INLINE
+                ],
+                static::MATRIX_FORM_ON_PRODUCT_LISTING => [
+                    'type' => 'string',
+                    'value' => static::MATRIX_FORM_INLINE
+                ],
+                static::MATRIX_FORM_ALLOW_TO_ADD_EMPTY => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::DISPLAY_SIMPLE_VARIATIONS => [
+                    'type' => 'string',
+                    'value' => static::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY
                 ],
             ]
         );

@@ -1,3 +1,5 @@
+# TODO: unskip in BB-13499
+@skip
 @fixture-OroProductBundle:products_inline_matrix_form.yml
 @regression
 

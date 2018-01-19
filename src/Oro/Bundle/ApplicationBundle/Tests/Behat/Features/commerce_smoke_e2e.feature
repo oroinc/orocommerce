@@ -595,7 +595,7 @@ Feature: Commerce smoke e2e
     And should see "Your Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     And should see "Listed Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     When click "Shirts"
-    Then should not see "Add to Shopping List button" for "Shirt_Sku" product
+    Then should see "Add to Shopping List button" for "Shirt_Sku" product
     And should see "View Details" for "Shirt_Sku" product
     And should see "Product Image" for "Shirt_Sku" product
     And should see "Product Name" for "Shirt_Sku" product
@@ -609,11 +609,10 @@ Feature: Commerce smoke e2e
     And should see an "Matrix Grid Form" element
     And should see an "Add to Shopping List" element
     And fill "Matrix Grid Form" with:
-      |Black L|2|
-      |Black M|3|
-      |White L|1|
-      |White M|5|
-    And click "Add to Shoppin..."
+      |       | L | M |
+      | Black | 2 | 3 |
+      | White | 1 | 5 |
+    And click "Add to Shopping list"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
     And click "Shopping list"

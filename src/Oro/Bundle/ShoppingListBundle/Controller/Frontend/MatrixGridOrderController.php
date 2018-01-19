@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class MatrixGridOrderController extends AbstractLineItemController
 {
@@ -49,13 +48,10 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $request->request->get('matrix_collection', [])
             );
 
-            $updateQuantity = (bool) $request->get('updateQuantity', false);
+            $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+
             foreach ($lineItems as $lineItem) {
-                if ($updateQuantity === false) {
-                    $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
-                } else {
-                    $shoppingListManager->updateLineItem($lineItem, $shoppingList);
-                }
+                $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
 
             if ($request->isXmlHttpRequest()) {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 
 class LineItemsFrontendDatagridListener
 {

@@ -103,7 +103,7 @@ oro_behat_extension:
 
     PromotionShoppingListLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
-      selector: 'tbody.line_item'
+      selector: 'div.shopping-list-line-items__item-wrapper'
 
     PromotionOrderForm:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm

@@ -1,0 +1,22 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order
+            root: __root
+            namespace: matrix
+    actions:
+        - '@setBlockTheme':
+            themes: 'shopping_list_matrix_grid_order.html.twig'
+        - '@setOption':
+            id:  __matrix_total_text
+            optionName: text
+            optionValue: 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'
+        - '@add':
+            id: __matrix_form_actions_submit
+            blockType: button
+            parentId: __matrix_totals
+            options:
+                action: submit
+                text:
+                    label: Update
+                style: 'btn btn--info btn--size-s shopping-list-line-items__action-button'

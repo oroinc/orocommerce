@@ -106,41 +106,51 @@ class ProductShoppingListsDataProvider
         $shoppingLists = [];
 
         foreach ($lineItems as $lineItem) {
-            $shoppingList = $lineItem->getShoppingList();
-            $shoppingListId = $shoppingList->getId();
-
             $product = $lineItem->getProduct();
-            $productId = $product->getId();
 
-            $productShoppingLists = $this->getProductShoppingList($shoppingLists, $productId);
-
-            if (!isset($productShoppingLists[$shoppingListId])) {
-                $productShoppingLists[$shoppingListId] = [
-                    'id' => $shoppingListId,
-                    'label' => $shoppingList->getLabel(),
-                    'is_current' => $shoppingList->isCurrent(),
-                    'line_items' => []
-                ];
+            if ($lineItem->getParentProduct()) {
+                $parentProduct = $lineItem->getParentProduct();
+                $productShoppingLists = $this->saveShoppingListData($parentProduct->getId(), $lineItem, $shoppingLists);
+                $shoppingLists[$parentProduct->getId()] = $productShoppingLists;
             }
 
-            $productShoppingLists[$shoppingListId]['line_items'][] = [
-                'id' => $lineItem->getId(),
-                'unit' => $lineItem->getProductUnitCode(),
-                'quantity' => $lineItem->getQuantity()
-            ];
-
-            $shoppingLists[$productId] = $productShoppingLists;
-
-            if ($lineItem->getParentProduct() instanceof Product) {
-                $shoppingLists[$lineItem->getParentProduct()->getId()] = $productShoppingLists;
-            }
-
-            foreach ($product->getParentVariantLinks() as $parentVariantLink) {
-                $shoppingLists[$parentVariantLink->getParentProduct()->getId()] = $productShoppingLists;
-            }
+            $productShoppingLists = $this->saveShoppingListData($product->getId(), $lineItem, $shoppingLists);
+            $shoppingLists[$product->getId()] = $productShoppingLists;
         }
 
         return $shoppingLists;
+    }
+
+    /**
+     * @param int $productId
+     * @param LineItem $lineItem
+     * @param array $shoppingLists
+     * @return array
+     */
+    private function saveShoppingListData($productId, LineItem $lineItem, array $shoppingLists)
+    {
+        $shoppingList = $lineItem->getShoppingList();
+        $shoppingListId = $shoppingList->getId();
+
+        $productShoppingLists = $this->getProductShoppingList($shoppingLists, $productId);
+
+        if (!isset($productShoppingLists[$shoppingListId])) {
+            $productShoppingLists[$shoppingListId] = [
+                'id' => $shoppingListId,
+                'label' => $shoppingList->getLabel(),
+                'is_current' => $shoppingList->isCurrent(),
+                'line_items' => []
+            ];
+        }
+
+        $productShoppingLists[$shoppingListId]['line_items'][] = [
+            'id' => $lineItem->getId(),
+            'productId' => $lineItem->getProduct()->getId(),
+            'unit' => $lineItem->getProductUnitCode(),
+            'quantity' => $lineItem->getQuantity()
+        ];
+
+        return $productShoppingLists;
     }
 
     /**
