@@ -119,16 +119,16 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityId = 1;
+
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('getId')
-            ->willReturn(1);
+            ->willReturn($entityId);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
-
-        $entetyId = 1;
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -137,7 +137,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->sluggableEntityListener->postPersist($args);
         $this->assertAttributeEquals(
-            [get_class($entity) => [$entetyId]],
+            [get_class($entity) => [$entityId]],
             'sluggableEntities',
             $this->sluggableEntityListener
         );
