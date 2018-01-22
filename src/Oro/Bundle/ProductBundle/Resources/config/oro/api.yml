@@ -31,6 +31,10 @@ api:
                     exclude: true
                 denormalizedDefaultNameUppercase:
                     exclude: true
+            filters:
+                fields:
+                    sku:
+                        allow_array: true
             actions:
                 create:
                     fields:
@@ -74,3 +78,8 @@ api:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
         Oro\Bundle\AttachmentBundle\Entity\File:
             documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'
+            fields:
+                filePath:
+                    data_type: array
+                    form_options:
+                        mapped: false

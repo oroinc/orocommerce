@@ -1,0 +1,4 @@
+services:
+    oro_soap.client:
+        class: 'Oro\Bundle\FedexShippingBundle\Tests\Functional\Stub\SoapClientStub'
+        public: false

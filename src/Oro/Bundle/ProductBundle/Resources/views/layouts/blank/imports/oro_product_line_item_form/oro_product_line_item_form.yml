@@ -29,13 +29,11 @@ layout:
                 __line_item_form_buttons:
                     blockType: container
                 __line_item_view_details:
-                    blockType: button
+                    blockType: link
                     options:
                         visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp") || context["is_logged_in"]'
-                        action: submit
                         text:
                             label: oro.product.frontend.index.view_details
-                        style: 'btn--info full'
             tree:
                 __root:
                     __line_item_form:

@@ -156,7 +156,7 @@ Feature: Showing related products
       And I should see "PSKU1" product
       And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
-      And I should see "Add to Shopping list" in related products
+      And I should see "Add to Shopping List" in related products
       And I proceed as the Admin
       And go to System/ Configuration
       And I follow "Commerce/Catalog/Related Items" on configuration sidebar
@@ -170,7 +170,7 @@ Feature: Showing related products
       And I should see "PSKU1" product
       And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
-      Then I should not see "Add to Shopping list" in related products
+      Then I should not see "Add to Shopping List" in related products
 
 #  Scenario: Check related items are displayed as slider when "use slider on mobile" option is checked
 #  TODO: Fix this check when we will be able to emulate mobile

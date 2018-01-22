@@ -63,6 +63,7 @@ Feature: Promotions in Shopping List
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Size] |
+    And I check SKU2 record in grid
     And I save form
     Then I should see "Product has been saved" flash message
 

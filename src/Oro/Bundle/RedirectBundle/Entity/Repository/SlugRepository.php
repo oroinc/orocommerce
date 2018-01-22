@@ -196,7 +196,7 @@ class SlugRepository extends EntityRepository
         }
         $hashParameters = UrlParameterHelper::hashParams($parameters);
         $qb = $connection->createQueryBuilder()
-            ->select('slug.url', 'slug.slug_prototype', 'slug.localization_id')
+            ->select('slug.url', 'slug.slug_prototype')
             ->from('oro_redirect_slug', 'slug')
             ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
             ->where('scope.slug_id IS NULL')
@@ -217,7 +217,9 @@ class SlugRepository extends EntityRepository
                     'routeParameters' => Type::TARRAY,
                     'localizationId' => Type::INTEGER
                 ]
-            )->addOrderBy('slug.localization_id', $localizationIdSortOrder);
+            )
+            ->addOrderBy('slug.localization_id', $localizationIdSortOrder)
+            ->setMaxResults(1);
 
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }

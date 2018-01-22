@@ -159,6 +159,38 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
+    public function testGetMatrixCollectionNoVariantFields()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productUnit = new ProductUnit();
+        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getVariantFieldsAvailability')
+            ->with($product)
+            ->willReturn([]);
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getVariantFieldValues');
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([]);
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getVariantFieldScalarValue');
+
+        $expectedCollection = new MatrixCollection();
+        $expectedCollection->unit = $productUnit;
+
+        $shoppingList = $this->getEntity(ShoppingList::class);
+
+        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+    }
+
     public function testGetMatrixCollectionWithBoolean()
     {
         /** @var Product $product */
@@ -181,15 +213,13 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ]);
 
-        $this->variantAvailability->expects($this->at(1))
+        $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
-            ->with('discount')
-            ->willReturn([true => 'Yes', false => 'No']);
-
-        $this->variantAvailability->expects($this->at(2))
-            ->method('getVariantFieldValues')
-            ->with('inSale')
-            ->willReturn([true => 'Yes', false => 'No']);
+            ->withConsecutive(['discount'], ['inSale'])
+            ->willReturnOnConsecutiveCalls(
+                [true => 'Yes', false => 'No'],
+                [true => 'Yes', false => 'No']
+            );
 
         $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(false);
         $simpleProductNoDiscountInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(true);

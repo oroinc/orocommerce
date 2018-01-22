@@ -160,7 +160,7 @@ datagrids:
                 quantity:
                     data_name: lineItem.quantity
                 unitCode:
-                    data_name: unit.code
+                    data_name: unitCode
             default:
                 productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:

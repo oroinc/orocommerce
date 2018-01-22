@@ -76,6 +76,6 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 
         (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);
 
-        static::assertEquals(new ArrayCollection([1 => $configurableLineItems[1]]),  $shoppingList->getLineItems());
+        static::assertEquals(new ArrayCollection([1 => $configurableLineItems[1]]), $shoppingList->getLineItems());
     }
 }

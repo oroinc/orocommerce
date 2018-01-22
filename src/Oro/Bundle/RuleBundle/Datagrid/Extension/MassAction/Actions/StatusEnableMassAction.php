@@ -4,6 +4,7 @@ namespace Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\AbstractMassAction;
+use Symfony\Component\HttpFoundation\Request;
 
 class StatusEnableMassAction extends AbstractMassAction
 {
@@ -67,5 +68,21 @@ class StatusEnableMassAction extends AbstractMassAction
         $options['enable'] = $this->isEnabled;
 
         return parent::setOptions($options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAllowedRequestTypes()
+    {
+        return [Request::METHOD_POST];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRequestType()
+    {
+        return Request::METHOD_POST;
     }
 }

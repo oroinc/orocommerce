@@ -484,7 +484,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension'
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_order.form.section.provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -499,7 +499,7 @@ services:
     oro_promotion.event_listener.order_line_item_applied_discounts_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener
         arguments:
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_promotion.provider.applied_discounts_provider'

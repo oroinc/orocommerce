@@ -36,10 +36,11 @@
     {% set form_route_name = 'oro_shopping_list_frontend_matrix_grid_order' %}
     {% set form_route_parameters = form_route_parameters|merge({
         productId: product.id,
-        shoppingListId: shoppingList.id
+        shoppingListId: shoppingList is not empty ? shoppingList.id : null
     }) %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form fields-row'
+        '~class': class_prefix ~ '__form fields-row',
+        'novalidate': 'novalidate'
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}

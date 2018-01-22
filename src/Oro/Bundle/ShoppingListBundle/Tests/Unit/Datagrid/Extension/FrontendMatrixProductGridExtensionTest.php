@@ -146,7 +146,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->exactly(3))
@@ -199,7 +199,20 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->gridExtension->visitResult($this->datagridConfiguration, $resultObject);
 
-        $expectedData = [
+        $expectedData = $this->getVisitResultExpectedData();
+
+        foreach ($resultObject->getData() as $data) {
+            $this->assertEquals($data->getValue('matrixForm'), $expectedData[$data->getValue('id')]['matrixForm']);
+            $this->assertEquals($data->getValue('prices'), $expectedData[$data->getValue('id')]['prices']);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function getVisitResultExpectedData()
+    {
+        return [
             '1' => [
                 'matrixForm' => [
                     'type' => 'inline',
@@ -225,17 +238,6 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
                 'prices' => null,
             ],
         ];
-
-        foreach ($resultObject->getData() as $data) {
-            $this->assertEquals(
-                $data->getValue('matrixForm'),
-                $expectedData[$data->getValue('id')]['matrixForm']
-            );
-            $this->assertEquals(
-                $data->getValue('prices'),
-                $expectedData[$data->getValue('id')]['prices']
-            );
-        }
     }
 
     public function testVisitResultWhenCanNotGetProduct()
@@ -255,7 +257,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->once())
@@ -305,14 +307,14 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $product2 = $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]);
         $product3 = $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_SIMPLE]);
 
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $repository = $this->createMock(EntityRepository::class);
+
         $products = [
             1 => $product1,
             2 => $product2,
             3 => $product3
         ];
-
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $repository = $this->createMock(EntityRepository::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
@@ -320,7 +322,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('getForCurrentUser')
+            ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $repository->expects($this->exactly(3))

@@ -43,3 +43,5 @@ To apply PriceShardWalker to grids, use the `HINT_PRICE_SHARD` hint. Oro `QueryH
     source:
         hints:
             - HINT_PRICE_SHARD
+        count_hints:
+            - HINT_PRICE_SHARD

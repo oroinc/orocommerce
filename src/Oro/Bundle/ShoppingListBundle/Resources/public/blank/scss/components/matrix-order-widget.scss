@@ -14,14 +14,16 @@
 .matrix-order-widget {
     clear: $matrix-order-widget-clear;
 
-    max-width: $matrix-order-widget-max-width;
+    width: $matrix-order-widget-width;
     margin: $matrix-order-widget-offset;
 
     @include clearfix();
 
     &__one-line {
+        min-width: $matrix-order-widget-one-line-form-col-width;
         display: flex;
         align-items: center;
+        flex-shrink: $matrix-order-widget-one-line-flex-shrink;
     }
 
     &__one-line & {
@@ -174,6 +176,7 @@
 
         &__grid-head-wrapper,
         &__grid-footer-wrapper {
+            display: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display;
             position: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position;
             
             .matrix-order-widget__form__col {
@@ -181,6 +184,7 @@
 
                 &:after {
                     position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
                     bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-bottom;
 
                     width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
@@ -197,6 +201,7 @@
                 &:before {
                     position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
                     top: $matrix-order-widget-grid-multi-rows-grid-head-after-top;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
 
                     width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
                     border-top: $matrix-order-widget-grid-multi-rows-grid-head-after-border-top;
@@ -231,10 +236,11 @@
             &:not(:last-child) {
                 .matrix-order-widget__form__col:after {
                     position: $matrix-order-widget-form-row-not-last-child-position;
-                    align-self: $matrix-order-widget-form-row-not-last-child-align-self;
 
                     border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
                     width: $matrix-order-widget-form-row-not-last-child-width;
+                    left: $matrix-order-widget-form-row-not-last-child-left;
+                    bottom: $matrix-order-widget-form-row-not-last-child-bottom;
 
                     content: $matrix-order-widget-form-row-not-last-child-content;
                     z-index: $matrix-order-widget-form-row-not-last-child-z-index;
@@ -261,6 +267,8 @@
 
             line-height: $matrix-order-widget-grid-footer-label-line-height;
             text-align: $matrix-order-widget-grid-area-items-label-text-align;
+
+            flex-shrink: $matrix-order-widget-grid-area-items-label-flex-shrink;
         }
     }
 
@@ -324,7 +332,14 @@
         }
 
         &__grid-side {
-            &:before,
+            &:before {
+                content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            }
+        }
+    }
+
+    &.has-x-scroll:not(.has-y-scroll) & {
+        &__grid-side {
             &:after {
                 content: $matrix-order-widget-grid-side-pseudo-classes-content;
             }
@@ -354,6 +369,7 @@
     &__grid-scrollable-area {
         display: $matrix-order-widget-grid-scrollable-area-display;
         min-height: $matrix-order-widget-grid-scrollable-area-min-height;
+        flex-grow: $matrix-order-widget-grid-scrollable-area-flex-grow;
     }
 
     &__form {
@@ -578,12 +594,28 @@
     &--dialog & {
         max-width: $matrix-order-widget-dialog-max-width;
 
+        &__grid {
+            &.state-labels-above {
+                .matrix-order-widget__one-line {
+                    flex-grow: $matrix-order-widget-dialog-state-labels-above-one-line-flex-grow;
+                }
+            }
+
+            .matrix-order-widget__grid-body {
+                overflow: $matrix-order-widget-dialog-grid-body-overflow;
+            }
+        }
+
         &__grid-body {
             max-height: $matrix-order-widget-dialog-grid-body-max-height;
         }
 
         &__grid-side {
             max-height: $matrix-order-widget-dialog-grid-side-max-height;
+        }
+
+        &__form__col {
+            flex-grow: $matrix-order-widget-dialog-form-col-flex-grow;
         }
     }
 

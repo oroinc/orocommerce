@@ -14,7 +14,7 @@ $matrix-order-widget-light-shadow-gradient-right: linear-gradient(to right, rgba
 $matrix-order-widget-light-shadow-gradient-left: linear-gradient(to left, rgba($matrix-order-widget-light-color, 1), rgba($matrix-order-widget-light-color, 0))  !default;
 
 $matrix-order-widget-clear: both !default;
-$matrix-order-widget-max-width: 100% !default;
+$matrix-order-widget-width: 100% !default;
 $matrix-order-widget-offset: 0 !default;
 
 $matrix-order-widget-not-available-line-height: 40px !default;
@@ -40,6 +40,9 @@ $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner: 0 40px 20px !defa
 $matrix-order-widget-dialog-max-width: 830px !default;
 $matrix-order-widget-dialog-grid-body-max-height: 310px !default;
 $matrix-order-widget-dialog-grid-side-max-height: 310px !default;
+$matrix-order-widget-dialog-form-col-flex-grow: 1 !default;
+$matrix-order-widget-dialog-state-labels-above-one-line-flex-grow: 1 !default;
+$matrix-order-widget-dialog-grid-body-overflow: auto;
 
 // Dialog-fullscreen group variables
 $matrix-order-widget-dialog-fullscreen-position: static !default;
@@ -54,6 +57,7 @@ $matrix-order-widget-grid-offset-bottom: $offset-x !default;
 $matrix-order-widget-grid-offset-inner-top: $offset-x !default;
 $matrix-order-widget-grid-font-family: $font-family-base !default;
 
+$matrix-order-widget-one-line-flex-shrink: 0 !default;
 $matrix-order-widget-one-line-form-col-width: 90px !default;
 
 $matrix-order-widget-grid-multi-rows-border-bottom: $matrix-order-widget-border !default;
@@ -67,6 +71,7 @@ $matrix-order-widget-grid-multi-rows-grid-head-z-index: 2 !default;
 
 $matrix-order-widget-grid-multi-rows-grid-head-after-position: absolute !default;
 $matrix-order-widget-grid-multi-rows-grid-head-after-top: 0 !default;
+$matrix-order-widget-grid-multi-rows-grid-head-after-left: 0 !default;
 $matrix-order-widget-grid-multi-rows-grid-head-after-bottom: 0 !default;
 $matrix-order-widget-grid-multi-rows-grid-head-after-align-self: flex-end !default;
 $matrix-order-widget-grid-multi-rows-grid-head-after-content: '' !default;
@@ -99,6 +104,7 @@ $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-le
 $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-right: 0 !default;
 $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-class-after-background: $matrix-order-widget-base-shadow-gradient-left !default;
 
+$matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display: flex !default;
 $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position: relative !default;
 
 $matrix-order-widget-grid-body-display: block !default;
@@ -116,6 +122,7 @@ $matrix-order-widget-grid-area-items-label-float: left !default;
 $matrix-order-widget-grid-area-items-label-width: 100% !default;
 $matrix-order-widget-grid-area-items-label-max-width: $matrix-order-widget-aside-items-width !default;
 $matrix-order-widget-grid-area-items-label-text-align: center !default;
+$matrix-order-widget-grid-area-items-label-flex-shrink: 0 !default;
 
 $matrix-order-widget-grid-footer-display: flex !default;
 $matrix-order-widget-grid-footer-position: relative !default;
@@ -166,6 +173,7 @@ $matrix-order-widget-grid-side-form-row-line-height: 1.1em !default;
 
 $matrix-order-widget-grid-scrollable-area-display: flex !default;
 $matrix-order-widget-grid-scrollable-area-min-height: 43px !default;
+$matrix-order-widget-grid-scrollable-area-flex-grow: 1 !default;
 
 $matrix-order-widget-grid-body-form-row-align-items: stretch !default;
 
@@ -202,7 +210,8 @@ $matrix-order-widget-colored-form-row-float: left !default;
 $matrix-order-widget-colored-form-row-clear: both !default;
 
 $matrix-order-widget-form-row-not-last-child-position: absolute !default;
-$matrix-order-widget-form-row-not-last-child-align-self: flex-end !default;
+$matrix-order-widget-form-row-not-last-child-left: 0 !default;
+$matrix-order-widget-form-row-not-last-child-bottom: 0 !default;
 $matrix-order-widget-form-row-not-last-child-border-bottom: $matrix-order-widget-border !default;
 $matrix-order-widget-form-row-not-last-child-width: 100% !default;
 $matrix-order-widget-form-row-not-last-child-content: '' !default;

@@ -264,7 +264,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function expectProductsShoppingLists()
     {
-
         $productRepository = $this->createMock(ProductRepository::class);
 
         $this->managerRegistry->expects($this->once())

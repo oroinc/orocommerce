@@ -21,6 +21,7 @@ system_configuration:
         oro_pricing.rounding_type:
             data_type: string
             type: choice
+            search_type: choice
             priority: 10
             options:
                 label: oro.pricing.system_configuration.fields.rounding_type.label
@@ -38,6 +39,7 @@ system_configuration:
         oro_pricing.precision:
             data_type: integer
             type: integer
+            search_type: text
             priority: 20
             options:
                 label: oro.pricing.system_configuration.fields.precision.label
@@ -51,6 +53,7 @@ system_configuration:
         oro_pricing.offset_of_processing_cpl_prices:
             data_type: float
             type: number
+            search_type: text
             options:
                 label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
                 tooltip: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip

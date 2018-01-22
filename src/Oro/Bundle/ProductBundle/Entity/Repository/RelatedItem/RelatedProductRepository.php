@@ -74,8 +74,7 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
         if ($productIds) {
             $products = $this->getEntityManager()
                 ->getRepository(Product::class)
-                //@Todo: This is a temporary fix. Should be fixed in scope BB-13311
-                ->findBy(['id' => $productIds], ['id' => 'ASC'], $limit || $limit === 0 ? $limit : null);
+                ->findBy(['id' => $productIds], ['id' => 'ASC'], $limit);
         }
 
         return $products;

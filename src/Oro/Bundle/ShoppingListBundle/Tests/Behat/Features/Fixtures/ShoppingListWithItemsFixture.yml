@@ -1,0 +1,58 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision2:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: Product1
+    locvalue2:
+        string: Product2
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'BB2'
+        primaryUnitPrecision: '@precision2'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List 1'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem2:
+       product: '@product2'
+       quantity: '10'
+       unit: '@piece'
+       customerUser: '@amanda'
+       shoppingList: '@shoppinglist1'
+       organization: '@organization'

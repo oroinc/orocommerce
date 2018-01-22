@@ -859,24 +859,22 @@ datagrids:
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
                     - { table: %oro_product.entity.brand.class%, alias: brand }
         columns:
-            name:
+            defaultTitle:
                 label: oro.product.brand.label
         properties:
             id: ~
-            name:
-                type: localized_value
-                data_name: brand.names
         sorters:
             columns:
-                name:
-                    data_name: name
+                defaultTitle:
+                    data_name: brand.defaultTitle
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                defaultTitle: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
-                name:
+                defaultTitle:
                     type:      string
-                    data_name: name
+                    data_name: brand.defaultTitle

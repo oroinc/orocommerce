@@ -130,7 +130,7 @@ Feature: Showing upsell products
       And I should see "PSKU1" product
       And I click "Product 1"
       And I should see "Up-sell Products"
-      And I should see "Add to Shopping list" in upsell products
+      And I should see "Add to Shopping List" in upsell products
       And I proceed as the Admin
       And go to System/ Configuration
       And I follow "Commerce/Catalog/Related Items" on configuration sidebar

@@ -568,7 +568,7 @@ class ShippingMethodViewCollectionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCount()
+    public function testIsEmpty()
     {
         $collection = $this->createCollection();
 
@@ -579,8 +579,16 @@ class ShippingMethodViewCollectionTest extends \PHPUnit_Framework_TestCase
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
+        $methodTypeView = [
+            'someTypeField1' => 'someTypeValue1',
+            'someTypeField2' => 'someTypeValue2',
+        ];
 
         $collection->addMethodView($methodId, $methodView);
+
+        $this->assertTrue($collection->isEmpty());
+
+        $collection->addMethodTypeView($methodId, 'someMethodTypeId', $methodTypeView);
 
         $this->assertFalse($collection->isEmpty());
 

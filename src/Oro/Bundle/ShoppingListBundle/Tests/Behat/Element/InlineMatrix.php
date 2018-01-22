@@ -10,16 +10,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 /**
- * It supports both two-dimensional and one-dimensional matrix forms
+ * It supports two-dimensional matrix forms
  * Usage examples:
- *
- * And I fill "Matrix Grid Form" with:
- * | Value A | Value B | Value C |
- * | 2       | 3       | -       |
- *
- * Then I should see next rows in "Matrix Grid Form" table
- * | Value A | Value B | Value C |
- * | 2       | 3       |         |
  *
  * And I fill "Matrix Grid Form" with:
  * |         | Value X | Value Y | Value Z |

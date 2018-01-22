@@ -1,0 +1,7 @@
+services:
+    oro_fedex_shipping.form.type.shipping_method_options:
+        class: 'Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType'
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }

@@ -20,6 +20,7 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroRFPBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
@@ -77,7 +78,7 @@ oro_behat_extension:
 
     AllQuotes:
       selector: 'div[data-page-component-name="frontend-quotes-grid"]'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
     First Product Quantity on Quote:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
