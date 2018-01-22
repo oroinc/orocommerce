@@ -1,0 +1,9 @@
+{% block _matrix_grid_order_actions_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' matrix-order-widget__actions-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

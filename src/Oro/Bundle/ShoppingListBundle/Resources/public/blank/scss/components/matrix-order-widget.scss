@@ -633,9 +633,27 @@
     }
 
     .clear-button {
+        &--mobile {
+            width: $matrix-order-widget-clear-button-mobile-width;
+            border-color: $matrix-order-widget-clear-button-mobile-border-color;
+
+            @include element-state('hover') {
+                border-color: $matrix-order-widget-clear-button-mobile-border-color;
+            }
+
+            @include element-state('focus') {
+                border-color: $matrix-order-widget-clear-button-mobile-border-color;
+            }
+        }
+
         &.disabled {
             color: $matrix-order-widget-form-col-color;
         }
+    }
+
+    &__actions-container {
+        margin: $matrix-order-widget-actions-container-offset;
+        padding: $matrix-order-widget-actions-container-inner-offset;
     }
 }
 
