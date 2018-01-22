@@ -15,7 +15,6 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
 {
     const URL_KEY = 'url';
     const SLUG_PROTOTYPE_KEY = 'slug_prototype';
-    const LOCALIZATION_ID_KEY = 'localization_id';
     const SLUG_ROUTES_KEY = '__slug_routes__';
 
     /**
@@ -93,13 +92,17 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
     {
         $slugData = $this->getSlugData($routeName, $routeParameters, $localizationId);
 
-        // store in the persistent cache to bypass database read in future
+        // Store in the persistent cache to bypass database read in future
+        // Store URL for requested localizationId even for cases where repository returns URL for default localization
+        // to increase cache hits.
+        // On slug changes caches should be refreshed during new Slug entities actualization
+        // by queue processor DirectUrlProcessor
         $this->cache->setUrl(
             $routeName,
             $routeParameters,
             $slugData[self::URL_KEY],
             $slugData[self::SLUG_PROTOTYPE_KEY],
-            $slugData[self::LOCALIZATION_ID_KEY]
+            $localizationId
         );
 
         if ($this->cache instanceof FlushableCache) {
@@ -124,8 +127,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         if (!$slugData) {
             $slugData = [
                 self::URL_KEY => null,
-                self::SLUG_PROTOTYPE_KEY => null,
-                self::LOCALIZATION_ID_KEY => null
+                self::SLUG_PROTOTYPE_KEY => null
             ];
         }
 

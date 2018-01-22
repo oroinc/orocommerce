@@ -59,7 +59,7 @@ Feature: Mass Product Actions processing
       | PSKU1 | 10       | set  |
       | PSKU2 | 15       | item |
 
-  Scenario: "Add to current shopping list" mass action on the category list view
+  Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
     And I click "All Products"
     And I click "Search Button"
@@ -67,7 +67,7 @@ Feature: Mass Product Actions processing
     And I fill line item with "PSKU3" in frontend product grid:
       | Quantity | 7    |
       | Unit     | set  |
-    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping List of Amanda" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "1 product was added" flash message
     When I hover on "Shopping Cart"
     And click "Shopping List of Amanda"
@@ -119,4 +119,4 @@ Feature: Mass Product Actions processing
     And I check PSKU3 record in "Product Frontend Grid" grid
     And click "Product Frontend Mass Action Button"
     Then I should not see "Shopping List of Amanda"
-    And I should see "Add to current Shopping List"
+    And I should see "Add to Shopping list"

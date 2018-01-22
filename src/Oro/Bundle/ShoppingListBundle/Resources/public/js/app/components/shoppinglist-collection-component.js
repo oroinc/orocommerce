@@ -37,7 +37,8 @@ define(function(require) {
         },
 
         comparator: function(model) {
-            return model.get('id');
+            //0 for current SL - should be first
+            return model.get('is_current') ? 0 : model.get('id');
         },
 
         _onLineItemsUpdate: function(model, response) {
@@ -52,9 +53,17 @@ define(function(require) {
                 );
             }
 
-            if (response.product) {
-                model.set('shopping_lists', response.product.shopping_lists, {silent: true});
+            var updateModel = function(model, product) {
+                model.set('shopping_lists', product.shopping_lists, {silent: true});
                 model.trigger('change:shopping_lists');
+            };
+            if (response.product && !_.isArray(model)) {
+                updateModel(model, response.product);
+            } else if (response.products && _.isArray(model)) {
+                model = _.indexBy(model, 'id');
+                _.each(response.products, function(product) {
+                    updateModel(model[product.id], product);
+                });
             }
 
             if (response.shoppingList && !this.collection.find({id: response.shoppingList.id})) {

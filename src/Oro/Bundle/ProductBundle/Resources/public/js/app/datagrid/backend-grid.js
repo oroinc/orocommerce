@@ -235,6 +235,14 @@ define(function(require) {
             }
         },
 
+        getMassActions: function() {
+            return this.metadataModel.get('massActions');
+        },
+
+        setMassActions: function(massActions) {
+            this.metadataModel.set('massActions', massActions);
+        },
+
         onWindowUnload: function() {
             if (!this.selectState.isEmpty()) {
                 return __('oro.ui.leave_page_with_unsaved_data_confirm');

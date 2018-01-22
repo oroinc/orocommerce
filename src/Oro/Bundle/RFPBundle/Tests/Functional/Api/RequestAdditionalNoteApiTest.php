@@ -59,7 +59,8 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
             $this->getUrl($routeName, array_merge(['entity' => 'requestadditionalnotes'], $param))
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
+        self::assertEquals('GET', $response->headers->get('Allow'));
     }
 
     /**

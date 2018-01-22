@@ -14,6 +14,9 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Schedule Slug regeneration for Sluggable entity which has changed Slug prototypes
+ */
 class SluggableEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;

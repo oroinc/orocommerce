@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -151,5 +152,91 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
             ->with($shoppingLists, $productCount, $localization);
 
         $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount, $localization);
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigurableProductsFromShoppingListDataProvider()
+    {
+        $configurableProduct100 = $this->getEntity(Product::class, ['id' => 100]);
+        $configurableProduct200 = $this->getEntity(Product::class, ['id' => 200]);
+        $variantProduct1 = $this->getEntity(Product::class, ['id' => 10]);
+        $variantProduct2 = $this->getEntity(Product::class, ['id' => 20]);
+        $variantProduct3 = $this->getEntity(Product::class, ['id' => 30]);
+        $simpleProduct1 = $this->getEntity(Product::class, ['id' => 1]);
+        $simpleProduct2 = $this->getEntity(Product::class, ['id' => 2]);
+        $simpleProduct3 = $this->getEntity(Product::class, ['id' => 3]);
+
+        $lineItemSimple1 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProduct1,
+        ]);
+        $lineItemSimple2 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProduct2,
+        ]);
+        $lineItemConfigurable1 = $this->getEntity(LineItem::class, [
+            'product' => $variantProduct1,
+            'parentProduct' => $configurableProduct100,
+        ]);
+        $lineItemConfigurable2 = $this->getEntity(LineItem::class, [
+            'product' => $variantProduct2,
+            'parentProduct' => $configurableProduct100,
+        ]);
+        $lineItemConfigurable3 = $this->getEntity(LineItem::class, [
+            'product' => $variantProduct3,
+            'parentProduct' => $configurableProduct200,
+        ]);
+        $lineItemSimple3 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProduct3,
+        ]);
+
+        $shoppingListEmpty = $this->getEntity(ShoppingList::class, [
+            'lineItems' => []
+        ]);
+        $shoppingListSimple = $this->getEntity(ShoppingList::class, [
+            'lineItems' => [
+                $lineItemSimple1,
+                $lineItemSimple2,
+                $lineItemSimple3,
+            ]
+        ]);
+        $shoppingListSimpleAndConfigurable = $this->getEntity(ShoppingList::class, [
+            'lineItems' => [
+                $lineItemSimple1,
+                $lineItemSimple2,
+                $lineItemConfigurable1,
+                $lineItemConfigurable2,
+                $lineItemConfigurable3,
+                $lineItemSimple3,
+            ]
+        ]);
+
+        return [
+            'empty shopping list' => [
+                $shoppingListEmpty,
+                [],
+            ],
+            'shopping without configurable products' => [
+                $shoppingListSimple,
+                [],
+            ],
+            'shopping with configurable products' => [
+                $shoppingListSimpleAndConfigurable,
+                [
+                    100 => $configurableProduct100,
+                    200 => $configurableProduct200,
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Product[] $expected
+     * @dataProvider getConfigurableProductsFromShoppingListDataProvider
+     */
+    public function testGetConfigurableProductsFromShoppingList(ShoppingList $shoppingList, $expected)
+    {
+        $this->assertEquals($expected, $this->provider->getConfigurableProductsFromShoppingList($shoppingList));
     }
 }

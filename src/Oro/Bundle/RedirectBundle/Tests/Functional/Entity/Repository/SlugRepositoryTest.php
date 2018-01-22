@@ -349,8 +349,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization() ? $expected->getLocalization()->getId() : null
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );
@@ -373,8 +372,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization()->getId()
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );
@@ -391,8 +389,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertNotEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization()->getId()
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );

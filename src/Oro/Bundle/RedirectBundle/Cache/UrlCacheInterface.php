@@ -6,7 +6,6 @@ interface UrlCacheInterface
 {
     const SLUG_KEY = 's';
     const URL_KEY = 'u';
-    const DEFAULT_LOCALIZATION_ID = 0;
 
     /**
      * @param string $routeName

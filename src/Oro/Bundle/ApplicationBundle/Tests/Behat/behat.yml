@@ -235,26 +235,36 @@ oro_behat_extension:
         type: xpath
 
     Matrix Grid Form:
-      selector: 'form[name="matrix_collection"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Black L: 'matrix_collection[rows][0][columns][0][quantity]'
-          Black M: 'matrix_collection[rows][0][columns][1][quantity]'
-          White L: 'matrix_collection[rows][1][columns][0][quantity]'
-          White M: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 11: 'matrix_collection[rows][0][columns][0][quantity]'
-          Value 12: 'matrix_collection[rows][1][columns][0][quantity]'
-          Value 13: 'matrix_collection[rows][2][columns][0][quantity]'
-          Value 14: 'matrix_collection[rows][3][columns][0][quantity]'
-          Value 21: 'matrix_collection[rows][0][columns][1][quantity]'
-          Value 22: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 23: 'matrix_collection[rows][2][columns][1][quantity]'
-          Value 24: 'matrix_collection[rows][3][columns][1][quantity]'
-          Value 31: 'matrix_collection[rows][0][columns][2][quantity]'
-          Value 32: 'matrix_collection[rows][1][columns][2][quantity]'
-          Value 33: 'matrix_collection[rows][2][columns][2][quantity]'
-          Value 34: 'matrix_collection[rows][3][columns][2][quantity]'
+      selector:
+        type: xpath
+        locator: '//*[@data-matrix-grid-container and contains(@class, "matrix-order-widget__grid--multi-rows")]/ancestor::form[@name="matrix_collection"]'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrix
+
+    One Dimensional Matrix Grid Form:
+      selector:
+        type: xpath
+        locator: '//*[@data-matrix-grid-container and not(contains(@class, "matrix-order-widget__grid--multi-rows"))]/ancestor::form[@name="matrix_collection"]'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixOneDimensional
+
+    InlineMatrixHeader:
+      selector: '.matrix-order-widget__grid-head-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeader
+
+    InlineMatrixHeaderOneDimensional:
+      selector: '.matrix-order-widget__form__row'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeaderOneDimensional
+
+    InlineMatrixRowHeader:
+      selector: '.matrix-order-widget__grid-side-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowHeader
+
+    InlineMatrixRow:
+      selector: '.matrix-order-widget__form__col'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRow
+
+    InlineMatrixRowOneDimensional:
+      selector: '.matrix-order-widget__form__row'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowOneDimensional
 
     Configurable Product Shopping List Form:
       selector: 'form[name="oro_product_product_variant_frontend_variant_field"]'

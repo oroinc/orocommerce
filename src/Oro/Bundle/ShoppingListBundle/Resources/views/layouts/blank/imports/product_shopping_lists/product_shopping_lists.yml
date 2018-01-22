@@ -8,7 +8,8 @@ layout:
                     blockType: product_shopping_lists
                     options:
                         productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'
-                        visible: '=data.offsetExists("product") ? data["oro_product_form_availability"].isSimpleFormAvailable(data["product"]) : true'
+                        vars:
+                            product: '=data.offsetExists("product") ? data["oro_product_variant"].getProductVariantOrProduct(data)'
                 __shopping_lists_template:
                     blockType: container
                 __shopping_lists_template_preview:
