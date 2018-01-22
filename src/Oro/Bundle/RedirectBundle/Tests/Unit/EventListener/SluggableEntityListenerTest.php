@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -13,6 +15,8 @@ use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -137,7 +141,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->sluggableEntityListener->postPersist($args);
         $this->assertAttributeEquals(
-            [get_class($entity) => [$entityId]],
+            [get_class($entity) => [true => [$entityId]]],
             'sluggableEntities',
             $this->sluggableEntityListener
         );
@@ -270,7 +274,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $sluggableEntities = [get_class($entity) => [$entityId]];
+        $sluggableEntities = [get_class($entity) => [true => [$entityId]]];
 
         $this->sluggableEntityListener->onFlush($event);
 
@@ -317,7 +321,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $sluggableEntities = [get_class($entity) => [$entityId]];
+        $sluggableEntities = [get_class($entity) => [true => [$entityId]]];
 
         $this->sluggableEntityListener->onFlush($event);
 
@@ -345,24 +349,18 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEmpty('sluggableEntities', $this->sluggableEntityListener);
     }
 
-    public function testPostFlush()
+    /**
+     * @dataProvider slugPrototypeWithRedirectDataProvider
+     */
+    public function testPostFlushWithSlugPrototypeWithRedirect(bool $createRedirect, bool $expectedCreateRedirect)
     {
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $args **/
-        $args = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $entityId = 1;
-
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->createMock(SluggableInterface::class);
-        $entity->expects($this->once())
-            ->method('getId')
-            ->willReturn($entityId);
-
-        $args->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($entity);
+        $entity = new SluggableEntityStub();
+        $entity->setId($entityId);
+        $entity->setSlugPrototypesWithRedirect(new SlugPrototypesWithRedirect(
+            new ArrayCollection([new LocalizedFallbackValue()]),
+            $createRedirect
+        ));
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -372,18 +370,95 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $message = [
             'id' => [$entityId],
             'class' => get_class($entity),
-            'createRedirect' => false
+            'createRedirect' => $createRedirect
         ];
         $this->messageFactory->expects($this->once())
             ->method('createMassMessage')
-            ->with(get_class($entity), [$entityId], false)
+            ->with(get_class($entity), [$entityId], $expectedCreateRedirect)
             ->willReturn($message);
 
-        $this->sluggableEntityListener->postPersist($args);
+        $this->sluggableEntityListener
+            ->postPersist(new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class)));
 
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+
+        $this->sluggableEntityListener->postFlush();
+    }
+
+    /**
+     * @return array
+     */
+    public function slugPrototypeWithRedirectDataProvider(): array
+    {
+        return [
+            'create redirect is true' => [
+                'createRedirect' => true,
+                'expectedCreateRedirect' => true
+            ],
+            'create redirect is false' => [
+                'createRedirect' => false,
+                'expectedCreateRedirect' => false
+            ]
+        ];
+    }
+
+    public function testPostFlushWithSlugPrototypeWithRedirectWithMultiple()
+    {
+        $entityWithoutRedirectId = 1;
+        $entityWithoutRedirect = new SluggableEntityStub();
+        $entityWithoutRedirect->setId($entityWithoutRedirectId);
+        $entityWithoutRedirect->setSlugPrototypesWithRedirect(new SlugPrototypesWithRedirect(
+            new ArrayCollection([new LocalizedFallbackValue()]),
+            false
+        ));
+
+        $entityWithRedirectId = 1;
+        $entityWithRedirect = new SluggableEntityStub();
+        $entityWithRedirect->setId($entityWithoutRedirectId);
+        $entityWithRedirect->setSlugPrototypesWithRedirect(new SlugPrototypesWithRedirect(
+            new ArrayCollection([new LocalizedFallbackValue()]),
+            true
+        ));
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
+
+        $messageWithoutRedirect = [
+            'id' => [$entityWithoutRedirectId],
+            'class' => get_class($entityWithoutRedirect),
+            'createRedirect' => false
+        ];
+
+        $messageWithRedirect = [
+            'id' => [$entityWithRedirectId],
+            'class' => get_class($entityWithRedirect),
+            'createRedirect' => true
+        ];
+
+        $this->messageFactory->expects($this->exactly(2))
+            ->method('createMassMessage')
+            ->withConsecutive(
+                [get_class($entityWithoutRedirect), [$entityWithoutRedirectId]],
+                [get_class($entityWithoutRedirect), [$entityWithRedirectId]]
+            )
+            ->willReturnOnConsecutiveCalls($messageWithoutRedirect, $messageWithRedirect);
+
+        $this->sluggableEntityListener
+            ->postPersist(new LifecycleEventArgs($entityWithoutRedirect, $this->createMock(ObjectManager::class)));
+
+        $this->sluggableEntityListener
+            ->postPersist(new LifecycleEventArgs($entityWithRedirect, $this->createMock(ObjectManager::class)));
+
+        $this->messageProducer->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithoutRedirect],
+                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithRedirect]
+            );
 
         $this->sluggableEntityListener->postFlush();
     }
