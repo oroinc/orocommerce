@@ -115,6 +115,7 @@ trait BasicOperationRepositoryTrait
      */
     protected function applyWhereCondition(QueryBuilder $queryBuilder, array $where, $parameterIndex = 0)
     {
+        $parameterIndex = (int)$parameterIndex;
         foreach ($where as $field => $value) {
             $parameterIndex++;
             $parameterName = 'parameter' . $parameterIndex;
