@@ -93,10 +93,12 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     public function postFlush()
     {
-        foreach ($this->sluggableEntities as $entityClass => $ids) {
-            $message = $this->messageFactory->createMassMessage($entityClass, $ids, false);
+        foreach ($this->sluggableEntities as $entityClass => $entityInfo) {
+            foreach ($entityInfo as $createRedirect => $ids) {
+                $message = $this->messageFactory->createMassMessage($entityClass, $ids, (bool)$createRedirect);
 
-            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+                $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            }
         }
 
         $this->sluggableEntities = [];
@@ -165,8 +167,13 @@ class SluggableEntityListener implements OptionalListenerInterface
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
+            $createRedirect = true;
+            if ($entity->getSlugPrototypesWithRedirect()) {
+                $createRedirect = $entity->getSlugPrototypesWithRedirect()->getCreateRedirect();
+            }
+
             $entityClass = ClassUtils::getClass($entity);
-            $this->sluggableEntities[$entityClass][] = $entity->getId();
+            $this->sluggableEntities[$entityClass][$createRedirect][] = $entity->getId();
         }
     }
 }
