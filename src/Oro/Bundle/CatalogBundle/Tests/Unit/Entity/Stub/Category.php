@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category as BaseCategory;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,6 +25,11 @@ class Category extends BaseCategory
      * @var ArrayCollection
      */
     private $products;
+
+    /**
+     * @var File
+     */
+    private $smallImage;
 
     /**
      * @var array
@@ -114,5 +120,37 @@ class Category extends BaseCategory
     public function getProducts()
     {
         return $this->products;
+    }
+
+    /**
+     * @param ArrayCollection $products
+     *
+     * @return Category
+     */
+    public function setProducts(ArrayCollection $products)
+    {
+        $this->products = $products;
+
+        return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getSmallImage()
+    {
+        return $this->smallImage;
+    }
+
+    /**
+     * @param File $smallImage
+     *
+     * @return Category
+     */
+    public function setSmallImage(File $smallImage)
+    {
+        $this->smallImage = $smallImage;
+
+        return $this;
     }
 }
