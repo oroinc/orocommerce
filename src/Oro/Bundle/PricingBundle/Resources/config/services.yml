@@ -927,6 +927,7 @@ services:
         arguments:
             - '@oro_pricing.cache.rule_cache.storage'
             - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
 
     oro_pricing.duplicator.price_list_to_product_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator'
