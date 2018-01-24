@@ -27,9 +27,7 @@
     } %}
 
     <div class="product-container" data-role="grid-sidebar-component-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
-            scrollbar: '[data-role="sidebar-content"]'
-        }} %}
+        {% embed "OroUIBundle::content_sidebar.html.twig" %}
             {% block sidebar %}
                 <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                      data-page-component-options="{{ componentOptions|json_encode }}"
