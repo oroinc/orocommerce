@@ -6,11 +6,13 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 class RuleCache implements Cache
 {
     const DQL_PARTS_KEY = 'dql_parts';
     const PARAMETERS_KEY = 'parameters';
+    const HASH = 'hash';
 
     /**
      * @var Cache
@@ -23,13 +25,20 @@ class RuleCache implements Cache
     protected $registry;
 
     /**
+     * @var SymmetricCrypterInterface
+     */
+    private $crypter;
+
+    /**
      * @param Cache $cache
      * @param ManagerRegistry $registry
+     * @param SymmetricCrypterInterface $crypter
      */
-    public function __construct(Cache $cache, ManagerRegistry $registry)
+    public function __construct(Cache $cache, ManagerRegistry $registry, SymmetricCrypterInterface $crypter)
     {
         $this->cacheStorage = $cache;
         $this->registry = $registry;
+        $this->crypter = $crypter;
     }
 
     /**
@@ -39,7 +48,9 @@ class RuleCache implements Cache
     {
         if ($this->contains($id)) {
             $data = $this->cacheStorage->fetch($id);
-            if ($data) {
+            if ($data
+                && (!empty($data[self::HASH]) && $this->getHash($data[self::DQL_PARTS_KEY]) === $data[self::HASH])
+            ) {
                 return $this->restoreQueryBuilder($data);
             }
         }
@@ -65,7 +76,8 @@ class RuleCache implements Cache
                 $id,
                 [
                     self::DQL_PARTS_KEY => $data->getDQLParts(),
-                    self::PARAMETERS_KEY => $data->getParameters()
+                    self::PARAMETERS_KEY => $data->getParameters(),
+                    self::HASH => $this->getHash($data->getDQLParts())
                 ],
                 $lifeTime
             );
@@ -114,5 +126,14 @@ class RuleCache implements Cache
         $qb->setParameters($data[self::PARAMETERS_KEY]);
         
         return $qb;
+    }
+
+    /**
+     * @param array $dqlParts
+     * @return string
+     */
+    private function getHash(array $dqlParts)
+    {
+        return md5($this->crypter->encryptData(serialize($dqlParts)));
     }
 }
