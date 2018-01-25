@@ -59,13 +59,13 @@ define([
             var url = $form.attr('action');
             var value = $(this.el).find(this.options.methodSelectSelector).val();
             data.push({
-                'name': 'oro_payment_methods_configs_rule[methodConfigs][' + this.methodCount + '][type]',
-                'value': value
+                name: 'oro_payment_methods_configs_rule[methodConfigs][' + this.methodCount + '][type]',
+                value: value
             });
             this.methodCount++;
             data.push({
-                'name': this.options.updateFlag,
-                'value': true
+                name: this.options.updateFlag,
+                value: true
             });
             mediator.execute('submitPage', {
                 url: url,

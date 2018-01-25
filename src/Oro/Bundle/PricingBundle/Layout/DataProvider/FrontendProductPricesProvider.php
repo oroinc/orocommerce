@@ -74,11 +74,7 @@ class FrontendProductPricesProvider
      */
     public function getByProduct(Product $product)
     {
-        if (!$product) {
-            return null;
-        }
-
-        $this->setProductsPrices([$product]);
+        $this->prepareAndSetProductsPrices([$product]);
 
         return $this->productPrices[$product->getId()];
     }
@@ -89,7 +85,7 @@ class FrontendProductPricesProvider
      */
     public function getByProducts($products)
     {
-        $this->setProductsPrices($products);
+        $this->prepareAndSetProductsPrices($products);
         $productPrices = [];
 
         foreach ($products as $product) {
@@ -103,20 +99,9 @@ class FrontendProductPricesProvider
     }
 
     /**
-     * @param Product $product
-     * @return array
-     */
-    public function getSimpleByConfigurable($product)
-    {
-        $products = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-
-        return $this->getByProducts($products);
-    }
-
-    /**
      * @param Product[] $products
      */
-    protected function setProductsPrices($products)
+    protected function prepareAndSetProductsPrices($products)
     {
         $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->productPrices);
@@ -125,6 +110,23 @@ class FrontendProductPricesProvider
         if (!$products) {
             return;
         }
+
+        $configurableProducts = [];
+        foreach ($products as $product) {
+            if ($product->isConfigurable()) {
+                $configurableProducts[$product->getId()] = $this->productVariantAvailabilityProvider
+                    ->getSimpleProductsByVariantFields($product);
+                $products = array_merge($products, $configurableProducts[$product->getId()]);
+            }
+        }
+
+        // Can't use array_unique here, because it uses __toString() for comparison which uses LocalizedFallbackValue
+        // And array_unique with SORT_REGULAR option leads to nesting level error on complex objects
+        $uniqueProducts = [];
+        foreach ($products as $product) {
+            $uniqueProducts[$product->getId()] = $product;
+        }
+        $products = array_values($uniqueProducts);
 
         $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         $productsIds = array_map(
@@ -150,6 +152,23 @@ class FrontendProductPricesProvider
             ]
         );
 
+        $this->setProductsPrices($products, $prices);
+
+        foreach ($configurableProducts as $configurableId => $simpleProducts) {
+            foreach ($simpleProducts as $product) {
+                if ($this->productPrices[$product->getId()]) {
+                    $this->productPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Product[] $products
+     * @param ProductPrice[] $prices
+     */
+    protected function setProductsPrices($products, $prices)
+    {
         $productsPrices = [];
         foreach ($prices as $price) {
             $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [

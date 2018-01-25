@@ -8,9 +8,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -33,15 +35,20 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $managerRegistry;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductShoppingListsDataProvider */
+    protected $productShoppingListsDataProvider;
+
     protected function setUp()
     {
-        $this->shoppingListItemHandler = $this->getShoppingListItemHandler();
+        $this->shoppingListItemHandler = $this->createMock(ShoppingListLineItemHandler::class);
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->productShoppingListsDataProvider = $this->createMock(ProductShoppingListsDataProvider::class);
 
         $this->handler = new AddProductsMassActionHandler(
             $this->shoppingListItemHandler,
             $this->getMessageGenerator(),
-            $this->managerRegistry
+            $this->managerRegistry,
+            $this->productShoppingListsDataProvider
         );
     }
 
@@ -56,6 +63,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals(0, $response->getOptions()['count']);
+        $this->assertEquals([], $response->getOptions()['products']);
     }
 
     public function testHandleNotAllowed()
@@ -70,6 +78,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $response = $this->handler->handle($args);
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals(0, $response->getOptions()['count']);
+        $this->assertEquals([], $response->getOptions()['products']);
     }
 
     public function testHandleException()
@@ -122,7 +131,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn([
                 'shoppingList' => $shoppingList,
-                'values' => 3
+                'values' => '23,42,56'
             ]);
 
         $this->shoppingListItemHandler->expects($this->once())
@@ -149,10 +158,13 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(ShoppingList::class)
             ->willReturn($em);
 
+        $productsShoppingLists = $this->expectProductsShoppingLists();
+
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
         $this->assertEquals(self::MESSAGE, $response->getMessage());
+        $this->assertEquals($productsShoppingLists, $response->getOptions()['products']);
     }
 
     public function testHandle()
@@ -162,7 +174,10 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => $shoppingList, 'values' => 3]);
+            ->willReturn([
+                'shoppingList' => $shoppingList,
+                'values' => '23,42,56'
+            ]);
 
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
 
@@ -192,10 +207,13 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(ShoppingList::class)
             ->willReturn($em);
 
+        $productsShoppingLists = $this->expectProductsShoppingLists();
+
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
         $this->assertEquals(self::MESSAGE, $response->getMessage());
+        $this->assertEquals($productsShoppingLists, $response->getOptions()['products']);
     }
 
     public function testHandleWhenAllProductsSelected()
@@ -215,6 +233,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals(0, $response->getOptions()['count']);
         $this->assertEquals(self::MESSAGE, $response->getMessage());
+        $this->assertEquals([], $response->getOptions()['products']);
     }
 
     /**
@@ -222,9 +241,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMassActionArgs()
     {
-        $args = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $args = $this->createMock(MassActionHandlerArgs::class);
         $args->expects($this->any())
             ->method('getMassAction')
             ->willReturn(new AddProductsMassAction());
@@ -237,9 +254,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMessageGenerator()
     {
-        $translator = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $translator = $this->createMock(MessageGenerator::class);
         $translator->expects($this->any())
             ->method('getSuccessMessage')
             ->willReturn(self::MESSAGE);
@@ -247,26 +262,63 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         return $translator;
     }
 
-    /**
-     * @return ShoppingListLineItemHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getShoppingListItemHandler()
+    protected function expectProductsShoppingLists()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $shoppingList->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
+        $productRepository = $this->createMock(ProductRepository::class);
 
-        $shoppingList->expects($this->any())
-            ->method('getCustomerUser')
-            ->willReturn(new CustomerUser());
+        $this->managerRegistry->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($productRepository);
 
-        $shoppingListItemHandler = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $products = [
+            $this->getEntity(Product::class, ['id' => 23]),
+            $this->getEntity(Product::class, ['id' => 42]),
+            $this->getEntity(Product::class, ['id' => 56]),
+        ];
+        $productRepository->expects($this->once())
+            ->method('getProductsByIds')
+            ->with([23, 42, 56])
+            ->willReturn($products);
 
-        return $shoppingListItemHandler;
+        $shoppingListsByProducts = [
+            23 => [
+                $this->getEntity(ShoppingList::class, ['id' => 1]),
+            ],
+            42 => [
+                $this->getEntity(ShoppingList::class, ['id' => 1]),
+                $this->getEntity(ShoppingList::class, ['id' => 2]),
+            ],
+            56 => [
+                $this->getEntity(ShoppingList::class, ['id' => 2]),
+            ],
+        ];
+
+        $this->productShoppingListsDataProvider->expects($this->once())
+            ->method('getProductsUnitsQuantity')
+            ->with($products)
+            ->willReturn($shoppingListsByProducts);
+
+        return [
+            23 => [
+                'id' => 23,
+                'shopping_lists' => [
+                    $this->getEntity(ShoppingList::class, ['id' => 1]),
+                ],
+            ],
+            42 => [
+                'id' => 42,
+                'shopping_lists' => [
+                    $this->getEntity(ShoppingList::class, ['id' => 1]),
+                    $this->getEntity(ShoppingList::class, ['id' => 2]),
+                ],
+            ],
+            56 => [
+                'id' => 56,
+                'shopping_lists' => [
+                    $this->getEntity(ShoppingList::class, ['id' => 2]),
+                ],
+            ],
+        ];
     }
 }

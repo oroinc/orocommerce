@@ -416,6 +416,18 @@ class ProductRepositoryTest extends WebTestCase
                 'criteria' => ['sku' => 'UndefinedSku'],
                 'expectedSkus' => []
             ],
+            'insensitive type' => [
+                'criteria' => ['type' => 'SiMpLe'],
+                'expectedSkus' => [
+                    ProductFixture::PRODUCT_1,
+                    ProductFixture::PRODUCT_2,
+                    ProductFixture::PRODUCT_3,
+                    ProductFixture::PRODUCT_4,
+                    ProductFixture::PRODUCT_5,
+                    ProductFixture::PRODUCT_6,
+                    ProductFixture::PRODUCT_7,
+                ]
+            ],
         ];
     }
 

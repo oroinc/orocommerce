@@ -37,9 +37,9 @@ define(function(require) {
                 var $fields = $('td', element);
 
                 result.push({
-                    'sku': $fields.get(-1).textContent,
-                    'quantity': $fields.get(1).textContent,
-                    'unit': $fields.get(2).textContent
+                    sku: $fields.get(-1).textContent,
+                    quantity: $fields.get(1).textContent,
+                    unit: $fields.get(2).textContent
                 });
             }).promise().done(function() {
                 mediator.trigger('quick-add-import-form:submit', result);
@@ -76,7 +76,7 @@ define(function(require) {
                 if (that.options.validItemsCount !== undefined) {
                     subtitle = __(
                         'oro.product.frontend.quick_add.import_validation.subtitle',
-                        {'count': that.options.validItemsCount},
+                        {count: that.options.validItemsCount},
                         that.options.validItemsCount
                     );
                 }

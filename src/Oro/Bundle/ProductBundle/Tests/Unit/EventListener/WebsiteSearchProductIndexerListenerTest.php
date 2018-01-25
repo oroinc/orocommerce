@@ -152,6 +152,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->with([777])
             ->willReturn([777 => ['item', 'set']]);
 
+        $unitRepository->expects($this->once())
+            ->method('getPrimaryProductsUnits')
+            ->with([777])
+            ->willReturn([777 => 'item']);
+
         $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1001, 'fieldName' => 'sku']);
         $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => 1002, 'fieldName' => 'newArrival']);
         $attribute3 = $this->getEntity(FieldConfigModel::class, ['id' => 1003, 'fieldName' => 'descriptions']);
@@ -173,11 +178,17 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             );
 
         $this->registry
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('getRepository')
-            ->withConsecutive(['OroProductBundle:Product'], ['OroProductBundle:ProductUnit'], [AttributeFamily::class])
+            ->withConsecutive(
+                ['OroProductBundle:Product'],
+                ['OroProductBundle:ProductUnit'],
+                ['OroProductBundle:ProductUnit'],
+                [AttributeFamily::class]
+            )
             ->willReturnOnConsecutiveCalls(
                 $productRepository,
+                $unitRepository,
                 $unitRepository,
                 $attributeFamilyRepository
             );
@@ -245,6 +256,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'sku_uppercase' => [['value' => 'SKU123', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
+            'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [
                 [
@@ -292,6 +304,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     'all_text' => false
                 ]
             ],
+            'primary_unit' => [
+                [
+                    'value' => 'item',
+                    'all_text' => false
+                ]
+            ],
             'descriptions' => [
                 [
                     'value' => new PlaceholderValue(
@@ -300,7 +318,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     ),
                     'all_text' => false
                 ]
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());

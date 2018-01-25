@@ -56,5 +56,5 @@ define(function(require) {
         }
     });
 
-    return ShippingTrackingCollectionView ;
+    return ShippingTrackingCollectionView;
 });

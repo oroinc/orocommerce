@@ -60,7 +60,7 @@ define(function(require) {
             events: {
                 before: 'entry-point:quote:load:before',
                 after: 'entry-point:quote:load:after',
-                trigger: 'entry-point:quote:trigger',
+                trigger: 'entry-point:quote:trigger'
             }
         },
 
@@ -340,7 +340,7 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
-                var routeParams = {'id': productId};
+                var routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;
@@ -577,7 +577,6 @@ define(function(require) {
                 $(widget).find(self.options.offersPriceValueSelector).prop('readonly', true);
                 $(widget).find(self.options.offersQuantitySelector).prop('readonly', true);
             });
-
         },
 
         dispose: function() {

@@ -177,7 +177,7 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
-        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList, $concatNotes) {
+        $func = function (LineItem $duplicate) use ($lineItem, $concatNotes) {
             $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
         };
 
@@ -197,7 +197,7 @@ class ShoppingListManager
      */
     public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
     {
-        $func = function (LineItem $duplicate) use ($lineItem, $shoppingList) {
+        $func = function (LineItem $duplicate) use ($lineItem) {
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {
@@ -261,15 +261,13 @@ class ShoppingListManager
         /** @var LineItemRepository $repository */
         $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
+        $products = [];
         if ($product->isConfigurable()) {
-            $simpleProducts = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
-            if (!$simpleProducts) {
-                return 0;
-            }
-        } else {
-            $simpleProducts = [$product];
+            $products = $this->productVariantProvider->getSimpleProductsByVariantFields($product);
         }
-        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, $simpleProducts);
+        $products[] = $product;
+
+        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, $products);
 
         foreach ($lineItems as $lineItem) {
             $shoppingList->removeLineItem($lineItem);
@@ -429,6 +427,10 @@ class ShoppingListManager
     {
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
+
+        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
+            return [$this->getShoppingListForCustomerVisitor()];
+        }
 
         return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
     }

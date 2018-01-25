@@ -1,4 +1,3 @@
-/*global define*/
 define(['underscore', 'orotranslation/js/translator', 'jquery', 'oroui/js/messenger'
 ], function(_, __, $, messenger) {
     'use strict';
@@ -21,9 +20,9 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'oroui/js/messen
         var price = $(element);
 
         var priceList = price.find('input[name$="[priceList]"]');
-        var quantity  = price.find('input[name$="[quantity]"]');
-        var unit      = price.find('select[name$="[unit]"] option:selected');
-        var currency  = price.find('select[name$="[currency]"] option:selected');
+        var quantity = price.find('input[name$="[quantity]"]');
+        var unit = price.find('select[name$="[unit]"] option:selected');
+        var currency = price.find('select[name$="[currency]"] option:selected');
 
         return {
             priceList: priceList ? priceList.val() : undefined,

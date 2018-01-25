@@ -1,12 +1,32 @@
 layout:
+    imports:
+        -
+            id: shopping_list_matrix_grid_order
+            root: shopping_list_line_items_list_item_inline_matrix_form
+            namespace: shopping_list
+        -
+            id: oro_product_totals
+            root: shopping_list_line_items_list_specification_wrapper
+            namespace: matrix_shopping_list
     actions:
         - '@setBlockTheme':
             themes: 'view.html.twig'
+
+        - '@setOption':
+            id:  matrix_shopping_list_total_text
+            optionName: text
+            optionValue: 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'
         - '@setOption':
             id: title
             optionName: params
             optionValue:
                 '%label%': '=data["title"]'
+
+        - '@add':
+            id: shopping_list_line_items_list_item_matrix_popup_button
+            blockType: container
+            parentId: matrix_shopping_list_totals
+
         - '@add':
             id: order_taxes_template
             blockType: block
@@ -42,6 +62,7 @@ layout:
                     blockType: shopping_list_line_items_list
                     options:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
+                        lineItems: '=data["oro_shopping_list_matrix_grid_shopping_list"].getSortedLineItems(data["entity"])'
                         shoppingList: '=data["entity"]'
                         lineItemErrors: '=data["oro_line_item_violations"].getLineItemErrors(data["entity"].getLineItems())'
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
@@ -50,6 +71,8 @@ layout:
                         productsUnitSelectionVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getProductsUnitSelectionVisibilities(data["entity"])'
                         configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["entity"].getLineItems())'
                         lineItemsUnitVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getLineItemsUnitVisibilities(data["entity"])'
+                        vars:
+                            totalPrices: '=data["oro_shopping_list_matrix_grid_order"].getTotalsQuantityPrice(data["oro_shopping_list_products"].getConfigurableProductsFromShoppingList(data["entity"]), data["entity"])'
 
                 shopping_list_line_items_list_row:
                     blockType: container
@@ -57,9 +80,9 @@ layout:
                     blockType: container
                 shopping_list_line_items_list_item_description:
                     blockType: container
-                shopping_list_line_items_list_availability:
+                shopping_list_line_items_list_specification:
                     blockType: container
-                shopping_list_line_items_list_quantity:
+                shopping_list_line_items_list_specification_wrapper:
                     blockType: container
                 shopping_list_line_items_list_price:
                     blockType: container
@@ -75,10 +98,9 @@ layout:
                 shopping_list_line_items_list_item_inventory_status:
                     blockType: block
                 shopping_list_line_items_list_item_configurable_products:
-                    blockType: block
-
-                shopping_list_line_items_list_availability_inventory_status:
-                    blockType: block
+                    blockType: container
+                shopping_list_line_items_list_item_inline_matrix_form:
+                    blockType: container
 
                 shopping_list_line_items_list_quantity_form:
                     blockType: block
@@ -147,14 +169,14 @@ layout:
                                                 shopping_list_line_items_list_item_sku: ~
                                                 shopping_list_line_items_list_item_inventory_status: ~
                                                 shopping_list_line_items_list_item_configurable_products: ~
-                                        shopping_list_line_items_list_availability:
-                                            shopping_list_line_items_list_availability_inventory_status: ~
-                                        shopping_list_line_items_list_quantity:
-                                            shopping_list_line_items_list_quantity_form: ~
-                                        shopping_list_line_items_list_price:
-                                            shopping_list_line_items_list_price_info: ~
+                                        shopping_list_line_items_list_specification_wrapper:
+                                            shopping_list_line_items_list_specification:
+                                                shopping_list_line_items_list_quantity_form: ~
+                                                shopping_list_line_items_list_price:
+                                                    shopping_list_line_items_list_price_info: ~
                                         shopping_list_line_items_list_actions:
                                             shopping_list_line_items_list_actions_remove: ~
+                                        shopping_list_line_items_list_item_inline_matrix_form: ~
                                     shopping_list_line_items_list_errors: ~
                                     shopping_list_line_items_list_notes: ~
                                 shopping_list_line_items_empty: ~

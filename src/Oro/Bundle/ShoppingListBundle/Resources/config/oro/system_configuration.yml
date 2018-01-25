@@ -14,6 +14,8 @@ system_configuration:
             title: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
         shopping_list_options:
             title: oro.shoppinglist.system_configuration.groups.shopping_list_options.title
+        configurable_products_matrix_form:
+            title: oro.shoppinglist.system_configuration.groups.configurable_product_matrix_form_on_shopping_list.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
@@ -86,4 +88,3 @@ system_configuration:
                                     shopping_list_options:
                                         children:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
-

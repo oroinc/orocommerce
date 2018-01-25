@@ -3,4 +3,5 @@ styles:
         - 'bundles/oropricing/blank/scss/variables/product-price-filter-config.scss'
         - 'bundles/oropricing/blank/scss/variables/product-price-config.scss'
         - 'bundles/oropricing/blank/scss/variables/product-prices-config.scss'
+        - 'bundles/oropricing/blank/scss/variables/product-totals-config.scss'
         - 'bundles/oropricing/blank/scss/styles.scss'

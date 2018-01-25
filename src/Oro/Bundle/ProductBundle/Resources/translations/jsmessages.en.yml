@@ -135,6 +135,8 @@ oro:
             quantity:
                 required: Quantity is required
                 greaterThanZero: Quantity should be greater than 0
+            configurable:
+                required: Please provide at least one value before adding the product to your shopping list
         frontend:
             quick_add:
                 import_from_file:

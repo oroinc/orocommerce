@@ -45,7 +45,7 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
             }
         }
 
-        if ($newCategory && !$newCategory->hasProduct($product)) {
+        if ($newCategory && !$newCategory->getProducts()->contains($product)) {
             // We can't add product to category directly due to doctrine2 bug
             $this->productsToAdd[] = [$newCategory, $product];
         }
