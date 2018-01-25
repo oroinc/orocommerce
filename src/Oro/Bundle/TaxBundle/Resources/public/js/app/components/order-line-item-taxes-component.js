@@ -106,7 +106,7 @@ define(function(require) {
          */
         setOrderTaxes: function(response) {
             var result = _.defaults(response, {taxItems: {}});
-            var itemId =  this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
+            var itemId = this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
 
             if (!_.has(result.taxItems, itemId)) {
                 return;

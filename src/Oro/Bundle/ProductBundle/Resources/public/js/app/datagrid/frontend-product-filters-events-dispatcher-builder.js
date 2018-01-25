@@ -41,8 +41,8 @@ define(['jquery'], function($) {
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
                 var validation = new FiltersEventsDispatcher({
-                    'grid': grid,
-                    'options': options
+                    grid: grid,
+                    options: options
                 });
                 deferred.resolve(validation);
             }).fail(function() {

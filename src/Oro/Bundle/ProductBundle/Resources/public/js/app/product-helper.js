@@ -6,8 +6,8 @@ define(function(require) {
 
     ProductHelper = {
         trimWhiteSpace: function(val) {
-            val = val.replace(/(\n|\r\n|^)\s+/g, '$1')//trim white space in each line start
-                .replace(/\s+(\n|\r\n|$)/g, '$1');//trim white space in each line end
+            val = val.replace(/(\n|\r\n|^)\s+/g, '$1')// trim white space in each line start
+                .replace(/\s+(\n|\r\n|$)/g, '$1');// trim white space in each line end
 
             return val;
         },

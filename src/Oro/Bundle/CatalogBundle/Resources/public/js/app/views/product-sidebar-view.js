@@ -73,7 +73,7 @@ define(function(require) {
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
                 config.dnd = {
-                    'is_draggable': false
+                    is_draggable: false
                 };
             }
 

@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -167,7 +165,7 @@ define(function(require) {
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
-                this.onQuantityChange.call(this);
+                this.onQuantityChange();
             }, this));
 
             this.$quantity.on('keyup', _.bind(function() {
