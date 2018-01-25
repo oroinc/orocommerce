@@ -427,6 +427,10 @@ oro_behat_extension:
           Product Collection Segment Name:
             type: css
             locator: '.content-variant-item:not([class*="content-variant-item-default"]) [id*="productCollectionSegment_name"]'
+          First System Page Customer Group:
+            type: css
+            locator: 'div.content-variant-item:first-child input[data-name="field__customer-group"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition a.close'
