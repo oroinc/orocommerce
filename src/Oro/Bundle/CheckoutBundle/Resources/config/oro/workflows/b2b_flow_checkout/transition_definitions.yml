@@ -58,7 +58,12 @@ workflows:
                     - '@transit_workflow':
                        [$checkout, 'start_checkout_as_guest_system', 'b2b_flow_checkout']
 
-            start_checkout_as_guest_system_definition: ~
+            start_checkout_as_guest_system_definition:
+                actions:
+                    - '@redirect':
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
 
             continue_checkout_as_guest_definition: ~
 
