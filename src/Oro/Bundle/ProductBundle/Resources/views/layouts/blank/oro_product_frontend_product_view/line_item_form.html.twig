@@ -24,10 +24,16 @@
         </div>
     {% else %}
         <div class="product-view-quantity fields-row">
-            <div class="product-view-quantity__unit">
-                {{ form_widget(form.unit) }}
+            <div class="product-view-quantity__unit{% if form.unit.vars.choices|length == 1 %} product-view-quantity__unit--half{% endif %}">
+                {% if form.unit.vars.choices|length > 1 %}
+                    {{ form_widget(form.unit) }}
+                {% else %}
+                    <div class="product-view-quantity__unit-label">
+                        {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label|capitalize }}
+                    </div>
+                {% endif %}
             </div>
-            <div class="product-view-quantity__value">
+            <div class="product-view-quantity__value{% if form.unit.vars.choices|length == 1 %} product-view-quantity__value--half{% endif %}">
                 {{ form_widget(form.quantity) }}
             </div>
             <div class="fields-row-error"></div>

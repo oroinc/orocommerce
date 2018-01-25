@@ -18,6 +18,10 @@
         display: inline-block;
     }
 
+    &__select-label {
+        width: 82px;
+    }
+
     &__select .select2-chosen {
         min-width: 50px;
     }
