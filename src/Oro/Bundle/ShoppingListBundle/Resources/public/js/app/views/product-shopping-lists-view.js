@@ -45,8 +45,8 @@ define(function(require) {
 
         initModel: function(options) {
             var modelAttr = _.each(options.modelAttr, function(value, attribute) {
-                    options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
-                }) || {};
+                options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
+            }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
 
             if (options.productModel) {
@@ -115,7 +115,7 @@ define(function(require) {
                 {line_items: current.line_items},
                 this.shoppingListCollection.get(current.id).toJSON()
             );
-        },
+        }
     }));
 
     return ProductShoppingListsView;

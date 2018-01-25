@@ -1,4 +1,3 @@
-/** @lends PaymentValidateComponent */
 define(function(require) {
     'use strict';
 
@@ -8,7 +7,7 @@ define(function(require) {
 
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    PaymentValidateComponent = BaseComponent.extend(/** @exports PaymentValidateComponent.prototype */ {
+    PaymentValidateComponent = BaseComponent.extend(/** @lends PaymentValidateComponent.prototype */ {
         /**
          * @property {jQuery}
          */
