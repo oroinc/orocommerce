@@ -428,6 +428,10 @@ class ShoppingListManager
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
+        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
+            return [$this->getShoppingListForCustomerVisitor()];
+        }
+
         return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
     }
 
