@@ -7,14 +7,18 @@
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
 
 #### PricingBundle
-* Improved security of pricing rules cache, added hash to stored data to track consistency. New dependency on `Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface`
-was added to `__construct` of `Oro\Bundle\PricingBundle\Cache\RuleCache`
+* Improved security of pricing rules cache, added hash to stored data to track consistency. Old caches will be recalculated automatically.
+* Class `Oro\Bundle\PricingBundle\Cache\RuleCache`
+    * method `__construct` added dependency on `Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface`
 
 #### ProductBundle
 * Class `Oro\Bundle\CatalogBundle\Model\ExtendProduct`:
     * method `setCategory` was added
     * method `getCategory` was added
     * property `category_id` was added
+* Improved security of segment products provider cache, added hash to stored data to track consistency. Old caches should me removed as inconsistent.
+* Class `Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider`
+    * method `__construct` added dependency on `Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface`
 
 ### Changed
 #### AlternativeCheckoutBundle
