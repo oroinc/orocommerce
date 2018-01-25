@@ -29,6 +29,7 @@
                     {{ form_widget(form.unit) }}
                 {% else %}
                     <div class="product-view-quantity__unit-label">
+                        <input type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" />
                         {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label|capitalize }}
                     </div>
                 {% endif %}
