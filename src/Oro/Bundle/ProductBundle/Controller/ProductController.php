@@ -76,6 +76,10 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $manager = $this->get('doctrine')->getManager();
+        $configuration = $manager->getConfiguration();
+        $imple = $configuration->getResultCacheImpl();
+        die('x');
         $widgetRouteParameters = [
             'gridName' => 'products-grid',
             'renderParams' => [

@@ -7,22 +7,22 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         stopProcessing: false
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
-    shippingMethodTypeConfig:
-        type: 'primary'
+    upsShippingMethodTypeConfig:
+        type: '02'
         enabled: true
         options:
-            price: 1.5
-            type: 'per_order'
-            handling_fee: 1.5
+            surcharge: 100
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
-    shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
-        typeConfigs: ['@shippingMethodTypeConfig']
+    upsShippingMethodConfig:
+        method: '<("ups_".@upsIntegration->id)>'
+        typeConfigs: ['@upsShippingMethodTypeConfig']
+        options:
+            surcharge: 1000
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
-    shipping_methods_configs_rule1:
+    ups_shipping_methods_configs_rule:
         rule: '@upsRule'
-        currency: 'EUR'
-        methodConfigs: ['@shippingMethodConfig']
+        currency: 'USD'
+        methodConfigs: ['@upsShippingMethodConfig']
         organization: '@organization'

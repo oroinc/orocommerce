@@ -1,0 +1,12 @@
+services:
+    oro_ups.provider.transport:
+        class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Provider\UPSTransportMock'
+        shared: true
+        arguments:
+            - '@oro_ups.client.url_provider_basic'
+            - '@logger'
+        calls:
+            - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
+            - [setCacheDir, ['%kernel.cache_dir%']]
+        tags:
+            - { name: oro_integration.transport, type: '%oro_ups.integration.transport.type%', channel_type: '%oro_ups.integration.channel.type%' }
