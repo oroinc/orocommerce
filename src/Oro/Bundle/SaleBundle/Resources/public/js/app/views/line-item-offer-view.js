@@ -11,7 +11,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            'allUnits': [],
+            allUnits: [],
             $: {
                 product: ''
             }

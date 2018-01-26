@@ -11,7 +11,7 @@ define(function(require) {
 
     ProductAddToRfqView = BaseView.extend(_.extend({}, ElementsHelper, {
         events: {
-            'click': 'onClick'
+            click: 'onClick'
         },
 
         dropdownWidget: null,

@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -172,7 +170,6 @@ define(function(require) {
             _.each($select.find('option'), function(option) {
                 if (!units.hasOwnProperty(option.value) || !option.value ||
                         _.indexOf(allSelectedUnits, option.value) !== -1 && option.value !== currentValue) {
-
                     if (option.value === currentValue) {
                         currentValue = '';
                     }

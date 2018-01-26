@@ -155,7 +155,7 @@ define(function(require) {
                     mediator.trigger(
                         eventName,
                         {
-                            'layoutSubtreeCallback': function() {
+                            layoutSubtreeCallback: function() {
                                 eventCount--;
 
                                 if (eventCount < 1) {
