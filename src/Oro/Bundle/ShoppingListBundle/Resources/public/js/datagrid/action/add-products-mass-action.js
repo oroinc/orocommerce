@@ -4,7 +4,7 @@ define(function(require) {
     var AddProductsAction;
     var MassAction = require('oro/datagrid/action/mass-action');
     var mediator = require('oroui/js/mediator');
-    var  _ = require('underscore');
+    var _ = require('underscore');
 
     /**
      * Add products to shopping list

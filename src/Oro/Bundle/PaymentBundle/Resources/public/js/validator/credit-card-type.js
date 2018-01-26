@@ -1,4 +1,3 @@
-/*jshint bitwise: false*/
 define([
     'underscore',
     'orotranslation/js/translator',

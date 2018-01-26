@@ -40,7 +40,7 @@ define(function(require) {
                 mediator.execute('showLoading');
                 $.post(
                     routing.generate(this.options.localizationSwitcherRoute),
-                    {'localization': localization},
+                    {localization: localization},
                     function() {
                         mediator.execute('refreshPage');
                     }

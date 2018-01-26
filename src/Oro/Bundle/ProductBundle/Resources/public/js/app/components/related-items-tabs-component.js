@@ -16,7 +16,7 @@ define(function(require) {
             var categories = options.data;
 
             if (categories.length === 0) {
-                //Nothing to show
+                // Nothing to show
                 return;
             }
 

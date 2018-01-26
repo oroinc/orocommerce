@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -59,7 +57,7 @@ define(function(require) {
 
         onPriceListChange: function(e) {
             var value = e.target.value;
-            var routeParams = $.extend({}, this.options.routingParams, {'id': value});
+            var routeParams = $.extend({}, this.options.routingParams, {id: value});
 
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),
