@@ -4,10 +4,10 @@
 @fixture-OroUPSBundle:ProductWithShippingOptions.yml
 @fixture-OroUPSBundle:Integration.yml
 @fixture-OroUPSBundle:ShippingMethodsConfigsRule.yml
-Feature: Applying shipping rules
-  In order to decrease shipping cost for buyers
-  As administrator
-  I need to be able change shipping methods rules and orders
+Feature: UPS shipping cost calculation
+  In order to be able to use UPS as a shipping provider
+  As a Buyer
+  I need to be able to get UPS shipping cost during checkout
 
   Scenario: Check that UPS shipping cost is calculated correctly on all steps
     Given I login as AmandaRCole@example.org buyer
