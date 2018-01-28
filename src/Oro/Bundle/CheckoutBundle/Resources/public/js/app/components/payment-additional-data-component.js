@@ -1,4 +1,3 @@
-/** @lends PaymentAdditionalDataComponent */
 define(function(require) {
     'use strict';
 

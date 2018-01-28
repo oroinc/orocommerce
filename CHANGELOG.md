@@ -1,4 +1,5 @@
 ## 1.6.0 (Unreleased)
+[Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added
 #### CatalogBundle

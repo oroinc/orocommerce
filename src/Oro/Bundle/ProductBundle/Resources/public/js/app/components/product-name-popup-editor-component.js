@@ -73,8 +73,8 @@ define(function(require) {
                             urls = response.slugsData;
 
                             this.confirmModal = new ConfirmSlugChangeModal({
-                                'changedSlugs': that._getUrlsList(urls),
-                                'confirmState': that.createRedirectOption
+                                changedSlugs: that._getUrlsList(urls),
+                                confirmState: that.createRedirectOption
                             })
                                 .on('ok', _.bind(that.modalApply, that))
                                 .on('confirm-option-changed', _.bind(that.onConfirmModalOptionChange, that))
@@ -128,13 +128,13 @@ define(function(require) {
                 for (var localization in urls) {
                     if (urls.hasOwnProperty(localization)) {
                         list += '\n' + __(
-                                'oro.redirect.confirm_slug_change.changed_localized_slug_item',
-                                {
-                                    'old_slug': urls[localization].before,
-                                    'new_slug': urls[localization].after,
-                                    'purpose': localization
-                                }
-                            );
+                            'oro.redirect.confirm_slug_change.changed_localized_slug_item',
+                            {
+                                old_slug: urls[localization].before,
+                                new_slug: urls[localization].after,
+                                purpose: localization
+                            }
+                        );
                     }
                 }
 

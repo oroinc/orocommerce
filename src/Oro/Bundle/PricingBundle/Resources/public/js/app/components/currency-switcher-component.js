@@ -37,7 +37,7 @@ define(function(require) {
                 mediator.execute('showLoading');
                 $.post(
                     routing.generate(this.options.currencySwitcherRoute),
-                    {'currency': currency},
+                    {currency: currency},
                     function() {
                         mediator.execute('refreshPage');
                     }

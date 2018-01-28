@@ -27,7 +27,7 @@ define(function(require) {
         },
 
         events: {
-            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange',
+            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange'
         },
 
         /**

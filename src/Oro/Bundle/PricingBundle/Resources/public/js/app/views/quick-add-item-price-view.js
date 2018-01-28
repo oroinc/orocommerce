@@ -18,8 +18,8 @@ define(function(require) {
         }),
 
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
-            'subtotal': '[data-name="field__product-subtotal"]',
-            'pricesHintContentRendered': '[data-class="prices-hint-content"]'
+            subtotal: '[data-name="field__product-subtotal"]',
+            pricesHintContentRendered: '[data-class="prices-hint-content"]'
         }),
 
         modelElements: {
@@ -31,10 +31,10 @@ define(function(require) {
         }),
 
         modelEvents: _.extend({}, BaseProductPricesView.prototype.modelEvents, {
-            'quantity': ['change', 'updateSubtotal'],
-            'unit': ['change', 'updateSubtotal'],
-            'prices': ['change', 'updateSubtotal'],
-            'subtotal': ['change', 'updateUI']
+            quantity: ['change', 'updateSubtotal'],
+            unit: ['change', 'updateSubtotal'],
+            prices: ['change', 'updateSubtotal'],
+            subtotal: ['change', 'updateUI']
         }),
 
         listen: {
@@ -68,30 +68,29 @@ define(function(require) {
                     var index = [unit, priceObject.quantity].join('_');
                     prices[index] = priceObject;
                 }, this);
-
             }, this);
 
             this.changeQuantity = !this.model.get('quantity_changed_manually');
 
             if (!data.item.sku) {
                 this.model.set({
-                    'subtotal': '',
-                    'prices': {}
+                    subtotal: '',
+                    prices: {}
                 });
             } else if (data.item.quantity) {
                 this.model.set({
-                    'quantity': data.item.quantity,
-                    'quantity_changed_manually': data.item.quantity_changed_manually,
-                    'unit': data.item.unit,
-                    'showSubtotalPlaceholder': data.item.unit !== data.item.unit_placeholder
+                    quantity: data.item.quantity,
+                    quantity_changed_manually: data.item.quantity_changed_manually,
+                    unit: data.item.unit,
+                    showSubtotalPlaceholder: data.item.unit !== data.item.unit_placeholder
                 });
             } else {
                 this.model.set({
-                    'quantity': this.model.get('quantity') || this.options.defaultQuantity,
-                    'quantity_changed_manually': this.model.get('quantity'),
-                    'units': data.item.units,
-                    'product_units': data.item.units,
-                    'prices': _.isEmpty(prices) ? this.model.get('prices') : prices
+                    quantity: this.model.get('quantity') || this.options.defaultQuantity,
+                    quantity_changed_manually: this.model.get('quantity'),
+                    units: data.item.units,
+                    product_units: data.item.units,
+                    prices: _.isEmpty(prices) ? this.model.get('prices') : prices
                 });
             }
         },
