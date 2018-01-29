@@ -615,7 +615,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $manager->persist($productPrice);
         $manager->flush();
 
-        $repository->deleteGeneratedPrices($this->shardManager, $priceList, $productPrice->getProduct());
+        $repository->deleteGeneratedPrices($this->shardManager, $priceList, [$productPrice->getProduct()->getId()]);
 
         $actual = $repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
         $this->assertEquals($manualPrices, $actual);

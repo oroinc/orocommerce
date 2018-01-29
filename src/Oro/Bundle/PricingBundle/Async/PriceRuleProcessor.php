@@ -111,7 +111,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $priceList = $trigger->getPriceList();
             $startTime = $priceList->getUpdatedAt();
-            $this->priceBuilder->buildByPriceList($priceList, $trigger->getProduct());
+            $this->priceBuilder->buildByPriceList($priceList, $trigger->getProducts());
             $this->updatePriceListActuality($priceList, $startTime);
             $em->commit();
         } catch (InvalidArgumentException $e) {

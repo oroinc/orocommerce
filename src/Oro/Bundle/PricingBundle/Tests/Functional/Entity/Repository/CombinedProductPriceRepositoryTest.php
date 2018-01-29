@@ -60,11 +60,11 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
-        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, [$product]);
 
         $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
 
-        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, [$product]);
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,
@@ -78,7 +78,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $combinedPriceList,
                 $combinedPriceListRelation->getPriceList(),
                 $combinedPriceListRelation->isMergeAllowed(),
-                $product
+                [$product]
             );
         }
         $prices = $combinedProductPriceRepository->findBy(
@@ -319,11 +319,11 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
-        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, [$product]);
 
         $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
 
-        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, [$product]);
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,
@@ -337,7 +337,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $this->insertFromSelectQueryExecutor,
                 $combinedPriceList,
                 $combinedPriceListRelation->getPriceList(),
-                $product
+                [$product]
             );
         }
         $prices = $combinedProductPriceRepository->createQueryBuilder('prices')

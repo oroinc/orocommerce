@@ -193,14 +193,14 @@ class ProductPriceTest extends RestJsonApiTestCase
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-1')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-2')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-2')->getId()],
             ]
         );
     }
@@ -436,7 +436,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-1')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
             ]
         );
     }
@@ -521,18 +521,19 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     private function assertMessagesSentForCreateRequest($priceListReference)
     {
+        $productId = $this->getReference('product-5')->getId();
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-5')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$productId],
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-5')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$productId],
             ]
         );
     }

@@ -64,35 +64,35 @@ class PriceListProductAssignmentBuilder
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function buildByPriceList(PriceList $priceList, Product $product = null)
+    public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->clearGenerated($priceList, $product);
+        $this->clearGenerated($priceList, $products);
         if ($priceList->getProductAssignmentRule()) {
             $this->insertFromSelectQueryExecutor->execute(
                 PriceListToProduct::class,
                 $this->ruleCompiler->getOrderedFields(),
-                $this->ruleCompiler->compile($priceList, $product)
+                $this->ruleCompiler->compile($priceList, $products)
             );
         }
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
             ->deleteInvalidPrices($this->shardManager, $priceList);
 
-        $event = new AssignmentBuilderBuildEvent($priceList, $product);
+        $event = new AssignmentBuilderBuildEvent($priceList, $products);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
     }
 
     /**
      * @param PriceList $priceList
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    protected function clearGenerated(PriceList $priceList, Product $product = null)
+    protected function clearGenerated(PriceList $priceList, array $products = [])
     {
         /** @var PriceListToProductRepository $repo */
         $repo = $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class);
-        $repo->deleteGeneratedRelations($priceList, $product);
+        $repo->deleteGeneratedRelations($priceList, $products);
     }
 }

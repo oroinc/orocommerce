@@ -127,7 +127,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildByPriceListForProduct()
     {
         $fields = ['product', 'priceList', 'manual'];
-        $product = new Product();
+        $productId = 1;
 
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
@@ -147,7 +147,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->ruleCompiler->expects($this->once())
             ->method('compile')
-            ->with($priceList, $product)
+            ->with($priceList, [$productId])
             ->willReturn($qb);
 
         $this->insertFromSelectQueryExecutor->expects($this->once())
@@ -158,12 +158,12 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
                 $qb
             );
 
-        $event = new AssignmentBuilderBuildEvent($priceList, $product);
+        $event = new AssignmentBuilderBuildEvent($priceList, [$productId]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(AssignmentBuilderBuildEvent::NAME, $event);
 
-        $this->priceListProductAssignmentBuilder->buildByPriceList($priceList, $product);
+        $this->priceListProductAssignmentBuilder->buildByPriceList($priceList, [$productId]);
     }
 
     /**

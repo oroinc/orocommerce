@@ -123,28 +123,32 @@
 
     {% set twoColumnContent = parent() %}
 
-    {% embed "OroUIBundle::content_sidebar.html.twig" %}
-        {% block sidebar %}
-            {{ UI.renderJsTree(
-                {
-                    'label': 'oro.catalog.category.entity_plural_label'|trans,
-                    'treeOptions': treeOptions
-                },
-                {
-                    'move': {
-                        'routeName': 'oro_catalog_category_move_form'
+    <div class="sidebar-container">
+        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
+            scrollbar: '[data-role="jstree-container"]'
+        }} %}
+            {% block sidebar %}
+                {{ UI.renderJsTree(
+                    {
+                        'label': 'oro.catalog.category.entity_plural_label'|trans,
+                        'treeOptions': treeOptions
+                    },
+                    {
+                        'move': {
+                            'routeName': 'oro_catalog_category_move_form'
+                        }
                     }
-                }
-            ) }}
-        {% endblock sidebar %}
+                ) }}
+            {% endblock sidebar %}
 
-        {% block content %}
-            {% autoescape %}
-                <div class="category-data">
-                    {{ twoColumnContent|raw}}
-                </div>
-            {% endautoescape %}
-        {% endblock content %}
-    {% endembed %}
+            {% block content %}
+                {% autoescape %}
+                    <div class="category-data">
+                        {{ twoColumnContent|raw}}
+                    </div>
+                {% endautoescape %}
+            {% endblock content %}
+        {% endembed %}
+    </div>
 
 {% endblock content_data %}
