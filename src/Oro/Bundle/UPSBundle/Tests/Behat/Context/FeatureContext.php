@@ -28,6 +28,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
      *      | 12          | USD      | 77.0 |
      *
      * @Then /^(?:|I )expect the following shipping costs:$/
+     * @param TableNode $table
      */
     public function iExpectUPSShippingCosts(TableNode $table)
     {
@@ -37,7 +38,11 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $this->writeFile($yamlDumper->dump($data));
     }
 
-    public static function getBehatYamlFilename($cacheDir)
+    /**
+     * @param string $cacheDir
+     * @return string
+     */
+    public static function getBehatYamlFilename(string $cacheDir): string
     {
         $behatCacheDir = $cacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_DIR_NAME;
 
@@ -72,7 +77,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
             $data[] = [
                 'Service' => [
                     'Code' => $this->getMethodCodeByDescription($row[$columnsByHeaders[self::HEADER_METHOD]]),
-                    'Description' => ''
+                    'Description' => $row[$columnsByHeaders[self::HEADER_METHOD]],
                 ],
                 'TotalCharges' => [
                     'CurrencyCode' => $row[$columnsByHeaders[self::HEADER_CURRENCY]],

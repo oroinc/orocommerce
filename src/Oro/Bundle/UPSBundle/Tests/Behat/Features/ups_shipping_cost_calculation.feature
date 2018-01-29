@@ -10,11 +10,11 @@ Feature: UPS shipping cost calculation
   I need to be able to get UPS shipping cost during checkout
 
   Scenario: Check that UPS shipping cost is calculated correctly on all steps
-    Given I login as AmandaRCole@example.org buyer
-    And I expect the following shipping costs:
+    Given I expect the following shipping costs:
       | Method          | Cost  | Currency |
       | UPS 2nd Day Air | 99.75 | USD      |
-    When I open page with shopping list List 1
+    When I login as AmandaRCole@example.org buyer
+    And I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
     When I click "Create Order"
