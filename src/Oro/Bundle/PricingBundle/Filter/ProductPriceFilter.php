@@ -80,6 +80,7 @@ class ProductPriceFilter extends NumberRangeFilter
         $productPriceAlias = $ds->generateParameterName('product_price_' . $this->get('data_name'));
         $this->qbPrepare($ds, $data['unit'], $productPriceAlias);
 
+        QueryBuilderUtil::checkIdentifier($productPriceAlias);
         $this->applyFilterToClause(
             $ds,
             $this->buildRangeComparisonExpr(
@@ -143,6 +144,8 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     protected function addEqExpr(FilterDatasourceAdapterInterface $ds, $fieldName, $parameterName, $parameterValue)
     {
+        QueryBuilderUtil::checkField($fieldName);
+        QueryBuilderUtil::checkIdentifier($parameterName);
         $this->applyFilterToClause($ds, $ds->expr()->eq($fieldName, $parameterName, true));
         $ds->setParameter($parameterName, $parameterValue);
     }
