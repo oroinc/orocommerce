@@ -3,12 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class PriceListTriggerHandler
 {
+    const PRICE_LISTS_KEY = 'price_lists';
+    const PRODUCTS_KEY = 'products';
+
     /**
      * @var PriceListTriggerFactory
      */
@@ -20,9 +22,9 @@ class PriceListTriggerHandler
     protected $messageProducer;
 
     /**
-     * @var array|PriceListTrigger[]
+     * @var array
      */
-    protected $scheduledTriggers = [];
+    protected $triggersData = [];
 
     /**
      * @param PriceListTriggerFactory $triggerFactory
@@ -39,99 +41,114 @@ class PriceListTriggerHandler
     /**
      * @param string $topic
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function addTriggerForPriceList($topic, PriceList $priceList, Product $product = null)
+    public function addTriggerForPriceList($topic, PriceList $priceList, array $products = [])
     {
         if ($priceList->isActive()) {
-            $trigger = $this->triggerFactory->create($priceList, $product);
-
-            if (!$this->isScheduledTrigger($topic, $trigger)) {
-                $this->scheduleTrigger($topic, $trigger);
+            if ($products) {
+                foreach ($products as $product) {
+                    if (!$this->isScheduledTrigger($topic, $priceList, $product)) {
+                        $this->scheduleTrigger($topic, $priceList, $product);
+                    }
+                }
+            } else {
+                $this->scheduleTrigger($topic, $priceList);
             }
         }
     }
 
     /**
-     * @param $topic
+     * @param string $topic
      * @param PriceList[] $priceLists
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function addTriggersForPriceLists($topic, array $priceLists, Product $product = null)
+    public function addTriggersForPriceLists($topic, array $priceLists, array $products = [])
     {
         foreach ($priceLists as $priceList) {
-            $this->addTriggerForPriceList($topic, $priceList, $product);
+            $this->addTriggerForPriceList($topic, $priceList, $products);
         }
     }
 
     public function sendScheduledTriggers()
     {
-        foreach ($this->scheduledTriggers as $topic => $triggers) {
-            if (count($triggers) > 0) {
-                $priceListTriggers = array_filter(
-                    $triggers,
-                    function (PriceListTrigger $trigger) {
-                        return !$trigger->getProduct();
-                    }
-                );
-
-                /** @var PriceListTrigger[] $filteredTriggers */
-                $filteredTriggers = array_filter(
-                    $triggers,
-                    function (PriceListTrigger $trigger) use ($priceListTriggers) {
-                        return !$trigger->getProduct()
-                        || !array_key_exists($this->getKey($trigger->getPriceList()), $priceListTriggers);
-                    }
-                );
-
-                foreach ($filteredTriggers as $trigger) {
+        $this->removeDuplicatedData();
+        foreach ($this->triggersData as $topic => $triggers) {
+            if (array_key_exists(self::PRICE_LISTS_KEY, $triggers)) {
+                foreach ($triggers[self::PRICE_LISTS_KEY] as $priceListId) {
                     $this->messageProducer->send(
                         $topic,
-                        $this->triggerFactory->triggerToArray($trigger)
+                        $this->triggerFactory->createFromIds($priceListId, [])
+                    );
+                }
+            }
+            if (array_key_exists(self::PRODUCTS_KEY, $triggers)) {
+                foreach ($triggers[self::PRODUCTS_KEY] as $priceListId => $products) {
+                    $this->messageProducer->send(
+                        $topic,
+                        $this->triggerFactory->createFromIds($priceListId, array_values($products))
                     );
                 }
             }
         }
-        $this->scheduledTriggers = [];
+        $this->triggersData = [];
+    }
+
+    /**
+     * remove triggers by Product + Price List if trigger for Price List exists
+     */
+    protected function removeDuplicatedData()
+    {
+        foreach ($this->triggersData as $topic => $triggers) {
+            $filteredData = isset($triggers[self::PRODUCTS_KEY]) ? $triggers[self::PRODUCTS_KEY] : [];
+            $priceListTriggers = isset($triggers[self::PRICE_LISTS_KEY]) ? $triggers[self::PRICE_LISTS_KEY] : [];
+            if ($priceListTriggers) {
+                $filteredData = array_filter(
+                    $filteredData,
+                    function ($priceListId) use ($priceListTriggers) {
+                        return !isset($priceListTriggers[$priceListId]);
+                    },
+                    ARRAY_FILTER_USE_KEY
+                );
+            }
+            $this->triggersData[$topic][self::PRODUCTS_KEY] = $filteredData;
+        }
     }
 
     /**
      * @param string $topic
-     * @param PriceListTrigger $trigger
+     * @param PriceList $priceList
+     * @param Product|int $product
      * @return bool
      */
-    protected function isScheduledTrigger($topic, PriceListTrigger $trigger)
+    protected function isScheduledTrigger($topic, PriceList $priceList, $product = null)
     {
-        $priceList = $trigger->getPriceList();
-        $product = $trigger->getProduct();
+        $triggers = empty($this->triggersData[$topic]) ? [] : $this->triggersData[$topic];
+        if ($product instanceof Product) {
+            $product = $product->getId();
+        }
+        if ($product && isset($triggers[self::PRODUCTS_KEY][$priceList->getId()][$product])) {
+            return true;
+        }
 
-        $triggers = empty($this->scheduledTriggers[$topic]) ? [] : $this->scheduledTriggers[$topic];
-
-        return array_key_exists($this->getKey($priceList), $triggers)
-        || array_key_exists($this->getKey($priceList, $product), $triggers);
+        return isset($triggers[self::PRICE_LISTS_KEY][$priceList->getId()]);
     }
 
     /**
      * @param string $topic
-     * @param PriceListTrigger $trigger
-     */
-    protected function scheduleTrigger($topic, PriceListTrigger $trigger)
-    {
-        $this->scheduledTriggers[$topic][$this->getKey($trigger->getPriceList(), $trigger->getProduct())] = $trigger;
-    }
-
-    /**
      * @param PriceList $priceList
-     * @param Product $product
-     * @return string
+     * @param Product|int|null $product
      */
-    protected function getKey(PriceList $priceList, Product $product = null)
+    protected function scheduleTrigger($topic, PriceList $priceList, $product = null)
     {
-        $key = 'pl' . $priceList->getId();
+        $priceListId = $priceList->getId();
         if ($product) {
-            $key .= ':p' . $product->getId();
+            if ($product instanceof Product) {
+                $product = $product->getId();
+            }
+            $this->triggersData[$topic][self::PRODUCTS_KEY][$priceListId][$product] = $product;
+        } else {
+            $this->triggersData[$topic][self::PRICE_LISTS_KEY][$priceListId] = $priceListId;
         }
-
-        return $key;
     }
 }

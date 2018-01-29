@@ -13,18 +13,18 @@ class PriceListTrigger
     protected $priceList;
 
     /**
-     * @var Product|null
+     * @var array|Product[]
      */
-    protected $product;
+    protected $products;
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function __construct(PriceList $priceList, Product $product = null)
+    public function __construct(PriceList $priceList, array $products = [])
     {
         $this->priceList = $priceList;
-        $this->product = $product;
+        $this->products = $products;
     }
 
     /**
@@ -36,10 +36,10 @@ class PriceListTrigger
     }
 
     /**
-     * @return Product|null
+     * @return array|Product[]
      */
-    public function getProduct()
+    public function getProducts()
     {
-        return $this->product;
+        return $this->products;
     }
 }

@@ -265,9 +265,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger = new PriceListTrigger($priceList, $product);
+
+        $productIds = [2];
+        $trigger = new PriceListTrigger($priceList, $productIds);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -295,7 +295,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->priceResolver->expects($this->once())
             ->method('combinePrices')
-            ->with($cpl, $product);
+            ->with($cpl, $productIds);
 
         $event = new CombinedPriceListsUpdateEvent([$cplId]);
         $this->eventDispatcher->expects($this->once())

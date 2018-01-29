@@ -112,7 +112,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             foreach ($iterator as $combinedPriceList) {
                 $this->strategyRegister->getCurrentStrategy()
-                    ->combinePrices($combinedPriceList, $trigger->getProduct());
+                    ->combinePrices($combinedPriceList, $trigger->getProducts());
                 $builtCPLs[$combinedPriceList->getId()] = true;
             }
             if ($builtCPLs) {

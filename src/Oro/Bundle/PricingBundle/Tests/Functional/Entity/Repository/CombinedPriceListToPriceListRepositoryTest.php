@@ -33,7 +33,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
          */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $product = $this->getReference($product);
-        $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, $product);
+        $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, [$product]);
 
         if ($expectedPriceLists) {
             $actualPriceLists = array_map(

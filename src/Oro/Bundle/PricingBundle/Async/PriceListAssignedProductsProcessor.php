@@ -103,7 +103,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                 $trigger->getPriceList()->getId()
             );
 
-            $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProduct());
+            $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProducts());
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
