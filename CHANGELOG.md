@@ -1,4 +1,4 @@
-## 1.6.0 (Unreleased)
+## 1.6.0 (2018-01-29)
 [Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added
