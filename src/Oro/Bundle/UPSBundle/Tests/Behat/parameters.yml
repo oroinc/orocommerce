@@ -1,7 +1,6 @@
 services:
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Provider\UPSTransportMock'
-        shared: true
         arguments:
             - '@oro_ups.client.url_provider_basic'
             - '@logger'
