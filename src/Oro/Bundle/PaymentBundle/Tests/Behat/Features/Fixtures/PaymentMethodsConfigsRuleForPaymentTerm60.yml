@@ -1,0 +1,27 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRuleForPaymentTerm60:
+        name: 'Payment Rule 60'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfigForPaymentTerm60:
+        type: '<("payment_term_".@paymentTerm60Integration->id)>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+    paymentMethodsConfigsRuleDestination:
+        country: '@germany'
+        region: '@berlin'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode:
+    postalCode1:
+        destination: '@paymentMethodsConfigsRuleDestination'
+        name: '10111'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRuleForPaymentTerm60:
+        rule: '@paymentRuleForPaymentTerm60'
+        methodConfigs: ['@paymentMethodConfigForPaymentTerm60']
+        currency: 'USD'
+        organization: '@organization'
+        destinations: ['@paymentMethodsConfigsRuleDestination']

@@ -8,6 +8,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
 class PriceRuleLexemeRepository extends EntityRepository
 {
+    const LEXEMES_CACHE_KEY = 'oro_pricing_price_rule_lexemes_cache';
+
     /**
      * @param PriceList $priceList
      */
@@ -69,6 +71,19 @@ class PriceRuleLexemeRepository extends EntityRepository
 
         $qb->where($whereExpr);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()
+            ->useResultCache(true, 3600, self::LEXEMES_CACHE_KEY)
+            ->getResult();
+    }
+
+    public function invalidateCache()
+    {
+        $cache = $this->getEntityManager()
+            ->getConfiguration()
+            ->getResultCacheImpl();
+
+        if ($cache) {
+            $cache->delete(self::LEXEMES_CACHE_KEY);
+        }
     }
 }

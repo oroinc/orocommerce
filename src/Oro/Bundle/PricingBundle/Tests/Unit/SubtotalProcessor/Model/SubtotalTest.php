@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
@@ -22,6 +23,11 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $subtotal->setVisible(true)->isVisible());
         $this->assertEquals(['some value'], $subtotal->setData(['some value'])->getData());
         $this->assertEquals(987, $subtotal->setSortOrder(987)->getSortOrder());
+        $this->assertEquals(
+            'test',
+            $subtotal->setCombinedPriceList((new CombinedPriceList())->setName('test'))
+                ->getCombinedPriceList()->getName()
+        );
     }
 
     public function testToArray()
