@@ -117,6 +117,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
         if ($productsPriceCriteria) {
             $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
+            $subtotal->setCombinedPriceList($priceList);
+
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
             /** @var Price $price */
             foreach ($prices as $identifier => $price) {
