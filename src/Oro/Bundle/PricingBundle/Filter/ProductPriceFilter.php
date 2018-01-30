@@ -144,8 +144,6 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     protected function addEqExpr(FilterDatasourceAdapterInterface $ds, $fieldName, $parameterName, $parameterValue)
     {
-        QueryBuilderUtil::checkField($fieldName);
-        QueryBuilderUtil::checkIdentifier($parameterName);
         $this->applyFilterToClause($ds, $ds->expr()->eq($fieldName, $parameterName, true));
         $ds->setParameter($parameterName, $parameterValue);
     }
