@@ -14,6 +14,7 @@ oro_behat_extension:
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -111,3 +112,7 @@ oro_behat_extension:
           Quantity: 'oro_action_operation[price][quantity]'
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
+
+    Price list Product prices Grid:
+      selector: 'div[data-page-component-name="price-list-product-prices-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

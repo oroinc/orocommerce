@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Util\JSON;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class SearchMessageProcessor implements MessageProcessorInterface
 {
@@ -26,56 +26,39 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $jobRunner;
 
     /**
+     * @var MessageProducerInterface
+     */
+    private $messageProducer;
+
+    /**
+     * @var IndexerInputValidator
+     */
+    private $inputValidator;
+
+    /**
+     * @var ReindexMessageGranularizer
+     */
+    private $reindexMessageGranularizer;
+
+    /**
      * @param IndexerInterface $indexer
-     * @param JobRunner        $jobRunner
+     * @param JobRunner $jobRunner
+     * @param MessageProducerInterface $messageProducer
+     * @param IndexerInputValidator $indexerInputValidator
+     * @param ReindexMessageGranularizer $reindexMessageGranularizer
      */
-    public function __construct(IndexerInterface $indexer, JobRunner $jobRunner)
-    {
-        $this->indexer   = $indexer;
-        $this->jobRunner = $jobRunner;
-    }
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    private function hasEnoughDataToBuildJobName($data)
-    {
-        return !empty($data['class']) || !empty($data['context']);
-    }
-
-    /**
-     * @param $data
-     * @param $key
-     * @return string
-     */
-    private function getSerializedValueIfKeyExists($data, $key)
-    {
-        $accessor = new PropertyAccessor(false, true);
-        $value    = $accessor->getValue($data, $key);
-
-        if (null !== $value) {
-            return serialize($value);
-        }
-        return 'null';
-    }
-
-    /**
-     * @param array $data
-     * @return null|string
-     */
-    private function buildJobNameForMessage($data)
-    {
-        if ($this->hasEnoughDataToBuildJobName($data)) {
-            return
-                'website_search_reindex|' .
-                md5(
-                    $this->getSerializedValueIfKeyExists($data, 'class') .
-                    $this->getSerializedValueIfKeyExists($data, 'context.' . AbstractIndexer::CONTEXT_WEBSITE_IDS) .
-                    $this->getSerializedValueIfKeyExists($data, 'context.' . AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY)
-                );
-        }
-        return null;
+    public function __construct(
+        IndexerInterface $indexer,
+        JobRunner $jobRunner,
+        MessageProducerInterface $messageProducer,
+        IndexerInputValidator $indexerInputValidator,
+        ReindexMessageGranularizer $reindexMessageGranularizer
+    ) {
+        $this->indexer                    = $indexer;
+        $this->jobRunner                  = $jobRunner;
+        $this->messageProducer            = $messageProducer;
+        $this->inputValidator             = $indexerInputValidator;
+        $this->reindexMessageGranularizer = $reindexMessageGranularizer;
     }
 
     /**
@@ -105,17 +88,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
                 break;
 
             case AsyncIndexer::TOPIC_REINDEX:
-                $ownerId = $message->getMessageId();
-                $jobName = $this->buildJobNameForMessage($data);
-                $closure = function () use ($data) {
-                    $this->indexer->reindex($data['class'], $data['context']);
-                    return true;
-                };
-                if (null !== $jobName) {
-                    $this->jobRunner->runUnique($ownerId, $jobName, $closure);
-                } else {
-                    $closure();
-                }
+                $this->processReindex($data);
 
                 $result = static::ACK;
                 break;
@@ -128,5 +101,60 @@ class SearchMessageProcessor implements MessageProcessorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $data
+     * @throws \Oro\Component\MessageQueue\Transport\Exception\Exception
+     */
+    private function processReindex($data)
+    {
+        if (!empty($data['granulize'])) {
+            list($entityClassesToIndex, $websiteIdsToIndex) =
+                $this->inputValidator->validateReindexRequest($data['class'], $data['context']);
+
+            $reindexMsgData = $this->reindexMessageGranularizer->process(
+                $entityClassesToIndex,
+                $websiteIdsToIndex,
+                $data['context']
+            );
+
+            // If data scope is small it can be processed without triggering new messages,
+            // Batch size should be the same as in granulizer
+            $batchSize = count($entityClassesToIndex) * count($websiteIdsToIndex);
+            // As granulizer returns iterable but not countable we can't count messages, buffer used instead
+            // in order to process data without triggering new messages when it's smaller than batch size
+            $buffer = [];
+            $enableBuffer = true;
+            foreach ($reindexMsgData as $msgData) {
+                if ($enableBuffer) {
+                    if (count($buffer) <= $batchSize) {
+                        $buffer[] = $msgData;
+                        continue;
+                    }
+                    // If this line of code were reached, there are more messages than batch size.
+                    // Send buffered messages and clear the buffer as data should be processed asynchronously
+                    foreach ($buffer as $bufferMsgData) {
+                        $this->messageProducer->send(
+                            AsyncIndexer::TOPIC_REINDEX,
+                            $bufferMsgData
+                        );
+                    }
+                    $buffer = [];
+                    $enableBuffer = false;
+                }
+                $this->messageProducer->send(
+                    AsyncIndexer::TOPIC_REINDEX,
+                    $msgData
+                );
+            }
+
+            // Process data without triggering new messages if the buffer isn't empty
+            foreach ($buffer as $msgData) {
+                $this->indexer->reindex($msgData['class'], $msgData['context']);
+            }
+        } else {
+            $this->indexer->reindex($data['class'], $data['context']);
+        }
     }
 }

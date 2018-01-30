@@ -237,12 +237,13 @@ class LineItemRepositoryTest extends WebTestCase
 
         $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
         $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
+        $productName8 = $this->getReference(LoadProductData::PRODUCT_8)->getName()->getString();
 
         $shoppingListId1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
         $shoppingListId5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)->getId();
 
         /** @var LineItem[] $lineItems */
-        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 1);
+        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 2);
 
         $this->assertEquals(
             [
@@ -252,6 +253,9 @@ class LineItemRepositoryTest extends WebTestCase
                     ]
                 ],
                 $shoppingListId5 => [
+                    [
+                        'name' => $productName8
+                    ],
                     [
                         'name' => $productName5
                     ]

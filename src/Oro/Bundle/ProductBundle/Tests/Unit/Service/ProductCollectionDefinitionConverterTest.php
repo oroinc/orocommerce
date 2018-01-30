@@ -4,9 +4,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Service;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
 class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCase
 {
+    const EXCLUDED_IDS = '1,111';
+    const INCLUDED_IDS = '2,7';
+
+    /**
+     * @var SegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $filtersPurifier;
+
     /**
      * @var ProductCollectionDefinitionConverter
      */
@@ -17,7 +26,106 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
      */
     public function setUp()
     {
-        $this->definitionConverter = new ProductCollectionDefinitionConverter();
+        $this->filtersPurifier = $this->createMock(SegmentFiltersPurifier::class);
+        $this->definitionConverter = new ProductCollectionDefinitionConverter($this->filtersPurifier);
+    }
+
+    public function testPutDefinitionPartsWithPurifiedDefinition()
+    {
+        $this->filtersPurifier
+            ->expects($this->once())
+            ->method('purifyFilters')
+            ->willReturn([]);
+
+        $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
+            json_encode([
+                'filters' => [
+                    'columnName' => 'id',
+                    'criterion' => [
+                        'filter' => 'number',
+                        'data' => [
+                            'value' => 10,
+                            'type' => NumberFilterType::TYPE_LESS_THAN
+                        ]
+                    ]
+                ]
+            ]),
+            self::EXCLUDED_IDS,
+            self::INCLUDED_IDS
+        );
+
+        $expectedDefinition = [
+            'filters' => [
+                [
+                    'alias' => ProductCollectionDefinitionConverter::INCLUDED_FILTER_ALIAS,
+                    'columnName' => 'id',
+                    'criterion' => [
+                        'filter' => 'number',
+                        'data' => [
+                            'value' => self::INCLUDED_IDS,
+                            'type' => NumberFilterType::TYPE_IN
+                        ]
+                    ]
+                ],
+                'AND',
+                [
+                    'alias' => ProductCollectionDefinitionConverter::EXCLUDED_FILTER_ALIAS,
+                    'columnName' => 'id',
+                    'criterion' => [
+                        'filter' => 'number',
+                        'data' => [
+                            'value' => self::EXCLUDED_IDS,
+                            'type' => NumberFilterType::TYPE_NOT_IN
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expectedDefinition, json_decode($resultDefinition, true));
+    }
+
+    public function testPutDefinitionPartsWithEmptyDefinition()
+    {
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
+        $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
+            json_encode([]),
+            self::EXCLUDED_IDS,
+            self::INCLUDED_IDS
+        );
+
+        $expectedDefinition = [
+            'filters' => [
+                [
+                    'alias' => ProductCollectionDefinitionConverter::INCLUDED_FILTER_ALIAS,
+                    'columnName' => 'id',
+                    'criterion' => [
+                        'filter' => 'number',
+                        'data' => [
+                            'value' => self::INCLUDED_IDS,
+                            'type' => NumberFilterType::TYPE_IN
+                        ]
+                    ]
+                ],
+                'AND',
+                [
+                    'alias' => ProductCollectionDefinitionConverter::EXCLUDED_FILTER_ALIAS,
+                    'columnName' => 'id',
+                    'criterion' => [
+                        'filter' => 'number',
+                        'data' => [
+                            'value' => self::EXCLUDED_IDS,
+                            'type' => NumberFilterType::TYPE_NOT_IN
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expectedDefinition, json_decode($resultDefinition, true));
     }
 
     /**
@@ -34,6 +142,11 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
         $excludedIds,
         array $expectedDefinition
     ) {
+        $this->filtersPurifier
+            ->expects($this->once())
+            ->method('purifyFilters')
+            ->willReturnArgument(0);
+
         $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
             json_encode($definition),
             $excludedIds,
@@ -51,62 +164,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
     public function putDefinitionsDataProvider()
     {
         return [
-            'empty definition' => [
-                'definition' => [],
-                'includedIds' => '1,3,5',
-                'excludedIds' => '7,9',
-                'expectedDefinition' => [
-                    'filters' => [
-                        [
-                            'alias' => ProductCollectionDefinitionConverter::INCLUDED_FILTER_ALIAS,
-                            'columnName' => 'id',
-                            'criterion' => [
-                                'filter' => 'number',
-                                'data' => [
-                                    'value' => '1,3,5',
-                                    'type' => NumberFilterType::TYPE_IN
-                                ]
-                            ]
-                        ],
-                        'AND',
-                        [
-                            'alias' => ProductCollectionDefinitionConverter::EXCLUDED_FILTER_ALIAS,
-                            'columnName' => 'id',
-                            'criterion' => [
-                                'filter' => 'number',
-                                'data' => [
-                                    'value' => '7,9',
-                                    'type' => NumberFilterType::TYPE_NOT_IN
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
             'definition with filters' => [
                 'definition' => [
-                    'columns' => [
-                        [
-                            'name' => "sku",
-                            'label' => "sku",
-                            'sorting' => 'DESC',
-                            'func' => null
-                        ]
-                    ],
-                    'filters' => [
-                        'columnName' => 'id',
-                        'criterion' => [
-                            'filter' => 'number',
-                            'data' => [
-                                'value' => 10,
-                                'type' => NumberFilterType::TYPE_LESS_THAN
-                            ]
-                        ]
-                    ]
-                ],
-                'includedIds' => '1,3,5',
-                'excludedIds' => '7,9',
-                'expectedDefinition' => [
                     'columns' => [
                         [
                             'name' => "sku",
@@ -125,6 +184,32 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                                     'type' => NumberFilterType::TYPE_LESS_THAN
                                 ]
                             ]
+                        ]
+                    ]
+                ],
+                'includedIds' => '1,3,5',
+                'excludedIds' => '7,9',
+                'expectedDefinition' => [
+                    'columns' => [
+                        [
+                            'name' => "sku",
+                            'label' => "sku",
+                            'sorting' => 'DESC',
+                            'func' => null
+                        ]
+                    ],
+                    'filters' => [
+                        [
+                            [
+                                'columnName' => 'id',
+                                'criterion' => [
+                                    'filter' => 'number',
+                                    'data' => [
+                                        'value' => 10,
+                                        'type' => NumberFilterType::TYPE_LESS_THAN
+                                    ]
+                                ]
+                            ],
                         ],
                         'OR',
                         [
@@ -306,6 +391,10 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
             ]
         ];
 
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
         $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
             $definition,
             $excludedIds,
@@ -348,6 +437,10 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
             'excluded' => null
         ];
 
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
         $this->assertEquals($expectedParts, $this->definitionConverter->getDefinitionParts($definition));
     }
 
@@ -365,6 +458,10 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
         $expectedIncluded,
         $expectedExcluded
     ) {
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
+
         $definitionParts = $this->definitionConverter->getDefinitionParts(json_encode($definition));
 
         $this->assertEquals(
@@ -611,6 +708,9 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
      */
     public function testHasFilters($definition, $expectedResult)
     {
+        $this->filtersPurifier
+            ->expects($this->never())
+            ->method('purifyFilters');
         $result = $this->definitionConverter->hasFilters($definition);
         $this->assertEquals($expectedResult, $result);
     }

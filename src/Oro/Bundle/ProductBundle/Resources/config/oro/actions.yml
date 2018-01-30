@@ -85,8 +85,9 @@ operations:
             - for_all_datagrids
             - for_all_entities
             - preconditions
-        entities:
-            - Oro\Bundle\ProductBundle\Entity\Product
+        routes:
+            - oro_product_view
+            - oro_product_update
         datagrids:
             - products-grid
         preconditions:

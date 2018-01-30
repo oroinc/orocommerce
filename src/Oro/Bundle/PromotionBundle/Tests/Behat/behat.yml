@@ -54,6 +54,21 @@ oro_behat_extension:
           Type: 'oro_promotion[discountConfiguration][options][discount_type]'
           Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'
 
+    Coupon Form:
+      selector: 'form[name="oro_promotion_coupon_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Coupon Code: 'oro_promotion_coupon_type[code]'
+          Promotion:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_promotion_coupon_type_promotion-uid")]//input'
+          Enabled: 'oro_promotion_coupon_type[enabled]'
+          Uses per Coupon: 'oro_promotion_coupon_type[usesPerCoupon]'
+          Uses Per Person: 'oro_promotion_coupon_type[usesPerPerson]'
+          Valid From: 'oro_promotion_coupon_type[validFrom]'
+          Valid Until: 'oro_promotion_coupon_type[validUntil]'
+
     PromotionBackendOrder:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder
       selector: 'div.layout-content'
@@ -88,7 +103,7 @@ oro_behat_extension:
 
     PromotionShoppingListLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
-      selector: 'tbody.line_item'
+      selector: 'div.shopping-list-line-items__item-wrapper'
 
     PromotionOrderForm:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm

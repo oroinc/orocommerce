@@ -95,13 +95,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             'list'  => [
                 DataGridThemeHelper::VIEW_LIST,
                 [
-                    'name'       => 'grid-name',
+                    'name' => 'grid-name',
                     'properties' => [
                         'product_units' => [
-                            'type'          => 'field',
+                            'type' => 'field',
                             'frontend_type' => 'row_array',
                         ]
                     ],
+                    'columns' => [
+                        'image'=> ['label' => 'oro.product.image.label'],
+                    ]
                 ],
             ],
             'grid'  => [

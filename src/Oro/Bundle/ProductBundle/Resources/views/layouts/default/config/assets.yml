@@ -1,7 +1,6 @@
 styles:
     inputs:
         - 'bundles/oroproduct/default/scss/variables/sku-config.scss'
-        - 'bundles/oroproduct/default/scss/variables/product-list-config.scss'
         - 'bundles/oroproduct/default/scss/variables/buttons-inline-group-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-desc-title-config.scss'
@@ -13,6 +12,7 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/page-templates/list-theme-config.scss'
         - 'bundles/oroproduct/default/scss/variables/page-templates/two-columns-theme-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-sticker-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/product-action-config.scss'
 
         - 'bundles/oroproduct/default/scss/components/filter-controls.scss'
         - 'bundles/oroproduct/default/scss/components/oro-more-info-toggler.scss'

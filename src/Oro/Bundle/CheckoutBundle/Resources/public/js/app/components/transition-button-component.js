@@ -1,4 +1,3 @@
-/** @lends TransitionButtonComponent */
 define(function(require) {
     'use strict';
 
@@ -8,7 +7,7 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
+    TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             enabled: true,
@@ -132,7 +131,9 @@ define(function(require) {
                 var eventData = {stopped: false, responseData: response.responseData};
                 // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
-                if (eventData.stopped) { return; }
+                if (eventData.stopped) {
+                    return;
+                }
             }
 
             if (response.hasOwnProperty('redirectUrl')) {

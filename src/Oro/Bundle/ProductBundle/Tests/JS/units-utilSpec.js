@@ -10,15 +10,15 @@ define(function(require) {
     var $ = require('jquery');
     var translator = require('translator');
 
-    //fixtures
+    // fixtures
     var html = require('text!./Fixture/units-select-template.html');
 
     translator.fromJSON({
-        'locale': 'en',
-        'defaultDomain': 'jsmessages',
-        'translations': {
-            'en': {
-                'jsmessages': {
+        locale: 'en',
+        defaultDomain: 'jsmessages',
+        translations: {
+            en: {
+                jsmessages: {
                     'oro.product.product_unit.item.label.full': 'item',
                     'oro.product.product_unit.set.label.full': 'set',
                     'oro.product.product_unit.kg.label.full': 'kilogram'
@@ -27,7 +27,7 @@ define(function(require) {
         }
     });
 
-    //variables
+    // variables
     var $el;
     var model;
 
@@ -93,6 +93,7 @@ define(function(require) {
                 expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
                 expect(model.get('unit')).toEqual('item');
                 expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
             });
 
             it('we should see placeholder if units list is empty', function() {
@@ -108,6 +109,13 @@ define(function(require) {
                 UnitsUtil.updateSelect(model, $el);
 
                 expect(getOptions($el)).toEqual(['--']);
+            });
+
+            it('input widget should be readonly when there is only one option', function() {
+                model.set('product_units', {item: 0});
+                UnitsUtil.updateSelect(model, $el);
+
+                expect($el.prop('readonly')).toBeTruthy();
             });
 
             it('input widget should be refreshed', function() {

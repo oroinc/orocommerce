@@ -69,6 +69,11 @@ oro:
                 label:                  'Deleted At'
                 description:            The date and time when the RFQ has been deleted.
 
+            website:
+                label:              'Website'
+                description:        'A website where the Request For Quote is created.'
+
+
             submit.label:               'Submit Request For Quote'
             cancel.label:               'Cancel'
 

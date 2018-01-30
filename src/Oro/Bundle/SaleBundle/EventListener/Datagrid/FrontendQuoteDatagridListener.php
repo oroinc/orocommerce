@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\EventListener\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 /**
@@ -11,12 +13,24 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 class FrontendQuoteDatagridListener
 {
     /**
-     * @param OrmResultBeforeQuery $event
+     * @param BuildAfter $event
      */
-    public function onResultBeforeQuery(OrmResultBeforeQuery $event)
+    public function onBuildAfter(BuildAfter $event)
     {
-        $qb = $event->getQueryBuilder();
+        /** @var OrmDatasource $ormDataSource */
+        $ormDataSource = $event->getDatagrid()->getDatasource();
+        $this->applyFiltrationByInternalStatuses($ormDataSource->getQueryBuilder());
+        $countQb = $ormDataSource->getCountQb();
+        if ($countQb) {
+            $this->applyFiltrationByInternalStatuses($countQb);
+        }
+    }
 
+    /**
+     * @param QueryBuilder $qb
+     */
+    protected function applyFiltrationByInternalStatuses(QueryBuilder $qb)
+    {
         $rootAliases = $qb->getRootAliases();
         $field = sprintf('%s.internal_status', reset($rootAliases));
 

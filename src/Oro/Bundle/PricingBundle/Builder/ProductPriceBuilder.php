@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -27,7 +27,7 @@ class ProductPriceBuilder
     protected $registry;
 
     /**
-     * @var InsertFromSelectShardQueryExecutor
+     * @var ShardQueryExecutorInterface
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -48,14 +48,14 @@ class ProductPriceBuilder
 
     /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
      * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param ShardManager $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
         PriceListTriggerHandler $priceListTriggerHandler,
         ShardManager $shardManager
@@ -69,31 +69,31 @@ class ProductPriceBuilder
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function buildByPriceList(PriceList $priceList, Product $product = null)
+    public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $product);
+        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $products);
         if (count($priceList->getPriceRules()) > 0) {
             $rules = $this->getSortedRules($priceList);
             foreach ($rules as $rule) {
-                $this->applyRule($rule, $product);
+                $this->applyRule($rule, $products);
             }
         }
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);
         $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
      * @param PriceRule $priceRule
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    protected function applyRule(PriceRule $priceRule, Product $product = null)
+    protected function applyRule(PriceRule $priceRule, array $products = [])
     {
         $this->insertFromSelectQueryExecutor->execute(
             ProductPrice::class,
             $this->ruleCompiler->getOrderedFields(),
-            $this->ruleCompiler->compile($priceRule, $product)
+            $this->ruleCompiler->compile($priceRule, $products)
         );
     }
 

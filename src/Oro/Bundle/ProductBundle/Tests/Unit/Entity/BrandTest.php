@@ -32,7 +32,8 @@ class BrandTest extends \PHPUnit_Framework_TestCase
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Brand::STATUS_ENABLED, Brand::STATUS_DISABLED],
-            ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false]
+            ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['defaultTitle', 'Foo', null],
         ];
 
         $this->assertPropertyAccessors(new Brand(), $properties);
@@ -63,16 +64,21 @@ class BrandTest extends \PHPUnit_Framework_TestCase
     public function testPrePersist()
     {
         $brand = new Brand();
+        $this->assertNull($brand->getDefaultTitle());
+        $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->prePersist();
         $this->assertInstanceOf('\DateTime', $brand->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
     public function testPreUpdate()
     {
         $brand = new Brand();
+        $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->preUpdate();
         $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
     public function testClone()

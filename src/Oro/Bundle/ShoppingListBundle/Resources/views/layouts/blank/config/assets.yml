@@ -3,6 +3,8 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/variables/matrix-order-widget-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-popup-config.scss'
+        - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-dropdown-config.scss'
+        - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-line-items-config.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/components/cart.scss'
         - 'bundles/oroshoppinglist/blank/scss/components/cart-list-empty.scss'

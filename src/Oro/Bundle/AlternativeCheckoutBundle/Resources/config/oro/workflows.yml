@@ -175,6 +175,12 @@ workflows:
                 transition_definition: start_from_shoppinglist_definition
                 frontend_options:
                     icon: fa-briefcase
+                    data:
+                      component_name: oro_shopping_list_matrix_to_create_order
+                      page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
+                      page-component-options:
+                          component_name: '[name$="[component]"]'
+                          hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 init_routes:
                     - oro_shopping_list_frontend_view
                 acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
@@ -551,6 +557,11 @@ workflows:
                             class: $init_context.entityClass
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_shopping_list.manager.empty_matrix_grid
+                        method: hasEmptyMatrix
+                        method_parameters: [$.result.shoppingList]
+                        attribute: $.result.shoppingListHasEmptyMatrix
                 preconditions:
                    '@and':
                        - '@has_elements': $.result.shoppingList.lineItems

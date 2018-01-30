@@ -1,9 +1,19 @@
 {% block __oro_product_list_item__product_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
+    {% set productImageUrl = Image.url(productImage, 'product_small') %}
+
+    {% set modelAttr = product.jsonSerialize() %}
+    {% set modelAttr = modelAttr|merge({
+        'imageUrl': productImageUrl
+    }) %}
+
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product|default({})
+            modelAttr: modelAttr
         },
         'data-layout': 'separate'
     }) %}
@@ -23,7 +33,9 @@
 
 {% block __oro_product_list_item__product_content_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__content product-item__content--{{ class_prefix }}'
+        '~class': ' product-item__content product-item__content--{{ class_prefix }}',
+        'itemscope': '',
+        'itemtype': 'http://schema.org/Product'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -91,10 +103,10 @@
         'class': 'product-item__preview-image'
     } %}
 
-    {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
+    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}" itemprop="image">
     </picture>
 {% endblock %}
 
@@ -111,9 +123,9 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__title product-item__title--{{ class_prefix }}'
     }) %}
-    <h3 {{ block('block_attributes') }}>
+    <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product">{{ product.name }}</a>
+           class="view-product" itemprop="url"><span itemprop="name">{{ product.name }}</span></a>
     </h3>
 {% endblock %}
 
@@ -121,6 +133,17 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__primary-content product-item__primary-content--{{ class_prefix }}'
     }) %}
+    {% if matrixFormType == 'inline' %}
+        {% if class_prefix == 'list-view' %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-item__primary-content--remainder-width'
+            }) %}
+        {% elseif class_prefix == 'no-image-view'%}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-item__primary-content--full-width'
+            }) %}
+        {% endif %}
+    {% endif %}
     <div {{ block('block_attributes') }}>
         <div class="product-item__primary-half product-item__primary-half--{{ class_prefix }}">
             {{ block_widget(block) }}
@@ -141,7 +164,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {%- spaceless -%}
-            {{ 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value">{{- product.sku -}}</span>
+            {{ 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
         {%- endspaceless -%}
     </div>
 {% endblock %}
@@ -165,27 +188,31 @@
         }|json_encode
     }) %}
 
-    <div {{ block('block_attributes') }} >
-        <p>{{ product.shortDescription|raw|oro_html_sanitize }}</p>
-    </div>
+    {% if (class_prefix == 'list-view') %}
+        <div {{ block('block_attributes') }} >
+            <div class="product__description-content tiny-container" itemprop="description">{{ product.shortDescription|raw|oro_html_sanitize }}</div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
+    '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product">
-            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="link view-product">
+            {{ 'oro.product.frontend.index.view_details'|trans }}
         </a>
     </div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_secondary_content_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% if matrixFormType != 'inline' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}'
+        }) %}
+        <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_secondary_content_first_container_widget %}
@@ -204,12 +231,14 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_secondary_content_second_container_widget %}
-    {% set buttonsId = id|replace({'_secondary_content_second_container': ''}) ~ '_line_item_form_buttons' %}
-    {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__secondary-half product-item__secondary-half--{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% if matrixFormType != 'inline' %}
+        {% set buttonsId = id|replace({'_secondary_content_second_container': ''}) ~ '_line_item_form_buttons' %}
+        {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__secondary-half product-item__secondary-half--{{ class_prefix }}'
+        }) %}
+        <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

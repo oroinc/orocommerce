@@ -755,6 +755,7 @@ datagrids:
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
                     - text.product_units as product_units
+                    - text.primary_unit as unit
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -782,6 +783,7 @@ datagrids:
                 route: oro_product_frontend_product_view
                 params: [ id ]
             newArrival: ~
+            unit: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
@@ -800,16 +802,14 @@ datagrids:
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
                     - { table: %oro_product.entity.brand.class%, alias: brand }
         columns:
-            brandName:
+            defaultTitle:
                 label: oro.product.brand.names.label
         properties:
             id: ~
-            brandName:
-                type: localized_value
-                data_name: names
             status:
                 label:         oro.product.brand.names.label
                 frontend_type: select
@@ -826,13 +826,13 @@ datagrids:
                     - id
         sorters:
             columns:
-                brandName:
-                    data_name: brandName
+                defaultTitle:
+                    data_name: brand.defaultTitle
         filters:
             columns:
                 brandName:
                     type:      string
-                    data_name: brandName
+                    data_name: brand.defaultTitle
         actions:
             update:
                 acl_resource:  oro_product_brand_update
@@ -859,24 +859,22 @@ datagrids:
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
                     - { table: %oro_product.entity.brand.class%, alias: brand }
         columns:
-            name:
+            defaultTitle:
                 label: oro.product.brand.label
         properties:
             id: ~
-            name:
-                type: localized_value
-                data_name: brand.names
         sorters:
             columns:
-                name:
-                    data_name: name
+                defaultTitle:
+                    data_name: brand.defaultTitle
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                defaultTitle: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
-                name:
+                defaultTitle:
                     type:      string
-                    data_name: name
+                    data_name: brand.defaultTitle

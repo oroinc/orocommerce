@@ -22,6 +22,7 @@ services:
                 - setOptionsConfig
                 -
                     -
+                        lineItems: {required: true}
                         lineItemErrors: {required: true}
                         shoppingList: {required: true}
                         productsMatchedPrice: {required: true}
@@ -93,23 +94,18 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_dropdown_create }
 
-    oro_shopping_list.layout.block_type.matrix_order_form_summary:
-        parent: oro_layout.block_type.abstract_configurable
+    oro_shopping_list.layout.block.type.matrix_grid_order:
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             -
                 - setOptionsConfig
                 -
                     -
-                        totalQuantity: {required: true}
-                        totalPrice: {required: true}
-            - [setName, ['matrix_order_form_summary']]
+                        product: {required: true}
+                        shoppingList: {required: true}
+                        form: {required: true}
+                        prices: {required: true}
+                        totals: {required: true}
+            - [setName, ['matrix_grid_order']]
         tags:
-            - { name: layout.block_type, alias: matrix_order_form_summary }
-
-    oro_shopping_list.layout.block_type.matrix_grid_prices:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{productPrices: [], unit: ~}]]
-            - [setName, ['matrix_grid_prices']]
-        tags:
-            - { name: layout.block_type, alias: matrix_grid_prices }
+             - { name: layout.block_type, alias: matrix_grid_order }

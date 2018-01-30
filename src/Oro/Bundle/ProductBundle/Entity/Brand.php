@@ -26,7 +26,8 @@ use Oro\Bundle\ProductBundle\Model\ExtendBrand;
  *      name="oro_brand",
  *      indexes={
  *          @ORM\Index(name="idx_oro_brand_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_brand_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_brand_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(name="idx_oro_brand_default_title", columns={"default_title"})
  *      }
  * )
  * @ORM\AssociationOverrides({
@@ -278,6 +279,23 @@ class Brand extends ExtendBrand implements
     protected $shortDescriptions;
 
     /**
+     * This field stores default name localized value for optimisation purposes
+     *
+     * @var string
+     *
+     * @ORM\Column(name="default_title", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
+     */
+    protected $defaultTitle;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -494,6 +512,8 @@ class Brand extends ExtendBrand implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->defaultTitle = $this->getName()->getString();
     }
 
     /**
@@ -504,6 +524,7 @@ class Brand extends ExtendBrand implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->defaultTitle = $this->getName()->getString();
     }
 
     public function __clone()
@@ -517,5 +538,15 @@ class Brand extends ExtendBrand implements
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
         }
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getDefaultTitle()
+    {
+        return $this->defaultTitle;
     }
 }

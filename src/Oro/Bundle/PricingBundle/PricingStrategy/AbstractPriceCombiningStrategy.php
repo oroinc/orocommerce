@@ -10,12 +10,15 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyInterface
+abstract class AbstractPriceCombiningStrategy implements
+    PriceCombiningStrategyInterface,
+    InsertFromSelectExecutorAwareInterface
 {
 
     /**
@@ -59,12 +62,12 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
 
     /**
      * @param Registry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
      */
     public function __construct(
         Registry $registry,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->registry = $registry;
@@ -89,13 +92,11 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
     }
 
     /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
-     * @param int|null $startTimestamp
+     * {@inheritdoc}
      */
-    public function combinePrices(CombinedPriceList $combinedPriceList, Product $product = null, $startTimestamp = null)
+    public function combinePrices(CombinedPriceList $combinedPriceList, array $products = [], $startTimestamp = null)
     {
-        if ($product === null
+        if (!$products
             && $startTimestamp !== null
             && !empty($this->builtList[$startTimestamp][$combinedPriceList->getId()])
         ) {
@@ -105,7 +106,7 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
         $priceListsRelations = $this->getCombinedPriceListRelationsRepository()
             ->getPriceListRelations(
                 $combinedPriceList,
-                $product
+                $products
             );
 
         if ($this->isOutputEnabled()) {
@@ -116,7 +117,7 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
             $progressBar = new ProgressBar($this->output, count($priceListsRelations));
         }
         $combinedPriceRepository = $this->getCombinedProductPriceRepository();
-        $combinedPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $combinedPriceRepository->deleteCombinedPrices($combinedPriceList, $products);
         foreach ($priceListsRelations as $i => $priceListRelation) {
             if ($this->isOutputEnabled()) {
                 $progressBar->setProgress($i);
@@ -127,9 +128,9 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
                 );
                 $progressBar->display();
             }
-            $this->processRelation($combinedPriceList, $priceListRelation, $product);
+            $this->processRelation($combinedPriceList, $priceListRelation, $products);
         }
-        if (!$product) {
+        if (!$products) {
             $combinedPriceList->setPricesCalculated(true);
             $this->getManager()->flush($combinedPriceList);
         }
@@ -142,7 +143,7 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
             );
         }
 
-        $this->triggerHandler->processByProduct($combinedPriceList, $product);
+        $this->triggerHandler->processByProduct($combinedPriceList, $products);
         $this->builtList[$startTimestamp][$combinedPriceList->getId()] = true;
     }
 
@@ -203,11 +204,27 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param CombinedPriceListToPriceList $priceListRelation
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     abstract protected function processRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,
-        Product $product = null
+        array $products = []
     );
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setInsertSelectExecutor(ShardQueryExecutorInterface $queryExecutor)
+    {
+        $this->insertFromSelectQueryExecutor = $queryExecutor;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInsertSelectExecutor()
+    {
+        return $this->insertFromSelectQueryExecutor;
+    }
 }

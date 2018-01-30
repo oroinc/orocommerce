@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
@@ -11,12 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Layout\DataProvider\ConfigProvider;
+use Oro\Bundle\EntityConfigBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -27,48 +26,27 @@ class AttributeChangesListenerTest extends \PHPUnit_Framework_TestCase
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
-
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $dispatcher;
-
     /** @var AttributeChangesListener */
     protected $listener;
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
 
+    /** @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $producer;
+
     protected function setUp()
     {
         $this->requestStack = new RequestStack();
-
-        $this->repository = $this->createMock(ProductRepository::class);
-
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->with(Product::class)
-            ->willReturn($this->repository);
-
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Product::class)
-            ->willReturn($manager);
-
-        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $this->listener = new AttributeChangesListener($this->requestStack, $registry, $this->dispatcher);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->listener = new AttributeChangesListener($this->requestStack, $this->producer);
 
         $this->configManager = $this->createMock(ConfigManager::class);
     }
 
     public function testPostFlushUnsupportedModel()
     {
-        $this->dispatcher->expects($this->never())->method($this->anything());
+        $this->producer->expects($this->never())->method($this->anything());
 
         $model = new \stdClass();
 
@@ -81,7 +59,7 @@ class AttributeChangesListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostFlushUnsupportedModelEntityClass()
     {
-        $this->dispatcher->expects($this->never())->method($this->anything());
+        $this->producer->expects($this->never())->method($this->anything());
 
         $model = $this->getFieldConfigModel(\stdClass::class);
 
@@ -90,8 +68,8 @@ class AttributeChangesListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostFlushWithoutRequest()
     {
-        $this->dispatcher->expects($this->never())
-            ->method('dispatch');
+        $this->producer->expects($this->never())
+            ->method('send');
 
         $this->listener->postFlush(new PostFlushConfigEvent([new FieldConfigModel()], $this->configManager));
     }
@@ -118,14 +96,9 @@ class AttributeChangesListenerTest extends \PHPUnit_Framework_TestCase
 
         $model = $this->getFieldConfigModel(Product::class);
 
-        $this->repository->expects($this->any())
-            ->method('getProductIdsByAttribute')
-            ->with($model)
-            ->willReturn([42]);
-
-        $this->dispatcher->expects($expected)
-            ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, new ReindexationRequestEvent([Product::class], [], [42]));
+        $this->producer->expects($expected)
+            ->method('send')
+            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE, ['attributeId' => 1]);
 
         $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
     }
@@ -760,6 +733,7 @@ class AttributeChangesListenerTest extends \PHPUnit_Framework_TestCase
 
         $fieldModel = new FieldConfigModel();
         $fieldModel->setFieldName(self::FIELD_NAME)->setEntity($entityModel);
+        ReflectionUtil::setId($fieldModel, 1);
 
         return $fieldModel;
     }

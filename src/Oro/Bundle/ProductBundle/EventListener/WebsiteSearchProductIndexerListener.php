@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
@@ -92,6 +93,7 @@ class WebsiteSearchProductIndexerListener
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
+        $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager->getAttributesByClass(Product::class);
         $attributeFamilies = $this->getAttributeFamilyRepository()->getFamilyIdsForAttributes($attributes);
 
@@ -105,33 +107,24 @@ class WebsiteSearchProductIndexerListener
 
                 $data = $this->dataProvider->getIndexData($product, $attribute, $localizations);
 
-                foreach ($data as $content) {
-                    $values = $this->toArray($content->getValue());
-
-                    foreach ($values as $value) {
-                        $value = $this->cleanUpString($value);
-
-                        if ($content->isLocalized()) {
-                            $event->addPlaceholderField(
-                                $productId,
-                                $content->getFieldName(),
-                                $value,
-                                $content->getPlaceholders(),
-                                $content->isSearchable()
-                            );
-                        } else {
-                            $event->addField($productId, $content->getFieldName(), $value, $content->isSearchable());
-                        }
-                    }
-                }
+                $this->processIndexData($event, $productId, $data);
             }
 
             $event->addField($product->getId(), 'product_id', $product->getId());
             $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
+            $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
 
             $this->processImages($event, $productImages, $product->getId());
+
+            if (isset($primaryUnits[$product->getId()])) {
+                $event->addField(
+                    $product->getId(),
+                    'primary_unit',
+                    $primaryUnits[$product->getId()]
+                );
+            }
 
             if (array_key_exists($product->getId(), $productUnits)) {
                 $units = serialize($productUnits[$product->getId()]);
@@ -140,6 +133,34 @@ class WebsiteSearchProductIndexerListener
                     'product_units',
                     $units
                 );
+            }
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param int $productId
+     * @param ProductIndexDataModel[] $data
+     */
+    private function processIndexData(IndexEntityEvent $event, $productId, $data)
+    {
+        foreach ($data as $content) {
+            $values = $this->toArray($content->getValue());
+
+            foreach ($values as $value) {
+                $value = $this->cleanUpString($value);
+
+                if ($content->isLocalized()) {
+                    $event->addPlaceholderField(
+                        $productId,
+                        $content->getFieldName(),
+                        $value,
+                        $content->getPlaceholders(),
+                        $content->isSearchable()
+                    );
+                } else {
+                    $event->addField($productId, $content->getFieldName(), $value, $content->isSearchable());
+                }
             }
         }
     }
@@ -221,7 +242,7 @@ class WebsiteSearchProductIndexerListener
      */
     private function cleanUpString($string)
     {
-        return is_string($string) ? preg_replace('/[[:cntrl:]]/', '', $string) : $string;
+        return is_string($string) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $string) : $string;
     }
 
     /**

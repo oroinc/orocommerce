@@ -349,8 +349,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization() ? $expected->getLocalization()->getId() : null
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );
@@ -358,7 +357,6 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetRawRedirectSlugLocalized()
     {
-        $this->markTestSkipped('Fix in scope of BAP-16106');
         /** @var Slug $expected */
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
 
@@ -374,8 +372,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization()->getId()
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );
@@ -392,8 +389,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertNotEquals(
             [
                 'url' => $expected->getUrl(),
-                'slug_prototype' => $expected->getSlugPrototype(),
-                'localization_id' => $expected->getLocalization()->getId()
+                'slug_prototype' => $expected->getSlugPrototype()
             ],
             $slug
         );

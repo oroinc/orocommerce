@@ -7,16 +7,50 @@ use Behat\Symfony2Extension\Context\KernelDictionary;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Configuration\ConfigurationManager as FeatureConfigurationManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;
+use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext implements KernelAwareContext, FixtureLoaderAwareInterface
 {
     use KernelDictionary;
+    use FixtureLoaderDictionary;
+
+    /**
+     * Load "BestSelling.yml" alice fixture from OrderBundle suite
+     *
+     * PrePersist lifecycleCallback will override createdAt and updatedAt fields passed from fixture.
+     * So, we should disable this callback to save original values.
+     *
+     * @Given /^best selling fixture loaded$/
+     */
+    public function bestSellingFixtureLoaded()
+    {
+        $metadata = $this->getMetadata();
+
+        $events = $metadata->lifecycleCallbacks;
+        $metadata->setLifecycleCallbacks([]);
+
+        $this->fixtureLoader->loadFixtureFile('OroOrderBundle:BestSelling.yml');
+
+        $metadata->setLifecycleCallbacks($events);
+    }
+
+    /**
+     * @return ClassMetadataInfo
+     */
+    private function getMetadata()
+    {
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Order::class);
+
+        return $manager->getClassMetadata(Order::class);
+    }
 
     /**
      * This context method can change order createdAt field,so we can tests time related features

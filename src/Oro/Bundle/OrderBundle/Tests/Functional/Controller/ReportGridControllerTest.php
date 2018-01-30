@@ -35,14 +35,15 @@ class ReportGridControllerTest extends WebTestCase
         $content = $this->requestGrid('');
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(3, $result['data']);
+        $this->assertCount(5, $result['data']);
 
         $this->assertContains('10 Liters', $content);
         $this->assertContains('15 Liters', $content);
-        $this->assertContains('20 Liters', $content);
-        $this->assertContains('"dateGrouping":"2-1-2000"', $content);
-        $this->assertContains('"dateGrouping":"3-1-2000"', $content);
-        $this->assertContains('"dateGrouping":"2-2-2000"', $content);
+        $this->assertContains('35 Liters', $content);
+        $this->assertContains('40 Liters', $content);
+        $this->assertContains('"timePeriod":"2-1-2000"', $content);
+        $this->assertContains('"timePeriod":"3-1-2000"', $content);
+        $this->assertContains('"timePeriod":"2-2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByMonth()
@@ -50,12 +51,13 @@ class ReportGridControllerTest extends WebTestCase
         $content = $this->requestGrid('month');
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(2, $result['data']);
+        $this->assertCount(4, $result['data']);
 
-        $this->assertContains('20 Liters', $content);
         $this->assertContains('25 Liters', $content);
-        $this->assertContains('"dateGrouping":"1-2000"', $content);
-        $this->assertContains('"dateGrouping":"2-2000"', $content);
+        $this->assertContains('35 Liters', $content);
+        $this->assertContains('40 Liters', $content);
+        $this->assertContains('"timePeriod":"1-2000"', $content);
+        $this->assertContains('"timePeriod":"2-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByQuarter()
@@ -63,10 +65,11 @@ class ReportGridControllerTest extends WebTestCase
         $content = $this->requestGrid('quarter');
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(1, $result['data']);
+        $this->assertCount(3, $result['data']);
 
-        $this->assertContains('45 Liters', $content);
-        $this->assertContains('"dateGrouping":"1-2000"', $content);
+        $this->assertContains('40 Liters', $content);
+        $this->assertContains('60 Liters', $content);
+        $this->assertContains('"timePeriod":"1-2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYear()
@@ -74,10 +77,10 @@ class ReportGridControllerTest extends WebTestCase
         $content = $this->requestGrid('year');
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(1, $result['data']);
+        $this->assertCount(3, $result['data']);
 
-        $this->assertContains('45 Liters', $content);
-        $this->assertContains('"dateGrouping":"2000"', $content);
+        $this->assertContains('40 Liters', $content);
+        $this->assertContains('"timePeriod":"2000"', $content);
     }
 
     public function testBestSellingProductsWithFiltersGroupedByYearAndNoDates()
@@ -86,7 +89,7 @@ class ReportGridControllerTest extends WebTestCase
 
         $result = $this->jsonToArray($content);
 
-        $this->assertCount(0, $result['data']);
+        $this->assertCount(3, $result['data']);
     }
 
     /**
@@ -107,7 +110,7 @@ class ReportGridControllerTest extends WebTestCase
                 'best-selling-products[_filter][grouping][value]' => $groupingBy,
                 'best-selling-products[_filter][sku][type]' => 1,
                 'best-selling-products[_filter][sku][value]' => 'product',
-                'best-selling-products[_sort_by][dateGrouping]' => 'DESC',
+                'best-selling-products[_sort_by][timePeriod]' => 'DESC',
                 'best-selling-products[_sort_by][sku]' => 'DESC',
             ]
         );
@@ -122,6 +125,8 @@ class ReportGridControllerTest extends WebTestCase
         $this->getReference(LoadOrders::ORDER_2)->setCreatedAt($this->createDate('2000-01-02'));
         $this->getReference(LoadOrders::ORDER_3)->setCreatedAt($this->createDate('2000-01-03'));
         $this->getReference(LoadOrders::ORDER_4)->setCreatedAt($this->createDate('2000-02-02'));
+        $this->getReference(LoadOrders::ORDER_5)->setCreatedAt($this->createDate('2000-02-02'));
+        $this->getReference(LoadOrders::ORDER_6)->setCreatedAt($this->createDate('2000-02-02'));
 
         $this->getContainer()->get('doctrine')->getManagerForClass(Order::class)->flush();
     }

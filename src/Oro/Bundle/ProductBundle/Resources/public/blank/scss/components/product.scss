@@ -125,15 +125,7 @@
     }
 
     &__description {
-        &--gallery-view {
-            display: none;
-        }
-
-        &--no-image-view {
-            display: none;
-        }
-
-        p {
+        &-content {
             margin: 0 0 15px;
         }
     }

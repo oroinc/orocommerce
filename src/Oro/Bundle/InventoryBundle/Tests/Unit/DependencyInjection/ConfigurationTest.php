@@ -26,7 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'settings' => [
                 'resolved' => true,
                 'manage_inventory' => [
-                    'value' => true,
+                    'value' => false,
                     'scope' => 'app'
                 ],
                 'highlight_low_inventory' => [

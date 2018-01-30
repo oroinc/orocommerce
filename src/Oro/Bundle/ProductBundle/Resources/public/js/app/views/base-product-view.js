@@ -40,10 +40,10 @@ define(function(require) {
         },
 
         modelEvents: {
-            'id': ['change', 'onProductChanged'],
-            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'unit_label': ['change', 'changeUnitLabel'],
-            'unit': ['change', 'onUnitChange']
+            id: ['change', 'onProductChanged'],
+            line_item_form_enable: ['change', 'onLineItemFormEnableChanged'],
+            unit_label: ['change', 'changeUnitLabel'],
+            unit: ['change', 'onUnitChange']
         },
 
         originalProductId: null,
@@ -59,7 +59,10 @@ define(function(require) {
             this.originalProductId = this.model.get('parentProduct');
 
             this.initializeSubviews({
-                productModel: this.model
+                productModel: this.model,
+                options: {
+                    productModel: this.model
+                }
             });
         },
 
@@ -67,7 +70,7 @@ define(function(require) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (!this.model) {
                 this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
-                                this.collection.get(this.rowId) : new BaseModel();
+                    this.collection.get(this.rowId) : new BaseModel();
             }
 
             _.each(this.modelAttr, function(value, attribute) {

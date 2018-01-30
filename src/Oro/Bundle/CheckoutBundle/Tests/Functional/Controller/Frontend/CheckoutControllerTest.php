@@ -22,7 +22,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
-    use EnabledPaymentMethodIdentifierTrait;
+    use EnabledPaymentMethodIdentifierTrait {
+        getReference as protected;
+    }
 
     public function testStartCheckout()
     {

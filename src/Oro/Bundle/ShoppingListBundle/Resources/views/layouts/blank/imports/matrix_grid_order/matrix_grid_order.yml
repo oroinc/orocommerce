@@ -1,42 +1,47 @@
 layout:
+    imports:
+        -
+            id: oro_product_totals
+            root: __form_summary
     actions:
         - '@setBlockTheme':
             themes: 'matrix_grid_order.html.twig'
         - '@setFormTheme':
             themes: 'matrix_grid_order_form.html.twig'
+        - '@add':
+            id: __matrix_form_clear_button
+            blockType: button
+            parentId: __totals
+            prepend: true
+            options:
+                icon: times
+                style: 'btn btn--link disabled clear-button'
+                attr:
+                    title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
+                    data-role: 'clear'
+                text:
+                    label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
         - '@addTree':
             items:
                 __wrapper:
-                    blockType: matrix_grid_prices
+                    blockType: matrix_grid_order
                     options:
-                        visible: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
-                        productPrices: '=data["frontend_product_prices"].getSimpleByConfigurable(data["product"])'
-                        unit: '=data["product"].getPrimaryUnitPrecision().getProductUnitCode()'
+                        visible: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].isMatrixFormAvailable(product) : true'
+                        product: '=data.offsetExists("product") ? data["product"]'
+                        shoppingList: '=data.offsetExists("shoppingList") ? data["shoppingList"] : data["oro_shopping_list_customer_user_shopping_lists"].getCurrent()'
+                        form: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(product, shoppingList)'
+                        prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getByProduct(product)'
+                        totals:
+                            quantity: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(product)'
+                            price: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(product)'
                 __form_start:
                     blockType: form_start
-                    options:
-                        visible: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
-                        form_route_name: 'oro_shopping_list_frontend_matrix_grid_order'
-                        form_route_parameters:
-                            productId: '=data["product"].getId()'
-                            shoppingListId: '=data.offsetExists("shoppingList") ? data["shoppingList"].getId() : ""'
                 __form_fields:
                     blockType: form_fields
-                    options:
-                        visible: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
                 __form_end:
                     blockType: form_end
-                    options:
-                        visible: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
-                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"], data["oro_shopping_list_customer_user_shopping_lists"].getCurrent())'
                 __form_summary:
-                    blockType: matrix_order_form_summary
-                    options:
-                        visible: '=data["oro_product_form_availability"].isMatrixFormAvailable(data["product"])'
-                        totalQuantity: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'
-                        totalPrice: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'
+                    blockType: container
             tree:
                 __root:
                     __wrapper:

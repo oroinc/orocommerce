@@ -98,6 +98,11 @@ define(function(require) {
                 return;
             }
             delete this.hide;
+            delete this.$container;
+
+            if (this.model) {
+                this.model.off(null, null, this);
+            }
             BackendSelectRowCell.__super__.dispose.apply(this, arguments);
         }
     });

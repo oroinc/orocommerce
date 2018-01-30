@@ -141,17 +141,8 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
-            ->withConsecutive(
-                [
-                    IndexEntityEvent::NAME,
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ],
-                [
-                    IndexEntityEvent::NAME.'.std',
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ]
-            )
+        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
+            ->with(IndexEntityEvent::NAME, $this->isInstanceOf(IndexEntityEvent::class))
             ->willReturnCallback(
                 function ($name, IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
@@ -160,6 +151,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     }
                 }
             );
+
+        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
+            ->with(IndexEntityEvent::NAME.'.std', $this->isInstanceOf(IndexEntityEvent::class));
 
         $this->assertEquals(
             $expected,
@@ -182,6 +176,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     [1, 'sku', 'SKU-01', false],
                 ],
                 'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
+            ],
+            'simple field with duplicates' => [
+                'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
+                'indexData' => [
+                    [1, 'description', 'Handheld Flashlight Handheld', false],
+                ],
+                'expected' => [1 => ['text' => ['description' => 'Handheld Flashlight Handheld']]],
             ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
@@ -350,6 +351,33 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                         ],
                         'decimal' => [
                             'decimal_2' => 1.1
+                        ],
+                    ],
+                ],
+            ],
+            'multiple fields with duplicates in all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'description',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', true],
+                    [1, 'description', 'The quick brown fox jumps over the lazy dog', true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'description' => 'The quick brown fox jumps over the lazy dog',
+                            'all_text' => 'The fox quick brown jumps over the lazy dog',
                         ],
                     ],
                 ],

@@ -10,5 +10,8 @@ Feature: Quote Edit Product Selector
     Given I login as administrator
     When go to Sales/Quotes
     And I click "Create Quote"
+    And I click "Save and Close"
+    And I should see "Quote Form" validation errors:
+      | LineItemProduct | Product cannot be empty. |
     And I choose Product "ProductWithHTML" in 1 row
     Then I should not see alert

@@ -28,4 +28,4 @@ Feature: Check CPL after Prices Import
     And I am on the homepage
     And I click "NewCategory"
     And I click "Product 1"
-    And I should see "$11.00"
+    And I should see "$ 11.00"

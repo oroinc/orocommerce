@@ -1,4 +1,4 @@
-{% block _featured_categories_widget %}
+{% block _featured_categories_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-categories'
     }) %}
@@ -9,6 +9,15 @@
 {% endblock %}
 
 {% block _featured_category_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__item'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_category_link_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category'
     }) %}
@@ -32,7 +41,7 @@
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
-            src: asset('/bundles/orocatalog/default/images/no_image_315x260.png')
+            src: Image.urlFromString('/bundles/orocatalog/default/images/no_image_315x260.png', 'category_medium')
         }) %}
     {% endif %}
 

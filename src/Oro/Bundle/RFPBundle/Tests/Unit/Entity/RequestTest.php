@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -47,6 +48,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             ['note', 'test_request_notes'],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
+            ['website', new Website()],
         ];
 
         $propertyRequest = new Request();

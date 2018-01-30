@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -95,7 +93,7 @@ define(function(require) {
                 this.handleCurrencies(this.currencies[priceListId], selectFirst);
             } else {
                 $.ajax({
-                    url: routing.generate(this.options.currenciesRoute, {'id': priceListId}),
+                    url: routing.generate(this.options.currenciesRoute, {id: priceListId}),
                     type: 'GET',
                     beforeSend: function() {
                         self.loadingMaskView.show();

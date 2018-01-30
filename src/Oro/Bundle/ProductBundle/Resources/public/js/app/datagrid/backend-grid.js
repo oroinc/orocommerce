@@ -80,7 +80,6 @@ define(function(require) {
             this.collection.updateState(params.responseJSON.data.options);
             this.collection.reset(params.responseJSON.data.data);
 
-            this.initLayout({collection: this.collection});
             this._afterRequest(params);
         },
 
@@ -160,6 +159,16 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        _afterRequest: function(jqXHR) {
+            if (this.requestsCount === 1) {
+                this.initLayout({collection: this.collection});
+            }
+            BackendGrid.__super__._afterRequest.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         undelegateEvents: function() {
             this.collection.off('gridContentUpdate');
             mediator.off('grid-content-loaded');
@@ -170,7 +179,7 @@ define(function(require) {
         renderActionsArea: function() {
             // Don't render Actions without data
             if (!this.massActions.length) {
-                return ;
+                return;
             }
 
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
@@ -187,7 +196,7 @@ define(function(require) {
 
             this.massActionsContainer.append(this.selectAllHeaderCell.$el);
             if (this.massActionsInSticky) {
-                this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
+                this.additionalSelectAllHeaderCell = new BackendSelectAllHeaderCell({
                     collection: this.collection,
                     selectState: this.selectState,
                     additionalTpl: true
@@ -224,6 +233,14 @@ define(function(require) {
             if ($.isEmptyObject(obj)) {
                 obj.hasMassActions = !!this.massActions.length;
             }
+        },
+
+        getMassActions: function() {
+            return this.metadataModel.get('massActions');
+        },
+
+        setMassActions: function(massActions) {
+            this.metadataModel.set('massActions', massActions);
         },
 
         onWindowUnload: function() {

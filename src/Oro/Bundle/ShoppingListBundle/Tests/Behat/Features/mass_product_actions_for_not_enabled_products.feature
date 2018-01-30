@@ -30,9 +30,10 @@ Feature: Mass Product Actions for not enabled products
     Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    Then I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     And I click "Create and Add"
     Then I should see "No products were added"
+    And I reload the page
     And I should not see "rtsh_m"
 
   Scenario: Not enabled products can not be added with mass actions
@@ -52,6 +53,7 @@ Feature: Mass Product Actions for not enabled products
     Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping list" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "No products were added"
+    And I reload the page
     And I should not see "gtsh_l"

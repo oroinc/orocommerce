@@ -5,21 +5,21 @@ namespace Oro\Bundle\RFPBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
+use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
-use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
-use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\RFPBundle\Model\ExtendRequest;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * Request
@@ -64,7 +64,8 @@ class Request extends ExtendRequest implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
     SoftDeleteableInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    WebsiteAwareInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
@@ -277,6 +278,21 @@ class Request extends ExtendRequest implements
      * @ORM\OneToMany(targetEntity="RequestAdditionalNote", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $requestAdditionalNotes;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * Constructor
@@ -697,5 +713,24 @@ class Request extends ExtendRequest implements
     public function getIdentifier()
     {
         return $this->getPoNumber();
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite(Website $website = null)
+    {
+        $this->website = $website;
+
+        return $this;
     }
 }

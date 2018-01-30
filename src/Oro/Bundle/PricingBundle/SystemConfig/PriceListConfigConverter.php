@@ -55,9 +55,9 @@ class PriceListConfigConverter
 
     /**
      * @param array $configs
-     * @return array
+     * @return PriceListConfig[]
      */
-    public function convertFromSaved(array $configs)
+    public function convertFromSaved(array $configs): array
     {
         $ids = array_map(
             function ($config) {

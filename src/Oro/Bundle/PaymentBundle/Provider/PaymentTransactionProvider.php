@@ -240,6 +240,10 @@ class PaymentTransactionProvider
             if ($this->logger) {
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
+        } catch (\Error $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
     }
 

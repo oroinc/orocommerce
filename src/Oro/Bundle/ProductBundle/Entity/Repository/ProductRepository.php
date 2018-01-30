@@ -389,6 +389,7 @@ class ProductRepository extends EntityRepository
     public function findByCaseInsensitive(array $criteria)
     {
         $queryBuilder = $this->createQueryBuilder('product');
+        $metadata = $this->getClassMetadata();
 
         foreach ($criteria as $fieldName => $fieldValue) {
             if (!is_string($fieldValue)) {
@@ -396,8 +397,16 @@ class ProductRepository extends EntityRepository
             }
 
             $parameterName = $fieldName . 'Value';
+
+            $productFieldName = $fieldName . 'Uppercase';
+            if ($metadata->hasField($productFieldName)) {
+                $productFieldName = sprintf('product.%s', $productFieldName);
+            } else {
+                $productFieldName = sprintf('UPPER(product.%s)', $fieldName);
+            }
+
             $queryBuilder
-                ->andWhere("UPPER(product.$fieldName) = :$parameterName")
+                ->andWhere($queryBuilder->expr()->eq($productFieldName, ':' . $parameterName))
                 ->setParameter($parameterName, mb_strtoupper($fieldValue));
         }
 
@@ -455,6 +464,17 @@ class ProductRepository extends EntityRepository
      */
     public function getProductIdsByAttribute(FieldConfigModel $attribute)
     {
+        return $this->getProductIdsByAttributeId($attribute->getId());
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param int $attributeId
+     * @return array
+     */
+    public function getProductIdsByAttributeId($attributeId)
+    {
         $qb = $this->createQueryBuilder('p');
 
         $result = $qb
@@ -464,7 +484,7 @@ class ProductRepository extends EntityRepository
             ->innerJoin('f.attributeGroups', 'g')
             ->innerJoin('g.attributeRelations', 'r')
             ->where('r.entityConfigFieldId = :id')
-            ->setParameter('id', $attribute->getId())
+            ->setParameter('id', $attributeId)
             ->orderBy('p.id')
             ->getQuery()
             ->getArrayResult();

@@ -88,7 +88,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\ExtractLineItemPaymentOptionsListener'
         arguments:
             - '@translator'
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions, priority: -200 }
 
@@ -198,7 +198,7 @@ services:
     oro_tax.event_listener.order.taxes:
         class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener'
         arguments:
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_order.pricing.price_matcher'
         tags:
@@ -206,10 +206,14 @@ services:
 
     oro_tax.provider.tax_provider_registry:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry'
+        arguments:
+            - '@oro_config.manager'
 
     oro_tax.provider.built_in_tax_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider'
         public: false
+        arguments:
+            - '@oro_tax.manager.tax_manager'
         tags:
             - { name: oro_tax.tax_provider, priority: 255 }
 
@@ -484,7 +488,7 @@ services:
         #TODO: Set to false after BB-11299
         public: true
         arguments:
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist }
@@ -496,7 +500,7 @@ services:
         #TODO: Set to false after BB-11299
         public: true
         arguments:
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: postPersist }
@@ -506,7 +510,7 @@ services:
     oro_tax.layout.data_provider.tax:
         class: 'Oro\Bundle\TaxBundle\Layout\Provider\TaxProvider'
         arguments:
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
         tags:
             - { name: layout.data_provider, alias: tax }
 
@@ -523,7 +527,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.tax_provider_registry'
             - '@oro_tax.factory.tax'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }

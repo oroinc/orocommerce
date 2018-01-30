@@ -65,14 +65,14 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $now = new \DateTime();
 
         // second call to check avoiding of same recalculation
-        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
-        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, [], $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, [], $now->getTimestamp());
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
 
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        $this->assertCount(4, $messages);
+        $this->assertCount(1, $messages);
 
         /** @var Message $message */
         $message = $messages[0]['message'];
@@ -178,7 +178,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->flush();
 
         $combinedPriceList->setPricesCalculated(false);
-        $this->resolver->combinePrices($combinedPriceList, $product);
+        $this->resolver->combinePrices($combinedPriceList, [$product->getId()]);
         $this->assertFalse($combinedPriceList->isPricesCalculated());
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
 
@@ -262,7 +262,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->persist($price);
         $priceManager->flush();
 
-        $this->resolver->combinePrices($combinedPriceList, $price->getProduct());
+        $this->resolver->combinePrices($combinedPriceList, [$price->getProduct()->getId()]);
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
@@ -342,7 +342,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->remove($price);
         $priceManager->flush();
 
-        $this->resolver->combinePrices($combinedPriceList, $product);
+        $this->resolver->combinePrices($combinedPriceList, [$product->getId()]);
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);

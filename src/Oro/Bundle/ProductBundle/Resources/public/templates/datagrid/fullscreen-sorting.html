@@ -1,0 +1,18 @@
+<button class="btn btn--default btn--size-s" title="Sorting" data-role="fullscreen-sorting">
+    <i class="fa-sort-alpha-asc hide-text"></i>
+</button>
+<div class="sorting-popup" data-role="fullscreen-sorting-content">
+    <% if (itemsList) { %>
+    <div class="sorting-popup__title"><%=_.__('oro.datagrid.toolbar_sorting.label') %>:</div>
+    <div class="sorting-popup__list">
+        <% _.each(itemsList, function(item) { %>
+        <div class="sorting-popup__item">
+            <label class="custom-radio sorting-popup__radio">
+                <input type="radio" name="<%= item.name %>" class="custom-radio__control" data-role="fullscreen-sorting-switcher" value="<%= item.value %>"<% if (item.checked) { %> checked<% } %>>
+                <span class="custom-radio__text"><%= item.title %></span>
+            </label>
+        </div>
+        <% }) %>
+    </div>
+    <% } %>
+</div>

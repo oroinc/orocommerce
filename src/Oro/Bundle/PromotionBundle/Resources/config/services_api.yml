@@ -1,0 +1,8 @@
+services:
+    oro_promotion.api.add_promotion_discounts_amount:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\AddPromotionDiscounts
+        arguments:
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: '%oro_order.entity.order.class%' }

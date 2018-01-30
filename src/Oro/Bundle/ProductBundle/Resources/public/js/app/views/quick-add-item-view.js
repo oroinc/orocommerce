@@ -21,11 +21,11 @@ define(function(require) {
         },
 
         elements: {
-            'sku': '[data-name="field__product-display-name"]',
-            'skuHiddenField': '[data-name="field__product-sku"]',
-            'quantity': '[data-name="field__product-quantity"]',
-            'unit': '[data-name="field__product-unit"]',
-            'remove': '[data-role="row-remove"]'
+            sku: '[data-name="field__product-display-name"]',
+            skuHiddenField: '[data-name="field__product-sku"]',
+            quantity: '[data-name="field__product-quantity"]',
+            unit: '[data-name="field__product-unit"]',
+            remove: '[data-role="row-remove"]'
         },
 
         modelElements: {
@@ -36,7 +36,7 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['keyup', 'onQuantityChange']
+            quantity: ['keyup', 'onQuantityChange']
         },
 
         modelAttr: {
@@ -49,10 +49,10 @@ define(function(require) {
         },
 
         modelEvents: {
-            'sku': ['change', 'onSkuChange'],
-            'quantity': ['change', 'publishModelChanges'],
-            'unit': ['change', 'publishModelChanges'],
-            'product_units': ['change', 'setUnits']
+            sku: ['change', 'onSkuChange'],
+            quantity: ['change', 'publishModelChanges'],
+            unit: ['change', 'publishModelChanges'],
+            product_units: ['change', 'setUnits']
         },
 
         listen: {
@@ -104,8 +104,8 @@ define(function(require) {
 
         onQuantityChange: _.debounce(function(e) {
             this.model.set({
-                'quantity': $(e.currentTarget).val(),
-                'quantity_changed_manually': true
+                quantity: $(e.currentTarget).val(),
+                quantity_changed_manually: true
             });
             this.publishModelChanges();
         }, 500),
@@ -130,19 +130,19 @@ define(function(require) {
             }
 
             this.model.set({
-                'sku': obj.sku,
-                'skuHiddenField': obj.sku,
-                'quantity_changed_manually': true,
-                'quantity': canBeUpdated ?
+                sku: obj.sku,
+                skuHiddenField: obj.sku,
+                quantity_changed_manually: true,
+                quantity: canBeUpdated ?
                     parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
-                'unit_deferred': obj.unit
+                unit_deferred: obj.unit
             });
 
             if (canBeUpdated) {
                 mediator.trigger('quick-add-copy-paste-form:update-product', obj);
             }
 
-            this.updateUI();
+            this.updateUI(true);
         },
 
         updateModel: function(data) {
@@ -153,20 +153,20 @@ define(function(require) {
 
             if (data.item.sku) {
                 this.model.set({
-                    'sku': data.item.sku
+                    sku: data.item.sku
                 }, {
                     silent: true
                 });
 
                 this.model.set({
-                    'skuHiddenField': data.item.sku
+                    skuHiddenField: data.item.sku
                 });
             }
 
             this.model.set({
-                'units_loaded': !_.isUndefined(data.item.units),
-                'quantity': data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
-                'product_units': data.item.units || {}
+                units_loaded: !_.isUndefined(data.item.units),
+                quantity: data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
+                product_units: data.item.units || {}
             });
         },
 
@@ -177,16 +177,16 @@ define(function(require) {
             }
 
             this.model.set({
-                'skuHiddenField': obj.sku
+                skuHiddenField: obj.sku
             });
-            this.updateUI();
+            this.updateUI(true);
         },
 
         clearSku: function() {
             this.model.set({
-                'sku_changed_manually': true,
-                'sku': '',
-                'skuHiddenField': ''
+                sku_changed_manually: true,
+                sku: '',
+                skuHiddenField: ''
             });
         },
 
@@ -252,8 +252,11 @@ define(function(require) {
                 !_.has(this.model.get('product_units'), this.model.get('unit'));
         },
 
-        updateUI: function() {
-            this.getElement('sku').trigger('blur');
+        updateUI: function(triggerBlur) {
+            if (triggerBlur) {
+                this.getElement('sku').trigger('blur');
+            }
+
             this.getElement('unit').inputWidget('refresh');
 
             if (this.model.get('sku') && this.unitInvalid()) {

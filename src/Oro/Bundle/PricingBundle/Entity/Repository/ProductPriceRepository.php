@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -31,14 +31,14 @@ class ProductPriceRepository extends BaseProductPriceRepository
     /**
      * @param ShardManager $shardManager
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     public function deleteGeneratedPrices(
         ShardManager $shardManager,
         PriceList $priceList,
-        Product $product = null
+        array $products = []
     ) {
-        $qb = $this->getDeleteQbByPriceList($priceList, $product);
+        $qb = $this->getDeleteQbByPriceList($priceList, $products);
         $query = $qb->andWhere($qb->expr()->isNotNull('productPrice.priceRule'))->getQuery();
         $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]);
         $realTableName = ' ' . $shardName . ' ';
@@ -46,10 +46,17 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $sql = $query->getSQL();
         $sql = str_replace($baseTable, $realTableName, $sql);
         $parameters = [$priceList->getId()];
-        if ($product) {
-            $parameters[] = $product->getId();
+        $types = [\PDO::PARAM_INT];
+        if ($products) {
+            $parameters[] = array_map(
+                function ($product) {
+                    return $product instanceof Product ? $product->getId() : $product;
+                },
+                $products
+            );
+            $types[] = Connection::PARAM_INT_ARRAY;
         }
-        $this->_em->getConnection()->executeQuery($sql, $parameters);
+        $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
     /**
@@ -127,12 +134,12 @@ class ProductPriceRepository extends BaseProductPriceRepository
     /**
      * @param BasePriceList $sourcePriceList
      * @param BasePriceList $targetPriceList
-     * @param InsertFromSelectShardQueryExecutor $insertQueryExecutor
+     * @param ShardQueryExecutorInterface $insertQueryExecutor
      */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
-        InsertFromSelectShardQueryExecutor $insertQueryExecutor
+        ShardQueryExecutorInterface $insertQueryExecutor
     ) {
         $qb = $this->createQBForCopy($sourcePriceList, $targetPriceList);
         $qb->addSelect('UUID()');

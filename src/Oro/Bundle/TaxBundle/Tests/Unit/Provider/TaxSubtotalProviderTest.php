@@ -8,9 +8,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 
 class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
@@ -26,9 +27,9 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TaxManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderInterface
      */
-    protected $taxManager;
+    protected $taxProvider;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TaxFactory
@@ -44,15 +45,17 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
 
         $this->taxFactory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new TaxSubtotalProvider($this->translator, $this->taxManager, $this->taxFactory);
+        $this->provider = new TaxSubtotalProvider($this->translator, $taxProviderRegistry, $this->taxFactory);
     }
 
     protected function tearDown()
@@ -70,7 +73,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->willReturn($tax);
 
@@ -84,7 +87,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willReturn($tax);
 
@@ -95,7 +98,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCachedSubtotalEmptyIfTaxationDisabled()
     {
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willThrowException(new TaxationDisabledException());
 
@@ -106,7 +109,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubtotalWithException()
     {
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->willThrowException(new TaxationDisabledException());
 

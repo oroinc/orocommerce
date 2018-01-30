@@ -1,4 +1,5 @@
-@import 'form.scss';
+// @theme: default;
+
 @import './components/request-form-container/request-form-container';
 @import './components/request-form-grid/request-form-grid';
 @import './components/request-form/request-form';
@@ -18,10 +19,3 @@
 @import './components/request-form-footer/request-form-footer';
 @import './components/product-tier-prices/product-tier-prices';
 @import './components/request-success/request-success';
-
-.customer-rfp_request-assigned_users {
-  ul {
-    list-style: outside none none;
-    padding-left: 0;
-  }
-}

@@ -2,24 +2,26 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Form\FormInterface;
+
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use Symfony\Component\Form\FormInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TaxManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $taxManager;
+    protected $taxProvider;
 
     /**
      * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -43,13 +45,18 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
 
     public function setUp()
     {
-        $this->taxManager = $this->createMock(TaxManager::class);
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
+
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->appliedDiscountsProvider = $this->createMock(AppliedDiscountsProvider::class);
 
         $this->discountsListener = new OrderLineItemAppliedDiscountsListener(
-            $this->taxManager,
+            $taxProviderRegistry,
             $this->taxationSettingsProvider,
             $this->lineItemSubtotalProvider,
             $this->appliedDiscountsProvider
@@ -66,7 +73,7 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
         $taxesRow->offsetSet(ResultElement::EXCLUDING_TAX, 50);
         $result = new Result();
         $result->offsetSet(Result::ROW, $taxesRow);
-        $this->taxManager->expects($this->atLeastOnce())->method('getTax')->willReturn($result);
+        $this->taxProvider->expects($this->atLeastOnce())->method('getTax')->willReturn($result);
 
         $event = new OrderEvent($this->createMock(FormInterface::class), $order);
         $this->discountsListener->onOrderEvent($event);
@@ -123,6 +130,9 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
         ], $event->getData()->offsetGet('appliedDiscounts'));
     }
 
+    /**
+     * @return Order
+     */
     protected function prepareOrder()
     {
         $order = new Order();

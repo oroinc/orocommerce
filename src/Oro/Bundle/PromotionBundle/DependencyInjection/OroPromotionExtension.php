@@ -25,6 +25,7 @@ class OroPromotionExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
         $loader->load('block_types.yml');
+        $loader->load('services_api.yml');
 
         $container->prependExtensionConfig($this->getAlias(), $config);
     }

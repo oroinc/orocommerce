@@ -99,19 +99,3 @@
     }
   }
 }
-
-@include breakpoint('mobile') {
-  .catalog__filter-controls {
-    .action-selectbox_custom_in-pager {
-      display: inline-block;
-
-      .select2-container {
-        a.select2-choice {
-          max-width: 60px;
-
-          padding: 8px 4px !important;
-        }
-      }
-    }
-  }
-}

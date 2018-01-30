@@ -29,6 +29,11 @@ class PlaceholderHelper
         $placeholderPatterns = [];
         $withPlaceholders = false;
 
+        // quick check because placeholders are always uppercase
+        if (!preg_match('/[A-Z]+/', $name)) {
+            return false;
+        }
+
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
             $placeholderNames[] = $placeholder->getPlaceholder();
             $placeholderPatterns[] = PlaceholderDecorator::DEFAULT_PLACEHOLDER_VALUE;

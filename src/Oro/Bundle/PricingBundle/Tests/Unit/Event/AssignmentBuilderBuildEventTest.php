@@ -14,7 +14,7 @@ class AssignmentBuilderBuildEventTest extends \PHPUnit_Framework_TestCase
 
         $event = new AssignmentBuilderBuildEvent($priceList);
         $this->assertSame($priceList, $event->getPriceList());
-        $this->assertNull($event->getProduct());
+        $this->assertEmpty($event->getProducts());
     }
 
     public function testEventWithProduct()
@@ -22,8 +22,8 @@ class AssignmentBuilderBuildEventTest extends \PHPUnit_Framework_TestCase
         $priceList = new PriceList();
         $product = new Product();
 
-        $event = new AssignmentBuilderBuildEvent($priceList, $product);
+        $event = new AssignmentBuilderBuildEvent($priceList, [$product]);
         $this->assertSame($priceList, $event->getPriceList());
-        $this->assertSame($product, $event->getProduct());
+        $this->assertSame([$product], $event->getProducts());
     }
 }

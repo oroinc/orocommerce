@@ -51,4 +51,9 @@ class ParentCategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
         $result = $this->parentCategoryFallbackProvider->getFallbackHolderEntity($object, 'test');
         $this->assertSame($parent, $result);
     }
+
+    public function testGetFallbackEntityClass()
+    {
+        $this->assertSame(Category::class, $this->parentCategoryFallbackProvider->getFallbackEntityClass());
+    }
 }

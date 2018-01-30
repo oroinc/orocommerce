@@ -60,7 +60,7 @@ abstract class AbstractRuleEntityListener
                 $updatedFields,
                 $relationId
             );
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, [$product]);
         }
     }
 
@@ -72,7 +72,7 @@ abstract class AbstractRuleEntityListener
     {
         $lexemes = $this->priceRuleLexemeTriggerHandler
             ->findEntityLexemes($this->getEntityClassName(), [], $relationId);
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
+        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product ? [$product] : []);
     }
 
     /**

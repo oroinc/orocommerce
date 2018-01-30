@@ -22,7 +22,15 @@ abstract class InventoryFallbackTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([LoadCategoryProductData::class]);
+        $this->loadFixtures($this->getFixtures());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFixtures()
+    {
+        return [LoadCategoryProductData::class];
     }
 
     /**

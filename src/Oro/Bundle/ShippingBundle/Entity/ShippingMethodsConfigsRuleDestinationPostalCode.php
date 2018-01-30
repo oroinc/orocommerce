@@ -85,6 +85,6 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
      */
     public function __toString()
     {
-        return $this->getName();
+        return (string)$this->getName();
     }
 }

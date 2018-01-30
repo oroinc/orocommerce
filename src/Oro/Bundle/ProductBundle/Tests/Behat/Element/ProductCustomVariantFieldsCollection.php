@@ -13,16 +13,17 @@ class ProductCustomVariantFieldsCollection extends Element
     {
         $value = is_array($value) ? $value : [$value];
 
+        $variants = $this->find(
+            'css',
+            'div[data-name="field__variant-fields"]'
+        );
+        self::assertNotNull($variants, "Variants block not found");
+
         foreach ($value as $item) {
             // Click on label because stylish checkbox hover the real one
-            $checkBox = $this->find('css', "input[type='checkbox'][id^=oro_product_variantFields_$item]");
-            self::assertNotNull($checkBox, "Checkbox '$item' not found");
-            $checkBoxLabel = $checkBox
-                ->getParent()
-                ->getParent()
-                ->find('css', 'label');
-            self::assertNotNull($checkBoxLabel, "Label for checkbox '$item' not found");
-            $checkBoxLabel->click();
+            $checkBox = $variants->find('xpath', '//label[text()="'. $item .'"]');
+            self::assertNotNull($checkBox, "Label for checkbox '$item' not found");
+            $checkBox->click();
         }
     }
 }

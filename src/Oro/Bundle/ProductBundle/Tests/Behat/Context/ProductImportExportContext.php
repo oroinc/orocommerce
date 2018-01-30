@@ -19,6 +19,7 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
 
     const PRODUCT_ENTITY = 'Products';
     const PRODUCT_PROCESSOR = 'oro_product_product';
+    const PRODUCT_ATTRIBUTES_PROCESSOR = 'oro_entity_config_attribute.export_template';
 
     /**
      * @var ImportExportContext
@@ -85,5 +86,15 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
         } catch (IOExceptionInterface $e) {
             echo "An error occurred while copying image" . $imagePath;
         }
+    }
+
+    /**
+     * Download product attributes' data template from attributes grid page
+     *
+     * @When /^(?:|I )download Product Attributes' Data Template file$/
+     */
+    public function downloadProductAttributesDataTemplate()
+    {
+        $this->importExportContext->downloadTemplateFileByProcessor(self::PRODUCT_ATTRIBUTES_PROCESSOR);
     }
 }

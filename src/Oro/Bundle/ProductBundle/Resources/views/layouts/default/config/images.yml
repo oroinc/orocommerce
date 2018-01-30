@@ -46,13 +46,13 @@ dimensions:
         options:
             applyProductImageWatermark: true
     product_large:
-        width: 268
-        height: 268
+        width: 316
+        height: auto
         options:
             applyProductImageWatermark: true
     product_medium:
-        width: 203
-        height: 203
+        width: 262
+        height: auto
         options:
             applyProductImageWatermark: true
     product_small:

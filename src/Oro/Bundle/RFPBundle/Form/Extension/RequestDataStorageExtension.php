@@ -175,7 +175,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             $inventoryStatus = $inventoryStatus->getId();
         }
 
-        return $inventoryStatus && in_array($inventoryStatus, $this->supportedStatuses);
+        return $inventoryStatus && in_array($inventoryStatus, $this->supportedStatuses) && $product->isEnabled();
     }
 
     /**

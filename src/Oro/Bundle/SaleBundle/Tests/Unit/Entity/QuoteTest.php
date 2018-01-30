@@ -40,7 +40,7 @@ class QuoteTest extends AbstractTest
             ['shippingMethodLocked', true],
             ['allowUnlistedShippingMethod', true],
             ['request', new Request()],
-            ['website', new Website()],
+            ['website', new Website(), true],
             ['currency', 'UAH'],
             ['estimatedShippingCostAmount', 15],
             ['overriddenShippingCostAmount', 15],

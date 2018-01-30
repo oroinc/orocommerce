@@ -1,4 +1,3 @@
-/*global define*/
 define([
     'tpl!oropricing/templates/product/pricing-filter.html',
     'jquery',
@@ -190,7 +189,7 @@ define([
             currentValue.value_end = Math.abs(currentValue.value_end);
 
             if (!tools.isEqualsLoosely(currentValue, oldValue)) {
-                //apply new values and filter type
+                // apply new values and filter type
                 this._writeDOMValue(currentValue);
             }
         },

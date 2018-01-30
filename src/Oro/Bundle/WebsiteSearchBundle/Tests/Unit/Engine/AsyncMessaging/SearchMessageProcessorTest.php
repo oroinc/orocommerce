@@ -4,8 +4,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -18,6 +21,21 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
      * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
      */
     private $indexer;
+
+    /**
+     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
+     */
+    private $messageProducer;
+
+    /**
+     * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject $indexer
+     */
+    private $indexerInputValidator;
+
+    /**
+     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject $indexer
+     */
+    private $reindexMessageGranularizer;
 
     /**
      * @var SearchMessageProcessor
@@ -36,7 +54,23 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('reindex')
             ->willReturn(1);
 
-        $this->processor = new SearchMessageProcessor($this->indexer, new JobRunner());
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+
+        $this->indexerInputValidator = $this->getMockBuilder(IndexerInputValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->reindexMessageGranularizer = $this->getMockBuilder(ReindexMessageGranularizer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->processor = new SearchMessageProcessor(
+            $this->indexer,
+            new JobRunner(),
+            $this->messageProducer,
+            $this->indexerInputValidator,
+            $this->reindexMessageGranularizer
+        );
 
         $this->session = $this->createMock(SessionInterface::class);
     }
@@ -68,13 +102,17 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $messageBody
-     * @param $messageId
-     * @param $jobName
+     * @param $topic
+     * @param $expectedMethod
      *
-     * @dataProvider buildJobNameForMessageDataProvider
+     * @dataProvider processingReindexWithGranulizeDataProvider
      */
-    public function testBuildJobNameForMessage($messageBody, $messageId, $jobName)
-    {
+    public function testProcessingReindexWithGranulize(
+        array $messageBody,
+        array $classesToIndex,
+        array $websiteIdsToIndex,
+        array $granulizedMessages
+    ) {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
@@ -85,19 +123,65 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
-        $message->method('getMessageId')
-            ->willReturn($messageId);
+        $this->indexerInputValidator->expects($this->once())
+            ->method('validateReindexRequest')
+            ->with($messageBody['class'], $messageBody['context'])
+            ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
-        /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
-        $jobRunner = $this->createMock(JobRunner::class);
+        $this->reindexMessageGranularizer->expects($this->once())
+            ->method('process')
+            ->with($classesToIndex, $websiteIdsToIndex, $messageBody['context'])
+            ->willReturn($granulizedMessages);
 
-        $this->processor = new SearchMessageProcessor($this->indexer, $jobRunner);
+        $this->indexer->expects($this->exactly(count($granulizedMessages)))
+            ->method('reindex');
 
-        $jobRunner->expects($this->once())
-            ->method('runUnique')
-            ->with($messageId, $jobName);
+        $this->messageProducer->expects($this->never())
+            ->method('send');
 
-        $this->processor->process($message, $this->session);
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
+    }
+
+    /**
+     * @param $messageBody
+     * @param $topic
+     * @param $expectedMethod
+     *
+     * @dataProvider processingReindexWithGranulizeAsyncDataProvider
+     */
+    public function testProcessingReindexWithGranulizeAsync(
+        array $messageBody,
+        array $classesToIndex,
+        array $websiteIdsToIndex,
+        array $granulizedMessages
+    ) {
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->method('getBody')
+            ->will($this->returnValue(json_encode($messageBody)));
+
+        $message->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->indexerInputValidator->expects($this->once())
+            ->method('validateReindexRequest')
+            ->with($messageBody['class'], $messageBody['context'])
+            ->willReturn([$classesToIndex, $websiteIdsToIndex]);
+
+        $this->reindexMessageGranularizer->expects($this->once())
+            ->method('process')
+            ->with($classesToIndex, $websiteIdsToIndex, $messageBody['context'])
+            ->willReturn($granulizedMessages);
+
+        $this->indexer->expects($this->never())
+            ->method('reindex');
+
+        $this->messageProducer->expects($this->exactly(count($granulizedMessages)))
+            ->method('send');
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
     }
 
     public function testNotRunUniqueWhenNoInputGiven()
@@ -119,8 +203,6 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
         $jobRunner = $this->createMock(JobRunner::class);
-
-        $this->processor = new SearchMessageProcessor($this->indexer, $jobRunner);
 
         $jobRunner->expects($this->never())
             ->method('runUnique');
@@ -221,75 +303,242 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function buildJobNameForMessageDataProvider()
+    public function processingReindexWithGranulizeDataProvider()
     {
         return [
-            [
-                'messageBody' => [
-                    'class'   => ['Product'],
+            'reindex immediately if there are less messages than the batch size on 2 websites and 1 entity' => [
+                'message'        => [
+                    'granulize'=> true,
+                    'class'   => '\StdClass',
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
+                    ]
+                ],
+                'classesToIndex' => ['\StdClass'],
+                'websiteIdsToIndex'=> [1, 2],
+                'granulizedMessages' => [
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                ],
+            ],
+            'reindex immediately if there are less messages than the batch size on 3 websites and 2 entities' => [
+                'message'        => [
+                    'granulize'=> true,
+                    'class'   => ['Product', 'Category'],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2, 3],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
                     ]
                 ],
-                'messageId'   => 1,
-                'jobName'     => 'website_search_reindex|a48239eb5ecaa2b782ff2cbbf0d34533'
-            ],
-            [
-                'messageBody' => [
-                    'class'   => ['Product'],
-                    'context' => []
+                'classesToIndex' => ['Product', 'Category'],
+                'websiteIdsToIndex'=> [1, 2, 3],
+                'granulizedMessages' => [
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                        ],
+                    ],
                 ],
-                'messageId'   => 2,
-                'jobName'     => 'website_search_reindex|4223c0b13a1961eec345321c3a05c7e6'
             ],
-            [
-                'messageBody' => [
-                    'class'   => ['Product'],
+        ];
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return array
+     */
+    public function processingReindexWithGranulizeAsyncDataProvider()
+    {
+        return [
+            'reindex asynchronously if there are more messages than the batch size on 2 websites and 1 entity' => [
+                'message' => [
+                    'granulize' => true,
+                    'class' => '\StdClass',
                     'context' => [
-                        AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3, 4],
-                    ]
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
-                'messageId'   => 3,
-                'jobName'     => 'website_search_reindex|c6b774eac4cfdba461ace1186ee2640a'
+                'classesToIndex' => ['\StdClass'],
+                'websiteIdsToIndex' => [1, 2],
+                'granulizedMessages' => [
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                ],
             ],
-            [
-                'messageBody' => [
+            'reindex asynchronously if there are more messages than the batch size on 3 websites and 2 entities' => [
+                'message' => [
+                    'granulize' => true,
+                    'class' => ['Product', 'Category'],
                     'context' => [
-                        AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3, 4],
-                    ]
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2, 3],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
-                'messageId'   => 4,
-                'jobName'     => 'website_search_reindex|832e10bf6f398367916cdec1827e90cc'
-            ],
-            [
-                'messageBody' => [
-                    'class' => ['Product']
+                'classesToIndex' => ['Product', 'Category'],
+                'websiteIdsToIndex' => [1, 2, 3],
+                'granulizedMessages' => [
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Product',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
+                        ],
+                    ],
+                    [
+                        'class' => 'Category',
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3],
+                        ],
+                    ],
                 ],
-                'messageId'   => 5,
-                'jobName'     => 'website_search_reindex|4223c0b13a1961eec345321c3a05c7e6'
-            ],
-            [
-                'messageBody' => [
-                    'class'   => ['Product'],
-                    'context' => [
-                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2]
-                    ]
-                ],
-                'messageId'   => 6,
-                'jobName'     => 'website_search_reindex|5d068fd124226bee495078e525ea7e94'
-            ],
-            [
-                'messageBody' => [
-                    'class'   => ['Product'],
-                    'context' => [
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3, 4],
-                    ]
-                ],
-                'messageId'   => 7,
-                'jobName'     => 'website_search_reindex|3f728306313430c89c56da58bec7dd5f'
             ],
         ];
     }

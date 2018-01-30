@@ -40,10 +40,3 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
-
-Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
-    productVariant1:
-        parentProduct: '@product_configurable'
-        product: '@product2'
-        visible: true
-

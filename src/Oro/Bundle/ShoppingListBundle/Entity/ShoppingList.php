@@ -261,6 +261,14 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function removeLineItem(LineItem $item)
     {
+        if ($item->getId() === null) {
+            if ($this->lineItems->contains($item)) {
+                $this->lineItems->removeElement($item);
+            }
+
+            return $this;
+        }
+
         foreach ($this->lineItems as $lineItem) {
             if ($item->getId() === $lineItem->getId()) {
                 $this->lineItems->removeElement($lineItem);

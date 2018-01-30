@@ -9,12 +9,12 @@ interface PriceCombiningStrategyInterface
 {
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @param int|null $startTimestamp
      */
     public function combinePrices(
         CombinedPriceList $combinedPriceList,
-        Product $product = null,
+        array $products = [],
         $startTimestamp = null
     );
 }

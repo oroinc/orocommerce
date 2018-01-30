@@ -104,10 +104,14 @@ class ShoppingListControllerTest extends WebTestCase
     /**
      * @dataProvider viewSelectedShoppingListDataProvider
      * @param string $shoppingList
-     * @param string $expectedLineItemPrice
+     * @param string|array $expectedLineItemPrice
+     * @param bool   $atLeastOneAvailableProduct
      */
-    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
-    {
+    public function testViewSelectedShoppingListWithLineItemPrice(
+        string $shoppingList,
+        $expectedLineItemPrice,
+        bool $atLeastOneAvailableProduct
+    ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
@@ -134,7 +138,10 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertContains($shoppingList1->getLabel(), $crawler->html());
 
         $this->assertContains('Create Order', $crawler->html());
-        $this->assertContains('Request Quote', $crawler->html());
+        if ($atLeastOneAvailableProduct) {
+            $this->assertContains('Duplicate List', $crawler->html());
+            $this->assertContains('Request Quote', $crawler->html());
+        }
 
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
@@ -147,18 +154,23 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10'
+                'expectedLineItemPrice' => '$13.10',
+                'atLeastOneAvailableProduct' => true,
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00'
+                'expectedLineItemPrice' => '$0.00',
+                'atLeastOneAvailableProduct' => false,
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
-                ]
+                    'N/A',
+                    'N/A',
+                ],
+                'atLeastOneAvailableProduct' => true,
             ],
         ];
     }

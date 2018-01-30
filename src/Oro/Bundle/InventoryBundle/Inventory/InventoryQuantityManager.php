@@ -83,11 +83,15 @@ class InventoryQuantityManager
             return false;
         }
 
-        if ($this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')) {
-            return true;
+        if (!$this->entityFallbackResolver->getFallbackValue($product, 'manageInventory')) {
+            return false;
         }
 
-        return false;
+        if (!$this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

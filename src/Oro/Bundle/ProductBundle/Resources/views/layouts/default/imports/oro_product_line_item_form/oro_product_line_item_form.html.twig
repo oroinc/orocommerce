@@ -34,5 +34,7 @@
             renderCache: renderCache
         }) %}
     {% endif %}
-    {{ renderCache }}
+    {% if not is_configurable_product_type(product.type) %}
+        {{ renderCache }}
+    {% endif %}
 {% endblock %}

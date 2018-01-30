@@ -27,7 +27,7 @@ define(function(require) {
                 trigger: 'entry-point:order:trigger',
                 init: 'entry-point:order:init',
                 listenersOff: 'entry-point:listeners:off',
-                listenersOn: 'entry-point:listeners:on',
+                listenersOn: 'entry-point:listeners:on'
             },
             triggerTimeout: 1500
         },

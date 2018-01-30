@@ -11,7 +11,7 @@ class RemoveUsedShippingServiceConstraint extends Constraint
      */
     public function validatedBy()
     {
-        return RemoveUsedShippingServiceValidator::ALIAS;
+        return 'oro_ups_remove_used_shipping_service_validator';
     }
 
     /**

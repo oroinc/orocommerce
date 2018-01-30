@@ -14,6 +14,7 @@ Table of Contents
  - [Product Attributes](./Resources/doc/product-attributes.md)
  - [Customize products using layouts](./Resources/doc/customize-products.md)
  - [Related items](./Resources/doc/related-items.md)
+ - [Actions](./Resources/doc/actions.md)
 
 Description:
 ------------

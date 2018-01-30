@@ -1,22 +1,11 @@
 ## 1.6.0 (Unreleased)
+[Show detailed list of changes](incompatibilities-1-6.md)
 
-### Changed
+### Added
 #### CatalogBundle
 * Improved caching of home page, added `Oro\Component\Cache\Layout\DataProviderCacheTrait` to the following layout data providers:
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`) 
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
-* Layout data provider method `=data["featured_categories"].getAll()` returns data in format `[['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]`
-
-#### CatalogBundle
-* Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
-* Class `Oro\Bundle\CatalogBundle\Entity\Category`:
-    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
-    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
-    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
-    * method `removeProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
-    * property `products` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
-* Removed `oro_category_to_product` joining table.
-* The `CategoryRepository::getCategoriesProductsCountQueryBuilder` is deprecated. Not using.
 
 #### ProductBundle
 * Class `Oro\Bundle\CatalogBundle\Model\ExtendProduct`:
@@ -24,11 +13,33 @@
     * method `getCategory` was added
     * property `category_id` was added
 
+### Changed
 #### AlternativeCheckoutBundle
 * Operation `oro_accept_quote` renamed to `oro_sale_accept_quote` and moved to `SaleBundle`
 
+#### CatalogBundle
+* Layout data provider method `=data["featured_categories"].getAll()` returns data in format `[['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]`
+* Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
+* Class `Oro\Bundle\CatalogBundle\Entity\Category`:
+    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `removeProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+    * property `products` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+
 #### CheckoutBundle
 * Operation `oro_checkout_frontend_quote_submit_to_order` renamed to `oro_sale_frontend_quote_submit_to_order` and moved to `SaleBundle`
+
+#### TaxBundle
+* Now enabled tax provider in system config is a main point for tax calculation instead of TaxManager (look at the TaxProviderInterface). Read more in documentation [how to setup custom tax provider](./src/Oro/Bundle/TaxBundle/README.md#create-custom-tax-provider).
+
+### Deprecated
+#### CatalogBundle
+* The `CategoryRepository::getCategoriesProductsCountQueryBuilder` is deprecated. Not using.
+
+### Removed
+#### CatalogBundle
+* Removed `oro_category_to_product` joining table.
 
 ## 1.5.0 (2017-11-30)
 [Show detailed list of changes](incompatibilities-1-5.md)
@@ -113,7 +124,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 ### Added
 #### PricingBundle
 * Class `BaseProductPriceRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup> got an abstract method:
-    * `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers witch contains price for given product
+    * `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers which contains price for given product
 * Api for `ProductPrice`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Entity/ProductPrice.php "Oro\Bundle\PricingBundle\Entity\ProductPrice")</sup> entity was added. In sharding mode product prices can't be managed without `priceList` field, that's why in `get_list` action `priceList` filter is required and in all actions ID of entities has format `ProductPriceID-PriceListID`.
     * Class `PriceManagerDeleteHandler`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Api/ProductPrice/Delete/PriceManagerDeleteHandler.php "Oro\Bundle\PricingBundle\Api\ProductPrice\Delete\PriceManagerDeleteHandler")</sup> was added to correctly remove prices in sharding mode
     * Interface `PriceListIDContextStorageInterface`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PricingBundle/Api/ProductPrice/PriceListIDContextStorageInterface.php "Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface")</sup> was added to abstract the way of storing price list id in an api context

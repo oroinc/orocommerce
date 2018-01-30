@@ -708,6 +708,35 @@ Example:
 ```
 {@/request}
 
+### website
+
+#### get_subresource
+
+Retrieve the website where the Request For Quote was created.
+
+#### get_relationship
+
+Retrieve the website ID where the Request For Quote was created.
+
+#### update_relationship
+
+Replace the wesbite where the Request For Quote was created.
+
+{@request:json_api}
+Example:
+
+`</admin/api/requests/1/relationships/website>`
+
+```JSON
+{
+  "data": {
+    "type": "websites",
+    "id": "1"
+  }
+}
+```
+{@/request}
+
 ### owner
 
 #### get_subresource

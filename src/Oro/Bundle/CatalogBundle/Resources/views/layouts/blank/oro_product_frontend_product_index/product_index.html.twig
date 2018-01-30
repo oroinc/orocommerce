@@ -3,7 +3,8 @@
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' category-picture__image',
-        alt: category.defaultTitle
+        'alt': category.defaultTitle,
+        'itemprop': 'image'
     }) %}
 
     {% if category.largeImage %}
@@ -11,8 +12,10 @@
             src: Image.url(category.largeImage, 'product_original')
         }) %}
 
-        <div class="category-picture">
-            <img {{ block('block_attributes') }}>
+        <div class="category-picture" itemprop="hasOfferCatalog" itemscope itemtype="http://schema.org/OfferCatalog">
+            <div itemprop="name" content="{{ category.defaultTitle }}">
+                <img {{ block('block_attributes') }}>
+            </div>
         </div>
     {% endif %}
 {% endblock %}
