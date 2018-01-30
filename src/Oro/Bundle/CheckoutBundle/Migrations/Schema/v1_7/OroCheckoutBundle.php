@@ -14,8 +14,6 @@ class OroCheckoutBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateCheckoutTable($schema);
-
         /** Tables generation **/
         $this->createOroCheckoutLineItemTable($schema);
         $this->createOroCheckoutSubtotalTable($schema);
@@ -27,22 +25,6 @@ class OroCheckoutBundle implements Migration
         /** Create CheckoutLineItems for existing Checkouts **/
         $queries->addPostQuery(
             new ConvertCheckoutLineItemsDataQuery()
-        );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function updateCheckoutTable(Schema $schema)
-    {
-        $table = $schema->getTable('oro_checkout');
-        $table->addColumn('registered_customer_user_id', 'integer', ['notnull' => false]);
-        $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer_user'),
-            ['registered_customer_user_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

@@ -27,6 +27,7 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->addRegisteredCustomerUser($schema);
         $this->updateOroCheckoutSubtotalTable($schema);
 
         $this->addOroCheckoutSubtotalForeignKeys($schema);
@@ -112,5 +113,21 @@ UPDATE oro_checkout_subtotal AS cs
             AND c.completed = :completed
 SET cs.is_valid = :isValid
 SQL;
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addRegisteredCustomerUser(Schema $schema)
+    {
+        $table = $schema->getTable('oro_checkout');
+        $table->addColumn('registered_customer_user_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['registered_customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
     }
 }
