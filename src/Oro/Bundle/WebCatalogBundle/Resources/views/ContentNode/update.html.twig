@@ -146,26 +146,30 @@
         'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
     } %}
 
-    {% embed "OroUIBundle::content_sidebar.html.twig" %}
-        {% block sidebar %}
-            {{ UI.renderJsTree(
-                {
-                    'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
-                    'treeOptions': treeOptions
-                },
-                {
-                    'move': {
-                    'routeName': 'oro_web_catalog_move',
-                    'routeParams': {'id': web_catalog.id}
+    <div class="sidebar-container">
+        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
+            scrollbar: '[data-role="jstree-container"]'
+        }} %}
+            {% block sidebar %}
+                {{ UI.renderJsTree(
+                    {
+                        'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
+                        'treeOptions': treeOptions
+                    },
+                    {
+                        'move': {
+                        'routeName': 'oro_web_catalog_move',
+                        'routeParams': {'id': web_catalog.id}
+                        }
                     }
-                }
-            ) }}
-        {% endblock sidebar %}
+                ) }}
+            {% endblock sidebar %}
 
-        {% block content %}
-            {% autoescape %}
-                {{ twoColumnContent|raw}}
-            {% endautoescape %}
-        {% endblock content %}
-    {% endembed %}
+            {% block content %}
+                {% autoescape %}
+                    {{ twoColumnContent|raw}}
+                {% endautoescape %}
+            {% endblock content %}
+        {% endembed %}
+    </div>
 {% endblock content_data %}
