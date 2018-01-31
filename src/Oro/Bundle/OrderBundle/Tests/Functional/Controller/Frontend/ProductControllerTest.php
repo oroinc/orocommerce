@@ -79,6 +79,8 @@ class ProductControllerTest extends FrontendWebTestCase
      */
     public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected)
     {
+        $this->markTestSkipped('will be unskipped in BB-13532');
+
         $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, $gridParam, true);
 
         $result = static::getJsonResponseContent($response, 200);
