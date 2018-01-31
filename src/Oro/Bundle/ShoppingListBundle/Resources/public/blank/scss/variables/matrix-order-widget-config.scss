@@ -295,6 +295,9 @@ $matrix-order-widget-item-content-wrapper-width: 100% !default;
 $matrix-order-widget-pinned-dropdown-max-width: 210px !default;
 $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width: 100% !default;
 
+$matrix-order-widget-actions-container-offset: $offset-y-m 0;
+$matrix-order-widget-actions-container-inner-offset: 0 $offset-y-m;
+
 // Strict-tablet variables
 $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis: 20% !default;
 $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner: 10px 45px 10px 15px !default;
@@ -310,3 +313,5 @@ $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis: 33% !defau
 
 // Mobile variables
 $matrix-order-widget-dialog-item-content-mobile-flex-basis: 50% !default;
+$matrix-order-widget-clear-button-mobile-width: 100% !default;
+$matrix-order-widget-clear-button-mobile-border-color: get-color('additional', 'base') !default;
