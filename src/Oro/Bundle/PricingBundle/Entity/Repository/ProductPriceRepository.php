@@ -31,14 +31,14 @@ class ProductPriceRepository extends BaseProductPriceRepository
     /**
      * @param ShardManager $shardManager
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     public function deleteGeneratedPrices(
         ShardManager $shardManager,
         PriceList $priceList,
-        Product $product = null
+        array $products = []
     ) {
-        $qb = $this->getDeleteQbByPriceList($priceList, $product);
+        $qb = $this->getDeleteQbByPriceList($priceList, $products);
         $query = $qb->andWhere($qb->expr()->isNotNull('productPrice.priceRule'))->getQuery();
         $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]);
         $realTableName = ' ' . $shardName . ' ';
@@ -46,10 +46,17 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $sql = $query->getSQL();
         $sql = str_replace($baseTable, $realTableName, $sql);
         $parameters = [$priceList->getId()];
-        if ($product) {
-            $parameters[] = $product->getId();
+        $types = [\PDO::PARAM_INT];
+        if ($products) {
+            $parameters[] = array_map(
+                function ($product) {
+                    return $product instanceof Product ? $product->getId() : $product;
+                },
+                $products
+            );
+            $types[] = Connection::PARAM_INT_ARRAY;
         }
-        $this->_em->getConnection()->executeQuery($sql, $parameters);
+        $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
     /**

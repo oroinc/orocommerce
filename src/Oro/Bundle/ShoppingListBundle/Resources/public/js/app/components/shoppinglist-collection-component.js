@@ -37,7 +37,7 @@ define(function(require) {
         },
 
         comparator: function(model) {
-            //0 for current SL - should be first
+            // 0 for current SL - should be first
             return model.get('is_current') ? 0 : model.get('id');
         },
 

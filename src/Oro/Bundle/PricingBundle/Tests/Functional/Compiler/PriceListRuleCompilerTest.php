@@ -403,7 +403,6 @@ class PriceListRuleCompilerTest extends WebTestCase
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
         $this->assertEqualsPrices($expected, $actual);
-//        $this->assertEquals($expected, $actual);
     }
 
     public function testRestrictByManualPrices()
@@ -483,7 +482,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ],
         ];
 
-        $qb = $this->getQueryBuilder($priceRule, $product1);
+        $qb = $this->getQueryBuilder($priceRule, [$product1]);
         $actual = $this->getActualResult($qb);
         $this->assertEqualsPrices($expected, $actual);
     }
@@ -753,12 +752,12 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     /**
      * @param PriceRule $priceRule
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @return QueryBuilder
      */
-    protected function getQueryBuilder(PriceRule $priceRule, Product $product = null)
+    protected function getQueryBuilder(PriceRule $priceRule, array $products = [])
     {
-        $qb = $this->compiler->compile($priceRule, $product);
+        $qb = $this->compiler->compile($priceRule, $products);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
         $qb->orderBy($rootAlias.'.id');

@@ -123,7 +123,10 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
         $em->flush();
 
-        $this->repository->deleteManualRelations($priceList, $product2);
+        $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
+        $this->assertCount(3, $actual);
+
+        $this->repository->deleteManualRelations($priceList, [$product2]);
         /** @var PriceListToProduct[] $actual */
         $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
         $this->assertCount(2, $actual);

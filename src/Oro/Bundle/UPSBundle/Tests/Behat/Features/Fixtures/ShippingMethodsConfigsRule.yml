@@ -1,0 +1,28 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    upsRule:
+        name: 'UPS Shipping Rule'
+        enabled: true
+        sortOrder: 1
+        expression: 'true'
+        stopProcessing: false
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    upsShippingMethodTypeConfig:
+        type: '02'
+        enabled: true
+        options:
+            surcharge: 100
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    upsShippingMethodConfig:
+        method: '<("ups_".@upsIntegration->id)>'
+        typeConfigs: ['@upsShippingMethodTypeConfig']
+        options:
+            surcharge: 1000
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    ups_shipping_methods_configs_rule:
+        rule: '@upsRule'
+        currency: 'USD'
+        methodConfigs: ['@upsShippingMethodConfig']
+        organization: '@organization'

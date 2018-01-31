@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
@@ -16,14 +14,14 @@ class IndexerInputValidatorTest extends \PHPUnit_Framework_TestCase
     const WEBSITE_ID = 1;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $doctrineHelper;
-
-    /**
      * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mappingProvider;
+
+    /**
+     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteProvider;
 
     /**
      * @var IndexerInputValidator
@@ -32,23 +30,18 @@ class IndexerInputValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $websiteRepository = $this->createMock(WebsiteRepository::class);
-        $websiteRepository->method('getWebsiteIdentifiers')
-            ->willReturn([self::WEBSITE_ID]);
-
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
-        $this->doctrineHelper->method('getEntityRepository')
-            ->with(Website::class)
-            ->willReturn($websiteRepository);
-
         $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
 
         $this->mappingProvider->method('isClassSupported')
             ->willReturn(true);
 
+        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $this->websiteProvider->expects($this->any())
+            ->method('getWebsiteIds')
+            ->willReturn([self::WEBSITE_ID]);
+
         $this->testable = new IndexerInputValidator(
-            $this->doctrineHelper,
+            $this->websiteProvider,
             $this->mappingProvider
         );
     }

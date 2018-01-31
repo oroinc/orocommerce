@@ -1,4 +1,3 @@
-/*global define*/
 define([
     'underscore', 'orotranslation/js/translator', 'orolocale/js/locale-settings'
 ], function(_, __, localeSettings) {

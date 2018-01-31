@@ -189,9 +189,9 @@ For render `Add Content Variant` dropdown button with all available content vari
 As a result, you will have possibility to add content node variant for your entity.
 And rendering this content variant on store frontend according selected scopes.
 
-### Default content variant ###
+### Default content variant
 Each content variant of content node may be selected as default using `ContentVariant` `is_default` flag.
 It's mean that if Content Node has scopes not assigned to any Content Variant of this node, that scopes will be assigned to content variant marked as default.
 
-### Sitemap ###
+### Sitemap
 For adding created content variant to Sitemap you should create appropriate provider. Please see OroSeoBundle documentation, section Sitemap.

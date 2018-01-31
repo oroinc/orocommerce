@@ -77,7 +77,7 @@ define(function(require) {
         },
 
         modelEvents: {
-            'productId': ['change', 'onProductChanged']
+            productId: ['change', 'onProductChanged']
         },
 
         /**
@@ -173,7 +173,7 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
-                var routeParams = {'id': productId};
+                var routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;

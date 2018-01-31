@@ -107,7 +107,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => null,
                 'expectedData' => [
                     'product-1',
-                    'product-2',
                     'product-3',
                     'product-5',
                     'product-6',
@@ -120,8 +119,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
                 'expectedData' => [
-                    'product-2',
                     'product-3',
+                    'product-5',
                 ]
             ],
             'group config visible' => [

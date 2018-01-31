@@ -47,7 +47,7 @@ define(function(require) {
                 var productId = this.model.get('id');
 
                 if (!_.isUndefined(productId) && _.isUndefined(tierPrices[productId])) {
-                    //load prices from server for new line items
+                    // load prices from server for new line items
                     this.updateTierPrices();
                 }
 

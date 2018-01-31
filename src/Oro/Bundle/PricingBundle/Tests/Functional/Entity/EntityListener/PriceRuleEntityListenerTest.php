@@ -42,7 +42,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
-                PriceListTriggerFactory::PRODUCT => null
+                PriceListTriggerFactory::PRODUCT => []
             ]
         );
     }
@@ -63,7 +63,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
-                PriceListTriggerFactory::PRODUCT => null
+                PriceListTriggerFactory::PRODUCT => []
             ]
         );
     }

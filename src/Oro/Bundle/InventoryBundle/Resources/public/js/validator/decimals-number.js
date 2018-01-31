@@ -1,4 +1,3 @@
-/*global define*/
 define([
     'underscore', 'orotranslation/js/translator', 'orolocale/js/locale-settings'
 ], function(_, __, localeSettings) {
@@ -7,8 +6,8 @@ define([
     var options = localeSettings.getNumberFormats('decimal');
     var decimalSeparator = options.decimal_separator_symbol;
     var defaultParam = {
-            message: 'This value should have {{ limit }} or less decimal digits.'
-        };
+        message: 'This value should have {{ limit }} or less decimal digits.'
+    };
 
     return [
         'DecimalsNumber',

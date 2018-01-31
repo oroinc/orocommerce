@@ -48,8 +48,8 @@ define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, Url
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
                 var validation = new DisplayOptions({
-                    'grid': grid,
-                    'options': options
+                    grid: grid,
+                    options: options
                 });
                 deferred.resolve(validation);
             }).fail(function() {
