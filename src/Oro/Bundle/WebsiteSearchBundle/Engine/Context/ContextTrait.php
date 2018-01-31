@@ -13,7 +13,7 @@ trait ContextTrait
     private function getContextWebsiteIds(array $context)
     {
         return isset($context[AbstractIndexer::CONTEXT_WEBSITE_IDS]) ?
-            $context[AbstractIndexer::CONTEXT_WEBSITE_IDS] :
+            array_filter($context[AbstractIndexer::CONTEXT_WEBSITE_IDS]) :
             [];
     }
 
@@ -36,7 +36,7 @@ trait ContextTrait
     private function getContextEntityIds(array $context)
     {
         return isset($context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]) ?
-            $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] :
+            array_filter($context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]) :
             [];
     }
 
