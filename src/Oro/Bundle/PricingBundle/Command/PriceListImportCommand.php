@@ -96,7 +96,8 @@ class PriceListImportCommand extends ContainerAwareCommand
                 'processorAlias' => self::DEFAULT_PROCESSOR,
                 'process'        => $process,
                 'options'        => [
-                    'price_list_id' => $priceListId
+                    'price_list_id' => $priceListId,
+                    'unique_job_slug' => $priceListId,
                 ]
             ]
         );
