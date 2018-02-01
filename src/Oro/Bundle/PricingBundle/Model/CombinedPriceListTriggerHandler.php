@@ -3,12 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedPriceListTriggerHandler
 {
@@ -94,7 +96,9 @@ class CombinedPriceListTriggerHandler
         $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($combinedPriceLists);
-        $this->productsSchedule[$websiteId] = $productIds;
+        foreach ($productIds as $productId) {
+            $this->productsSchedule[$websiteId][$productId] = $productId;
+        }
 
         if (!$this->isSessionStarted) {
             $this->send();
@@ -125,6 +129,7 @@ class CombinedPriceListTriggerHandler
             $websiteIds = $websiteId ? [$websiteId] : [];
             $this->dispatchByPriceLists($websiteIds, $cplIds);
         }
+
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
             $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
@@ -145,9 +150,14 @@ class CombinedPriceListTriggerHandler
         $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($cplIds);
-        if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        foreach ($productIds as $productId) {
+            if (!$websiteIds) {
+                $this->productsSchedule[null][$productId] = $productId;
+            }
+
+            foreach ($websiteIds as $websiteId) {
+                $this->productsSchedule[$websiteId][$productId] = $productId;
+            }
         }
     }
 }
