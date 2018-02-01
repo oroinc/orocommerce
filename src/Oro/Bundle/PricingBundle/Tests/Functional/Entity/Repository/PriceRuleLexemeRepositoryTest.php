@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Logging\DebugStack;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -29,6 +30,11 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository(PriceRuleLexeme::class);
+    }
+    
+    protected function tearDown()
+    {
+        $this->repository->invalidateCache();
     }
 
     public function testGetRelationIds()
@@ -106,6 +112,39 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     {
         $lexemes = $this->repository->findEntityLexemes(Category::class, ['some_other_unknown']);
         $this->assertEmpty($lexemes);
+    }
+
+    public function testInvalidateCache()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleLexeme::class);
+
+        $config = $em->getConnection()->getConfiguration();
+        $oldLogger = $config->getSQLLogger();
+
+        $logger = new DebugStack();
+        $config->setSQLLogger($logger);
+
+        $this->repository->findEntityLexemes(PriceAttributeProductPrice::class);
+        $this->assertCount(1, $logger->queries);
+
+        $this->repository->findEntityLexemes(PriceAttributeProductPrice::class);
+        $this->assertCount(1, $logger->queries);
+
+        $this->repository->findEntityLexemes(Category::class);
+        $this->assertCount(2, $logger->queries);
+
+        $this->repository->findEntityLexemes(Category::class);
+        $this->assertCount(2, $logger->queries);
+
+        $this->repository->invalidateCache();
+
+        $this->repository->findEntityLexemes(PriceAttributeProductPrice::class);
+        $this->assertCount(3, $logger->queries);
+
+        $this->repository->findEntityLexemes(Category::class);
+        $this->assertCount(4, $logger->queries);
+
+        $config->setSQLLogger($oldLogger);
     }
 
     /**
