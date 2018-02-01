@@ -182,6 +182,20 @@ operations:
         order: 220
         button_options:
             icon: fa-briefcase
+        frontend_options:
+            confirmation:
+                title: oro.shoppinglist.create_rfp_confirmation.title
+                message: oro.shoppinglist.create_rfp_confirmation.message
+                okText: oro.shoppinglist.create_rfp_confirmation.accept_button_title
+                cancelText: oro.shoppinglist.create_rfp_confirmation.cancel_button_title
+                hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
+                component: oroshoppinglist/js/shoppinglist-request-quote-confirmation
+        preactions:
+            - '@call_service_method':
+                service: oro_shopping_list.manager.empty_matrix_grid
+                method: hasEmptyMatrix
+                method_parameters: [$.data]
+                attribute: $.result.shoppingListHasEmptyMatrix
         preconditions:
             '@and':
                 - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
