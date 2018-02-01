@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "oro/platform": "2.6.x-dev",
-        "oro/platform-serialised-fields": "2.6.x-dev",
-        "oro/calendar-bundle": "2.6.x-dev",
-        "oro/marketing": "2.6.x-dev",
-        "oro/customer-portal": "2.6.x-dev",
+        "oro/platform": "2.6.*",
+        "oro/platform-serialised-fields": "2.6.*",
+        "oro/calendar-bundle": "2.6.*",
+        "oro/marketing": "2.6.*",
+        "oro/customer-portal": "2.6.*",
         "box/spout": "2.3.*",
         "myclabs/deep-copy": "1.5.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
