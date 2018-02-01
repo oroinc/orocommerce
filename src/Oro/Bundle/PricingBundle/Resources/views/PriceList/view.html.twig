@@ -16,7 +16,7 @@
 {% block navButtons %}
     {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
         'alias': 'oro_product_price',
-        'options': {'price_list_id': entity.id}
+        'options': {'price_list_id': entity.id, 'unique_job_slug' : entity.id}
     } %}
 
     {{ parent() }}
