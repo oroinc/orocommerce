@@ -122,7 +122,7 @@ Feature: Guest Shopping Lists
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10 |
       | Unit | each |
-    And I click "Update Shopping list"
+    And I click "Update Shopping List"
     Then I should see "Record has been successfully updated" flash message
     And I click "NewCategory"
     Then I should see "In shopping list"
@@ -131,7 +131,7 @@ Feature: Guest Shopping Lists
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
-    When I click "Add to Shopping list" for "CONTROL1" product
+    When I click "Add to Shopping List" for "CONTROL1" product
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List
