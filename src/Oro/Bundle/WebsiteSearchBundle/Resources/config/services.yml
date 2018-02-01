@@ -167,6 +167,8 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
+        calls:
+            - [setWebsiteProvider, [ '@oro_website.website.provider' ]]
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'

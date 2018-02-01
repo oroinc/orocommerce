@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
@@ -18,6 +17,9 @@ class IndexerInputValidator
     /** @var WebsiteSearchMappingProvider */
     protected $mappingProvider;
 
+    /** @var WebsiteProvider */
+    protected $websiteProvider;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
@@ -28,6 +30,14 @@ class IndexerInputValidator
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
+    }
+
+    /**
+     * @param WebsiteProvider $websiteProvider
+     */
+    public function setWebsiteProvider(WebsiteProvider $websiteProvider)
+    {
+        $this->websiteProvider = $websiteProvider;
     }
 
     /**
@@ -102,9 +112,6 @@ class IndexerInputValidator
             return $websiteIds;
         }
 
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-
-        return $websiteRepository->getWebsiteIdentifiers();
+        return $this->websiteProvider->getWebsiteIds();
     }
 }
