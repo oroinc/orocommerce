@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
@@ -104,7 +104,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
 
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->willReturn($tax);
 
