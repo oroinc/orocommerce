@@ -167,6 +167,8 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
+        calls:
+            - [setWebsiteProvider, [ '@oro_website.website.provider' ]]
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
@@ -210,7 +212,9 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'
         arguments:
             - '@oro_website_search.indexer'
-            - "@oro_website_search.async.indexer"
+            - '@oro_website_search.async.indexer'
+        calls:
+            - [setReindexMessageGranularizer, ['@oro_website_search.async.indexer.message_granularizer.reindex']]
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
 

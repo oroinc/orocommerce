@@ -97,7 +97,7 @@ Feature: Best Selling Products
     And I filter Time Period as between "Jan 1, 2016 11:30 AM" and "Jan 3, 2016 11:30 AM"
     And I check "No" in Skip Empty Periods filter
     And I sort grid by "Qty Sold" again
-    Then there are 11 records in grid
+    Then there are 10 records in grid
     And I should see "82 Items" in grid with following data:
       | Time Period | 1-2016   |
       | SKU         | 9OL25    |

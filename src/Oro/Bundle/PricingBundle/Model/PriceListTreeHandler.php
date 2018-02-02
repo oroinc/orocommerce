@@ -6,13 +6,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class PriceListTreeHandler
 {
@@ -37,7 +36,7 @@ class PriceListTreeHandler
     protected $configManager;
 
     /**
-     * @var BasePriceList[]
+     * @var CombinedPriceList[]
      */
     protected $priceLists = [];
 
@@ -59,7 +58,7 @@ class PriceListTreeHandler
     /**
      * @param Customer|null $customer
      * @param Website|null $website
-     * @return BasePriceList|null
+     * @return CombinedPriceList|null
      */
     public function getPriceList(Customer $customer = null, Website $website = null)
     {
@@ -138,7 +137,7 @@ class PriceListTreeHandler
     }
 
     /**
-     * @return null|BasePriceList
+     * @return null|CombinedPriceList
      */
     protected function getPriceListFromConfig()
     {

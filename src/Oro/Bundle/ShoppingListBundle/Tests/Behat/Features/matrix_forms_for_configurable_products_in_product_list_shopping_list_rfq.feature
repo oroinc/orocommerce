@@ -264,10 +264,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          |          | N/A      |
       | N/A      | N/A      |          |
     Given I click "Create Order"
-    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
-    And I click "Proceed"
-    Then I should see "Shopping list"
     Then I should see "Cannot create order because Shopping List has no items" flash message
+
+  Scenario: Create request for quote with empty matrix form
+    Given I click "Request Quote"
+    Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
+    And I should see "Products with no quantities have not been added to this request."
+    And I should see "Request A Quote"
 
   Scenario: Order empty matrix form and a simple product
     Given type "SKU123" in "search"
@@ -282,6 +285,16 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "Checkout"
     And I should see "400-Watt Bulb Work Light"
     And I should not see "Configurable Product B"
+
+  Scenario: Create request for quote with empty configurable product and a simple product
+    Given I open shopping list widget
+    And I click "View Details"
+    And I click "Request Quote"
+    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
+    And I click "Proceed"
+    Then I should see "Request A Quote"
+    And I should see "400-Watt Bulb Work Light" in the "RequestAQuoteProducts" element
+    And I should not see "Configurable Product B" in the "RequestAQuoteProducts" element
 
   Scenario: Update empty matrix form in the shopping list and create order
     Given I open shopping list widget
