@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -150,32 +151,45 @@ class PriceListToProductRepository extends EntityRepository
     {
         $table = $this->getClassMetadata()->getTableName();
 
-        $sql = sprintf(
-            'INSERT INTO %s (price_list_id, product_id, is_manual) SELECT ?, ?, ? WHERE NOT EXISTS (%s)',
-            $table,
-            sprintf('SELECT id FROM %s WHERE price_list_id = ? AND product_id = ? LIMIT ?', $table)
-        );
+        $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        if ($platform instanceof MySqlPlatform) {
+            $sql = sprintf('INSERT IGNORE INTO %s (price_list_id, product_id, is_manual) VALUES (?, ?, ?)', $table);
+            $params = [
+                $priceList->getId(),
+                $product->getId(),
+                $isManual
+            ];
+            $types = [
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::BOOLEAN
+            ];
+        } else {
+            $sql = sprintf(
+                'INSERT INTO %s (price_list_id, product_id, is_manual) SELECT ?, ?, ? WHERE NOT EXISTS (%s)',
+                $table,
+                sprintf('SELECT id FROM %s WHERE price_list_id = ? AND product_id = ? LIMIT ?', $table)
+            );
+            $params = [
+                $priceList->getId(),
+                $product->getId(),
+                $isManual,
+                $priceList->getId(),
+                $product->getId(),
+                1
+            ];
+            $types = [
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::BOOLEAN,
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::INTEGER,
+            ];
+        }
 
         return $this->getEntityManager()
             ->getConnection()
-            ->executeUpdate(
-                $sql,
-                [
-                    $priceList->getId(),
-                    $product->getId(),
-                    $isManual,
-                    $priceList->getId(),
-                    $product->getId(),
-                    1
-                ],
-                [
-                    Type::INTEGER,
-                    Type::INTEGER,
-                    Type::BOOLEAN,
-                    Type::INTEGER,
-                    Type::INTEGER,
-                    Type::INTEGER,
-                ]
-            );
+            ->executeUpdate($sql, $params, $types);
     }
 }
