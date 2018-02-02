@@ -41,7 +41,7 @@
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
-            src: asset('/bundles/orocatalog/default/images/no_image_315x260.png')
+            src: Image.urlFromString('/bundles/orocatalog/default/images/no_image_315x260.png', 'category_medium')
         }) %}
     {% endif %}
 

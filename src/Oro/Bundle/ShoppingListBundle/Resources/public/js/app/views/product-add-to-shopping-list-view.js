@@ -185,7 +185,7 @@ define(function(require) {
             buttons.push($button);
 
             if (hasLineItems) {
-                var $removeButton =  $(this.options.removeButtonTemplate(shoppingList));
+                var $removeButton = $(this.options.removeButtonTemplate(shoppingList));
                 $removeButton.find('a').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
@@ -328,7 +328,7 @@ define(function(require) {
                 label = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
                 intention = 'new';
             } else {
-                label =  _.__('oro.shoppinglist.actions.add_to_shopping_list', {
+                label = _.__('oro.shoppinglist.actions.add_to_shopping_list', {
                     shoppingList: shoppingList.label
                 });
                 intention = 'add';
@@ -363,14 +363,14 @@ define(function(require) {
             } else if (!this.model.get('quantity_changed_manually')) {
                 this.editLineItem = _.findWhere(
                     currentShoppingListInModel.line_items, {unit: this.model.get('unit')}
-                    ) || null;
+                ) || null;
             }
 
             if (this.editLineItem) {
-                //quantity precision depend on unit, set unit first
+                // quantity precision depend on unit, set unit first
                 this.model.set('unit', this.editLineItem.unit);
                 this.model.set('quantity', this.editLineItem.quantity);
-                this.model.set('quantity_changed_manually', true);//prevent quantity change in other components
+                this.model.set('quantity_changed_manually', true);// prevent quantity change in other components
             }
         },
 

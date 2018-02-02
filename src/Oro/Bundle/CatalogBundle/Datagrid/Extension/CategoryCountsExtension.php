@@ -69,9 +69,10 @@ class CategoryCountsExtension extends AbstractExtension
     public function isApplicable(DatagridConfiguration $config)
     {
         return
-            !$this->parameters->get(self::SKIP_PARAM) &&
-            SearchDatasource::TYPE === $config->getDatasourceType() &&
-            in_array($config->getName(), $this->applicableGrids, true);
+            parent::isApplicable($config)
+            && !$this->parameters->get(self::SKIP_PARAM)
+            && SearchDatasource::TYPE === $config->getDatasourceType()
+            && in_array($config->getName(), $this->applicableGrids, true);
     }
 
     /**

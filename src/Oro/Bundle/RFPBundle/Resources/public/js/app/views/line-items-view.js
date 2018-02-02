@@ -82,7 +82,7 @@ define(function(require) {
                 var unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
                 var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
 
-                items.push({'product': productId, 'unit': unitCode, 'qty': quantity});
+                items.push({product: productId, unit: unitCode, qty: quantity});
             });
 
             return items;

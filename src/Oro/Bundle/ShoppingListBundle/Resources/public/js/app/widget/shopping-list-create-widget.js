@@ -23,11 +23,11 @@ define(function(require) {
             this.options.shoppingListCreateEnabled = true;
 
             options.dialogOptions = {
-                'modal': true,
-                'resizable': false,
-                'width': '480',
-                'autoResize': true,
-                'dialogClass': 'shopping-list-dialog'
+                modal: true,
+                resizable: false,
+                width: '480',
+                autoResize: true,
+                dialogClass: 'shopping-list-dialog'
             };
 
             this.on('formSave', _.bind(this.onFormSave, this));

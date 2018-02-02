@@ -91,7 +91,9 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return static::SUPPORTED_GRID === $config->getName();
+        return
+            parent::isApplicable($config)
+            && static::SUPPORTED_GRID === $config->getName();
     }
 
     /**

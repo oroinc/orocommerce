@@ -167,15 +167,17 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($priceList->isActual());
     }
 
-    public function testPrePersist()
+    public function testPostPersist()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $priceList->setProductAssignmentRule('product.id == 1');
         $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggerForPriceList');
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('sendScheduledTriggers');
 
-        $this->listener->prePersist($priceList);
+        $this->listener->postPersist($priceList);
         $this->assertFalse($priceList->isActual());
     }
 
@@ -185,7 +187,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $this->priceListTriggerHandler->expects($this->never())
             ->method('addTriggerForPriceList');
-        $this->listener->prePersist($priceList);
+        $this->listener->postPersist($priceList);
         $this->assertTrue($priceList->isActual());
     }
 

@@ -1,4 +1,3 @@
-/** @lends ShippingTransitionButtonComponent */
 define(function(require) {
     'use strict';
 
@@ -7,7 +6,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     var ShippingTransitionButtonComponent;
-    ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @exports ShippingTransitionButtonComponent.prototype */{
+    ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
         /**
          * @constructor
          * @param {Object} options
@@ -50,9 +49,9 @@ define(function(require) {
             var selectedMethodValue = this.getShippingMethodElement().val();
             if (this.getShippingMethodTypeSelector().length && selectedTypeValue && selectedMethodValue) {
                 var selectedEl = this
-                  .getShippingMethodTypeSelector()
-                  .filter('[data-shipping-type="' + selectedTypeValue + '"]')
-                  .filter('[data-shipping-method="' + selectedMethodValue + '"]');
+                    .getShippingMethodTypeSelector()
+                    .filter('[data-shipping-type="' + selectedTypeValue + '"]')
+                    .filter('[data-shipping-method="' + selectedMethodValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
             } else {

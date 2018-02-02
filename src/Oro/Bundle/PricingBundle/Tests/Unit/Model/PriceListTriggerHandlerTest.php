@@ -46,62 +46,38 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $product = new Product();
-        $trigger = new PriceListTrigger($priceList, $product);
+        $product = 1;
 
-        $this->triggerFactory->expects($this->once())
-            ->method('create')
-            ->with($priceList, $product)
-            ->willReturn($trigger);
-
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersForPriceLists()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $product = new Product();
-        $trigger = new PriceListTrigger($priceList, $product);
+        $product = 1;
 
-        $this->triggerFactory->expects($this->once())
-            ->method('create')
-            ->with($priceList, $product)
-            ->willReturn($trigger);
-
-        $this->handler->addTriggersForPriceLists(Topics::RESOLVE_PRICE_RULES, [$priceList], $product);
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->handler->addTriggersForPriceLists(Topics::RESOLVE_PRICE_RULES, [$priceList], [$product]);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersForPriceListWithoutProduct()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $trigger = new PriceListTrigger($priceList);
-
-        $this->triggerFactory->expects($this->once())
-            ->method('create')
-            ->with($priceList)
-            ->willReturn($trigger);
 
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersForPriceListsWithoutProduct()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $trigger = new PriceListTrigger($priceList);
-
-        $this->triggerFactory->expects($this->once())
-            ->method('create')
-            ->with($priceList)
-            ->willReturn($trigger);
 
         $this->handler->addTriggersForPriceLists(Topics::RESOLVE_PRICE_RULES, [$priceList]);
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersScheduledTrigger()
@@ -109,17 +85,11 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        $trigger = new PriceListTrigger($priceList, $product);
 
-        $this->triggerFactory->expects($this->exactly(2))
-            ->method('create')
-            ->with($priceList)
-            ->willReturn($trigger);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
 
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
-
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersExistingWiderScope()
@@ -128,46 +98,11 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
-        $triggerWider = new PriceListTrigger($priceList);
-        $trigger = new PriceListTrigger($priceList, $product);
-
-        $this->triggerFactory->expects($this->exactly(2))
-            ->method('create')
-            ->willReturnMap(
-                [
-                    [$priceList, null, $triggerWider],
-                    [$priceList, $product, $trigger]
-                ]
-            );
 
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
 
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
-    }
-
-    public function testAddTriggersExistingLowerScope()
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 2]);
-        $triggerWider = new PriceListTrigger($priceList);
-        $trigger = new PriceListTrigger($priceList, $product);
-
-        $this->triggerFactory->expects($this->exactly(2))
-            ->method('create')
-            ->willReturnMap(
-                [
-                    [$priceList, null, $triggerWider],
-                    [$priceList, $product, $trigger]
-                ]
-            );
-
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
-
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
     }
 
     public function testAddTriggersDifferentProducts()
@@ -178,23 +113,12 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
         /** @var Product $product2 */
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger1 = new PriceListTrigger($priceList, $product1);
-        $trigger2 = new PriceListTrigger($priceList, $product2);
 
-        $this->triggerFactory->expects($this->exactly(2))
-            ->method('create')
-            ->willReturnMap(
-                [
-                    [$priceList, $product1, $trigger1],
-                    [$priceList, $product2, $trigger2]
-                ]
-            );
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product1]);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, [$product2]);
 
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product1);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product2);
-
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
-        $this->messageProducer->expects($this->exactly(2))
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
+        $this->messageProducer->expects($this->exactly(1))
             ->method('send')
             ->withConsecutive(
                 [Topics::RESOLVE_PRICE_RULES, null],
@@ -213,10 +137,10 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->never())->method('create');
 
         $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
-        $this->assertAttributeEmpty('scheduledTriggers', $this->handler);
+        $this->assertAttributeEmpty('triggersData', $this->handler);
     }
 
-    public function testSendScheduledTriggers()
+    public function testSendtriggersData()
     {
         /** @var PriceList $priceList */
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -228,45 +152,39 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var Product $product2 */
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
-        $trigger1 = new PriceListTrigger($priceList1);
-        $trigger2 = new PriceListTrigger($priceList1, $product1);
-        $trigger3 = new PriceListTrigger($priceList2, $product2);
-
-        $this->triggerFactory->expects($this->exactly(3))
-            ->method('create')
-            ->willReturnMap(
-                [
-                    [$priceList1, null, $trigger1],
-                    [$priceList1, $product1, $trigger2],
-                    [$priceList2, $product2, $trigger3]
-                ]
-            );
-
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1, $product1);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1);
-        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList2, $product2);
-
-        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
-
-        $trigger1Data = ['data' => 1];
-        $trigger3Data = ['data' => 3];
+        $message1 = [
+            PriceListTriggerFactory::PRICE_LIST => $priceList1->getId(),
+            PriceListTriggerFactory::PRODUCT => [$product1->getId()]
+        ];
+        $message2 = [
+            PriceListTriggerFactory::PRICE_LIST => $priceList1->getId(),
+            PriceListTriggerFactory::PRODUCT => []
+        ];
+        $message3 = [
+            PriceListTriggerFactory::PRICE_LIST => $priceList2->getId(),
+            PriceListTriggerFactory::PRODUCT => [$product2->getId()]
+        ];
         $this->triggerFactory->expects($this->exactly(2))
-            ->method('triggerToArray')
-            ->withConsecutive(
-                [$trigger1],
-                [$trigger3]
-            )
+            ->method('createFromIds')
             ->willReturnMap(
                 [
-                    [$trigger1, $trigger1Data],
-                    [$trigger3, $trigger3Data],
+                    [$priceList1->getid(), [$product1->getId()], $message1],
+                    [$priceList1->getId(), [], $message2],
+                    [$priceList2->getid(), [$product2->getId()], $message3],
                 ]
             );
+
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1, [$product1]);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList2, [$product2]);
+
+        $this->assertAttributeCount(1, 'triggersData', $this->handler);
+
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::RESOLVE_PRICE_RULES, $trigger1Data],
-                [Topics::RESOLVE_PRICE_RULES, $trigger3Data]
+                [Topics::RESOLVE_PRICE_RULES, $message2],
+                [Topics::RESOLVE_PRICE_RULES, $message3]
             );
 
         $this->handler->sendScheduledTriggers();

@@ -73,7 +73,7 @@ define(function(require) {
         },
 
         canUse: function(selectState) {
-            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable' ]();
+            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable']();
         },
 
         _onShoppingListsRefresh: function() {
@@ -130,7 +130,7 @@ define(function(require) {
         renderActionsPanel: function() {
             var panel = this.subview('actionsPanel');
 
-            panel.massActionsInSticky =  this.massActionsInSticky;
+            panel.massActionsInSticky = this.massActionsInSticky;
             if (panel.haveActions()) {
                 this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
                 panel.setElement(this.$('[data-action-panel]'));

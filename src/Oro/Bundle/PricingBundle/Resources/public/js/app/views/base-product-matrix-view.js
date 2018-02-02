@@ -143,18 +143,18 @@ define(function(require) {
             var column = columns[index.column] = this.getTotal(columns, index.column);
             var row = rows[index.row] = this.getTotal(rows, index.row);
 
-            //remove old values
+            // remove old values
             this.changeTotal(this.total, cell, -1);
             this.changeTotal(column, cell, -1);
             this.changeTotal(row, cell, -1);
 
-            //recalculate cell total
+            // recalculate cell total
             cell.quantity = this.getValidQuantity($element.val());
             var quantity = cell.quantity > 0 ? cell.quantity.toString() : '';
             cell.price = PricesHelper.calcTotalPrice(this.prices[productId], this.model.get('unit'), quantity);
             $element.val(quantity);
 
-            //add new values
+            // add new values
             this.changeTotal(this.total, cell);
             this.changeTotal(column, cell);
             this.changeTotal(row, cell);

@@ -179,7 +179,7 @@ define(function(require) {
         renderActionsArea: function() {
             // Don't render Actions without data
             if (!this.massActions.length) {
-                return ;
+                return;
             }
 
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
@@ -196,7 +196,7 @@ define(function(require) {
 
             this.massActionsContainer.append(this.selectAllHeaderCell.$el);
             if (this.massActionsInSticky) {
-                this.additionalSelectAllHeaderCell =  new BackendSelectAllHeaderCell({
+                this.additionalSelectAllHeaderCell = new BackendSelectAllHeaderCell({
                     collection: this.collection,
                     selectState: this.selectState,
                     additionalTpl: true

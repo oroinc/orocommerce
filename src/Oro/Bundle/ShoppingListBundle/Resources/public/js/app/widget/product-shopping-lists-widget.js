@@ -88,7 +88,7 @@ define(function(require) {
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
 
-            mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
+            mediator.on('frontend:item:delete', this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
 
             ShoppingListCollectionService.shoppingListCollection.done((function(collection) {

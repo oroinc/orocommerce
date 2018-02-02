@@ -80,9 +80,11 @@ class ProductSelectionGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return !$this->applied
-        && static::SUPPORTED_GRID === $config->getName()
-        && ($token = $this->tokenStorage->getToken())
-        && $token->getUser() instanceof CustomerUser;
+        return
+            parent::isApplicable($config)
+            && !$this->applied
+            && static::SUPPORTED_GRID === $config->getName()
+            && ($token = $this->tokenStorage->getToken())
+            && $token->getUser() instanceof CustomerUser;
     }
 }
