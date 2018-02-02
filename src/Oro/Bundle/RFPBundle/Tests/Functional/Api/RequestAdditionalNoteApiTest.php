@@ -23,7 +23,8 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requestadditionalnotes']
+            ['entity' => 'requestadditionalnotes'],
+            ['page' => ['size' => 1000]]
         );
 
         $expectedCount = LoadRequestData::NUM_REQUESTS
