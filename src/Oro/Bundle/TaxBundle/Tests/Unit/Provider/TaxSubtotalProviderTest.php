@@ -99,7 +99,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isProductPricesIncludeTax')
-            ->willReturn('true');
+            ->willReturn(true);
 
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
