@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
@@ -23,6 +24,11 @@ class ReindexRequestListener implements OptionalListenerInterface
     protected $asyncIndexer;
 
     /**
+     * @var ReindexMessageGranularizer
+     */
+    private $granularizer;
+
+    /**
      * @param IndexerInterface|null $regularIndexer
      * @param IndexerInterface|null $asyncIndexer
      */
@@ -32,6 +38,14 @@ class ReindexRequestListener implements OptionalListenerInterface
     ) {
         $this->regularIndexer = $regularIndexer;
         $this->asyncIndexer   = $asyncIndexer;
+    }
+
+    /**
+     * @param ReindexMessageGranularizer $granularizer
+     */
+    public function setReindexMessageGranularizer(ReindexMessageGranularizer $granularizer)
+    {
+        $this->granularizer = $granularizer;
     }
 
     /**
@@ -59,6 +73,14 @@ class ReindexRequestListener implements OptionalListenerInterface
     {
         $factory = new ContextFactory();
         $context = $factory->createForReindexation($event);
-        $indexer->reindex($event->getClassesNames(), $context);
+        if ($event->getIds()) {
+            $reindexMsgData = $this->granularizer
+                ->process($event->getClassesNames(), $event->getWebsitesIds(), $context);
+            foreach ($reindexMsgData as $message) {
+                $indexer->reindex($message['class'], $message['context']);
+            }
+        } else {
+            $indexer->reindex($event->getClassesNames(), $context);
+        }
     }
 }
