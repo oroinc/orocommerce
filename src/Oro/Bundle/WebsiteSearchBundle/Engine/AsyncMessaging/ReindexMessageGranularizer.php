@@ -45,7 +45,7 @@ class ReindexMessageGranularizer
      *     'entityIds' int[] Array of entities ids to reindex
      * ]
      *
-     * @return iterable|array
+     * @return \Generator|array
      */
     public function process($entities, array $websites, array $context)
     {

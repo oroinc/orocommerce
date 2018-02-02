@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
@@ -74,6 +75,11 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $databaseExceptionHelper;
 
     /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    private $triggerHandler;
+
+    /**
      * @param CombinedPriceListsBuilder $commonPriceListsBuilder
      * @param WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder
      * @param CustomerGroupCombinedPriceListsBuilder $customerGroupPriceListsBuilder
@@ -107,6 +113,14 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     }
 
     /**
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     */
+    public function setCombinedPriceListTriggerHandler(CombinedPriceListTriggerHandler $triggerHandler)
+    {
+        $this->triggerHandler = $triggerHandler;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
@@ -114,6 +128,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CombinedPriceList::class);
         $em->beginTransaction();
+        $this->triggerHandler->startCollect();
         
         try {
             $this->resetCache();
@@ -121,13 +136,16 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListRelationTrigger($trigger);
             $this->dispatchChangeAssociationEvents();
+            $this->triggerHandler->commit();
             $em->commit();
         } catch (InvalidArgumentException $e) {
+            $this->triggerHandler->rollback();
             $em->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
+            $this->triggerHandler->rollback();
             $em->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
