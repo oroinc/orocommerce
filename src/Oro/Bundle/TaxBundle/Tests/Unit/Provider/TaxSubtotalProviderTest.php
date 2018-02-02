@@ -65,9 +65,12 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new TaxSubtotalProvider($this->translator, $taxProviderRegistry, $this->taxFactory);
-
-        $this->provider->setTaxationSettingsProvider($this->taxationSettingsProvider);
+        $this->provider = new TaxSubtotalProvider(
+            $this->translator,
+            $taxProviderRegistry,
+            $this->taxFactory,
+            $this->taxationSettingsProvider
+        );
     }
 
     protected function tearDown()
@@ -82,6 +85,10 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubtotal()
     {
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
+
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
 
@@ -99,7 +106,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isProductPricesIncludeTax')
-            ->willReturn('true');
+            ->willReturn(true);
 
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
@@ -116,6 +123,10 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCachedSubtotal()
     {
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
+
         $total = $this->createTotalResultElement(150, 'USD');
         $tax   = $this->createTaxResultWithTotal($total);
 

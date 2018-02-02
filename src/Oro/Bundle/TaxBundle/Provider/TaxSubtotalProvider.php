@@ -41,19 +41,17 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
      * @param TranslatorInterface $translator
      * @param TaxProviderRegistry $taxProviderRegistry
      * @param TaxFactory $taxFactory
+     * @param TaxationSettingsProvider $taxationSettingsProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         TaxProviderRegistry $taxProviderRegistry,
-        TaxFactory $taxFactory
+        TaxFactory $taxFactory,
+        TaxationSettingsProvider $taxationSettingsProvider
     ) {
         $this->translator = $translator;
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxFactory = $taxFactory;
-    }
-
-    public function setTaxationSettingsProvider(TaxationSettingsProvider $taxationSettingsProvider)
-    {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
@@ -123,7 +121,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal->setCurrency($tax->getTotal()->getCurrency());
         $subtotal->setVisible((bool)$tax->getTotal()->getTaxAmount());
 
-        if ($this->taxationSettingsProvider && $this->taxationSettingsProvider->isProductPricesIncludeTax()) {
+        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
             $subtotal->setOperation(Subtotal::OPERATION_IGNORE);
         }
 
