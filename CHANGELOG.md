@@ -29,6 +29,7 @@
 * Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
 
 ## 1.6.0 (Unreleased)
+[Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added
 #### CatalogBundle

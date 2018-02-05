@@ -209,10 +209,11 @@ class ProductApiTest extends RestJsonApiTestCase
     public function testProductPageTemplateInvalidValue()
     {
         // pageTemplate = 'invalid-value'
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $this->getEntityType(Product::class)]),
-            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml')
+        $response = $this->post(
+            ['entity' => $this->getEntityType(Product::class)],
+            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml'),
+            [],
+            false
         );
 
         $this->assertResponseValidationError(

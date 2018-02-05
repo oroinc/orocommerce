@@ -134,16 +134,8 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
     {
         $routeParameters = self::processTemplateData(['entity' => $this->getApiEntityName()]);
         $parameters = $this->getRequestData($this->getAliceFilesFolderName().'/create.yml');
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $this->post($routeParameters, $parameters);
+        $response = $this->post($routeParameters, $parameters, [], false);
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
             'unique entity constraint',

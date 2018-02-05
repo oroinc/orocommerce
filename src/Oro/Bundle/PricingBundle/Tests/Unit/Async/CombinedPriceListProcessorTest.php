@@ -18,6 +18,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
@@ -85,6 +86,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $databaseExceptionHelper;
 
     /**
+     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $triggerHandler;
+
+    /**
      * @var CombinedPriceListProcessor
      */
     protected $processor;
@@ -127,6 +133,8 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
+
         /** @var CombinedPriceListProcessor processor */
         $this->processor = new CombinedPriceListProcessor(
             $this->cplBuilder,
@@ -139,6 +147,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             $this->registry,
             $this->databaseExceptionHelper
         );
+        $this->processor->setCombinedPriceListTriggerHandler($this->triggerHandler);
     }
 
     /**
@@ -156,6 +165,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->once())
             ->method('commit');
 
         $this->registry->expects($this->once())
@@ -186,6 +202,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->once())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->never())
             ->method('commit');
 
         $this->registry->expects($this->once())
@@ -242,6 +265,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     public function testDispatchCustomerScopeEvent(array $builtList)
     {
         $em = $this->createMock(EntityManagerInterface::class);
+
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->once())
+            ->method('commit');
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -329,6 +359,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $em->expects(($this->once()))
             ->method('commit');
 
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->once())
+            ->method('commit');
+
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(CombinedPriceList::class)
@@ -408,6 +445,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->once())
+            ->method('commit');
+
         $this->cplWebsiteBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
@@ -459,6 +503,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     public function testDispatchConfigScopeEvent($isBuilt)
     {
         $em = $this->createMock(EntityManagerInterface::class);
+
+        $this->triggerHandler->expects($this->once())
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->never())
+            ->method('rollback');
+        $this->triggerHandler->expects($this->once())
+            ->method('commit');
 
         $em->expects($this->once())
             ->method('beginTransaction');

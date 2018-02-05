@@ -72,6 +72,7 @@ services:
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]
             - [setContainer, ['@service_container']]
+            - [setProductAvailabilityProvider, ['@oro_rfp.provider.product_availability']]
         tags:
             - { name: form.type_extension, alias: oro_rfp_frontend_request }
 

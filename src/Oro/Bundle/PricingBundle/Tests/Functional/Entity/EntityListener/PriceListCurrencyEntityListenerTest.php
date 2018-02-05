@@ -43,7 +43,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
-                PriceListTriggerFactory::PRODUCT => null
+                PriceListTriggerFactory::PRODUCT => []
             ]
         );
     }
@@ -64,7 +64,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
-                PriceListTriggerFactory::PRODUCT => null
+                PriceListTriggerFactory::PRODUCT => []
             ]
         );
     }

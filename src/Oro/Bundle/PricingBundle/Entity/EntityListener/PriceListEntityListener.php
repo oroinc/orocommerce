@@ -92,12 +92,13 @@ class PriceListEntityListener
     /**
      * @param PriceList $priceList
      */
-    public function prePersist(PriceList $priceList)
+    public function postPersist(PriceList $priceList)
     {
         if ($priceList->getProductAssignmentRule()) {
             $priceList->setActual(false);
             $this->priceListTriggerHandler
                 ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            $this->priceListTriggerHandler->sendScheduledTriggers();
         }
     }
 

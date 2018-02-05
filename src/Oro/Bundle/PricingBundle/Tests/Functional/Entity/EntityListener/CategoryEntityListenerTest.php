@@ -45,15 +45,15 @@ class CategoryEntityListenerTest extends WebTestCase
             [
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
             ]
         );
@@ -74,15 +74,15 @@ class CategoryEntityListenerTest extends WebTestCase
             [
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
             ]
         );
@@ -103,7 +103,7 @@ class CategoryEntityListenerTest extends WebTestCase
             [
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
-                    PriceListTriggerFactory::PRODUCT => null
+                    PriceListTriggerFactory::PRODUCT => []
                 ],
             ]
         );
@@ -127,11 +127,11 @@ class CategoryEntityListenerTest extends WebTestCase
             [
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
                 ],
             ]
         );
@@ -156,11 +156,11 @@ class CategoryEntityListenerTest extends WebTestCase
             [
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
                 ],
                 [
                     PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
                 ],
             ]
         );

@@ -8,7 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
@@ -20,7 +19,6 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
     protected $shardManager;
 
     /**
-     * MinimalPricesCombiningStrategy constructor.
      * @param Registry $registry
      * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
@@ -37,21 +35,19 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
     }
 
     /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceListToPriceList $priceListRelation
-     * @param Product|null $product
+     * {@inheritdoc}
      */
     protected function processRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,
-        Product $product = null
+        array $products = []
     ) {
         $this->getCombinedProductPriceRepository()->insertMinimalPricesByPriceList(
             $this->shardManager,
             $this->insertFromSelectQueryExecutor,
             $combinedPriceList,
             $priceListRelation->getPriceList(),
-            $product
+            $products
         );
     }
 }

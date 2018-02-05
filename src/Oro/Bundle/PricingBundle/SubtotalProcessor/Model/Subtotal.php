@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 
 class Subtotal
 {
@@ -29,6 +30,11 @@ class Subtotal
      * @var string
      */
     protected $currency;
+
+    /**
+     * @var CombinedPriceList
+     */
+    protected $combinedPriceList;
 
     /**
      * Type operation for calculate total
@@ -134,6 +140,26 @@ class Subtotal
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return CombinedPriceList
+     */
+    public function getCombinedPriceList()
+    {
+        return $this->combinedPriceList;
+    }
+
+    /**
+     * @param CombinedPriceList|null $combinedPriceList
+     *
+     * @return Subtotal
+     */
+    public function setCombinedPriceList(CombinedPriceList $combinedPriceList = null)
+    {
+        $this->combinedPriceList = $combinedPriceList;
 
         return $this;
     }

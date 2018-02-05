@@ -18,27 +18,20 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
         /** @var PriceListSchedule $scheduleToUpdate */
         $scheduleToUpdate = $this->getReference('schedule.2');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                [
-                    'entity' => 'pricelistschedules',
-                    'id' => $scheduleToUpdate->getId(),
-                ]
-            ),
+        $response = $this->patch(
+            ['entity' => 'pricelistschedules', 'id' => $scheduleToUpdate->getId()],
             [
-                'data' =>
-                    [
-                        'type' => 'pricelistschedules',
-                        'id' => (string)$scheduleToUpdate->getId(),
-                        'attributes' =>
-                            [
-                                'activeAt' => $schedule->getActiveAt()->format('c'),
-                                'deactivateAt' => $schedule->getDeactivateAt()->format('c'),
-                            ],
-                    ],
-            ]
+                'data' => [
+                    'type' => 'pricelistschedules',
+                    'id' => (string)$scheduleToUpdate->getId(),
+                    'attributes' => [
+                        'activeAt' => $schedule->getActiveAt()->format('c'),
+                        'deactivateAt' => $schedule->getDeactivateAt()->format('c')
+                    ]
+                ]
+            ],
+            [],
+            false
         );
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
@@ -55,28 +48,21 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
         /** @var PriceListSchedule $scheduleToUpdate */
         $scheduleToUpdate = $this->getReference('schedule.2');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                [
-                    'entity' => 'pricelistschedules',
-                    'id' => $scheduleToUpdate->getId(),
-                ]
-            ),
+        $response = $this->patch(
+            ['entity' => 'pricelistschedules', 'id' => $scheduleToUpdate->getId()],
             [
-                'data' =>
-                    [
-                        'type' => 'pricelistschedules',
-                        'id' => (string)$scheduleToUpdate->getId(),
-                        'attributes' =>
-                            [
-                                'deactivateAt' => $schedule->getDeactivateAt()
-                                    ->add(new \DateInterval('P1D'))
-                                    ->format('c'),
-                            ],
-                    ],
-            ]
+                'data' =>[
+                    'type' => 'pricelistschedules',
+                    'id' => (string)$scheduleToUpdate->getId(),
+                    'attributes' => [
+                        'deactivateAt' => $schedule->getDeactivateAt()
+                            ->add(new \DateInterval('P1D'))
+                            ->format('c')
+                    ]
+                ]
+            ],
+            [],
+            false
         );
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
@@ -97,11 +83,7 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
 
         $routeParameters = self::processTemplateData(['entity' => 'pricelistschedules']);
         $parameters = $this->getRequestData('price_list_schedule/price_list_schedules_create.yml');
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
