@@ -241,6 +241,8 @@ services:
         arguments:
             - '@oro_web_catalog.content_node_tree_resolver.default'
             - '@oro_web_catalog.content_node_tree_resolver.cache'
+        calls:
+            - [setContentNodeTreeDumper, ['@oro_web_catalog.cache.dumper.content_node_tree_dumper']]
 
     oro_web_catalog.cache:
         parent: oro.cache.abstract
