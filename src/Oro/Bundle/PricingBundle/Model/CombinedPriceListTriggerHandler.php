@@ -66,17 +66,19 @@ class CombinedPriceListTriggerHandler
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @param Website|null $website
      */
     public function processByProduct(
         CombinedPriceList $combinedPriceList,
-        Product $product = null,
+        array $products = [],
         Website $website = null
     ) {
-        if ($product) {
+        if ($products) {
             $websiteId = $website ? $website->getId() : null;
-            $this->productsSchedule[$websiteId][$product->getId()] = $product->getId();
+            foreach ($products as $productId) {
+                $this->productsSchedule[$websiteId][$productId] = $productId;
+            }
             if (!$this->isSessionStarted) {
                 $this->send();
             }

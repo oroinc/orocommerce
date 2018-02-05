@@ -62,7 +62,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }
@@ -99,7 +99,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }
@@ -123,7 +123,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }

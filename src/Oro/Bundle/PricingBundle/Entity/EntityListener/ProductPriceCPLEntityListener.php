@@ -110,7 +110,11 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+        $this->priceListTriggerHandler->addTriggerForPriceList(
+            Topics::RESOLVE_COMBINED_PRICES,
+            $priceList,
+            [$product]
+        );
     }
 
     /**
@@ -160,7 +164,7 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         if (!$prices) {
             /** @var PriceListToProductRepository $repository */
             $repository = $this->getRepository(PriceListToProduct::class);
-            $repository->deleteManualRelations($priceList, $product);
+            $repository->deleteManualRelations($priceList, [$product]);
         }
     }
 

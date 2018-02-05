@@ -148,11 +148,11 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('addTriggerForPriceList')
             ->withConsecutive(
-                [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList1, $product],
-                [Topics::RESOLVE_PRICE_RULES, $priceList2, $product]
+                [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList1, $product ? [$product] : []],
+                [Topics::RESOLVE_PRICE_RULES, $priceList2, $product ? [$product] : []]
             );
 
-        $this->handler->addTriggersByLexemes($lexemes, $product);
+        $this->handler->addTriggersByLexemes($lexemes, $product ? [$product] : []);
     }
 
     /**

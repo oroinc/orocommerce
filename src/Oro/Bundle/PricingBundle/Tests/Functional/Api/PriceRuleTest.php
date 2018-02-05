@@ -122,7 +122,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $priceRule->getPriceList()->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
 
@@ -159,7 +159,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $priceRule->getPriceList()->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
 
@@ -196,7 +196,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $priceList1->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
 
@@ -204,7 +204,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $priceList2->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
     }
@@ -249,7 +249,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $updatedPriceRule->getPriceList()->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
     }
@@ -274,7 +274,7 @@ class PriceRuleTest extends RestJsonApiTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 'priceList' => $priceList->getId(),
-                'product' => null,
+                'product' => [],
             ]
         );
     }

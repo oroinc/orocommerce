@@ -105,9 +105,9 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger = new PriceListTrigger($priceList, $product);
+
+        $productIds = [2];
+        $trigger = new PriceListTrigger($priceList, $productIds);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
@@ -119,11 +119,11 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
 
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
-            ->with($priceList, $product);
+            ->with($priceList, $productIds);
 
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
-            ->with($priceList, $product)
+            ->with($priceList, $productIds)
             ->willThrowException($exception);
 
         $this->logger->expects($this->once())
@@ -161,8 +161,8 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1, 'updatedAt' => $updateDate]);
         /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger = new PriceListTrigger($priceList, $product);
+        $productId = 2;
+        $trigger = new PriceListTrigger($priceList, [$productId]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -180,7 +180,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
 
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
-            ->with($priceList, $product);
+            ->with($priceList, [$productId]);
 
         $manager = $this->createMock(EntityManagerInterface::class);
 
