@@ -7,6 +7,8 @@ use Oro\Component\Expression\Node\NodeInterface;
 
 interface QueryExpressionConverterInterface
 {
+    const REQUIRE_PARAMETRIZATION = '_parametrize_';
+
     /**
      * @param NodeInterface $node
      * @param Expr $expr

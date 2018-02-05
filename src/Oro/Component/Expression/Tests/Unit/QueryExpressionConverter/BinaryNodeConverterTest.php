@@ -5,9 +5,9 @@ namespace Oro\Component\Expression\Tests\Unit\QueryExpressionConverter;
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\BinaryNode;
 use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
-use Oro\Component\Expression\Node\ValueNode;
 
 class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,6 +51,7 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertEquals($expected, (string)$converter->convert($node, $expr, $params, $aliasMapping));
+        $this->assertArrayNotHasKey(QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION, $params);
     }
 
     /**
@@ -78,6 +79,70 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider operationWithValueDataProvider
+     *
+     * @param string $operation
+     * @param string $expected
+     * @param array $params
+     * @param string $convertedValue
+     */
+    public function testConvertWithValue($operation, $expected, array $params, $convertedValue)
+    {
+        $expr = new Expr();
+        $aliasMapping = [];
+
+        $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
+
+        $left = $this->createMock(NodeInterface::class);
+        $right = $this->createMock(ValueNode::class);
+        $converter = new BinaryNodeConverter();
+        $converter->setConverter($mainConverter);
+
+        $mainConverter->expects($this->any())
+            ->method('convert')
+            ->willReturnMap(
+                [
+                    [$left, $expr, $params, $aliasMapping, 'a.b'],
+                    [$right, $expr, $params, $aliasMapping, $convertedValue]
+                ]
+            );
+
+        $node = new BinaryNode($left, $right, $operation);
+        $this->assertEquals($expected, (string)$converter->convert($node, $expr, $params, $aliasMapping));
+        $this->assertArrayNotHasKey(QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION, $params);
+    }
+
+    /**
+     * @return array
+     */
+    public function operationWithValueDataProvider(): array
+    {
+        return [
+            ['and', 'a.b AND 10', [], '10'],
+            ['or', 'a.b OR 10', [], '10'],
+            ['+', 'a.b + 10', [], '10'],
+            ['-', 'a.b - 10', [], '10'],
+            ['*', 'a.b * 10', [], '10'],
+            ['/', 'a.b / 10', [], '10'],
+            ['like', 'a.b LIKE :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['>', 'a.b > :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['>=', 'a.b >= :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['<', 'a.b < :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['<=', 'a.b <= :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['==', 'a.b = :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['!=', 'a.b <> :_vn0', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            ['in', 'a.b IN(:_vn0)', [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true], ':_vn0'],
+            [
+                'not in',
+                'a.b NOT IN(:_vn0)',
+                [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true],
+                ':_vn0'
+            ],
+            ['%', 'MOD(a.b, 10)', [], '10']
+        ];
+    }
+
     public function testConvertInArray()
     {
         $expr = new Expr();
@@ -98,12 +163,19 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     [$left, $expr, $params, $aliasMapping, 'a.b'],
-                    [$right, $expr, $params, $aliasMapping, ':_vn0']
+                    [
+                        $right,
+                        $expr,
+                        array_merge($params, [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true]),
+                        $aliasMapping,
+                        ':_vn0'
+                    ]
                 ]
             );
 
         $node = new BinaryNode($left, $right, 'in');
         $this->assertEquals('a.b IN(:_vn0)', (string)$converter->convert($node, $expr, $params, $aliasMapping));
+        $this->assertArrayNotHasKey(QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION, $params);
     }
 
     public function testConvertException()
