@@ -11,7 +11,7 @@ define(function(require) {
     var _ = require('underscore');
 
     BaseProductMatrixView = BaseView.extend({
-        autoRender: false,
+        autoRender: true,
 
         optionNames: BaseView.prototype.optionNames.concat([
             'dimension'
@@ -68,7 +68,6 @@ define(function(require) {
             delete this.total;
             delete this.minValue;
 
-            this.disposeElements();
             BaseProductMatrixView.__super__.dispose.apply(this, arguments);
         },
 
@@ -119,7 +118,7 @@ define(function(require) {
          * Update all totals
          */
         updateTotals: function() {
-            _.each(this.find('[data-name="field__quantity"]:enabled'), function(element) {
+            _.each(this.$('[data-name="field__quantity"]:enabled'), function(element) {
                 this.updateTotal($(element));
             }, this);
         },
@@ -211,8 +210,8 @@ define(function(require) {
          */
         render: function() {
             this.checkClearButtonVisibility();
-            this.find('[data-role="total-quantity"]').text(this.total.quantity);
-            this.find('[data-role="total-price"]').text(
+            this.$('[data-role="total-quantity"]').text(this.total.quantity);
+            this.$('[data-role="total-price"]').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
 
@@ -250,18 +249,18 @@ define(function(require) {
          * Toggle visibility of clear button
          */
         checkClearButtonVisibility: function() {
-            var isFieldsEmpty = _.every(this.find('[data-name="field__quantity"]:enabled'), function(field) {
+            var isFieldsEmpty = _.every(this.$('[data-name="field__quantity"]:enabled'), function(field) {
                 return _.isEmpty(field.value);
             });
 
-            this.find('[data-role="clear"]').toggleClass('disabled', isFieldsEmpty);
+            this.$('[data-role="clear"]').toggleClass('disabled', isFieldsEmpty);
         },
 
         /**
          * Clear matrix form fields and totals info
          */
         clearForm: function() {
-            this.find('[data-name="field__quantity"]:enabled').filter(function() {
+            this.$('[data-name="field__quantity"]:enabled').filter(function() {
                 return this.value.length > 0;
             }).val('').trigger('change');
         }
