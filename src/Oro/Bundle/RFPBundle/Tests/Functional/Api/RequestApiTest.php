@@ -25,7 +25,8 @@ class RequestApiTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requests']
+            ['entity' => 'requests'],
+            ['page' => ['size' => 100]]
         );
 
         $this->assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
