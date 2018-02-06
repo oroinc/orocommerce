@@ -111,6 +111,7 @@ define(function(require) {
             }
 
             this.updateTotal($(event.currentTarget));
+            this.checkClearButtonVisibility();
             this.render();
         },
 
@@ -209,7 +210,6 @@ define(function(require) {
          * Update totals
          */
         render: function() {
-            this.checkClearButtonVisibility();
             this.$('[data-role="total-quantity"]').text(this.total.quantity);
             this.$('[data-role="total-price"]').text(
                 NumberFormatter.formatCurrency(this.total.price)

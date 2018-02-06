@@ -75,7 +75,7 @@
 {% endblock %}
 
 {% block __matrix_grid_order__matrix_form_clear_button_widget %}
-    {% if datagrid_row is defined and datagrid_row.matrixForm.totals.quantity == 0 or totals.quantity|default(0) == 0 %}
+    {% if totals.quantity|default(0) == 0 %}
         {% set style = style ~ ' disabled' %}
     {% endif %}
 
