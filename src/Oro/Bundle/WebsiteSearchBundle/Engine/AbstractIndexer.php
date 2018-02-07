@@ -72,7 +72,7 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param array $entitiesData
      * @param string $entityAliasTemp
      * @param array $context
-     * @return int
+     * @return array
      */
     abstract protected function saveIndexData(
         $entityClass,
@@ -206,11 +206,6 @@ abstract class AbstractIndexer implements IndexerInterface
         $contextEntityIds = $this->getContextEntityIds($context);
 
         if ($contextEntityIds) {
-            // Remove certain entities from index before reindexation
-            if (false === $this->deleteEntities($entityClass, $contextEntityIds, $context)) {
-                throw new \RuntimeException('Delete has not been successful, cannot proceed with reindex');
-            }
-
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
                 ->setParameter('contextEntityIds', $contextEntityIds);
         }
@@ -220,24 +215,38 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $itemsCount = 0;
         $entityIds = [];
+        $indexedContextEntityIds = [];
         $indexedItemsNum = 0;
 
         foreach ($iterator as $entity) {
             $entityIds[] = $entity['id'];
             $itemsCount++;
             if (0 === $itemsCount % $this->getBatchSize()) {
-                $indexedItemsNum += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
+                $indexedEntityIds = $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
+                $indexedItemsNum += count($indexedEntityIds);
+                if ($contextEntityIds) {
+                    $indexedContextEntityIds = array_merge($indexedContextEntityIds, $indexedEntityIds);
+                }
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
         }
 
         if ($itemsCount % $this->getBatchSize() > 0) {
-            $indexedItemsNum += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
+            $indexedEntityIds = $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
+            $indexedItemsNum += count($indexedEntityIds);
+            if ($contextEntityIds) {
+                $indexedContextEntityIds = array_merge($indexedContextEntityIds, $indexedEntityIds);
+            }
             $entityManager->clear($entityClass);
         }
 
-        if (!$contextEntityIds) {
+        if ($contextEntityIds) {
+            $removedContextEntityIds = array_diff($contextEntityIds, $indexedContextEntityIds);
+            if ($removedContextEntityIds) {
+                $this->deleteEntities($entityClass, $removedContextEntityIds, $context);
+            }
+        } else {
             $this->renameIndex($temporaryAlias, $currentAlias);
         }
 
@@ -273,14 +282,14 @@ abstract class AbstractIndexer implements IndexerInterface
      * ]
      *
      * @param string $aliasToSave
-     * @return int
+     * @return array List of reindexed entity IDs
      */
     protected function indexEntities($entityClass, array $entityIds, array $context, $aliasToSave)
     {
         $restrictedEntities = $this->getRestrictedEntities($entityIds, $context, $entityClass);
 
         if (!$restrictedEntities) {
-            return 0;
+            return [];
         }
 
         $entityConfig = $this->mappingProvider->getEntityConfig($entityClass);
