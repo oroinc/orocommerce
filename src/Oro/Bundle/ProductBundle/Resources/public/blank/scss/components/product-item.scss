@@ -302,10 +302,6 @@
         &--no-image-view {
             @include clearfix();
 
-            .product-item__qty__current-grid {
-                @include clearfix();
-            }
-
             .validation-failed {
                 position: absolute;
                 z-index: 1;
@@ -321,6 +317,10 @@
         &-input {
             text-align: center;
         }
+    }
+
+    &__placeholder-label {
+        
     }
 
     &__select-row {
