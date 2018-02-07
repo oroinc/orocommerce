@@ -90,7 +90,7 @@ class OrmIndexer extends AbstractIndexer
         // Insert data to the database
         $this->getDriver()->flushWrites();
 
-        return count($items);
+        return $entityIds;
     }
 
     /**
