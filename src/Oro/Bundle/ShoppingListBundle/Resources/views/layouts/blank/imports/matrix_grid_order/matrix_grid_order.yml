@@ -30,7 +30,7 @@ layout:
                         product: '=data.offsetExists("product") ? data["product"]'
                         shoppingList: '=data.offsetExists("shoppingList") ? data["shoppingList"] : data["oro_shopping_list_customer_user_shopping_lists"].getCurrent()'
                         form: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(product, shoppingList)'
-                        prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getByProduct(product)'
+                        prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getVariantsPricesByProduct(product)'
                         totals:
                             quantity: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(product)'
                             price: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(product)'
