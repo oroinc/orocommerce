@@ -13,3 +13,7 @@ layout:
             id: product_price_container
             optionName: product
             optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+        - '@setOption':
+            id: product_price_container
+            optionName: vars.visible
+            optionValue: '=data["frontend_product_prices"].isShowProductPriceContainer(product)'
