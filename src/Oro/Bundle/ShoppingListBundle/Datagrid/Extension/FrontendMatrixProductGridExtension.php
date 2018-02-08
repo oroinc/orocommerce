@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -36,9 +35,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     /** @var ProductFormAvailabilityProvider */
     private $productFormAvailabilityProvider;
 
-    /** @var ProductVariantAvailabilityProvider */
-    private $productVariantAvailabilityProvider;
-
     /** @var FrontendProductPricesProvider */
     private $frontendProductPricesProvider;
 
@@ -53,7 +49,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      * @param ShoppingListManager $shoppingListManager
      * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
      * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param FrontendProductPricesProvider $frontendProductPricesProvider
      * @param MatrixGridOrderProvider $matrixGridOrderProvider
      * @param DataGridThemeHelper $dataGridThemeHelper
@@ -63,7 +58,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         ShoppingListManager $shoppingListManager,
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
         ProductFormAvailabilityProvider $productFormAvailabilityProvider,
-        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         FrontendProductPricesProvider $frontendProductPricesProvider,
         MatrixGridOrderProvider $matrixGridOrderProvider,
         DataGridThemeHelper $dataGridThemeHelper
@@ -72,7 +66,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         $this->shoppingListManager = $shoppingListManager;
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
         $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
-        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->frontendProductPricesProvider = $frontendProductPricesProvider;
         $this->matrixGridOrderProvider = $matrixGridOrderProvider;
         $this->dataGridThemeHelper = $dataGridThemeHelper;
@@ -125,9 +118,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                     'price' => $this->matrixGridOrderProvider->getTotalPriceFormatted($product),
                 ];
 
-                $simpleProducts = $this->productVariantAvailabilityProvider
-                    ->getSimpleProductsByVariantFields($product);
-
                 if ($matrixFormData['type'] === 'inline') {
                     $formHtml = $this->matrixGridOrderFormProvider->getMatrixOrderFormHtml($product, $shoppingList);
                     $matrixFormData['form'] = $formHtml;
@@ -139,7 +129,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
 
                 $row->setValue(
                     self::PRODUCT_PRICES_COLUMN_NAME,
-                    $this->frontendProductPricesProvider->getByProducts($simpleProducts)
+                    $this->frontendProductPricesProvider->getVariantsPricesByProduct($product)
                 );
             }
 
