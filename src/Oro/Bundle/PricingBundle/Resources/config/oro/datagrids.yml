@@ -134,9 +134,9 @@ datagrids:
             bind_parameters:
                 - price_list_id
             hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
             count_hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
         properties:
             id: ~
             view_link:
@@ -253,9 +253,9 @@ datagrids:
             bind_parameters:
                 - price_list_id
             hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
             count_hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
         columns:
             has_price_list:
                 label:          oro.pricing.pricelist.has_price_list.label
@@ -411,9 +411,9 @@ datagrids:
             bind_parameters:
                 - price_list_id
             hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
             count_hints:
-                - HINT_PRICE_SHARD
+                - { name: HINT_PRICE_SHARD, value: ':price_list_id' }
         columns:
             productSku:
                 label:         oro.pricing.productprice.product_sku.label
