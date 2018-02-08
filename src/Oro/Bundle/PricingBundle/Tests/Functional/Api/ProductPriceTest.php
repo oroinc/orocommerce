@@ -83,10 +83,7 @@ class ProductPriceTest extends RestJsonApiTestCase
     {
         $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_cget', $routeParameters)
-        );
+        $response = $this->cget($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -123,17 +120,9 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFolderName().'/create.yml'
         );
 
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $this->post($routeParameters, $parameters);
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -149,11 +138,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFolderName().'/create_wrong.yml'
         );
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -213,10 +198,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_cdelete', $routeParameters)
-        );
+        $response = $this->cdelete($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -236,10 +218,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -259,10 +238,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -282,10 +258,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -341,14 +314,7 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $parameters = $this->getRequestData($this->getAliceFolderName().'/update_with_price_list.yml');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                $routeParameters
-            ),
-            $parameters
-        );
+        $response = $this->patch($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -372,14 +338,7 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $parameters = $this->getRequestData($this->getAliceFolderName().'/update_duplicate.yml');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                $routeParameters
-            ),
-            $parameters
-        );
+        $response = $this->patch($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(

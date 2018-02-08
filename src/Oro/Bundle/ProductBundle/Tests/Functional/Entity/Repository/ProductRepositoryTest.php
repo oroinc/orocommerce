@@ -391,7 +391,10 @@ class ProductRepositoryTest extends WebTestCase
             $actualSkus[] = $product->getSku();
         }
 
-        $this->assertEquals($expectedSkus, $actualSkus);
+        $this->assertCount(count($expectedSkus), $actualSkus);
+        foreach ($expectedSkus as $expectedSku) {
+            $this->assertContains($expectedSku, $actualSkus);
+        }
     }
 
     /**

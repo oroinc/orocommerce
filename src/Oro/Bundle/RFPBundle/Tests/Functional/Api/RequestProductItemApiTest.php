@@ -22,7 +22,8 @@ class RequestProductItemApiTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requestproductitems']
+            ['entity' => 'requestproductitems'],
+            ['page' => ['size' => 1000]]
         );
 
         $expectedCount = LoadRequestData::NUM_REQUESTS

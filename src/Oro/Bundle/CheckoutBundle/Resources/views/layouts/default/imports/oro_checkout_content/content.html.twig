@@ -256,7 +256,7 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_info_column_widget %}
-    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info" data-checkout-order-summary-line-item-info_{{ productSku|lower }}>
+    <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info" data-checkout-order-summary-line-item-info_{{ productSku|lower|oro_attribute_name_purify }}>
         {% spaceless %}{{ block('container_widget') }}{% endspaceless %}
     </td>
 {% endblock %}
@@ -311,7 +311,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_price_per_item_column_widget %}
     <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--price"
-        data-checkout-order-summary-line-item-price_{{ productSku|lower }}
+        data-checkout-order-summary-line-item-price_{{ productSku|lower|oro_attribute_name_purify }}
     >{% spaceless %}{{ block('container_widget') }}{% endspaceless %}</td>
 {% endblock %}
 

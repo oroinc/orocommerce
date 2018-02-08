@@ -50,11 +50,7 @@ class PriceRuleTest extends RestJsonApiTestCase
     {
         $routeParameters = self::processTemplateData(['entity' => 'pricerules']);
         $parameters = $this->getRequestData('price_rule/create_values_with_expressions.yml');
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -75,11 +71,7 @@ class PriceRuleTest extends RestJsonApiTestCase
     {
         $routeParameters = self::processTemplateData(['entity' => 'pricerules']);
         $parameters = $this->getRequestData('price_rule/create_required_fields_blank.yml');
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(

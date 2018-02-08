@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -43,6 +44,41 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
+
+        $this->sendScheduledMessages();
+
+        // Assert Rules scheduled for rebuild
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+            ]
+        );
+
+        // Assert Dependent price lists scheduled for recalculation
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+            ]
+        );
+    }
+
+    public function testOnPriceListToProductSave()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+
+        $priceListToProduct = new PriceListToProduct();
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher->dispatch(
+            PriceListToProductSaveAfterEvent::NAME,
+            new PriceListToProductSaveAfterEvent($priceListToProduct)
+        );
 
         $this->sendScheduledMessages();
 

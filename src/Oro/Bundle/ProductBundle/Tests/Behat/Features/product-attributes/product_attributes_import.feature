@@ -50,26 +50,45 @@ Feature: Product attributes import
 
   Scenario: Import BigInt Product Attribute as "Serialized field"
     Given I fill template with data:
-      | fieldName        | type   | entity.label    | form.is_enabled | datagrid.show_filter |
-      | bigIntSerialized | bigint | FieldText Label | yes             | no                   |
+      | fieldName        | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
+      | bigIntSerialized | bigint | FieldText Label | no                   | 0                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     When I reload the page
+    Then I should not see "Update schema"
+    And I should see bigIntSerialized in grid with following data:
+      | Storage Type | Serialized field |
+
+  Scenario: Import BigInt Product Attribute as "Serialized field" when field which requires schema update is changed
+    Given I fill template with data:
+      | fieldName        | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
+      | bigIntSerialized | bigint | FieldText Label | no                   | 1                   |
+    When I import file
+    And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    When I reload the page
+    Then I should not see "Update schema"
+
+  Scenario: Import BigInt Product Attribute as "Table column"
+    Given I fill template with data:
+      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
+      | bigIntTable | bigint | FieldText Label | 1                    | 0                   |
+    When I import file
+    And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    And I reload the page
     Then I should see "Update schema"
     When I check "BigInt" in "Data Type" filter
     Then I should see following grid:
       | Name             | Storage Type     |
       | bigIntSerialized | Serialized field |
+      | bigIntTable      | Table column     |
+    When I click update schema
+    Then I should see "Schema updated" flash message
 
-  Scenario: Import BigInt Product Attribute as "Table column"
+  Scenario: Import BigInt Product Attribute as "Table column" when field which requires schema update is changed
     Given I fill template with data:
-      | fieldName   | type   | entity.label    | datagrid.show_filter |
-      | bigIntTable | bigint | FieldText Label | yes                  |
+      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
+      | bigIntTable | bigint | FieldText Label | yes                  | 1                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     And I reload the page
-    When I check "BigInt" in "Data Type" filter
-    Then I should see following grid:
-      | Name             | Storage Type     |
-      | bigIntSerialized | Serialized field |
-      | bigIntTable      | Table column     |
+    Then I should see "Update schema"
