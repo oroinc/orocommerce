@@ -10,15 +10,15 @@ define(function(require) {
     var $ = require('jquery');
     var translator = require('translator');
 
-    //fixtures
+    // fixtures
     var html = require('text!./Fixture/units-select-template.html');
 
     translator.fromJSON({
-        'locale': 'en',
-        'defaultDomain': 'jsmessages',
-        'translations': {
-            'en': {
-                'jsmessages': {
+        locale: 'en',
+        defaultDomain: 'jsmessages',
+        translations: {
+            en: {
+                jsmessages: {
                     'oro.product.product_unit.item.label.full': 'item',
                     'oro.product.product_unit.set.label.full': 'set',
                     'oro.product.product_unit.kg.label.full': 'kilogram'
@@ -27,7 +27,7 @@ define(function(require) {
         }
     });
 
-    //variables
+    // variables
     var $el;
     var model;
 

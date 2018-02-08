@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class MatrixGridOrderProvider
 {
@@ -27,29 +28,40 @@ class MatrixGridOrderProvider
     private $numberFormatter;
 
     /**
+     * @var ShoppingListManager
+     */
+    private $shoppingListManager;
+
+    /**
      * @param MatrixGridOrderManager $matrixGridManager
      * @param TotalProcessorProvider $totalProvider
      * @param NumberFormatter $numberFormatter
+     * @param ShoppingListManager $shoppingListManager
      */
     public function __construct(
         MatrixGridOrderManager $matrixGridManager,
         TotalProcessorProvider $totalProvider,
-        NumberFormatter $numberFormatter
+        NumberFormatter $numberFormatter,
+        ShoppingListManager $shoppingListManager
     ) {
         $this->matrixGridManager = $matrixGridManager;
         $this->totalProvider = $totalProvider;
         $this->numberFormatter = $numberFormatter;
+        $this->shoppingListManager = $shoppingListManager;
     }
 
     /**
      * Get total quantities for all columns and per column
      *
      * @param Product $product
+     * @param ShoppingList $shoppingList
      * @return float
      */
-    public function getTotalQuantity(Product $product)
+    public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixGridManager->getMatrixCollection($product);
+        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
+
+        $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 
         $totalQuantity = 0;
         foreach ($collection->rows as $row) {
@@ -63,13 +75,16 @@ class MatrixGridOrderProvider
 
     /**
      * @param Product $product
+     * @param ShoppingList $shoppingList
      * @return string
      */
-    public function getTotalPriceFormatted(Product $product)
+    public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixGridManager->getMatrixCollection($product);
+        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
 
-        $shoppingList = new ShoppingList();
+        $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
+
+        $tempShoppingList = new ShoppingList();
 
         foreach ($collection->rows as $row) {
             foreach ($row->columns as $column) {
@@ -82,15 +97,38 @@ class MatrixGridOrderProvider
                 $lineItem->setUnit($collection->unit);
                 $lineItem->setQuantity($column->quantity ?: 0);
 
-                $shoppingList->addLineItem($lineItem);
+                $tempShoppingList->addLineItem($lineItem);
             }
         }
 
-        $price = $this->totalProvider->getTotal($shoppingList)->getTotalPrice();
+        $price = $this->totalProvider->getTotal($tempShoppingList)->getTotalPrice();
 
         return $this->numberFormatter->formatCurrency(
             $price->getValue(),
             $price->getCurrency()
         );
+    }
+
+    /**
+     * @param Product[] $products
+     * @param ShoppingList $shoppingList
+     * @return array
+     */
+    public function getTotalsQuantityPrice(array $products, ShoppingList $shoppingList = null)
+    {
+        $totals = [];
+
+        foreach ($products as $product) {
+            if ($product->getType() !== Product::TYPE_CONFIGURABLE) {
+                continue;
+            }
+
+            $totals[$product->getId()] = [
+                'quantity' => $this->getTotalQuantity($product, $shoppingList),
+                'price' => $this->getTotalPriceFormatted($product, $shoppingList),
+            ];
+        }
+
+        return $totals;
     }
 }

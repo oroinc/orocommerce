@@ -176,8 +176,6 @@ oro_behat_extension:
             element: Configurable Attributes
           Color: 'oro_product[Color]'
           Size: 'oro_product[Size]'
-          Color Attribute: 'oro_product[color_attribute]'
-          Size Attribute: 'oro_product[size_attribute]'
         # for testing product attributes
           StringField: 'oro_product[StringField]'
           IntegerField: 'oro_product[IntegerField]'
@@ -429,6 +427,10 @@ oro_behat_extension:
           Product Collection Segment Name:
             type: css
             locator: '.content-variant-item:not([class*="content-variant-item-default"]) [id*="productCollectionSegment_name"]'
+          First System Page Customer Group:
+            type: css
+            locator: 'div.content-variant-item:first-child input[data-name="field__customer-group"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition a.close'
@@ -775,6 +777,14 @@ oro_behat_extension:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
+    Display Simple Variations Form:
+          selector: 'form[name="configurable_products"]'
+          class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+          options:
+            mapping:
+              Display Simple Variations Default: 'configurable_products[oro_product___display_simple_variations][use_parent_scope_value]'
+              Display Simple Variations: 'configurable_products[oro_product___display_simple_variations][value]'
+
     Uploaded Product Image:
       selector: 'img[src^="/media/cache/attachment"]'
 
@@ -848,6 +858,7 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
+        - OroUIBundle::DragAndDropContext
         - OroCheckoutBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext

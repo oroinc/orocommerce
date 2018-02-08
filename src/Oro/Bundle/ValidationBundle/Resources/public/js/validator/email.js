@@ -1,4 +1,3 @@
-/*global define*/
 define([
     'underscore', 'oroform/js/validator/email'
 ], function(_, emailConstraint) {

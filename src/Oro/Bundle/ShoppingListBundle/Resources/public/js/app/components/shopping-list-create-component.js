@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(
     [
         'oroui/js/widget-manager',
@@ -27,8 +25,8 @@ define(
                         mediator.trigger('widget_success:' + widget.getAlias(), options);
                         mediator.trigger('widget_success:' + widget.getWid(), options);
                         widget.trigger('formSave', {
-                            'savedId': options.savedId,
-                            'shoppingListCreateEnabled': options.shoppingListCreateEnabled
+                            savedId: options.savedId,
+                            shoppingListCreateEnabled: options.shoppingListCreateEnabled
                         });
                         if (!widget.disposed) {
                             widget.remove();

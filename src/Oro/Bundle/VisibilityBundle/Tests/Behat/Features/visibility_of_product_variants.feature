@@ -23,6 +23,17 @@ Feature: Visibility of product variants
       | Large |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
+    And I go to Products / Product Attributes
+    And I click "Create Attribute"
+    And I fill form with:
+      | Field Name | Color   |
+      | Type       | Select |
+    And I click "Continue"
+    And set Options with:
+      | Label |
+      | Red |
+      | Green |
+    And I save form
 
     # Update schema
     And I go to Products / Product Attributes
@@ -34,7 +45,7 @@ Feature: Visibility of product variants
     And set Attribute Groups with:
       | Label         | Visible | Attributes |
       | system  group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices] |
-      | Size group    | true    | [Size]     |
+      | Size group    | true    | [Size, Color] |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -42,7 +53,22 @@ Feature: Visibility of product variants
     And I go to Products / Products
     And I click Edit SKU2 in grid
     And I fill "ProductForm" with:
-      | Size | Large |
+      | Size  | Large |
+      | Color | Red   |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    And click "More actions"
+    And click "Manage Visibility"
+    And fill "Visibility Product Form" with:
+      |Visibility To All |hidden |
+    And I save form
+    Then I should see "Product visibility has been saved" flash message
+
+    And I go to Products / Products
+    And I click Edit SKU5 in grid
+    And I fill "ProductForm" with:
+      | Size  | Small |
+      | Color | Green   |
     And I save and close form
     Then I should see "Product has been saved" flash message
     And click "More actions"
@@ -58,6 +84,8 @@ Feature: Visibility of product variants
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Size] |
+    And I check SKU2 record in grid
+    And I check SKU5 record in grid
     And I save form
     Then I should see "Product has been saved" flash message
 
@@ -69,3 +97,51 @@ Feature: Visibility of product variants
     And I should see "Product Configurable"
     And I click "Product Configurable"
     Then I should not see "Add to Shopping List"
+
+  Scenario: Check visibility add to shopping list button of related products
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Minimum Items Use Default | false |
+      | Minimum Items             | 1     |
+    And I save form
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Product Views" field
+    And I fill in "Product Views" with "No Matrix Form"
+    And I save form
+    Then I go to Products / Products
+    And I click View SKU2 in grid
+    And click "More actions"
+    And click "Manage Visibility"
+    And fill "Visibility Product Form" with:
+      |Visibility To All | visible |
+    And I save form
+    Then I should see "Product visibility has been saved" flash message
+    And I go to Products / Products
+    And I click View SKU5 in grid
+    And click "More actions"
+    And click "Manage Visibility"
+    And fill "Visibility Product Form" with:
+      |Visibility To All | visible |
+    And I save form
+    Then I should see "Product visibility has been saved" flash message
+    Then I go to Products / Products
+    And I click Edit SKU_CONFIGURABLE in grid
+    And I fill "ProductForm" with:
+      | Configurable Attributes | [Color] |
+    And I click "Select related products"
+    And I select following records in "SelectRelatedProductsGrid" grid:
+      | SKU3 |
+      | SKU4 |
+    And I click "Select products"
+    And I save and close form
+    Given I proceed as the Guest
+    And type "SKU_CONFIGURABLE" in "search"
+    And I click "Search Button"
+    And I click "Product Configurable"
+    Then I should see "Add to Shopping List"
+    And I select "Please select option" from "Size"
+    And I should see "Related Products"
+    And I click "Add to Shopping List"
+    Then I should see "Product has been added to \"Shopping list\""

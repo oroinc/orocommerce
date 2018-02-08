@@ -1,11 +1,30 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'mobile_matrix_grid_order.html.twig'
         - '@setFormTheme':
             themes: 'mobile_matrix_grid_order_form.html.twig'
+        - '@move':
+            id: matrix_grid_order_form_actions_submit
+            parentId: widget_actions
+        - '@move':
+            id: widget_actions
+            parentId: matrix_grid_order_wrapper
+            siblingId: matrix_grid_order_form_end
+            prepend: true
+        - '@add':
+            id: matrix_grid_order_actions_container
+            blockType: container
+            parentId: matrix_grid_order_wrapper
+            siblingId: matrix_grid_order_form_start
+            prepend: true
+        - '@move':
+            id: matrix_grid_order_matrix_form_clear_button
+            parentId: matrix_grid_order_actions_container
         - '@remove':
             id: matrix_grid_order_form_summary
         - '@add':
-            id: form_actions_close
+            id: matrix_grid_order_form_actions_close
             blockType: button
             parentId: widget_actions
             options:
@@ -15,7 +34,11 @@ layout:
                 style: 'btn btn--action btn--size-s'
             prepend: true
         - '@setOption':
-            id: form_actions_submit
+            id: matrix_grid_order_form_actions_submit
             optionName: style
             optionValue: 'btn btn--info btn--size-s'
+        - '@appendOption':
+            id: matrix_grid_order_matrix_form_clear_button
+            optionName: style
+            optionValue: 'btn--size-s clear-button--mobile'
     conditions: 'context["is_mobile"]'

@@ -127,8 +127,8 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
                 var validation = new LevelQuantity({
-                    'grid': grid,
-                    'options': options
+                    grid: grid,
+                    options: options
                 });
                 deferred.resolve(validation);
             }).fail(function() {

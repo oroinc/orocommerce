@@ -93,7 +93,6 @@ define(function(require) {
          * @param {Object} response
          */
         loadedRelatedData: function(response) {
-
             this.customerPaymentTerm = this.parseInt(response.customerPaymentTerm || null);
             this.customerGroupPaymentTerm = this.parseInt(response.customerGroupPaymentTerm || null);
 

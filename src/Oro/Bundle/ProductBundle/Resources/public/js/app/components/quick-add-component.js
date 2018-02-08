@@ -12,10 +12,10 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            'componentSelector': '[name$="[component]"]',
-            'additionalSelector': '[name$="[additional]"]',
-            'componentButtonSelector': '.component-button',
-            'componentPrefix': 'quick-add'
+            componentSelector: '[name$="[component]"]',
+            additionalSelector: '[name$="[additional]"]',
+            componentButtonSelector: '.component-button',
+            componentPrefix: 'quick-add'
         },
 
         /**

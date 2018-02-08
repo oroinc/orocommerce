@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
@@ -9,11 +10,16 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceCPLEntityListener implements OptionalListenerInterface
 {
@@ -35,18 +41,34 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
     protected $priceListTriggerHandler;
 
     /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param ExtraActionEntityStorageInterface $extraActionsStorage
      * @param RegistryInterface $registry
      * @param PriceListTriggerHandler $priceListTriggerHandler
+     * @param ShardManager $shardManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
         RegistryInterface $registry,
-        PriceListTriggerHandler $priceListTriggerHandler
+        PriceListTriggerHandler $priceListTriggerHandler,
+        ShardManager $shardManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->extraActionsStorage = $extraActionsStorage;
         $this->registry = $registry;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
+        $this->shardManager = $shardManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -56,8 +78,8 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
     {
         /** @var ProductPrice $productPrice */
         $productPrice = $event->getEventArgs()->getEntity();
-        $this->handleChanges($productPrice);
         $this->addPriceListToProductRelation($productPrice);
+        $this->handleChanges($productPrice);
     }
 
     /**
@@ -65,7 +87,9 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
      */
     public function onRemove(ProductPriceRemove $event)
     {
-        $this->handleChanges($event->getPrice());
+        $productPrice = $event->getPrice();
+        $this->removePriceListToProductRelation($productPrice);
+        $this->handleChanges($productPrice);
     }
 
     /**
@@ -73,18 +97,15 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
      */
     protected function handleChanges(ProductPrice $productPrice)
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->isProductPriceValid($productPrice)) {
             return;
         }
 
-        /** @var PriceList $priceList */
-        $priceList = $productPrice->getPriceList();
-        $product = $productPrice->getProduct();
-
-        if (!$priceList || !$product || !$priceList->getId() || !$product->getId()) {
-            return;
-        }
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+        $this->priceListTriggerHandler->addTriggerForPriceList(
+            Topics::RESOLVE_COMBINED_PRICES,
+            $productPrice->getPriceList(),
+            [$productPrice->getProduct()]
+        );
     }
 
     /**
@@ -92,17 +113,49 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
      */
     protected function addPriceListToProductRelation(ProductPrice $productPrice)
     {
-        /** @var PriceList $priceList */
+        if (!$this->isProductPriceValid($productPrice)) {
+            return;
+        }
+
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        if (null === $this->findRelation($product, $priceList)) {
-            $relation = new PriceListToProduct();
-            $relation->setPriceList($priceList)
-                ->setProduct($product);
-            $em = $this->registry->getManagerForClass(PriceListToProduct::class);
-            $em->persist($relation);
-            $em->flush($relation);
+        // create entity to get default value of 'isManual' field
+        $relation = new PriceListToProduct();
+
+        /** @var PriceListToProductRepository $repository */
+        $repository = $this->getRepository(PriceListToProduct::class);
+        $isCreated = $repository->createRelation($priceList, $product, $relation->isManual());
+
+        $relation = $this->findRelation($product, $priceList);
+        if ($isCreated && $relation) {
+            $this->eventDispatcher->dispatch(
+                PriceListToProductSaveAfterEvent::NAME,
+                new PriceListToProductSaveAfterEvent($relation)
+            );
+        }
+    }
+
+    /**
+     * @param ProductPrice $productPrice
+     */
+    protected function removePriceListToProductRelation(ProductPrice $productPrice)
+    {
+        if (!$this->isProductPriceValid($productPrice)) {
+            return;
+        }
+
+        $priceList = $productPrice->getPriceList();
+        $product = $productPrice->getProduct();
+
+        /** @var ProductPriceRepository $repository */
+        $repository = $this->getRepository(ProductPrice::class);
+
+        $prices = $repository->findByPriceListAndProductSkus($this->shardManager, $priceList, [$product->getSku()]);
+        if (!$prices) {
+            /** @var PriceListToProductRepository $repository */
+            $repository = $this->getRepository(PriceListToProduct::class);
+            $repository->deleteManualRelations($priceList, [$product]);
         }
     }
 
@@ -113,15 +166,33 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
      */
     protected function findRelation(Product $product, PriceList $priceList)
     {
-        $relation = $this->registry->getManagerForClass(PriceListToProduct::class)
-            ->getRepository(PriceListToProduct::class)
+        return $this->getRepository(PriceListToProduct::class)
             ->findOneBy(
                 [
                     'product' => $product,
                     'priceList' => $priceList,
                 ]
             );
+    }
 
-        return $relation;
+    /**
+     * @param ProductPrice $productPrice
+     * @return bool
+     */
+    protected function isProductPriceValid(ProductPrice $productPrice)
+    {
+        $priceList = $productPrice->getPriceList();
+        $product = $productPrice->getProduct();
+
+        return $priceList && $product && $priceList->getId() && $product->getId();
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository(string $className): ObjectRepository
+    {
+        return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 }

@@ -15,7 +15,7 @@ define(function(require) {
         $container.nextAll('[data-role="error-container"]').remove();
         if (errorList.length) {
             _.each(errorMap, function(message) {
-                $(template({'message': message})).insertAfter($container);
+                $(template({message: message})).insertAfter($container);
             });
         }
     };

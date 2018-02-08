@@ -54,7 +54,7 @@ define(function(require) {
          * @param {Object} response
          */
         setDiscounts: function(response) {
-            var itemId =  this.options._sourceElement.closest('tr.order-line-item').index();
+            var itemId = this.options._sourceElement.closest('tr.order-line-item').index();
             if (!_.has(response.appliedDiscounts, itemId)) {
                 return;
             }

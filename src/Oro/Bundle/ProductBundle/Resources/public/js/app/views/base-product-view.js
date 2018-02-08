@@ -16,10 +16,11 @@ define(function(require) {
         normalizeQuantityField: true,
 
         elements: {
+            productItem: '[data-role="product-item"]',
             quantity: ['lineItem', '[data-name="field__quantity"]:first'],
             unit: ['lineItem', '[data-name="field__unit"]:first'],
             lineItem: '[data-role="line-item-form-container"]',
-            lineItemFields: ['lineItem', ':input[data-name]']
+            lineItemFields: ':input[data-name]'
         },
 
         elementsEvents: {
@@ -40,10 +41,10 @@ define(function(require) {
         },
 
         modelEvents: {
-            'id': ['change', 'onProductChanged'],
-            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'unit_label': ['change', 'changeUnitLabel'],
-            'unit': ['change', 'onUnitChange']
+            id: ['change', 'onProductChanged'],
+            line_item_form_enable: ['change', 'onLineItemFormEnableChanged'],
+            unit_label: ['change', 'changeUnitLabel'],
+            unit: ['change', 'onUnitChange']
         },
 
         originalProductId: null,
@@ -59,7 +60,10 @@ define(function(require) {
             this.originalProductId = this.model.get('parentProduct');
 
             this.initializeSubviews({
-                productModel: this.model
+                productModel: this.model,
+                options: {
+                    productModel: this.model
+                }
             });
         },
 
@@ -67,7 +71,7 @@ define(function(require) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (!this.model) {
                 this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
-                                this.collection.get(this.rowId) : new BaseModel();
+                    this.collection.get(this.rowId) : new BaseModel();
             }
 
             _.each(this.modelAttr, function(value, attribute) {
@@ -144,13 +148,22 @@ define(function(require) {
         },
 
         enableLineItemForm: function() {
-            this.getElement('lineItemFields').prop('disabled', false).inputWidget('refresh');
-            this.getElement('lineItem').removeClass('disabled');
+            this.getLineItemFields().prop('disabled', false).inputWidget('refresh');
+            this.getLineItem().removeClass('disabled');
         },
 
         disableLineItemForm: function() {
-            this.getElement('lineItemFields').prop('disabled', true).inputWidget('refresh');
-            this.getElement('lineItem').addClass('disabled');
+            this.getLineItemFields().prop('disabled', true).inputWidget('refresh');
+            this.getLineItem().addClass('disabled');
+        },
+
+        getLineItem: function() {
+            var $innerLineItem = this.getElement('productItem').find(this.elements.lineItem);
+            return this.getElement('lineItem').not($innerLineItem);
+        },
+
+        getLineItemFields: function() {
+            return this.getLineItem().find(this.elements.lineItem);
         },
 
         dispose: function() {

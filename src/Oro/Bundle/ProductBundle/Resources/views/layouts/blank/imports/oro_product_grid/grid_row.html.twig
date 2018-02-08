@@ -25,16 +25,35 @@
         getDefaultName: datagrid_row.name
     }) %}
 
+    {% set matrixForm = product.matrixForm %}
+    {% if matrixForm.type == 'inline' and not blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}
+        {# fix type for related, not matrix, blocks #}
+        {% set matrixForm = matrixForm|merge({
+            type: 'none'
+        }) %}
+    {% endif %}
+    {% set matrixFormType = matrixForm.type %}
+
+    {% set class_prefix = themeOptions.currentRowView %}
+
+    {% set modelAttr = layout_attr_defaults(product|default({}), {
+        'imageUrl': product.image
+    }) %}
+
     {% do block|merge_context({
-        class_prefix: themeOptions.currentRowView,
+        class_prefix: class_prefix,
+        matrixForm: matrixForm,
+        matrixFormType: matrixForm.type,
+        totals: matrixForm.totals|default([]),
         product: product
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
+        '~class': matrixFormType == 'inline' ? 'product-item__wrapper--{{ class_prefix }}' : '',
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product|default({})
+            modelAttr: modelAttr
         },
         'data-layout': 'separate'
     }) %}
@@ -59,14 +78,11 @@
         '~class': ' product-item__preview'
     }) %}
 
-    {% set isNoImage = false %}
-    
+    {% set isNoImage = true %}
     {% if product.image is defined %}
         {% set isNoImage = (product.image|trim) == (Image.url(null, 'product_large')|e|trim) %}
-    {% else %}
-        {% set isNoImage = true %}
     {% endif %}
-    
+
     {% if popup_gallery and not isNoImage %}
         {% set options = {
             ajaxMode: true,
@@ -90,12 +106,9 @@
 {% block __oro_product_grid__product_popup_gallery_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
-    {% set isNoImage = false %}
-    
+    {% set isNoImage = true %}
     {% if product.image is defined %}
         {% set isNoImage = (product.image|trim|split('/')|last) == (Image.url(null, 'product_large')|e|trim|split('/')|last) %}
-    {% else %}
-        {% set isNoImage = true %}
     {% endif %}
 
     {% if not isNoImage %}
@@ -160,6 +173,21 @@
 
 {% block __oro_product_grid__product_price_container_widget %}
     {{ block("product_price_container") }}
+{% endblock %}
+
+{% block _product_datagrid_cell_matrixForm_widget %}
+    {% if matrixFormType == 'inline' %}
+        {% do block|merge_context({
+            'prices': product.prices,
+            'matrixForm': matrixForm.form,
+            'rows': matrixForm.rows
+        }) %}
+        {{- block('container_widget') -}}
+    {% endif %}
+{% endblock %}
+
+{% block _product_datagrid_cell_matrix_form_fields_widget %}
+    {{ matrixForm|raw }}
 {% endblock %}
 
 {% block _product_item_select_row_widget %}

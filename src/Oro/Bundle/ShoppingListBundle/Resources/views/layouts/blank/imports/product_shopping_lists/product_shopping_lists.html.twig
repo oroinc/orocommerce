@@ -1,24 +1,26 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
-    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
-    {% set shoppingListsTemplate %}
-        {% spaceless %}
-            {{ block_widget(block) }}
-        {% endspaceless %}
-    {% endset %}
+    {% if not is_configurable_product_type(product.type) %}
+        {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
+        {% set shoppingListsTemplate %}
+            {% spaceless %}
+                {{ block_widget(block) }}
+            {% endspaceless %}
+        {% endset %}
 
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
-            modelAttr: {
-                shopping_lists: productShoppingLists
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            '~data-page-component-options': {
+                view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
+                modelAttr: {
+                    shopping_lists: productShoppingLists
+                },
+                template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
             },
-            template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
-        },
-        'data-product-shopping-lists': '',
-        'data-layout': 'separate',
-    }) %}
-    <div {{ block('block_attributes') }}></div>
+            'data-product-shopping-lists': '',
+            'data-layout': 'separate',
+        }) %}
+        <div {{ block('block_attributes') }}></div>
+    {% endif %}
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_template_widget %}
@@ -164,7 +166,7 @@
                                                             lineItemId: '<%= lineItem.id %>'
                                                         },
                                                         confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                        sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+                                                        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
                                                     }
                                                 })) }}>
                                                 <i class="fa-trash-o"></i>

@@ -1,0 +1,69 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+    locvalue2:
+        string: 'Product 2'
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+    product2:
+        sku: 'PSKU2'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products:
+        __construct: [['@product1', '@product2']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        setProducts: ['@products']
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceList1:
+        name: 'First Price List'
+        addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@priceList1'
+        currency: 'USD'
+        quantity: 5
+        unit: '@item'
+        value: 15
+    price2:
+        product: '@product2'
+        priceList: '@priceList1'
+        currency: 'USD'
+        quantity: 10
+        unit: '@piece'
+        value: 30
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@priceList1'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@priceList1'

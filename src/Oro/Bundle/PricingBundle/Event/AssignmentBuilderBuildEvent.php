@@ -16,18 +16,18 @@ class AssignmentBuilderBuildEvent extends Event
     protected $priceList;
 
     /**
-     * @var Product
+     * @var array|Product[]
      */
-    private $product;
+    private $products;
 
     /**
      * @param PriceList $priceList
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    public function __construct(PriceList $priceList, Product $product = null)
+    public function __construct(PriceList $priceList, array $products = [])
     {
         $this->priceList = $priceList;
-        $this->product = $product;
+        $this->products = $products;
     }
 
     /**
@@ -39,10 +39,10 @@ class AssignmentBuilderBuildEvent extends Event
     }
 
     /**
-     * @return Product
+     * @return array|Product[]
      */
-    public function getProduct()
+    public function getProducts()
     {
-        return $this->product;
+        return $this->products;
     }
 }

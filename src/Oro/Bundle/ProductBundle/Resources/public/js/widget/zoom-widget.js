@@ -26,7 +26,7 @@ define(function(require) {
         _init: function() {
             this.options.onZoomedImageLoaded = _.bind(this._resetImageProperty, this);
 
-            //Bind activeImage event of slick gallery
+            // Bind activeImage event of slick gallery
             this.element.on('slider:activeImage', _.bind(function(e, activeImage) {
                 this._removeZoomContainer();
                 this._zoomInit(activeImage);
@@ -61,21 +61,20 @@ define(function(require) {
             var zoomWindowWidth = this.options.zoomWindowWidth;
             var zoomWindowHeight = this.options.zoomWindowHeight;
 
-            //Check if image has small size
+            // Check if image has small size
             if (imageLargeWidth <= zoomWindowWidth || imageLargeHeight <= zoomWindowHeight) {
-
-                //Increase large size of small image
+                // Increase large size of small image
                 var newImageZoomWidth = imageLargeWidth * 3;
                 var newImageZoomHeight = imageLargeHeight * 3;
 
                 imageZoomData.largeWidth = newImageZoomWidth;
                 imageZoomData.largeHeight = newImageZoomHeight;
 
-                //Should remove old zoom containers from DOM
+                // Should remove old zoom containers from DOM
                 $('.zoomWindowContainer').remove();
                 $('.zoomContainer').remove();
 
-                //Call to internal method of elevatezoom for reinit zoom containers
+                // Call to internal method of elevatezoom for reinit zoom containers
                 imageZoomData.startZoom();
             }
         },
@@ -95,16 +94,16 @@ define(function(require) {
             var maxZoomWindowWidth = this.options.maxZoomWindowWidth;
             var minZoomWindowWidth = this.options.minZoomWindowWidth;
 
-            //Calculate proportional size of zoom window
+            // Calculate proportional size of zoom window
             var proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
 
-            //Check max zoom window width
+            // Check max zoom window width
             proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
 
-            //Check min zoom window width
+            // Check min zoom window width
             proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
 
-            //Set proportionalWidth for zoom window
+            // Set proportionalWidth for zoom window
             this.options.zoomWindowWidth = proportionalWidth;
         },
 

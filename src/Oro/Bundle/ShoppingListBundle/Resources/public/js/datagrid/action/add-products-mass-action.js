@@ -4,9 +4,7 @@ define(function(require) {
     var AddProductsAction;
     var MassAction = require('oro/datagrid/action/mass-action');
     var mediator = require('oroui/js/mediator');
-    var ShoppingListCreate = require('oro/shopping-list-create-widget');
-    var  _ = require('underscore');
-    var $  = require('jquery');
+    var _ = require('underscore');
 
     /**
      * Add products to shopping list
@@ -19,37 +17,59 @@ define(function(require) {
         shoppingLists: null,
 
         /**
-         * @inheritdoc
+         * @inheritDoc
          */
         initialize: function(options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
 
-            if (this.route_parameters.actionName === 'oro_shoppinglist_frontend_addlineitemnew') {
-                this.listenTo(
-                    mediator,
-                    'widget_success:add_products_to_new_shopping_list_mass_action',
-                    _.bind(this.onAddProductsToNewShoppingListMassActionSuccess, this),
-                    this
-                );
+            this.datagrid.on('action:add-products-mass:shopping-list', this._onAddProducts, this);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            this.datagrid.off(null, null, this);
+            return AddProductsAction.__super__.dispose.apply(this, arguments);
+        },
+
+        /**
+         * Override function to change URL
+         *
+         * @inheritDoc
+         */
+        _handleWidget: function() {
+            if (this.dispatched) {
+                return;
             }
+            this.frontend_options = this.frontend_options || {};
+            this.frontend_options.url = this.getLink();
+            this.frontend_options.title = this.frontend_options.title || this.label;
+
+            require(['oro/' + this.frontend_handle + '-widget'], _.bind(this._createHandleWidget, this));
         },
 
-        /**
-         * @param {object} data
-         */
-        onAddProductsToNewShoppingListMassActionSuccess: function(data) {
-            data.label = $(data._sourceElement).find('.form-field-label').val();
-            this._updateShoppingListsData(data);
+        _createHandleWidget: function(WidgetType) {
+            var widget = new WidgetType(this.frontend_options);
+            widget.render();
+
+            var datagrid = this.datagrid;
+            var selectionState = datagrid.getSelectionState();
+
+            widget.on('formSave', _.bind(function(response) {
+                datagrid.resetSelectionState(selectionState);
+                this._onSaveHandleWidget(response, datagrid);
+            }, this));
         },
 
-        /**
-         * @param {object} data
-         * @private
-         */
-        _updateShoppingListsData: function(data) {
-            var widget = new ShoppingListCreate({});
-            widget.onFormSave(data);
-            widget.dispose();
+        _onSaveHandleWidget: function(response, datagrid) {
+            datagrid.trigger('action:add-products-mass:shopping-list', response.savedId);
+        },
+
+        _onAddProducts: function(shoppingListId) {
+            if (this.route_parameters.shoppingList === shoppingListId) {
+                this.run({});
+            }
         },
 
         /**
@@ -86,9 +106,26 @@ define(function(require) {
             return params;
         },
 
+        _handleAjax: function() {
+            if (this.dispatched) {
+                return;
+            }
+
+            mediator.execute('showLoading');
+            this._doAjaxRequest();
+        },
+
         _onAjaxSuccess: function(data, textStatus, jqXHR) {
-            mediator.trigger('shopping-list:refresh');
-            AddProductsAction.__super__._onAjaxSuccess.apply(this, arguments);
+            var datagrid = this.datagrid;
+
+            var models = _.map(data.products, function(product) {
+                return datagrid.collection.get(product.id);
+            });
+
+            datagrid.resetSelectionState();
+
+            mediator.trigger('shopping-list:line-items:update-response', models, data);
+            mediator.execute('hideLoading');
         }
     });
 

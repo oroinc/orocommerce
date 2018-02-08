@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -65,21 +67,46 @@ class PriceListToProductRepository extends EntityRepository
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
+     * @return QueryBuilder
      */
-    public function deleteGeneratedRelations(PriceList $priceList, Product $product = null)
+    protected function getDeleteRelationsQueryBuilder(PriceList $priceList, array $products = []): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(PriceListToProduct::class, 'pltp')
             ->where($qb->expr()->eq('pltp.priceList', ':priceList'))
-            ->andWhere($qb->expr()->neq('pltp.manual', ':isManual'))
-            ->setParameter('priceList', $priceList)
+            ->setParameter('priceList', $priceList);
+
+        if ($products) {
+            $qb->andWhere($qb->expr()->in('pltp.product', ':products'))
+                ->setParameter('products', $products);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function deleteGeneratedRelations(PriceList $priceList, array $products = [])
+    {
+        $qb = $this->getDeleteRelationsQueryBuilder($priceList, $products);
+        $qb->andWhere($qb->expr()->neq('pltp.manual', ':isManual'))
             ->setParameter('isManual', true);
 
-        if ($product) {
-            $qb->andWhere($qb->expr()->eq('pltp.product', ':product'))
-                ->setParameter('product', $product);
-        }
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function deleteManualRelations(PriceList $priceList, array $products = [])
+    {
+        $qb = $this->getDeleteRelationsQueryBuilder($priceList, $products);
+        $qb->andWhere($qb->expr()->eq('pltp.manual', ':isManual'))
+            ->setParameter('isManual', true);
 
         $qb->getQuery()->execute();
     }
@@ -112,5 +139,57 @@ class PriceListToProductRepository extends EntityRepository
         ];
 
         $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param bool $isManual
+     * @return int
+     */
+    public function createRelation(PriceList $priceList, Product $product, $isManual = true)
+    {
+        $table = $this->getClassMetadata()->getTableName();
+
+        $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
+        if ($platform instanceof MySqlPlatform) {
+            $sql = sprintf('INSERT IGNORE INTO %s (price_list_id, product_id, is_manual) VALUES (?, ?, ?)', $table);
+            $params = [
+                $priceList->getId(),
+                $product->getId(),
+                $isManual
+            ];
+            $types = [
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::BOOLEAN
+            ];
+        } else {
+            $sql = sprintf(
+                'INSERT INTO %s (price_list_id, product_id, is_manual) SELECT ?, ?, ? WHERE NOT EXISTS (%s)',
+                $table,
+                sprintf('SELECT id FROM %s WHERE price_list_id = ? AND product_id = ? LIMIT ?', $table)
+            );
+            $params = [
+                $priceList->getId(),
+                $product->getId(),
+                $isManual,
+                $priceList->getId(),
+                $product->getId(),
+                1
+            ];
+            $types = [
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::BOOLEAN,
+                Type::INTEGER,
+                Type::INTEGER,
+                Type::INTEGER,
+            ];
+        }
+
+        return $this->getEntityManager()
+            ->getConnection()
+            ->executeUpdate($sql, $params, $types);
     }
 }

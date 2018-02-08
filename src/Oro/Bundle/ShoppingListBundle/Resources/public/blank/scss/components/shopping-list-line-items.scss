@@ -1,0 +1,100 @@
+// @theme: default;
+
+.shopping-list-line-items {
+    margin-top: $shopping-list-line-items-ofsset-top;
+
+    &__header {
+        display: $shopping-list-line-items-header-display;
+        justify-content: $shopping-list-line-items-header-justify-content;
+
+        width: $shopping-list-line-items-header-width;
+        padding: $shopping-list-line-items-header-offset;
+
+        border-top: $shopping-list-line-items-header-border-top;
+        border-bottom: $shopping-list-line-items-header-border-bottom;
+        background: $shopping-list-line-items-header-background;
+
+        &-label {
+            &:first-child {
+                width: $shopping-list-line-items-header-label-fist-child-width;
+            }
+        }
+    }
+
+    &__item-wrapper {
+        position: $shopping-list-line-items-item-wrapper-position;
+
+        padding: $shopping-list-line-items-item-wrapper-offset-inner;
+
+        border-bottom: $shopping-list-line-items-item-wrapper-border-bottom;
+    }
+
+    &__item {
+        display: $shopping-list-line-items-item-display;
+        align-items: $shopping-list-line-items-item-align-items;
+        justify-content: $shopping-list-line-items-item-justify-content;
+
+        margin-bottom: $shopping-list-line-items-item-margin-bottom;
+        padding-right: $shopping-list-line-items-item-offset-inner-right;
+        width: $shopping-list-line-items-item-width;
+    }
+
+    &__specification {
+        display: $shopping-list-line-items-specification-display;
+        align-items: $shopping-list-line-items-specification-align-items;
+    }
+
+    &__actions {
+        position: $shopping-list-line-items-actions-position;
+        right: $shopping-list-line-items-actions-right;
+        top: $shopping-list-line-items-actions-top;
+    }
+
+    &__description {
+        position: $shopping-list-line-items-description-position;
+        padding: $shopping-list-line-items-description-offset-inner;
+    }
+
+    &__status {
+        color: $shopping-list-line-items-status-color;
+    }
+
+    &__note {
+        clear: $shopping-list-line-items-note-clear;
+    }
+
+    & &__action-button { //Should overide .btn class property
+        padding: $shopping-list-line-items-action-button-offset-inner;
+    }
+
+    .line-item-price {
+        min-width: $shopping-list-line-items-line-item-price-min-width;
+        text-align: $shopping-list-line-items-line-item-price-text-align;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .shopping-list-line-items {
+        &__item {
+            flex-direction: $shopping-list-line-items-item-mobile-landscape-flex-direction;
+
+            margin-bottom: $shopping-list-line-items-item-mobile-landscape-offset-bottom;
+            padding-right: $shopping-list-line-items-item-mobile-landscape-offset-inner-right;
+        }
+
+        &__specification {
+            width: $shopping-list-line-items-mobile-landscape-specification-width;
+            justify-content: $shopping-list-line-items-mobile-landscape-specification-justify-content;
+            padding: $shopping-list-line-items-mobile-landscape-specification-offset-inner;
+
+            //TODO: Should move all child of __specification block to the component
+            .product__qty-container {
+                width: $shopping-list-line-items-mobile-landscape-specification-product-qty-container-width;
+            }
+        }
+
+        &__action-button {
+            width: $shopping-list-line-items-action-button-mobile-landscape-width;
+        }
+    }
+}

@@ -44,7 +44,9 @@
             renderCache: renderCache
         }) %}
     {% endif %}
-    {{ renderCache }}
+    {% if not is_configurable_product_type(product.type) %}
+        {{ renderCache }}
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_widget %}
@@ -56,20 +58,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {% if is_configurable_product_type(product.type) %}
-            <div class="add-product-from-view-component">
-                <div class="btn-group full" {{ block('block_attributes') }}>
-                    {{ UI.addButton({
-                        'path': path('oro_product_frontend_product_view', {id: product.id}),
-                        'label': 'oro.product.frontend.index.view_details'|trans,
-                        'title': 'oro.product.frontend.index.view_details'|trans,
-                        'aCss': 'btn--info'
-                    }) }}
-                </div>
-            </div>
-        {% else %}
-            {{ block_widget(block) }}
-        {% endif %}
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -94,4 +83,15 @@
         }
     }) %}
     {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_view_details_widget %}
+    {% if is_configurable_product_type(product.type) and matrixFormType == 'none' %}
+        {% set path = product.view_link|default('') %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " btn btn--info full"
+        }) %}
+        
+        {{ parent_block_widget(block) }}
+    {% endif %}
 {% endblock %}

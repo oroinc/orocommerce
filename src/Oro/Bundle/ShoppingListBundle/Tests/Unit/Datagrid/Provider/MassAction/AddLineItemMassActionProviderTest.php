@@ -117,6 +117,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                             ],
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
+                        'frontend_handle' => 'shopping-list-create',
                     ]
                 ]
             ],
@@ -181,6 +182,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                             ],
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
+                        'frontend_handle' => 'shopping-list-create',
                     ]
                 ]
             ],
@@ -245,6 +247,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                             ],
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
+                        'frontend_handle' => 'shopping-list-create',
                     ]
                 ]
             ]

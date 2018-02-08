@@ -68,10 +68,6 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onFormChange: function(e) {
-            if (!Boolean(e.originalEvent)) {
-                return;
-            }
-
             var $target = $(e.target);
 
             this.isReloadRequired($target);
@@ -155,7 +151,7 @@ define(function(require) {
                     mediator.trigger(
                         eventName,
                         {
-                            'layoutSubtreeCallback': function() {
+                            layoutSubtreeCallback: function() {
                                 eventCount--;
 
                                 if (eventCount < 1) {

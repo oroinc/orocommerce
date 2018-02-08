@@ -63,7 +63,7 @@ define(function(require) {
                         if (errorList.length) {
                             $element.addClass(this.settings.errorClass);
                             _.each(errorMap, function(message) {
-                                $(template({'message': message})).appendTo($container);
+                                $(template({message: message})).appendTo($container);
                             });
                         }
                     }
@@ -91,7 +91,7 @@ define(function(require) {
                 this.$form.ajaxSubmit({
                     url: this.subtotalUrl,
                     data: {
-                        '_widgetContainer': 'ajax'
+                        _widgetContainer: 'ajax'
                     },
                     success: _.bind(this.onSubtotalSuccess, this)
                 });

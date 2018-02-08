@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
@@ -46,6 +47,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             $this->tokenStorage,
             $this->productListModifier
         );
+        $this->extension->setParameters(new ParameterBag());
     }
 
     /**
