@@ -113,7 +113,7 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
+            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, false)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice();
         $this->assertEquals($expected, $actual);
@@ -178,11 +178,14 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIncludeSubcategoriesChoiceWithTrueOption()
     {
+        // string value is used only for showing correct value passing
+        $trueValue = 'trueValue';
+
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
+            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, $trueValue)
             ->willReturn(true);
-        $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice(true);
+        $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice($trueValue);
         $this->assertTrue($actual);
     }
 
