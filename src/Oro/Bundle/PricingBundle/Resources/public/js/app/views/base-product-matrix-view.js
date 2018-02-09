@@ -11,7 +11,7 @@ define(function(require) {
     var _ = require('underscore');
 
     BaseProductMatrixView = BaseView.extend({
-        autoRender: true,
+        autoRender: false,
 
         optionNames: BaseView.prototype.optionNames.concat([
             'dimension'
