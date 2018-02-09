@@ -262,6 +262,87 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see an "Default Page Prices" element
     And I should see "Item 1 $ 12.00" in the "Default Page Prices" element
 
+  Scenario: Check clear all button and totals container
+    Then type "CNF_B" in "search"
+    And click "Search Button"
+    And click "View Details" for "CNF_B" product
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
+    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
+    And I click "Clear All"
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      |          |          | N/A      |
+      |          | N/A      |          |
+      |          |          | N/A      |
+      | N/A      | N/A      |          |
+    And I should see "Total QTY 0 | Total $0.00" in the "Matrix Grid Form Totals" element
+    Then I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    And I click "Shopping list"
+
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
+    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I should see "Total QTY 5 | Subtotal $60.00" in the "Matrix Grid Form Totals" element
+    And I click "Clear All"
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      |          |          | N/A      |
+      |          | N/A      |          |
+      |          |          | N/A      |
+      | N/A      | N/A      |          |
+    And I should see "Total QTY 0 | Subtotal $0.00" in the "Matrix Grid Form Totals" element
+
+    Then type "CNF_B" in "search"
+    And click "Search Button"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
+    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
+    And I click "Clear All"
+    Then I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      |          |          | N/A      |
+      |          | N/A      |          |
+      |          |          | N/A      |
+      | N/A      | N/A      |          |
+    And I should see "Total QTY 0 | Total $0.00" in the "Matrix Grid Form Totals" element
+    And I am on the homepage
+    Then I open shopping list widget
+    And I click "View Details"
+    And I click "Delete"
+    And I click "Yes, Delete"
+    Then I should see "You do not have available Shopping Lists"
+
   Scenario: Order empty matrix form
     And type "CNF_B" in "search"
     And click "Search Button"
@@ -537,11 +618,23 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I proceed as the User
     And type "CNF_B" in "search"
     And click "Search Button"
+    And I click "Gallery View"
+    Then I should see "Add to Shopping list" for "CNF_B" product
+    And I should not see an "Matrix Grid Form" element
+    And I click "Add to Shopping list" for "CNF_B" product
+    Then I should see an "Matrix Grid Form" element
+    And I click "Matrix Grid Popup Close Button"
     And I click "List View"
     Then I should see "Add to Shopping list" for "CNF_B" product
     And I should not see an "Matrix Grid Form" element
     And I click "Add to Shopping list" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
+    # Check popup close button and product name in popup title
+    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
+    And I click "Matrix Grid Popup Close Button"
+    Then I should not see an "Matrix Grid Popup" element
+    And I click "Add to Shopping list" for "CNF_B" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -553,6 +646,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Shopping list"
     Then I should not see an "Matrix Grid Form" element
     And I should see "Update"
+    And I click "Update"
+    # Check popup close button and product name in popup title
+    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
+    And I click "Matrix Grid Popup Close Button"
+    Then I should not see an "Matrix Grid Popup" element
     And I click "Update"
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -650,6 +749,11 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should not see an "Matrix Grid Form" element
     And I press "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
+    # Check popup close button and product name in popup title
+    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
+    And I click "Matrix Grid Popup Close Button"
+    Then I should not see an "Matrix Grid Popup" element
     And I reload the page
 
   Scenario: Disabled matrix form in Product View
