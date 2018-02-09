@@ -1,12 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% set taxCode %}
-    {% if entity %}
-        {% set isGranted = is_granted('VIEW', entity) %}
-        {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': entity.id}) }}">{% endif %}
-        {{ entity.code }}
-        {% if isGranted %}</a>{% endif %}
-    {% endif %}
-{% endset %}
-
-{{ UI.renderHtmlProperty('oro.tax.taxcode.label'|trans, taxCode) }}
+{{ UI.renderHtmlProperty(
+    'oro.tax.taxcode.label'|trans,
+    UI.entityViewLink(entity, entity ? entity.code : null, 'oro_tax_customer_tax_code_view')
+) }}

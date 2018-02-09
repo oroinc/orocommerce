@@ -25,6 +25,11 @@ class FrontendProductPricesProvider
     protected $productPrices = [];
 
     /**
+     * @var array
+     */
+    protected $variantsPrices = [];
+
+    /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
@@ -70,17 +75,31 @@ class FrontendProductPricesProvider
 
     /**
      * @param Product $product
+     *
      * @return ProductPrice[]
      */
     public function getByProduct(Product $product)
     {
         $this->prepareAndSetProductsPrices([$product]);
 
-        return $this->productPrices[$product->getId()];
+        return $this->getProductPrices($product->getId());
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return ProductPrice[]
+     */
+    public function getVariantsPricesByProduct(Product $product)
+    {
+        $this->prepareAndSetProductsPrices([$product]);
+
+        return $this->getVariantsPrices($product->getId());
     }
 
     /**
      * @param Product[] $products
+     *
      * @return array
      */
     public function getByProducts($products)
@@ -91,11 +110,31 @@ class FrontendProductPricesProvider
         foreach ($products as $product) {
             $productId = $product->getId();
             if ($this->productPrices[$productId]) {
-                $productPrices[$productId] = $this->productPrices[$productId];
+                $productPrices[$productId] = $this->getProductPrices($productId);
             }
         }
 
         return $productPrices;
+    }
+
+    /**
+     * @param int $productId
+     *
+     * @return array
+     */
+    protected function getProductPrices(int $productId)
+    {
+        return array_key_exists($productId, $this->productPrices) ? $this->productPrices[$productId] : [];
+    }
+
+    /**
+     * @param int $productId
+     *
+     * @return array
+     */
+    protected function getVariantsPrices(int $productId)
+    {
+        return array_key_exists($productId, $this->variantsPrices) ? $this->variantsPrices[$productId] : [];
     }
 
     /**
@@ -157,7 +196,7 @@ class FrontendProductPricesProvider
         foreach ($configurableProducts as $configurableId => $simpleProducts) {
             foreach ($simpleProducts as $product) {
                 if ($this->productPrices[$product->getId()]) {
-                    $this->productPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
+                    $this->variantsPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
                 }
             }
         }
@@ -194,5 +233,27 @@ class FrontendProductPricesProvider
                 }
             );
         }
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return bool
+     */
+    protected function isProductHasPrices(Product $product)
+    {
+        $this->prepareAndSetProductsPrices([$product]);
+
+        return !empty($this->productPrices[$product->getId()]);
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return bool
+     */
+    public function isShowProductPriceContainer(Product $product)
+    {
+        return $product->getType() !== Product::TYPE_CONFIGURABLE || $this->isProductHasPrices($product);
     }
 }

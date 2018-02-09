@@ -9,6 +9,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroFormBundle::FeatureContext
         - OroApplicationBundle::CommerceMainContext
+        - OroConfigBundle::FeatureContext
         - OroUIBundle::TypeaheadContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'

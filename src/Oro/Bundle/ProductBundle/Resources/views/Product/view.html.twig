@@ -2,7 +2,7 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroUIBundle::macros.html.twig' as UII %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedProductsDataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
@@ -124,7 +124,7 @@
             }
             ) }}
         {% endset %}
-        {% set unitOfQuantityData = { 'unitOfQuantity' : UI.renderHtmlProperty('oro.product.productunitprecision.unit.label'|trans, primaryUnitPrecisionElement) } %}
+        {% set unitOfQuantityData = { 'unitOfQuantity' : UI.renderProperty('oro.product.productunitprecision.unit.label'|trans, primaryUnitPrecisionElement) } %}
     {% endif %}
 
     {% if entity.additionalUnitPrecisions.count %}
@@ -171,7 +171,7 @@
             'subblocks': [{
                 'title': '',
                 'data': {
-                    'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus ~ '</span>')
+                    'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus|e ~ '</span>')
                 }
             }]
         }
@@ -205,7 +205,7 @@
     {% if relatedItemsSubblocks|length %}
         {% set headerLinkContent = '' %}
         {% if resource_granted('oro_product_update') %}
-            {% set headerLinkContent = UII.link({
+            {% set headerLinkContent = UI.link({
                 path: path('oro_product_related_items_update', {id: entity.id}),
                 label: 'oro.product.quick_edit.label'|trans,
                 iCss: 'fa-edit',
@@ -241,7 +241,7 @@
     {% if pageTemplate == null %}
         {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
     {% else %}
-        {% set pageTemplatesData = UI.renderHtmlProperty(
+        {% set pageTemplatesData = UI.renderProperty(
             'oro.product.page_template.label'|trans,
             pageTemplate.label
         ) %}

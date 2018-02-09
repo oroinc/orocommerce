@@ -529,6 +529,7 @@ services:
             - '@translator'
             - '@oro_tax.provider.tax_provider_registry'
             - '@oro_tax.factory.tax'
+            - '@oro_tax.provider.taxation_settings_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
 

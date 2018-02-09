@@ -242,7 +242,7 @@ define(function(require) {
          * @private
          */
         _isSafeNumber: function(value) {
-            return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
+            return _.isSafeInteger(parseFloat(value === '' ? 0 : value));
         },
 
         /**

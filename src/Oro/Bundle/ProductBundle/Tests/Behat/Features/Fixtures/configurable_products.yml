@@ -648,6 +648,13 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 1
         unit: '@item'
         value: 12
+    price_configurable_B:
+        product: '@configurable_product_B'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
     price_B_11:
         product: '@product_B_11'
         priceList: '@defaultPriceList'
@@ -1047,6 +1054,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         value: 12
     combinedProductPrice_A_4:
         product: '@product_A_4'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    combinedProductPrice_configurable_B:
+        product: '@configurable_product_B'
         priceList: '@combinedPriceList'
         currency: 'USD'
         quantity: 1
