@@ -185,6 +185,7 @@
                         {% set lineItem = lineItem.lineItems|first %}
                         {% set mainProduct = lineItem.parentProduct|default(lineItem.product) %}
                         {% set totals = totalPrices[mainProduct.id] is defined ? totalPrices[mainProduct.id] : null %}
+                        {% set matrixFromPrices = productsWithConfigurableVariants[mainProduct.id]|default([]) %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
@@ -194,6 +195,7 @@
                             loop: loop,
                             matrixForm: matrixForm,
                             matrixFormType: matrixFormType,
+                            matrixFromPrices: matrixFromPrices,
                             productsAllPrices: productsAllPrices,
                             totals: totals
                         }) %}
@@ -218,7 +220,7 @@
             product: mainProduct,
             shoppingList: shoppingList,
             form: matrixForm,
-            prices: productsAllPrices,
+            prices: matrixFromPrices
         }) %}
         <div {{ UI.renderPageComponentAttributes({
             view: 'oroshoppinglist/js/app/views/line-item-form-submit-view',
