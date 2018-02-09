@@ -12,7 +12,7 @@
                 {{ UI.renderHtmlProperty('oro.shoppinglist.customer_user.label'|trans, UI.entityViewLink(shopping_list.customerUser, shopping_list.customerUser|oro_format_name, 'oro_customer_customer_user_view')) }}
             {% endif %}
             {{ UI.renderProperty('oro.shoppinglist.label.label'|trans, shopping_list.label) }}
-            {{ UI.renderSwitchableHtmlProperty('oro.shoppinglist.notes.label'|trans, shopping_list.notes) }}
+            {{ UI.renderProperty('oro.shoppinglist.notes.label'|trans, shopping_list.notes) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(shopping_list) }}
