@@ -126,15 +126,13 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
     }
 
     /**
-     * @param array $data
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getResult(array $data)
+    protected function restoreQuery(array $data)
     {
-        $query = $this->getRegistry()->getEntityManager()->createQuery($data['dql']);
+        $query = parent::restoreQuery($data);
         $this->setMaxItemsLimit($query);
 
-        return $query->execute($data['parameters']);
+        return $query;
     }
 }
