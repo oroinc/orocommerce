@@ -29,7 +29,7 @@ trait CategoryVisibilityResolvedTermTrait
     /**
      * @param QueryBuilder $qb
      * @param Scope $scope
-     * @param int
+     * @param int $configValue
      * @return string
      */
     protected function getCustomerGroupCategoryVisibilityResolvedTerm(
@@ -50,9 +50,9 @@ trait CategoryVisibilityResolvedTermTrait
         $qb->setParameter('groupScope', $scope);
 
         return sprintf(
-            'COALESCE(CASE WHEN agcvr.visibility = %s THEN %s ELSE agcvr.visibility END, 0) * 10',
+            'COALESCE(CASE WHEN agcvr.visibility = %d THEN %d ELSE agcvr.visibility END, 0) * 10',
             CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $configValue
+            (int)$configValue
         );
     }
 
@@ -77,9 +77,9 @@ trait CategoryVisibilityResolvedTermTrait
         $qb->setParameter('customerScope', $scope);
 
         return sprintf(
-            'COALESCE(CASE WHEN acvr.visibility = %s THEN %s ELSE acvr.visibility END, 0) * 100',
+            'COALESCE(CASE WHEN acvr.visibility = %d THEN %d ELSE acvr.visibility END, 0) * 100',
             CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $configValue
+            (int)$configValue
         );
     }
 
@@ -105,10 +105,10 @@ trait CategoryVisibilityResolvedTermTrait
         }
 
         return sprintf(
-            'CASE WHEN %1$s IS NOT NULL AND %1$s != %2$s THEN %1$s ELSE %3$s END',
+            'CASE WHEN %1$s IS NOT NULL AND %1$s != %2$s THEN %1$s ELSE %3$d END',
             $select,
             CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $configValue
+            (int)$configValue
         );
     }
 }
