@@ -144,7 +144,10 @@
 
 {% block _matrix_collection_widget_footer_cell %}
     <div class="{{ class_prefix }}__form__col">
-        <div class="{{ class_prefix }}__grid-footer-total" data-columns-quantity="{{ cellIndex }}">{{ columnsQty[key] }}</div>
+        <div class="{{ class_prefix }}__grid-footer-total {{ columnsQty[key] > 0 ? 'valid' : '' }}"
+             data-columns-quantity="{{ cellIndex }}">
+            {{ columnsQty[key] }}
+        </div>
     </div>
 {% endblock %}
 
