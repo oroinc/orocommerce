@@ -343,6 +343,63 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Yes, Delete"
     Then I should see "You do not have available Shopping Lists"
 
+#  TODO: Uncomment after BB-13368 is fixed
+#  Scenario: Check product view is working after changing to No Matrix Form for guest user
+#    Given I click "Sign Out"
+#    And I proceed as the Admin
+#    And I go to System/ Configuration
+#    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+#    And uncheck "Use default" for "Enable guest shopping list" field
+#    And check "Enable guest shopping list"
+#    And I save form
+#    And I proceed as the User
+#    And type "CNF_B" in "search"
+#    And click "Search Button"
+#    And click "View Details" for "CNF_B" product
+#    Then I should see an "Matrix Grid Form" element
+#    And I proceed as the Admin
+#    And I go to System/ Configuration
+#    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+#    And uncheck "Use default" for "Product Views" field
+#    And I fill in "Product Views" with "No Matrix Form"
+#    And I save form
+#    And I should see "Configuration saved" flash message
+#    And I proceed as the User
+#    And I reload the page
+#    Then I should not see "Error occurred during layout update. Please contact system administrator."
+#    And I should not see an "Configurable Product Shopping List Form" element
+#    And I proceed as the Admin
+#    And I go to System/ Configuration
+#    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+#    And check "Use default" for "Product Views" field
+#    And I save form
+#    And I should see "Configuration saved" flash message
+#    And I proceed as the User
+
+  Scenario: Check related products are clickable on the configurable product page
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Minimum Items Use Default | false |
+      | Minimum Items             | 1     |
+    And I save form
+    Then I go to Products / Products
+    And filter SKU as is equal to "CNF_B"
+    And I click Edit CNF_B in grid
+    And I click "Select related products"
+    And I select following records in "SelectRelatedProductsGrid" grid:
+      | SKU123 |
+    And I click "Select products"
+    And I save and close form
+    And I proceed as the User
+    And type "CNF_B" in "search"
+    And click "Search Button"
+    And click "View Details" for "CNF_B" product
+    And I should see "400-Watt Bulb Work Light" in related products
+    Then I click "400-Watt Bulb Work Light"
+    And I should see "All Products / 400-Watt Bulb Work Light"
+
   Scenario: Order empty matrix form
     And type "CNF_B" in "search"
     And click "Search Button"
