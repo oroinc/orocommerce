@@ -546,19 +546,32 @@
     {% endif %}
     {% set errorPath = 'product.' ~ lineItem.productSku %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
-    {% for error in parent.lineItemErrors[errorPath] %}
-    <div class="shopping-list-line-items__error">
-        <div id="product-error-{{ lineItem.productSku }}"></div>
-    </div>
-    <script>
-        require(['oroui/js/messenger'], function(messenger) {
-            messenger.notificationFlashMessage('error', '{{ error.message }}', {
-                style: 'validation',
-                container: $('#product-error-{{ lineItem.productSku }}')
-            })
-        });
-    </script>
-    {% endfor %}
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+        {% set flashMessages = [] %}
+
+        {% for error in parent.lineItemErrors[errorPath] %}
+            {% set flashMessages = flashMessages|merge([{
+                type: 'error',
+                message: error.message,
+                options: {
+                    style: 'validation',
+                    container: '#product-error-' ~ lineItem.productSku
+                }
+            }]) %}
+            <div class="shopping-list-line-items__error">
+                <div id="product-error-{{ lineItem.productSku }}"></div>
+            </div>
+        {% endfor %}
+
+        {% set flashMessageViewOptions = {
+            view: 'oroui/js/app/views/flash-message-view',
+            options: {
+                messages: flashMessages
+            }
+        } %}
+
+        <div {{ UI.renderPageComponentAttributes(flashMessageViewOptions) }}></div>
     {% endif %}
 {% endblock %}
 
