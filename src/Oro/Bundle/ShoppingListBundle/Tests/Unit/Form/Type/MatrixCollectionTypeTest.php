@@ -62,7 +62,9 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                                 [
                                     'quantity' => 3,
                                 ],
-                                [],
+                                [
+                                    'quantity' => 7,
+                                ],
                             ]
                         ],
                         [
@@ -83,6 +85,16 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                 'expectedData' => $this->createCollection(),
             ],
         ];
+    }
+
+    public function testBuildView()
+    {
+        $expectedQtys = [3, 12];
+        $collection = $this->createCollection(true);
+        $form = $this->factory->create($this->type, $collection);
+        $view = $form->createView();
+
+        $this->assertEquals($expectedQtys, $view->vars['columnsQty']);
     }
 
     public function testConfigureOptions()
@@ -110,6 +122,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     private function createCollection($withQuantities = false)
     {
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
+        $simpleProductSmallGreen = (new ProductWithSizeAndColor())->setSize('s')->setColor('green');
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
 
         $columnSmallRed = new MatrixCollectionColumn();
@@ -118,10 +131,12 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         $columnMediumGreen = new MatrixCollectionColumn();
 
         $columnSmallRed->product = $simpleProductSmallRed;
+        $columnSmallGreen->product = $simpleProductSmallGreen;
         $columnMediumGreen->product = $simpleProductMediumGreen;
 
         if ($withQuantities) {
             $columnSmallRed->quantity = 3;
+            $columnSmallGreen->quantity = 7;
             $columnMediumGreen->quantity = 5;
         }
 
