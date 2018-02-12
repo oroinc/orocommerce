@@ -7,6 +7,8 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 trait ContextTrait
 {
     /**
+     * Get website identifiers from context with filtering out of empty values
+     *
      * @param array $context [ 'websiteIds' => array, 'entityIds' => array ]
      * @return array
      */
@@ -30,6 +32,8 @@ trait ContextTrait
     }
 
     /**
+     * Get entity identifiers from context with filtering out of empty values
+     *
      * @param array $context [ 'websiteIds' => array, 'entityIds' => array ]
      * @return array
      */
