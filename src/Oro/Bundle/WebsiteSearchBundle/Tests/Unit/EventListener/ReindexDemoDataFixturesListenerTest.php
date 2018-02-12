@@ -6,7 +6,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener;
 
 class ReindexDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
@@ -47,19 +46,15 @@ class ReindexDemoDataFixturesListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnPostLoad()
     {
         $event = $this->createMock(MigrationDataFixturesEvent::class);
+        $event->expects(self::never())
+            ->method('log');
 
         $this->listenerManager->expects($this->once())
             ->method('enableListeners')
             ->with(self::LISTENERS);
-        $event->expects(self::once())
-            ->method('log')
-            ->with('running full reindexation of website index');
-        $this->dispatcher->expects(self::once())
-            ->method('dispatch')
-            ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                self::isInstanceOf(ReindexationRequestEvent::class)
-            );
+
+        $this->dispatcher->expects(self::never())
+            ->method($this->anything());
 
         $this->listener->onPostLoad($event);
     }
