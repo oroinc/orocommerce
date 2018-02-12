@@ -57,6 +57,7 @@ Feature: Mass Product Actions Availability
     And I click "Search Button"
     And I should not see mass action checkbox in row with shirt_main content for "Product Frontend Grid"
     And I should see mass action checkbox in row with gtsh_l content for "Product Frontend Grid"
+    And I click "Copyright"
     And I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Non visible products can not be added to a newly created Shopping List with mass actions
