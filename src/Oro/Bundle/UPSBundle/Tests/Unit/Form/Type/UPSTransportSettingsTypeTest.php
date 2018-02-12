@@ -3,9 +3,8 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -151,7 +150,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     'entity' => $entityType,
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
                     'translatable_entity' => $translatableEntity,
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
