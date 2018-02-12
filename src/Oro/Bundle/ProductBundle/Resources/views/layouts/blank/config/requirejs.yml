@@ -36,5 +36,6 @@ config:
         'oroproduct/js/app/datagrid/cell/backend-select-row-cell': 'bundles/oroproduct/js/app/datagrid/cell/backend-select-row-cell.js'
         'oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell': 'bundles/oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell.js'
         'oroproduct/js/app/datagrid/header-cell/backend-action-header-cell': 'bundles/oroproduct/js/app/datagrid/header-cell/backend-action-header-cell.js'
+        'oroproduct/js/app/datagrid/datagrid-product-lazy-init-view': 'bundles/oroproduct/js/app/datagrid/datagrid-product-lazy-init-view.js'
         'oroproduct/js/widget/zoom-widget': 'bundles/oroproduct/js/widget/zoom-widget.js'
         'jquery-elevatezoom': 'bundles/bowerassets/elevatezoom3/jquery.elevatezoom.js'
