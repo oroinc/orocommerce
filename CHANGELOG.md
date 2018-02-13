@@ -1,3 +1,14 @@
+## 1.7.0 (Unreleased)
+
+### Added
+#### ProductBundle
+* Added a listener to the `oro_product.display_simple_variations` config field that cleans the product and category layout cache when changes occur.
+
+### Removed
+#### ProductBundle
+* Removed listener `oro_product.event_listener.restrict.display_product_variations`. The service `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
+* Removed listener `oro_product.event_listener.datagrid.frontend_product_search.display_product_variations`. The service  `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
+
 ## 1.6.0 (Unreleased)
 [Show detailed list of changes](incompatibilities-1-6.md)
 

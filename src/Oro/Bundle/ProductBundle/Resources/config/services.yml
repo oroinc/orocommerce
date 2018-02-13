@@ -491,13 +491,6 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
-    oro_product.event_listener.restrict.display_product_variations:
-            class: Oro\Bundle\ProductBundle\EventListener\Restrict\DisplayProductVariationsListener
-            arguments:
-                - '@oro_config.manager'
-            tags:
-                - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
-
     oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
         arguments:
@@ -582,13 +575,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
-
-    oro_product.event_listener.datagrid.frontend_product_search.display_product_variations:
-        class: Oro\Bundle\ProductBundle\EventListener\Datagrid\FrontendProduct\DisplayProductVariationsListener
-        arguments:
-            - '@oro_config.manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
 
     oro_product.event_listener.doctrine.product_variants_changed:
         class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductVariantsChangedListener
@@ -1435,3 +1421,21 @@ services:
             - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attribute' }
+
+    oro_product.config.event_listener.display_simple_variations_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener
+        arguments:
+            - '@oro_product.layout.data_provider.cache_cleaner'
+            - '@oro_catalog.layout.data_provider.category.cache_cleaner'
+            - 'oro_product.display_simple_variations'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_product.event_listener.restrict_display_product_variants:
+        class: 'Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProductVariationsEventListener'
+        arguments:
+            - "@oro_config.manager"
+            - "@oro_frontend.request.frontend_helper"
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
