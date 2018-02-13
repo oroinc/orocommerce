@@ -62,7 +62,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'full_list' => false,
                 'choices' => null,

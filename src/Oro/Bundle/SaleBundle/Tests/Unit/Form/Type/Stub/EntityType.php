@@ -20,7 +20,7 @@ class EntityType extends StubEntityType
     {
         $resolver->setDefaults([
             'class' => '',
-            'property' => '',
+            'choice_label' => '',
             'choice_list' => $this->choiceList,
             'configs' => [],
         ]);

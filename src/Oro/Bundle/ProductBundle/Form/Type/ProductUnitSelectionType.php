@@ -156,7 +156,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,

@@ -113,7 +113,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 'entity',
                 [
                     'class' => FedexShippingService::class,
-                    'property' => 'description',
+                    'choice_label' => 'description',
                     'label' => 'oro.fedex.integration.settings.shipping_services.label',
                     'required' => true,
                     'multiple' => true,

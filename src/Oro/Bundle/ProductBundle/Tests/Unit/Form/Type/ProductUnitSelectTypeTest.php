@@ -143,7 +143,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
                 [
                     [
                         'class' => ProductUnitPrecision::class,
-                        'property' => 'code',
+                        'choice_label' => 'code',
                         'compact' => false,
                         'choices_updated' => false,
                         'required' => true,

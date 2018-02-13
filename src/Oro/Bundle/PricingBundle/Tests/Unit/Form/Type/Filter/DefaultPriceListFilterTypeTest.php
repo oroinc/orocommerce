@@ -77,7 +77,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $defaultOptions = [
             'field_options' => [
                 'class' => $this->priceListClass,
-                'property' => 'name'
+                'choice_label' => 'name'
             ],
             'required' => true,
         ];
@@ -108,7 +108,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $defaultOptions = [
             'field_options' => [
                 'class' => $this->priceListClass,
-                'property' => 'name'
+                'choice_label' => 'name'
             ],
             'required' => false,
         ];
