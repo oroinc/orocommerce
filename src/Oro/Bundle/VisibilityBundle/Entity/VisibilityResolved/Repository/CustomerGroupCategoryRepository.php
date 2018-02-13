@@ -119,6 +119,7 @@ class CustomerGroupCategoryRepository extends EntityRepository
         array $visibilityIds,
         $visibility
     ) {
+        $visibility = (int)$visibility;
         if (!$visibilityIds) {
             return;
         }

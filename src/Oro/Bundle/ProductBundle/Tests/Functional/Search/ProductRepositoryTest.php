@@ -40,7 +40,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
-            1024
+            100500000
         );
         $this->assertNull($notFoundProduct);
     }
