@@ -73,8 +73,8 @@ class LatestOrderedProductsInfoProvider
         $queryResult = $qb->getQuery()->getArrayResult();
         foreach ($queryResult as $item) {
             $productIndexOrderInfo[$item['product_id']][] = [
-                'customer_id' => $item['customer_id'],
-                'created_at'  => new \DateTime($item['created_at'])
+                'customer_user_id' => $item['customer_user_id'],
+                'created_at'       => new \DateTime($item['created_at'])
             ];
         }
 
