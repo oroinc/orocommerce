@@ -23,9 +23,12 @@ Feature: Product attribute float
       | Sortable   | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
+    And I should not see "Update schema"
 
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    When I check "Float" in "Data Type" filter
+    Then I should see following grid:
+      | Name       | Storage type     |
+      | FloatField | Serialized field |
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families

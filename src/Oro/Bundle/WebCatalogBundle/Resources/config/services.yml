@@ -239,8 +239,8 @@ services:
     oro_web_catalog.content_node_tree_resolver:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverFacade
         arguments:
-            - '@oro_web_catalog.content_node_tree_resolver.default'
             - '@oro_web_catalog.content_node_tree_resolver.cache'
+            - '@oro_web_catalog.cache.dumper.content_node_tree_dumper'
 
     oro_web_catalog.cache:
         parent: oro.cache.abstract

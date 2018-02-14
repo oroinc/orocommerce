@@ -170,6 +170,7 @@ class ProductRepository extends AbstractVisibilityRepository
      */
     protected function getVisibilitiesByCategoryQb($visibility, array $categoryIds, Scope $scope)
     {
+        $visibility = (int)$visibility;
         $qb = $this->getEntityManager()
             ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
