@@ -20,8 +20,8 @@ use Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 

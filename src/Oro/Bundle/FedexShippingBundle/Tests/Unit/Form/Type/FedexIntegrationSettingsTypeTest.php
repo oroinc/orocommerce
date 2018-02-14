@@ -14,8 +14,9 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionType
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -75,7 +76,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                     new LocalizedPropertyType(),
                     new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
-                    'entity' => $entityType,
+                    EntityType::class => $entityType,
                     new OroEncodedPlaceholderPasswordType($crypter),
                 ],
                 []

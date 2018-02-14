@@ -5,12 +5,13 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
@@ -24,7 +25,7 @@ class PriceListCollectionTypeExtensionsProvider extends \PHPUnit_Framework_TestC
      */
     public function getExtensions()
     {
-        $entityType = new EntityType([]);
+        $entityType = new EntityTypeStub([]);
         $configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -39,7 +40,7 @@ class PriceListCollectionTypeExtensionsProvider extends \PHPUnit_Framework_TestC
                     PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     PriceListCollectionType::NAME => new PriceListCollectionType(),
-                    $entityType->getName() => $entityType,
+                    EntityType::class => $entityType,
                 ],
                 [
                     'form' => [new SortableExtension()],

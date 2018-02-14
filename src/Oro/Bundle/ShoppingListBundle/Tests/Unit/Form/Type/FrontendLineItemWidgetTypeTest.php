@@ -17,11 +17,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -89,7 +90,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 1 => $this->getShoppingList(1, 'Shopping List 1'),
                 2 => $this->getShoppingList(2, 'Shopping List 2'),
@@ -102,7 +103,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
             new PreloadedExtension(
                 [
                     FrontendLineItemType::NAME     => $this->getParentForm(),
-                    $entityType->getName()         => $entityType,
+                    EntityType::class              => $entityType,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     QuantityTypeTrait::$name       => $this->getQuantityType(),
                 ],

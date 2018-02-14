@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -158,7 +159,7 @@ class UPSTransportSettingsType extends AbstractType
         );
         $builder->add(
             'applicableShippingServices',
-            'entity',
+            EntityType::class,
             $this->getApplicableShippingServicesOptions()
         );
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
@@ -227,7 +228,7 @@ class UPSTransportSettingsType extends AbstractType
             ];
         }
 
-        $form->add('applicableShippingServices', 'entity', array_merge(
+        $form->add('applicableShippingServices', EntityType::class, array_merge(
             $this->getApplicableShippingServicesOptions(),
             $additionalOptions
         ));

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
@@ -117,6 +118,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 }

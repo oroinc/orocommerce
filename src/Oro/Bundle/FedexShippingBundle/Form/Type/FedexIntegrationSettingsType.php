@@ -6,6 +6,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -110,7 +111,7 @@ class FedexIntegrationSettingsType extends AbstractType
             )
             ->add(
                 'shippingServices',
-                'entity',
+                EntityType::class,
                 [
                     'class' => FedexShippingService::class,
                     'choice_label' => 'description',

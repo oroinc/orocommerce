@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class AbstractFormIntegrationTestCase extends FormIntegrationTestCase
 {

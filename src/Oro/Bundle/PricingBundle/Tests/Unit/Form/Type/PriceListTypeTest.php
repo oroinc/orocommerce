@@ -17,8 +17,9 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PriceListTypeTest extends FormIntegrationTestCase
@@ -98,7 +99,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                             $localeSettings,
                             $currencyNameHelper
                         ),
-                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')]),
                         PriceRuleType::NAME => new PriceRuleType(),
                     ],
                     $this->getPriceRuleEditorExtension()

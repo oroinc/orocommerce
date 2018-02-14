@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -14,7 +14,8 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
@@ -47,7 +48,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -58,7 +59,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType
+                    EntityType::class => $entityType
                 ],
                 [
                     'form' => [new IntegerExtension()]

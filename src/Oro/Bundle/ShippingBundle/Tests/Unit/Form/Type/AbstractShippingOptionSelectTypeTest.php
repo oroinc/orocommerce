@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
@@ -53,7 +54,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     public function testGetParent()
     {
-        $this->assertEquals('entity', $this->formType->getParent());
+        $this->assertEquals(EntityType::class, $this->formType->getParent());
     }
 
     public function testSetEntityClass()
@@ -174,7 +175,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return [
             new PreloadedExtension(
                 [
-                    'entity' => new EntityType($this->prepareChoices())
+                    EntityType::class => new EntityTypeStub($this->prepareChoices())
                 ],
                 []
             ),

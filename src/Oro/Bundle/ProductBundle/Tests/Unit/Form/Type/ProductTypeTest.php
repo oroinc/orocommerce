@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -58,7 +58,8 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -210,7 +211,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -227,7 +228,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType,
+                    EntityType::class => $entityType,
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionType(
                         $variantFieldProvider

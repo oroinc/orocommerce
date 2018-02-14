@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -14,7 +14,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -75,13 +76,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->prepareChoices());
+        $entityType = new EntityTypeStub($this->prepareChoices());
         $productUnitSelectionType = new ProductUnitSelectionTypeStub([1], ProductUnitSelectionType::NAME);
 
         return [
             new PreloadedExtension(
                 [
-                    'entity' => $entityType,
+                    EntityType::class => $entityType,
                     $productUnitSelectionType->getName() => $productUnitSelectionType,
                 ],
                 []
@@ -301,7 +302,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('entity', $this->formType->getParent());
+        $this->assertEquals(EntityType::class, $this->formType->getParent());
     }
 
     /**

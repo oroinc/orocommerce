@@ -8,6 +8,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -75,7 +76,7 @@ class FrontendLineItemWidgetType extends AbstractType
         $builder
             ->add(
                 'shoppingList',
-                'entity',
+                EntityType::class,
                 [
                     'mapped' => false,
                     'required' => false,

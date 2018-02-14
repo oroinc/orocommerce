@@ -7,10 +7,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -47,7 +48,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -58,7 +59,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType
+                    EntityType::class => $entityType
                 ],
                 []
             ),
