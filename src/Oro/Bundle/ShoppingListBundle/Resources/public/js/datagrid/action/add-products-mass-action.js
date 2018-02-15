@@ -58,7 +58,9 @@ define(function(require) {
 
             widget.on('formSave', _.bind(function(response) {
                 datagrid.resetSelectionState(selectionState);
-                this._onSaveHandleWidget(response, datagrid);
+                this.listenToOnce(datagrid.massActions, 'reset', function() {
+                    this._onSaveHandleWidget(response, datagrid);
+                });
             }, this));
         },
 
