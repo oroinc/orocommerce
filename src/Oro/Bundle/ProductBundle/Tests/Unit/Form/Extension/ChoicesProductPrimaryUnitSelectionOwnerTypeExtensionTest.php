@@ -68,6 +68,9 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildFormIntegration()
     {
+        //@TODO unskipp in scope BAP-16496
+        $this->markTestSkipped('Unskipp in scope BAP-16496');
+
         $choices = ['choice1', 'choice2'];
         $this->productFormUnitFieldsSettings
             ->method('getAvailablePrimaryUnitChoices')
