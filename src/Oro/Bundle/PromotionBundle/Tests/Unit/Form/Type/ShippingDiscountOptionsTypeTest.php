@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -187,7 +187,10 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
                     OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter),
                     ShippingMethodTypesChoiceType::NAME =>
                         new ShippingMethodTypesChoiceType($provider, $iconProvider, $assetHelper),
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    'oro_select2_choice' => new Select2Type(
+                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
+                        'oro_select2_choice'
+                    ),
                 ],
                 [
                     'form' => [new TooltipFormExtension($configProvider, $translator)],

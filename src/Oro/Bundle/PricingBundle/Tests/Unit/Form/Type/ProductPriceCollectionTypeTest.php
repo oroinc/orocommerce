@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -117,7 +117,10 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                         $searchRegistry,
                         $configProvider
                     ),
-                    'genemu_jqueryselect2_hidden' => new Select2Type('hidden'),
+                    'oro_select2_hidden' => new Select2Type(
+                        'Symfony\Component\Form\Extension\Core\Type\HiddenType',
+                        'oro_select2_hidden'
+                    ),
                     PriceType::NAME => $priceType,
                     QuantityType::NAME => $this->getQuantityType(),
                     CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
