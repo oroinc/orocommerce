@@ -11,7 +11,6 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
@@ -19,6 +18,7 @@ use Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 abstract class BaseProductPriceRepository extends EntityRepository
 {
@@ -292,7 +292,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
         }
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('price', $fieldName),
+                QueryBuilderUtil::getSortOrder($orderDirection)
+            );
         }
 
         return $qb;
@@ -537,6 +540,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $qb->andWhere('prices.priceList = :priceList')
             ->setParameter('priceList', $priceList);
         foreach ($criteria as $field => $criterion) {
+            QueryBuilderUtil::checkIdentifier($field);
             if ($criterion === null) {
                 $qb->andWhere($qb->expr()->isNull('prices.'.$field));
             } elseif (is_array($criterion)) {
@@ -547,7 +551,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
             }
         }
         foreach ($orderBy as $field => $order) {
-            $qb->addOrderBy('prices.'.$field, $order);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('prices', $field),
+                QueryBuilderUtil::getSortOrder($order)
+            );
         }
         if ($limit !== null) {
             $qb->setMaxResults($limit);

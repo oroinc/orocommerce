@@ -63,7 +63,7 @@ class OrderRepository extends EntityRepository
     public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses)
     {
         $qb = $this->createQueryBuilder('orders');
-        $qb->select('IDENTITY(orders.customerUser) as customer_id')
+        $qb->select('IDENTITY(orders.customerUser) as customer_user_id')
             ->addSelect('IDENTITY(lineItems.product) as product_id')
             ->addSelect(
                 $qb->expr()->max('orders.createdAt') . ' as created_at'
