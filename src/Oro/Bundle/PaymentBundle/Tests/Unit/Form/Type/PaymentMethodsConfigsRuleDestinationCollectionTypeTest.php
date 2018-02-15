@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
@@ -142,7 +142,10 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
                     ),
                     'oro_country' => new CountryType(),
                     'oro_region' => new RegionType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
                     'translatable_entity' => $translatableEntity,
                 ],
                 ['form' => [

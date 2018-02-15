@@ -156,11 +156,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ],
             'orderInfo' => [
                 1 => [
-                    ['customer_id' => 1, 'created_at' => 20171],
-                    ['customer_id' => 2, 'created_at' => 20172]
+                    ['customer_user_id' => 1, 'created_at' => 20171],
+                    ['customer_user_id' => 2, 'created_at' => 20172]
                 ],
                 2 => [
-                    ['customer_id' => 1, 'created_at' => 20173]
+                    ['customer_user_id' => 1, 'created_at' => 20173]
                 ]
             ],
             'assertPlaceholderFieldCallback' => function (\PHPUnit_Framework_MockObject_MockObject $event) {
@@ -169,13 +169,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     ->method('addPlaceholderField')
                     ->withConsecutive(
                         [
-                            1, 'ordered_at_by_CUSTOMER_ID', 20171, [ 'CUSTOMER_ID' => 1 ]
+                            1, 'ordered_at_by_CUSTOMER_USER_ID', 20171, [ 'CUSTOMER_USER_ID' => 1 ]
                         ],
                         [
-                            1, 'ordered_at_by_CUSTOMER_ID', 20172, [ 'CUSTOMER_ID' => 2 ]
+                            1, 'ordered_at_by_CUSTOMER_USER_ID', 20172, [ 'CUSTOMER_USER_ID' => 2 ]
                         ],
                         [
-                            2, 'ordered_at_by_CUSTOMER_ID', 20173, [ 'CUSTOMER_ID' => 1 ]
+                            2, 'ordered_at_by_CUSTOMER_USER_ID', 20173, [ 'CUSTOMER_USER_ID' => 1 ]
                         ]
                     );
             }

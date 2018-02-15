@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerUserIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
@@ -68,10 +68,10 @@ class WebsiteSearchProductIndexerListener
             if (isset($latestOrderedProductsInfo[$product->getId()])) {
                 $orderInfoArray = $latestOrderedProductsInfo[$product->getId()];
                 foreach ($orderInfoArray as $orderInfo) {
-                    $placeholders = [CustomerIdPlaceholder::NAME => $orderInfo['customer_id']];
+                    $placeholders = [CustomerUserIdPlaceholder::NAME => $orderInfo['customer_user_id']];
                     $event->addPlaceholderField(
                         $product->getId(),
-                        'ordered_at_by_CUSTOMER_ID',
+                        'ordered_at_by_CUSTOMER_USER_ID',
                         $orderInfo['created_at'],
                         $placeholders
                     );

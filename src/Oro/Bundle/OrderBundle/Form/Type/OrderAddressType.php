@@ -43,7 +43,7 @@ class OrderAddressType extends AbstractOrderAddressType
                 $customerAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }
 
-            $builder->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
+            $builder->add('customerAddress', 'oro_select2_choice', $customerAddressOptions);
         }
     }
 
