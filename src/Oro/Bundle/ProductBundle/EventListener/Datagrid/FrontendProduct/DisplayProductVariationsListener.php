@@ -9,7 +9,9 @@ use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 
 /**
- * @codeCoverageIgnore Covered by behat
+ * @deprecated since 1.6 will be removed after 1.6.
+ * Use {@see Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProductVariationsEventListener}
+ * instead.
  */
 class DisplayProductVariationsListener
 {

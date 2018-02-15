@@ -7,7 +7,9 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 /**
- * @codeCoverageIgnore Covered by behat
+ * @deprecated since 1.6 will be removed after 1.6.
+ * Use {@see Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProductVariationsEventListener}
+ * instead.
  */
 class DisplayProductVariationsListener
 {
