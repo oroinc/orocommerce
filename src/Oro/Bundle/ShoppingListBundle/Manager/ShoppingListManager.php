@@ -432,7 +432,7 @@ class ShoppingListManager
             return [$this->getShoppingListForCustomerVisitor()];
         }
 
-        return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
+        return $repository->findByUser($this->aclHelper, $sortCriteria, null, $this->getWebsiteId());
     }
 
     /**
