@@ -121,12 +121,14 @@ class FrontendShoppingListProductsProvider
         $products = [];
 
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            if (!$lineItem->getParentProduct()) {
-                continue;
+            if ($lineItem->getParentProduct()) {
+                $parentProduct = $lineItem->getParentProduct();
+                $products[$parentProduct->getId()] = $parentProduct;
+            } elseif ($lineItem->getProduct()->getType() === Product::TYPE_CONFIGURABLE) {
+                // In case of empty matrix form
+                $emptyConfigurableProduct = $lineItem->getProduct();
+                $products[$emptyConfigurableProduct->getId()] = $emptyConfigurableProduct;
             }
-
-            $parentProduct = $lineItem->getParentProduct();
-            $products[$parentProduct->getId()] = $parentProduct;
         }
 
         return $products;

@@ -414,6 +414,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
+    And I should see "Total QTY 0 | Subtotal $0.00" in the "Matrix Grid Form Totals" element
     Given I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items" flash message
 
