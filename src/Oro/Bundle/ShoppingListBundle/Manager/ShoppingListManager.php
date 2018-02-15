@@ -428,7 +428,7 @@ class ShoppingListManager
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
+        return $repository->findByUser($this->aclHelper, $sortCriteria, null, $this->getWebsiteId());
     }
 
     /**
