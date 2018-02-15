@@ -1,4 +1,13 @@
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision5:
+        unit: '@item'
+        precision: '0'
+    precision4:
+        unit: '@item'
+        precision: '0'
+    precision3:
+        unit: '@item'
+        precision: '0'
     precision2:
         unit: '@item'
         precision: '0'
@@ -9,8 +18,14 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locValue2:
         string: 'Product 2'
+    locValue3:
+        string: 'Product 3'
+    locValue4:
+        string: 'Product 4'
+    locValue5:
+        string: 'Product 5'
     locValueFamily:
-        string: 'Product Attribute Family'
+        string: 'Default'
     locValueConfigurable:
         string: 'Product Configurable'
 
@@ -23,6 +38,30 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         owner: '@admin'
 
 Oro\Bundle\ProductBundle\Entity\Product:
+    product5:
+        sku: 'SKU5'
+        primaryUnitPrecision: '@precision5'
+        addName: ['@locValue5']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product4:
+        sku: 'SKU4'
+        primaryUnitPrecision: '@precision4'
+        addName: ['@locValue4']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product3:
+        sku: 'SKU3'
+        primaryUnitPrecision: '@precision3'
+        addName: ['@locValue3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
     product2:
         sku: 'SKU2'
         primaryUnitPrecision: '@precision2'

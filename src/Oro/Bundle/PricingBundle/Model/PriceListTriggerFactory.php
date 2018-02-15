@@ -28,12 +28,25 @@ class PriceListTriggerFactory
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|int[] $productIds
      * @return PriceListTrigger
      */
-    public function create(PriceList $priceList, Product $product = null)
+    public function create(PriceList $priceList, array $productIds = [])
     {
-        return new PriceListTrigger($priceList, $product);
+        return new PriceListTrigger($priceList, $productIds);
+    }
+
+    /**
+     * @param int $priceListId
+     * @param array|int[] $productIds
+     * @return array
+     */
+    public function createFromIds($priceListId, array $productIds)
+    {
+        return [
+            self::PRICE_LIST => $priceListId,
+            self::PRODUCT => $this->getProductIds($productIds)
+        ];
     }
 
     /**
@@ -44,7 +57,7 @@ class PriceListTriggerFactory
     {
         return [
             self::PRICE_LIST => $trigger->getPriceList()->getId(),
-            self::PRODUCT => $trigger->getProduct() ? $trigger->getProduct()->getId() : null
+            self::PRODUCT => $this->getProductIds($trigger->getProducts())
         ];
     }
 
@@ -62,9 +75,8 @@ class PriceListTriggerFactory
         if (!$priceList) {
             throw new InvalidArgumentException('Price List is required.');
         }
-        $product = $this->getProduct($data);
 
-        return $this->create($priceList, $product);
+        return $this->create($priceList, $this->getProducts($data));
     }
 
     /**
@@ -84,16 +96,24 @@ class PriceListTriggerFactory
 
     /**
      * @param array $data
-     * @return null|PriceList
+     * @return array|int[]
      */
-    protected function getProduct(array $data)
+    protected function getProducts(array $data)
     {
-        if (empty($data[self::PRODUCT])) {
-            return null;
-        }
+        return $this->getProductIds($data[self::PRODUCT] ?? []);
+    }
 
-        return $this->registry
-            ->getManagerForClass(Product::class)
-            ->find(Product::class, $data[self::PRODUCT]);
+    /**
+     * @param array $products
+     * @return array|int[]
+     */
+    private function getProductIds(array $products)
+    {
+        return array_map(
+            function ($product) {
+                return $product instanceof Product ? $product->getId() : $product;
+            },
+            $products
+        );
     }
 }

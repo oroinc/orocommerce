@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
@@ -86,6 +87,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             $this->matrixGridOrderProvider,
             $this->dataGridThemeHelper
         );
+        $this->gridExtension->setParameters(new ParameterBag());
     }
 
     public function testGetPriority()
@@ -126,9 +128,6 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
         $product1 = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_CONFIGURABLE]);
         $product2 = $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE]);
         $product3 = $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_SIMPLE]);
-
-        $simpleProduct = $this->getEntity(Product::class, ['id' => 4, 'type' => Product::TYPE_SIMPLE]);
-        $simpleProduct2 = $this->getEntity(Product::class, ['id' => 5, 'type' => Product::TYPE_SIMPLE]);
 
         $products = [
             1 => $product1,
@@ -179,20 +178,17 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($product1)
             ->willReturn('$12.34');
 
-        $this->productVariantAvailabilityProvider->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
-            ->with($product1)
-            ->willReturn([$simpleProduct, $simpleProduct2]);
-
         $this->matrixGridOrderFormProvider->expects($this->once())
             ->method('getMatrixOrderFormHtml')
             ->with($product1, $shoppingList)
             ->willReturn('form html');
 
         $this->frontendProductPricesProvider->expects($this->once())
-            ->method('getByProducts')
-            ->with([$simpleProduct, $simpleProduct2])
-            ->willReturn(['1' => ['unit' => 1]]);
+            ->method('getVariantsPricesByProduct')
+            ->with($product1)
+            ->willReturn([
+                '1' => ['unit' => 1],
+            ]);
 
         $this->datagridConfiguration->expects($this->exactly(2))
             ->method('offsetAddToArrayByPath');
@@ -335,9 +331,6 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('isMatrixFormAvailable')
             ->withConsecutive([$product1], [$product2], [$product3])
             ->willReturnOnConsecutiveCalls(false, false, false);
-
-        $this->productVariantAvailabilityProvider->expects($this->never())
-            ->method('getSimpleProductsByVariantFields');
 
         $this->matrixGridOrderFormProvider->expects($this->never())
             ->method('getMatrixOrderFormHtml');

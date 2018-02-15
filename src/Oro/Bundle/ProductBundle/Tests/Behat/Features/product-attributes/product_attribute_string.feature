@@ -30,9 +30,9 @@ Feature: Product attribute string
       | Sortable   | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
-
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    And I should not see "Update schema"
+    And I should see StringField in grid with following data:
+      | Storage type | Serialized field |
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families

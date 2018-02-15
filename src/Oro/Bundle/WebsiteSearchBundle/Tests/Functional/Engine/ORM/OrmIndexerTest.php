@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
@@ -82,7 +82,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         /** @var WebsiteRepository $repo */
         $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository(Website::class);
-        $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $websiteProvider = $this->createMock(WebsiteProvider::class);
         $websiteProvider->expects($this->any())
             ->method('getWebsiteIds')
             ->will($this->returnCallback(function () use ($repo) {
@@ -339,7 +339,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->mappingProviderMock
-            ->expects($this->exactly(7))
+            ->expects($this->exactly(6))
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);

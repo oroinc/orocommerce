@@ -262,7 +262,7 @@ abstract class AbstractCombinedPriceListBuilder
         $relation = $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
         if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
-            $this->strategyRegister->getCurrentStrategy()->combinePrices($activeCpl, null, $forceTimestamp);
+            $this->strategyRegister->getCurrentStrategy()->combinePrices($activeCpl, [], $forceTimestamp);
         }
         $hasOtherRelations = $this->getCombinedPriceListRepository()->hasOtherRelations($relation);
         //when CPL used the first time at this website

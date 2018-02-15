@@ -52,9 +52,9 @@ class PriceRuleLexemeTriggerHandler
 
     /**
      * @param PriceRuleLexeme[] $lexemes
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function addTriggersByLexemes(array $lexemes, Product $product = null)
+    public function addTriggersByLexemes(array $lexemes, array $products = [])
     {
         $assignmentsRecalculatePriceLists = [];
         foreach ($lexemes as $lexeme) {
@@ -63,7 +63,7 @@ class PriceRuleLexemeTriggerHandler
                 $this->priceListTriggerHandler->addTriggerForPriceList(
                     Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
                     $priceList,
-                    $product
+                    $products
                 );
                 $assignmentsRecalculatePriceLists[$priceList->getId()] = true;
             }
@@ -75,7 +75,7 @@ class PriceRuleLexemeTriggerHandler
                 $this->priceListTriggerHandler->addTriggerForPriceList(
                     Topics::RESOLVE_PRICE_RULES,
                     $priceList,
-                    $product
+                    $products
                 );
             }
         }
