@@ -3,13 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\ResolvedFormTypeInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -121,8 +119,9 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);
         $type->method('getName')->willReturn('entity');
+        //@TODO remove setDefaultOptions in scope BAP-16496
         $type->method('setDefaultOptions')->willReturnCallback(
-            function (OptionsResolverInterface $resolver) {
+            function (OptionsResolver $resolver) {
                 $resolver->setDefined(['auto_initialize', 'choice_list', 'choice_loader', 'choices']);
             }
         );

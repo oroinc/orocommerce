@@ -5,7 +5,6 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -85,7 +84,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
+            ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -94,7 +93,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'OroAddressBundle:Country' => ['US' => $country],
         ];
 
-        $translatableEntity->expects(static::any())->method('setDefaultOptions')->will(
+        $translatableEntity->expects(static::any())->method('configureOptions')->will(
             static::returnCallback(
                 function (OptionsResolver $resolver) use ($choices) {
                     $choiceList = function (Options $options) use ($choices) {

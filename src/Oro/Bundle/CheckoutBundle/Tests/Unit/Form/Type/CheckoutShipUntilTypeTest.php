@@ -21,7 +21,7 @@ class CheckoutShipUntilTypeTest extends FormIntegrationTestCase
         $this->assertSame(OroDateType::class, $formType->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $checkout = new Checkout();
         $form = $this->factory->create(CheckoutShipUntilType::class, new \DateTime(), ['checkout' => $checkout]);

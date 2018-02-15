@@ -104,6 +104,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
+     * @param Promotion $defaultData
      * @param array $submittedData
      * @param Promotion $expectedData
      */
@@ -211,7 +212,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
