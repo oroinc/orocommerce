@@ -1,21 +1,13 @@
 include:
-    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+    - '@OroProductBundle:ConfigurableProductFixtures.yml'
 
 Oro\Bundle\OrderBundle\Entity\Order:
-    simpleOrder:
+    configurableOrder:
         organization: '@organization'
         owner: '@admin'
         customer: '@customer1'
         customerUser: '@amanda'
-        identifier: 'SimpleOrder'
-        website: '@website1'
-        currency: USD
-    secondOrder:
-        organization: '@organization'
-        owner: '@admin'
-        customer: '@customer1'
-        customerUser: '@amanda'
-        identifier: 'SecondOrder'
+        identifier: 'configurableOrder'
         website: '@website1'
         currency: USD
 
@@ -25,16 +17,18 @@ Oro\Bundle\CurrencyBundle\Entity\Price (local):
         currency: USD
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
-    simpleOrderLineItem:
-        product: '@product1'
-        order: '@simpleOrder'
+    configurableOrderLineItem1:
+        product: '@simpleProduct1'
+        parentProduct: '@configurableProduct'
+        order: '@configurableOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
-    secondOrderLineItem:
-        product: '@product1'
-        order: '@secondOrder'
+    configurableOrderLineItem2:
+        product: '@simpleProduct2'
+        parentProduct: '@configurableProduct'
+        order: '@configurableOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'

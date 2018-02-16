@@ -87,6 +87,7 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
         $orderLineItem
             ->setFromExternalSource(random_int(0, 1))
             ->setProduct($product)
+            ->setProductName($product->getName())
             ->setProductUnit($this->getProductUnit($product))
             ->setQuantity($quantity)
             ->setPrice($price);

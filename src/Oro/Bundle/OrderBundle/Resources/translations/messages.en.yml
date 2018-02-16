@@ -273,6 +273,12 @@ oro:
             product_sku:
                 label:          'Product SKU'
                 description:    A unique human-readable product identifier.
+            product_name:
+                label:          'Product Name'
+                description:    'The default name of the ordered product'
+            product_variant_fields:
+                label:          'Product Variant Fields'
+                description:    'Contains data about fields of ordered configurable product'
             order:
                 label:          'Order'
                 description:    A relationship with the order that contains the line item.

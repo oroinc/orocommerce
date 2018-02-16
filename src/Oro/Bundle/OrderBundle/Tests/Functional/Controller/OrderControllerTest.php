@@ -233,6 +233,9 @@ class OrderControllerTest extends WebTestCase
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
 
+        $lineItem = $order->getLineItems()[0];
+        static::assertSame($product->getDenormalizedDefaultName(), $lineItem->getProductName());
+
         return $order->getId();
     }
 
@@ -308,6 +311,18 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
         $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
+
+        /** @var Order $order */
+        $order = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroOrderBundle:Order')
+            ->getRepository('OroOrderBundle:Order')
+            ->find($id);
+
+        static::assertSame(
+            $order->getLineItems()[1]->getProduct()->getDenormalizedDefaultName(),
+            $order->getLineItems()[1]->getProductName()
+        );
     }
 
     /**
