@@ -86,7 +86,6 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             ]
         ]);
 
-        $errors = $form->getErrors();
         $this->assertTrue($form->isValid());
         $this->assertEquals([
             PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
