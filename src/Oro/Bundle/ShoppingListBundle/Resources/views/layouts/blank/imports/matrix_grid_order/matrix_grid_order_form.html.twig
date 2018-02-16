@@ -3,7 +3,7 @@
     {% set defaultColumns = form.rows[0].columns %}
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}
-
+    {% set columnsQty = form.vars.columnsQty %}
     <div class="{{ class_prefix }}__grid {{ columnsCount > 1 ? class_prefix ~ '__grid--multi-rows' }}" data-matrix-grid-container>
         {% if (columnsCount > 1) %}
             {{ block('_matrix_collection_widget_head') }}
@@ -132,7 +132,7 @@
         </div>
         <div class="{{ class_prefix }}__grid-footer-wrapper">
             <div class="{{ class_prefix }}__grid-scrollable-area" data-scroll-view-follow="x">
-                {% for cell in cells %}
+                {% for key, cell in cells %}
                     {% set cellIndex = loop.index %}
                     {{ block('_matrix_collection_widget_footer_cell') }}
                 {% endfor %}
@@ -144,7 +144,10 @@
 
 {% block _matrix_collection_widget_footer_cell %}
     <div class="{{ class_prefix }}__form__col">
-        <div class="{{ class_prefix }}__grid-footer-total" data-columns-quantity="{{ cellIndex }}">0</div>
+        <div class="{{ class_prefix }}__grid-footer-total {{ columnsQty[key] > 0 ? 'valid' : '' }}"
+             data-columns-quantity="{{ cellIndex }}">
+            {{ columnsQty[key] }}
+        </div>
     </div>
 {% endblock %}
 

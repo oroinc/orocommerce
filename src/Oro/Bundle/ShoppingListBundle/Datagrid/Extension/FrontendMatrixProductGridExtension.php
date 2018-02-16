@@ -36,9 +36,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     /** @var ProductFormAvailabilityProvider */
     private $productFormAvailabilityProvider;
 
-    /** @var ProductVariantAvailabilityProvider */
-    private $productVariantAvailabilityProvider;
-
     /** @var FrontendProductPricesProvider */
     private $frontendProductPricesProvider;
 
@@ -72,7 +69,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         $this->shoppingListManager = $shoppingListManager;
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
         $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
-        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->frontendProductPricesProvider = $frontendProductPricesProvider;
         $this->matrixGridOrderProvider = $matrixGridOrderProvider;
         $this->dataGridThemeHelper = $dataGridThemeHelper;
@@ -125,9 +121,6 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                     'price' => $this->matrixGridOrderProvider->getTotalPriceFormatted($product),
                 ];
 
-                $simpleProducts = $this->productVariantAvailabilityProvider
-                    ->getSimpleProductsByVariantFields($product);
-
                 if ($matrixFormData['type'] === 'inline') {
                     $formHtml = $this->matrixGridOrderFormProvider->getMatrixOrderFormHtml($product, $shoppingList);
                     $matrixFormData['form'] = $formHtml;
@@ -139,7 +132,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
 
                 $row->setValue(
                     self::PRODUCT_PRICES_COLUMN_NAME,
-                    $this->frontendProductPricesProvider->getByProducts($simpleProducts)
+                    $this->frontendProductPricesProvider->getVariantsPricesByProduct($product)
                 );
             }
 

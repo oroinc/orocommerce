@@ -109,11 +109,11 @@ Delete a collection of price list to customer relations. A collection may contai
 
 ### mergeAllowed
 
-Whether to allow merging of the current price list to other price lists for the current customer
+Whether to allow merging of the current price list to other price lists for the current customer.
 
 ### sortOrder
 
-The priority of the current price list in a scope of the current customer
+The priority of the current price list in a scope of the current customer.
 
 #### create
 
@@ -123,7 +123,7 @@ The priority of the current price list in a scope of the current customer
 
 ### customer
 
-The customer this relation is tied to
+The customer this relation is tied to.
 
 #### create
 
@@ -133,14 +133,13 @@ The customer this relation is tied to
 
 ### priceList
 
-The price list this relation is tied to
+The price list this relation is tied to.
 
 #### create
 
 {@inheritdoc}
 
 **The required field**
-
 
 ## SUBRESOURCES
 
@@ -148,18 +147,18 @@ The price list this relation is tied to
 
 #### get_subresource
 
-Get full information about the customer tied to the current price list to customer relation
+Get full information about the customer tied to the current price list to customer relation.
 
 #### get_relationship
 
-Retrieve the ID of the customer tied to the current price list to customer relation
+Retrieve the ID of the customer tied to the current price list to customer relation.
 
 ### priceList
 
 #### get_subresource
 
-Get full information about the price list tied to the current price list to customer relation
+Get full information about the price list tied to the current price list to customer relation.
 
 #### get_relationship
 
-Retrieve the ID of the price list tied to the current price list to customer relation
+Retrieve the ID of the price list tied to the current price list to customer relation.

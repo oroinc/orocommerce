@@ -25,6 +25,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -95,6 +96,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $productVariantProvider;
 
+    /**
+     * @var GuestShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $guestShoppingListManager;
+
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
@@ -126,6 +132,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->cache,
             $this->productVariantProvider
         );
+
+        $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
+        $this->manager->setGuestShoppingListManager($this->guestShoppingListManager);
     }
 
     public function testCreate()
@@ -477,6 +486,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->cache,
             $this->productVariantProvider
         );
+        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
         $this->assertEquals(
             [$shoppingList3, $shoppingList1, $shoppingList2],

@@ -247,9 +247,22 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Order empty matrix form
+  Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And type "CNF_A" in "search"
+    And click "Search Button"
+    And click "View Details" for "CNF_A" product
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should not see an "Default Page Prices" element
+    Then type "CNF_B" in "search"
+    And click "Search Button"
+    And click "View Details" for "CNF_B" product
+    Then I should see an "Matrix Grid Form" element
+    And I should see an "Default Page Prices" element
+    And I should see "Item 1 $ 12.00" in the "Default Page Prices" element
+
+  Scenario: Order empty matrix form
     And type "CNF_B" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element

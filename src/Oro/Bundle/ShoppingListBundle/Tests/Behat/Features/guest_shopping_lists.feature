@@ -10,6 +10,7 @@ Feature: Guest Shopping Lists
     Given sessions active:
       | Admin | first_session  |
       | User  | second_session |
+      | Guest | system_session |
 
   Scenario: Create configurable attributes
     Given I proceed as the Admin
@@ -120,8 +121,8 @@ Feature: Guest Shopping Lists
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
     When I fill "FrontendLineItemForm" with:
-      | Quantity | 10 |
-      | Unit | each |
+      | Quantity | 10   |
+      | Unit     | each |
     And I click "Update Shopping list"
     Then I should see "Record has been successfully updated" flash message
     And I click "NewCategory"
@@ -142,3 +143,26 @@ Feature: Guest Shopping Lists
       | Delete        |
       | Create Order  |
       | Request Quote |
+
+  Scenario: Check shopping list count
+    Given I proceed as the Admin
+    When I go to Sales/ Shopping Lists
+    Then number of records should be 1
+
+  Scenario: Disable guest shopping list
+    Given I go to System/ Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And uncheck "Use default" for "Enable guest shopping list" field
+    And I uncheck "Enable guest shopping list"
+    When I save setting
+    And I should see "Configuration saved" flash message
+
+  Scenario: Open homepage as a guest
+    Given I proceed as the Guest
+    When I am on homepage
+    Then I should not see "Shopping list"
+
+  Scenario: Re-check shopping list count
+    Given I proceed as the Admin
+    When I go to Sales/ Shopping Lists
+    Then number of records should be 1

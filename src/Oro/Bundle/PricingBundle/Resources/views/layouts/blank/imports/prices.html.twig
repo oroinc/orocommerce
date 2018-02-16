@@ -4,7 +4,7 @@
     {% endif %}
     {% if productPrices is not null %}
         {% do block|merge_context({
-            productPrices: is_configurable_product_type(product.type) ? [] : productPrices,
+            productPrices: productPrices,
             product: product,
             isPriceUnitsVisible: isPriceUnitsVisible
         }) %}
@@ -45,29 +45,27 @@
 {% block product_price_value %}
     <div {{ block('block_attributes') }}
             data-name="price">
-        {% if not is_configurable_product_type(product.type) %}
-            <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
-            {% set firstPrice = productPrices|first %}
-            <span class="product-price__main-box">
-                <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
-                    {% spaceless %}
-                    {% if firstPrice %}
-                        <span itemprop="priceCurrency" content="{{ firstPrice.currency }}">{{ oro_currency_symbol(firstPrice.currency) }}</span>
-                        <span itemprop="price" content="{{ firstPrice.price }}">{{ (firstPrice.price|number_format(2, '.', ',')) }}</span>
-                    {% endif %}
-                    {% endspaceless %}
+        <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
+        {% set firstPrice = productPrices|first %}
+        <span class="product-price__main-box">
+            <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
+                {% spaceless %}
+                {% if firstPrice %}
+                    <span itemprop="priceCurrency" content="{{ firstPrice.currency }}">{{ oro_currency_symbol(firstPrice.currency) }}</span>
+                    <span itemprop="price" content="{{ firstPrice.price }}">{{ (firstPrice.price|number_format(2, '.', ',')) }}</span>
+                {% endif %}
+                {% endspaceless %}
+            </span>
+            <span> / </span>
+            <span class="product-price__unit" data-name="unit">
+                <span class="product-price__unit-full">
+                    {{ firstPrice ? firstPrice.formatted_unit }}
                 </span>
-                <span> / </span>
-                <span class="product-price__unit" data-name="unit">
-                    <span class="product-price__unit-full">
-                        {{ firstPrice ? firstPrice.formatted_unit }}
-                    </span>
-                    <span class="product-price__unit-short">
-                        {{ firstPrice ? firstPrice.unit }}
-                    </span>
+                <span class="product-price__unit-short">
+                    {{ firstPrice ? firstPrice.unit }}
                 </span>
             </span>
-        {% endif %}
+        </span>
     </div>
 {% endblock %}
 
@@ -216,27 +214,29 @@
     <tbody {{ block('block_attributes') }}>
         {% set currentUnit = '' %}
         {% for price in productPrices %}
-            {% if currentUnit != price.formatted_unit %}
-                {% set currentUnit = price.formatted_unit %}
-                <tr class="product-prices__tr">
-                    <td colspan="2" class="product-prices__td">
-                        {% if loop.index > 1 %}<br/>{% endif %}
-                        {% if isPriceUnitsVisible %}
-                            <strong>{{ currentUnit|capitalize }}</strong>
-                        {% endif %}
+            {% if price.formatted_unit is defined %}
+                {% if currentUnit != price.formatted_unit %}
+                    {% set currentUnit = price.formatted_unit %}
+                    <tr class="product-prices__tr">
+                        <td colspan="2" class="product-prices__td">
+                            {% if loop.index > 1 %}<br/>{% endif %}
+                            {% if isPriceUnitsVisible %}
+                                <strong>{{ currentUnit|capitalize }}</strong>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr class="product-prices__tr" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
+                    <td class="product-prices__td" itemprop="referenceQuantity" itemscope itemtype="http://schema.org/QuantitativeValue">
+                        <span itemprop="value" content="{{ price.quantity }}">{{ price.quantity }}</span>
+                        <meta itemprop="unitCode" content="{{ currentUnit }}"/>
+                    </td>
+                    <td class="product-prices__td">
+                        <span itemprop="priceCurrency" content="{{ price.currency }}">{{ oro_currency_symbol(price.currency) }}</span>
+                        <span itemprop="price">{{ (price.price|number_format(2, '.', ',')) }}</span>
                     </td>
                 </tr>
             {% endif %}
-            <tr class="product-prices__tr" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
-                <td class="product-prices__td" itemprop="referenceQuantity" itemscope itemtype="http://schema.org/QuantitativeValue">
-                    <span itemprop="value" content="{{ price.quantity }}">{{ price.quantity }}</span>
-                    <meta itemprop="unitCode" content="{{ currentUnit }}"/>
-                </td>
-                <td class="product-prices__td">
-                    <span itemprop="priceCurrency" content="{{ price.currency }}">{{ oro_currency_symbol(price.currency) }}</span>
-                    <span itemprop="price">{{ (price.price|number_format(2, '.', ',')) }}</span>
-                </td>
-            </tr>
         {% endfor %}
     </tbody>
 {% endblock %}
