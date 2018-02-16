@@ -2,7 +2,7 @@
 
 namespace Oro\Component\Testing\Unit;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
@@ -31,13 +31,23 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $typeGuesser = $this->createMock(
+            'Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser'
+        );
+
         return [
             new PreloadedExtension(
                 [
                     'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
                     'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
+                    'oro_select2_choice' => new Select2Type(
+                        'choice',
+                        'oro_select2_choice'
+                    ),
                     'translatable_entity' => $this->getTranslatableEntity(),
                     'oro_region' => new RegionType(),
                 ],
@@ -46,7 +56,8 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                         new AdditionalAttrExtension(),
                         new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                     ],
-                ]
+                ],
+                $typeGuesser
             )
         ];
     }
@@ -58,7 +69,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
+            ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -77,7 +88,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             ],
         ];
 
-        $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
+        $translatableEntity->expects($this->any())->method('configureOptions')->will(
             $this->returnCallback(
                 function (OptionsResolver $resolver) use ($choices) {
                     $choiceList = function (Options $options) use ($choices) {

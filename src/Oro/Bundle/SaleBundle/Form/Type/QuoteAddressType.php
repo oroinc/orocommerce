@@ -93,7 +93,7 @@ class QuoteAddressType extends AbstractType
                     $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
                 }
 
-                $form->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
+                $form->add('customerAddress', 'oro_select2_choice', $customerAddressOptions);
             }
         );
 

@@ -20,9 +20,9 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new PriceListSelectType();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -42,7 +42,7 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetParent()

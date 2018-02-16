@@ -52,8 +52,9 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);
         $visibilities[] = $this->getCustomerGroupProductVisibilityResolvedTerm($queryBuilder);
         $visibilities[] = $this->getCustomerProductVisibilityResolvedTerm($queryBuilder);
+        $visibilityExpression = implode(' + ', $visibilities);
 
-        $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+        $queryBuilder->andWhere($queryBuilder->expr()->gt($visibilityExpression, 0));
     }
 
     /**

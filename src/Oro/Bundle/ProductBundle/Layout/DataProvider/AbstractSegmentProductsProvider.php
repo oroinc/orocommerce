@@ -4,21 +4,26 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractSegmentProductsProvider implements ProductsProviderInterface
 {
-    use DataProviderCacheTrait;
+    const DQL = 'dql';
+    const PARAMETERS = 'parameters';
+    const HASH = 'hash';
+
+    use DataProviderCacheTrait {
+        getFromCache as loadFromCache;
+    }
 
     /** @var SegmentManager */
     private $segmentManager;
@@ -38,6 +43,9 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /** @var TokenStorageInterface */
     private $tokenStorage;
 
+    /** @var SymmetricCrypterInterface */
+    private $crypter;
+
     /**
      * @param SegmentManager $segmentManager
      * @param ProductSegmentProviderInterface $productSegmentProvider
@@ -45,6 +53,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      * @param ConfigManager $configManager
      * @param RegistryInterface $registry
      * @param TokenStorageInterface $tokenStorage
+     * @param SymmetricCrypterInterface $crypter
      */
     public function __construct(
         SegmentManager $segmentManager,
@@ -52,7 +61,8 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ProductManager $productManager,
         ConfigManager $configManager,
         RegistryInterface $registry,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        SymmetricCrypterInterface $crypter
     ) {
         $this->segmentManager = $segmentManager;
         $this->productSegmentProvider = $productSegmentProvider;
@@ -60,6 +70,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $this->configManager = $configManager;
         $this->registry = $registry;
         $this->tokenStorage = $tokenStorage;
+        $this->crypter = $crypter;
     }
 
     /**
@@ -117,6 +128,25 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     }
 
     /**
+     * @return false|array
+     */
+    private function getFromCache()
+    {
+        $data = $this->loadFromCache();
+
+        // Check cache data consistency
+        if ($data
+            && !empty($data[self::DQL])
+            && !empty($data[self::HASH])
+            && $this->getHash($data[self::DQL]) === $data[self::HASH]
+        ) {
+            return $data;
+        }
+
+        return false;
+    }
+
+    /**
      * @return RegistryInterface
      */
     public function getRegistry()
@@ -158,12 +188,23 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
     /**
      * @param array $data
+     * @return \Doctrine\ORM\Query
+     */
+    protected function restoreQuery(array $data)
+    {
+        return $this->getRegistry()
+            ->getEntityManager()
+            ->createQuery($data[self::DQL]);
+    }
+
+    /**
+     * @param array $data
      *
      * @return array
      */
     protected function getResult(array $data)
     {
-        return $this->getRegistry()->getEntityManager()->createQuery($data['dql'])->execute($data['parameters']);
+        return $this->restoreQuery($data)->execute($data[self::PARAMETERS]);
     }
 
     /**
@@ -174,16 +215,27 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      */
     private function getCachedData($dql, array $parameters)
     {
-        $result = ['dql' => $dql];
-
         /** @var Parameter $parameter */
         $resultParameters = [];
         foreach ($parameters as $parameter) {
             $resultParameters[$parameter->getName()] = $parameter->getValue();
         }
 
-        $result['parameters'] = $resultParameters;
+        $result = [
+            self::DQL => $dql,
+            self::PARAMETERS => $resultParameters,
+            self::HASH => $this->getHash($dql)
+        ];
 
         return $result;
+    }
+
+    /**
+     * @param $dql
+     * @return string
+     */
+    private function getHash($dql)
+    {
+        return md5($this->crypter->encryptData($dql));
     }
 }

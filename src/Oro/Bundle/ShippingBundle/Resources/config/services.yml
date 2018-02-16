@@ -255,9 +255,8 @@ services:
 
     oro_shipping.form.handler.shipping_methods_configs_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler'
-        scope: request
         arguments:
-            - '@request'
+            - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_shipping.shipping_origin.provider:

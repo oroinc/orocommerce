@@ -285,13 +285,7 @@
 {% block __oro_checkout_content__checkout_order_summary_line_item_configurable_products_widget %}
     {% if mainProduct is not null and parent.configurableProducts[lineItem.product.id] is defined %}
         {% for product in parent.configurableProducts[lineItem.product.id] %}
-            <div>{{ product.label|trans }}:
-                {% if product.type == 'boolean' %}
-                    {{ product.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
-                {% else %}
-                    {{ product.value }}
-                {% endif %}
-            </div>
+            <div>{{ product.label|trans }}: {{ product.value }}</div>
         {% endfor %}
     {% endif %}
 {% endblock %}

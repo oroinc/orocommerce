@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
@@ -73,7 +73,10 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    'oro_select2_choice' => new Select2Type(
+                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
+                        'oro_select2_choice'
+                    ),
                     OroChoiceType::NAME => new OroChoiceType(),
                     CategoryTreeType::NAME => new CategoryTreeType($treeHandler),
                     'oro_entity_identifier' => new EntityIdentifierType(

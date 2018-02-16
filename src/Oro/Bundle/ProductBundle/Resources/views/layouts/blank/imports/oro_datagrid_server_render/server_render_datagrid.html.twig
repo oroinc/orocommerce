@@ -165,7 +165,11 @@
 {% block __oro_datagrid_server_render__datagrid_row_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " grid-row",
-        'data-row-id': datagrid_row.id
+        'data-row-id': datagrid_row.id,
+        'data-layout': 'separate',
+        'data-page-component-view': {
+            view: 'oroproduct/js/app/datagrid/datagrid-product-lazy-init-view'
+        }
     }) %}
 
     <div{{ block('block_attributes') }}>
@@ -191,13 +195,13 @@
             {% set child = block[id ~'_row'] %}
 
             {% set childAttr = layout_attr_defaults(child.vars.attr, {
-            'class': themeOptions.rowClassName
+                'class': themeOptions.rowClassName
             }) %}
             {% set childAttr = layout_attr_defaults(childAttr, themeOptions.rowAttributes) %}
 
             {% do child|merge_context({
-            'datagrid_row': datagrid_row,
-            'themeOptions': themeOptions
+                'datagrid_row': datagrid_row,
+                'themeOptions': themeOptions
             }) %}
             {{ block_widget(child, {'attr': childAttr}) }}
         {% endfor %}

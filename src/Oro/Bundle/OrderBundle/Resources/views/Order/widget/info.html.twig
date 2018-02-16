@@ -8,7 +8,7 @@
     |oro_order_format_source_document(
     order.sourceEntityId,
     order.sourceEntityIdentifier
-  )|escape %}
+  ) %}
 
   <i class="{{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
   {% if sourceEntity is not null and is_granted('VIEW', sourceEntity) %}
@@ -29,22 +29,15 @@
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
             {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
-            {% if is_granted('VIEW', order.customer) %}
-                {% set customerView = UI.renderUrl(path('oro_customer_customer_view', {'id': order.customer.id}), order.customer|oro_format_name|default('oro.ui.empty'|trans)) %}
-            {% else %}
-                {% set customerView = order.customer|oro_format_name|trim %}
-            {% endif %}
-            {{ UI.renderHtmlProperty('oro.order.customer.label'|trans, customerView) }}
+            {{ UI.renderHtmlProperty(
+                'oro.order.customer.label'|trans,
+                UI.entityViewLink(order.customer, order.customer|oro_format_name, 'oro_customer_customer_view')
+            ) }}
 
-            {% set customerUserView = '' %}
-            {% if order.customerUser is not empty %}
-                {% if is_granted('VIEW', order.customerUser) %}
-                    {% set customerUserView = UI.renderUrl(path('oro_customer_customer_user_view', {'id': order.customerUser.id}), order.customerUser|oro_format_name|default('oro.ui.empty'|trans)) %}
-                {% else %}
-                    {% set customerUserView = order.customerUser|oro_format_name|trim %}
-                {% endif %}
-            {% endif %}
-            {{ UI.renderHtmlProperty('oro.order.customer_user.label'|trans, customerUserView) }}
+            {{ UI.renderHtmlProperty(
+                'oro.order.customer_user.label'|trans,
+                UI.entityViewLink(order.customerUser, order.customerUser|oro_format_name, 'oro_customer_customer_user_view')
+            ) }}
 
             {{ UI.renderProperty('oro.order.internal_status.label'|trans, order.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}

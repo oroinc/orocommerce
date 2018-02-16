@@ -115,6 +115,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
             $orderLineItem
                 ->setFromExternalSource(mt_rand(0, 1))
                 ->setProduct($product)
+                ->setProductName($product->getName())
                 ->setFreeFormProduct($product ? null : $row['freeFormProduct'])
                 ->setProductUnit($productUnit)
                 ->setQuantity($quantity)
