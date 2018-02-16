@@ -71,7 +71,6 @@ class OrmIndexer extends AbstractIndexer
         }
 
         // Build items for search index
-        $items = [];
         foreach ($entitiesData as $entityId => $indexData) {
             $item = $this->getDriver()->createItem();
             $item->setEntity($entityClass)
@@ -81,7 +80,6 @@ class OrmIndexer extends AbstractIndexer
                 ->setChanged(false)
                 ->saveItemData($indexData);
             $this->getDriver()->writeItem($item);
-            $items[] = $item;
         }
 
         // Remove old data to prevent possible conflicts with unique indexes

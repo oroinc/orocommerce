@@ -134,7 +134,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         return $this->translator->trans(
             'oro.shoppinglist.actions.add_to_shopping_list',
             [
-                '{{ shoppingList }}' => $shoppingList->getLabel()
+                '{{ shoppingList }}' => \strip_tags($shoppingList->getLabel())
             ]
         );
     }
