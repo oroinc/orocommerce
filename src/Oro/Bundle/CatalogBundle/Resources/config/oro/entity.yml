@@ -8,4 +8,4 @@ oro_entity:
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: category, conditionType: 'WITH', condition: 'entity MEMBER OF category.products' }
+                            - { join: entity.category, alias: category }
