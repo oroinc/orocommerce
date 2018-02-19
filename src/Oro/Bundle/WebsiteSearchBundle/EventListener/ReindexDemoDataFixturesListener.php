@@ -5,11 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Triggers full reindexation of website index after demo data are loaded.
+ * Disables website search index listener during loading of main and demo data
  */
 class ReindexDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
@@ -52,11 +51,5 @@ class ReindexDemoDataFixturesListener extends AbstractDemoDataFixturesListener
      */
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
-        $event->log('running full reindexation of website index');
-
-        $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([], [], [], false)
-        );
     }
 }
