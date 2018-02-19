@@ -1,3 +1,3 @@
 {% spaceless %}
-    {{ get_payment_method_admin_label(methodData.type)|oro_tag_filter }}
+    {{ get_payment_method_admin_label(methodData.type)|oro_html_sanitize }}
 {% endspaceless %}
