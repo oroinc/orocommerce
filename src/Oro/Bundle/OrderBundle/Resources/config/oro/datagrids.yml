@@ -532,7 +532,7 @@ datagrids:
                     - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
-                    - product.denormalizedDefaultName as productName
+                    - order_item.productName
                 from:
                     - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
                 join:

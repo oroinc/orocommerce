@@ -13,6 +13,7 @@ use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class NotificationHelper
 {

@@ -29,7 +29,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');

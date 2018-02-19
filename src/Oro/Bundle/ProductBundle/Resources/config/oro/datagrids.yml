@@ -831,6 +831,7 @@ datagrids:
         filters:
             columns:
                 brandName:
+                    label:     oro.product.brand.names.label
                     type:      string
                     data_name: brand.defaultTitle
         actions:

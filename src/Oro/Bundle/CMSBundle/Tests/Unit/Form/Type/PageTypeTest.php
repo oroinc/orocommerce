@@ -133,7 +133,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()

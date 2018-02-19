@@ -108,6 +108,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('creditCardPaymentAction', ChoiceType::class, [
                 'choices' => $this->paymentActionsDataProvider->getPaymentActions(),
+                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                 'choices_as_values' => true,
                 'choice_label' => function ($action) {
                     return $this->translator->trans(
@@ -119,6 +120,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('expressCheckoutPaymentAction', ChoiceType::class, [
                 'choices' => $this->paymentActionsDataProvider->getPaymentActions(),
+                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                 'choices_as_values' => true,
                 'choice_label' => function ($action) {
                     return $this->translator->trans(
@@ -130,6 +132,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('allowedCreditCardTypes', ChoiceType::class, [
                 'choices' => $this->creditCardTypesDataProvider->getCardTypes(),
+                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                 'choices_as_values' => true,
                 'choice_label' => function ($cardType) {
                     return $this->translator->trans(

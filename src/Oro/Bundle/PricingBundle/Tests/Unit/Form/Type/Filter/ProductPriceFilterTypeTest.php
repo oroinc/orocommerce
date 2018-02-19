@@ -94,7 +94,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    public function configureOptionsProvider()
+    public function configureOptionsDataProvider()
     {
         return [
             [

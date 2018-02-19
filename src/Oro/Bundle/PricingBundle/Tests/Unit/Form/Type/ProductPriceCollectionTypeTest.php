@@ -146,7 +146,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals(ProductPriceCollectionType::NAME, $this->formType->getName());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $form = $this->factory->create($this->formType);
 

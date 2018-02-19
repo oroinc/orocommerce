@@ -33,6 +33,16 @@ services:
             - '%oro_shopping_list.entity.shopping_list.class%'
             - "@doctrine.orm.entity_manager"
 
+    oro_shopping_list.manager.guest_shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@translator'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
+
     oro_shopping_list.shopping_list.manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
         arguments:
@@ -46,6 +56,8 @@ services:
             - "@oro_security.acl_helper"
             - '@oro_shopping_list.shopping_list_provider.cache'
             - "@oro_product.provider.product_variant_availability_provider"
+        calls:
+            - [setGuestShoppingListManager, ['@oro_shopping_list.manager.guest_shopping_list']]
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'

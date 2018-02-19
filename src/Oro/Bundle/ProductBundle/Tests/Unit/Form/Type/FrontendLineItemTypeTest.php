@@ -98,7 +98,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Method testSetDefaultOptions
+     * Method testConfigureOptions
      */
     public function testConfigureOptions()
     {
