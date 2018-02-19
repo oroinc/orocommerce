@@ -15,6 +15,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(new OffersType());
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
+        // TODO: Remove assert below in scope of BAP-15236
         $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
@@ -26,6 +27,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(new OffersType(), null, ['offers' => $offers]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
+        // TODO: Remove assert below in scope of BAP-15236
         $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertEquals($offers, $form->getConfig()->getOption('offers'));
@@ -42,6 +44,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(new OffersType(), null, ['offers' => 1]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
+        // TODO: Remove assert below in scope of BAP-15236
         $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));

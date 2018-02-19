@@ -41,6 +41,7 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
                             'oro.inventory.is_upcoming.choice.false' => 0,
                             'oro.inventory.is_upcoming.choice.true' => 1,
                         ],
+                        // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                         'choices_as_values' => true,
                     ],
                 ]
