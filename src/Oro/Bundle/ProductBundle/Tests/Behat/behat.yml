@@ -192,6 +192,10 @@ oro_behat_extension:
           DateTimeField: 'oro_product[DateTimeField]'
           SelectField: 'oro_product[SelectField]'
           TextField: 'oro_product[TextField]'
+          ManyToOneField:
+            type: 'css'
+            locator: 'input[name="oro_product[ManyToOneField]"]'
+            element: Select2Entity
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
