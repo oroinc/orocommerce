@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Element;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
+use Symfony\Component\DomCrawler\Crawler;
 
 class InlineMatrixRowHeader extends Element
 {

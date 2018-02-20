@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Validator\Constraints;
 
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\TaxBundle\Entity\ZipCode;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
@@ -53,7 +52,8 @@ class ZipCodeFieldsValidator extends ConstraintValidator
 
         if ($entity->getZipRangeStart() && $entity->getZipRangeEnd() && (
             !$this->isInteger($entity->getZipRangeStart()) ||
-            !$this->isInteger($entity->getZipRangeEnd()))
+            !$this->isInteger($entity->getZipRangeEnd())
+        )
         ) {
             $context->buildViolation($constraint->onlyNumericRangesSupported)->atPath('zipRangeStart')->addViolation();
         }

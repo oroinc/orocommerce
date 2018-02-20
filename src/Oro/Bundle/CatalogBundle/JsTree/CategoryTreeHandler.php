@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;

@@ -4,11 +4,10 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Client;
 
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Message\Response;
-
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\NVPClient;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
 
 class NVPClientTest extends \PHPUnit_Framework_TestCase
 {

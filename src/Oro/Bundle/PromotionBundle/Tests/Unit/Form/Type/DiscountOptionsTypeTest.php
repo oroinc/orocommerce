@@ -192,7 +192,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
@@ -226,7 +226,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testFinishView()

@@ -3,9 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CheckoutBundle\Model\ExtendCheckoutSource;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryDecrementFormViewListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryDecrementFormViewListener;
 
 class CategoryInventoryDecrementFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {

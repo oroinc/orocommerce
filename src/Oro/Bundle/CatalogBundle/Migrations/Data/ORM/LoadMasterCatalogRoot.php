@@ -4,9 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 class LoadMasterCatalogRoot extends AbstractFixture
 {

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CustomerUserControllerTest extends WebTestCase
 {

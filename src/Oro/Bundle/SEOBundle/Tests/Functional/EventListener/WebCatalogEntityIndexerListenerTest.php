@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,6 +12,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {

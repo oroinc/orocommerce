@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Event;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Component\Website\WebsiteInterface;
 

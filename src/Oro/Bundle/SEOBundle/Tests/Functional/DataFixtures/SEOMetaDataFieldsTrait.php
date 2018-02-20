@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 trait SEOMetaDataFieldsTrait

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Grid\Frontend;
 
-use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @dbIsolationPerTest

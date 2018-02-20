@@ -179,14 +179,14 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $resolvedVisibility = $parentGroupVisibilityResolved !== null
                 ? $parentGroupVisibilityResolved
                 : $parentCategoryVisibilityResolved;
-            // category fallback (visibility to all)
+        // category fallback (visibility to all)
         } elseif ($parentVisibility === CustomerCategoryVisibility::CATEGORY) {
             $resolvedVisibility = $parentCategoryVisibilityResolved;
-            // parent category fallback
+        // parent category fallback
         } elseif ($parentVisibility === CustomerCategoryVisibility::PARENT_CATEGORY) {
             $parentGroup = $customerVisibilities[$parentVisibilityId];
             $resolvedVisibility = $this->resolveVisibility($customerVisibilities, $parentGroup);
-            // static visibility
+        // static visibility
         } else {
             $resolvedVisibility
                 = $this->convertVisibility($parentVisibility === CustomerCategoryVisibility::VISIBLE);

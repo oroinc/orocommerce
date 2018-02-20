@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CustomThemeBundle\Tests\Functional\Frontend;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Form;
 
 class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
 {

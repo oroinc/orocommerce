@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Entity\RelatedItem;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class AbstractOrderController extends Controller
 {

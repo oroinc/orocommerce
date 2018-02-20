@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoginPageProvider

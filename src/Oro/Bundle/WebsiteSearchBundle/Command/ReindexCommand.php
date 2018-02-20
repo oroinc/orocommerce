@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ReindexCommand extends ContainerAwareCommand
 {

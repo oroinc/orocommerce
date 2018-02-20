@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ShippingOptionLabelExtension extends \Twig_Extension
 {

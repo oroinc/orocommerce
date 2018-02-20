@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutSubtotalTest extends \PHPUnit_Framework_TestCase
 {

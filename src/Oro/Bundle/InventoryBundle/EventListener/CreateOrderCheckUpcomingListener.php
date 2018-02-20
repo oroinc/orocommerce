@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateOrderCheckUpcomingListener
 {

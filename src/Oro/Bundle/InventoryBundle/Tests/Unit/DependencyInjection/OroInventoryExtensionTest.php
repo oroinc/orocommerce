@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 

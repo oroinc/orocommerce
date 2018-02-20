@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
  * Simple DTO that used to transfer coupon generation options through different code layers.

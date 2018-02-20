@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {

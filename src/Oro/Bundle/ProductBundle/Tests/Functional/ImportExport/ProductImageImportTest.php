@@ -2,14 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 use Doctrine\ORM\EntityRepository;
-
-use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
-use Oro\Component\MessageQueue\Transport\SessionInterface;
-
 use Oro\Bundle\ImportExportBundle\Async\Topics;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
@@ -21,6 +14,10 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @dbIsolationPerTest

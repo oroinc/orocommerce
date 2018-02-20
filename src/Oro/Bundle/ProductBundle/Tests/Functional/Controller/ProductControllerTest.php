@@ -7,9 +7,8 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
-
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 

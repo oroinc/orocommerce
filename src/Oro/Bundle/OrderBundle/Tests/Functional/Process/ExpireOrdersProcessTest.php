@@ -3,9 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Process;
 
 use Doctrine\DBAL\Connection;
-
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
@@ -25,6 +22,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessTrigger;
 use Oro\Bundle\WorkflowBundle\Tests\Functional\Process\AbstractProcessTest;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @group CommunityEdition

@@ -3,16 +3,14 @@
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-use Oro\Component\PhpUtils\ArrayUtil;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Component\PhpUtils\ArrayUtil;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcessorInterface
 {

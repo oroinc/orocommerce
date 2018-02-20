@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class LineItemProductTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -13,6 +11,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage\Renderer;
 
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Renderer\FlashMessageRenderer;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class FlashMessageRendererTest extends \PHPUnit_Framework_TestCase
 {

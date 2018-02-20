@@ -41,7 +41,7 @@ services:
     oro_paypal.paypal.payflow_gateway.gateway:
         class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway'
         public: false
-        scope: prototype
+        shared: false
         arguments:
             - '@oro_paypal.paypal.payflow.host_address_provider'
             - '@oro_paypal.paypal.payflow.client.nvp'
@@ -67,7 +67,7 @@ services:
     oro_paypal.paypal.payflow_express_checkout.gateway:
         class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway'
         public: false
-        scope: prototype
+        shared: false
         arguments:
             - '@oro_paypal.paypal.payflow.host_address_provider'
             - '@oro_paypal.paypal.payflow.client.nvp'

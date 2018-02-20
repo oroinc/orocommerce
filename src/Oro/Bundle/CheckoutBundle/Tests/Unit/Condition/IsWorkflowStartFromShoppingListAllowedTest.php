@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit_Framework_TestCase
 {

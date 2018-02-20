@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Model;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class CategoryMaterializedPathModifier
 {

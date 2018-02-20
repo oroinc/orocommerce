@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType;
-
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 
 class SecureArrayType extends JsonArrayType

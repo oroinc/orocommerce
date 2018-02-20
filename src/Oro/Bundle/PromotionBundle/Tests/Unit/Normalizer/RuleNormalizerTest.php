@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Normalizer;
 
-use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\PromotionBundle\Normalizer\RuleNormalizer;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class RuleNormalizerTest extends \PHPUnit_Framework_TestCase

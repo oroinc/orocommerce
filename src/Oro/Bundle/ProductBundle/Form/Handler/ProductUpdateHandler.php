@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
-use Oro\Bundle\UIBundle\Route\Router;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductUpdateHandler extends UpdateHandler
 {

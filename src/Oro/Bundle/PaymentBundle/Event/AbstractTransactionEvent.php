@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Symfony\Component\EventDispatcher\Event;
 
 abstract class AbstractTransactionEvent extends Event
 {

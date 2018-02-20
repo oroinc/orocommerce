@@ -3,17 +3,16 @@
 namespace Oro\Bundle\InvoiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 
 /**
  * @ORM\Table(

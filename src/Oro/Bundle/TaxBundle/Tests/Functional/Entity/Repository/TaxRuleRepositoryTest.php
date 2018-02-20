@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class TaxRuleRepositoryTest extends WebTestCase
 {

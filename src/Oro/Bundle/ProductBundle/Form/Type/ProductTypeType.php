@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductTypeType extends AbstractType
 {

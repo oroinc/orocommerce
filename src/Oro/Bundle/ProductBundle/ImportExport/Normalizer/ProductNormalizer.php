@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductNormalizer extends ConfigurableEntityNormalizer
 {

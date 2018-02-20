@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 
 class PayflowIPCheckListener
 {

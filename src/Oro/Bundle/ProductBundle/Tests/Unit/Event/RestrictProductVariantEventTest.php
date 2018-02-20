@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 
 class RestrictProductVariantEventTest extends \PHPUnit_Framework_TestCase

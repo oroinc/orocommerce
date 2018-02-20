@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Component\Cache\Layout\DataProviderCacheCleaner;

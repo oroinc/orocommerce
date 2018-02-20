@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Exception\AssignerNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class RelatedItemsHandler
 {

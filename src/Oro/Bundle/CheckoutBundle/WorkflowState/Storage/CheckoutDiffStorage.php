@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Storage;
 
-use Oro\Bundle\EntityBundle\Exception\InvalidEntityException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
+use Oro\Bundle\EntityBundle\Exception\InvalidEntityException;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class CheckoutDiffStorage implements CheckoutDiffStorageInterface
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;

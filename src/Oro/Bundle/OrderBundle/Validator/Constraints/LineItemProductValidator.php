@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class LineItemProductValidator extends ConstraintValidator
 {

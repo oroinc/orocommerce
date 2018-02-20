@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\Expression;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ExpressionValidator;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\ExpressionLanguageConverter;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;

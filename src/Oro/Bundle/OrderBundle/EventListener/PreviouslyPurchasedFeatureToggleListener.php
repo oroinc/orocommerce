@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration as OrderConfig;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 class PreviouslyPurchasedFeatureToggleListener
 {

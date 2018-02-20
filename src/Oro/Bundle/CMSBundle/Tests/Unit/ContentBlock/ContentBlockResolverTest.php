@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlock;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ContentBlockResolverTest extends \PHPUnit_Framework_TestCase
 {

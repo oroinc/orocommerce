@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener

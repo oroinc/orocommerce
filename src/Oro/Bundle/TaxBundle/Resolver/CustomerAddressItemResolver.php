@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
-
 use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class CustomerAddressItemResolver extends AbstractItemResolver

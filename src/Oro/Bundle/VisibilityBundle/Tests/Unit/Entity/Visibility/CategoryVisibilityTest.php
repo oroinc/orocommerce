@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {

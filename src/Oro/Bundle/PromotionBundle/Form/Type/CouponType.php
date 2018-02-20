@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 class CouponType extends AbstractType
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\MoneyOrderBundle;
 
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroMoneyOrderBundle extends Bundle

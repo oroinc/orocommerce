@@ -3,14 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Doctrine\ORM\EntityRepository;
-
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 
 abstract class AbstractTaxExtension extends AbstractTypeExtension
 {

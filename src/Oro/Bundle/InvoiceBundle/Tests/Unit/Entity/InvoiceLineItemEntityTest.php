@@ -3,11 +3,11 @@
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
 {

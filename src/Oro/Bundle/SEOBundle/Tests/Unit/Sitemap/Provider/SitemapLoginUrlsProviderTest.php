@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
-use Symfony\Component\Routing\Router;
-
-use Oro\Component\Website\WebsiteInterface;
+use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\RouterSitemapUrlsProvider;
-use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Component\Website\WebsiteInterface;
+use Symfony\Component\Routing\Router;
 
 class SitemapLoginUrlsProviderTest extends \PHPUnit_Framework_TestCase
 {

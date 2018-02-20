@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Entity\Brand;
-use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 
 class BrandStatusType extends AbstractType
 {

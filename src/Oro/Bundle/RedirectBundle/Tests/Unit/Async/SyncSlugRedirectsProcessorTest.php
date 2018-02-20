@@ -14,9 +14,9 @@ use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase

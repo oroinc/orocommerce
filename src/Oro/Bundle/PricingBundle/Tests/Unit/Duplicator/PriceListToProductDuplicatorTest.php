@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator;
 
 class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {

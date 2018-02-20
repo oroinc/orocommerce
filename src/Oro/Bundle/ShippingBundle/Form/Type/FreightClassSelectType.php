@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-
-use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 
 class FreightClassSelectType extends AbstractShippingOptionSelectType
 {

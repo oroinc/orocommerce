@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CatalogBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @method File getSmallImage()

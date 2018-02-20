@@ -4,8 +4,8 @@ namespace Oro\Component\Expression\Tests\Unit\QueryExpressionConverter;
 
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
-use Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter;
 use Oro\Component\Expression\Node\RelationNode;
+use Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter;
 
 class RelationNodeConverterTest extends \PHPUnit_Framework_TestCase
 {

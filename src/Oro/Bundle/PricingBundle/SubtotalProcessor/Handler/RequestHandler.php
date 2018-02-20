@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
+use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
-use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class RequestHandler
 {

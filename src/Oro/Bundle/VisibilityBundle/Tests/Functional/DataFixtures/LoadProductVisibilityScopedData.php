@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadProductVisibilityScopedData extends LoadProductVisibilityData
 {

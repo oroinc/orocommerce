@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\VisibilityBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\VisibilityBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 
 class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {

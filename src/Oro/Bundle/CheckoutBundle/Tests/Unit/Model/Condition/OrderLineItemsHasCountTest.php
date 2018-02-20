@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount;

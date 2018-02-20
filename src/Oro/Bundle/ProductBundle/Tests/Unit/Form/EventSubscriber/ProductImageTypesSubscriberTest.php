@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\EventSubscriber;
 
-use Symfony\Component\Form\FormEvent;
-
-use Prophecy\Prophecy\ObjectProphecy;
-
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
+use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Form\FormEvent;
 
 class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
 {

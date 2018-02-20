@@ -8,18 +8,16 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists;
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
 {

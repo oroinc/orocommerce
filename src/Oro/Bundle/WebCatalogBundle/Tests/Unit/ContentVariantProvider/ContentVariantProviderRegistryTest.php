@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
 
-use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
+use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
 class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
 {

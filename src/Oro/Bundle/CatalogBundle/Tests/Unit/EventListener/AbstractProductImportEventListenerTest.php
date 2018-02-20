@@ -4,11 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework_TestCase
 {

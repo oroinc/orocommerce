@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
 
 class ProductImageValidator extends ConstraintValidator
 {

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 
 class CheckoutAddressType extends AbstractOrderAddressType
 {

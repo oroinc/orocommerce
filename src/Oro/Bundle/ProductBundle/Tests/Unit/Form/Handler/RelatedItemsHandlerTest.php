@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Exception\AssignerNotFoundException;
 use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
 use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class RelatedItemsHandlerTest extends \PHPUnit_Framework_TestCase
 {

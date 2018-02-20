@@ -248,17 +248,30 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onLocalizationSettingsChange }
 
-    oro_website_search.migration.demo_data_fixtures_listener.reindex:
-        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
-        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener
+    oro_website_search.event_listener.install_command:
+        class: Oro\Bundle\SearchBundle\EventListener\Command\InstallCommandListener
         arguments:
-            - '@event_dispatcher'
+            - '@request_stack'
+            - 'oro:website-search:reindex'
+        tags:
+            # do reindexation of website index after reindexation of search index
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
+
+    oro_website_search.event_listener.platform_update_command:
+        class: Oro\Bundle\SearchBundle\EventListener\Command\PlatformUpdateCommandListener
+        arguments:
+            - 'oro:website-search:reindex'
+        tags:
+            # do reindexation of website index after reindexation of search index
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
+
+    oro_website_search.migration.demo_data_fixtures_listener.reindex:
+        parent: oro_platform.event_listener.data_fixtures_listener.abstract
         calls:
             - [disableListener, ['oro_website_search.reindex_request.listener']]
         tags:
-            # do reindexation of website index after reindexation of search index
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
-            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad, priority: -110 }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
 
     oro_website_search.provider.placeholder_provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'

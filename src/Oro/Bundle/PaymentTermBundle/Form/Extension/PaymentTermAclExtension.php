@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Form\Extension;
 
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

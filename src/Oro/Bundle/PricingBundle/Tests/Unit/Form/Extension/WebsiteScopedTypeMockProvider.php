@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
 {

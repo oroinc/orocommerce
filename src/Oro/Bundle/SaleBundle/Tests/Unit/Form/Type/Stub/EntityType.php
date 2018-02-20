@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityType extends StubEntityType
 {
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'class' => '',

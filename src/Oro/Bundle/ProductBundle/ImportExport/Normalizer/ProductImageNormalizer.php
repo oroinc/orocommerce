@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
-use Symfony\Component\Config\FileLocator;
-
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Symfony\Component\Config\FileLocator;
 
 class ProductImageNormalizer extends ConfigurableEntityNormalizer
 {

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerUserIdPlaceholder;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Oro\Bundle\CustomerBundle\Placeholder\CustomerUserIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {

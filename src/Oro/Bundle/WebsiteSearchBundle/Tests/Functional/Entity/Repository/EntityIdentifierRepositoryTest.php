@@ -3,9 +3,9 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadEmployeesToIndex;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class EntityIdentifierRepositoryTest extends WebTestCase
 {

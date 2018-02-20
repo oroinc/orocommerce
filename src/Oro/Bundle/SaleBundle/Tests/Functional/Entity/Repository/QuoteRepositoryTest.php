@@ -3,13 +3,11 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
-
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class QuoteRepositoryTest extends WebTestCase
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;

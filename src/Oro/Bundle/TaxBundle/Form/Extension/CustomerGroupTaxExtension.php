@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerGroupTaxExtension extends AbstractTaxExtension
 {

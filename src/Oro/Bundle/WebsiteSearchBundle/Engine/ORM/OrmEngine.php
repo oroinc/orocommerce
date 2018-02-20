@@ -4,10 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
 use Oro\Bundle\SearchBundle\Query\LazyResult;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 class OrmEngine extends AbstractEngine
 {

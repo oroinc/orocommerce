@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Event;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TaxEventDispatcher
 {

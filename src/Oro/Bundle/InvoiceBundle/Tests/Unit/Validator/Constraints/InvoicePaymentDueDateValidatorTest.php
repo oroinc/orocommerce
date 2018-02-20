@@ -5,7 +5,6 @@ namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate;
 use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDateValidator;
-
 use Symfony\Component\Validator\Context\ExecutionContext;
 
 class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase

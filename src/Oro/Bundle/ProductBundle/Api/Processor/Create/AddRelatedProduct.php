@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor\Create;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\Label;
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;

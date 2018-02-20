@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InvoiceBundle\EventListener;
 
-use Symfony\Component\Form\FormFactory;
-
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Symfony\Component\Form\FormFactory;
 
 class TotalCalculateListener
 {
