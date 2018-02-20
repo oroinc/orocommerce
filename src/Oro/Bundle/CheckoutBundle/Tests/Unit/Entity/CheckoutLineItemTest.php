@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutLineItemTest extends \PHPUnit_Framework_TestCase
 {

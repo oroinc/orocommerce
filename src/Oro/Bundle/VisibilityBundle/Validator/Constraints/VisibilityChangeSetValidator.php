@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

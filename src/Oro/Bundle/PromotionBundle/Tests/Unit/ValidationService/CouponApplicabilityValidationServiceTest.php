@@ -4,13 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
-use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order as OrderStub;
-use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order as OrderStub;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
+use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCase

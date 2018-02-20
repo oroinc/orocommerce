@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-
 use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;

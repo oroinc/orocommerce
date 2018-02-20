@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class UniqueProductPricesValidator extends ConstraintValidator
 {

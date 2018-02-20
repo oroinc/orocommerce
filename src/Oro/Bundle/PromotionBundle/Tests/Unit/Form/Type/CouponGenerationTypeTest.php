@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
-
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 /**

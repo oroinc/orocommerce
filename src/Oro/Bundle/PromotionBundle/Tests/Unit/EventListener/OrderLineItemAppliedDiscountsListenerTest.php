@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
@@ -15,6 +13,7 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestCase
 {

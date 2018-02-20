@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;

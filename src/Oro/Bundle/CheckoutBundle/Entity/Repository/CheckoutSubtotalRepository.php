@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 
 class CheckoutSubtotalRepository extends EntityRepository

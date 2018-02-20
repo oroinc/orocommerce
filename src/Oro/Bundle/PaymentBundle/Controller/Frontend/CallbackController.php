@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\PaymentBundle\Controller\Frontend;
 
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
-use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 
 class CallbackController extends Controller
 {

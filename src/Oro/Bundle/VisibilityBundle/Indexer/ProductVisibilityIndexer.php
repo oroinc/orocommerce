@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Indexer;
 
-use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class ProductVisibilityIndexer
 {

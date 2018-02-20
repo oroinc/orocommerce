@@ -1,8 +1,8 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;

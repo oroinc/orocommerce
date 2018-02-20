@@ -3,9 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\MessageProcessor;
 
 use Doctrine\ORM\EntityRepository;
-
 use Liip\ImagineBundle\Binary\BinaryInterface;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
@@ -16,7 +14,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;

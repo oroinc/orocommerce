@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
-use Symfony\Component\Routing\RouterInterface;
-
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @group CommunityEdition

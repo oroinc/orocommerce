@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
-use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
+use Oro\Component\Config\CumulativeResourceInfo;
 
 class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
 {

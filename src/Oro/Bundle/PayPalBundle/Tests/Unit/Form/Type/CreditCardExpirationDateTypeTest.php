@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 
 class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 {

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option;
 
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 
 class ActionDependent implements OptionInterface
 {

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\RFPBundle\DependencyInjection\OroRFPExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroRFPExtensionTest extends ExtensionTestCase
 {

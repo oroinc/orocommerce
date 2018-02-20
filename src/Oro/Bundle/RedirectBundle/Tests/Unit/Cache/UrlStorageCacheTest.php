@@ -251,7 +251,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
-         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $oldStorage */
+        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $oldStorage */
         $oldStorage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
@@ -9,10 +12,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
-use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
 
 /**
  * Discards price modifications and free form inputs, if there are no permissions for those operations

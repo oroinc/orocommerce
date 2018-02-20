@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLengthValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CouponCodeLengthValidatorTest extends \PHPUnit_Framework_TestCase
 {

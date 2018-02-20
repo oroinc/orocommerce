@@ -4,9 +4,9 @@ namespace Oro\Component\Expression\Tests\Unit\QueryExpressionConverter;
 
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter;
-use Oro\Component\Expression\Node\ValueNode;
 
 class ValueNodeConverterTest extends \PHPUnit_Framework_TestCase
 {

@@ -5,18 +5,17 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Writer;
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\JobInstance;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
+use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
-use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
 
 class ProductPriceWriterTest extends WebTestCase
 {

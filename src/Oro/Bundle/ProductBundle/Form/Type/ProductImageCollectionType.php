@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
 class ProductImageCollectionType extends AbstractType
 {

@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
 class ItemRepository extends EntityRepository

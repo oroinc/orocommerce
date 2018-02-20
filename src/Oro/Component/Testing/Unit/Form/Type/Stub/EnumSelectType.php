@@ -2,9 +2,8 @@
 
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnumSelectType extends EntityType
 {

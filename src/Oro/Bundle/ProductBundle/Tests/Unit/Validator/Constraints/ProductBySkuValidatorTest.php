@@ -3,13 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
 {

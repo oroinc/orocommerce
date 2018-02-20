@@ -3,17 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class PriceListCollectionTypeTest extends FormIntegrationTestCase
 {

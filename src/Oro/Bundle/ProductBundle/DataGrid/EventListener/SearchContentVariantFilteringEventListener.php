@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
-use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
+use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;

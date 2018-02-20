@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framework_TestCase
 {

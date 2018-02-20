@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
+use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
+use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
-
-use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
-use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
-use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {

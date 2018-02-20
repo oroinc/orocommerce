@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 
 class UserIdToEmailTransformer implements DataTransformerInterface
 {

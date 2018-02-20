@@ -745,12 +745,13 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
             $this->getDelayedCaptureOptions()
         );
 
-        $this->gateway->expects($this->once())
-                      ->method('request')
-                      ->with('D', $requestOptions)
-                      ->willReturn(
-                          new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage])
-                      );
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->with('D', $requestOptions)
+            ->willReturn(
+                new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage])
+            );
 
         $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
 

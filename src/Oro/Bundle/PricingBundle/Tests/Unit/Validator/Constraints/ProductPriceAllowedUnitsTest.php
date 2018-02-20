@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits;
-use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator;
+use Symfony\Component\Validator\Constraint;
 
 class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
 {

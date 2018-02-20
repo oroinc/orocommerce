@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BrandSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

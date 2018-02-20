@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

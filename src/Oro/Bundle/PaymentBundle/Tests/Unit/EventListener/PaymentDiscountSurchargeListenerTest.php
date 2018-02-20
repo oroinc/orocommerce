@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener;
 use Oro\Bundle\PaymentBundle\Event\CollectSurchargeEvent;
+use Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener;
 
 class PaymentDiscountSurchargeListenerTest extends AbstractSurchargeListenerTest
 {

@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {

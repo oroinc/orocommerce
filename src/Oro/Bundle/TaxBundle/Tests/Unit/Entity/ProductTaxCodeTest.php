@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
 {

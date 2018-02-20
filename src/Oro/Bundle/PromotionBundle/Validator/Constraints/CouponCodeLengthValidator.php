@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Validator\Constraints;
 
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 /**
  * This validator used to check coupon length before insert it to DB

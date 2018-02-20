@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Entity\Language;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxLocalizationControllerTest extends WebTestCase
 {

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\ImportExport\DataConverter;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 
 class CouponDataConverter extends ConfigurableTableDataConverter
 {

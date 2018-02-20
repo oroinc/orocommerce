@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {

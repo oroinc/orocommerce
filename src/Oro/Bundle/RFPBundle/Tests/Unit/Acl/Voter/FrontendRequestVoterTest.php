@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Acl\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
-use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
-use Oro\Bundle\WorkflowBundle\Model\Workflow;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
 {

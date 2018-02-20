@@ -3,17 +3,15 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {

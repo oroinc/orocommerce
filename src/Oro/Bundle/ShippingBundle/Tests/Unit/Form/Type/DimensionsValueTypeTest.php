@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class DimensionsValueTypeTest extends FormIntegrationTestCase
 {

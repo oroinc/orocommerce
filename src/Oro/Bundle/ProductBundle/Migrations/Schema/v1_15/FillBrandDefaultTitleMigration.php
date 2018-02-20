@@ -5,12 +5,11 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_15;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 
 class FillBrandDefaultTitleMigration implements Migration, DatabasePlatformAwareInterface, OrderedMigrationInterface
 {

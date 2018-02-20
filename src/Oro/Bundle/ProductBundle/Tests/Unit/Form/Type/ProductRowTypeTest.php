@@ -2,23 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
 {

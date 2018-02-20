@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Command;
 
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 
 class ResizeAllProductImagesCommand extends ContainerAwareCommand
 {
@@ -24,7 +23,8 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
         $this
             ->setName(self::COMMAND_NAME)
             ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
-            ->setDescription(<<<DESC
+            ->setDescription(
+                <<<DESC
 Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command 
 is running to get images resized)
 DESC

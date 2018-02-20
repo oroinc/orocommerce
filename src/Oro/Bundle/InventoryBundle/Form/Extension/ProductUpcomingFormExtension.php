@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
+use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductUpcomingFormExtension extends AbstractTypeExtension
 {

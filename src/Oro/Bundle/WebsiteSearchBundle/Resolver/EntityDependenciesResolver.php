@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Resolver;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EntityDependenciesResolver implements EntityDependenciesResolverInterface

@@ -3,12 +3,11 @@
 namespace Oro\Bundle\SaleBundle\Tests\Performance\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
 
 class DisableQuotesProcessTest extends WebTestCase
 {

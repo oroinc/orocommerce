@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Handler;
 
-use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class VisibilityFormDataHandlerTest extends FormHandlerTestCase
 {

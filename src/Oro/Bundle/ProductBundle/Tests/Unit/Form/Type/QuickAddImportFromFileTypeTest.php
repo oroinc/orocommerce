@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 {

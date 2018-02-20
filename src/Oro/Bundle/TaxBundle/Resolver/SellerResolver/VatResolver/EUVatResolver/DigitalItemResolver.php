@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
 use Brick\Math\BigDecimal;
-
 use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebCatalogConfigChangeListenerTest extends \PHPUnit_Framework_TestCase
 {

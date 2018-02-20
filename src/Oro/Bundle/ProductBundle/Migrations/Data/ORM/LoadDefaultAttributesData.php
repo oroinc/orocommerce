@@ -5,9 +5,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class LoadDefaultAttributesData extends AbstractFixture implements

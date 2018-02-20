@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Symfony\Component\EventDispatcher\Event;
 
 class ExtractAddressOptionsEvent extends Event
 {

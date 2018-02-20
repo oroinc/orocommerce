@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\InvoiceBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\InvoiceBundle\DependencyInjection\OroInvoiceExtension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroInvoiceBundle extends Bundle
 {

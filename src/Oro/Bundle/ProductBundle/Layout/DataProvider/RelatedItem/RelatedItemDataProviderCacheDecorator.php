@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem;
 
 use Doctrine\Common\Cache\Cache;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class RelatedItemDataProviderCacheDecorator implements RelatedItemDataProviderInterface

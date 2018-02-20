@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Acl\Voter;
 
-use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PriceListVoterTest extends \PHPUnit_Framework_TestCase

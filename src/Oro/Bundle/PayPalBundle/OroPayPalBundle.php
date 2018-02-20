@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroPayPalBundle extends Bundle
 {

@@ -3,13 +3,11 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CMSBundle\Entity\Page;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

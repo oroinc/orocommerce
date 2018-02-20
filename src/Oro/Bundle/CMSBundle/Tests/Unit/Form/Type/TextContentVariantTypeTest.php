@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
+use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
-
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Symfony\Component\Form\PreloadedExtension;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase

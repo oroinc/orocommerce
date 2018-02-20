@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\SecurityBundle\Model\AclPermission;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\Role;
+use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractAddressACLTest extends WebTestCase
 {

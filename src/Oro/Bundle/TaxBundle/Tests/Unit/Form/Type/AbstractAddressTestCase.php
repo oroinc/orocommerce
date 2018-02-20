@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
+use Symfony\Component\Form\AbstractType;
 
 abstract class AbstractAddressTestCase extends AddressFormExtensionTestCase
 {

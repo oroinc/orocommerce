@@ -3,18 +3,16 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
+use Symfony\Component\HttpFoundation\Request;
 
 class CategoriesProductsProviderTest extends FrontendWebTestCase
 {

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
-use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle2\TestBundle2;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle3\TestBundle3;
+use Oro\Component\Config\CumulativeResourceManager;
 
 class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
 {

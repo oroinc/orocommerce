@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
+use Symfony\Component\Validator\Constraint;
 
 class NotEmptyConfigurableAttributesTest extends \PHPUnit_Framework_TestCase
 {

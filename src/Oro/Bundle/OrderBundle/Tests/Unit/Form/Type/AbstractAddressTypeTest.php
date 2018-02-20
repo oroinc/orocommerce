@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\ConstraintViolation;
-
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 
 abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
 {

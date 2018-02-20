@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit_Framework_TestCase

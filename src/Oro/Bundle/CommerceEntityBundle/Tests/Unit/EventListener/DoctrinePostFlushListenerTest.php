@@ -3,9 +3,8 @@
 namespace Oro\Bundle\CommerceEntityBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Util\ClassUtils;
-
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CommerceEntityBundle\EventListener\DoctrinePostFlushListener;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
 use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity1;

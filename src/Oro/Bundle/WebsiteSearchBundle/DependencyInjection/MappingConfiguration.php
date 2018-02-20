@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
+use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Oro\Bundle\SearchBundle\Query\Query;
 
 class MappingConfiguration implements ConfigurationInterface
 {

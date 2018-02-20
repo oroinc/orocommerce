@@ -3,10 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
@@ -14,6 +10,8 @@ use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateOrderTest extends \PHPUnit_Framework_TestCase
 {

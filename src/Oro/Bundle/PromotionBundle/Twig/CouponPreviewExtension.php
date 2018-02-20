@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CouponPreviewExtension extends \Twig_Extension
 {

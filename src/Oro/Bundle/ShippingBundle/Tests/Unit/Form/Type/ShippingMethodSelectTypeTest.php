@@ -7,8 +7,8 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
 {

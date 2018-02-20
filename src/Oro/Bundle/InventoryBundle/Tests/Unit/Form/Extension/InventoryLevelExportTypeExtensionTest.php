@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {

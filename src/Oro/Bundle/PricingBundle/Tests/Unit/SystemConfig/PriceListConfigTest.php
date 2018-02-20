@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceListConfigTest extends \PHPUnit_Framework_TestCase
 {

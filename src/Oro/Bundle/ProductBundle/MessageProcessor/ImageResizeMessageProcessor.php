@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\MessageProcessor;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
@@ -11,7 +10,6 @@ use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
-
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;

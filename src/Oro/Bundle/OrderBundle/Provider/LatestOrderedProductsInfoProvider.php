@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class LatestOrderedProductsInfoProvider
 {

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeExtension
 {

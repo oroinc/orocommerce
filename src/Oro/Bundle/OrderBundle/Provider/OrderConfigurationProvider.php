@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration as OrderConfiguration;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderConfigurationProvider implements OrderConfigurationProviderInterface
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\Intl\Intl;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Intl\Intl;
 
 class AjaxPriceListControllerTest extends WebTestCase
 {

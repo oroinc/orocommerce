@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;

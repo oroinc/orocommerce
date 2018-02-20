@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ProductVariantLinkTest extends \PHPUnit_Framework_TestCase
 {

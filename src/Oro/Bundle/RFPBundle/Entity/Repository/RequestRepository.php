@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class RequestRepository extends EntityRepository

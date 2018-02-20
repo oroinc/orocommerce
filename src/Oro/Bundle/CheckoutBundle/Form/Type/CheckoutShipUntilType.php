@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutShipUntilType extends AbstractType
 {

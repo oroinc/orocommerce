@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Layout\Decider;
 
+use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
+use Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
-use Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider;
 
 class RFPActionDeciderTest extends \PHPUnit_Framework_TestCase
 {

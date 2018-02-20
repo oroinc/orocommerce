@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\RFPBundle\Form\Type\OffersType;
-
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 

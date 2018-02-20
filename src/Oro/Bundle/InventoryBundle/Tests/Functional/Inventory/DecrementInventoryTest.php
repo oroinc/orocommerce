@@ -3,9 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
 
 use Doctrine\ORM\EntityManagerInterface;
-
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -17,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolationPerTest

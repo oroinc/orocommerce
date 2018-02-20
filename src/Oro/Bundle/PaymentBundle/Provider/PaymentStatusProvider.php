@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;

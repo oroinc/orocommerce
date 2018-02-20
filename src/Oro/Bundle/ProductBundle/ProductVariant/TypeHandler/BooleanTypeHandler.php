@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\TypeHandler;
 
-use Symfony\Component\Form\FormFactory;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
+use Symfony\Component\Form\FormFactory;
 
 class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
 {

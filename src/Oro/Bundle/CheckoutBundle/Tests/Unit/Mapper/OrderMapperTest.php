@@ -15,7 +15,6 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderMapperTest extends \PHPUnit_Framework_TestCase

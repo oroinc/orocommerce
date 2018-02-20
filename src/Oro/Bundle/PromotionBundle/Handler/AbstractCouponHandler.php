@@ -8,9 +8,8 @@ use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-
+use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

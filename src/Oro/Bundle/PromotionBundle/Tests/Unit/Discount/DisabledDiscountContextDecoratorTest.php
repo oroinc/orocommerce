@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountContextDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountLineItemDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
-use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountContextDecorator;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**

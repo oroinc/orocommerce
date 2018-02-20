@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class InventoryLevelTest extends \PHPUnit_Framework_TestCase
 {

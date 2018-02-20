@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 
 use Doctrine\Common\Collections\Criteria;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;

@@ -3,16 +3,14 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
 {

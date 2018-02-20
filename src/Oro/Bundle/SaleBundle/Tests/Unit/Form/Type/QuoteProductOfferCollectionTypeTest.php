@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
 class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
 {

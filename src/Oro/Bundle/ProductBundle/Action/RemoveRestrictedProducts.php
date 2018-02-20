@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
-use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
 use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class RemoveRestrictedProducts extends AbstractAction
 {

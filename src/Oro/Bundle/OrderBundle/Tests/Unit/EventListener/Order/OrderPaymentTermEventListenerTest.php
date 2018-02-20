@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormInterface;
 
 class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 {

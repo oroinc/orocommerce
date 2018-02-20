@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 use Oro\Bundle\CheckoutBundle\OroCheckoutBundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroCheckoutBundleTest extends \PHPUnit_Framework_TestCase
 {

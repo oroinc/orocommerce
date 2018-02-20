@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\Form;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\EventListener\InvoiceFormListener;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Form;
 
 class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
 {
