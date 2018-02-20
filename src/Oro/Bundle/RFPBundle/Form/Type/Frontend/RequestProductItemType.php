@@ -2,97 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType as BaseRequestProductItemType;
 
 /**
  * Form type for RequestProductItem on the frontend
  */
-class RequestProductItemType extends AbstractType
+class RequestProductItemType extends BaseRequestProductItemType
 {
     const BLOCK_PREFIX = 'oro_rfp_frontend_request_product_item';
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add(
-                'price',
-                PriceType::NAME,
-                [
-                    'currency_empty_value' => null,
-                    'required' => true,
-                    'label' => 'oro.rfp.requestproductitem.price.label',
-                    'validation_groups' => ['Optional'],
-                ]
-            )
-            ->add(
-                'productUnit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'label' => 'oro.product.productunit.entity_label',
-                    'required' => false,
-                    'compact' => $options['compact_units'],
-                ]
-            )
-            ->add(
-                'quantity',
-                QuantityType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'oro.rfp.requestproductitem.quantity.label',
-                    'default_data' => 1,
-                ]
-            );
-
-        // make value not empty
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                /** @var RequestProductItem $item */
-                $item = $event->getData();
-                if ($item) {
-                    $item->updatePrice();
-                }
-            }
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'data_class' => $this->dataClass,
-                'compact_units' => false,
-                'intention' => 'rfp_request_product_item',
-            ]
-        );
-    }
 
     /**
      * {@inheritdoc}
