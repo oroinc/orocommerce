@@ -251,14 +251,12 @@ datagrids:
                     data_name: quote.updatedAt
 
     frontend-quotes-grid:
-        acl_resource: oro_sale_quote_frontend_index
+        acl_resource: oro_sale_quote_frontend_view
         extended_entity_name: %oro_sale.entity.quote.class%
         options:
             frontend: true
             entityHint:        quotes
             entity_pagination: true
-            customerUserOwner:
-                customerUserColumn: customerUserName
         source:
             type:         orm
             query:
