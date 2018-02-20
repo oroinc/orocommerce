@@ -3,18 +3,16 @@
 namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
+use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
 {

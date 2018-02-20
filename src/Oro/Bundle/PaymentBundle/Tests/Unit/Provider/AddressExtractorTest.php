@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class AddressExtractorTest extends \PHPUnit_Framework_TestCase
 {

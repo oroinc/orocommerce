@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
+use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormView;
 

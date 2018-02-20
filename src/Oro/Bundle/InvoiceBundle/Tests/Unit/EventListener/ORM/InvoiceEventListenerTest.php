@@ -4,7 +4,6 @@ namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener;

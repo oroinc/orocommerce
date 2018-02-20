@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

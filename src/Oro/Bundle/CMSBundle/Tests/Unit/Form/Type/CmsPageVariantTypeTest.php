@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
-use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {

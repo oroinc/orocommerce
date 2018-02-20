@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;

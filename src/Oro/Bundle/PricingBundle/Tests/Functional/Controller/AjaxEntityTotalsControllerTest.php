@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxEntityTotalsControllerTest extends WebTestCase
 {

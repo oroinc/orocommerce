@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\EventDispatcher\Event;
 
 class BeforeSearchEvent extends Event
 {

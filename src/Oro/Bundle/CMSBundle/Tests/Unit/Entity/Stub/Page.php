@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub;
 
-use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\CMSBundle\Entity\Page as BasePage;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 
 class Page extends BasePage
 {

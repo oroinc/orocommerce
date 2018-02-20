@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
 

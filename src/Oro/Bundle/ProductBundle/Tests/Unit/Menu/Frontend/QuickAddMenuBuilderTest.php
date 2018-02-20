@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
 
-use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
 
 class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
 {

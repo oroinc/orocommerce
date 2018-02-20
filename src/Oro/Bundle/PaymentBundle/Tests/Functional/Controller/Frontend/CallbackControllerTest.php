@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CallbackControllerTest extends WebTestCase
 {

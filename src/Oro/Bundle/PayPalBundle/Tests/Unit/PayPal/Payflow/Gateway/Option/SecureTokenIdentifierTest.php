@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\SecureTokenIdentifier;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 class SecureTokenIdentifierTest extends AbstractOptionTest
 {

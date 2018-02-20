@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Doctrine\ORM\Query;
-
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;

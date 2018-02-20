@@ -3,12 +3,12 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\EventListener;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener;
 use Oro\Bundle\SEOBundle\Sitemap\Exception\LogicException;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;

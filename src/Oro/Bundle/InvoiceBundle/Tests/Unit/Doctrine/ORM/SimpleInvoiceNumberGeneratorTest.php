@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Doctrine\ORM;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class SimpleInvoiceNumberGeneratorTest extends \PHPUnit_Framework_TestCase
 {

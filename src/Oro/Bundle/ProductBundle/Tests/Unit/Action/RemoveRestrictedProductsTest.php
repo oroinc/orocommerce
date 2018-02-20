@@ -4,10 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Action;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
-
 use Oro\Bundle\ProductBundle\Action\RemoveRestrictedProducts;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,6 +11,8 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductHolderStub;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class RemoveRestrictedProductsTest extends \PHPUnit_Framework_TestCase
 {

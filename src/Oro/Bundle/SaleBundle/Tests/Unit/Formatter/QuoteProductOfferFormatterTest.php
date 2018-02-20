@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
 {

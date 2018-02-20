@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -164,11 +163,12 @@ class CategoryProvider
     }
 
     /**
+     * @param null|bool $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice()
+    public function getIncludeSubcategoriesChoice($defaultValue = null)
     {
-        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }
 
     /**

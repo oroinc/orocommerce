@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {

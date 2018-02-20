@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Symfony\Component\EventDispatcher\Event;
 
 class CheckoutEntityEvent extends Event
 {

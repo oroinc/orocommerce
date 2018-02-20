@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductTypeStub extends AbstractType
 {

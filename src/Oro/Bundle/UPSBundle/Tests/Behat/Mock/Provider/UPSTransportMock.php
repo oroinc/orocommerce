@@ -6,8 +6,8 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
-use Symfony\Component\Yaml\Parser;
 use Oro\Bundle\UPSBundle\Tests\Behat\Context\FeatureContext;
+use Symfony\Component\Yaml\Parser;
 
 class UPSTransportMock extends UPSTransport
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class DimensionsTransformer implements DataTransformerInterface
 {

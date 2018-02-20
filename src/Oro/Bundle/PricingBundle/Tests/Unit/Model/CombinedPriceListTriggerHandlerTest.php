@@ -3,9 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\EntityManagerInterface;
-
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -15,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 {

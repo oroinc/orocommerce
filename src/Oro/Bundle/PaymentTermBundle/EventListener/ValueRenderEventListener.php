@@ -3,12 +3,10 @@
 namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 

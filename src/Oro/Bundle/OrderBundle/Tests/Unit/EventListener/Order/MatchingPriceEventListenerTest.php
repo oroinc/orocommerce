@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormInterface;
 
 class MatchingPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,13 +3,11 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Oro\Component\Testing\Unit\LoadTestCaseDataTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Unit\LoadTestCaseDataTrait;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * @dbIsolationPerTest

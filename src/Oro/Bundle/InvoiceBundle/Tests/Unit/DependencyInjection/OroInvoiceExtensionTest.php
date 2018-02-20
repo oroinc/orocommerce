@@ -1,8 +1,8 @@
 <?php
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\InvoiceBundle\DependencyInjection\OroInvoiceExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroInvoiceExtensionTest extends ExtensionTestCase
 {

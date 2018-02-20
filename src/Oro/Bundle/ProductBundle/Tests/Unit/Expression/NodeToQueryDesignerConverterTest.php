@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
 use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
-use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\ColumnInformationProviderInterface;
+use Oro\Component\Expression\Node\NodeInterface;
 
 class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
 {

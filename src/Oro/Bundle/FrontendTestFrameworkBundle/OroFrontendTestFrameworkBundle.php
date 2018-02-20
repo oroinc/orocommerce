@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\FrontendTestFrameworkBundle;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 class OroFrontendTestFrameworkBundle extends Bundle
 {

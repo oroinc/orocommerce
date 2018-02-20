@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class FrontendProductListModifier
 {

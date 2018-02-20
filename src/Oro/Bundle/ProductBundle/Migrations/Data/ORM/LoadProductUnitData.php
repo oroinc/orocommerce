@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class LoadProductUnitData extends AbstractFixture

@@ -3,12 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Symfony\Component\HttpFoundation\Response;
 
 class PriceListSetActiveOperationTest extends ActionTestCase
 {

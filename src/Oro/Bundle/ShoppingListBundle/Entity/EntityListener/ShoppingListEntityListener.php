@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\EntityListener;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\OroShoppingListExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
 class ShoppingListEntityListener

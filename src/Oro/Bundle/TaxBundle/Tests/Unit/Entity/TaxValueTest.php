@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class TaxValueTest extends \PHPUnit_Framework_TestCase
 {

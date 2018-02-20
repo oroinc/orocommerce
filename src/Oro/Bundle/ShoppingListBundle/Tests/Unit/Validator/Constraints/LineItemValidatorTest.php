@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\ExecutionContextInterface;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
+use Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\OrderBundlePass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-
-use Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\OrderBundlePass;
 
 class OrderBundlePassTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
 {

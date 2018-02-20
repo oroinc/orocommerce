@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 class CategoryUpcomingFormExtension extends AbstractTypeExtension
 {
@@ -41,6 +40,7 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
                             'oro.inventory.is_upcoming.choice.false' => 0,
                             'oro.inventory.is_upcoming.choice.true' => 1,
                         ],
+                        // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                         'choices_as_values' => true,
                     ],
                 ]

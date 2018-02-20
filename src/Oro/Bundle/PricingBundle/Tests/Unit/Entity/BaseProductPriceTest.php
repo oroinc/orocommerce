@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class BaseProductPriceTest extends \PHPUnit_Framework_TestCase
 {

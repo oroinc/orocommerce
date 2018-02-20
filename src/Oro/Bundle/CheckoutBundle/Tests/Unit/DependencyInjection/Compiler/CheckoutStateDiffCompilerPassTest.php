@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection\Compiler;
 
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutStateDiffCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutStateDiffCompilerPass;
 
 class CheckoutStateDiffCompilerPassTest extends \PHPUnit_Framework_TestCase
 {

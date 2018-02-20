@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\ApplicationBundle\Repository;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
-
-use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
-use Oro\Bundle\ApplicationBundle\Model\ModelInterface;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
+use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
+use Oro\Bundle\ApplicationBundle\Model\ModelInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ModelRepository implements ModelRepositoryInterface
 {

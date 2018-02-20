@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 class PriceTypeSelectorType extends AbstractType
 {

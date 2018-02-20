@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 
 class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
 {

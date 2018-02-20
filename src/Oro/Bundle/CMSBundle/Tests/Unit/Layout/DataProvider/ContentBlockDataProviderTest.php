@@ -5,15 +5,13 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Psr\Log\LoggerInterface;
 
 class ContentBlockDataProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 {

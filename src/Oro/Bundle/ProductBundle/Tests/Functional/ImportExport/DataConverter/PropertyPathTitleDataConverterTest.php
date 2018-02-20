@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PropertyPathTitleDataConverterTest extends WebTestCase
 {

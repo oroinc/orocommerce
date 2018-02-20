@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
+use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
-use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
-use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
-use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
-use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {

@@ -3,14 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\ORM\PersistentCollection;
-
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class PriceForProductUnitExistsValidator extends ConstraintValidator
 {

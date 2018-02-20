@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit_Framework_TestCase
 {

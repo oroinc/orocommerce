@@ -3,10 +3,11 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class OrderLineItemTest extends \PHPUnit_Framework_TestCase
@@ -22,6 +23,7 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
             ['product', new Product()],
             ['parentProduct', new Product()],
             ['productSku', '1234'],
+            ['productName', 'name', ''],
             ['freeFormProduct', 'Services'],
             ['quantity', 42],
             ['productUnit', new ProductUnit()],
@@ -98,13 +100,22 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($entity->getProductSku());
         $this->assertEmpty($entity->getProductUnitCode());
 
-        $entity->setProduct((new Product())->setSku('SKU'));
+        $productName = new LocalizedFallbackValue();
+        $productName->setString('Product Test Name');
+
+        $product = new Product();
+        $product->setSku('SKU')
+            ->addName($productName)
+            ->prePersist();
+
+        $entity->setProduct($product);
         $entity->setProductUnit((new ProductUnit())->setCode('kg'));
 
         $entity->preSave();
         $this->assertEquals(84, $entity->getValue());
         $this->assertEquals('EUR', $entity->getCurrency());
         $this->assertEquals('SKU', $entity->getProductSku());
+        $this->assertEquals('Product Test Name', $entity->getProductName());
         $this->assertEquals('kg', $entity->getProductUnitCode());
     }
 

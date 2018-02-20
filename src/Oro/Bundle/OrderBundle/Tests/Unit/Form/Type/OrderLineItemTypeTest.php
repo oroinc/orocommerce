@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
@@ -13,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
+use Symfony\Component\Form\PreloadedExtension;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {

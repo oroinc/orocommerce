@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
 use Oro\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
+use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
 
 /**
  * TODO: remove this listener after stable release

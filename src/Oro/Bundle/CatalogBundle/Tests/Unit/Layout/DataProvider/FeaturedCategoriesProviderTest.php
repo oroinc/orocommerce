@@ -3,16 +3,14 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FeaturedCategoriesProviderTest extends \PHPUnit_Framework_TestCase
 {

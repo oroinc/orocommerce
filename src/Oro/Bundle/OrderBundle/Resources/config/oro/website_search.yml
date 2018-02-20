@@ -2,5 +2,5 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
       -
-        name: ordered_at_by_CUSTOMER_ID
+        name: ordered_at_by_CUSTOMER_USER_ID
         type: datetime

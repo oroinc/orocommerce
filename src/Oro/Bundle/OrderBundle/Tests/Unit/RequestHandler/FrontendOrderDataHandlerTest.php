@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\UserBundle\Entity\User;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class AbstractLineItemController extends Controller

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Generator;
 
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 
 class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
 {

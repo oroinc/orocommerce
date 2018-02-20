@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class RelatedItemSecurityCheckTest extends GetProcessorTestCase
 {

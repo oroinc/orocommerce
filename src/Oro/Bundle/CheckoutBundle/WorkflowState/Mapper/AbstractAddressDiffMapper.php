@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInterface

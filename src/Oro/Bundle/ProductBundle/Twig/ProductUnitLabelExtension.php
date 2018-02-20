@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductUnitLabelExtension extends \Twig_Extension
 {

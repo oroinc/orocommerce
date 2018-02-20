@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions as BaseLoadTaxJurisdictions;
 

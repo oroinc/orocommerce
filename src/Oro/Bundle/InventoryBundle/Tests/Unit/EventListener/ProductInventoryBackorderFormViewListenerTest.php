@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\InventoryBundle\EventListener\ProductBackOrderFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTestCase
 {

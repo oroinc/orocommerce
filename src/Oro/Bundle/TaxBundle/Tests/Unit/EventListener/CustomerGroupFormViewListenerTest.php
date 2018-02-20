@@ -3,12 +3,10 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\CustomerGroupFormViewListener;
+use Symfony\Component\Form\FormView;
 
 class CustomerGroupFormViewListenerTest extends AbstractFormViewListenerTest
 {

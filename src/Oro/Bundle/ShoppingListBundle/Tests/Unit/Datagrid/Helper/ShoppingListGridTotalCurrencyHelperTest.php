@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Helper;
 
-use Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper;
 use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper;
 
 class ShoppingListGridTotalCurrencyHelperTest extends \PHPUnit_Framework_TestCase
 {

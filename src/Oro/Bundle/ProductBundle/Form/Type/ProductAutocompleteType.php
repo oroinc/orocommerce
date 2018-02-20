@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductAutocompleteType extends AbstractProductAwareType
 {

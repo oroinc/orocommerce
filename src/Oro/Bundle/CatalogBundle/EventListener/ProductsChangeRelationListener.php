@@ -4,11 +4,9 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductsChangeRelationListener
 {

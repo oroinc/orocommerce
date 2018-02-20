@@ -7,7 +7,6 @@ use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;

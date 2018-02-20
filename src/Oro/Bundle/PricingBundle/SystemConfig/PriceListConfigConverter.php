@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\SystemConfig;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListConfigConverter
 {

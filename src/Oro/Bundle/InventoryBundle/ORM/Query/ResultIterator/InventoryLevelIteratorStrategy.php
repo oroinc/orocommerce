@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator;
 
 use Doctrine\ORM\Query;
-
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierIterationStrategy;
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\SelectIdentifierWalker as InventoryWalker;

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListToProductDuplicator
 {

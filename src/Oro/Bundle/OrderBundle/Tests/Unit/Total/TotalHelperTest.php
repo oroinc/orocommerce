@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Total;
 
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
@@ -9,7 +10,6 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 
 class TotalHelperTest extends \PHPUnit_Framework_TestCase
 {

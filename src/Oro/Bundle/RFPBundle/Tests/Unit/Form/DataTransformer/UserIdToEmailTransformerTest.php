@@ -3,9 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
 {

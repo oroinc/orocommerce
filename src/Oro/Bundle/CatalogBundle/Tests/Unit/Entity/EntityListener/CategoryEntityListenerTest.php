@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;

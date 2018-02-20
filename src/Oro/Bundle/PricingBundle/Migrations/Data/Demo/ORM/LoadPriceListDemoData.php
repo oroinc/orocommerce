@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInterface
 {

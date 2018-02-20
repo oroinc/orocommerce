@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
-use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\Types\Type;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Psr\Log\LoggerInterface;
 
 /**
  * This class generates and inserts coupon codes to database

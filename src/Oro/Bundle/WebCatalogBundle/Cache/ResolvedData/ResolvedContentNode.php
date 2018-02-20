@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Cache\ResolvedData;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ResolvedContentNode implements ContentNodeInterface

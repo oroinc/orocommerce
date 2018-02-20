@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightType;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {

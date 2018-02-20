@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class TotalsProviderTest extends \PHPUnit_Framework_TestCase
 {

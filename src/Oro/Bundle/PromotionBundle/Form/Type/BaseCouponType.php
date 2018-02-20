@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;

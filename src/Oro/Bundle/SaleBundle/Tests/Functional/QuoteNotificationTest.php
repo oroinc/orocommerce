@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional;
 
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 class QuoteNotificationTest extends WebTestCase
 {

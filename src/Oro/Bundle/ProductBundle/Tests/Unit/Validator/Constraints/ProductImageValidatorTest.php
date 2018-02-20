@@ -3,18 +3,15 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Prophecy\Argument;
-
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
+use Prophecy\Argument;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
 {

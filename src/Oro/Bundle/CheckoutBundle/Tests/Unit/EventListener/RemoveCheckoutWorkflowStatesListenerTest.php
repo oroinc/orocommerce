@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit_Framework_TestCase
 {

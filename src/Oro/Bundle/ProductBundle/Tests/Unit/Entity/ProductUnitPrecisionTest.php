@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\Unit\EntityTestCase;
 
 class ProductUnitPrecisionTest extends EntityTestCase
 {

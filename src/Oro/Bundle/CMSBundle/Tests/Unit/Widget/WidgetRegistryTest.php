@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Widget;
 
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\CMSBundle\Widget\WidgetInterface;
 use Oro\Bundle\CMSBundle\Widget\WidgetRegistry;
+use Psr\Log\LoggerInterface;
 
 class WidgetRegistryTest extends \PHPUnit_Framework_TestCase
 {

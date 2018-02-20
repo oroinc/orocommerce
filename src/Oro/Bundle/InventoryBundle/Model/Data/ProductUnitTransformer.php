@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Model\Data;
 
 use Doctrine\Common\Inflector\Inflector;
-
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitTransformer

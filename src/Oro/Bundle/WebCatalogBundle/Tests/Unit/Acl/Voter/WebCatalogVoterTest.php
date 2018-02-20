@@ -5,8 +5,8 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Acl\Voter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class WebCatalogVoterTest extends \PHPUnit_Framework_TestCase

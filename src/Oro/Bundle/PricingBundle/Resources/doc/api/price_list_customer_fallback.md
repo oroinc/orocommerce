@@ -101,7 +101,7 @@ Delete a collection of price list customer fallbacks. A collection may contain a
 
 ### fallback
 
-Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallback to the current customer only
+Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallback to the current customer only.
 
 #### create
 
@@ -111,14 +111,13 @@ Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallb
 
 ### customer
 
-The customer this fallback is tied to
+The customer this fallback is tied to.
 
 #### create
 
 {@inheritdoc}
 
 **The required field**
-
 
 ## SUBRESOURCES
 
@@ -126,8 +125,8 @@ The customer this fallback is tied to
 
 #### get_subresource
 
-Get full information about the customer tied to the current price list customer fallback
+Get full information about the customer tied to the current price list customer fallback.
 
 #### get_relationship
 
-Retrieve the ID of the customer tied to the current price list customer fallback
+Retrieve the ID of the customer tied to the current price list customer fallback.

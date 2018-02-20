@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceRuleEntityListenerTest extends WebTestCase
 {

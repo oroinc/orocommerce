@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PricingBundle\EventListener\ProductFormListener;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\EntityTrait;

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
+use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\PricesStrategyPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-
-use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\PricesStrategyPass;
 
 class PricesStrategyPassTest extends \PHPUnit_Framework_TestCase
 {

@@ -4,10 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemAclCheck;
-
 use Oro\Component\EntitySerializer\DoctrineHelper;
 
 class RelatedItemAclCheckTest extends \PHPUnit_Framework_TestCase

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 

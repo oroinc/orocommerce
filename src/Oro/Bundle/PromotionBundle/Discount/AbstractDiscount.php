@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;

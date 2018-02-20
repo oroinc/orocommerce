@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CategoryExtension extends \Twig_Extension
 {

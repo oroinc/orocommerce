@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ShoppingListLineItemsDataProvider
 {

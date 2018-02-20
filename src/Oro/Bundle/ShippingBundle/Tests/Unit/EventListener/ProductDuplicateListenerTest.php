@@ -3,13 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
 
 class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 {

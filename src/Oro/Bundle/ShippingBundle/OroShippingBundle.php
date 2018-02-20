@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle;
 
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
 use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass;
 use Oro\Bundle\ShippingBundle\DependencyInjection\OroShippingExtension;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroShippingBundle extends Bundle
 {

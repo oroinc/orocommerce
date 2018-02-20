@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints\Stub\ProductStub;
+use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimit;
+use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator;
+use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-
-use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
-use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimit;
-use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints\Stub\ProductStub;
 
 class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCase
 {

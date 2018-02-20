@@ -2,13 +2,10 @@
 
 namespace Oro\Bundle\SearchBundle\Tests\Unit\Datagrid\Filter;
 
-use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;
-use Doctrine\Common\Collections\Expr\Value;
 use Doctrine\Common\Collections\Expr\Comparison as CommonComparision;
-
-use Symfony\Component\Form\FormFactoryInterface;
-
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Value;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
@@ -17,6 +14,7 @@ use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

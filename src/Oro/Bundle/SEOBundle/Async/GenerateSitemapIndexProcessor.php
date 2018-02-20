@@ -10,7 +10,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
-
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicSubscriberInterface

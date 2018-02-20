@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ProductLineItemTest extends \PHPUnit_Framework_TestCase
 {

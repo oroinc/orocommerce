@@ -4,13 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCase
 {

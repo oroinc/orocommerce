@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 
 class ProductSearchQueryRestrictionEventListener
 {

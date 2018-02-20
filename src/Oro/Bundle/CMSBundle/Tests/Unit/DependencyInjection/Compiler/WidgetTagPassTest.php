@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection\Compiler;
 
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\WidgetTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-
-use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\WidgetTagPass;
 
 class WidgetTagPassTest extends \PHPUnit_Framework_TestCase
 {

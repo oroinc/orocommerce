@@ -3,14 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
-use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductManagerTest extends \PHPUnit_Framework_TestCase
 {

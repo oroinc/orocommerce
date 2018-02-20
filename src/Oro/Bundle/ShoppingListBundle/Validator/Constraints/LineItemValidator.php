@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

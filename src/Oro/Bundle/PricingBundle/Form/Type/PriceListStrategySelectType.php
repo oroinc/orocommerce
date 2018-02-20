@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 
 class PriceListStrategySelectType extends AbstractType
 {

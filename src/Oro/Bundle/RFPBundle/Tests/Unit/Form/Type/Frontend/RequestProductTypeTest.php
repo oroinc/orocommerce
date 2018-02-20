@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class RequestProductTypeTest extends AbstractTest
 {

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
 {

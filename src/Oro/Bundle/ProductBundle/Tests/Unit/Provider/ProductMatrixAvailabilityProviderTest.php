@@ -5,8 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Provider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductMatrixAvailabilityProviderTest extends \PHPUnit_Framework_TestCase

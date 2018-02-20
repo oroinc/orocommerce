@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 {

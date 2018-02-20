@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\VisibilityResolved;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CustomerCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {

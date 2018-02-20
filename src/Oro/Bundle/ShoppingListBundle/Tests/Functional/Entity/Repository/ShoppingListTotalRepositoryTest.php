@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
@@ -11,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListTotalRepositoryTest extends WebTestCase
 {

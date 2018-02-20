@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ProductTaxCodeControllerTest extends WebTestCase
 {

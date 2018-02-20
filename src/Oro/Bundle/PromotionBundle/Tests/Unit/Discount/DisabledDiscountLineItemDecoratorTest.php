@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
-use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountLineItemDecorator;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

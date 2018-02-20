@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 

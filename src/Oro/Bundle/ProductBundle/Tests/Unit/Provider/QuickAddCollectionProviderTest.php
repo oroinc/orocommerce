@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuickAddCollectionProviderTest extends \PHPUnit_Framework_TestCase
 {

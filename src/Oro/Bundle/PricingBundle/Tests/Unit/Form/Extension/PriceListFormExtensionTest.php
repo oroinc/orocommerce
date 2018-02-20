@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\PriceListSelectWithPriorityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class PriceListFormExtensionTest extends FormIntegrationTestCase
 {

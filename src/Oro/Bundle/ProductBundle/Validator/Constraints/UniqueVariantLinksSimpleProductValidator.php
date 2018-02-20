@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
 {

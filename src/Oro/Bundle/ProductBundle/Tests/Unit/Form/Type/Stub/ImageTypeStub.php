@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 
 class ImageTypeStub extends AbstractType
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
-use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-
+use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EntityDependenciesResolverTest extends \PHPUnit_Framework_TestCase

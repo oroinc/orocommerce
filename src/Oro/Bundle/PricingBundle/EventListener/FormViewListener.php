@@ -3,16 +3,14 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Component\Exception\UnexpectedTypeException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FormViewListener
 {

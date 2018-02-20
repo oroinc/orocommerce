@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
+use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /** This class is used to transform scalar value from csv file to fallback value */

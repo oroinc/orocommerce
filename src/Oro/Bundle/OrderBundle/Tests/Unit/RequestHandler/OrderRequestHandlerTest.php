@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Request;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {

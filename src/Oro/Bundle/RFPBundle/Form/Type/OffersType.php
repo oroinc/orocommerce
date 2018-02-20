@@ -27,6 +27,7 @@ class OffersType extends AbstractType
             [
                 'mapped' => false,
                 'expanded' => true,
+                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                 'choices_as_values' => true,
                 self::OFFERS_OPTION => [],
             ]

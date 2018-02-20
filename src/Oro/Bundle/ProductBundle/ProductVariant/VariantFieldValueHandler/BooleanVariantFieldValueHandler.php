@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
 {

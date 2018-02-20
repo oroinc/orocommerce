@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
 
 class CheckoutStepsProviderTest extends \PHPUnit_Framework_TestCase
 {

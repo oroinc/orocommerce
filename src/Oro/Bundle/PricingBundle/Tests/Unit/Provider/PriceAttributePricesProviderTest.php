@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;

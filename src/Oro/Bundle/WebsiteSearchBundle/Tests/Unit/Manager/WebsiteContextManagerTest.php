@@ -7,7 +7,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteContextManagerTest extends \PHPUnit_Framework_TestCase

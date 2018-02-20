@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
-
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ConfigurableProductProvider

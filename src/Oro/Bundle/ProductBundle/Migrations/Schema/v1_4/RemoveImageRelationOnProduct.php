@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;

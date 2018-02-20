@@ -3,10 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CheckoutLineItemsConverter
 {

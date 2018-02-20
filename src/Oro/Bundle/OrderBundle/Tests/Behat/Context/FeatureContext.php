@@ -4,14 +4,12 @@ namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FeatureToggleBundle\Configuration\ConfigurationManager as FeatureConfigurationManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
+use Oro\Bundle\FeatureToggleBundle\Configuration\ConfigurationManager as FeatureConfigurationManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;

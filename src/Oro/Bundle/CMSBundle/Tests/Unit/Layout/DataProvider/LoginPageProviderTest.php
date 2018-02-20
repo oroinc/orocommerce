@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider;
 

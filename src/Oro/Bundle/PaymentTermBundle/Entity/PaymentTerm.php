@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;

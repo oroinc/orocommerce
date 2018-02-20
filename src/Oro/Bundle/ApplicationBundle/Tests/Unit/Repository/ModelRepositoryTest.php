@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
 
-use Doctrine\ORM\EntityNotFoundException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
-use Oro\Bundle\ApplicationBundle\Repository\ModelRepository;
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
+use Oro\Bundle\ApplicationBundle\Repository\ModelRepository;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestMultiEntityModel;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
 {

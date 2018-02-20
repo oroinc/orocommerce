@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {

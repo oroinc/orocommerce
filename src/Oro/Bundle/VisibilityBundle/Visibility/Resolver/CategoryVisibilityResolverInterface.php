@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 interface CategoryVisibilityResolverInterface
 {

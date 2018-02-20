@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class RelatedItemsProductEditListener
 {

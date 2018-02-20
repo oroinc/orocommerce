@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 class CheckoutGridCustomerUserNameListener
 {
