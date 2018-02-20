@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigChangeSet;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\OrderBundle\EventListener\PreviouslyPurchasedFeatureToggleListener;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class RemoveCheckoutWorkflowStatesListener
 {

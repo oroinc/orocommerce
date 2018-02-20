@@ -3,23 +3,23 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
-use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
-use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
-use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
-use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\FilterBundle\Grid\Extension\Configuration;
 use Oro\Bundle\ImapBundle\Connector\Search\SearchQuery;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCase

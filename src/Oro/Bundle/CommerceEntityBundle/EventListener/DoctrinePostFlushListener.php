@@ -3,10 +3,9 @@
 namespace Oro\Bundle\CommerceEntityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 
 class DoctrinePostFlushListener implements OptionalListenerInterface
 {

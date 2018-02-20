@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\UrlValidator;
-
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Url;
 
 class UrlTest extends \PHPUnit_Framework_TestCase
 {

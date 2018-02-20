@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactory;
-use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestEntity;
+use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 
 class ModelFactoryTest extends \PHPUnit_Framework_TestCase
 {

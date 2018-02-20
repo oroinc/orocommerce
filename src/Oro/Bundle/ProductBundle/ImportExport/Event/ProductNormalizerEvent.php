@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\EventDispatcher\Event;
 
 class ProductNormalizerEvent extends Event
 {

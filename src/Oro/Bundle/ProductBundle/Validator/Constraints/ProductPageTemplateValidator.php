@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 
 class ProductPageTemplateValidator extends ConstraintValidator
 {

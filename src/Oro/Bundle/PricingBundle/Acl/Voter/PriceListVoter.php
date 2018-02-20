@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Acl\Voter;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PriceListVoter extends AbstractEntityVoter

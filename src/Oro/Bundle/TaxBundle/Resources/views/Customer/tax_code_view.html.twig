@@ -2,15 +2,9 @@
 
 {% set taxCode %}
     {% if entity %}
-        {% set isGranted = is_granted('VIEW', entity) %}
-        {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': entity.id}) }}">{% endif %}
-        {{ entity.code }}
-        {% if isGranted %}</a>{% endif %}
+        {{ UI.entityViewLink(entity, entity.code, 'oro_tax_customer_tax_code_view') }}
     {% elseif groupCustomerTaxCode %}
-        {% set isGranted = is_granted('VIEW', groupCustomerTaxCode) %}
-        {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': groupCustomerTaxCode.id}) }}">{% endif %}
-        {{ groupCustomerTaxCode.code }}
-        {% if isGranted %}</a>{% endif %}
+        {{ UI.entityViewLink(groupCustomerTaxCode, groupCustomerTaxCode.code, 'oro_tax_customer_tax_code_view') }}
         ({{ 'oro.tax.customertaxcode.customer_group.view.label'|trans }})
     {% endif %}
 {% endset %}

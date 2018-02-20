@@ -2,6 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,19 +21,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
-use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
-use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

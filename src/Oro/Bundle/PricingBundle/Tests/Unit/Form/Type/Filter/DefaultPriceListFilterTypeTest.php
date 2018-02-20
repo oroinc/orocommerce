@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\ChoiceFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -67,12 +66,12 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     }
 
     /**
-     * @dataProvider setDefaultOptionsDataProvider
+     * @dataProvider configureOptionsDataProvider
      *
      * @param array $parentDefaultOptions
      * @param array $requiredOptions
      */
-    public function testSetDefaultOptions(array $parentDefaultOptions, array $requiredOptions = array())
+    public function testConfigureOptions(array $parentDefaultOptions, array $requiredOptions = array())
     {
         $defaultOptions = [
             'field_options' => [
@@ -94,16 +93,16 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
             ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
             ->willReturnSelf();
 
-        $this->getTestFormType()->setDefaultOptions($resolver);
+        $this->getTestFormType()->configureOptions($resolver);
     }
 
 
     /**
-     * @dataProvider setDefaultOptionsDataProvider
+     * @dataProvider configureOptionsDataProvider
      *
      * @param array $parentDefaultOptions
      */
-    public function testSetDefaultOptionsWhenEntityNotSharded(array $parentDefaultOptions)
+    public function testConfigureOptionsWhenEntityNotSharded(array $parentDefaultOptions)
     {
         $defaultOptions = [
             'field_options' => [
@@ -126,13 +125,13 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
             ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
             ->willReturnSelf();
 
-        $this->getTestFormType()->setDefaultOptions($resolver);
+        $this->getTestFormType()->configureOptions($resolver);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptionsDataProvider()
+    public function configureOptionsDataProvider()
     {
         return [
             [

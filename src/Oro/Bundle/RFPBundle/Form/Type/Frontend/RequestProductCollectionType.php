@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class RequestProductCollectionType extends AbstractType
 {

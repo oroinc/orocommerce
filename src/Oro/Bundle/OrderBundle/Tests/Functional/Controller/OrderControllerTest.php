@@ -1,8 +1,8 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
@@ -235,6 +235,9 @@ class OrderControllerTest extends WebTestCase
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
 
+        $lineItem = $order->getLineItems()[0];
+        static::assertSame($product->getDenormalizedDefaultName(), $lineItem->getProductName());
+
         return $order->getId();
     }
 
@@ -310,6 +313,18 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
         $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
+
+        /** @var Order $order */
+        $order = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroOrderBundle:Order')
+            ->getRepository('OroOrderBundle:Order')
+            ->find($id);
+
+        static::assertSame(
+            $order->getLineItems()[1]->getProduct()->getDenormalizedDefaultName(),
+            $order->getLineItems()[1]->getProductName()
+        );
     }
 
     /**

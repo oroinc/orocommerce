@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListToProductRepositoryTest extends WebTestCase
 {
@@ -123,7 +124,10 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
         $em->flush();
 
-        $this->repository->deleteManualRelations($priceList, $product2);
+        $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
+        $this->assertCount(3, $actual);
+
+        $this->repository->deleteManualRelations($priceList, [$product2]);
         /** @var PriceListToProduct[] $actual */
         $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
         $this->assertCount(2, $actual);
@@ -166,6 +170,29 @@ class PriceListToProductRepositoryTest extends WebTestCase
         foreach ($newRelations as $newRelation) {
             $this->assertTrue($newRelation->isManual());
         }
+    }
+
+    public function testCreateRelation()
+    {
+        $this->assertCount(16, $this->repository->findAll());
+
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $priceList = new PriceList();
+        $priceList->setName('test price list');
+        $em->persist($priceList);
+        $em->flush();
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_5);
+
+        $this->assertEquals(1, $this->repository->createRelation($priceList, $product));
+        $this->assertCount(17, $this->repository->findAll());
+
+        // try to add relation with duplicated values
+        $this->assertEquals(0, $this->repository->createRelation($priceList, $product));
+        $this->assertCount(17, $this->repository->findAll());
     }
 
     /**

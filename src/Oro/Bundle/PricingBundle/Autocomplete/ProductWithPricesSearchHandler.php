@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
@@ -11,7 +11,6 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
 class ProductWithPricesSearchHandler implements SearchHandlerInterface

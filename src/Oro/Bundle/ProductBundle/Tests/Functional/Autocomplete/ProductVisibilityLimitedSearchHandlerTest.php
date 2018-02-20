@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * @dbIsolationPerTest

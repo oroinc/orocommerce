@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Mailer;
 
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
 
 class ProcessorTest extends AbstractProcessorTest
 {

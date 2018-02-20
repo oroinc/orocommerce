@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
@@ -68,17 +69,24 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit_Framework_TestCase
         $this->objectManager->expects($this->once())->method('persist');
         $this->objectManager->expects($this->once())->method('flush');
 
+        $combinedPriceList1 = (new CombinedPriceList())->setName('price list 1');
+        $combinedPriceList2 = (new CombinedPriceList())->setName('price list 2');
         $this->subtotalProvider->expects($this->exactly(3))
             ->method('getSubtotalByCurrency')
             ->willReturnMap([
-                [$checkout, self::USD, (new Subtotal())->setCurrency(self::USD)->setAmount(100)],
-                [$checkout, self::EUR, (new Subtotal())->setCurrency(self::EUR)->setAmount(80)],
+                [$checkout, self::USD, (new Subtotal())
+                    ->setCurrency(self::USD)->setAmount(100)->setCombinedPriceList($combinedPriceList1)],
+                [$checkout, self::EUR, (new Subtotal())
+                    ->setCurrency(self::EUR)->setAmount(80)->setCombinedPriceList($combinedPriceList2)],
                 [$checkout, self::CAD, (new Subtotal())->setCurrency(self::CAD)->setAmount(120)],
             ]);
 
         $this->checkoutSubtotalUpdater->recalculateCheckoutSubtotals($checkout, true);
         $this->assertSame(100, $totalUsd->getSubtotal()->getAmount());
         $this->assertSame(80, $totalEur->getSubtotal()->getAmount());
+
+        $this->assertSame('price list 1', $totalUsd->getSubtotal()->getCombinedPriceList()->getName());
+        $this->assertSame('price list 2', $totalEur->getSubtotal()->getCombinedPriceList()->getName());
     }
 
     public function testRecalculateInvalidSubtotals()

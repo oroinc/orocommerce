@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\EntityFilter;
-use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 class PriceListsFilter extends EntityFilter
 {

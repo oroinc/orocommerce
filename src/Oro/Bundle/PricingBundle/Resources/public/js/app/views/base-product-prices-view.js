@@ -184,7 +184,7 @@ define(function(require) {
 
             if (!price) {
                 if (changeQuantity) {
-                    price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
+                    price = _.last(this.prices[unit]) || null;// sorted by quantity, get smallest
                 } else {
                     price = PricesHelper.findPrice(this.prices, unit, quantity);
                 }

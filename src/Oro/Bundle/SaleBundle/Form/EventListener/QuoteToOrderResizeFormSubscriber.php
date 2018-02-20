@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class QuoteToOrderResizeFormSubscriber extends ResizeFormListener
 {

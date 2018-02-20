@@ -3,13 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Model\Builder;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
-
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddRowCollectionBuilderTest extends WebTestCase
 {

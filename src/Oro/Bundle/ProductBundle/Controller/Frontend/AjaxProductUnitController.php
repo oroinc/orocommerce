@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {

@@ -4,9 +4,7 @@ namespace Oro\Component\Tree\Tests\Unit\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\UIBundle\Model\TreeItem;
-
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 use Oro\Component\Tree\Tests\Unit\Stubs\EntityStub;
 use Oro\Component\Tree\Tests\Unit\Stubs\Handler\TreeHandlerStub;

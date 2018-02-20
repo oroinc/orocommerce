@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\AbstractType;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CatalogVisibilityType extends AbstractType
 {

@@ -89,7 +89,6 @@ define(function(require) {
         },
 
         updateSaveForLater: function() {
-
             if (this.getGlobalPaymentValidate()) {
                 this.setSaveForLaterBasedOnForm();
             } else {
@@ -116,7 +115,6 @@ define(function(require) {
                 this.paymentValidationRequiredComponentState
             ) {
                 AuthorizedCreditCardComponent.__super__.handleSubmit.call(this, eventData);
-
             }
         },
 

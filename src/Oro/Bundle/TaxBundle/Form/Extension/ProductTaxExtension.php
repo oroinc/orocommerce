@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductTaxExtension extends AbstractTaxExtension
 {

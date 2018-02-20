@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
-use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener;
 
 class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit_Framework_TestCase
 {

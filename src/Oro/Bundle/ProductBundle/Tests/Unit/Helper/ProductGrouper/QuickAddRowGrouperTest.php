@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Helper\ProductGrouper;
 
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\QuickAddRowGrouper;
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class QuickAddRowGrouperTest extends \PHPUnit_Framework_TestCase

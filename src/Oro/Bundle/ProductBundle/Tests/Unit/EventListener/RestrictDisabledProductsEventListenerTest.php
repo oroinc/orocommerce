@@ -3,16 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-
-use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestCase
 {

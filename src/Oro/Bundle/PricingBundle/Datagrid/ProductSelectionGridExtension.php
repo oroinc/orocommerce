@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Datagrid;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProductSelectionGridExtension extends AbstractExtension
 {
@@ -80,9 +79,11 @@ class ProductSelectionGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return !$this->applied
-        && static::SUPPORTED_GRID === $config->getName()
-        && ($token = $this->tokenStorage->getToken())
-        && $token->getUser() instanceof CustomerUser;
+        return
+            parent::isApplicable($config)
+            && !$this->applied
+            && static::SUPPORTED_GRID === $config->getName()
+            && ($token = $this->tokenStorage->getToken())
+            && $token->getUser() instanceof CustomerUser;
     }
 }

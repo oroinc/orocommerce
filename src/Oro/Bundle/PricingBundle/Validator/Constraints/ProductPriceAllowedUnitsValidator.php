@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceAllowedUnitsValidator extends ConstraintValidator
 {

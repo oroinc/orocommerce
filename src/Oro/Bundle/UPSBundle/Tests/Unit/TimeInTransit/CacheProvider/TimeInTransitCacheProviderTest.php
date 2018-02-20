@@ -5,9 +5,9 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\CacheProvider;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class TimeInTransitCacheProviderTest extends \PHPUnit_Framework_TestCase
 {

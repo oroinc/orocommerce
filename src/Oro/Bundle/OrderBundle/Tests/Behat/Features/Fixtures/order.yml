@@ -6,6 +6,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         owner: '@admin'
         customer: '@customer1'
+        customerUser: '@amanda'
         identifier: 'SimpleOrder'
         website: '@website1'
         currency: USD
@@ -13,6 +14,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         owner: '@admin'
         customer: '@customer1'
+        customerUser: '@amanda'
         identifier: 'SecondOrder'
         website: '@website1'
         currency: USD

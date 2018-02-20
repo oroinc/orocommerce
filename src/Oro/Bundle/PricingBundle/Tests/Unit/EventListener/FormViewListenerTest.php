@@ -3,18 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
-
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
+use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {

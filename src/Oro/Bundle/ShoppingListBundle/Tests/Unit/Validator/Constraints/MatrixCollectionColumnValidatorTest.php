@@ -5,14 +5,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
+use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn as MatrixCollectionColumnModel;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-
-use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn as MatrixCollectionColumnModel;
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 
 class MatrixCollectionColumnValidatorTest extends \PHPUnit_Framework_TestCase
 {

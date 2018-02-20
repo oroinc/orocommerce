@@ -3,9 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Oro\Bundle\AddressBundle\Entity\Address;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
@@ -14,6 +12,7 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ZipCodeMatcherTest extends WebTestCase
 {

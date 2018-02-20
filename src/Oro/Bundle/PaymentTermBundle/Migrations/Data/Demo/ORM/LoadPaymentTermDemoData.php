@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermDemoData extends AbstractFixture

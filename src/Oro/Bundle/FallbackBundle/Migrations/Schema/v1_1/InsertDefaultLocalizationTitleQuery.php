@@ -3,11 +3,9 @@
 namespace Oro\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\SyncBundle\Tests\Unit\Wamp\PDO;
+use Psr\Log\LoggerInterface;
 
 class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
 {

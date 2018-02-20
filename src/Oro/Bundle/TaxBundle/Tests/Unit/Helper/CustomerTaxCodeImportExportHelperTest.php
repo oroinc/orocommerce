@@ -3,14 +3,13 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Helper;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 {

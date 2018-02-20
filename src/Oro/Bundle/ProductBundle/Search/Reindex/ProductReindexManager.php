@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Search\Reindex;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * This service help to prepare and make event dispatching to make reindex of products data in search engine.

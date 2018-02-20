@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility;
 
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
-
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\Website\WebsiteInterface;
 
 trait ProductVisibilityTrait
@@ -166,6 +166,8 @@ TERM;
      */
     protected function addCategoryConfigFallback($field)
     {
+        QueryBuilderUtil::checkField($field);
+
         return sprintf(
             'CASE WHEN %1$s = %2$s THEN %3$s ELSE %1$s END',
             $field,
@@ -179,7 +181,7 @@ TERM;
      */
     protected function getProductConfigValue()
     {
-        return $this->getConfigValue($this->productConfigPath);
+        return (int)$this->getConfigValue($this->productConfigPath);
     }
 
     /**
@@ -187,12 +189,12 @@ TERM;
      */
     protected function getCategoryConfigValue()
     {
-        return $this->getConfigValue($this->categoryConfigPath);
+        return (int)$this->getConfigValue($this->categoryConfigPath);
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return mixed
+     * @return string
      */
     protected function getRootAlias(QueryBuilder $queryBuilder)
     {

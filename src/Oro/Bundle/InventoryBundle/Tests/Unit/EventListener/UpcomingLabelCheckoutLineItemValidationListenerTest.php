@@ -3,12 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\InventoryBundle\EventListener\UpcomingLabelCheckoutLineItemValidationListener;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\InventoryBundle\EventListener\UpcomingLabelCheckoutLineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
-use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 {

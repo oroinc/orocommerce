@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\DependencyInjection\Compiler;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 
 class InventoryLevelConstraintPass implements CompilerPassInterface
 {

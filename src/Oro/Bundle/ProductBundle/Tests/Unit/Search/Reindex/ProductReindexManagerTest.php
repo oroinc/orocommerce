@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search\Reindex;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductReindexManagerTest extends \PHPUnit_Framework_TestCase
 {

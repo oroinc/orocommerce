@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderMapperTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,10 +3,9 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Oro\Bundle\CMSBundle\Model\ExtendLoginPage;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CMSBundle\Model\ExtendLoginPage;
 
 /**
  * @ORM\Table(name="oro_cms_login_page")

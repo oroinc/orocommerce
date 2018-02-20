@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesMigration;
 
 class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration

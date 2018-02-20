@@ -3,15 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
 use Doctrine\ORM\Query;
-
-use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductRepositoryTest extends WebTestCase
 {
@@ -40,7 +38,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
-            1024
+            100500000
         );
         $this->assertNull($notFoundProduct);
     }

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Templating\EngineInterface;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Templating\EngineInterface;
 
 class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit_Framework_TestCase
 {

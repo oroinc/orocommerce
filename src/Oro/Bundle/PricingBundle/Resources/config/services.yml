@@ -1,6 +1,7 @@
 parameters:
     oro_pricing.entity.price_list.class: Oro\Bundle\PricingBundle\Entity\PriceList
     oro_pricing.entity.price_rule.class: Oro\Bundle\PricingBundle\Entity\PriceRule
+    oro_pricing.entity.price_rule_lexeme.class: Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme
     oro_pricing.entity.price_list_schedule.class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule
     oro_pricing.entity.combined_price_list.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceList
 
@@ -561,6 +562,7 @@ services:
             - '@doctrine'
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.shard_manager'
+            - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
@@ -576,7 +578,7 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: postPersist }
 
     oro_pricing.entity_listener.price_list_currency:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener'
@@ -598,6 +600,14 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: postPersist }
+
+    oro_pricing.entity_listener.price_rule_lexeme:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleLexemeEntityListener'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postRemove }
 
     oro_pricing.entity_listener.abstract_rule_listener:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener'
@@ -656,6 +666,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postRemove }
             - { name: kernel.event_listener, event: oro_pricing.assignment_rule_builder.build, method: onAssignmentRuleBuilderBuild}
+            - { name: kernel.event_listener, event: oro_pricing.price_list_to_product.save_after, method: onPriceListToProductSave }
 
     oro_pricing.migration.demo_data_fixtures_listener.build_prices:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
@@ -877,6 +888,7 @@ services:
         arguments:
             - '@oro_pricing.cache.rule_cache.storage'
             - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
 
     oro_pricing.duplicator.price_list_to_product_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator'
@@ -922,6 +934,8 @@ services:
             - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
             - '@oro_entity.database_exception_helper'
+        calls:
+            - [setCombinedPriceListTriggerHandler, ['@oro_pricing.model.combined_price_list_trigger_handler']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

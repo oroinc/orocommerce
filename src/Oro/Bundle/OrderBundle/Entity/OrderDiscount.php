@@ -5,7 +5,6 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\ArithmeticException;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 

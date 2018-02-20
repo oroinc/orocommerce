@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,4 +1,3 @@
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -67,7 +66,7 @@ define(function(require) {
                 if (options.shopping_list_limit) {
                     this.confirmMessage = __(
                         this.defaultMessages.confirm_content,
-                        {'count': options.shopping_list_limit},
+                        {count: options.shopping_list_limit},
                         options.shopping_list_limit
                     );
                 }

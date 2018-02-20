@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -21,10 +20,10 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @return QueryBuilder|null
      */
-    public function compile(PriceList $priceList, Product $product = null)
+    public function compile(PriceList $priceList, array $products = [])
     {
         if (!$priceList->getProductAssignmentRule()) {
             return null;
@@ -44,7 +43,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
             $this->cache->save($cacheKey, $qb);
         }
-        $this->restrictByGivenProduct($qb, $product);
+        $this->restrictByGivenProduct($qb, $products);
 
         return $qb;
     }
@@ -141,15 +140,15 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param QueryBuilder $qb
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    protected function restrictByGivenProduct(QueryBuilder $qb, Product $product = null)
+    protected function restrictByGivenProduct(QueryBuilder $qb, array $products = [])
     {
-        if ($product) {
+        if ($products) {
             $aliases = $qb->getRootAliases();
             $rootAlias = reset($aliases);
-            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
-                ->setParameter('product', $product->getId());
+            $qb->andWhere($qb->expr()->in($rootAlias, ':products'))
+                ->setParameter('products', $products);
         }
     }
 

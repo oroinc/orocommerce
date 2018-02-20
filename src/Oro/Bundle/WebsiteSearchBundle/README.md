@@ -9,5 +9,6 @@ related information and provides all required interfaces to interact with it.
 * [Search index structure](./Resources/doc/index_structure.md)
 * [How to perform search](./Resources/doc/search.md)
 * [Indexation process](./Resources/doc/indexation.md)
+* [Reindexation during platform update](Resources/doc/platform_update.md)
 * [ORM search engine](./Resources/doc/orm_engine.md)
 * [Testing](./Resources/doc/testing.md)

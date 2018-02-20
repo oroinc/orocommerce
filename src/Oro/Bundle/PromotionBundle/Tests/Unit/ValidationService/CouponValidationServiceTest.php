@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 

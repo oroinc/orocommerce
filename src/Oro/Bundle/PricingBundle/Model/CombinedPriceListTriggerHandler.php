@@ -64,17 +64,19 @@ class CombinedPriceListTriggerHandler
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @param Website|null $website
      */
     public function processByProduct(
         CombinedPriceList $combinedPriceList,
-        Product $product = null,
+        array $products = [],
         Website $website = null
     ) {
-        if ($product) {
+        if ($products) {
             $websiteId = $website ? $website->getId() : null;
-            $this->productsSchedule[$websiteId][$product->getId()] = $product->getId();
+            foreach ($products as $productId) {
+                $this->productsSchedule[$websiteId][$productId] = $productId;
+            }
             if (!$this->isSessionStarted) {
                 $this->send();
             }
@@ -94,7 +96,9 @@ class CombinedPriceListTriggerHandler
         $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($combinedPriceLists);
-        $this->productsSchedule[$websiteId] = $productIds;
+        foreach ($productIds as $productId) {
+            $this->productsSchedule[$websiteId][$productId] = $productId;
+        }
 
         if (!$this->isSessionStarted) {
             $this->send();
@@ -125,6 +129,7 @@ class CombinedPriceListTriggerHandler
             $websiteIds = $websiteId ? [$websiteId] : [];
             $this->dispatchByPriceLists($websiteIds, $cplIds);
         }
+
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
             $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
@@ -145,9 +150,14 @@ class CombinedPriceListTriggerHandler
         $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($cplIds);
-        if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        foreach ($productIds as $productId) {
+            if (!$websiteIds) {
+                $this->productsSchedule[null][$productId] = $productId;
+            }
+
+            foreach ($websiteIds as $websiteId) {
+                $this->productsSchedule[$websiteId][$productId] = $productId;
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -82,7 +81,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function checkValueOnCheckoutPage($value)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->findField(self::$valueMapping[$value]);
+        $element = $page->findField(self::$valueMapping[$value] ?? $value);
 
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
 

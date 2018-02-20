@@ -3,11 +3,9 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
-
 use Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase

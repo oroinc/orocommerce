@@ -28,7 +28,7 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -49,6 +49,6 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
                     }
                 )
             );
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 }

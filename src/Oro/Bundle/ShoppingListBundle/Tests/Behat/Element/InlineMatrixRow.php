@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Element;
 
 use Behat\Mink\Element\NodeElement;
-
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class InlineMatrixRow extends TableRow

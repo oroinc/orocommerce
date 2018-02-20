@@ -3,10 +3,10 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class BaseQuoteProductItemTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use Oro\Component\PhpUtils\ArrayUtil;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 class SystemConfigurationTest extends WebTestCase
 {

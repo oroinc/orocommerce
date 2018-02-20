@@ -3,14 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Yaml\Yaml;
-
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageProcessTrait;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageProcessTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @dbIsolationPerTest

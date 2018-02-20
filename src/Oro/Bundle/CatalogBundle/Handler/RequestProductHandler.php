@@ -48,14 +48,16 @@ class RequestProductHandler
     }
 
     /**
+     * @param bool|null $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice()
+    public function getIncludeSubcategoriesChoice($defaultValue = null)
     {
-        return $this->getChoice(
-            self::INCLUDE_SUBCATEGORIES_KEY,
-            self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE
-        );
+        if ($defaultValue === null) {
+            $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+        }
+
+        return $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
     }
 
     /**

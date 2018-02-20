@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {

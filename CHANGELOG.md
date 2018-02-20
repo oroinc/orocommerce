@@ -1,4 +1,16 @@
+## 1.7.0 (Unreleased)
+
+### Added
+#### ProductBundle
+* Added a listener to the `oro_product.display_simple_variations` config field that cleans the product and category layout cache when changes occur.
+
+### Removed
+#### ProductBundle
+* Removed listener `oro_product.event_listener.restrict.display_product_variations`. The service `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
+* Removed listener `oro_product.event_listener.datagrid.frontend_product_search.display_product_variations`. The service  `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
+
 ## 1.6.0 (Unreleased)
+[Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added
 #### CatalogBundle
@@ -6,11 +18,19 @@
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`) 
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
 
+#### PricingBundle
+* Improved security of pricing rules cache, added hash to stored data to track consistency. Old caches will be recalculated automatically.
+* Class `Oro\Bundle\PricingBundle\Cache\RuleCache`
+    * method `__construct` added dependency on `Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface`
+
 #### ProductBundle
 * Class `Oro\Bundle\CatalogBundle\Model\ExtendProduct`:
     * method `setCategory` was added
     * method `getCategory` was added
     * property `category_id` was added
+* Improved security of segment products provider cache, added hash to stored data to track consistency. Old caches should me removed as inconsistent.
+* Class `Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider`
+    * method `__construct` added dependency on `Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface`
 
 ### Changed
 #### AlternativeCheckoutBundle

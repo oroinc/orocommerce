@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\Form\AbstractType;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Symfony\Component\Form\AbstractType;
 
 class StubProductAutocompleteType extends AbstractType
 {

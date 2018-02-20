@@ -3,11 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Form\DataTransformer;
 
 use Doctrine\Common\Collections\Collection;
-
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class ProductVariantLinksDataTransformer implements DataTransformerInterface
 {

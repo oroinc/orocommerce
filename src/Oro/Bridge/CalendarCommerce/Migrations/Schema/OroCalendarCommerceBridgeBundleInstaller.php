@@ -3,7 +3,6 @@
 namespace Oro\Bridge\CalendarCommerce\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_0\OroCalendarCommerceBridgeBundle as CommerceBridgeBundle_v1_0;
 use Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_1\OroCalendarCommerceBridgeBundle as CommerceBridgeBundle_v1_1;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;

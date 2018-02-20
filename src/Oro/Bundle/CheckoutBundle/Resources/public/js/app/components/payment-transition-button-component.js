@@ -1,4 +1,3 @@
-/** @lends PaymentTransitionButtonComponent */
 define(function(require) {
     'use strict';
 

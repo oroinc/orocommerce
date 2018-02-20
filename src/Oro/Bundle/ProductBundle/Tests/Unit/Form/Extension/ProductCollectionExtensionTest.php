@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension;
-
+use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
 {

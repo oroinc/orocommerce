@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTestCase
 {

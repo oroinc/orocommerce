@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Normalizer;
 
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Normalizer\ProductPriceNormalizer;
 use PHPUnit\Framework\TestCase;
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 
 class ProductPriceNormalizerTest extends TestCase
 {

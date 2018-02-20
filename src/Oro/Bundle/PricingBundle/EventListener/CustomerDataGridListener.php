@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 
 class CustomerDataGridListener extends AbstractPriceListRelationDataGridListener
 {

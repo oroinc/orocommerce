@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\OroCatalogBundle;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroCatalogBundleTest extends \PHPUnit_Framework_TestCase
 {

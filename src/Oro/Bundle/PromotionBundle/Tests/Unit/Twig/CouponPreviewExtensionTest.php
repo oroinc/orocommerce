@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Twig;
 
-use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class CouponPreviewExtensionTest extends \PHPUnit_Framework_TestCase
 {

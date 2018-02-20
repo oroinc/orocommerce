@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PaymentTermTest extends \PHPUnit_Framework_TestCase
 {

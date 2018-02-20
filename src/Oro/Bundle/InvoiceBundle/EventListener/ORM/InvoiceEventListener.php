@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\FallbackBundle\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Form\DataTransformer\MultipleValueTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use Oro\Bundle\LocaleBundle\Form\DataTransformer\MultipleValueTransformer;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WebsitePropertyType extends AbstractType
 {
@@ -53,7 +52,7 @@ class WebsitePropertyType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
             'type',

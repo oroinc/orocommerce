@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Controller\Frontend;
 
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
+use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
-use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 
 class WebsiteSearchController extends Controller
 {

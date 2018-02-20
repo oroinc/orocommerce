@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductUnitRepositoryTest extends WebTestCase
 {

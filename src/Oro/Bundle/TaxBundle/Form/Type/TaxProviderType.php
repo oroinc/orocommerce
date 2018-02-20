@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderType extends AbstractType
 {

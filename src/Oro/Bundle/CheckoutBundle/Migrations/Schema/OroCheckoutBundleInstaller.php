@@ -32,7 +32,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -204,8 +204,10 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_valid', 'boolean', []);
         $table->addUniqueIndex(['checkout_id', 'currency'], 'unique_checkout_currency');
+        $table->addIndex(['is_valid'], 'idx_checkout_subtotal_valid');
         $table->setPrimaryKey(['id']);
     }
 
@@ -286,6 +288,12 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
             ['checkout_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_price_list_combined'),
+            ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

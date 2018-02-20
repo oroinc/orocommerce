@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Handler;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FormBundle\Form\Handler\FormHandler;
-use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandler;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
 
 class ProductPriceHandler extends FormHandler
 {

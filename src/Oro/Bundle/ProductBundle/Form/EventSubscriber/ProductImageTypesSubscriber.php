@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\EventSubscriber;
 
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageTypesSubscriber implements EventSubscriberInterface
 {

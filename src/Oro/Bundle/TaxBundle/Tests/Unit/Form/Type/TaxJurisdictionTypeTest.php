@@ -3,22 +3,20 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Form\PreloadedExtension;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Symfony\Component\Form\PreloadedExtension;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {

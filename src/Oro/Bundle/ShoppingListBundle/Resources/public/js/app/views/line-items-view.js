@@ -13,6 +13,10 @@ define(function(require) {
 
         initialize: function() {
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
+
+            mediator.setHandler('get-line-items', _.bind(function() {
+                return this.lineItems;
+            }, this));
         },
 
         /**
@@ -26,6 +30,8 @@ define(function(require) {
                     item.view.on('unit-changed', _.bind(this.unitChanged, this));
                 }
             }, this);
+
+            mediator.trigger('line-items-init', this.lineItems);
         },
 
         unitChanged: function(data) {

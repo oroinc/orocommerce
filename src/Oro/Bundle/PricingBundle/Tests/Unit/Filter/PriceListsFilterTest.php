@@ -3,14 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 {

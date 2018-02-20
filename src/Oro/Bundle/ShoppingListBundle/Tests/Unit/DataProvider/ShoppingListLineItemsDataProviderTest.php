@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ShoppingListLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
 {

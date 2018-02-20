@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 
@@ -43,9 +42,7 @@ class CategoryEntityListener extends AbstractRuleEntityListener
         $lexemes = $this->priceRuleLexemeTriggerHandler
             ->findEntityLexemes($this->getEntityClassName(), ['id']);
 
-        foreach ($products as $product) {
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
-        }
+        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $products);
     }
 
     /**

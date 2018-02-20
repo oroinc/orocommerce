@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\Extension;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\ContextConfiguratorInterface;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Component\Layout\ContextConfiguratorInterface;
+use Oro\Component\Layout\ContextInterface;
 
 class WebCatalogContextConfigurator implements ContextConfiguratorInterface
 {

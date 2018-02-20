@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * This listener listens for creation and deletion of Website entity

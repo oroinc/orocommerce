@@ -65,7 +65,6 @@ define(function(require) {
          * @returns {*}
          */
         setState: function(name, value) {
-
             if (_.isUndefined(value)) {
                 return error.showErrorInConsole('The value should be defined');
             }
@@ -139,7 +138,6 @@ define(function(require) {
 
                     this._appendToHierarchy(normalizeName);
                     this.setState(normalizeName, $select.val());
-
                 }, this));
             }
 

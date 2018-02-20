@@ -68,10 +68,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param PriceRule $rule
-     * @param Product $product
+     * @param array|Product[] $products
      * @return QueryBuilder
      */
-    public function compile(PriceRule $rule, Product $product = null)
+    public function compile(PriceRule $rule, array $products = [])
     {
         $cacheKey = 'pr_' . $rule->getId();
         $qb = $this->cache->fetch($cacheKey);
@@ -92,7 +92,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $this->cache->save($cacheKey, $qb);
         }
 
-        $this->restrictByGivenProduct($qb, $product);
+        $this->restrictByGivenProduct($qb, $products);
 
         return $qb;
     }
@@ -291,13 +291,13 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param QueryBuilder $qb
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    protected function restrictByGivenProduct(QueryBuilder $qb, Product $product = null)
+    protected function restrictByGivenProduct(QueryBuilder $qb, array $products = [])
     {
-        if ($product) {
-            $qb->andWhere($qb->expr()->eq($this->getRootAlias($qb), ':product'))
-                ->setParameter('product', $product->getId());
+        if ($products) {
+            $qb->andWhere($qb->expr()->in($this->getRootAlias($qb), ':products'))
+                ->setParameter('products', $products);
         }
     }
 

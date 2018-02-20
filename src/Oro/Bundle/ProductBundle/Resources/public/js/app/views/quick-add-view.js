@@ -10,18 +10,18 @@ define(function(require) {
 
     QuickAddView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            'container': '[data-role="quick-order-add-container"]',
-            'rows': '[data-name="field__name"]',
-            'displayName': '[data-name="field__product-display-name"]',
-            'sku': '[data-name="field__product-sku"]',
-            'unit': '[data-name="field__product-unit"]',
-            'buttons': '[data-role="quick-order-add-buttons"]',
-            'clear': '[data-role="quick-order-add-clear"]',
-            'remove': '[data-role="row-remove"]'
+            container: '[data-role="quick-order-add-container"]',
+            rows: '[data-name="field__name"]',
+            displayName: '[data-name="field__product-display-name"]',
+            sku: '[data-name="field__product-sku"]',
+            unit: '[data-name="field__product-unit"]',
+            buttons: '[data-role="quick-order-add-buttons"]',
+            clear: '[data-role="quick-order-add-clear"]',
+            remove: '[data-role="row-remove"]'
         },
 
         elementsEvents: {
-            'clear': ['click', 'clearRows']
+            clear: ['click', 'clearRows']
         },
 
         events: {

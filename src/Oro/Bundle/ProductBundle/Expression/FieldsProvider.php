@@ -157,7 +157,8 @@ class FieldsProvider implements FieldsProviderInterface
             foreach ($fields as $field) {
                 $fieldName = $field['name'];
                 if ($this->isBlacklistedField($className, $fieldName)
-                    || (!$this->isWhitelistedField($className, $fieldName)
+                    || (
+                        !$this->isWhitelistedField($className, $fieldName)
                         && $this->isSkippedField($field, $numericOnly, $withRelations)
                     )
                 ) {

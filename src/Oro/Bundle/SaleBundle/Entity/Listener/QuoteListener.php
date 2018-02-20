@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteListener

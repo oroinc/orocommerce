@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 {

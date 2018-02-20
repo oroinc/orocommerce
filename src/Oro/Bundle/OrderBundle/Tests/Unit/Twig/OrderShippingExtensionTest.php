@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\OrderBundle\Twig\OrderShippingExtension;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OrderShippingExtensionTest extends \PHPUnit_Framework_TestCase
 {

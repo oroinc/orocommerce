@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Layout\Decider;
 
+use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
 
 class RFPActionDecider
 {

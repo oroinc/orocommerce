@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
+use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,8 +11,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 
 class MatrixColumnType extends AbstractType
 {

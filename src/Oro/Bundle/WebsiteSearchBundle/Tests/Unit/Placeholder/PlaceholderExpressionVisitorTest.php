@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\Value;
-
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;

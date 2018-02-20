@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Model;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RequestHelperTest extends WebTestCase
 {

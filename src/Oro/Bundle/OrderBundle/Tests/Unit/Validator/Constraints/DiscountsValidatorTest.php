@@ -7,7 +7,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Unit\Validator\Stub\ConstraintViolationStub;
 use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountsValidator;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContext;

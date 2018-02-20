@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckboxTypeStub extends CheckboxType
 {
@@ -20,9 +20,9 @@ class CheckboxTypeStub extends CheckboxType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver->setDefaults(['validation_groups' => ['Default']]);
     }

@@ -1,4 +1,3 @@
-/** @lends ClearFieldData */
 define(function(require) {
     'use strict';
 
@@ -7,7 +6,7 @@ define(function(require) {
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    ClearFieldData = BaseComponent.extend(/** @exports ClearFieldData.prototype */ {
+    ClearFieldData = BaseComponent.extend(/** @lends ClearFieldData.prototype */ {
         /**
          * @inheritDoc
          */

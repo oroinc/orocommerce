@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
+use Oro\Bundle\ImportExportBundle\Async\Topics;
+use Oro\Bundle\ImportExportBundle\File\FileManager;
+use Oro\Bundle\ImportExportBundle\Handler\CliImportHandler;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-
-use Oro\Bundle\ImportExportBundle\Async\Topics;
-use Oro\Bundle\ImportExportBundle\Handler\CliImportHandler;
-use Oro\Bundle\ImportExportBundle\File\FileManager;
-use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 
 class PriceListImportCommand extends ContainerAwareCommand
 {
@@ -96,7 +94,8 @@ class PriceListImportCommand extends ContainerAwareCommand
                 'processorAlias' => self::DEFAULT_PROCESSOR,
                 'process'        => $process,
                 'options'        => [
-                    'price_list_id' => $priceListId
+                    'price_list_id' => $priceListId,
+                    'unique_job_slug' => $priceListId,
                 ]
             ]
         );

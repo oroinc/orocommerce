@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Handler;
 
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -113,7 +112,7 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
+            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, false)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice();
         $this->assertEquals($expected, $actual);
@@ -174,6 +173,19 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
                 'expected' => RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
             ],
         ];
+    }
+
+    public function testGetIncludeSubcategoriesChoiceWithTrueOption()
+    {
+        // string value is used only for showing correct value passing
+        $trueValue = 'trueValue';
+
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY, $trueValue)
+            ->willReturn(true);
+        $actual = $this->requestProductHandler->getIncludeSubcategoriesChoice($trueValue);
+        $this->assertTrue($actual);
     }
 
     /**

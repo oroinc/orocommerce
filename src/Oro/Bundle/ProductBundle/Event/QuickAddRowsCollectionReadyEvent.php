@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Symfony\Component\EventDispatcher\Event;
 
 class QuickAddRowsCollectionReadyEvent extends Event
 {

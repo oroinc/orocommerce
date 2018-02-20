@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class CustomerTaxCodeControllerTest extends WebTestCase
 {

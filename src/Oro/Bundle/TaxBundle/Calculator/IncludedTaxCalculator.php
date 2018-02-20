@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Calculator;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 

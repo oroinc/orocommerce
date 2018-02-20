@@ -1,4 +1,3 @@
-/*global define*/
 define([
     'underscore', 'oroform/js/validator/regex', 'orolocale/js/locale-settings'
 ], function(_, regexConstraint, localeSettings) {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolation;

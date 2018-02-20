@@ -5,7 +5,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Twig;
 use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\InventoryBundle\Twig\ProductUpcomingExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class ProductUpcomingExtensionTest extends \PHPUnit_Framework_TestCase

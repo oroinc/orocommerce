@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuickAddCollectionProvider
 {

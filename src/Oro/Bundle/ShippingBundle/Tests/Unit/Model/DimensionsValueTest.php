@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class DimensionsValueTest extends \PHPUnit_Framework_TestCase
 {

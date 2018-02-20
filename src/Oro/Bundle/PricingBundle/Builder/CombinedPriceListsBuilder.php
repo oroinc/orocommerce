@@ -123,7 +123,7 @@ class CombinedPriceListsBuilder
             $activeCpl = $cpl;
         }
         if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
-            $this->priceStrategyRegister->getCurrentStrategy()->combinePrices($activeCpl, null, $forceTimestamp);
+            $this->priceStrategyRegister->getCurrentStrategy()->combinePrices($activeCpl, [], $forceTimestamp);
         }
         $actualCplConfigKey = Configuration::getConfigKeyToPriceList();
         $fullCplConfigKey = Configuration::getConfigKeyToFullPriceList();

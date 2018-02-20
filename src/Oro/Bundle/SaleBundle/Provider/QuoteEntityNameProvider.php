@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Provider;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 
 class QuoteEntityNameProvider implements EntityNameProviderInterface
 {

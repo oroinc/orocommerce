@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 
 class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
 {

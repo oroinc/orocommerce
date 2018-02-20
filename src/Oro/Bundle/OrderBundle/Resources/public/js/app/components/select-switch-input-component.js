@@ -53,7 +53,7 @@ define(function(require) {
             this.$el.find('.input-container').attr('data-validation', validation);
             if (this.$mode === this.MODE_SELECT) {
                 this._onInputToSelect();
-            }else if (this.$mode === this.MODE_INPUT) {
+            } else if (this.$mode === this.MODE_INPUT) {
                 this._onSelectToInput();
                 this.$el.find('input').val(options.value);
             }

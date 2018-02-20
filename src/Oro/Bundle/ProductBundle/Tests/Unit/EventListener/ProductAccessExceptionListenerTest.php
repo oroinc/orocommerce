@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
-
-use Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener;
 
 class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
 {

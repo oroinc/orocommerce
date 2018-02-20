@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
-
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class UrlSafeTest extends \PHPUnit_Framework_TestCase
 {

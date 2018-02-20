@@ -12,9 +12,8 @@ services:
 
     oro_payment.form.handler.payment_methods_configs_rule:
         class: 'Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler'
-        scope: request
         arguments:
-            - '@request'
+            - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_payment.datagrid.payment_rule_actions_visibility_provider:
@@ -35,7 +34,7 @@ services:
 
     oro_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
-        scope: prototype
+        shared: false
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
 

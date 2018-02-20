@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoadLoginPage extends AbstractFixture

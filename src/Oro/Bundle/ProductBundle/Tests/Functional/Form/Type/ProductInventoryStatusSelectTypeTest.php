@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 
 class ProductInventoryStatusSelectTypeTest extends WebTestCase
 {
