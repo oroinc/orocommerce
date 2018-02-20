@@ -16,6 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Backoffice Quote entity controller
+ */
 class QuoteController extends Controller
 {
     const REDIRECT_BACK_FLAG = 'redirect_back';

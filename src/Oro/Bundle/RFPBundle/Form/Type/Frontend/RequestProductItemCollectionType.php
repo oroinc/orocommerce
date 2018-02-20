@@ -6,6 +6,10 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for the collection of RequestProductItemType on the frontend,
+ * with specific RequestProductItemType
+ */
 class RequestProductItemCollectionType extends AbstractType
 {
     const NAME = 'oro_rfp_frontend_request_product_item_collection';

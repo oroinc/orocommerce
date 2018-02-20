@@ -24,6 +24,9 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Form type for editing Order entity on the backoffice
+ */
 class OrderType extends AbstractType
 {
     const NAME = 'oro_order_type';

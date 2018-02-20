@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Backoffice Order entity controller
+ */
 class OrderController extends AbstractOrderController
 {
     /**

@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for RequestProductItem on the frontend
+ */
 class RequestProductItemType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_rfp_frontend_request_product_item';

@@ -26,6 +26,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for editing Quote entity on the backoffice
+ */
 class QuoteType extends AbstractType
 {
     const NAME = 'oro_sale_quote';
