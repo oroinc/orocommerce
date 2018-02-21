@@ -24,10 +24,12 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
      * @var Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
+
     /**
      * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $eventDispatcher;
+
     /**
      * @var CombinedPriceListTriggerHandler
      */
@@ -183,5 +185,40 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 'website' => ['id' => 1],
             ],
         ];
+    }
+
+    public function testProcessForWebsites()
+    {
+        $cpl1ProductIds = [1, 2];
+        $cpl2ProductIds = [1, 3];
+        $this->repository
+            ->expects($this->exactly(2))
+            ->method('getProductIdsByPriceLists')
+            ->willReturnOnConsecutiveCalls($cpl1ProductIds, $cpl2ProductIds);
+
+        $this->triggerHandler->startCollect();
+
+        /** Process CPL for all websites */
+        $combinedPriceList1 = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $this->triggerHandler->process($combinedPriceList1);
+
+        /** Process CPL for website1 */
+        $website1Id = 1;
+        $website1   = $this->getEntity(Website::class, ['id' => $website1Id]);
+        $combinedPriceList2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $this->triggerHandler->process($combinedPriceList2, $website1);
+
+        $this->assertEmpty($this->events);
+        $this->triggerHandler->commit();
+
+        $this->assertEquals(
+            [
+                ReindexationRequestEvent::EVENT_NAME => [
+                    new ReindexationRequestEvent([Product::class], [], $cpl1ProductIds),
+                    new ReindexationRequestEvent([Product::class], [$website1Id], [3])
+                ]
+            ],
+            $this->events
+        );
     }
 }

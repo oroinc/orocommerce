@@ -158,7 +158,9 @@ class CombinedPriceListTriggerHandler
             }
 
             foreach ($websiteIds as $websiteId) {
-                $this->productsSchedule[$websiteId][$productId] = $productId;
+                if (!isset($this->productsSchedule[null][$productId])) {
+                    $this->productsSchedule[$websiteId][$productId] = $productId;
+                }
             }
         }
     }
