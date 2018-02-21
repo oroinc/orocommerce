@@ -2,14 +2,20 @@
 
 namespace Oro\Bundle\RFPBundle\Acl\Voter;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class FrontendRequestVoter extends Voter
+/**
+ * Restricts EDIT permission for RFP when some workflow for this entity is enabled
+ */
+class FrontendRequestVoter extends AbstractEntityVoter
 {
+    /** @var array */
+    protected $supportedAttributes = ['EDIT'];
+
     /** @var ApplicationProvider */
     protected $applicationProvider;
 
@@ -17,11 +23,17 @@ class FrontendRequestVoter extends Voter
     protected $workflowManager;
 
     /**
+     * @param DoctrineHelper $doctrineHelper
      * @param ApplicationProvider $applicationProvider
      * @param WorkflowManager $workflowManager
      */
-    public function __construct(ApplicationProvider $applicationProvider, WorkflowManager $workflowManager)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ApplicationProvider $applicationProvider,
+        WorkflowManager $workflowManager
+    ) {
+        parent::__construct($doctrineHelper);
+
         $this->applicationProvider = $applicationProvider;
         $this->workflowManager = $workflowManager;
     }
@@ -29,19 +41,24 @@ class FrontendRequestVoter extends Voter
     /**
      * {@inheritdoc}
      */
-    protected function supports($attribute, $subject)
+    protected function getEntityIdentifier($object)
     {
-        return $attribute === 'EDIT' &&
-            $subject instanceof Request &&
-            $this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION;
+        // disallow EDIT for all Requests, so id does not matter
+        return false;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        return !$this->hasActiveWorkflows('b2b_rfq_frontoffice_flow');
+        if ($this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION &&
+            $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')
+        ) {
+            return self::ACCESS_DENIED;
+        }
+
+        return self::ACCESS_ABSTAIN;
     }
 
     /**
