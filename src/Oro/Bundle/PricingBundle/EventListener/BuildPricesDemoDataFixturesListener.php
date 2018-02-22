@@ -11,6 +11,10 @@ use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Building all combined price lists during loading of demo data
+ * Disables search re-indexation for building combined price lists
+ */
 class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
     /** @var CombinedPriceListsBuilder */
@@ -48,7 +52,10 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
     {
         $event->log('building all combined price lists');
 
+        // website search index should not be re-indexed while cpl build
+        $this->listenerManager->disableListener('oro_website_search.reindex_request.listener');
         $this->buildPrices($event->getObjectManager());
+        $this->listenerManager->enableListener('oro_website_search.reindex_request.listener');
     }
 
     /**

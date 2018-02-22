@@ -14,6 +14,9 @@ use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Builder for product prices
+ */
 class ProductPriceBuilder
 {
     /**
@@ -73,13 +76,8 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $products);
-        if (count($priceList->getPriceRules()) > 0) {
-            $rules = $this->getSortedRules($priceList);
-            foreach ($rules as $rule) {
-                $this->applyRule($rule, $products);
-            }
-        }
+        $this->buildByPriceListWithoutTriggers($priceList, $products);
+
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);
         $this->priceListTriggerHandler->sendScheduledTriggers();
     }
@@ -130,5 +128,20 @@ class ProductPriceBuilder
         );
 
         return $rules;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function buildByPriceListWithoutTriggers(PriceList $priceList, array $products = [])
+    {
+        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $products);
+        if (count($priceList->getPriceRules()) > 0) {
+            $rules = $this->getSortedRules($priceList);
+            foreach ($rules as $rule) {
+                $this->applyRule($rule, $products);
+            }
+        }
     }
 }
