@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
@@ -55,6 +56,11 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceResolver;
 
+    /**
+     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $triggerHandler;
+
     protected function setUp()
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -80,6 +86,8 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
+
         $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
         $this->cplScheduleResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
@@ -94,9 +102,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $strategyRegister
+            $strategyRegister,
+            $this->triggerHandler,
+            $this->websiteBuilder
         );
-        $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
     }
 
     /**
@@ -150,6 +159,11 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
         $this->websiteBuilder->expects($this->exactly($callExpects))
             ->method('build')
             ->with(null, $force);
+
+        $this->triggerHandler->expects($this->exactly($callExpects))
+            ->method('startCollect');
+        $this->triggerHandler->expects($this->exactly($callExpects))
+            ->method('commit');
 
         $this->builder->build($force);
         $this->builder->build($force);

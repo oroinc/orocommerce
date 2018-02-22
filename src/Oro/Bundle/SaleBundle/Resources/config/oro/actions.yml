@@ -170,7 +170,7 @@ operations:
         routes:
             - oro_sale_quote_frontend_view
         order: 20
-        acl_resource: [CHECKOUT_CREATE, $.data]
+        acl_resource: [CHECKOUT_CREATE, 'entity:Oro\Bundle\SaleBundle\Entity\QuoteDemand']
         button_options:
             icon: fa-pencil-square-o
             class:  quota-accept-btn
