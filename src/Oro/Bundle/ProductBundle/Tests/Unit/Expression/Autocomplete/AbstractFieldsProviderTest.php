@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression\Autocomplete;
 
-use Oro\Component\Expression\ExpressionParser;
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
+use Oro\Component\Expression\ExpressionParser;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
