@@ -8,6 +8,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         shipUntil:
             - Date: ~
         currency:
+            - NotBlank: ~
             - Currency: ~
         totalValue:
             - Type:
