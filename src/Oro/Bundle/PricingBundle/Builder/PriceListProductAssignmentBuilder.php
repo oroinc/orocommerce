@@ -68,17 +68,7 @@ class PriceListProductAssignmentBuilder
      */
     public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->clearGenerated($priceList, $products);
-        if ($priceList->getProductAssignmentRule()) {
-            $this->insertFromSelectQueryExecutor->execute(
-                PriceListToProduct::class,
-                $this->ruleCompiler->getOrderedFields(),
-                $this->ruleCompiler->compile($priceList, $products)
-            );
-        }
-        $this->registry->getManagerForClass(ProductPrice::class)
-            ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($this->shardManager, $priceList);
+        $this->buildByPriceListWithoutEventDispatch($priceList, $products);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $products);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
@@ -94,5 +84,24 @@ class PriceListProductAssignmentBuilder
         $repo = $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class);
         $repo->deleteGeneratedRelations($priceList, $products);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function buildByPriceListWithoutEventDispatch(PriceList $priceList, array $products = [])
+    {
+        $this->clearGenerated($priceList, $products);
+        if ($priceList->getProductAssignmentRule()) {
+            $this->insertFromSelectQueryExecutor->execute(
+                PriceListToProduct::class,
+                $this->ruleCompiler->getOrderedFields(),
+                $this->ruleCompiler->compile($priceList, $products)
+            );
+        }
+        $this->registry->getManagerForClass(ProductPrice::class)
+            ->getRepository(ProductPrice::class)
+            ->deleteInvalidPrices($this->shardManager, $priceList);
     }
 }

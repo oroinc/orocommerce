@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -55,6 +56,11 @@ class CombinedPriceListsBuilder
     protected $built = false;
 
     /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
+    /**
      * @param ConfigManager $configManager
      * @param PriceListCollectionProvider $priceListCollectionProvider
      * @param CombinedPriceListProvider $combinedPriceListProvider
@@ -90,13 +96,26 @@ class CombinedPriceListsBuilder
     }
 
     /**
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @return $this
+     */
+    public function setCombinedPriceListTriggerHandler(CombinedPriceListTriggerHandler $triggerHandler)
+    {
+        $this->triggerHandler = $triggerHandler;
+
+        return $this;
+    }
+
+    /**
      * @param int|null $forceTimestamp
      */
     public function build($forceTimestamp = null)
     {
         if (!$this->isBuilt()) {
+            $this->triggerHandler->startCollect();
             $this->updatePriceListsOnCurrentLevel($forceTimestamp);
             $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
+            $this->triggerHandler->commit();
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->built = true;
         }

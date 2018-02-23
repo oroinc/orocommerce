@@ -218,8 +218,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             ->get('oro_pricing.builder.price_list_product_assignment_builder');
 
         foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceList($priceList);
-            $priceBuilder->buildByPriceList($priceList);
+            $assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
     }
 

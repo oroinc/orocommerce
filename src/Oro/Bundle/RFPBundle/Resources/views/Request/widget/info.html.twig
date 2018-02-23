@@ -29,7 +29,7 @@
             {% endif %}
         </div>
         <div class="responsive-block">
-            {{ UI.renderHtmlProperty('oro.rfp.request.note.label'|trans, entity.note|nl2br) }}
+            {{ UI.renderSwitchableHtmlProperty('oro.rfp.request.note.label'|trans, entity.note) }}
 
             {{ entityConfig.renderDynamicFields(entity) }}
         </div>
