@@ -713,3 +713,126 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | N/A      | 3        |
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
+
+# From inline_matrix_for_configurable_products_in_product_views.feature
+  Scenario: Order with single dimensional inline matrix form
+    Given I proceed as the User
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    And type "Configurable Product A" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product A" product
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I fill "One Dimensional Matrix Grid Form" with:
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        | -        | -        | 1        |
+    And I click "Add to Shopping List"
+    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+
+  Scenario: Order with two dimensional inline matrix form
+    Given type "Configurable Product B" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product B" product
+    Then I should see an "Matrix Grid Form" element
+    And I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | -        | -        |
+      | Value 12 | 1        | -        | -        |
+      | Value 13 | -        | 1        | -        |
+      | Value 14 | -        | -        | 1        |
+    And I click on "Shopping List Dropdown"
+    And I click "Create New Shopping List"
+    And I fill in "Shopping List Name" with "Product B Shopping List"
+    And I click "Create and Add"
+    Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
+
+  Scenario: Update Configurable Product B variants
+    Given I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | -        | -        |
+      | Value 12 | 4        | -        | -        |
+      | Value 13 | -        | 3        | -        |
+      | Value 14 | -        | -        | 5        |
+    And I click on "Shopping List Dropdown"
+    And I click "Update Product B Shopping List"
+    Then I should see "Shopping list \"Product B Shopping List\" was updated successfully"
+    And I click "Product B Shopping List"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | Value 21 | Value 22 | Value 23 |
+      | 1        |          | N/A      |
+      | 4        | N/A      |          |
+      |          | 3        | N/A      |
+      | N/A      | N/A      | 5        |
+
+  Scenario: Check product name in shopping list dropdown in front store
+    Given I open shopping list widget
+    Then I should see "Configurable Product B" in the "ShoppingListWidget" element
+    And I should not see "Product C 232" in the "ShoppingListWidget" element
+
+#  Scenario: Order with regular variant selectors
+#    Given type "Configurable Product C" in "search"
+#    And click "Search Button"
+#    And click "View Details" for "Configurable Product C" product
+#    Then I should see an "Configurable Product Shopping List Form" element
+#    And I select "Value 12" from "Attribute_1"
+#    And I select "Value 23" from "Attribute_2"
+#    And I select "Value 32" from "Attribute_3"
+#    And I click on "Shopping List Dropdown"
+#    And I click "Create New Shopping List"
+#    And I fill in "Shopping List Name" with "Product C Shopping List"
+#    And I click "Create and Add"
+#    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
+#    And I should see "Product has been added to \"Product C Shopping List\""
+#
+#    And I click "Product C Shopping List"
+#    Then I should see "Shopping list 2 Items"
+#    And I should see "Product B Shopping List 5 Items"
+#    And I should see "Product C Shopping List 1 Item"
+#
+  Scenario: Remove Configurable Product A variants from shopping list
+    Given type "Configurable Product A" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product A" product
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I click on "Shopping List Dropdown"
+    And I click "Remove From Shopping List"
+    Then I should see "Product has been removed from \"Shopping list\""
+    And I click "Shopping list"
+    Then I should not see "Shopping list 2 Items"
+
+  Scenario: Check popup matrix form
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And uncheck "Use default" for "Product Views" field
+    And I fill in "Product Views" with "Popup Matrix Form"
+    And I save form
+    Given I proceed as the User
+    Given type "Configurable Product B" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product B" product
+    Then I should not see an "Matrix Grid Form" element
+    And I press "Add to Shopping List"
+    Then I should see an "Matrix Grid Form" element
+
+  Scenario: Check matrix form disabled
+    Given I proceed as the Admin
+    And I fill in "Product Views" with "No Matrix Form"
+    And I save form
+    Given I proceed as the User
+    And I reload the page
+    And type "Configurable Product B" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product B" product
+    Then I should not see an "Matrix Grid Form" element
+    And I should see an "Configurable Product Shopping List Form" element
+
+  Scenario: Check that configurable product doesn't show on grid in select product type
+    Given I proceed as the Admin
+    And I go to Sales/ Shopping Lists
+    And I click "view" on first row in grid
+    And click "Add Line Item"
+    Then should see an "Add Line Item Popup" element
+    And I open select entity popup for field "Product"
+    Then there is no "Configurable Product B" in grid
+    Then there is no "Configurable Product A" in grid
