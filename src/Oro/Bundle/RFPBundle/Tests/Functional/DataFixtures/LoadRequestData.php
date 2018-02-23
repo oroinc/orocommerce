@@ -250,8 +250,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         /** @var Organization $organization */
         $organization = $owner->getOrganization();
 
-        /** @var Website $website */
-        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+        $website = $this->getWebsite($manager);
 
         foreach (self::$requests as $key => $rawRequest) {
             $request = new Request();
@@ -275,7 +274,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
                 $request->setCustomerUser($this->getReference($rawRequest['customerUser']));
             }
 
-            $this->processRequestProducts($request);
+            $this->processRequestProducts($manager, $request);
             if (isset($rawRequest['ship_until'])) {
                 $request->setShipUntil(new \DateTime());
             }
@@ -325,11 +324,12 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
     }
 
     /**
-     * @param Request $request
+     * @param ObjectManager $manager
+     * @param Request       $request
      */
-    protected function processRequestProducts(Request $request)
+    protected function processRequestProducts(ObjectManager $manager, Request $request)
     {
-        $currencies = $this->getCurrencies();
+        $currency = $this->getWebsiteDefaultCurrency($manager);
         $products = [
             LoadProductData::PRODUCT_1,
             LoadProductData::PRODUCT_2,
@@ -347,7 +347,6 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
                 $requestProduct->setComment(sprintf('Notes %s', $i));
                 $productUnitPrecisions = $product->getUnitPrecisions();
                 $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
-                $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))
@@ -360,10 +359,25 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
     }
 
     /**
-     * @return array
+     * @param ObjectManager $manager
+     *
+     * @return string
      */
-    protected function getCurrencies()
+    protected function getWebsiteDefaultCurrency(ObjectManager $manager): string
     {
-        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
+        $website = $this->getWebsite($manager);
+
+        return $this->container->get('oro_pricing.provider.website_currency_provider')
+            ->getWebsiteDefaultCurrency($website->getId());
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return Website
+     */
+    protected function getWebsite(ObjectManager $manager): Website
+    {
+        return $manager->getRepository(Website::class)->findOneBy(['default' => true]);
     }
 }
