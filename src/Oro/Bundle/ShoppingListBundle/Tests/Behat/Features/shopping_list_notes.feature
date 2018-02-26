@@ -16,4 +16,4 @@ Feature: Shopping list notes
     Given I login as administrator
     And I go to Sales/ Shopping Lists
     When I click view "Another List" in grid
-    And I should not see "My shopping list notes"
+    And I should see "My shopping list <script>alert('malicious script')</script> notes"
