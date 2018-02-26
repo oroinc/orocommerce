@@ -1,0 +1,93 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1_name:
+        string: 'Black Refurbished'
+    product2_name:
+        string: 'White'
+    configurable_product_name:
+        string: 'Tablet PC'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision1:
+        unit: '@item'
+        precision: 0
+    unit_precision2:
+        unit: '@item'
+        precision: 0
+    unit_precision3:
+        unit: '@item'
+        precision: 0
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'tpc_b_r'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision1'
+        addName: ['@product1_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product2:
+        type: 'simple'
+        sku: 'tpc_w'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision2'
+        addName: ['@product2_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product:
+        type: 'configurable'
+        sku: 'tpc'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision3'
+        addName: ['@configurable_product_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product1ItemPrice:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 800
+    product2ItemPrice:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 1100
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationRpoduct1DefaultPriceList:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelationRpoduct2DefaultPriceList:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    product1ItemCombined:
+        unit: '@item'
+        product: '@product1'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 10
+        currency: 'USD'
+    product2ItemCombined:
+        unit: '@item'
+        product: '@product2'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 7
+        currency: 'USD'

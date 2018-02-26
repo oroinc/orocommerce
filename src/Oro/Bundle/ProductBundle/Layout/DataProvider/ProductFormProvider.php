@@ -17,6 +17,9 @@ use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 
+/**
+ * Provides form and form view for product view pages and quick order form
+ */
 class ProductFormProvider extends AbstractFormProvider
 {
     const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
@@ -139,7 +142,7 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options, ['parentProduct' => $product->getId()]);
     }
 
     /**
@@ -151,7 +154,12 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getFormView(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getFormView(
+            FrontendVariantFiledType::NAME,
+            $data,
+            $options,
+            ['parentProduct' => $product->getId()]
+        );
     }
 
     /**
