@@ -36,7 +36,11 @@ class MatrixGridOrderController extends AbstractLineItemController
         $matrixGridOrderManager = $this->get('oro_shopping_list.provider.matrix_grid_order_manager');
 
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+        if ($request->get('shoppingListId')) {
+            $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+        } else {
+            $shoppingList = $shoppingListManager->getCurrent();
+        }
 
         $form = $matrixOrderFormProvider->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);
@@ -47,6 +51,10 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $product,
                 $request->request->get('matrix_collection', [])
             );
+
+            if (!$shoppingList) {
+                $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+            }
 
             $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
