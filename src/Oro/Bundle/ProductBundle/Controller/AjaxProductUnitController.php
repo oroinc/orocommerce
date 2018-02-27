@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Use this class for getting product units on admin panel
+ */
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
@@ -33,8 +36,6 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
      */
     public function getProductUnitsAction(Request $request, Product $product)
     {
-        $isShort = (bool)$request->get('short', false);
-
-        return $this->getProductUnits($product, $isShort);
+        return $this->getProductUnits($product);
     }
 }

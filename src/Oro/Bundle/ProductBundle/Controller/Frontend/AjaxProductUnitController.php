@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Use this class for getting product units on frontend
+ */
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
@@ -25,8 +28,6 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
      */
     public function productUnitsAction(Request $request, Product $product)
     {
-        $isShort = (bool)$request->get('short', false);
-
-        return $this->getProductUnits($product, $isShort);
+        return $this->getProductUnits($product);
     }
 }
