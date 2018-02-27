@@ -535,6 +535,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Shopping Lists" with "Popup Matrix Form"
     And I save form
     Given I proceed as the User
+    And I should see "No Shopping Lists"
     And type "CNF_B" in "search"
     And click "Search Button"
     And I click "List View"
@@ -542,13 +543,19 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should not see an "Matrix Grid Form" element
     And I click "Add to Shopping list" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
+    And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
+    And I click "Matrix Grid Popup Close Button"
+    Then I should not see an "Matrix Grid Popup" element
+    # Check opening popup matrix form doesn't create empty shopping list
+    And I should see "No Shopping Lists"
+    And I click "Add to Shopping list" for "CNF_B" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shopping list"
+    And I click "Add to Shopping List"
     Then I should see "Shopping list \"Shopping list\" was updated successfully"
     And I click "Shopping list"
     Then I should not see an "Matrix Grid Form" element
@@ -644,12 +651,18 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Product Views" with "Popup Matrix Form"
     And I save form
     Given I proceed as the User
+    And I should see "No Shopping Lists"
     Given type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "CNF_B" product
     Then I should not see an "Matrix Grid Form" element
     And I press "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
+    And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
+    And I click "Matrix Grid Popup Close Button"
+    Then I should not see an "Matrix Grid Popup" element
+    # Check opening popup matrix form doesn't create empty shopping list
+    And I should see "No Shopping Lists"
     And I reload the page
 
   Scenario: Disabled matrix form in Product View
