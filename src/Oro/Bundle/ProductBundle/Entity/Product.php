@@ -976,7 +976,25 @@ class Product extends ExtendProduct implements
         $result = [];
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+                $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+        }
+
+        return $result;
+    }
+
+    /**
+     * We need to return only precisions with sell=true for frontend
+     *
+     * @return array
+     */
+    public function getSellUnitsPrecision()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            if ($unitPrecision->isSell()) {
+                $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+            }
         }
 
         return $result;
@@ -1316,7 +1334,7 @@ class Product extends ExtendProduct implements
     {
         return [
             'id' => $this->getId(),
-            'product_units' => $this->getAvailableUnitsPrecision(),
+            'product_units' => $this->getSellUnitsPrecision(),
             'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
             'sku' => $this->getSku(),
