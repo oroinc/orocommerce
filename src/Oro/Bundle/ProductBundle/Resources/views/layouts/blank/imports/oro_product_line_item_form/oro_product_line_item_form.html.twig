@@ -66,11 +66,17 @@
                 {{ renderCacheQuantity }}
             </div>
             <div class="form-row {{ class_prefix }}">
-                {% if product.product_units is not defined or product.product_units|length > 1 %}
+                {% if product is iterable %}
+                    {% set currentProduct = product %}
+                {% else %}
+                    {% set currentProduct = product.jsonSerialize() %}
+                {% endif %}
+
+                {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}
                     {{ renderCacheUnit }}
                 {% else %}
-                    <div class="product-item__placeholder-label">
-                        {{ product.unit|oro_format_product_unit_label|capitalize }}
+                    <div class="product-item__placeholder-label" data-role="unit-label">
+                        {{- currentProduct.unit|oro_format_product_unit_label -}}
                     </div>
                     <div class="hidden">
                         {{ renderCacheUnit }}
