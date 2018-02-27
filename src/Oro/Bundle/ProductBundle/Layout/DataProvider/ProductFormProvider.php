@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * Provides form and form view for product view pages and quick order form
+ */
 class ProductFormProvider extends AbstractFormProvider
 {
     const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
@@ -138,7 +141,7 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options, ['parentProduct' => $product->getId()]);
     }
 
     /**
@@ -150,7 +153,12 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getFormView(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getFormView(
+            FrontendVariantFiledType::NAME,
+            $data,
+            $options,
+            ['parentProduct' => $product->getId()]
+        );
     }
 
     /**

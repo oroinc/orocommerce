@@ -16,6 +16,9 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvide
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
+/**
+ * This extension adds data, that is required to build a matrix form, into a product search grid at frontend
+ */
 class FrontendMatrixProductGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'frontend-product-search-grid';
@@ -84,9 +87,11 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return
-            parent::isApplicable($config)
-            && static::SUPPORTED_GRID === $config->getName();
+        if (!parent::isApplicable($config)) {
+            return false;
+        }
+
+        return static::SUPPORTED_GRID === $config->getName() || $config->isDatagridExtendedFrom(self::SUPPORTED_GRID);
     }
 
     /**
