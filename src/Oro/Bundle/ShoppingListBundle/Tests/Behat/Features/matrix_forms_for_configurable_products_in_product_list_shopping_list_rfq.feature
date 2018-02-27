@@ -877,6 +877,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
 # From inline_matrix_for_configurable_products_in_product_views.feature
   Scenario: Order with single dimensional inline matrix form
+    Given I proceed as the Admin
+    And I go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And check "Use default" for "Product Views" field
+    And check "Use default" for "Shopping Lists" field
+    And I save form
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
     And type "Configurable Product A" in "search"
@@ -887,7 +893,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    Then I should see "Shopping list \"List 2\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
     Given type "Configurable Product B" in "search"
@@ -930,35 +936,36 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Configurable Product B" in the "ShoppingListWidget" element
     And I should not see "Product C 232" in the "ShoppingListWidget" element
 
-#  Scenario: Order with regular variant selectors
-#    Given type "Configurable Product C" in "search"
-#    And click "Search Button"
-#    And click "View Details" for "Configurable Product C" product
-#    Then I should see an "Configurable Product Shopping List Form" element
-#    And I select "Value 12" from "Attribute_1"
-#    And I select "Value 23" from "Attribute_2"
-#    And I select "Value 32" from "Attribute_3"
-#    And I click on "Shopping List Dropdown"
-#    And I click "Create New Shopping List"
-#    And I fill in "Shopping List Name" with "Product C Shopping List"
-#    And I click "Create and Add"
-#    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
-#    And I should see "Product has been added to \"Product C Shopping List\""
-#
-#    And I click "Product C Shopping List"
-#    Then I should see "Shopping list 2 Items"
-#    And I should see "Product B Shopping List 5 Items"
-#    And I should see "Product C Shopping List 1 Item"
-#
+  Scenario: Order with regular variant selectors
+    Given type "Configurable Product C" in "search"
+    And click "Search Button"
+    And click "View Details" for "Configurable Product C" product
+    Then I should see an "Configurable Product Shopping List Form" element
+    And I fill "ConfigurableProductForm" with:
+      | Attributes_1 | Value 12 |
+      | Attributes_2 | Value 23 |
+      | Attributes_3 | Value 31 |
+    And I click on "Shopping List Dropdown"
+    And I click "Create New Shopping List"
+    And I fill in "Shopping List Name" with "Product C Shopping List"
+    And I click "Create and Add"
+    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
+    And I should see "Product has been added to \"Product C Shopping List\""
+
+    And I click "Product C Shopping List"
+    And I should see "Product B Shopping List 4 Items"
+    And I should see "Product C Shopping List 1 Item"
+
   Scenario: Remove Configurable Product A variants from shopping list
     Given type "Configurable Product A" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product A" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
-    And I click "Remove From Shopping List"
-    Then I should see "Product has been removed from \"Shopping list\""
-    And I click "Shopping list"
+    And I click "Remove From List 2"
+    Then I should see "Product has been removed from \"List 2\""
+    And I open shopping list widget
+    And I click "View Details"
     Then I should not see "Shopping list 2 Items"
 
   Scenario: Check popup matrix form
