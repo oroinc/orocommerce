@@ -3,16 +3,14 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
 {

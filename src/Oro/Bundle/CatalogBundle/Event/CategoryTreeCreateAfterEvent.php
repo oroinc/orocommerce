@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
-use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\UserBundle\Entity\UserInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 class CategoryTreeCreateAfterEvent extends Event
 {

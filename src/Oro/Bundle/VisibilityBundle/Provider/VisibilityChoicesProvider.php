@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class VisibilityChoicesProvider
 {

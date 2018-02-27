@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Model;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class MatrixCollection
 {

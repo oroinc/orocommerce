@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContext;
-
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator;
-use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Symfony\Component\Validator\Context\ExecutionContext;
 
 class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
 {

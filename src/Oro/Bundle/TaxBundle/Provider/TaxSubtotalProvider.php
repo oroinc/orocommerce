@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
@@ -33,18 +32,26 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     protected $taxFactory;
 
     /**
+     * @var TaxationSettingsProvider
+     */
+    protected $taxationSettingsProvider;
+
+    /**
      * @param TranslatorInterface $translator
      * @param TaxProviderRegistry $taxProviderRegistry
      * @param TaxFactory $taxFactory
+     * @param TaxationSettingsProvider $taxationSettingsProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         TaxProviderRegistry $taxProviderRegistry,
-        TaxFactory $taxFactory
+        TaxFactory $taxFactory,
+        TaxationSettingsProvider $taxationSettingsProvider
     ) {
         $this->translator = $translator;
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxFactory = $taxFactory;
+        $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
     /**
@@ -112,6 +119,11 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal->setAmount($tax->getTotal()->getTaxAmount());
         $subtotal->setCurrency($tax->getTotal()->getCurrency());
         $subtotal->setVisible((bool)$tax->getTotal()->getTaxAmount());
+
+        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
+            $subtotal->setOperation(Subtotal::OPERATION_IGNORE);
+        }
+
         $subtotal->setData($tax->getArrayCopy());
 
         return $subtotal;

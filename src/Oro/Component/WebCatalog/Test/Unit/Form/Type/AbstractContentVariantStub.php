@@ -3,7 +3,6 @@
 namespace Oro\Component\WebCatalog\Test\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;

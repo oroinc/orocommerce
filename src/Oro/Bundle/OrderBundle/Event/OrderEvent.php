@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\Form\FormInterface;
 
 class OrderEvent extends Event implements EntityDataAwareEventInterface
 {

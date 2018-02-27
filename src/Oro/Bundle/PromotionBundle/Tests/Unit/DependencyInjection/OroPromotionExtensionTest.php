@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroPromotionExtensionTest extends ExtensionTestCase
 {

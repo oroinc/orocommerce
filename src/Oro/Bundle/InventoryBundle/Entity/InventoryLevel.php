@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\InventoryBundle\Model\ExtendInventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;

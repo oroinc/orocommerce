@@ -2,12 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Symfony\Bridge\Twig\Form\TwigRenderer;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
@@ -15,6 +9,11 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvide
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
 {

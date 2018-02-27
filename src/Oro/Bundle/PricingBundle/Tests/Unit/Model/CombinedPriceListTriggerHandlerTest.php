@@ -11,19 +11,23 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
 
     /**
      * @var Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
+
     /**
      * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $eventDispatcher;
+
     /**
      * @var CombinedPriceListTriggerHandler
      */
@@ -41,58 +45,81 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->repository = $this->getMockBuilder(CombinedProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(CombinedProductPriceRepository::class);
 
         $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->method('getRepository')->with(CombinedProductPrice::class)->willReturn($this->repository);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(CombinedProductPrice::class)
+            ->willReturn($this->repository);
 
-        $this->registry = $this->getMockBuilder(Registry::class)->disableOriginalConstructor()->getMock();
-        $this->registry->method('getManagerForClass')->willReturn($manager);
+        $this->registry = $this->createMock(Registry::class);
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
 
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)->disableOriginalConstructor()->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
         $this->eventDispatcher->method('dispatch')->willReturnCallback(
             function ($eventName, $event) {
                 $this->events[$eventName][] = $event;
             }
         );
+
         $this->triggerHandler = new CombinedPriceListTriggerHandler($this->registry, $this->eventDispatcher);
-        $this->events = [];
     }
 
     /**
      * @dataProvider processDataProvider
-     * @param CombinedPriceList $combinedPriceList
+     *
+     * @param array $combinedPriceList
      * @param array $productIds
      * @param array $expectedEvents
-     * @param Website|null $website
+     * @param array|null $website
      */
     public function testProcess(
-        CombinedPriceList $combinedPriceList,
+        array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
-        Website $website = null
+        array $website = null
     ) {
-        $this->repository->method('getProductIdsByPriceLists')->willReturn($productIds);
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
+
+        $this->repository
+            ->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
+
         $this->triggerHandler->process($combinedPriceList, $website);
         $this->assertEquals($expectedEvents, $this->events);
     }
 
     /**
      * @dataProvider processDataProvider
-     * @param CombinedPriceList $combinedPriceList
+     *
+     * @param array $combinedPriceList
      * @param array $productIds
      * @param array $expectedEvents
-     * @param Website|null $website
+     * @param array|null $website
      */
     public function testProcessWithCommit(
-        CombinedPriceList $combinedPriceList,
+        array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
-        Website $website = null
+        array $website = null
     ) {
-        $this->repository->method('getProductIdsByPriceLists')->willReturn($productIds);
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
+
+        $this->repository
+            ->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
 
         $this->triggerHandler->startCollect();
         $this->triggerHandler->process($combinedPriceList, $website);
@@ -103,18 +130,28 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider processDataProvider
-     * @param CombinedPriceList $combinedPriceList
+     *
+     * @param array $combinedPriceList
      * @param array $productIds
      * @param array $expectedEvents
-     * @param Website|null $website
+     * @param array|null $website
      */
     public function testMassProcess(
-        CombinedPriceList $combinedPriceList,
+        array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
-        Website $website = null
+        array $website = null
     ) {
-        $this->repository->method('getProductIdsByPriceLists')->willReturn($productIds);
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
+
+        $this->repository
+            ->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
+
         $this->triggerHandler->startCollect();
         $this->triggerHandler->massProcess([$combinedPriceList], $website);
         $this->triggerHandler->commit();
@@ -126,39 +163,60 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function processDataProvider()
     {
-        $combinedPriceList = new CombinedPriceList();
-
-        /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
-        $website = $this->createMock(Website::class);
-        $website->method('getId')->willReturn(1);
-
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
-        $product = $this->createMock(Product::class);
-        $product->method('getId')->willReturn(1);
-
         return [
             [
-                'cpl' => $combinedPriceList,
-                'productIds' => [
-                    $product->getId(),
-                ],
+                'cpl' => ['id' => 1],
+                'productIds' => [1, 2],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME =>
-                        [new ReindexationRequestEvent([Product::class], [], [$product->getId()])]
+                        [new ReindexationRequestEvent([Product::class], [], [1, 2])]
                 ],
                 'website' => null,
             ],
             [
-                'cpl' => $combinedPriceList,
-                'productIds' => [
-                    $product->getId()
-                ],
+                'cpl' => ['id' => 1],
+                'productIds' => [1, 2],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME =>
-                        [new ReindexationRequestEvent([Product::class], [$website->getId()], [$product->getId()])]
+                        [new ReindexationRequestEvent([Product::class], [1], [1, 2])]
                 ],
-                'website' => $website,
+                'website' => ['id' => 1],
             ],
         ];
+    }
+
+    public function testProcessForWebsites()
+    {
+        $cpl1ProductIds = [1, 2];
+        $cpl2ProductIds = [1, 3];
+        $this->repository
+            ->expects($this->exactly(2))
+            ->method('getProductIdsByPriceLists')
+            ->willReturnOnConsecutiveCalls($cpl1ProductIds, $cpl2ProductIds);
+
+        $this->triggerHandler->startCollect();
+
+        /** Process CPL for all websites */
+        $combinedPriceList1 = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $this->triggerHandler->process($combinedPriceList1);
+
+        /** Process CPL for website1 */
+        $website1Id = 1;
+        $website1   = $this->getEntity(Website::class, ['id' => $website1Id]);
+        $combinedPriceList2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $this->triggerHandler->process($combinedPriceList2, $website1);
+
+        $this->assertEmpty($this->events);
+        $this->triggerHandler->commit();
+
+        $this->assertEquals(
+            [
+                ReindexationRequestEvent::EVENT_NAME => [
+                    new ReindexationRequestEvent([Product::class], [], $cpl1ProductIds),
+                    new ReindexationRequestEvent([Product::class], [$website1Id], [3])
+                ]
+            ],
+            $this->events
+        );
     }
 }

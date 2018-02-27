@@ -3,22 +3,19 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Psr\Log\LoggerInterface;
 
 class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Element;
 
 use Behat\Gherkin\Node\TableNode;
-
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 
 class ShortTemplate extends ProductTemplate

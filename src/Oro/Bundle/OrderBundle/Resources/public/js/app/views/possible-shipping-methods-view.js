@@ -45,7 +45,7 @@ define(function(require) {
             toggleBtn: ['click', 'onToggleBtnClick'],
             overriddenShippingCostAmount: ['change', 'onOverriddenShippingCostChange'],
             possibleShippingMethodForm: ['change', 'onShippingMethodTypeChange'],
-            '$form': ['submit', 'onSaveForm']
+            $form: ['submit', 'onSaveForm']
         },
 
         initialize: function(options) {

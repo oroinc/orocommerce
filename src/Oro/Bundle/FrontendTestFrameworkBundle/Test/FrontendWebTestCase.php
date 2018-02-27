@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
 
 abstract class FrontendWebTestCase extends WebTestCase

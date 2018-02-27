@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator;
 
 class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
 {

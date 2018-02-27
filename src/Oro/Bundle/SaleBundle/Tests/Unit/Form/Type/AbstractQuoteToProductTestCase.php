@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
 {

@@ -2,26 +2,25 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\Form\Extension\CustomerFormExtension;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
-use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerTypeStub;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
+use Oro\Bundle\PricingBundle\Form\Extension\CustomerFormExtension;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {

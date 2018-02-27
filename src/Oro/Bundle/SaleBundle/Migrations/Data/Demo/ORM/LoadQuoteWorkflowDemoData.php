@@ -3,9 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Migrations\Data\Demo\ORM\AbstractLoadEntityWorkflowDemoData;
 use Oro\Bundle\WorkflowBundle\Model\Transition;

@@ -73,6 +73,6 @@ Expected dependencies:
 - Symfony\Component\HttpFoundation
 - Symfony\Component\HttpKernel\Bundle\Bundle
 - Symfony\Component\HttpKernel\DependencyInjection\Extension
-- Symfony\Component\OptionsResolver\OptionsResolverInterface
+- Symfony\Component\OptionsResolver\OptionsResolver
 - Symfony\Component\Translation\TranslatorInterface
 - Symfony\Component\Validator\Validation

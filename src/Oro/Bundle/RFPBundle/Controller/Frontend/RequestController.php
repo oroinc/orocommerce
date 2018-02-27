@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
 {

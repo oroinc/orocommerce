@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\Extension;
 
-use Oro\Component\Layout\LayoutContext;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator;
+use Oro\Component\Layout\LayoutContext;
 
 class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
 {

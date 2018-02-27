@@ -3,13 +3,11 @@
 namespace Oro\Bundle\RedirectBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-
-use Symfony\Component\HttpFoundation\Response;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @RouteResource("slug")

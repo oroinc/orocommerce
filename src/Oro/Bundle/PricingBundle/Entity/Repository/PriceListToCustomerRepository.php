@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -20,6 +20,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Composite primary key fields order:
@@ -50,7 +51,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->where($qb->expr()->eq('relation.customer', ':customer'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.sortOrder', $sortOrder)
+            ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
             ->setParameters(['customer' => $customer, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -241,6 +242,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         BasePriceList $priceList,
         $parameterName
     ) {
+        QueryBuilderUtil::checkIdentifier($parameterName);
         $parentAlias = $queryBuilder->getRootAliases()[0];
 
         $subQueryBuilder = $this->createQueryBuilder('relation');

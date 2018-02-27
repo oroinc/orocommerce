@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase

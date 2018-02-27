@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
+use Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider;
 
 class CompositeShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {

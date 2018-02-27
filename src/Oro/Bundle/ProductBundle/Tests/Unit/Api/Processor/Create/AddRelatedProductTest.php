@@ -5,10 +5,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Create;
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Create\CreateProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
-use Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\FakeAssignerStrategy;
 
 class AddRelatedProductTest extends CreateProcessorTestCase

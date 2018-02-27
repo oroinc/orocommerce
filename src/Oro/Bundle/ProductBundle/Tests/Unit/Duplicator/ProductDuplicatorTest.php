@@ -2,12 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
@@ -21,6 +17,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {

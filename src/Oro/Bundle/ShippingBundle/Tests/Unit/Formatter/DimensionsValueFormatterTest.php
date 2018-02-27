@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class DimensionsValueFormatterTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ExecutionContextInterface;
-
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OrderShippingExtension extends \Twig_Extension
 {

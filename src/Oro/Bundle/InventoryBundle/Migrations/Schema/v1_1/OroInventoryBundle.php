@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;

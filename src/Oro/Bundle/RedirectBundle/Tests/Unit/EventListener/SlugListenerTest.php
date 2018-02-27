@@ -10,8 +10,8 @@ use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\EventListener\SlugListener;
 use Oro\Component\MessageQueue\Client\Message;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class SlugListenerTest extends \PHPUnit_Framework_TestCase

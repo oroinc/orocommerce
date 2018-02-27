@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -12,9 +11,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class is responsible for triggering all events during indexation

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -29,7 +28,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');

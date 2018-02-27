@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class CheckoutWorkflowStateRepository extends EntityRepository

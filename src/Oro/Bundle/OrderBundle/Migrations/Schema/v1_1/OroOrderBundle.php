@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Doctrine\DBAL\Types\IntegerType;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;

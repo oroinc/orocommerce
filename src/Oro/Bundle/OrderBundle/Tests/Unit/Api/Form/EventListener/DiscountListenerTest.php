@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Form\EventListener;
 
+use Oro\Bundle\OrderBundle\Api\Form\EventListener\DiscountListener;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
-use Oro\Bundle\OrderBundle\Api\Form\EventListener\DiscountListener;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;

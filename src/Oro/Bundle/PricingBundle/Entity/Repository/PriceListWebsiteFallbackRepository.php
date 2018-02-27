@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 
 class PriceListWebsiteFallbackRepository extends EntityRepository

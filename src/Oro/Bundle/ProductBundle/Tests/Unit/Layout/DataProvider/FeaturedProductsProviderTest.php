@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
 
 class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
 {
@@ -60,7 +59,8 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
             $this->productManager,
             $this->configManager,
             $registry,
-            $this->tokenStorage
+            $this->tokenStorage,
+            $this->crypter
         );
     }
 

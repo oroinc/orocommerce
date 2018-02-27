@@ -22,7 +22,7 @@ class ValueNodeConverter implements QueryExpressionConverterInterface
     {
         if ($node instanceof ValueNode) {
             $value = $node->getValue();
-            if (!is_numeric($value)) {
+            if (!is_numeric($value) || array_key_exists(self::REQUIRE_PARAMETRIZATION, $params)) {
                 $param = self::PARAMETER_PREFIX . $this->paramCount;
                 $params[$param] = $value;
                 $value = ':' . $param;

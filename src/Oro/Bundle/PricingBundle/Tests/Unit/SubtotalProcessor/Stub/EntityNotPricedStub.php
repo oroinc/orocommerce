@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;

@@ -1,4 +1,4 @@
-# Freight Classes Extension #
+# Freight Classes Extension
 
 To expand "Freight Classes" within application, developer must add to its own Bundle the following:
 

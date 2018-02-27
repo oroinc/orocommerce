@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
-
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 class ProductQuantityToOrderLimitValidator extends ConstraintValidator
 {

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
-use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 
 class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
 {

@@ -33,6 +33,16 @@ services:
             - '%oro_shopping_list.entity.shopping_list.class%'
             - "@doctrine.orm.entity_manager"
 
+    oro_shopping_list.manager.guest_shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@translator'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
+
     oro_shopping_list.shopping_list.manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
         arguments:
@@ -46,6 +56,8 @@ services:
             - "@oro_security.acl_helper"
             - '@oro_shopping_list.shopping_list_provider.cache'
             - "@oro_product.provider.product_variant_availability_provider"
+        calls:
+            - [setGuestShoppingListManager, ['@oro_shopping_list.manager.guest_shopping_list']]
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
@@ -417,7 +429,6 @@ services:
             - '@oro_shopping_list.shopping_list.manager'
             - '@oro_shopping_list.layout.data_provider.matrix_order_form'
             - '@oro_product.layout.data_provider.product_list_form_availability_provider'
-            - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_pricing.layout.data_provider.frontend_product_prices'
             - '@oro_shopping_list.layout.data_provider.matrix_grid_order'
             - '@oro_product.datagrid_theme_helper'

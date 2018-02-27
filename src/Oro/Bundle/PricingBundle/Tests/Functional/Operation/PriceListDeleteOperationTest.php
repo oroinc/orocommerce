@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class PriceListDeleteOperationTest extends ActionTestCase
 {

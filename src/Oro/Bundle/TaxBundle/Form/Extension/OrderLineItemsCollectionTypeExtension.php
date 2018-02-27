@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class OrderLineItemsCollectionTypeExtension extends AbstractTypeExtension
 {

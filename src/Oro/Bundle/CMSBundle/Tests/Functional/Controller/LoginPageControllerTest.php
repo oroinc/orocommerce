@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class LoginPageControllerTest extends WebTestCase
 {

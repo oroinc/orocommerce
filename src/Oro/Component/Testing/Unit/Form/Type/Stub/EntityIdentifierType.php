@@ -2,9 +2,8 @@
 
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityIdentifierType extends EntityType
 {

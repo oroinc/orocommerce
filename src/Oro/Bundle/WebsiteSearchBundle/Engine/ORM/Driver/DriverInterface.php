@@ -3,11 +3,10 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
-
+use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterInterface;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 
 interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterface
 {

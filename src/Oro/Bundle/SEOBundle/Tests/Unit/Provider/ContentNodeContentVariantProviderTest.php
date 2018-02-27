@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\Provider\ContentNodeContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 

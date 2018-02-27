@@ -19,8 +19,8 @@ define(function(require) {
     LineItemView = LineItemProductView.extend({
         options: {
             priceTypes: {
-                'BUNDLE': 20,
-                'UNIT': 10
+                BUNDLE: 20,
+                UNIT: 10
             },
             selectors: {
                 productSelector: '.invoice-line-item-type-product [data-name="field__product"]',

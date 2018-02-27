@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 {

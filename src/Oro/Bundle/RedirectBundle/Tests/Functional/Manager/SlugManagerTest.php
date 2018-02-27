@@ -3,10 +3,9 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Manager\SlugManager;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class SlugManagerTest extends WebTestCase
 {

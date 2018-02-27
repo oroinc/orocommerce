@@ -3,13 +3,11 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
+use Symfony\Component\Validator\Constraint;
 
 class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
 {

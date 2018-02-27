@@ -5,7 +5,6 @@ namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;

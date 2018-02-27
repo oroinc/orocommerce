@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -14,10 +12,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -209,10 +208,11 @@ class ProductApiTest extends RestJsonApiTestCase
     public function testProductPageTemplateInvalidValue()
     {
         // pageTemplate = 'invalid-value'
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $this->getEntityType(Product::class)]),
-            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml')
+        $response = $this->post(
+            ['entity' => $this->getEntityType(Product::class)],
+            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml'),
+            [],
+            false
         );
 
         $this->assertResponseValidationError(

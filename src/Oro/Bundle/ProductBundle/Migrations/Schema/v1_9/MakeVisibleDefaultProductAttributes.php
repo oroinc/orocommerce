@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
-
 use Oro\Bundle\EntityConfigBundle\Migration\InsertEntityConfigIndexFieldValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;

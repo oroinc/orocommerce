@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\InventoryBundle\Form\Extension\CheckoutShipUntilFormExtension;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType;
+use Oro\Bundle\InventoryBundle\Form\Extension\CheckoutShipUntilFormExtension;
 use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutShipUntilFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

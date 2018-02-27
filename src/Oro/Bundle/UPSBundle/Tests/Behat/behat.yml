@@ -1,4 +1,17 @@
 oro_behat_extension:
+  suites:
+    OroUPSBundle:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroCheckoutBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroSaleBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroUPSBundle::FeatureContext
+      paths:
+        - '@OroUPSBundle/Tests/Behat/Features'
+
   elements:
     UPS Shipping Rule Form:
       selector: "form[id^='oro_shipping_methods_configs_rule-uid']"

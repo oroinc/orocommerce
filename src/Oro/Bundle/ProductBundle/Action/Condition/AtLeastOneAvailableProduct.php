@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Action\Condition;
 
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
-use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAccessorAwareInterface
 {

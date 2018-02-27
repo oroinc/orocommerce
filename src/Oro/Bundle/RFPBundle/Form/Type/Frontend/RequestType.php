@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
+use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -9,9 +11,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 class RequestType extends AbstractType
 {

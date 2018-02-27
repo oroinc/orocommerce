@@ -4,7 +4,6 @@ namespace Oro\Component\WebCatalog;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 interface ContentVariantProviderInterface

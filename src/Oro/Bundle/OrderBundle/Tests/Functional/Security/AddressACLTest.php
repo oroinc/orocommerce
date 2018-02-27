@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)

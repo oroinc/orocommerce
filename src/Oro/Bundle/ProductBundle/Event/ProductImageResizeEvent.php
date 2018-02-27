@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Symfony\Component\EventDispatcher\Event;
 
 class ProductImageResizeEvent extends Event
 {

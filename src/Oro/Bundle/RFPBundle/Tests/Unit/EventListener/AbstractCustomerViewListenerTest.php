@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
-use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
+use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractCustomerViewListenerTest extends FormViewListenerTestCase
 {

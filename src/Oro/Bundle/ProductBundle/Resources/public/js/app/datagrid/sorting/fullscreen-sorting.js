@@ -50,7 +50,7 @@ define(function(require) {
             });
 
             this.fullscreenView = new FullscreenPopupView({
-                content: this.$popupContent,
+                contentElement: this.$popupContent,
                 popupIcon: 'fa-chevron-left'
             });
             this.fullscreenView.on('close', _.bind(this.onClosePopup, this));

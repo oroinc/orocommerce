@@ -55,11 +55,7 @@ class PriceListTest extends RestJsonApiTestCase
         $routeParameters = self::processTemplateData(['entity' => 'pricelists']);
         $parameters = $this->getRequestData('price_list/create_wrong_schedules.yml');
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -73,11 +69,7 @@ class PriceListTest extends RestJsonApiTestCase
         $routeParameters = self::processTemplateData(['entity' => 'pricelists']);
         $parameters = $this->getRequestData('price_list/create_no_currencies.yml');
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(

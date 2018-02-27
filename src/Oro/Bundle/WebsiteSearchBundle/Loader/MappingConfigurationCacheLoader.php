@@ -3,9 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Loader;
 
 use Doctrine\Common\Cache\CacheProvider;
-
-use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
+use Oro\Component\Config\CumulativeResourceInfo;
 
 class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 {

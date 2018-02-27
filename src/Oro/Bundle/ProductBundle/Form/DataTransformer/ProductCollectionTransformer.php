@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class ProductCollectionTransformer implements DataTransformerInterface
 {

@@ -10,8 +10,8 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
-use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
+use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest

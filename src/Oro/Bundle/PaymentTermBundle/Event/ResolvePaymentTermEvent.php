@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Symfony\Component\EventDispatcher\Event;
 
 class ResolvePaymentTermEvent extends Event
 {

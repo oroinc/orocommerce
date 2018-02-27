@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10\ConfigMigration;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;

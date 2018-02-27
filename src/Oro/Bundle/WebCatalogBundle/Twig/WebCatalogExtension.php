@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WebCatalogExtension extends \Twig_Extension
 {

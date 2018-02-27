@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class LoginPageTest extends \PHPUnit_Framework_TestCase
 {

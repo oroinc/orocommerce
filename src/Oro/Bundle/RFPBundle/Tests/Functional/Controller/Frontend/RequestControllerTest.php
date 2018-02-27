@@ -3,9 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\DomCrawler\Field\InputFormField;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -17,6 +14,7 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -119,9 +117,8 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
-                static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
-                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
+            foreach ($data as $item) {
+                static::assertEquals($expectedData['action_configuration'], $item['action_configuration']);
             }
 
             static::assertEquals($expectedColumns, $testedColumns);
@@ -257,7 +254,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false,
                     ],
@@ -286,8 +282,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],
@@ -317,7 +311,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false
                     ]
@@ -343,7 +336,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false
                     ]
@@ -370,8 +362,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],
@@ -399,8 +389,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],

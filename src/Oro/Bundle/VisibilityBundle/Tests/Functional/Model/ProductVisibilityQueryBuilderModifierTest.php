@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -107,7 +107,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => null,
                 'expectedData' => [
                     'product-1',
-                    'product-2',
                     'product-3',
                     'product-5',
                     'product-6',
@@ -120,8 +119,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
                 'expectedData' => [
-                    'product-2',
                     'product-3',
+                    'product-5',
                 ]
             ],
             'group config visible' => [

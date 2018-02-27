@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Factory;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
 use Oro\Bundle\TaxBundle\Model\Taxable;

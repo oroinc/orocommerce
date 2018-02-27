@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model\Condition;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
 class OrderLineItemsHasCount extends AbstractCondition implements ContextAccessorAwareInterface
 {

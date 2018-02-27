@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
-use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListener
 {

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
 {

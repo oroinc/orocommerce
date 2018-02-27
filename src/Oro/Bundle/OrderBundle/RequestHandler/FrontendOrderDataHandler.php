@@ -3,15 +3,13 @@
 namespace Oro\Bundle\OrderBundle\RequestHandler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class FrontendOrderDataHandler
 {

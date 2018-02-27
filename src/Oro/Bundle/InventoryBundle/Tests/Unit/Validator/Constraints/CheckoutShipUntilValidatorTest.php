@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
@@ -11,6 +9,7 @@ use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CheckoutShipUntilValidatorTest extends \PHPUnit_Framework_TestCase
 {

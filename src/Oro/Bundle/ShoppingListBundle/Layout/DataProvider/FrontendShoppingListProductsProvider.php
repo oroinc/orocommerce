@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;

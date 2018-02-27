@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ProductControllerTest extends WebTestCase
 {

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStrategyHelperInterface
 {

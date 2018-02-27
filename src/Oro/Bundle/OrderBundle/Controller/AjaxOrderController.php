@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class AjaxOrderController extends Controller
 {

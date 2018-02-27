@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CombinedPriceListActivationRuleTest extends \PHPUnit_Framework_TestCase
 {

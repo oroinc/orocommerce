@@ -3,10 +3,9 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Listener;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class QuoteListenerTest extends WebTestCase
 {

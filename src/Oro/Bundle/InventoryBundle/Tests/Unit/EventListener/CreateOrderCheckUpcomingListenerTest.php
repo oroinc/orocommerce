@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\InventoryBundle\EventListener\CreateOrderCheckUpcomingListener;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Bundle\InventoryBundle\EventListener\CreateOrderCheckUpcomingListener;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateOrderCheckUpcomingListenerTest extends \PHPUnit_Framework_TestCase
 {

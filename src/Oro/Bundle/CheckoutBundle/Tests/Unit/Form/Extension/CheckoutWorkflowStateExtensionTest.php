@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension;
+use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
+use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
-use Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension;
-use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
+use Symfony\Component\Form\FormView;
 
 class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
 {

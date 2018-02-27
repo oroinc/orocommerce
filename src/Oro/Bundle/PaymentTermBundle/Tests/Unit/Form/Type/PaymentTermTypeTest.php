@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PaymentTermTypeTest extends FormIntegrationTestCase
 {

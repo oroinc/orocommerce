@@ -2,14 +2,12 @@
 
 namespace Oro\Component\Testing\Unit;
 
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 {

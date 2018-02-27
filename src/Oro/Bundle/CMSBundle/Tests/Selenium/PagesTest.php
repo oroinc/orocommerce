@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Selenium;
 
-use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 use Oro\Bundle\CMSBundle\Tests\Selenium\Pages\Pages;
+use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 
 class PagesTest extends Selenium2TestCase
 {

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -10,10 +13,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
 class QuoteProductDemandType extends AbstractType
 {

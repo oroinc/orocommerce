@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ScopedProductSearchQueryRestrictionEventListener extends ProductSearchQueryRestrictionEventListener
 {

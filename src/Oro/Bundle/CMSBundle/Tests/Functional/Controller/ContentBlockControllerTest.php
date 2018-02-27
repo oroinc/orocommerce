@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 

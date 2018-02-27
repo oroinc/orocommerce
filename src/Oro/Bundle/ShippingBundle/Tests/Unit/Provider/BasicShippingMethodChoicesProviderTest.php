@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase

@@ -3,12 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowTranslationHelper;
 use Oro\Bundle\WorkflowBundle\Tests\Functional\DataFixtures\LoadWorkflowTranslations;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class LoadTranslations extends LoadWorkflowTranslations
 {

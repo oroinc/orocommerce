@@ -3,11 +3,10 @@
 namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * @ORM\Table(name="oro_quote_product_demand")

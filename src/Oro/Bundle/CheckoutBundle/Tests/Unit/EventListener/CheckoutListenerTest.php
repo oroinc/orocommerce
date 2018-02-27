@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutListener;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;

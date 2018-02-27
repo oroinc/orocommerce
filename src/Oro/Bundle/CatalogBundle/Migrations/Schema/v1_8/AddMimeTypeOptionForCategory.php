@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\AttachmentBundle\Migration\SetAllowedMimeTypesForImageFieldQuery;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;

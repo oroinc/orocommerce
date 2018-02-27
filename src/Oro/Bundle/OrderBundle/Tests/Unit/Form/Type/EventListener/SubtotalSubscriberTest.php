@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\EventListener;
 
-use Symfony\Component\Form\FormEvents;
-
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -13,7 +12,7 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Symfony\Component\Form\FormEvents;
 
 class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
 {

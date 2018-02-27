@@ -7,7 +7,6 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\AST\GroupByClause;
 use Doctrine\ORM\Query\AST\PathExpression;
-
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\SelectIdentifierWalker;
 
 class SelectIdentifierWalkerTest extends \PHPUnit_Framework_TestCase

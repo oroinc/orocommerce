@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Validator\ExecutionContext;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Validator\ExecutionContext;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {

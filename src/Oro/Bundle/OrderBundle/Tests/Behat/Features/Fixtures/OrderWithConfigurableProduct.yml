@@ -1,0 +1,35 @@
+include:
+    - '@OroProductBundle:ConfigurableProductFixtures.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    configurableOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'configurableOrder'
+        website: '@website1'
+        currency: USD
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    configurableOrderLineItem1:
+        product: '@simpleProduct1'
+        parentProduct: '@configurableProduct'
+        order: '@configurableOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    configurableOrderLineItem2:
+        product: '@simpleProduct2'
+        parentProduct: '@configurableProduct'
+        order: '@configurableOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
-use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\Types\Type;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Psr\Log\LoggerInterface;
 
 /**
  * This class generates and inserts coupon codes to database
@@ -161,14 +160,17 @@ class CouponGenerator implements CouponGeneratorInterface
     }
 
     /**
-     * @param array $codes
+     * @param array|string[] $codes
      * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function filter(array $codes): array
     {
-        $statement = $this->getConnection()
-            ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
-        $statement->execute();
+        $statement = $this->getConnection()->executeQuery(
+            'SELECT code FROM oro_promotion_coupon WHERE code IN (?)',
+            [$codes],
+            [Connection::PARAM_STR_ARRAY]
+        );
 
         $assocCodes = array_flip($codes);
 

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class TaxBaseExclusionCollectionType extends AbstractType
 {

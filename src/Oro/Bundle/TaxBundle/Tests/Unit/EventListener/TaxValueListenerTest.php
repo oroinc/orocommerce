@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\TaxValueListener;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;

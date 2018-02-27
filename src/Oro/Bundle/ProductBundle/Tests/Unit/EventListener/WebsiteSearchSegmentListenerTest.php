@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchSegmentListener;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchSegmentListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchSegmentListenerTest extends \PHPUnit_Framework_TestCase

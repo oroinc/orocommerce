@@ -105,8 +105,8 @@ define(['jquery', 'underscore'], function($, _) {
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
                 var update = new InventoryStatus({
-                    'grid': grid,
-                    'options': options
+                    grid: grid,
+                    options: options
                 });
                 deferred.resolve(update);
             }).fail(function() {

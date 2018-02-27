@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;

@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Expression;
 
 use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
-use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\ColumnInformationProviderInterface;
+use Oro\Component\Expression\Node\NodeInterface;
 
 class NodeToQueryDesignerConverter
 {

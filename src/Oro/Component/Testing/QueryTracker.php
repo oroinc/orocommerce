@@ -4,7 +4,6 @@ namespace Oro\Component\Testing;
 
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
 class QueryTracker

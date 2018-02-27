@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Component\Exception\UnexpectedTypeException;
 
 class ProductFormViewListener extends BaseFormViewListener
 {

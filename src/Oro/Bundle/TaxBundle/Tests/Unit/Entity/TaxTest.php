@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class TaxTest extends \PHPUnit_Framework_TestCase
 {

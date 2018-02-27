@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request;
 
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
 
 class AuthorizationRequest extends AbstractRequest

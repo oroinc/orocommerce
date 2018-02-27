@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
@@ -16,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 {

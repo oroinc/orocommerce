@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\RelatedItem\UpsellProduct;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
-use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrategyTest;
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy;
+use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrategyTest;
 
 class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 {

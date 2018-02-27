@@ -20,6 +20,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Recalculate combined price list and combined product prices
+ */
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
     const NAME = 'oro:price-lists:recalculate';
@@ -218,8 +221,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             ->get('oro_pricing.builder.price_list_product_assignment_builder');
 
         foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceList($priceList);
-            $priceBuilder->buildByPriceList($priceList);
+            $assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
     }
 

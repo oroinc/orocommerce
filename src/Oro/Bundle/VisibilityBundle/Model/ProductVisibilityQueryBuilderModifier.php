@@ -7,12 +7,12 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
-use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Component\Website\WebsiteInterface;
 
 class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
@@ -52,8 +52,9 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);
         $visibilities[] = $this->getCustomerGroupProductVisibilityResolvedTerm($queryBuilder);
         $visibilities[] = $this->getCustomerProductVisibilityResolvedTerm($queryBuilder);
+        $visibilityExpression = implode(' + ', $visibilities);
 
-        $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+        $queryBuilder->andWhere($queryBuilder->expr()->gt($visibilityExpression, 0));
     }
 
     /**

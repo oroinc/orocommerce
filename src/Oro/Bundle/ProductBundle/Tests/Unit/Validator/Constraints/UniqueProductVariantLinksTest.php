@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
+use Symfony\Component\Validator\Constraint;
 
 class UniqueProductVariantLinksTest extends \PHPUnit_Framework_TestCase
 {

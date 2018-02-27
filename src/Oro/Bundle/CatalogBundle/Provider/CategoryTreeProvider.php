@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\UserBundle\Entity\UserInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryTreeProvider
 {

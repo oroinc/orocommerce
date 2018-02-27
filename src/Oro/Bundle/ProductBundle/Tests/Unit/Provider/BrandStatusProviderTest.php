@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 
 class BrandStatusProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\PaymentBundle\Event\CollectSurchargeEvent;
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SurchargeProvider
 {

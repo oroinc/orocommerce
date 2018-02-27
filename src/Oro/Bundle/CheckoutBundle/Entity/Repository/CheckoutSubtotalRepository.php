@@ -4,10 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 
 class CheckoutSubtotalRepository extends EntityRepository
 {
@@ -23,23 +21,13 @@ class CheckoutSubtotalRepository extends EntityRepository
         }
 
         $qb = $this->createQueryBuilder('cs');
-        $qb->select('DISTINCT cs.id')
-            ->join('cs.checkout', 'c')
-            ->join('c.lineItems', 'cli')
-            ->join(
-                CombinedProductPrice::class,
-                'cpp',
-                Join::WITH,
-                $qb->expr()->eq('cli.product', 'cpp.product')
-            )
+        $qb->select('cs.id')
             ->where(
-                $qb->expr()->in('cpp.priceList', ':priceLists'),
-                $qb->expr()->eq('cs.valid', ':isValid'),
-                $qb->expr()->eq('cli.priceFixed', ':isPriceFixed')
+                $qb->expr()->in('cs.combinedPriceList', ':priceLists'),
+                $qb->expr()->eq('cs.valid', ':isValid')
             )
-            ->setParameter('isValid', true)
             ->setParameter('priceLists', $combinedPriceListIds)
-            ->setParameter('isPriceFixed', false);
+            ->setParameter('isValid', true);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);

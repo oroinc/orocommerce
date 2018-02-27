@@ -3,18 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {

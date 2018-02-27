@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
-use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
-use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
-use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
-use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
-use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {

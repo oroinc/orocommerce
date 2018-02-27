@@ -64,7 +64,7 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var context =  {
+            var context = {
                 requestAttributes: {}
             };
             mediator.trigger('pricing:refresh:products-tier-prices:before', context);

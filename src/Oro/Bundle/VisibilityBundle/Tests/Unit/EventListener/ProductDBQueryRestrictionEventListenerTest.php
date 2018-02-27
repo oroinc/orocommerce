@@ -3,10 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\VisibilityBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\VisibilityBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase

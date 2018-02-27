@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 class ExtractLineItemPaymentOptionsEvent extends Event
 {

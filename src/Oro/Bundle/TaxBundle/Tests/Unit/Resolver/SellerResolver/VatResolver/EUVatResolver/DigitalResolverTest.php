@@ -6,8 +6,8 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
 
 class DigitalResolverTest extends \PHPUnit_Framework_TestCase
 {

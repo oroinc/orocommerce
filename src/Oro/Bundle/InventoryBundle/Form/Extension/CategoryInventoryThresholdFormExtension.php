@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
+use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class CategoryInventoryThresholdFormExtension extends AbstractFallbackCategoryTypeExtension
 {

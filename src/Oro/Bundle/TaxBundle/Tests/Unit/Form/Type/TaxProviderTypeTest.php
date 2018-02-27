@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\TaxBundle\Form\Type\TaxProviderType;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 {

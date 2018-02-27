@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class UniqueProductUnitShippingOptionsValidator extends ConstraintValidator
 {

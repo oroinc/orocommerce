@@ -20,7 +20,7 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $type;
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder(OptionsResolver::class)
             ->disableOriginalConstructor()
@@ -35,7 +35,7 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()

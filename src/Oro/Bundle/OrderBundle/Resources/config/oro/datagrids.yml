@@ -45,8 +45,6 @@ datagrids:
         update: false
         delete: false
         options:
-            customerUserOwner:
-                customerUserColumn: customerUserName
             frontend: true
         source:
             query:
@@ -532,7 +530,7 @@ datagrids:
                     - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
-                    - product.denormalizedDefaultName as productName
+                    - order_item.productName
                 from:
                     - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
                 join:
@@ -754,10 +752,10 @@ datagrids:
         source:
             query:
                 select:
-                    - datetime.ordered_at_by_CUSTOMER_ID as recency
+                    - datetime.ordered_at_by_CUSTOMER_USER_ID as recency
                 where:
                     and:
-                        - datetime.ordered_at_by_CUSTOMER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+                        - datetime.ordered_at_by_CUSTOMER_USER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
         columns:
             recency:
                 label: oro.order.recency.label
@@ -769,6 +767,6 @@ datagrids:
             columns:
                 recency:
                     type: datetime
-                    data_name: ordered_at_by_CUSTOMER_ID
+                    data_name: ordered_at_by_CUSTOMER_USER_ID
             default:
                 recency: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC

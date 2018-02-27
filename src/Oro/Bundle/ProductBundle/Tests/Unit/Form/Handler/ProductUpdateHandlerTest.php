@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
@@ -14,7 +13,6 @@ use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\UIBundle\Route\Router;
-
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;

@@ -8,11 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -38,6 +37,11 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var ProductAvailabilityProviderInterface
+     */
+    protected $productAvailabilityProvider;
 
     /**
      * @var array
@@ -77,6 +81,14 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
+     * @param ProductAvailabilityProviderInterface $productAvailabilityProvider
+     */
+    public function setProductAvailabilityProvider(ProductAvailabilityProviderInterface $productAvailabilityProvider)
+    {
+        $this->productAvailabilityProvider = $productAvailabilityProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function fillItemsData($entity, array $itemsData = [])
@@ -90,6 +102,14 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 
             $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
             if (!$product) {
+                continue;
+            }
+
+            if (!$this->productAvailabilityProvider->isProductApplicableForRFP($product)) {
+                $this->session->getFlashBag()->add(
+                    'warning',
+                    'oro.frontend.rfp.data_storage.no_qty_products_cant_be_added_to_rfq'
+                );
                 continue;
             }
 

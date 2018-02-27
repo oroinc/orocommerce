@@ -4,10 +4,11 @@
     {% set frontendOptions = operation.definition.frontendOptions.options %}
     {% set pageComponentOptions = {} %}
     <div class="widget-content add-product-widget">
-        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-            method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-            {% if frontendOptions.form_page_component_module is defined %}data-page-component-module="{{ frontendOptions.form_page_component_module }}"{% endif %}
-        >
+        {% set attr = {'id': form.vars.id, 'data-collect': 'true', 'class': 'form-dialog'} %}
+        {% if frontendOptions.form_page_component_module is defined %}
+            {% set attr = attr|merge({'data-page-component-module': frontendOptions.form_page_component_module}) %}
+        {% endif %}
+        {{ form_start(form, {'action': app.request.uri, 'attr': attr}) }}
             <fieldset class="form-horizontal">
                 {% if form.lineItem.product is defined %}
                     {{ form_row(form.lineItem.owner, { 'attr': {'class': 'product-owner'} }) }}
@@ -33,7 +34,7 @@
                 <button type="reset" class="btn">{{ 'oro.shoppinglist.lineitem.action.cancel'|trans }}</button>
                 <button type="submit" class="btn btn-success">{{ 'oro.shoppinglist.lineitem.action.save'|trans }}</button>
             </div>
-        </form>
+        {{ form_end(form) }}
         {{ oro_form_js_validation(form) }}
     </div>
 {% endblock %}

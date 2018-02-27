@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 abstract class AbstractCustomerFormViewListener
 {

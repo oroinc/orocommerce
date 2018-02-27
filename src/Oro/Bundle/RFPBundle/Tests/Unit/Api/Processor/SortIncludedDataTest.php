@@ -3,9 +3,9 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Create\CreateContext;
+use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
 use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
-use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
 use Oro\Bundle\RFPBundle\Api\Processor\SortIncludedData;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;

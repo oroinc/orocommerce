@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class RequestProductsExtension extends \Twig_Extension
 {

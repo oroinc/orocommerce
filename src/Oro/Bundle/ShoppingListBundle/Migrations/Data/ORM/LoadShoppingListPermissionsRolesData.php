@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

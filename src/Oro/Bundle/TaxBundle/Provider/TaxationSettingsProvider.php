@@ -4,9 +4,9 @@ namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

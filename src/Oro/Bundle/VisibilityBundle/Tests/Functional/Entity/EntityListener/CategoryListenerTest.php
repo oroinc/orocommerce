@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

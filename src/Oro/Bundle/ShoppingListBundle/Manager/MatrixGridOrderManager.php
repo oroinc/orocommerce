@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -12,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class MatrixGridOrderManager
 {

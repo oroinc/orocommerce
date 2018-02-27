@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductUnitHolderTypeStub extends AbstractType
 {

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 
 class CustomerGroupFormExtension extends AbstractTypeExtension
 {

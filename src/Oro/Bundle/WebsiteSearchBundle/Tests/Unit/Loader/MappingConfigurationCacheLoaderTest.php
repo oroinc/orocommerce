@@ -3,12 +3,10 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
 use Doctrine\Common\Cache\CacheProvider;
-
-use Oro\Component\Config\CumulativeResourceInfo;
-
-use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
-use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
+use Oro\Component\Config\CumulativeResourceInfo;
 
 class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
 {

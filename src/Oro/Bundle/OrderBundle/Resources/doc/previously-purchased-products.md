@@ -22,7 +22,7 @@ Previously Purchased Products
 Overview
 --------
 
-Previously Purchased Products functionality adds the previously purchased products grid to the customer pages under `Account >  Previously Purchased` on the frontend. By default, previously purchased products are disabled. To enable this fuctionality, go to `System > Configuration > Orders > Purchase History > Enabled Purchase History` in the admin panel.
+Previously Purchased Products functionality adds the previously purchased products grid to the customer pages under `Account >  Previously Purchased` on the frontend. By default, previously purchased products are disabled. To enable this functionality, go to `System > Configuration > Orders > Purchase History > Enabled Purchase History` in the admin panel.
 
 ### Config
 
@@ -55,7 +55,7 @@ public function onWebsiteSearchIndex(IndexEntityEvent $event)
 
 This method is triggered when search reindex process starts running. For example, we can start reindex process with the  `oro:website-search:reindex` command.
 This method adds new columns to the records with the `oro_product_WEBSITE_ID` index and based on order created_at,
-customer_id and product_id.
+customer_user_id and product_id.
 
 #### Index field
 [website_search.yml](../config/oro/website_search.yml)
@@ -64,7 +64,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
       -
-        name: ordered_at_by_CUSTOMER_ID
+        name: ordered_at_by_CUSTOMER_USER_ID
         type: datetime
 ```
 
@@ -76,10 +76,10 @@ This field is used to select a query in the grid config for select, filter and s
 ```yml
     query:
         select:
-            - datetime.ordered_at_by_CUSTOMER_ID as recency
+            - datetime.ordered_at_by_CUSTOMER_USER_ID as recency
         where:
             and:
-                - datetime.ordered_at_by_CUSTOMER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+                - datetime.ordered_at_by_CUSTOMER_USER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
 ```
 
 ### Reindex Listeners
@@ -210,8 +210,8 @@ This provider is used when we need more information who and when bought products
  * Returns information about who and when bought those products
  * [
  *      product id => [
- *          'customer_id' => customer user who bought,
- *          'created_at'  => order create \DateTime,
+ *          'customer_user_id' => customer user who bought,
+ *          'created_at'       => order create \DateTime,
  *      ],
  *      ...
  * ]

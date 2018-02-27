@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\CurrencySelectionTypeTest as CurrencyBundleCurrencySelectionTypeTest;
+use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Intl\Intl;
-
-use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\CurrencySelectionTypeTest as CurrencyBundleCurrencySelectionTypeTest;
 
 class CurrencySelectionTypeTest extends CurrencyBundleCurrencySelectionTypeTest
 {

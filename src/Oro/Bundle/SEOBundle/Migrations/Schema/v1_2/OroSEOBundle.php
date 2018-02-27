@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;

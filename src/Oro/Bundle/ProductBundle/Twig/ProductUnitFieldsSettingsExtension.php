@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductUnitFieldsSettingsExtension extends \Twig_Extension
 {

@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
+use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 
 class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 {

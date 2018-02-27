@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Event\ValidateBeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ValidateBeforeRemoveFieldListener

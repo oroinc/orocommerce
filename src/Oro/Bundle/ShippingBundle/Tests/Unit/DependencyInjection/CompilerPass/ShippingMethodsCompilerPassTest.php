@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
 {

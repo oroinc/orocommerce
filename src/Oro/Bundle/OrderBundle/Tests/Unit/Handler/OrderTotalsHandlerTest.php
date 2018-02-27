@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
 {

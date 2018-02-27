@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
+use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 
 class Client extends BaseClient
 {
