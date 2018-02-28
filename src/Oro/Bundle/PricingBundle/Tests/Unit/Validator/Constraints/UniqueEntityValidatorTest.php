@@ -25,7 +25,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 

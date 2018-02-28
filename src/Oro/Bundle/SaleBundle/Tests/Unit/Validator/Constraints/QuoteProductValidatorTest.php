@@ -6,7 +6,8 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +31,7 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->context      = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context      = $this->createMock(ExecutionContextInterface::class);
         $this->constraint   = new Constraints\QuoteProduct();
         $this->validator    = new Constraints\QuoteProductValidator();
         $this->validator->initialize($this->context);
@@ -62,11 +63,17 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate($data, $valid, $fieldPath = 'product')
     {
-        $this->context
-            ->expects($valid ? static::never() : static::once())
-            ->method('addViolationAt')
-            ->with($fieldPath, $this->constraint->message)
-        ;
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $this->context->expects($valid ? static::never() : static::once())
+            ->method('buildViolation')
+            ->with($this->constraint->message)
+            ->willReturn($builder);
+        $builder->expects($valid ? static::never() : static::once())
+            ->method('atPath')
+            ->with($fieldPath)
+            ->willReturnSelf();
+        $builder->expects($valid ? static::never() : static::once())
+            ->method('addViolation');
         $this->validator->validate($data, $this->constraint);
     }
 

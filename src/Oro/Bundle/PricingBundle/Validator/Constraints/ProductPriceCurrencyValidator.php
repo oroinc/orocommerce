@@ -38,7 +38,10 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
         $availableCurrencies = $value->getPriceList()->getCurrencies();
         $currency = $price->getCurrency();
         if (!in_array($currency, $availableCurrencies, true)) {
-            $this->context->addViolationAt('price.currency', $constraint->message, ['%invalidCurrency%' => $currency]);
+            $this->context->buildViolation($constraint->message)
+                ->atPath('price.currency')
+                ->setParameters(['%invalidCurrency%' => $currency])
+                ->addViolation();
         }
     }
 }

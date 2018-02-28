@@ -13,6 +13,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 {
@@ -39,9 +40,9 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
-        $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
