@@ -37,7 +37,7 @@ class PriceListCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'website' => null,
-                'type' => PriceListSelectWithPriorityType::NAME,
+                'entry_type' => PriceListSelectWithPriorityType::NAME,
                 'mapped' => false,
                 'label' => false,
                 'handle_primary' => false,

@@ -25,7 +25,7 @@ class TaxBaseExclusionCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => TaxBaseExclusionType::NAME,
+                'entry_type' => TaxBaseExclusionType::NAME,
                 'show_form_when_empty' => false
             ]
         );

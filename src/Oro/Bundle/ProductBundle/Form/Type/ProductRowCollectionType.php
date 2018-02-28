@@ -60,7 +60,7 @@ class ProductRowCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductRowType::NAME,
+                'entry_type' => ProductRowType::NAME,
                 'required' => false,
                 'handle_primary' => false,
                 'row_count_add' => self::ROW_COUNT_ADD,

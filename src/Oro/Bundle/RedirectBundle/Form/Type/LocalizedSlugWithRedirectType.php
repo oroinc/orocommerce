@@ -64,7 +64,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
                 LocalizedSlugType::NAME,
                 [
                     'required' => !empty($options['required']),
-                    'options'  => ['constraints' => $constraints],
+                    'entry_options'  => ['constraints' => $constraints],
                     'source_field' => $options['source_field'],
                     'label' => false,
                     'slug_suggestion_enabled' => $options['slug_suggestion_enabled'],

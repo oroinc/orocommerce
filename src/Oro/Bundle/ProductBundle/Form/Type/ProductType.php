@@ -91,7 +91,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.names.label',
                     'required' => true,
-                    'options' => [
+                    'entry_options' => [
                         'constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])],
                         StripTagsExtension::OPTION_NAME => true,
                     ],
@@ -104,8 +104,8 @@ class ProductType extends AbstractType
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
@@ -122,8 +122,8 @@ class ProductType extends AbstractType
                     'label' => 'oro.product.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,

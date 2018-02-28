@@ -148,9 +148,9 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
 
         $expectedOptions = [
-            'type' => ProductPriceType::NAME,
+            'entry_type' => ProductPriceType::NAME,
             'show_form_when_empty' => false,
-            'options' => ['data_class' => ProductPrice::class]
+            'entry_options' => ['data_class' => ProductPrice::class]
         ];
 
         $this->assertArraySubset($expectedOptions, $form->getConfig()->getOptions());

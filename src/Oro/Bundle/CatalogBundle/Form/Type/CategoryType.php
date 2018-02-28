@@ -72,7 +72,7 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
@@ -82,8 +82,8 @@ class CategoryType extends AbstractType
                     'label' => 'oro.catalog.category.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
@@ -100,8 +100,8 @@ class CategoryType extends AbstractType
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
