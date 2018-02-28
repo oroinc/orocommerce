@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Adds price value field and handles mapping it correct
+ */
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_pricing_product_attribute_price';
