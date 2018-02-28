@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -15,19 +14,6 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
 {
     const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
-
-    /**
-     * @var RoundingServiceInterface
-     */
-    protected $roundingService;
-
-    /**
-     * @param RoundingServiceInterface $roundingService
-     */
-    public function __construct(RoundingServiceInterface $roundingService)
-    {
-        $this->roundingService = $roundingService;
-    }
 
     /**
      * @param FormBuilderInterface $builder
