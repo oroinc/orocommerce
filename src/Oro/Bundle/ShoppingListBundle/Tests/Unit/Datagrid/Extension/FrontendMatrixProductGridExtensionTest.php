@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Provider\SystemAwareResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -97,12 +98,26 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $config = DatagridConfiguration::create(
-            [
-                DatagridConfiguration::NAME_KEY => FrontendMatrixProductGridExtension::SUPPORTED_GRID
+        $this->assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
+            DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name'
+        ])));
+
+        $this->assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
+            DatagridConfiguration::NAME_KEY => FrontendMatrixProductGridExtension::SUPPORTED_GRID
+        ])));
+
+        $this->assertFalse($this->gridExtension->isApplicable(DatagridConfiguration::create([
+            DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name',
+            SystemAwareResolver::KEY_EXTENDED_FROM => ['some-other-unsupported-datagrid']
+        ])));
+
+        $this->assertTrue($this->gridExtension->isApplicable(DatagridConfiguration::create([
+            DatagridConfiguration::NAME_KEY => 'some-unsupported-grid-name',
+            SystemAwareResolver::KEY_EXTENDED_FROM => [
+                'some-other-unsupported-datagrid',
+                FrontendMatrixProductGridExtension::SUPPORTED_GRID
             ]
-        );
-        $this->assertTrue($this->gridExtension->isApplicable($config));
+        ])));
     }
 
     public function testIsNotApplicable()
