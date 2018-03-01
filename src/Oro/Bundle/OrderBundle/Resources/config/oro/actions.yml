@@ -164,7 +164,7 @@ operations:
         button_options:
             icon: fa-window-close-o
         preconditions:
-            @or:
+            '@or':
                 - '@equal': [$internalStatus.id, 'open']
                 - '@equal': [$internalStatus.id, 'cancelled']
                 - '@equal': [$internalStatus.id, 'shipped']

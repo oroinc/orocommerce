@@ -50,7 +50,7 @@ class RequestProductType extends AbstractType
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
                 'label' => 'oro.rfp.requestproductitem.entity_plural_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])

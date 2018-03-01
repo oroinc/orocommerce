@@ -184,7 +184,7 @@ class QuoteProductType extends AbstractType
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'oro.sale.quoteproductoffer.add_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => $options['compact_units'],
                     'allow_prices_override' => $options['allow_prices_override'],
                 ],

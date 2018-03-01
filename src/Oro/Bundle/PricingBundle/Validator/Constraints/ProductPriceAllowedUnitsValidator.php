@@ -21,7 +21,9 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
         $priceUnit = $value->getUnit();
 
         if (!$priceProduct) {
-            $this->context->addViolationAt('product', $constraint->notExistingProductMessage);
+            $this->context->buildViolation($constraint->notExistingProductMessage)
+                ->atPath('product')
+                ->addViolation();
 
             return;
         }
@@ -32,18 +34,19 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
             $availableUnits[] = $unitPrecision->getUnit();
         }
 
-        if (!in_array($priceUnit, $availableUnits, true)) {
+        if (!in_array($priceUnit, $availableUnits)) {
             if ($priceUnit instanceof ProductUnit && $priceUnit->getCode()) {
-                $this->context->addViolationAt(
-                    'unit',
-                    $constraint->notAllowedUnitMessage,
-                    [
+                $this->context->buildViolation($constraint->notAllowedUnitMessage)
+                    ->atPath('unit')
+                    ->setParameters([
                         '%product%' => $priceProduct->getSku(),
                         '%unit%' => $priceUnit->getCode()
-                    ]
-                );
+                    ])
+                    ->addViolation();
             } else {
-                $this->context->addViolationAt('unit', $constraint->notExistingUnitMessage);
+                $this->context->buildViolation($constraint->notExistingUnitMessage)
+                    ->atPath('unit')
+                    ->addViolation();
             }
         }
     }

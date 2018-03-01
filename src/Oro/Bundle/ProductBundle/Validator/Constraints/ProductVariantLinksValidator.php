@@ -57,7 +57,9 @@ class ProductVariantLinksValidator extends ConstraintValidator
     private function validateLinksWithoutFields(Product $value, ProductVariantLinks $constraint)
     {
         if (count($value->getVariantFields()) === 0 && $value->getVariantLinks()->count() !== 0) {
-            $this->context->addViolationAt('variantFields', $constraint->variantFieldRequiredMessage);
+            $this->context->buildViolation($constraint->variantFieldRequiredMessage)
+                ->atPath('variantFields')
+                ->addViolation();
         }
     }
 

@@ -24,7 +24,7 @@ class QuoteProductCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => QuoteProductType::NAME,
+            'entry_type'                  => QuoteProductType::NAME,
             'show_form_when_empty'  => true,
             'error_bubbling'        => false,
             'prototype_name'        => '__namequoteproduct__'

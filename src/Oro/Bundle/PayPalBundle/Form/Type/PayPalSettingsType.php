@@ -85,22 +85,22 @@ class PayPalSettingsType extends AbstractType
             ->add('creditCardLabels', LocalizedFallbackValueCollectionType::NAME, [
                 'label' => 'oro.paypal.settings.credit_card_labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank()]],
             ])
             ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::NAME, [
                 'label' => 'oro.paypal.settings.credit_card_short_labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank()]],
             ])
             ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::NAME, [
                 'label' => 'oro.paypal.settings.express_checkout_labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank()]],
             ])
             ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::NAME, [
                 'label' => 'oro.paypal.settings.express_checkout_short_labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank()]],
             ])
             ->add('expressCheckoutName', TextType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_name.label',

@@ -124,7 +124,7 @@ class QuoteType extends AbstractType
                 QuoteProductCollectionType::class,
                 [
                     'add_label' => 'oro.sale.quoteproduct.add_label',
-                    'options' => [
+                    'entry_options' => [
                         'compact_units' => true,
                         'allow_prices_override' => $options['allow_prices_override'],
                         'allow_add_free_form_items' => $options['allow_add_free_form_items'],

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -35,14 +36,9 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->constraint = $this->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(Registry::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->constraint = $this->createMock(ProductBySku::class);
 
         $this->validator = new ProductBySkuValidator($this->registry);
         $this->validator->initialize($this->context);

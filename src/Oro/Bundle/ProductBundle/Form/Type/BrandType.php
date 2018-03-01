@@ -29,7 +29,7 @@ class BrandType extends AbstractType
                 [
                     'label' => 'oro.product.brand.names.label',
                     'required' => true,
-                    'options' => [
+                    'entry_options' => [
                         'constraints' => [
                             new NotBlank(['message' => 'oro.product.brand.form.update.messages.notBlank'])
                         ]
@@ -59,8 +59,8 @@ class BrandType extends AbstractType
                     'label' => 'oro.product.brand.descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::class,
-                    'options' => [
+                    'entry_type' => OroRichTextType::class,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
@@ -77,8 +77,8 @@ class BrandType extends AbstractType
                     'label' => 'oro.product.brand.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::class,
-                    'options' => [
+                    'entry_type' => OroRichTextType::class,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,

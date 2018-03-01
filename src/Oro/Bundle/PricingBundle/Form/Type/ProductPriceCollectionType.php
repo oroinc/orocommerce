@@ -52,9 +52,9 @@ class ProductPriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductPriceType::NAME,
+                'entry_type' => ProductPriceType::NAME,
                 'show_form_when_empty' => false,
-                'options' => ['data_class' => $this->dataClass],
+                'entry_options' => ['data_class' => $this->dataClass],
                 'validation_groups' => [self::VALIDATION_GROUP]
             ]
         );

@@ -17,7 +17,7 @@ class PaymentMethodsConfigsRuleDestinationCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => PaymentMethodsConfigsRuleDestinationType::class,
+                'entry_type' => PaymentMethodsConfigsRuleDestinationType::class,
                 'show_form_when_empty' => true,
             ]
         );
