@@ -110,7 +110,7 @@ class FrontendProductPricesProvider
         foreach ($products as $product) {
             if ($product->getType() === Product::TYPE_CONFIGURABLE) {
                 $productId = $product->getId();
-                $productPrices[$productId] = $this->getVariantsPricesByProduct($product);
+                $productPrices[$productId] = $this->getVariantsPrices($productId);
             }
         }
 
