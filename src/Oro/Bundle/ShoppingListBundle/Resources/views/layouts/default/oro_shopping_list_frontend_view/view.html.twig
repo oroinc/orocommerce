@@ -379,7 +379,7 @@
         </div>
         <div class="product__select">
             {% if isProductUnitSelectionVisible %}
-                {% if parent.productsUnits[lineItem.product.id]|keys|length > 1 %}
+                {% set selectUnit %}
                     <select class="select select--full" name="product_unit" data-name="field__unit" required>
                         {% if parent.productsUnits[lineItem.product.id] is defined %}
                             {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
@@ -390,12 +390,16 @@
                             {% endif %}
                         {% endif %}
                     </select>
+                {% endset %}
+
+                {% if parent.productsUnits[lineItem.product.id]|keys|length > 1 %}
+                    {{ selectUnit }}
                 {% else %}
                     <div class="product__select-label" data-role="unit-label">
                         {{- lineItem.unit.code|oro_format_product_unit_label -}}
                     </div>
                     <div class="hidden">
-                        <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" data-name="field__unit" />
+                        {{ selectUnit }}
                     </div>
                 {% endif %}
             {% else %}
