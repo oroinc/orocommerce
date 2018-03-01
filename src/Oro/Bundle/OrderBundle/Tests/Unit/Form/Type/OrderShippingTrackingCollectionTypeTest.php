@@ -39,7 +39,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
         $options = [
-            'options' => [
+            'entry_options' => [
                 'data_class' => OrderShippingTracking::class
             ]
         ];

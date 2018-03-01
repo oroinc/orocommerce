@@ -81,6 +81,8 @@ class MethodConfigSubscriber implements EventSubscriberInterface
     {
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
+        //@TODO remove in scope BAP-15236
+        unset($oldOptions['options']);
         $form->add('typeConfigs', ShippingMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
             'is_grouped' => $shippingMethod->isGrouped(),
         ]));

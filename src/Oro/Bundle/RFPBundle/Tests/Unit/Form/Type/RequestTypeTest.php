@@ -51,7 +51,7 @@ class RequestTypeTest extends AbstractTest
             ->with(
                 [
                     'data_class' => 'Oro\Bundle\RFPBundle\Entity\Request',
-                    'intention'  => 'rfp_request',
+                    'csrf_token_id'  => 'rfp_request',
                 ]
             );
 

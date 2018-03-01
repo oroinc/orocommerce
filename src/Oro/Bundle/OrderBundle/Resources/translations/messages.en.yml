@@ -460,7 +460,7 @@ oro:
             order:
                 cancel: 'Cancel'
                 close: 'Close'
-                archive : 'Archive'
+                archive: 'Archive'
                 mark_as_shipped: 'Mark as Shipped'
             message:
                 order:

@@ -302,7 +302,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'constraints' => [
                         new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
                     ],
-                    'options' => [
+                    'entry_options' => [
                         'product' => null,
                     ],
                 ]

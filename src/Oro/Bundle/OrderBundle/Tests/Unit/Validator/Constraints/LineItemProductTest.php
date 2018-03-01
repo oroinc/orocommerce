@@ -33,7 +33,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
     public function testValidateException()
     {
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
         $validator->validate(null, $this->constraint);
@@ -51,7 +51,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
 

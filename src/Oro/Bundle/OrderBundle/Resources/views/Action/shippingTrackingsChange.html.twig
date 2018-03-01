@@ -4,10 +4,11 @@
     {% set buttonOptions = operation.definition.buttonOptions %}
     {% set pageComponentOptions = {} %}
     <div class="widget-content">
-        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-              method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-                {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
-        >
+        {% set attr = {'id': form.vars.id, 'data-collect': 'true', 'class': 'form-dialog'} %}
+        {% if buttonOptions.page_component_module is defined %}
+            {% set attr = attr|merge({'data-page-component-module': buttonOptions.page_component_module}) %}
+        {% endif %}
+        {{ form_start(form, {'action': app.request.uri, 'attr': attr}) }}
             <div>
                 {{ form_widget(form.shippingTrackings) }}
             </div>
@@ -20,7 +21,7 @@
                 <button type="reset" class="btn">{{ 'oro.order.shipping_tracking.action.cancel'|trans }}</button>
                 <button type="submit" class="btn btn-success">{{ 'oro.order.shipping_tracking.action.save'|trans }}</button>
             </div>
-        </form>
+        {{ form_end(form) }}
         {{ oro_form_js_validation(form) }}
     </div>
 {% endblock %}

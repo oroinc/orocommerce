@@ -48,7 +48,7 @@ class ContentNodeType extends AbstractType
                 [
                     'label' => 'oro.webcatalog.contentnode.titles.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]]
+                    'entry_options' => ['constraints' => [new NotBlank()]]
                 ]
             )
             ->add(

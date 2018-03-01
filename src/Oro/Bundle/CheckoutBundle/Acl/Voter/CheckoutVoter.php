@@ -26,6 +26,7 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
 
     /**
      * {@inheritdoc}
+     * TODO: change public to protected in scope of BAP-15236
      */
     public function supportsClass($class)
     {
@@ -41,11 +42,16 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
             return self::ACCESS_ABSTAIN;
         }
 
+        $authorizationChecker = $this->getAuthorizationChecker();
+        $class = $this->getEntityClass($object);
+        if (!$this->supportsClass($class)) {
+            return self::ACCESS_ABSTAIN;
+        }
+
         if (!in_array(self::ATTRIBUTE_CREATE, $attributes, true)) {
             return self::ACCESS_ABSTAIN;
         }
 
-        $authorizationChecker = $this->getAuthorizationChecker();
         if ($authorizationChecker->isGranted(BasicPermissionMap::PERMISSION_VIEW, $object)
             && $authorizationChecker->isGranted(sprintf(
                 '%s;entity:OroCheckoutBundle:Checkout',

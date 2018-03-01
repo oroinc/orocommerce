@@ -36,11 +36,7 @@ class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
         $count = count($enabledRules);
 
         if ($count < $constraint->min) {
-            if ($this->context instanceof ExecutionContextInterface) {
-                $builder = $this->context->buildViolation($constraint->message);
-            } else {
-                $builder = $this->buildViolation($constraint->message);
-            }
+            $builder = $this->context->buildViolation($constraint->message);
             $builder
                 ->setParameter('{{ count }}', $count)
                 ->setParameter('{{ limit }}', $constraint->min)

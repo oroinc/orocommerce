@@ -29,7 +29,7 @@ class OrderShippingTrackingCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => OrderShippingTrackingType::class,
+                'entry_type' => OrderShippingTrackingType::class,
                 'show_form_when_empty' => false,
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [

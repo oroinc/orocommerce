@@ -18,7 +18,7 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
     /** @var UniqueProductUnitShippingOptions */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var UniqueProductUnitShippingOptionsValidator */

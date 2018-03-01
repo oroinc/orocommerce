@@ -39,7 +39,7 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => ShippingMethodTypeConfigType::class,
+            'entry_type' => ShippingMethodTypeConfigType::class,
             'is_grouped' => false,
             'allow_add' => true,
             'allow_delete' => true,

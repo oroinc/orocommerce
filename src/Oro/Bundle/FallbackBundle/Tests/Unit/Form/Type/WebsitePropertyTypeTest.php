@@ -92,7 +92,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     {
         return [
             'text with null data' => [
-                'options' => ['type' => 'text'],
+                'entry_options' => ['entry_type' => 'text'],
                 'defaultData' => null,
                 'viewData' => [
                     WebsitePropertyType::FIELD_DEFAULT => null,
@@ -111,7 +111,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'checkbox with full data' => [
-                'options' => ['type' => CheckboxTypeStub::NAME, 'options' => ['value' => 't']],
+                'entry_options' => ['entry_type' => CheckboxTypeStub::NAME, 'entry_options' => ['value' => 't']],
                 'defaultData' => [
                     null => true,
                     1    => false,
@@ -144,9 +144,6 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return ManagerRegistry
-     */
     protected function setRegistryExpectations()
     {
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')

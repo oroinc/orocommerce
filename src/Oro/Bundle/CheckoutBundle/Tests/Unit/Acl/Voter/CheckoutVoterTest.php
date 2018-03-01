@@ -56,60 +56,6 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $class
-     * @param bool $supports
-     *
-     * @dataProvider supportsClassProvider
-     */
-    public function testSupportsClass($class, $supports)
-    {
-        $this->assertEquals($supports, $this->voter->supportsClass($class));
-    }
-
-    /**
-     * @return array
-     */
-    public function supportsClassProvider()
-    {
-        return [
-            'supported class' => [
-                $this->createMock(CheckoutSourceEntityInterface::class),
-                true,
-            ],
-            'not supported class' => [
-                'stdClass',
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * @param string $attribute
-     * @param bool $expected
-     *
-     * @dataProvider supportsAttributeProvider
-     */
-    public function testSupportsAttribute($attribute, $expected)
-    {
-        $this->assertEquals($expected, $this->voter->supportsAttribute($attribute));
-    }
-
-    /**
-     * @return array
-     */
-    public function supportsAttributeProvider()
-    {
-        return [
-            'CHECKOUT_CREATE' => ['CHECKOUT_CREATE', true],
-            'VIEW' => ['VIEW', false],
-            'CREATE' => ['CREATE', false],
-            'EDIT' => ['EDIT', false],
-            'DELETE' => ['DELETE', false],
-            'ASSIGN' => ['ASSIGN', false]
-        ];
-    }
-
-    /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage ContainerInterface not injected
      */
@@ -143,6 +89,11 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                 }
                 return null;
             });
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityClass')
+            ->with($inputData['object'])
+            ->willReturn($inputData['object']);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
         $token = $this->createMock(TokenInterface::class);

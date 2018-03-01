@@ -10,6 +10,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Schedule re-indexation for products by combined price lists
+ */
 class CombinedPriceListTriggerHandler
 {
     /**
@@ -156,7 +159,9 @@ class CombinedPriceListTriggerHandler
             }
 
             foreach ($websiteIds as $websiteId) {
-                $this->productsSchedule[$websiteId][$productId] = $productId;
+                if (!isset($this->productsSchedule[null][$productId])) {
+                    $this->productsSchedule[$websiteId][$productId] = $productId;
+                }
             }
         }
     }

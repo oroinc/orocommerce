@@ -44,7 +44,7 @@ class FrontendRequestVoter extends AbstractEntityVoter
     protected function getEntityIdentifier($object)
     {
         // disallow EDIT for all Requests, so id does not matter
-        return false;
+        return 0;
     }
 
     /**

@@ -21,7 +21,7 @@ api:
                             exclude: true
             fields:
                 prices:
-                    exclude : true
+                    exclude: true
                 priceListCurrencies:
                     data_type: array
             subresources:

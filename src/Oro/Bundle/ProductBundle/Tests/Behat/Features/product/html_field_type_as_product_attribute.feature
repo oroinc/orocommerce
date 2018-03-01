@@ -56,5 +56,5 @@ Feature: HTML field type as product attribute
 
   Scenario: Open product view page on Front Store to see created attribute
     When I open product with sku "PSKU1" on the store frontend
-    Then I should see "HTML Content here!"
+    Then I should see "HTML Content <script>alert('malicious script')</script>here!"
     And I should not see tag "script" inside "html_escaped" element
