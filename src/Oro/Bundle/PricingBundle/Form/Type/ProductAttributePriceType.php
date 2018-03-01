@@ -25,7 +25,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::PRICE, 'number', [
-            'scale' => Price::MAX_VALUE_PRECISION
+            'scale' => Price::MAX_VALUE_SCALE
         ])
             ->setDataMapper($this);
     }
