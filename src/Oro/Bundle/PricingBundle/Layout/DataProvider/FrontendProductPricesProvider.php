@@ -12,6 +12,10 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
+/**
+ * Provides methods to get prices with currencies, units and quantities
+ * for regular products, configurable products and product variants
+ */
 class FrontendProductPricesProvider
 {
     /**

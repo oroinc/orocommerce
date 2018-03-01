@@ -10,6 +10,9 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Provides products and prices in relation to shopping list
+ */
 class FrontendShoppingListProductsProvider
 {
     /**
