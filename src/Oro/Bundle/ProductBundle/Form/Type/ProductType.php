@@ -317,7 +317,7 @@ class ProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'product',
+            'csrf_token_id' => 'product',
             'enable_attributes' => true,
             'enable_attribute_family' => true,
         ]);

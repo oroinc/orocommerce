@@ -163,7 +163,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->with(
                 [
                     'data_class' => self::DATA_CLASS,
-                    'intention' => 'category',
+                    'csrf_token_id' => 'category',
                 ]
             );
 

@@ -98,7 +98,7 @@ class BrandType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'brand',
+            'csrf_token_id' => 'brand',
         ]);
     }
 

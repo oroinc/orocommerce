@@ -97,7 +97,7 @@ class RequestType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class'           => $this->dataClass,
-            'intention'            => 'rfp_request',
+            'csrf_token_id'        => 'rfp_request',
         ]);
     }
 

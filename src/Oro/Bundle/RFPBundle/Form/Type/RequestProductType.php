@@ -66,7 +66,7 @@ class RequestProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'compact_units' => false,
-            'intention'  => 'rfp_request_product',
+            'csrf_token_id' => 'rfp_request_product',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'ororfp/js/app/views/line-item-view'],
         ]);

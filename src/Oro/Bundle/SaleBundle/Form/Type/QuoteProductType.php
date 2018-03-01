@@ -211,7 +211,7 @@ class QuoteProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'sale_quote_product',
+            'csrf_token_id' => 'sale_quote_product',
             'compact_units' => false,
             'allow_prices_override' => true,
             'allow_add_free_form_items' => true,

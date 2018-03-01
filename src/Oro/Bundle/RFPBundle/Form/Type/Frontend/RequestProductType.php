@@ -68,7 +68,7 @@ class RequestProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention'  => 'rfp_frontend_request_product',
+            'csrf_token_id' => 'rfp_frontend_request_product',
             'skipLoadingMask' => true
         ]);
     }

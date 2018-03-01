@@ -199,7 +199,7 @@ class CategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'category',
+            'csrf_token_id' => 'category',
         ]);
     }
 

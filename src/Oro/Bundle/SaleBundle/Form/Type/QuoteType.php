@@ -196,8 +196,8 @@ class QuoteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => $this->dataClass,
-            'intention'     => 'sale_quote',
+            'data_class' => $this->dataClass,
+            'csrf_token_id' => 'sale_quote',
             'allow_prices_override' => $this->securityFacade->isGranted('oro_quote_prices_override'),
             'allow_add_free_form_items' => $this->securityFacade->isGranted('oro_quote_add_free_form_items'),
         ]);

@@ -159,7 +159,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order'
+                'csrf_token_id' => 'order'
             ]
         );
     }
