@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 

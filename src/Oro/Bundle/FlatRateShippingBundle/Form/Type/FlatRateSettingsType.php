@@ -26,7 +26,7 @@ class FlatRateSettingsType extends AbstractType
                 [
                     'label'    => 'oro.flat_rate.settings.labels.label',
                     'required' => true,
-                    'options'  => [
+                    'entry_options'  => [
                         'constraints' => [new NotBlank()],
                         StripTagsExtension::OPTION_NAME => true,
                     ],

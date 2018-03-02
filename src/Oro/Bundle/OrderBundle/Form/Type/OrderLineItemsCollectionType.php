@@ -25,7 +25,7 @@ class OrderLineItemsCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => OrderLineItemType::NAME,
+                'entry_type' => OrderLineItemType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__nameorderlineitem__',

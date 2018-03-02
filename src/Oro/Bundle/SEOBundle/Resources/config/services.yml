@@ -167,7 +167,7 @@ services:
     oro_seo.sitemap.provider.url_items_provider_registry_index:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
         arguments:
-            - { index: @oro_seo.sitemap.provider.sitemap_files_provider }
+            - { index: '@oro_seo.sitemap.provider.sitemap_files_provider' }
 
     oro_seo.sitemap.sitemap_index_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper

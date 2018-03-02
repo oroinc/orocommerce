@@ -26,7 +26,7 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => ProductUnitPrecisionType::NAME,
+                'entry_type' => ProductUnitPrecisionType::NAME,
                 'show_form_when_empty' => false
             ]);
 

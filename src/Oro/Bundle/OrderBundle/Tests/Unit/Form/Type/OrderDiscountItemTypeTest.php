@@ -72,7 +72,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
             'currency' => 'USD',
             'total' => 99,
             'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderDiscount',
-            'intention' => 'order_discount_item',
+            'csrf_token_id' => 'order_discount_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/discount-item-view',

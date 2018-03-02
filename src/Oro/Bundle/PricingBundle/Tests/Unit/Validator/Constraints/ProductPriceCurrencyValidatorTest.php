@@ -8,6 +8,8 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +19,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -32,7 +34,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new ProductPriceCurrency();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new ProductPriceCurrencyValidator();
         $this->validator->initialize($this->context);
@@ -68,7 +70,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
         $productPrice->setPrice($price);
 
         $this->context->expects($this->never())
-            ->method('addViolationAt');
+            ->method('buildViolation');
 
         $this->validator->validate($productPrice, $this->constraint);
     }
@@ -85,13 +87,21 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
         $productPrice = $this->getProductPrice();
         $productPrice->setPrice($price);
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with(
-                'price.currency',
-                $this->constraint->message,
-                $this->equalTo(['%invalidCurrency%' => $invalidCurrency])
-            );
+            ->method('buildViolation')
+            ->with($this->constraint->message)
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('price.currency')
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('setParameters')
+            ->with($this->equalTo(['%invalidCurrency%' => $invalidCurrency]))
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('addViolation');
 
         $this->validator->validate($productPrice, $this->constraint);
     }
@@ -110,7 +120,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
         $productPrice = new ProductPrice();
 
         $this->context->expects($this->never())
-            ->method('addViolationAt');
+            ->method('buildViolation');
 
         $this->validator->validate($productPrice, $this->constraint);
     }
@@ -122,7 +132,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->context
             ->expects($this->never())
-            ->method('addViolationAt');
+            ->method('buildViolation');
 
         $this->validator->validate($productPrice, $this->constraint);
     }

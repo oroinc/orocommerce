@@ -84,10 +84,10 @@ operations:
 #            template: OroRFPBundle:Action:rfpEditForm.html.twig
 #            show_dialog: false
 #        actions:
-#            - @flash_message:
+#            - '@flash_message':
 #                message: oro.rfp.action.request.updated.message
 #                type: 'success'
-#            - @redirect:
+#            - '@redirect':
 #                route: 'oro_rfp_request_view'
 #                route_parameters:
 #                    id: $.data.id

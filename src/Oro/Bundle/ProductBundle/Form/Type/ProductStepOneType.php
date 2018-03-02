@@ -19,7 +19,7 @@ class ProductStepOneType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'intention'            => 'product',
+            'csrf_token_id'        => 'product',
             'data_class'           => Product::class,
             'validation_groups'    => ['product_create_step_one'],
             'enable_attribute_family' => true,

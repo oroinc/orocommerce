@@ -117,7 +117,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order_line_item',
+                'csrf_token_id' => 'order_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
                 'currency' => null,

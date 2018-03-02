@@ -7,7 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,18 +40,11 @@ class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->lineItem = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
-        $this->constraint = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(Registry::class);
+        $this->repository = $this->createMock(LineItemRepository::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->lineItem = $this->createMock(LineItem::class);
+        $this->constraint = $this->createMock(LineItemConstraint::class);
     }
 
     public function testValidateNoDuplicate()

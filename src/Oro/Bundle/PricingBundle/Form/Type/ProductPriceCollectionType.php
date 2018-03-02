@@ -9,6 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *  Product price collection form type
+ *  Used to handle collection of underlying  Product prices for types
+ */
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_collection';
@@ -52,9 +56,9 @@ class ProductPriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductPriceType::NAME,
+                'entry_type' => ProductPriceType::NAME,
                 'show_form_when_empty' => false,
-                'options' => ['data_class' => $this->dataClass],
+                'entry_options' => ['data_class' => $this->dataClass],
                 'validation_groups' => [self::VALIDATION_GROUP]
             ]
         );

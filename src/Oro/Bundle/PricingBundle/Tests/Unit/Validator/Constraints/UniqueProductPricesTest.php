@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -35,7 +36,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new UniqueProductPrices();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new UniqueProductPricesValidator();
         $this->validator->initialize($this->context);
