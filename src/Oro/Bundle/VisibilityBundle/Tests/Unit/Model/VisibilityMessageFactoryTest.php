@@ -83,7 +83,6 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $visibility->setScope($this->getEntity(Scope::class, ['id' => 5]))
             ->setProduct($this->getEntity(Product::class, ['id' => 6]));
 
-
         $this->assertEquals(
             [
                 VisibilityMessageFactory::ID => 1,
@@ -175,7 +174,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                     VisibilityMessageFactory::SCOPE_ID => 5,
                 ],
                 'message' => 'The option "id" with value "string"'
-                    .' is expected to be of type "int", but is of type "string".',
+                    .' is expected to be of type "int" or "null", but is of type "string".',
             ],
             'invalid_scope_id_type' => [
                 'data' => [
