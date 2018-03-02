@@ -3,12 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Creates array message data for updating visibility of products and categories for customers or customer groups.
+ * Also it can restore original visibility entity from generated message.
+ */
 class VisibilityMessageFactory implements MessageFactoryInterface
 {
     const TARGET_CLASS_NAME = 'target_class_name';
@@ -46,12 +51,12 @@ class VisibilityMessageFactory implements MessageFactoryInterface
                 self::TARGET_ID => $visibility->getTargetEntity()->getId(),
                 self::SCOPE_ID => $visibility->getScope()->getId(),
             ];
-        } else {
-            return [
-                self::ID => $visibility->getId(),
-                self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
-            ];
         }
+
+        return [
+            self::ID => $visibility->getId(),
+            self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
+        ];
     }
 
     /**
@@ -65,17 +70,13 @@ class VisibilityMessageFactory implements MessageFactoryInterface
             throw new InvalidArgumentException($e->getMessage());
         }
 
-        $visibility = $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
-            ->getRepository($data[self::ENTITY_CLASS_NAME])
-            ->find($data[self::ID]);
+        $visibility = $this->getVisibilityEntity($data);
 
         if (!$visibility && array_key_exists(self::TARGET_CLASS_NAME, $data)) {
-            $target = $this->registry->getManagerForClass($data[self::TARGET_CLASS_NAME])
-                ->getRepository($data[self::TARGET_CLASS_NAME])
+            $target = $this->getRepository($data[self::TARGET_CLASS_NAME])
                 ->find($data[self::TARGET_ID]);
 
-            $scope = $this->registry->getManagerForClass(Scope::class)
-                ->getRepository(Scope::class)
+            $scope = $this->getRepository(Scope::class)
                 ->find($data[self::SCOPE_ID]);
 
             if (null === $target) {
@@ -113,7 +114,7 @@ class VisibilityMessageFactory implements MessageFactoryInterface
                 self::TARGET_ID,
                 self::SCOPE_ID,
             ]);
-            $resolver->setAllowedTypes(self::ID, 'int');
+            $resolver->setAllowedTypes(self::ID, ['int', 'null']);
             $resolver->setAllowedTypes(self::TARGET_ID, 'int');
             $resolver->setAllowedTypes(self::SCOPE_ID, 'int');
 
@@ -131,5 +132,30 @@ class VisibilityMessageFactory implements MessageFactoryInterface
         }
 
         return $this->resolver;
+    }
+
+    /**
+     * @param array $data
+     * @return null|object
+     */
+    private function getVisibilityEntity(array $data)
+    {
+        $visibility = null;
+
+        if ($data[self::ID]) {
+            $visibility = $this->getRepository($data[self::ENTITY_CLASS_NAME])
+                ->find($data[self::ID]);
+        }
+
+        return $visibility;
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    private function getRepository(string $className): ObjectRepository
+    {
+        return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 }
