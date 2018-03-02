@@ -45,8 +45,6 @@ datagrids:
         update: false
         delete: false
         options:
-            customerUserOwner:
-                customerUserColumn: customerUserName
             frontend: true
         source:
             query:

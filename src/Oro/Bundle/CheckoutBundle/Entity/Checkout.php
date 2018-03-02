@@ -26,6 +26,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
+ * Checkout entity
+ *
  * @ORM\Table(name="oro_checkout")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -44,6 +46,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
+ *              "frontend_customer_field_name"="customer",
+ *              "frontend_customer_column_name"="customer_id"
  *          },
  *          "security"={
  *              "type"="ACL",

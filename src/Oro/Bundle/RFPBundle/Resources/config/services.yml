@@ -135,6 +135,9 @@ services:
         arguments:
             - '@oro_frontend.provider.current_application'
             - '@oro_workflow.manager'
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
+            - [setClassName, ['%oro_rfp.entity.request.class%']]
         tags:
             - { name: security.voter }
 
