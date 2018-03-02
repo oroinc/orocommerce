@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+/**
+ *  Product price collection form type
+ *  Used to handle collection of underlying  Product prices for types
+ */
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_collection';
