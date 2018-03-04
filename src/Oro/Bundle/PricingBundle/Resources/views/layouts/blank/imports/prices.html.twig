@@ -108,8 +108,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th class="text-uppercase">qty</th>
-                <th >Unit Price</th>
+                <th class="text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty#}
+                <th>{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
             </tr>
             </thead>
             <tbody>
@@ -180,10 +180,10 @@
     <div {{ block('block_attributes') }}>
         <table class="product-prices__table">
             <thead class="product-prices__thead">
-            <tr class="product-prices__tr">
-                <th style="width: 40%" class="product-prices__th text-uppercase">qty</th>
-                <th style="width: 60%" class="product-prices__th">Unit Price</th>
-            </tr>
+                <tr class="product-prices__tr">
+                    <th style="width: 40%" class="product-prices__th text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
+                    <th style="width: 60%" class="product-prices__th">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
+                </tr>
             </thead>
             {{ block_widget(block) }}
         </table>
