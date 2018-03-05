@@ -58,7 +58,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
                     LocalizedSlugType::NAME,
                     [
                         'required' => false,
-                        'options' => ['constraints' => [new UrlSafe()]],
+                        'entry_options' => ['constraints' => [new UrlSafe()]],
                         'label' => false,
                         'source_field' => 'field',
                         'slug_suggestion_enabled' => true,

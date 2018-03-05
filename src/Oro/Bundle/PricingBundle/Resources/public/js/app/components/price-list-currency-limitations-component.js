@@ -25,11 +25,6 @@ define(function(require) {
         currencies: {},
 
         /**
-         * @property {array}
-         */
-        systemSupportedCurrencyOptions: {},
-
-        /**
          * @property {Object}
          */
         $priceListSelect: null,
@@ -42,6 +37,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function PriceListCurrencyLimitationComponent(options) {
+            PriceListCurrencyLimitationComponent.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$elem = options._sourceElement;
@@ -50,14 +52,6 @@ define(function(require) {
             this.currencies = this.$elem.closest(options.container).data('currencies');
             this.$priceListSelect = this.$elem.find(options.priceListSelector);
             this.$currencySelect = this.$elem.find(options.currencySelector);
-            this.$currencySelect.find('option').each(
-                _.bind(
-                    function(idx, option) {
-                        this.systemSupportedCurrencyOptions[option.value] = option;
-                    },
-                    this
-                )
-            );
 
             this.prepareCurrencySelect(false);
             this.$elem.on(
@@ -70,6 +64,31 @@ define(function(require) {
                     this
                 )
             );
+        },
+
+        /**
+         * Fetches full list of currency options from the prototype of collection item
+         * Preserves fetched collection in the collection container for reuse by other collection items
+         *
+         * @return {Object.<string, HTMLOptionElement>}
+         */
+        getSystemSupportedCurrencyOptions: function() {
+            var $collectionContainer = this.$elem.closest(this.options.container);
+            var currencyOptions = $collectionContainer.data('systemSupportedCurrencyOptions');
+
+            if (!currencyOptions) {
+                currencyOptions = {};
+                $($collectionContainer.data('prototype'))
+                    .find(this.options.currencySelector + ' option')
+                    .each(function(i, option) {
+                        var optionClone = option.cloneNode(true);
+                        optionClone.removeAttribute('selected');
+                        currencyOptions[optionClone.value] = optionClone;
+                    });
+                $collectionContainer.data('systemSupportedCurrencyOptions', currencyOptions);
+            }
+
+            return currencyOptions;
         },
 
         /**
@@ -121,19 +140,23 @@ define(function(require) {
                 priceListCurrencies.unshift('');
             }
 
-            var newOptions = [];
-            _.each(priceListCurrencies, _.bind(function(currency) {
-                if (this.systemSupportedCurrencyOptions[currency] !== undefined) {
-                    newOptions.push($(this.systemSupportedCurrencyOptions[currency]).clone());
+            var systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
+            var value = this.$currencySelect.val();
+            this.$currencySelect.empty();
+            _.each(priceListCurrencies, function(currency) {
+                if (currency in systemSupportedCurrencyOptions) {
+                    var newOption = systemSupportedCurrencyOptions[currency].cloneNode(true);
+                    if (!_.isEmpty(value) && newOption.value === value) {
+                        newOption.selected = true;
+                    }
+                    this.$currencySelect.append(newOption);
                 }
-            }, this));
-
-            this.$currencySelect.html(newOptions);
+            }, this);
 
             this.$currencySelect.find('option[value=""]').hide();
             this.$currencySelect.removeAttr('disabled');
 
-            if (selectFirst) {
+            if (selectFirst && _.isEmpty(value)) {
                 this.$currencySelect.val(priceListCurrencies[1]);
                 this.$currencySelect.trigger('change');
             }

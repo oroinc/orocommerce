@@ -41,7 +41,7 @@ class QuickAddType extends AbstractType
                 ProductRowCollectionType::NAME,
                 [
                     'required' => false,
-                    'options' => [
+                    'entry_options' => [
                         'validation_required' => $options['validation_required'],
                     ],
                     'error_bubbling' => true,

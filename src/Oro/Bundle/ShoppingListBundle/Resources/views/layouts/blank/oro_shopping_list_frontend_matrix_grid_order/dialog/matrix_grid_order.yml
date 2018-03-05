@@ -22,7 +22,7 @@ layout:
                 text:
                     label: '=data["hasLineItems"] ? "oro.shoppinglist.actions.update_shopping_list" : "oro.shoppinglist.actions.add_to_shopping_list"'
                     parameters:
-                        '{{ shoppingList }}': '=data["shoppingList"].getLabel()'
+                        '{{ shoppingList }}': '=data["shoppingList"] ? data["shoppingList"].getLabel() : data["translator"].getTrans("oro.shoppinglist.entity_label")'
                 style: auto
         - '@move':
             id: widget_actions

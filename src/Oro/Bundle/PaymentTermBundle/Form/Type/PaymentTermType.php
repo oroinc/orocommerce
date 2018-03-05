@@ -49,7 +49,7 @@ class PaymentTermType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'payment_term',
+                'csrf_token_id' => 'payment_term',
             ]
         );
     }

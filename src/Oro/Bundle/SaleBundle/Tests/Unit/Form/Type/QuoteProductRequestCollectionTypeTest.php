@@ -32,7 +32,7 @@ class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => QuoteProductRequestType::NAME,
+                'entry_type' => QuoteProductRequestType::NAME,
                 'show_form_when_empty' => false,
                 'prototype_name' => '__namequoteproductrequest__',
                 'allow_add' => false,

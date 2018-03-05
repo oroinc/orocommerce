@@ -117,9 +117,8 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
-                static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
-                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
+            foreach ($data as $item) {
+                static::assertEquals($expectedData['action_configuration'], $item['action_configuration']);
             }
 
             static::assertEquals($expectedColumns, $testedColumns);
@@ -255,7 +254,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false,
                     ],
@@ -284,8 +282,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],
@@ -315,7 +311,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false
                     ]
@@ -341,7 +336,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
                         'update' => false,
                         'delete' => false
                     ]
@@ -368,8 +362,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],
@@ -397,8 +389,6 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'view' => true,
-                        'update' => true,
                         'delete' => false
                     ]
                 ],

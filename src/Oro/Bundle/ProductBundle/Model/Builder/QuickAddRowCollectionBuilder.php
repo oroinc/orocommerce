@@ -64,11 +64,8 @@ class QuickAddRowCollectionBuilder
     public function buildFromRequest(Request $request)
     {
         $collection = new QuickAddRowCollection();
-        $products = $request->request->get(
-            QuickAddType::NAME . '[' . QuickAddType::PRODUCTS_FIELD_NAME . ']',
-            [],
-            true
-        );
+        $formData = $request->request->get(QuickAddType::NAME);
+        $products = $formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? [];
 
         if (!is_array($products) || empty($products)) {
             return $collection;

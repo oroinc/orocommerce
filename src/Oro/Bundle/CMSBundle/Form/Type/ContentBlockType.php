@@ -36,7 +36,7 @@ class ContentBlockType extends AbstractType
                 [
                     'label' => 'oro.cms.contentblock.titles.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]]
+                    'entry_options' => ['constraints' => [new NotBlank()]]
                 ]
             )
             ->add(

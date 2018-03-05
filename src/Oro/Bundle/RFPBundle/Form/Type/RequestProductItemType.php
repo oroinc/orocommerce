@@ -86,7 +86,7 @@ class RequestProductItemType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
-                'intention' => 'rfp_request_product_item',
+                'csrf_token_id' => 'rfp_request_product_item',
             ]
         );
     }

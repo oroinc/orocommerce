@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck;
+use Oro\Bundle\SecurityBundle\Acl\Group\AclGroupProviderInterface;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -82,6 +83,11 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
         $authChecker = new FakeAuthorizationChecker();
         $authChecker->isGrantedMapping = $isGrantedMapping;
 
-        return new RelatedItemSecurityCheck($authChecker, $permissions, $capabilities);
+        $aclGroupProvider = $this->createMock(AclGroupProviderInterface::class);
+        $aclGroupProvider->expects(self::any())
+            ->method('getGroup')
+            ->willReturn('');
+
+        return new RelatedItemSecurityCheck($authChecker, $aclGroupProvider, $permissions, $capabilities);
     }
 }

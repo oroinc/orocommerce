@@ -64,7 +64,7 @@ class ProductFormExtension extends AbstractTypeExtension
                 'constraints' => [
                     new UniqueProductPrices(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]])
                 ],
-                'options' => [
+                'entry_options' => [
                     'product' => $product,
                 ],
             ]
