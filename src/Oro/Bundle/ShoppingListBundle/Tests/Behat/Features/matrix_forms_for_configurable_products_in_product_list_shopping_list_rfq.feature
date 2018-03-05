@@ -414,6 +414,16 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
+    And I should see "Total QTY 0 | Subtotal $0.00" in the "Matrix Grid Form Totals" element
+    Then I fill "Matrix Grid Form" with:
+      |          | Value 21 | Value 22 | Value 23 |
+      | Value 11 | 1        | 1        | -        |
+      | Value 12 | 1        | -        | 1        |
+      | Value 13 |          |          | -        |
+      | Value 14 | -        | -        | 1        |
+    And I should see "Total QTY 5 | Subtotal $60.00" in the "Matrix Grid Form Totals" element
+    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I click "Clear All"
     Given I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items" flash message
 
