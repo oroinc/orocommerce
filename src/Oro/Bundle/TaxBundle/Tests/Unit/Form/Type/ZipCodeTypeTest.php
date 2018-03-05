@@ -6,7 +6,8 @@ use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
@@ -136,7 +137,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         );
         $zipCodeFieldsValidator->expects($this->any())->method('initialize')->willReturnCallback(
             function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
-                $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+                $context = $this->createMock(ExecutionContextInterface::class);
                 $builder = $this
                     ->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
 

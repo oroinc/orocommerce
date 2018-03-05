@@ -47,7 +47,7 @@ class RequestProductTypeTest extends AbstractTest
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
                 $this->assertArrayHasKey('page_component', $options);
                 $this->assertArrayHasKey('page_component_options', $options);
 

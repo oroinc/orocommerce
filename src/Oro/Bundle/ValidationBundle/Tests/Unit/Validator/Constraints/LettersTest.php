@@ -5,13 +5,15 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Letters;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class LettersTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Letters */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var RegexValidator */
@@ -20,7 +22,7 @@ class LettersTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Letters();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new RegexValidator();
         $this->validator->initialize($this->context);
     }
@@ -52,12 +54,22 @@ class LettersTest extends \PHPUnit_Framework_TestCase
     public function testValidate($data, $correct)
     {
         if (!$correct) {
+            $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
             $this->context->expects($this->once())
-                ->method('addViolation')
-                ->with($this->constraint->message);
+                ->method('buildViolation')
+                ->with($this->constraint->message)
+                ->willReturn($builder);
+            $builder->expects($this->once())
+                ->method('setParameter')
+                ->willReturnSelf();
+            $builder->expects($this->once())
+                ->method('setCode')
+                ->willReturnSelf();
+            $builder->expects($this->once())
+                ->method('addViolation');
         } else {
             $this->context->expects($this->never())
-                ->method('addViolation');
+                ->method('buildViolation');
         }
 
         $this->validator->validate($data, $this->constraint);

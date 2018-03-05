@@ -47,6 +47,8 @@ class QuoteProductValidator extends ConstraintValidator
      */
     protected function addViolation($fieldPath, Constraints\QuoteProduct $constraint)
     {
-        $this->context->addViolationAt($fieldPath, $constraint->message);
+        $this->context->buildViolation($constraint->message)
+            ->atPath($fieldPath)
+            ->addViolation();
     }
 }

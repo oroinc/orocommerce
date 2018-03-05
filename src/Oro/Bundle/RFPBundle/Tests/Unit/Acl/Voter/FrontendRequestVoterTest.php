@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Acl\Voter;
 
+use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -12,6 +14,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrineHelper;
+
     /** @var ApplicationProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $applicationProvider;
 
@@ -29,11 +34,21 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityClass')
+            ->willReturnCallback([ClassUtils::class, 'getClass']);
+
         $this->applicationProvider = $this->createMock(ApplicationProvider::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->token = $this->createMock(TokenInterface::class);
 
-        $this->voter = new FrontendRequestVoter($this->applicationProvider, $this->workflowManager);
+        $this->voter = new FrontendRequestVoter(
+            $this->doctrineHelper,
+            $this->applicationProvider,
+            $this->workflowManager
+        );
+        $this->voter->setClassName(Request::class);
     }
 
     public function testVoteWithActiveFrontoffice()
@@ -71,7 +86,7 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_GRANTED,
+            FrontendRequestVoter::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }

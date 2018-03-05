@@ -331,14 +331,14 @@
 
 {% block _shopping_list_line_items_list_item_name_widget %}
     <h3 class="product-item__title product-item__title--in-cart">
-        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_tag_filter }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
     </h3>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
     <div>
         {{ 'oro.frontend.shoppinglist.view.item.label'|trans }}
-        <span class="product-item__sku-value">{{ mainProduct.sku|oro_tag_filter }}</span>
+        <span class="product-item__sku-value">{{ mainProduct.sku|oro_html_strip_tags }}</span>
     </div>
 {% endblock %}
 

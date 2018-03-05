@@ -56,7 +56,7 @@ class PriceListsSettingsType extends AbstractType
                 [
                     'label' => 'oro.pricing.pricelist.entity_plural_label',
                     'mapped' => true,
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => $options[self::PRICE_LIST_RELATION_CLASS]
                     ]
                 ]

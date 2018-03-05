@@ -139,7 +139,7 @@ class OrderTypeTest extends TypeTestCase
             ->with(
                 [
                     'data_class' => 'Order',
-                    'intention' => 'order'
+                    'csrf_token_id' => 'order'
                 ]
             );
 

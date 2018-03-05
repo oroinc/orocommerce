@@ -17,7 +17,7 @@ class ZipCodeCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ZipCodeType::NAME,
+                'entry_type' => ZipCodeType::NAME,
                 'required' => false,
             ]
         );

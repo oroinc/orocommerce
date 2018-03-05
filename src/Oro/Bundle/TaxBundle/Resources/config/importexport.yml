@@ -8,7 +8,7 @@ services:
     oro_tax.importexport.processor.export.tax_rule:
         parent: oro_importexport.processor.export_abstract
         calls:
-            - [setDataConverter, [@oro_tax.importexport.data_converter.tax_rule]]
+            - [setDataConverter, ['@oro_tax.importexport.data_converter.tax_rule']]
         tags:
             - name: oro_importexport.processor
               type: export
@@ -18,8 +18,8 @@ services:
     oro_tax.importexport.processor.import.tax_rule:
         parent: oro_importexport.processor.import_abstract
         calls:
-            - [setDataConverter, [@oro_tax.importexport.data_converter.tax_rule]]
-            - [setStrategy, [@oro_tax.importexport.strategy.tax_rule.add_or_replace]]
+            - [setDataConverter, ['@oro_tax.importexport.data_converter.tax_rule']]
+            - [setStrategy, ['@oro_tax.importexport.strategy.tax_rule.add_or_replace']]
         tags:
             - name: oro_importexport.processor
               type: import
@@ -39,7 +39,7 @@ services:
     oro_tax.importexport.processor.export.tax:
         parent: oro_importexport.processor.export_abstract
         calls:
-            - [setDataConverter, [@oro_tax.importexport.data_converter.tax]]
+            - [setDataConverter, ['@oro_tax.importexport.data_converter.tax']]
         tags:
             - name: oro_importexport.processor
               type: export
@@ -49,8 +49,8 @@ services:
     oro_tax.importexport.processor.import.tax:
         parent: oro_importexport.processor.import_abstract
         calls:
-            - [setDataConverter, [@oro_tax.importexport.data_converter.tax]]
-            - [setStrategy, [@oro_tax.importexport.strategy.tax.add_or_replace]]
+            - [setDataConverter, ['@oro_tax.importexport.data_converter.tax']]
+            - [setStrategy, ['@oro_tax.importexport.strategy.tax.add_or_replace']]
         tags:
             - name: oro_importexport.processor
               type: import

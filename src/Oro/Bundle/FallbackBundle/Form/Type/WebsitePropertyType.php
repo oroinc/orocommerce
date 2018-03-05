@@ -35,8 +35,8 @@ class WebsitePropertyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $formType    = $options['type'];
-        $formOptions = $options['options'];
+        $formType    = $options['entry_type'];
+        $formOptions = $options['entry_options'];
 
         $builder
             ->add(
@@ -44,7 +44,9 @@ class WebsitePropertyType extends AbstractType
                 $formType,
                 array_merge($formOptions, ['label' => 'oro.fallback.value.default'])
             )
-            ->add(self::FIELD_WEBSITES, WebsiteCollectionType::NAME, ['type' => $formType, 'options' => $formOptions]);
+            ->add(self::FIELD_WEBSITES, WebsiteCollectionType::NAME, [
+                'entry_type' => $formType, 'entry_options' => $formOptions
+            ]);
 
         $builder->addViewTransformer(new MultipleValueTransformer(self::FIELD_DEFAULT, self::FIELD_WEBSITES));
     }
@@ -55,11 +57,11 @@ class WebsitePropertyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
-            'type',
+            'entry_type',
         ]);
 
         $resolver->setDefaults([
-            'options' => [],
+            'entry_options' => [],
         ]);
     }
 }

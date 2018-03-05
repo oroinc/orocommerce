@@ -33,7 +33,7 @@ class PriceListType extends AbstractType
                 self::SCHEDULES_FIELD,
                 ScheduleIntervalsCollectionType::class,
                 [
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => PriceListSchedule::class
                     ]
                 ]
@@ -68,7 +68,7 @@ class PriceListType extends AbstractType
                 'priceRules',
                 CollectionType::class,
                 [
-                    'type' => PriceRuleType::NAME,
+                    'entry_type' => PriceRuleType::NAME,
                     'label' => false,
                     'required' => false,
                     'by_reference' => false,

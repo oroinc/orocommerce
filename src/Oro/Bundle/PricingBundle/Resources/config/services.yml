@@ -224,8 +224,8 @@ services:
             - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
             - '@oro_pricing.pricing_strategy.strategy_register'
-        calls:
-            - [setWebsiteCombinedPriceListBuilder,  ['@oro_pricing.builder.website_combined_price_list_builder']]
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.builder.website_combined_price_list_builder'
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'

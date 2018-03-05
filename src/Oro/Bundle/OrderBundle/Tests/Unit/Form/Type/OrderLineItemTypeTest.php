@@ -177,7 +177,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         return [
             'currency' => null,
             'data_class' => OrderLineItem::class,
-            'intention' => 'order_line_item',
+            'csrf_token_id' => 'order_line_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/line-item-view',

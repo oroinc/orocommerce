@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 class MatrixCollectionColumnValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -36,9 +36,7 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new MatrixCollectionColumn();
-        $this->context = $this->getMockBuilder(ExecutionContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new MatrixCollectionColumnValidator();
         $this->validator->initialize($this->context);

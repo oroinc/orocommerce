@@ -92,7 +92,7 @@ class InvoiceType extends AbstractType
                 InvoiceLineItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.invoice.invoicelineitem.add_label',
-                    'options' => ['currency' => $invoice->getCurrency()],
+                    'entry_options' => ['currency' => $invoice->getCurrency()],
                 ]
             );
     }
@@ -105,7 +105,7 @@ class InvoiceType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'invoice',
+                'csrf_token_id' => 'invoice',
             ]
         );
     }
