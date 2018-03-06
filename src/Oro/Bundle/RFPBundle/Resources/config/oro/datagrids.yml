@@ -1,7 +1,7 @@
 datagrids:
     base-rfq-grid:
         acl_resource: oro_rfp_request_view
-        extended_entity_name: %oro_rfp.entity.request.class%
+        extended_entity_name: '%oro_rfp.entity.request.class%'
         options:
             entityHint:        requests
             entity_pagination: true
@@ -15,9 +15,9 @@ datagrids:
                     - request.createdAt
                     - request.updatedAt
                 from:
-                    - { table: %oro_rfp.entity.request.class%, alias: request }
+                    - { table: '%oro_rfp.entity.request.class%', alias: request }
             hints:
-                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: '%oro_translation.translation_walker.class%'}
         columns:
             id:
                 label:         oro.rfp.request.id.label
@@ -50,7 +50,7 @@ datagrids:
                 updatedAt:
                     data_name: request.updatedAt
             default:
-                updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                updatedAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         actions:
             view:
                 type:          navigate
@@ -155,7 +155,7 @@ datagrids:
                         - { join: request.internal_status, alias: internalStatus }
                         - { join: request.customer_status, alias: customerStatus }
             hints:
-                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: '%oro_translation.translation_walker.class%'}
         columns:
             firstName:
                 label:         oro.rfp.request.first_name.label
@@ -272,7 +272,7 @@ datagrids:
 
     frontend-requests-grid:
         acl_resource: oro_rfp_frontend_request_view
-        extended_entity_name: %oro_rfp.entity.request.class%
+        extended_entity_name: '%oro_rfp.entity.request.class%'
         options:
             frontend: true
             entityHint:        requests
@@ -289,7 +289,7 @@ datagrids:
                     - customerStatus.name as customerStatusName
                     - customerStatus.id as customerStatusId
                 from:
-                    - { table: %oro_rfp.entity.request.class%, alias: request }
+                    - { table: '%oro_rfp.entity.request.class%', alias: request }
                 join:
                     left:
                         - { join: request.customerUser, alias: requestCustomerUser }
@@ -376,7 +376,7 @@ datagrids:
 
     rfp-request-additional-notes-grid:
         acl_resource: oro_rfp_request_view
-        extended_entity_name: %oro_rfp.entity.request.additional_note.class%
+        extended_entity_name: '%oro_rfp.entity.request.additional_note.class%'
         options:
             entityHint: additional notes
         source:
@@ -388,7 +388,7 @@ datagrids:
                     - additionalNote.text
                     - additionalNote.createdAt
                 from:
-                    - { table: %oro_rfp.entity.request.additional_note.class%, alias: additionalNote }
+                    - { table: '%oro_rfp.entity.request.additional_note.class%', alias: additionalNote }
                 where:
                     and:
                         - IDENTITY(additionalNote.request) = :request
@@ -421,7 +421,7 @@ datagrids:
                 createdAt:
                     data_name: additionalNote.createdAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 type:

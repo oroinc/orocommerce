@@ -17,7 +17,7 @@ datagrids:
                     - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
                     - customer.name as customerName
                 from:
-                    - { table: %oro_invoice.entity.invoice.class%, alias: invoice }
+                    - { table: '%oro_invoice.entity.invoice.class%', alias: invoice }
                 join:
                     left:
                         - { join: invoice.owner, alias: invoice_owner }

@@ -1,7 +1,7 @@
 datagrids:
     shipping-methods-configs-rule-grid:
         acl_resource: oro_shipping_methods_configs_rule_view
-        extended_entity_name: %oro_shipping.entity.shipping_methods_configs_rule.class%
+        extended_entity_name: '%oro_shipping.entity.shipping_methods_configs_rule.class%'
         options:
             entityHint:        shipping rules
             entity_pagination: true
@@ -17,7 +17,7 @@ datagrids:
                     - shipping_methods_configs_rule.currency
                     - rule.expression
                 from:
-                    - { table: %oro_shipping.entity.shipping_methods_configs_rule.class%, alias: shipping_methods_configs_rule }
+                    - { table: '%oro_shipping.entity.shipping_methods_configs_rule.class%', alias: shipping_methods_configs_rule }
                 join:
                     inner:
                         - { join: shipping_methods_configs_rule.rule, alias: rule }
@@ -129,12 +129,12 @@ datagrids:
                 acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
-                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
+                entity_name:  '%oro_shipping.entity.shipping_methods_configs_rule.class%'
                 data_identifier: shipping_methods_configs_rule.id
             disable:
                 type:         shippingruledisable
                 acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
-                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
+                entity_name:  '%oro_shipping.entity.shipping_methods_configs_rule.class%'
                 data_identifier: shipping_methods_configs_rule.id

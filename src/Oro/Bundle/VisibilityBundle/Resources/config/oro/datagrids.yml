@@ -8,11 +8,11 @@ datagrids:
                     - customer.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.customer.class%, alias: customer }
+                    - { table: '%oro_customer.entity.customer.class%', alias: customer }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
-                        - { join: %oro_visibility.entity.customer_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: '%oro_visibility.entity.customer_category_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -29,7 +29,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 name:
@@ -64,11 +64,11 @@ datagrids:
                     - customerGroup.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.customer_group.class%, alias: customerGroup }
+                    - { table: '%oro_customer.entity.customer_group.class%', alias: customerGroup }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
-                        - { join: %oro_visibility.entity.customer_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: '%oro_visibility.entity.customer_group_category_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -85,7 +85,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 name:
@@ -121,11 +121,11 @@ datagrids:
                     - customer.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.customer.class%, alias: customer }
+                    - { table: '%oro_customer.entity.customer.class%', alias: customer }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
-                        - { join: %oro_visibility.entity.customer_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: '%oro_visibility.entity.customer_product_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -142,7 +142,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 name:
@@ -178,11 +178,11 @@ datagrids:
                     - customerGroup.id
                     - customerGroup.name
                 from:
-                    - { table: %oro_customer.entity.customer_group.class%, alias: customerGroup }
+                    - { table: '%oro_customer.entity.customer_group.class%', alias: customerGroup }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
-                        - { join: %oro_visibility.entity.customer_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: '%oro_scope.entity.scope.class%', alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: '%oro_visibility.entity.customer_group_product_visibility.class%', alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -199,7 +199,7 @@ datagrids:
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 name:
