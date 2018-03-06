@@ -1,7 +1,7 @@
-@skip
-#TODO: unskip after BB-13064
-
 Feature: Rule Editor with Autocomplete in Price List
+  In order to simplify editing of the rules
+  As admin
+  I need to have autocomplete and validation in rule editors
 
   Scenario: Checking of autocomplete for Product Assignment Rule
     Given I login as administrator
@@ -120,11 +120,11 @@ Feature: Rule Editor with Autocomplete in Price List
       | Calculate As | pricelist[1].pri  |
       | Condition    | pricelist[12].pri |
     And I save form
-    Then I should see "Expected name around position 14."
-    And I should not see "Expected name around position 14.; Expected name around position 14."
-    And I should see "Expected name around position 15."
-    And I should not see "Expected name around position 15.; Expected name around position 15."
-    And I should see "Expected name around position 21."
-    And I should not see "Expected name around position 21.; Expected name around position 21."
-    And I should see "Expected name around position 22."
-    And I should not see "Expected name around position 22.; Expected name around position 22."
+    Then I should see "Unexpected end of expression around position 14."
+    And I should not see "Unexpected end of expression around position 14.; Unexpected end of expression around position 14."
+    And I should see "Unexpected end of expression around position 15."
+    And I should not see "Unexpected end of expression around position 15.; Unexpected end of expression around position 15."
+    And I should see "Unexpected end of expression around position 21."
+    And I should not see "Unexpected end of expression around position 21.; Unexpected end of expression around position 21."
+    And I should see "Unexpected end of expression around position 22."
+    And I should not see "Unexpected end of expression around position 22.; Unexpected end of expression around position 22."
