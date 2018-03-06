@@ -883,12 +883,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And check "Use default" for "Product Views" field
     And check "Use default" for "Shopping Lists" field
     And I save form
-    Given I proceed as the User
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I proceed as the User
+    And I signed in as AmandaRCole@example.org on the store frontend
     And type "Configurable Product A" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product A" product
-    Then I should see an "One Dimensional Matrix Grid Form" element
+    When I should see an "One Dimensional Matrix Grid Form" element
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
@@ -899,7 +899,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
-    Then I should see an "Matrix Grid Form" element
+    When I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | -        | -        |
@@ -921,10 +921,10 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | 5        |
     And I click on "Shopping List Dropdown"
     And I click "Update Product B Shopping List"
-    Then I should see "Shopping list \"Product B Shopping List\" was updated successfully"
-    And I click "Product B Shopping List"
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
+    And I should see "Shopping list \"Product B Shopping List\" was updated successfully"
+    When I click "Product B Shopping List"
+    And I should see an "Matrix Grid Form" element
+    Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 1        |          | N/A      |
       | 4        | N/A      |          |
@@ -933,14 +933,14 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Check product name in shopping list dropdown in front store
     Given I open shopping list widget
-    Then I should see "Configurable Product B" in the "ShoppingListWidget" element
-    And I should not see "Product C 232" in the "ShoppingListWidget" element
+    When I should see "Configurable Product B" in the "ShoppingListWidget" element
+    Then I should not see "Product C 232" in the "ShoppingListWidget" element
 
   Scenario: Order with regular variant selectors
     Given type "Configurable Product C" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product C" product
-    Then I should see an "Configurable Product Shopping List Form" element
+    When I should see an "Configurable Product Shopping List Form" element
     And I fill "ConfigurableProductForm" with:
       | Attributes_1 | Value 12 |
       | Attributes_2 | Value 23 |
@@ -952,8 +952,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
     And I should see "Product has been added to \"Product C Shopping List\""
 
-    And I click "Product C Shopping List"
-    And I should see "Product B Shopping List 4 Items"
+    When I click "Product C Shopping List"
+    Then I should see "Product B Shopping List 4 Items"
     And I should see "Product C Shopping List 1 Item"
 
   Scenario: Remove Configurable Product A variants from shopping list
@@ -975,8 +975,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And uncheck "Use default" for "Product Views" field
     And I fill in "Product Views" with "Popup Matrix Form"
     And I save form
-    Given I proceed as the User
-    Given type "Configurable Product B" in "search"
+    And I proceed as the User
+    When type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
     Then I should not see an "Matrix Grid Form" element
@@ -987,9 +987,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I proceed as the Admin
     And I fill in "Product Views" with "No Matrix Form"
     And I save form
-    Given I proceed as the User
+    And I proceed as the User
     And I reload the page
-    And type "Configurable Product B" in "search"
+    When type "Configurable Product B" in "search"
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
     Then I should not see an "Matrix Grid Form" element
@@ -1003,4 +1003,4 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then should see an "Add Line Item Popup" element
     And I open select entity popup for field "Product"
     Then there is no "Configurable Product B" in grid
-    Then there is no "Configurable Product A" in grid
+    And there is no "Configurable Product A" in grid
