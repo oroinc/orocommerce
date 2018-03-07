@@ -6,7 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\SearchBundle\Entity\AbstractIndexDecimal;
 
 /**
- * @ORM\Table(name="oro_website_search_decimal")
+ * Stores values of decimal fields
+ *
+ * @ORM\Table(
+ *      name="oro_website_search_decimal",
+ *      indexes={
+ *          @ORM\Index(name="oro_website_search_decimal_field_idx", columns={"field"}),
+ *          @ORM\Index(name="oro_website_search_decimal_item_field_idx", columns={"item_id", "field"})
+ *      }
+ * )
  * @ORM\Entity
  */
 class IndexDecimal extends AbstractIndexDecimal
