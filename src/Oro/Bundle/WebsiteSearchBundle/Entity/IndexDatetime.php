@@ -7,7 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\SearchBundle\Entity\AbstractIndexDatetime;
 
 /**
- * @ORM\Table(name="oro_website_search_datetime")
+ * Stores values of datatime fields
+ *
+ * @ORM\Table(
+ *      name="oro_website_search_datetime",
+ *      indexes={
+ *          @ORM\Index(name="oro_website_search_datetime_field_idx", columns={"field"}),
+ *          @ORM\Index(name="oro_website_search_datetime_item_field_idx", columns={"item_id", "field"})
+ *      }
+ * )
  * @ORM\Entity
  */
 class IndexDatetime extends AbstractIndexDatetime
