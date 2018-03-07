@@ -1,0 +1,21 @@
+.category-precision-holder {
+  tr {
+    vertical-align: top;
+  }
+
+  select {
+    &.unit {
+      width: 115px !important;
+    }
+  }
+
+  input {
+    &.precision {
+      width: 40px;
+    }
+  }
+}
+
+.menu-item {
+    padding: 0 10px;
+}

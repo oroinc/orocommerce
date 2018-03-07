@@ -1,0 +1,18 @@
+.mobile-version  {
+  .order-line-item-type,
+  .order-line-item-warehouse {
+    .select2-container {
+      width: auto;
+    }
+  }
+  .order-line-item-quantity {
+    .fields-row {
+      width: auto;
+      white-space: nowrap;
+
+      > div {
+        display: inline-block;
+      }
+    }
+  }
+}
