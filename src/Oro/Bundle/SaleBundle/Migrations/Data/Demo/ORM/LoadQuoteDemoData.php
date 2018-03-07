@@ -5,7 +5,6 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -28,7 +27,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Sample data of Quotes
  */
 class LoadQuoteDemoData extends AbstractFixture implements
-    FixtureInterface,
     ContainerAwareInterface,
     DependentFixtureInterface
 {
