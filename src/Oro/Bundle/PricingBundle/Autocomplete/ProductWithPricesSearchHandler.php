@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -41,24 +42,32 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $productPriceFormatter;
 
     /**
+     * @var UserCurrencyManager
+     */
+    private $userCurrencyManager;
+
+    /**
      * @param string $className
      * @param ProductSearchRepository $productSearchRepository
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param ManagerRegistry $registry
      * @param ProductPriceFormatter $productPriceFormatter
+     * @param UserCurrencyManager $userCurrencyManager
      */
     public function __construct(
         $className,
         ProductSearchRepository $productSearchRepository,
         PriceListRequestHandler $priceListRequestHandler,
         ManagerRegistry $registry,
-        ProductPriceFormatter $productPriceFormatter
+        ProductPriceFormatter $productPriceFormatter,
+        UserCurrencyManager $userCurrencyManager
     ) {
         $this->className = $className;
         $this->productSearchRepository = $productSearchRepository;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->registry = $registry;
         $this->productPriceFormatter = $productPriceFormatter;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -150,7 +159,9 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $prices = $this->getProductPriceRepository()
                 ->getFindByPriceListIdAndProductIdsQueryBuilder(
                     $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-                    $productIds
+                    $productIds,
+                    true,
+                    $this->userCurrencyManager->getUserCurrency()
                 )
                 ->getQuery()
                 ->getResult();
