@@ -153,6 +153,36 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
     }
 
+    public function testBuildByPriceListWithoutTriggers()
+    {
+        $rule = new PriceRule();
+        $rule->setPriority(10);
+
+        $priceList = new PriceList();
+        $priceList->setPriceRules(new ArrayCollection([$rule]));
+
+        $repository = $this->getRepositoryMock();
+        $repository->expects($this->once())
+            ->method('deleteGeneratedPrices')
+            ->with($this->shardManager, $priceList, []);
+
+        $fields = ['field1', 'field2'];
+        $queryBuilder = $this->assertInsertCall($fields, [$rule]);
+
+        $this->insertFromSelectQueryExecutor->expects($this->once())
+            ->method('execute')
+            ->with(
+                ProductPrice::class,
+                $fields,
+                $queryBuilder
+            );
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('addTriggerForPriceList');
+
+        $this->productPriceBuilder->buildByPriceListWithoutTriggers($priceList);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
      */

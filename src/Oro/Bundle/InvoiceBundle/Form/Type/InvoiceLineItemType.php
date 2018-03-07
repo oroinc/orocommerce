@@ -144,7 +144,7 @@ class InvoiceLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'invoice_line_item',
+                'csrf_token_id' => 'invoice_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [
                     'view' => 'oroinvoice/js/app/views/invoice-line-item-view',

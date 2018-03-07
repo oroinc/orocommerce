@@ -10,11 +10,11 @@ datagrids:
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-                    - { table: %oro_product.entity.product_unit_precision.class%, alias: precision }
+                    - { table: '%oro_product.entity.product_unit_precision.class%', alias: precision }
                 join:
                     left:
                         -
-                            join: %oro_inventory.entity.inventory_level.class%
+                            join: '%oro_inventory.entity.inventory_level.class%'
                             alias: level
                             conditionType: WITH
                             condition: "level.productUnitPrecision = precision.id"
@@ -40,7 +40,7 @@ datagrids:
                 productUnit:
                     data_name: productUnit
             default:
-                productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                productUnit:   '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         properties:
             combinedId: ~
             unitCode: ~
@@ -59,7 +59,7 @@ datagrids:
                 - oroinventory/js/datagrid/builder/level-quantity-builder
 
     inventory-grid:
-        extended_entity_name: %oro_inventory.entity.inventory_level.class%
+        extended_entity_name: '%oro_inventory.entity.inventory_level.class%'
         acl_resource: oro_product_inventory_view
         source:
             type: orm
@@ -78,7 +78,7 @@ datagrids:
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
-                    - { table: %oro_inventory.entity.inventory_level.class%, alias: inventory}
+                    - { table: '%oro_inventory.entity.inventory_level.class%', alias: inventory}
                 join:
                     left:
                         - { join: inventory.product, alias: product}
@@ -164,7 +164,6 @@ datagrids:
                     data_name:       quantity
                     type:            number
                 unit:
-                    data_name:       unit
                     type:            choice
                     data_name:       precisionUnit
                     options:

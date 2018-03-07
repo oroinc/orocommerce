@@ -24,7 +24,7 @@ class ShippingRuleEnableValidatorTest extends \PHPUnit_Framework_TestCase
     private $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     private $context;
 

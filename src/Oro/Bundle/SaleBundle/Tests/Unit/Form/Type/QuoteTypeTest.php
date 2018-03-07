@@ -94,7 +94,7 @@ class QuoteTypeTest extends AbstractTest
             ->with(
                 [
                     'data_class' => 'Oro\Bundle\SaleBundle\Entity\Quote',
-                    'intention' => 'sale_quote',
+                    'csrf_token_id' => 'sale_quote',
                     'allow_prices_override' => true,
                     'allow_add_free_form_items' => false,
                 ]

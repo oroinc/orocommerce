@@ -6,6 +6,9 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for the collection of RequestProductItemType on the backoffice
+ */
 class RequestProductItemCollectionType extends AbstractType
 {
     const NAME = 'oro_rfp_request_product_item_collection';
@@ -24,10 +27,10 @@ class RequestProductItemCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => RequestProductItemType::NAME,
-            'show_form_when_empty'  => false,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__namerequestproductitem__',
+            'entry_type' => RequestProductItemType::class,
+            'show_form_when_empty' => false,
+            'error_bubbling' => false,
+            'prototype_name' => '__namerequestproductitem__',
         ]);
     }
 

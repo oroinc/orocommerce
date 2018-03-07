@@ -89,7 +89,7 @@ class OrderType extends AbstractType
                 OrderLineItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.order.orderlineitem.add_label',
-                    'options' => ['currency' => $order->getCurrency()]
+                    'entry_options' => ['currency' => $order->getCurrency()]
                 ]
             )
             ->add(
@@ -158,7 +158,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order'
+                'csrf_token_id' => 'order'
             ]
         );
     }

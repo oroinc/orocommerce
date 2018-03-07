@@ -72,7 +72,7 @@ class QuoteProductRequestType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
-                'intention' => 'sale_quote_product_request',
+                'csrf_token_id' => 'sale_quote_product_request',
             ]
         );
     }

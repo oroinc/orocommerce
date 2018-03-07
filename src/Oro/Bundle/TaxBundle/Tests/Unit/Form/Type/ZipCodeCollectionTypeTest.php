@@ -55,7 +55,7 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'type' => ZipCodeType::NAME,
+                    'entry_type' => ZipCodeType::NAME,
                     'required' => false,
                 ]
             );

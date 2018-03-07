@@ -45,7 +45,7 @@ class RequestProductTypeTest extends AbstractTest
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
 
                 return true;
             }));

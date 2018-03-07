@@ -33,7 +33,7 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             'product',
-            $form->getConfig()->getOptions()['intention']
+            $form->getConfig()->getOptions()['csrf_token_id']
         );
     }
 

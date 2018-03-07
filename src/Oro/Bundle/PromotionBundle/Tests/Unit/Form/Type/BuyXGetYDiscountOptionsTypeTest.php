@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
@@ -161,12 +160,6 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
                 'set' => 'oro.product_unit.set.label.full',
             ]);
 
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
-
         /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
         /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
@@ -182,7 +175,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
                 [
                     ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
                     DiscountOptionsType::NAME => new DiscountOptionsType(),
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
+                    MultiCurrencyType::NAME => new MultiCurrencyType(),
                     CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
                     OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter),
                 ],

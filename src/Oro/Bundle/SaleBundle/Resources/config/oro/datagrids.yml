@@ -1,7 +1,7 @@
 datagrids:
     base-quote-grid:
         acl_resource: oro_sale_quote_view
-        extended_entity_name: %oro_sale.entity.quote.class%
+        extended_entity_name: '%oro_sale.entity.quote.class%'
         options:
             entityHint:        quotes
             entity_pagination: true
@@ -19,7 +19,7 @@ datagrids:
                     - quote.validUntil
                     - quote.expired
                 from:
-                    - { table: %oro_sale.entity.quote.class%, alias: quote }
+                    - { table: '%oro_sale.entity.quote.class%', alias: quote }
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
@@ -70,7 +70,7 @@ datagrids:
                 validUntil:
                     data_name: quote.validUntil
             default:
-                qid: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                qid: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         actions:
             view:
                 type:          navigate
@@ -251,14 +251,12 @@ datagrids:
                     data_name: quote.updatedAt
 
     frontend-quotes-grid:
-        acl_resource: oro_sale_quote_frontend_index
-        extended_entity_name: %oro_sale.entity.quote.class%
+        acl_resource: oro_sale_quote_frontend_view
+        extended_entity_name: '%oro_sale.entity.quote.class%'
         options:
             frontend: true
             entityHint:        quotes
             entity_pagination: true
-            customerUserOwner:
-                customerUserColumn: customerUserName
         source:
             type:         orm
             query:
@@ -273,7 +271,7 @@ datagrids:
                     - quote.poNumber
                     - quote.shipUntil
                 from:
-                    - { table: %oro_sale.entity.quote.class%, alias: quote }
+                    - { table: '%oro_sale.entity.quote.class%', alias: quote }
                 join:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }

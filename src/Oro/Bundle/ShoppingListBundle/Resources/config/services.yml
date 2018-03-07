@@ -377,7 +377,7 @@ services:
         public: false
         calls:
             - [setWebsiteManager, ['@oro_website.manager']]
-            - [setClassName, [%oro_shopping_list.entity.shopping_list.class%]]
+            - [setClassName, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:
             - { name: security.voter }
 

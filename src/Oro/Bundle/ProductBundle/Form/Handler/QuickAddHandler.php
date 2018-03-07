@@ -131,11 +131,8 @@ class QuickAddHandler
                 $products
             );
 
-            $additionalData = $request->get(
-                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
-                null,
-                true
-            );
+            $formData = $request->request->get(QuickAddType::NAME);
+            $additionalData = $formData[QuickAddType::ADDITIONAL_FIELD_NAME] ?? null;
 
             $response = $processor->process(
                 [

@@ -116,7 +116,7 @@ class QuoteType extends AbstractType
                 QuoteProductCollectionType::class,
                 [
                     'add_label' => 'oro.sale.quoteproduct.add_label',
-                    'options' => [
+                    'entry_options' => [
                         'compact_units' => true,
                         'allow_prices_override' => $options['allow_prices_override'],
                         'allow_add_free_form_items' => $options['allow_add_free_form_items'],
@@ -193,8 +193,8 @@ class QuoteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => $this->dataClass,
-            'intention'     => 'sale_quote',
+            'data_class' => $this->dataClass,
+            'csrf_token_id' => 'sale_quote',
             'allow_prices_override' => $this->securityFacade->isGranted('oro_quote_prices_override'),
             'allow_add_free_form_items' => $this->securityFacade->isGranted('oro_quote_add_free_form_items'),
         ]);

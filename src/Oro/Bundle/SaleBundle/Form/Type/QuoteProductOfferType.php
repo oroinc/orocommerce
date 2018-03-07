@@ -108,7 +108,7 @@ class QuoteProductOfferType extends AbstractType
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
                 'allow_prices_override' => true,
-                'intention' => 'sale_quote_product_offer',
+                'csrf_token_id' => 'sale_quote_product_offer',
             ]
         );
     }

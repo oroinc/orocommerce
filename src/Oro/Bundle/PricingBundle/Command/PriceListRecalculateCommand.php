@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
@@ -20,6 +21,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Recalculate combined price list and combined product prices
+ */
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
     const NAME = 'oro:price-lists:recalculate';
@@ -31,6 +35,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const DISABLE_TRIGGERS = 'disable-triggers';
     const VERBOSE = 'verbose';
     const USE_INSERT_SELECT = 'use-insert-select';
+    const INCLUDE_DEPENDENT = 'include-dependent';
 
     /**
      * {@inheritdoc}
@@ -67,6 +72,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'price list ids for prices recalculate',
                 []
+            )
+            ->addOption(
+                self::INCLUDE_DEPENDENT,
+                null,
+                InputOption::VALUE_NONE,
+                sprintf('recalculate prices for dependent price lists included in the %s option', self::PRICE_LIST)
             )
             ->addOption(
                 self::DISABLE_TRIGGERS,
@@ -203,7 +214,22 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             ->getRepository(PriceList::class);
 
         /** @var PriceList[] $priceLists */
-        return $priceListRepository->findBy(['id' => $priceListIds]);
+        $priceLists = $priceListRepository->findBy(['id' => $priceListIds]);
+
+        if ((bool)$input->getOption(self::INCLUDE_DEPENDENT)) {
+            $priceListsWithDependent = $priceLists;
+
+            foreach ($priceLists as $priceList) {
+                $priceListsWithDependent = array_merge(
+                    $priceListsWithDependent,
+                    $this->getDependentPriceLists($priceList)
+                );
+            }
+
+            return $priceListsWithDependent;
+        }
+
+        return $priceLists;
     }
 
     /**
@@ -218,8 +244,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             ->get('oro_pricing.builder.price_list_product_assignment_builder');
 
         foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceList($priceList);
-            $priceBuilder->buildByPriceList($priceList);
+            $assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
     }
 
@@ -309,6 +335,36 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         }
 
         return $customers;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return PriceList[]
+     */
+    protected function getDependentPriceLists(PriceList $priceList)
+    {
+        /** @var PriceRuleLexeme[] $lexemes */
+        $lexemes = $this->getContainer()->get('oro_pricing.price_rule_lexeme_trigger_handler')->findEntityLexemes(
+            PriceList::class,
+            [],
+            $priceList->getId()
+        );
+
+        $priceLists = [];
+        if (count($lexemes) > 0) {
+            $dependentPriceLists = [];
+            foreach ($lexemes as $lexeme) {
+                $dependentPriceList = $lexeme->getPriceList();
+                $dependentPriceLists[$dependentPriceList->getId()] = $dependentPriceList;
+            }
+
+            $priceLists = $dependentPriceLists;
+            foreach ($dependentPriceLists as $dependentPriceList) {
+                $priceLists = array_merge($priceLists, $this->getDependentPriceLists($dependentPriceList));
+            }
+        }
+
+        return $priceLists;
     }
 
     /**

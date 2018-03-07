@@ -32,10 +32,10 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
-                'type' => RequestProductType::NAME,
-                'show_form_when_empty'  => true,
-                'error_bubbling'        => false,
-                'prototype_name'        => '__namerequestproduct__',
+                'entry_type' => RequestProductType::class,
+                'show_form_when_empty' => true,
+                'error_bubbling' => false,
+                'prototype_name' => '__namerequestproduct__',
             ])
         ;
 

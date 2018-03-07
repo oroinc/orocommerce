@@ -58,7 +58,7 @@ class OrderDiscountItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order_discount_item',
+                'csrf_token_id' => 'order_discount_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
                 'validation_groups' => [self::VALIDATION_GROUP]

@@ -50,7 +50,7 @@ class RequestProductType extends AbstractType
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
                 'label' => 'oro.rfp.requestproductitem.entity_plural_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])
@@ -68,7 +68,7 @@ class RequestProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention'  => 'rfp_frontend_request_product',
+            'csrf_token_id' => 'rfp_frontend_request_product',
             'skipLoadingMask' => true
         ]);
     }

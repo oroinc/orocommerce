@@ -4,10 +4,10 @@ parameters:
 
 services:
     oro_commerce_entity.extra_insert_entity_storage:
-        class: %oro_commerce_entity.extra_insert_entity_storage.class%
+        class: '%oro_commerce_entity.extra_insert_entity_storage.class%'
 
     oro_commerce_entity.event_listener.doctrine_post_flush_listener:
-        class:  %oro_commerce_entity.event_listener.doctrine_post_flush_listener.class%
+        class:  '%oro_commerce_entity.event_listener.doctrine_post_flush_listener.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_commerce_entity.extra_insert_entity_storage'

@@ -79,6 +79,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $options['choices'] = $this->getProductUnits($form, $product);
         $options['choices_updated'] = true;
 
+        //@TODO Remove in scope BAP-15236
+        unset($options['cascade_validation']);
+
         $formParent->add($form->getName(), static::class, $options);
     }
 

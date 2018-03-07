@@ -5,13 +5,14 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DecimalValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class DecimalTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Decimal */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var DecimalValidator */
@@ -23,7 +24,7 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Decimal();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new DecimalValidator();
         $this->validator->initialize($this->context);
 
