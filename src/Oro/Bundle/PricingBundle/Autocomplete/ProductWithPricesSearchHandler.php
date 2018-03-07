@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -42,6 +43,11 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $productPriceFormatter;
 
     /**
+     * @var UserCurrencyManager
+     */
+    private $userCurrencyManager;
+
+    /**
      * @param string $className
      * @param ProductSearchRepository $productSearchRepository
      * @param PriceListRequestHandler $priceListRequestHandler
@@ -60,6 +66,14 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->registry = $registry;
         $this->productPriceFormatter = $productPriceFormatter;
+    }
+
+    /**
+     * @param UserCurrencyManager $userCurrencyManager
+     */
+    public function setUserCurrencyManager(UserCurrencyManager $userCurrencyManager)
+    {
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -148,10 +162,17 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function findPrices(array $productIds)
     {
         if (count($productIds) > 0) {
+            if (null !== $this->userCurrencyManager) {
+                $currency = $this->userCurrencyManager->getUserCurrency();
+            } else {
+                $currency = null;
+            }
             $prices = $this->getProductPriceRepository()
                 ->getFindByPriceListIdAndProductIdsQueryBuilder(
                     $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-                    $productIds
+                    $productIds,
+                    true,
+                    $currency
                 )
                 ->getQuery()
                 ->getResult();

@@ -229,8 +229,10 @@ define(function(require) {
                 var $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
                 var $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
 
+                var formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
+
                 $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
-                $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
+                $price.toggleClass('valid', total.price > 0).html(formattedCurrency);
             }, this);
         },
 

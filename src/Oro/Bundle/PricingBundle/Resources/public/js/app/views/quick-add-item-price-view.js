@@ -116,7 +116,8 @@ define(function(require) {
 
             if (priceObj && quantity) {
                 return NumberFormatter.formatCurrency(
-                    priceObj.price * quantity
+                    priceObj.price * quantity,
+                    priceObj.currency
                 );
             } else if (this.model.get('showSubtotalPlaceholder')) {
                 return this.options.subtotalNotAvailable;
