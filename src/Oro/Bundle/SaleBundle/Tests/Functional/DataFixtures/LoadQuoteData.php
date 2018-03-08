@@ -287,6 +287,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             $quote
                 ->setQid($item['qid'])
                 ->setWebsite($website)
+                ->setCurrency($this->getWebsiteCurrency($website))
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
                 ->setShipUntil(new \DateTime('+10 day'))
@@ -296,7 +297,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setPricesChanged($item['pricesChanged'] ?? false);
 
             if (!empty($item['estimatedShippingCostAmount'])) {
-                $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount'])->setCurrency('USD');
+                $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount']);
             }
             if (!empty($item['customer'])) {
                 $quote->setCustomer($this->getReference($item['customer']));
@@ -404,5 +405,16 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         return array_key_exists('validUntil', $item)
             ? ($item['validUntil'] ? new \DateTime($item['validUntil']) : null)
             : new \DateTime('+10 day');
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return string
+     */
+    protected function getWebsiteCurrency(Website $website)
+    {
+        return $this->container->get('oro_pricing.provider.website_currency_provider')
+            ->getWebsiteDefaultCurrency($website->getId());
     }
 }

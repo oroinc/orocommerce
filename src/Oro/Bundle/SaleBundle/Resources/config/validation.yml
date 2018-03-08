@@ -18,6 +18,9 @@ Oro\Bundle\SaleBundle\Entity\Quote:
             - Date: ~
         quoteProducts:
             - Valid: ~
+        currency:
+            - NotBlank: ~
+            - Currency: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     constraints:

@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
@@ -11,7 +12,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
-use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -24,6 +24,9 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Form type for editing Order entity on the backoffice
+ */
 class OrderType extends AbstractType
 {
     const NAME = 'oro_order_type';
@@ -35,24 +38,18 @@ class OrderType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /** @var OrderCurrencyHandler */
-    protected $orderCurrencyHandler;
-
     /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalSubscriber $subtotalSubscriber
+     * @param SubtotalSubscriber           $subtotalSubscriber
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        OrderCurrencyHandler $orderCurrencyHandler,
         SubtotalSubscriber $subtotalSubscriber
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
-        $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalSubscriber = $subtotalSubscriber;
     }
 
@@ -65,7 +62,6 @@ class OrderType extends AbstractType
     {
         /** @var Order $order */
         $order = $options['data'];
-        $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
             ->add('customer', CustomerSelectType::NAME, ['label' => 'oro.order.customer.label', 'required' => true])
@@ -84,7 +80,10 @@ class OrderType extends AbstractType
                 TextareaType::class,
                 ['required' => false, 'label' => 'oro.order.customer_notes.label']
             )
-            ->add('currency', HiddenType::class)
+            ->add('currency', CurrencySelectionType::NAME, [
+                'label' => 'oro.order.currency.label',
+                'full_currency_name' => true,
+            ])
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,

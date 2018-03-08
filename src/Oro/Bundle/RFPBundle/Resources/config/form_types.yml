@@ -62,6 +62,13 @@ services:
         tags:
             - { name: form.type, alias: oro_rfp_frontend_request_product_collection }
 
+    oro_rfp.form.type.frontend_request_product_item:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType'
+        calls:
+            - [setDataClass, ['%oro_rfp.entity.request_product_item.class%']]
+        tags:
+            - { name: form.type, alias: oro_rfp_frontend_request_product_item }
+
     oro_rfp.form.type.extension.frontend_request_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
         parent: oro_product.form.type.extension.product_data_storage.abstract

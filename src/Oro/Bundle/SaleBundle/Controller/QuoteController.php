@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
@@ -15,6 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Backoffice Quote entity controller
+ */
 class QuoteController extends Controller
 {
     const REDIRECT_BACK_FLAG = 'redirect_back';
@@ -69,6 +73,10 @@ class QuoteController extends Controller
     public function createAction(Request $request)
     {
         $quote = new Quote();
+
+        $quote->setCurrency($this->get('oro_config.manager')->get(CurrencyConfig::getConfigKeyByName(
+            CurrencyConfig::KEY_DEFAULT_CURRENCY
+        )));
 
         if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
             return $this->handleRequestAndRedirectBack(

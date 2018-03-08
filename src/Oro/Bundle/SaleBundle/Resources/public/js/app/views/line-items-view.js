@@ -19,7 +19,6 @@ define(function(require) {
         options: {
             tierPrices: null,
             tierPricesRoute: '',
-            currency: null,
             customer: null
         },
 
@@ -32,7 +31,6 @@ define(function(require) {
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 tierPrices: this.options.tierPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
-                currency: this.options.currency,
                 customer: this.options.customer
             }));
 

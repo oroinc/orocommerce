@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,6 +25,16 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
         $this->formType = new RequestProductItemCollectionType();
     }
 
+    public function testGetParent()
+    {
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(RequestProductItemCollectionType::NAME, $this->formType->getName());
+    }
+
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
@@ -40,15 +50,5 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
         ;
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetParent()
-    {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductItemCollectionType::NAME, $this->formType->getName());
     }
 }

@@ -8,13 +8,14 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -26,18 +27,11 @@ class RequestProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->translator   = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-
-        $this->formType     = new RequestProductType($this->translator);
+        $this->formType     = new RequestProductType();
         $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
@@ -175,5 +169,16 @@ class RequestProductTypeTest extends AbstractTest
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    /**
+     * @return RequestProductItemType
+     */
+    protected function prepareRequestProductItemType()
+    {
+        $requestProductItemType = new RequestProductItemType();
+        $requestProductItemType->setDataClass(RequestProductItem::class);
+
+        return $requestProductItemType;
     }
 }

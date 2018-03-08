@@ -5,7 +5,6 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -20,11 +19,14 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Sample data of Quotes
+ */
 class LoadQuoteDemoData extends AbstractFixture implements
-    FixtureInterface,
     ContainerAwareInterface,
     DependentFixtureInterface
 {
@@ -96,7 +98,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setCustomer($customer)
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
-                ->setWebsite($website);
+                ->setWebsite($website)
+                ->setCurrency($this->getWebsiteCurrency($website));
 
             if (1 === mt_rand(1, 3)) {
                 $quote->setRequest($requests[mt_rand(1, count($requests) - 1)]);
@@ -330,5 +333,16 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $productUnits;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return string
+     */
+    protected function getWebsiteCurrency(Website $website)
+    {
+        return $this->container->get('oro_pricing.provider.website_currency_provider')
+            ->getWebsiteDefaultCurrency($website->getId());
     }
 }
