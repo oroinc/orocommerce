@@ -77,6 +77,7 @@
              data-page-component-options="{{ {
                  view: 'oroorder/js/app/views/line-items-view',
                  tierPrices: orderData.tierPrices|default({}),
+                 currency: entity.currency,
                  customer: entity.customer is null ? null : entity.customer.id,
                  subtotalType: subtotalType
              }|json_encode }}"
@@ -98,7 +99,8 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    form_row(form.currency)
+                    form_row(form.currency),
+                    UI.renderProperty('oro.order.currency.label'|trans, entity.currency)
                 ]
             }]
         },

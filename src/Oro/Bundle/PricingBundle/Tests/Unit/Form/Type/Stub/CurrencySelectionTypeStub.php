@@ -18,8 +18,7 @@ class CurrencySelectionTypeStub extends AbstractType
                 'additional_currencies' => null,
                 'compact'               => false,
                 'currencies_list'       => null,
-                'full_currency_list'    => true,
-                'full_currency_name'    => true,
+                'full_currency_list'    => true
             ]
         );
     }

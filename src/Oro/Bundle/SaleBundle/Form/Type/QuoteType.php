@@ -3,8 +3,9 @@
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
@@ -26,9 +27,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Form type for editing Quote entity on the backoffice
- */
 class QuoteType extends AbstractType
 {
     const NAME = 'oro_sale_quote';
@@ -39,6 +37,9 @@ class QuoteType extends AbstractType
     /** @var string */
     protected $dataClass;
 
+    /** @var ConfigManager */
+    protected $configManager;
+
     /** @var EventSubscriberInterface */
     protected $quoteFormSubscriber;
 
@@ -47,15 +48,18 @@ class QuoteType extends AbstractType
 
     /**
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
+     * @param ConfigManager $configManager
      * @param EventSubscriberInterface $quoteFormSubscriber
      * @param SecurityFacade $securityFacade
      */
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
+        ConfigManager $configManager,
         EventSubscriberInterface $quoteFormSubscriber,
         SecurityFacade $securityFacade
     ) {
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
+        $this->configManager = $configManager;
         $this->quoteFormSubscriber = $quoteFormSubscriber;
         $this->securityFacade = $securityFacade;
     }
@@ -76,6 +80,10 @@ class QuoteType extends AbstractType
     {
         /** @var Quote $quote */
         $quote = $options['data'];
+        $defaultCurrency = $this->configManager->get(CurrencyConfig::getConfigKeyByName(
+            CurrencyConfig::KEY_DEFAULT_CURRENCY
+        ));
+        $quote->setCurrency($defaultCurrency);
 
         $builder
             ->add('qid', HiddenType::class)
@@ -128,12 +136,7 @@ class QuoteType extends AbstractType
             ])
             ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
                 'label' => 'oro.sale.quote.assigned_customer_users.label',
-            ])
-            ->add('currency', CurrencySelectionType::NAME, [
-                'label' => 'oro.sale.quote.currency.label',
-                'full_currency_name' => true,
             ]);
-
         $this->addShippingFields($builder, $quote);
 
         $builder->addEventSubscriber($this->quoteFormSubscriber);

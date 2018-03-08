@@ -21,6 +21,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -56,6 +57,9 @@ class OrderTypeTest extends TypeTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
     private $orderAddressSecurityProvider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    private $orderCurrencyHandler;
+
     /** @var OrderType */
     private $type;
 
@@ -81,6 +85,8 @@ class OrderTypeTest extends TypeTestCase
     {
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder(OrderAddressSecurityProvider::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->orderCurrencyHandler = $this->getMockBuilder(OrderCurrencyHandler::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->totalsProvider = $this
@@ -116,6 +122,7 @@ class OrderTypeTest extends TypeTestCase
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->orderAddressSecurityProvider,
+            $this->orderCurrencyHandler,
             new SubtotalSubscriber($totalHelper, $this->priceMatcher)
         );
 
@@ -159,6 +166,8 @@ class OrderTypeTest extends TypeTestCase
         $options = [
             'data' => $order
         ];
+
+        $this->orderCurrencyHandler->expects($this->any())->method('setOrderCurrency');
 
         $form = $this->factory->create($this->type, null, $options);
 

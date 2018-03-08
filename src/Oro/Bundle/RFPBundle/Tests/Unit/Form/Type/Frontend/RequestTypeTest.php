@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -12,10 +14,8 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -261,16 +261,5 @@ class RequestTypeTest extends AbstractTest
                 'multiple' => true
             ]
         );
-    }
-
-    /**
-     * @return RequestProductItemType
-     */
-    protected function prepareRequestProductItemType()
-    {
-        $requestProductItemType = new RequestProductItemType();
-        $requestProductItemType->setDataClass(RequestProductItem::class);
-
-        return $requestProductItemType;
     }
 }

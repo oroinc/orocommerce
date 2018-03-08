@@ -17,9 +17,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Backoffice Order entity controller
- */
 class OrderController extends AbstractOrderController
 {
     /**
@@ -105,7 +102,6 @@ class OrderController extends AbstractOrderController
     {
         $order = new Order();
         $order->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
-        $this->get('oro_order.handler.order_currency_handler')->setOrderCurrency($order);
         return $this->update($order, $request);
     }
 

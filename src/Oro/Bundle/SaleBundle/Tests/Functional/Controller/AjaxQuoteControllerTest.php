@@ -27,8 +27,6 @@ class AjaxQuoteControllerTest extends WebTestCase
      *
      * @param string|null $customer
      * @param string|null $customerUser
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testGetRelatedDataAction($customer, $customerUser = null)
     {
@@ -105,6 +103,14 @@ class AjaxQuoteControllerTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($response, 400);
     }
 
+    public function testEntryPoint()
+    {
+        $this->client->request('GET', $this->getUrl('oro_quote_entry_point'));
+        $response = $this->client->getResponse();
+
+        static::assertInstanceOf(JsonResponse::class, $response);
+    }
+
     public function testEntryPointAction()
     {
         $this->client->request(
@@ -112,16 +118,15 @@ class AjaxQuoteControllerTest extends WebTestCase
             $this->getUrl('oro_quote_entry_point'),
             [
                 QuoteType::NAME => [
-                    'calculateShipping' => true,
-                    'currency' => 'USD'
+                    'calculateShipping' => true
                 ]
             ]
         );
 
         $response = $this->client->getResponse();
-        static::assertInstanceOf(JsonResponse::class, $response);
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
 
         $result = $this->getJsonResponseContent($response, 200);
-        static::assertArrayHasKey('possibleShippingMethods', $result);
+        $this->assertArrayHasKey('possibleShippingMethods', $result);
     }
 }

@@ -13,9 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class OrderLineItemTest extends RestJsonApiTestCase
 {
     /**
@@ -53,9 +50,11 @@ class OrderLineItemTest extends RestJsonApiTestCase
 
         $oldQuantity = $item->getQuantity();
         $oldValue = $item->getValue();
+        $oldCurrency = $item->getCurrency();
 
         $newQuantity = 50;
         $newValue = 100;
+        $newCurrency = 'EUR';
 
         $this->patch(
             ['entity' => 'orderlineitems', 'id' => $item->getId()],
@@ -66,6 +65,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
                     'attributes' => [
                         'quantity' => $newQuantity,
                         'value' => $newValue,
+                        'currency' => $newCurrency,
                     ],
                 ],
             ]
@@ -79,7 +79,8 @@ class OrderLineItemTest extends RestJsonApiTestCase
         self::assertEquals($newQuantity, $updatedItem->getQuantity());
 
         $updatedItem->setQuantity($oldQuantity)
-            ->setValue($oldValue);
+            ->setValue($oldValue)
+            ->setCurrency($oldCurrency);
 
         $this->getEntityManager()->flush();
     }

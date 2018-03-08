@@ -28,9 +28,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Sample data of Orders
- */
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /** @var array */
@@ -138,8 +135,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
             $subtotal->setBaseCurrencyValue($baseSubtotal);
 
-            $website = $this->getWebsite($manager, $row['websiteName']);
-
             $order
                 ->setOwner($user)
                 ->setCustomer($customerUser->getCustomer())
@@ -148,8 +143,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setOrganization($user->getOrganization())
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
-                ->setWebsite($website)
-                ->setCurrency($this->getWebsiteCurrency($website))
+                ->setWebsite($this->getWebsite($manager, $row['websiteName']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
@@ -172,6 +166,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         }
 
         fclose($handler);
+
         $manager->flush();
     }
 
@@ -277,16 +272,5 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         }
 
         return $this->websites[$name];
-    }
-
-    /**
-     * @param Website $website
-     *
-     * @return string
-     */
-    protected function getWebsiteCurrency(Website $website)
-    {
-        return $this->container->get('oro_pricing.provider.website_currency_provider')
-            ->getWebsiteDefaultCurrency($website->getId());
     }
 }

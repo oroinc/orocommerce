@@ -72,7 +72,6 @@ class OrderControllerTest extends WebTestCase
                 'poNumber' => self::ORDER_PO_NUMBER,
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
-                'currency' => 'USD',
             ]
         ];
 
@@ -97,7 +96,6 @@ class OrderControllerTest extends WebTestCase
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
-                'currency' => 'USD',
             ]
         ];
 

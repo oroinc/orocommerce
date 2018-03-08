@@ -9,4 +9,3 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO1'
         qid: 'Quote1'
         website: '@website1'
-        currency: 'USD'

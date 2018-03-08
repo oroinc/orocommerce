@@ -8,6 +8,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
         arguments:
             - "@oro_sale.provider.quote_address_security"
+            - '@oro_config.global'
             - '@oro_sale.form.event_listener.quote_update'
             - '@oro_security.security_facade'
         calls:

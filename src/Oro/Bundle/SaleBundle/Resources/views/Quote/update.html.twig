@@ -78,7 +78,8 @@
                  view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  tierPricesRoute: 'oro_pricing_price_by_customer',
-                 customer: entity.customer is null ? null : entity.customer.id
+                 customer: entity.customer is null ? null : entity.customer.id,
+                 currency: entity.currency
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
@@ -108,7 +109,6 @@
             {{ form_row(form.shipUntil) }}
             {{ form_row(form.assignedUsers) }}
             {{ form_row(form.assignedCustomerUsers) }}
-            {{ form_row(form.currency) }}
         </div>
     {% endset %}
     {% set dataBlocks = [

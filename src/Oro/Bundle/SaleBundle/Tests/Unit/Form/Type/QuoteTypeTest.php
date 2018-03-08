@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -48,6 +49,9 @@ class QuoteTypeTest extends AbstractTest
     /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    protected $configManager;
+
     /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteFormSubscriber */
     protected $quoteFormSubscriber;
 
@@ -63,13 +67,25 @@ class QuoteTypeTest extends AbstractTest
 
         $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
 
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_currency.default_currency')
+            ->willReturn('USD');
+
         $this->quoteFormSubscriber = $this->createMock(QuoteFormSubscriber::class);
         $this->quoteFormSubscriber = new MutableFormEventSubscriber($this->quoteFormSubscriber);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_currency.default_currency')
+            ->willReturn('USD');
 
         $this->securityFacade = $this->createMock(SecurityFacade::class);
 
         $this->formType = new QuoteType(
             $this->quoteAddressSecurityProvider,
+            $this->configManager,
             $this->quoteFormSubscriber,
             $this->securityFacade
         );
@@ -199,8 +215,8 @@ class QuoteTypeTest extends AbstractTest
                 'isValid'       => false,
                 'submittedData' => [
                 ],
-                'expectedData'  => new Quote(),
-                'defaultData'   => $this->getQuote(1),
+                'expectedData'  => (new Quote())->setCurrency('USD'),
+                'defaultData'   => $this->getQuote(1)->setCurrency('USD'),
                 'options' => [
                     'data' => $this->getQuote(1)
                 ]
@@ -213,7 +229,6 @@ class QuoteTypeTest extends AbstractTest
                     'customer' => 2,
                     'poNumber'  => null,
                     'shipUntil' => null,
-                    'currency' => 'USD',
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -263,7 +278,6 @@ class QuoteTypeTest extends AbstractTest
                     'customer' => 2,
                     'poNumber'  => 'poNumber',
                     'shipUntil' => $date,
-                    'currency' => 'USD',
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -327,8 +341,7 @@ class QuoteTypeTest extends AbstractTest
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
                     )->addAssignedUser($this->getUser(1))
-                        ->addAssignedCustomerUser($this->getCustomerUser(11))
-                        ->setCurrency('USD'),
+                        ->addAssignedCustomerUser($this->getCustomerUser(11)),
                 ]
             ],
         ];
