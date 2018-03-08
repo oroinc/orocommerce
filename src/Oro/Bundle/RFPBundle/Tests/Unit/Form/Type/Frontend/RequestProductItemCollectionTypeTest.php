@@ -25,6 +25,16 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
         $this->formType = new RequestProductItemCollectionType();
     }
 
+    public function testGetParent()
+    {
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(RequestProductItemCollectionType::NAME, $this->formType->getName());
+    }
+
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
@@ -36,18 +46,9 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__namerequestproductitem__',
-            ]);
+            ])
+        ;
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetParent()
-    {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductItemCollectionType::NAME, $this->formType->getName());
     }
 }
