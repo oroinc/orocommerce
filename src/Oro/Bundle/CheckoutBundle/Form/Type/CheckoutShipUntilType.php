@@ -41,8 +41,8 @@ class CheckoutShipUntilType extends AbstractType
         ]);
 
         $resolver->setRequired(['checkout']);
-        $resolver->setAllowedValues(['checkout' => function ($value) {
+        $resolver->setAllowedValues('checkout', function ($value) {
             return $value instanceof Checkout;
-        }]);
+        });
     }
 }
