@@ -1,10 +1,11 @@
 .mobile-version {
-  .content-with-sidebar--content {
-    .select2-container {
-      width: calc('100% - 31px');
+    .content-with-sidebar--content {
+        .select2-container {
+            width: calc(100% - 31px);
+        }
+
+        .select2-choice {
+            width: 100%;
+        }
     }
-    .select2-choice {
-      width: 100%;
-    }
-  }
 }
