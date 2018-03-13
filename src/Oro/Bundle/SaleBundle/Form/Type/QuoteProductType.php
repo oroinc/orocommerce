@@ -194,8 +194,10 @@ class QuoteProductType extends AbstractType
             ])
             ->add('commentCustomer', 'textarea', [
                 'required' => false,
-                'read_only' => true,
                 'label' => 'oro.sale.quoteproduct.comment_customer.label',
+                'attr' => [
+                    'readonly' => true
+                ]
             ])
             ->add('comment', 'textarea', [
                 'required' => false,

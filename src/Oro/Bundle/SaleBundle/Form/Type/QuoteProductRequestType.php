@@ -38,7 +38,9 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.price.label',
-                    'read_only' => true,
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
@@ -47,8 +49,10 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
-                    'read_only' => true,
                     'compact' => $options['compact_units'],
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
@@ -57,8 +61,10 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.quantity.label',
-                    'read_only' => true,
                     'product_holder' => $builder->getData(),
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             );
     }
