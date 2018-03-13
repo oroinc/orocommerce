@@ -1,5 +1,5 @@
 assets:
     css:
         'orocatalog':
-            - 'bundles/orocatalog/css/less/categories.scss'
-            - 'bundles/orocatalog/css/less/product-grid-sidebar.scss'
+            - 'bundles/orocatalog/css/scss/categories.scss'
+            - 'bundles/orocatalog/css/scss/product-grid-sidebar.scss'

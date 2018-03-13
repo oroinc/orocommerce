@@ -1,5 +1,5 @@
 assets:
     css:
         'orocms':
-            - 'bundles/orocms/css/less/pages.scss'
-            - 'bundles/orocms/css/less/loginPage.scss'
+            - 'bundles/orocms/css/scss/pages.scss'
+            - 'bundles/orocms/css/scss/loginPage.scss'

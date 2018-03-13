@@ -1,4 +1,4 @@
 assets:
     css:
         'oroshipping':
-            - 'bundles/oroshipping/less/style.scss'
+            - 'bundles/oroshipping/scss/style.scss'

@@ -1,5 +1,5 @@
 assets:
     css:
         'ororfp':
-            - 'bundles/ororfp/css/less/rfp.scss'
-            - 'bundles/ororfp/css/less/order.scss'
+            - 'bundles/ororfp/css/scss/rfp.scss'
+            - 'bundles/ororfp/css/scss/order.scss'
