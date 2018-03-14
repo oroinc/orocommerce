@@ -96,6 +96,7 @@ class RedirectListener
         $transaction = $event->getPaymentTransaction();
         $response = new Response($transaction->getResponse());
 
-        return $response->getResult() === $responseCode;
+        return $response->getResult() === $responseCode &&
+            strpos($response->getMessage(), 'Field format error: 10736') === 0;
     }
 }
