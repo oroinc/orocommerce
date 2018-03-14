@@ -6,19 +6,18 @@
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _product_require_js_config_widget %}
-    {% if (not isMobileVersion()) %}
-        {% set attr = layout_attr_defaults(attr, {
-            'data-grid-toolbar': 'top',
-            'data-sticky-target': 'top-sticky-panel',
-            'data-proxy-data': 'true',
-            'data-sticky': {
-                'isSticky': true,
-                'autoWidth': true,
-                'toggleClass': 'toolbar-sticky-container',
-                'placeholderId': 'sticky_element_toolbar'
-            }
-        }) %}
-    {% endif %}
+{% block _product_datagrid_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-grid-toolbar': 'top',
+        'data-sticky-target': 'top-sticky-panel',
+        'data-proxy-data': 'true',
+        'data-sticky': {
+            'isSticky': true,
+            'autoWidth': true,
+            'toggleClass': 'datagrid-toolbar-sticky-container',
+            'placeholderId': 'sticky_element_toolbar'
+        }
+    }) %}
+
     {{ parent_block_widget(block) }}
 {% endblock %}
