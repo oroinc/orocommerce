@@ -12,52 +12,45 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @dbIsolationPerTest
- */
 class OrderRepositoryTest extends WebTestCase
 {
-    /**
-     * @var OrderRepository
-     */
-    protected $orderRepo;
+    /** @var OrderRepository */
+    protected $repository;
 
     protected function setUp()
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            LoadOrders::class,
             LoadOrganizations::class,
+            LoadOrders::class,
         ]);
 
-        $this->orderRepo = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(Order::class);
+        $this->repository = $this->getRepository();
     }
 
     public function testHasRecordsWithRemovingCurrencies()
     {
-        // TODO: fix in BB-10946
-        $this->markTestIncomplete('Incomplete test. Skipped due to random failing. Will be fixed in BB-10946');
-
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);
+        $this->assertNotNull($user);
 
         /** @var Organization $organization */
         $organization = $this->getReference(LoadOrganizations::ORGANIZATION_1);
+        $this->assertNotNull($organization);
 
-        $this->assertTrue($this->orderRepo->hasRecordsWithRemovingCurrencies(['USD']));
-        $this->assertTrue($this->orderRepo->hasRecordsWithRemovingCurrencies(['EUR']));
-        $this->assertFalse($this->orderRepo->hasRecordsWithRemovingCurrencies(['UAH']));
-        $this->assertTrue($this->orderRepo->hasRecordsWithRemovingCurrencies(['EUR'], $user->getOrganization()));
-        $this->assertFalse($this->orderRepo->hasRecordsWithRemovingCurrencies(['USD'], $organization));
+        $this->assertTrue($this->repository->hasRecordsWithRemovingCurrencies(['USD']));
+        $this->assertTrue($this->repository->hasRecordsWithRemovingCurrencies(['EUR']));
+        $this->assertFalse($this->repository->hasRecordsWithRemovingCurrencies(['UAH']));
+        $this->assertTrue($this->repository->hasRecordsWithRemovingCurrencies(['EUR'], $user->getOrganization()));
+        $this->assertFalse($this->repository->hasRecordsWithRemovingCurrencies(['USD'], $organization));
     }
 
     public function testGetOrderWithRelations()
     {
-        $reference = $this->getReference(LoadOrders::ORDER_1);
         /** @var Order $order */
-        $orderWithRelations = $this->orderRepo->getOrderWithRelations($reference->getId());
+        $order = $this->getReference(LoadOrders::ORDER_1);
+
+        $orderWithRelations = $this->repository->getOrderWithRelations($order->getId());
 
         /** @var AbstractLazyCollection $lineItems */
         $lineItems = $orderWithRelations->getLineItems();
@@ -67,5 +60,16 @@ class OrderRepositoryTest extends WebTestCase
 
         $this->assertTrue($lineItems->isInitialized());
         $this->assertTrue($discounts->isInitialized());
+    }
+
+    /**
+     * @return OrderRepository
+     */
+    private function getRepository()
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(Order::class)
+            ->getRepository(Order::class);
     }
 }
