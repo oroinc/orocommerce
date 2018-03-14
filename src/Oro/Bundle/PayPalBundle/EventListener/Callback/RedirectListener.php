@@ -10,6 +10,10 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * Listen payment error callbacks from payment and redirect to shipping address url in case when PayPal returns
+ * that some problem with passed address data in request
+ */
 class RedirectListener
 {
     const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
@@ -95,6 +99,7 @@ class RedirectListener
         $transaction = $event->getPaymentTransaction();
         $response = new Response($transaction->getResponse());
 
-        return $response->getResult() === $responseCode;
+        return $response->getResult() === $responseCode &&
+            strpos($response->getMessage(), 'Field format error: 10736') === 0;
     }
 }
