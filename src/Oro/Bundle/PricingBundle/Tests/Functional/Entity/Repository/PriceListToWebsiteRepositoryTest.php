@@ -86,11 +86,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
-        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
-        $result = [];
-        foreach ($iterator as $item) {
-            $result[] = $item;
-        }
+        $result1 = iterator_to_array($this->getRepository()->getIteratorByPriceList($priceList));
+        $result2 = iterator_to_array($this->getRepository()->getIteratorByPriceLists([$priceList]));
 
         $this->assertEquals(
             [
@@ -98,8 +95,9 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
                     'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
                 ],
             ],
-            $result
+            $result1
         );
+        $this->assertSame($result1, $result2);
     }
 
     /**

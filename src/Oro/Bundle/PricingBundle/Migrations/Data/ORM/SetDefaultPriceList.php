@@ -10,6 +10,10 @@ use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Sets default price list into configuration
+ * and executes combined price lists rebuild
+ */
 class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /**
@@ -52,6 +56,6 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
             [new PriceListConfig($defaultPriceList, 100, true)]
         );
         $configManager->flush();
-        $this->container->get('oro_pricing.builder.combined_price_list_builder')->build();
+        $this->container->get('oro_pricing.builder.combined_price_list_builder_facade')->rebuildAll();
     }
 }
