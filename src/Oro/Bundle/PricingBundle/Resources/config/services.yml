@@ -228,6 +228,17 @@ services:
             - [setWebsiteCombinedPriceListBuilder,  ['@oro_pricing.builder.website_combined_price_list_builder']]
             - [setCombinedPriceListTriggerHandler,  ['@oro_pricing.model.combined_price_list_trigger_handler']]
 
+    oro_pricing.builder.combined_price_list_builder_facade:
+        class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.builder.customer_combined_price_list_builder'
+            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
+            - '@oro_pricing.builder.website_combined_price_list_builder'
+            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
         public: false
@@ -678,6 +689,7 @@ services:
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
         calls:
+            - [setCombinedPriceListsBuilderFacade, ['@oro_pricing.builder.combined_price_list_builder_facade']]
             - [disableListener, ['oro_pricing.entity_listener.product_price_cpl']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_to_product']]
         tags:
@@ -937,6 +949,7 @@ services:
             - '@oro_entity.database_exception_helper'
         calls:
             - [setCombinedPriceListTriggerHandler, ['@oro_pricing.model.combined_price_list_trigger_handler']]
+            - [setCombinedPriceListBuilderFacade, ['@oro_pricing.builder.combined_price_list_builder_facade']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -950,6 +963,8 @@ services:
             - '@logger'
             - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
+        calls:
+            - [setCombinedPriceListsBuilderFacade, ['@oro_pricing.builder.combined_price_list_builder_facade']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

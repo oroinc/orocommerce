@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -13,6 +14,9 @@ use Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener;
 
 class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
+    /** @var CombinedPriceListsBuilderFacade|\PHPUnit_Framework_MockObject_MockObject CombinedPriceListsBuilderFacade */
+    protected $combinedPriceListsBuilderFacade;
+
     /** @var CombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceListBuilder;
 
@@ -38,6 +42,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
         $this->objectManager = $this->createMock(ObjectManager::class);
         $this->priceListRepository = $this->createMock(PriceListRepository::class);
+        $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
 
         parent::setUp();
     }
@@ -47,12 +52,15 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
      */
     protected function getListener()
     {
-        return new BuildPricesDemoDataFixturesListener(
+        $listener = new BuildPricesDemoDataFixturesListener(
             $this->listenerManager,
             $this->priceListBuilder,
             $this->priceBuilder,
             $this->assignmentBuilder
         );
+        $listener->setCombinedPriceListsBuilderFacade($this->combinedPriceListsBuilderFacade);
+
+        return $listener;
     }
 
     public function testOnPostLoad()
@@ -92,8 +100,8 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->method('buildByPriceList')
             ->with($priceList);
 
-        $this->priceListBuilder->expects($this->once())
-            ->method('build');
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('rebuildAll');
 
         $this->listener->onPostLoad($this->event);
     }

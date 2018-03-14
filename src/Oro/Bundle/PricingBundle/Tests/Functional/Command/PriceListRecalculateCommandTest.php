@@ -105,12 +105,12 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all'],
-                'expectedCount' => 42 // 2 + 38 + 2 = config + website1 + website3
+                'expectedCount' => 64 // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
             ],
             'all with triggers off' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--disable-triggers'],
-                'expectedCount' => 42 // 2 + 38 + 2 = config + website1 + website3
+                'expectedCount' => 64 // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
             ],
             'empty run' => [
                 'expected_message' => 'ATTENTION',
@@ -160,7 +160,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'price_list_1' => [
                 'expected_message' => 'Start the process',
                 'params' => [],
-                'expectedCount' => 56,
+                'expectedCount' => 60,
                 'website' => [],
                 'customerGroup' => [],
                 'customer' => [],
@@ -169,7 +169,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'price_list_1 with dependant' => [
                 'expected_message' => 'Start the process',
                 'params' => ['--include-dependent'],
-                'expectedCount' => 58,
+                'expectedCount' => 62,
                 'website' => [],
                 'customerGroup' => [],
                 'customer' => [],
@@ -178,12 +178,12 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'verbosity_verbose' => [
                 'expected_message' => 'Processing combined price list id:',
                 'params' => ['--all', '-v'],
-                'expectedCount' => 42
+                'expectedCount' => 64
             ],
             'verbosity_very_verbose' => [
                 'expected_message' => 'Processing price list:',
                 'params' => ['--all', '-vv'],
-                'expectedCount' => 42
+                'expectedCount' => 64
             ],
         ];
     }

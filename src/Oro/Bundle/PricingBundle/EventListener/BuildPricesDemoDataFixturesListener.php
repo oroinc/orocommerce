@@ -7,13 +7,20 @@ use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    /** @var CombinedPriceListsBuilder */
+    /** @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade */
+    protected $combinedPriceListsBuilderFacade;
+
+    /**
+     * @var CombinedPriceListsBuilder
+     * @deprecated Will be removed in 2.0
+     */
     protected $priceListBuilder;
 
     /** @var ProductPriceBuilder */
@@ -42,6 +49,15 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
     }
 
     /**
+     * @param CombinedPriceListsBuilderFacade $builderFacade
+     * @deprecated Will be removed in 2.0
+     */
+    public function setCombinedPriceListsBuilderFacade(CombinedPriceListsBuilderFacade $builderFacade)
+    {
+        $this->combinedPriceListsBuilderFacade = $builderFacade;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
@@ -63,7 +79,6 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
             $this->priceBuilder->buildByPriceList($priceList);
         }
 
-        $now = new \DateTime();
-        $this->priceListBuilder->build($now->getTimestamp());
+        $this->combinedPriceListsBuilderFacade->rebuildAll(time());
     }
 }

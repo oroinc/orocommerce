@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -39,6 +40,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
      * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $triggerHandler;
+
+    /**
+     * @var CombinedPriceListsBuilderFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $combinedPriceListsBuilderFacade;
 
     /**
      * @var MergePricesCombiningStrategy|\PHPUnit_Framework_MockObject_MockObject
@@ -88,6 +94,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
+
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->repository = $this->getMockBuilder(CombinedPriceListRepository::class)
@@ -113,6 +122,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             $this->databaseExceptionHelper,
             $this->triggerHandler
         );
+        $this->priceRuleProcessor->setCombinedPriceListsBuilderFacade($this->combinedPriceListsBuilderFacade);
     }
 
     public function testProcessInvalidArgumentException()
@@ -283,24 +293,16 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willReturn($trigger);
 
-        $cplId = 1;
-        $cpl = $this->createMock(CombinedPriceList::class);
-        $cpl->expects($this->once())
-            ->method('getId')
-            ->willReturn($cplId);
-
+        $cpl = new CombinedPriceList();
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)
             ->willReturn([$cpl]);
 
-        $this->priceResolver->expects($this->once())
-            ->method('combinePrices')
-            ->with($cpl, $productIds);
-
-        $event = new CombinedPriceListsUpdateEvent([$cplId]);
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(CombinedPriceListsUpdateEvent::NAME, $event);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('rebuild')
+            ->with([$cpl], $productIds);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('dispatchEvents');
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
     }

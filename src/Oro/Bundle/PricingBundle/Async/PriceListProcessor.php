@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -40,13 +40,20 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @var StrategyRegister
+     * @deprecated Will be removed in 2.0. Use combinedPriceListsBuilderFacade methods instead
      */
     protected $strategyRegister;
 
     /**
      * @var EventDispatcherInterface
+     * @deprecated Will be removed in 2.0. Use combinedPriceListsBuilderFacade methods instead
      */
     protected $dispatcher;
+
+    /**
+     * @var CombinedPriceListsBuilderFacade
+     */
+    protected $combinedPriceListsBuilderFacade;
 
     /**
      * @var LoggerInterface
@@ -91,6 +98,15 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
+     * @param CombinedPriceListsBuilderFacade $facade
+     * @deprecated Will be removed in 2.0.
+     */
+    public function setCombinedPriceListsBuilderFacade(CombinedPriceListsBuilderFacade $facade)
+    {
+        $this->combinedPriceListsBuilderFacade = $facade;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
@@ -108,16 +124,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $trigger->getPriceList(),
                 true
             );
-            $builtCPLs = [];
-
-            foreach ($iterator as $combinedPriceList) {
-                $this->strategyRegister->getCurrentStrategy()
-                    ->combinePrices($combinedPriceList, $trigger->getProducts());
-                $builtCPLs[$combinedPriceList->getId()] = true;
-            }
-            if ($builtCPLs) {
-                $this->dispatchEvent($builtCPLs);
-            }
+            $this->combinedPriceListsBuilderFacade->rebuild($iterator, $trigger->getProducts());
+            $this->dispatchEvent([]);
             $em->commit();
             $this->triggerHandler->commit();
         } catch (InvalidArgumentException $e) {
@@ -146,11 +154,12 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @param array $cplIds
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
      */
     protected function dispatchEvent(array $cplIds)
     {
-        $event = new CombinedPriceListsUpdateEvent(array_keys($cplIds));
-        $this->dispatcher->dispatch(CombinedPriceListsUpdateEvent::NAME, $event);
+        $this->combinedPriceListsBuilderFacade->dispatchEvents();
     }
 
     /**

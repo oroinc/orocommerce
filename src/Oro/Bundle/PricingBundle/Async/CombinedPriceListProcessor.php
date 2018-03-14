@@ -6,14 +6,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
@@ -30,27 +31,37 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
+     * @var CombinedPriceListsBuilderFacade
+     */
+    protected $combinedPriceListsBuilderFacade;
+
+    /**
      * @var CombinedPriceListsBuilder
+     * @deprecated Will be removed in 2.0
      */
     protected $commonPriceListsBuilder;
 
     /**
      * @var WebsiteCombinedPriceListsBuilder
+     * @deprecated Will be removed in 2.0
      */
     protected $websitePriceListsBuilder;
 
     /**
      * @var CustomerGroupCombinedPriceListsBuilder
+     * @deprecated Will be removed in 2.0
      */
     protected $customerGroupPriceListsBuilder;
 
     /**
      * @var CustomerCombinedPriceListsBuilder
+     * @deprecated Will be removed in 2.0
      */
     protected $customerPriceListsBuilder;
 
     /**
      * @var EventDispatcherInterface
+     * @deprecated Will be removed in 2.0
      */
     protected $dispatcher;
 
@@ -114,10 +125,22 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
 
     /**
      * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @deprecated Will be removed in 2.0
+     * Dependencies will be injected via constructor
      */
     public function setCombinedPriceListTriggerHandler(CombinedPriceListTriggerHandler $triggerHandler)
     {
         $this->triggerHandler = $triggerHandler;
+    }
+
+    /**
+     * @param CombinedPriceListsBuilderFacade $builderFacade
+     * @deprecated Will be removed in 2.0
+     * Dependencies will be injected via constructor
+     */
+    public function setCombinedPriceListBuilderFacade(CombinedPriceListsBuilderFacade $builderFacade)
+    {
+        $this->combinedPriceListsBuilderFacade = $builderFacade;
     }
 
     /**
@@ -131,7 +154,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         $this->triggerHandler->startCollect();
         
         try {
-            $this->resetCache();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListRelationTrigger($trigger);
@@ -169,35 +191,43 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     {
         switch (true) {
             case !is_null($trigger->getCustomer()):
-                $this->customerPriceListsBuilder->build(
+                $this->combinedPriceListsBuilderFacade->rebuildForCustomers(
+                    [$trigger->getCustomer()],
                     $trigger->getWebsite(),
-                    $trigger->getCustomer(),
                     $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getCustomerGroup()):
-                $this->customerGroupPriceListsBuilder->build(
+                $this->combinedPriceListsBuilderFacade->rebuildForCustomerGroups(
+                    [$trigger->getCustomerGroup()],
                     $trigger->getWebsite(),
-                    $trigger->getCustomerGroup(),
                     $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $trigger->isForce());
+                $this->combinedPriceListsBuilderFacade->rebuildForWebsites(
+                    [$trigger->getWebsite()],
+                    $trigger->isForce()
+                );
                 break;
             default:
-                $this->commonPriceListsBuilder->build($trigger->isForce());
+                $this->combinedPriceListsBuilderFacade->rebuildAll($trigger->isForce());
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
+     */
     protected function dispatchChangeAssociationEvents()
     {
-        $this->dispatchCustomerScopeEvent();
-        $this->dispatchCustomerGroupScopeEvent();
-        $this->dispatchWebsiteScopeEvent();
-        $this->dispatchConfigScopeEvent();
+        $this->combinedPriceListsBuilderFacade->dispatchEvents();
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
+     */
     protected function dispatchCustomerScopeEvent()
     {
         $customerBuildList = $this->customerPriceListsBuilder->getBuiltList();
@@ -215,6 +245,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
+     */
     protected function dispatchCustomerGroupScopeEvent()
     {
         $customerGroupBuildList = $this->customerGroupPriceListsBuilder->getBuiltList();
@@ -231,6 +265,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
+     */
     protected function dispatchWebsiteScopeEvent()
     {
         $websiteBuildList = $this->websitePriceListsBuilder->getBuiltList();
@@ -240,6 +278,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * Call $this->combinedPriceListsBuilderFacade->dispatchEvents() directly instead
+     */
     protected function dispatchConfigScopeEvent()
     {
         if ($this->commonPriceListsBuilder->isBuilt()) {
@@ -256,11 +298,11 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return [Topics::REBUILD_COMBINED_PRICE_LISTS];
     }
 
+    /**
+     * @deprecated Will be removed in 2.0
+     * $this->combinedPriceListsBuilderFacade now properly handles cache reset by itself
+     */
     protected function resetCache()
     {
-        $this->commonPriceListsBuilder->resetCache();
-        $this->websitePriceListsBuilder->resetCache();
-        $this->customerGroupPriceListsBuilder->resetCache();
-        $this->customerPriceListsBuilder->resetCache();
     }
 }
