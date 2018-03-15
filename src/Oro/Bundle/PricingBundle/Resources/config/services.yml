@@ -227,6 +227,17 @@ services:
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.website_combined_price_list_builder'
 
+    oro_pricing.builder.combined_price_list_builder_facade:
+        class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.builder.customer_combined_price_list_builder'
+            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
+            - '@oro_pricing.builder.website_combined_price_list_builder'
+            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
         public: false
@@ -672,7 +683,7 @@ services:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
         class: Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener
         arguments:
-            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
         calls:
@@ -925,17 +936,12 @@ services:
     oro_pricing.async.combined_price_list_processor:
         class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
         arguments:
-            - '@oro_pricing.builder.combined_price_list_builder'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_combined_price_list_builder'
-            - '@event_dispatcher'
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
             - '@oro_entity.database_exception_helper'
-        calls:
-            - [setCombinedPriceListTriggerHandler, ['@oro_pricing.model.combined_price_list_trigger_handler']]
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -944,8 +950,7 @@ services:
         arguments:
             - '@oro_pricing.price_list_trigger_factory'
             - '@doctrine'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@event_dispatcher'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
             - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
