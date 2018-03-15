@@ -188,13 +188,11 @@ class FrontendProductDatagridListener
                 return;
         }
 
-        $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-
         foreach ($records as $record) {
             $productImageUrl = $record->getValue('image_' . $imageFilter);
 
             if (!$productImageUrl) {
-                $productImageUrl = $defaultImageUrl;
+                $productImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
             }
             $record->addData(['image' => $productImageUrl]);
         }
