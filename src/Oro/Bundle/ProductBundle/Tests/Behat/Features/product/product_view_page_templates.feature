@@ -211,9 +211,12 @@ Feature: Product View Page Templates
     Given I open product with sku "shirt_main" on the store frontend
     Then I should see "Shirt_1"
     Then I should see "Item #: shirt_main"
-    Then I should see Line Item Form with data:
-      | Color  | Green |
-      | Size   | L     |
+    And I should see the following options for "Color" select:
+      | Green |
+      | Red   |
+    And I should see the following options for "Size" select:
+      | L |
+      | M |
     Then I should see "Default Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
@@ -242,9 +245,12 @@ Feature: Product View Page Templates
     Given I open product with sku "shirt_main" on the store frontend
     Then I should see "Shirt_1"
     Then I should see "Item #: shirt_main"
-    Then I should see Line Item Form with data:
-      | Color  | Green |
-      | Size   | L     |
+    And I should see the following options for "Color" select:
+      | Green |
+      | Red   |
+    And I should see the following options for "Size" select:
+      | L |
+      | M |
     Then I should not see "Remark Group"
 
   Scenario: "Product View Page Templates 3A" > Check simple product page with selected: Two columns page template
