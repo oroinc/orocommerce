@@ -230,8 +230,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->expects($this->once())
             ->method('commit');
 
-        $expectedResponse = new RedirectResponse($redirectUrl);
-        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+        /** @var RedirectResponse $result */
+        $result = $this->processor->process($data, new Request());
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals($redirectUrl, $result->getTargetUrl());
     }
 
     public function testProcessWhenCommittedWithLimit()
