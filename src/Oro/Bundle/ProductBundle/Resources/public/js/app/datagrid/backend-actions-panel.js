@@ -7,6 +7,13 @@ define(function(require) {
 
     BackendActionsPanel = ActionsPanel.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function BackendActionsPanel() {
+            BackendActionsPanel.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * Renders panel
          *
          * @return {*}
