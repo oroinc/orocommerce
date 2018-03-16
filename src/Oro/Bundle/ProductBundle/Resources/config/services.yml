@@ -569,8 +569,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - '@oro_product.datagrid_theme_helper'
-            - '@doctrine'
-            - '@oro_attachment.manager'
             - '@liip_imagine.cache.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }

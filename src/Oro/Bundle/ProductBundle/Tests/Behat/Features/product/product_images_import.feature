@@ -83,7 +83,7 @@ Feature: Product Images Import
     And I upload product images files
     And fill template with data:
       |SKU |Name                  |Main  |Listing   |Additional|
-      |SKU1|tiger.svg |1     |1         |1         |
+      |SKU1|tiger.svg             |1     |1         |1         |
       |SKU2|dog1.jpg              |0     |0         |1         |
     When import file
     #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
