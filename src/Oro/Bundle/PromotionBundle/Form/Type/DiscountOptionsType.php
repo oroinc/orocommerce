@@ -185,6 +185,7 @@ class DiscountOptionsType extends AbstractType
                     'currency_empty_value' => null,
                     'required' => true,
                     'label' => 'oro.discount_options.general.value.label',
+                    'tooltip' => 'oro.discount_options.general.value.tooltip',
                     'compact' => false,
                     'data_class' => MultiCurrency::class,
                     'value_constraints' => [new NotBlank()],
