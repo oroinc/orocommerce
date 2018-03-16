@@ -202,7 +202,6 @@ class Product extends ExtendProduct implements
      *      },
      *     mode="hidden"
      * )
-     *
      */
     protected $skuUppercase;
 
@@ -242,7 +241,7 @@ class Product extends ExtendProduct implements
     protected $variantFields = [];
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -259,7 +258,7 @@ class Product extends ExtendProduct implements
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -608,7 +607,7 @@ class Product extends ExtendProduct implements
 
     /**
      * This is a mirror field for performance reasons only.
-     * It mirrors getDefaultName()->getString()
+     * It mirrors getDefaultName()->getString().
      *
      * @var string
      *
@@ -689,12 +688,12 @@ class Product extends ExtendProduct implements
     {
         try {
             if ($this->getDefaultName()) {
-                return (string)$this->getDefaultName();
+                return (string) $this->getDefaultName();
             } else {
-                return (string)$this->sku;
+                return (string) $this->sku;
             }
         } catch (\LogicException $e) {
-            return (string)$this->sku;
+            return (string) $this->sku;
         }
     }
 
@@ -716,6 +715,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param string $sku
+     *
      * @return $this
      */
     public function setSku($sku)
@@ -746,11 +746,12 @@ class Product extends ExtendProduct implements
      */
     public function getVariantFields()
     {
-        return (array)$this->variantFields;
+        return (array) $this->variantFields;
     }
 
     /**
      * @param array|null $variantFields
+     *
      * @return Product
      */
     public function setVariantFields($variantFields)
@@ -770,6 +771,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param \DateTime $createdAt
+     *
      * @return Product
      */
     public function setCreatedAt(\DateTime $createdAt = null)
@@ -789,6 +791,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return Product
      */
     public function setUpdatedAt(\DateTime $updatedAt = null)
@@ -836,6 +839,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param BusinessUnit $owningBusinessUnit
+     *
      * @return Product
      */
     public function setOwner($owningBusinessUnit)
@@ -847,6 +851,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param OrganizationInterface $organization
+     *
      * @return Product
      */
     public function setOrganization(OrganizationInterface $organization = null)
@@ -865,9 +870,10 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Add unitPrecisions
+     * Add unitPrecisions.
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -889,9 +895,10 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Remove unitPrecisions
+     * Remove unitPrecisions.
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -904,7 +911,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Get unitPrecisions
+     * Get unitPrecisions.
      *
      * @return Collection|ProductUnitPrecision[]
      */
@@ -914,9 +921,10 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Get unitPrecisions by unit code
+     * Get unitPrecisions by unit code.
      *
      * @param string $unitCode
+     *
      * @return ProductUnitPrecision|null
      */
     public function getUnitPrecision($unitCode)
@@ -936,7 +944,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Get available unit codes
+     * Get available unit codes.
      *
      * @return string[]
      */
@@ -952,7 +960,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Get available units
+     * Get available units.
      *
      * @return ProductUnit[]
      */
@@ -975,14 +983,14 @@ class Product extends ExtendProduct implements
         $result = [];
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-                $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
         }
 
         return $result;
     }
 
     /**
-     * We need to return only precisions with sell=true for frontend
+     * We need to return only precisions with sell=true for frontend.
      *
      * @return array
      */
@@ -1097,6 +1105,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductVariantLink $variantLink
+     *
      * @return $this
      */
     public function addVariantLink(ProductVariantLink $variantLink)
@@ -1112,6 +1121,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductVariantLink $variantLink
+     *
      * @return $this
      */
     public function removeVariantLink(ProductVariantLink $variantLink)
@@ -1141,6 +1151,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductVariantLink $parentVariantLink
+     *
      * @return $this
      */
     public function addParentVariantLink(ProductVariantLink $parentVariantLink)
@@ -1156,6 +1167,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductVariantLink $parentVariantLink
+     *
      * @return $this
      */
     public function removeParentVariantLink(ProductVariantLink $parentVariantLink)
@@ -1177,6 +1189,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param string $type
+     *
      * @return ProductImage[]|Collection
      */
     public function getImagesByType($type)
@@ -1188,6 +1201,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductImage $image
+     *
      * @return $this
      */
     public function addImage(ProductImage $image)
@@ -1203,6 +1217,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductImage $image
+     *
      * @return $this
      */
     public function removeImage(ProductImage $image)
@@ -1271,7 +1286,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Pre persist event handler
+     * Pre persist event handler.
      *
      * @ORM\PrePersist
      */
@@ -1288,7 +1303,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Pre update event handler
+     * Pre update event handler.
      *
      * @ORM\PreUpdate
      */
@@ -1342,6 +1357,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param ProductUnitPrecision|null $primaryUnitPrecision
+     *
      * @return Product
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
@@ -1366,9 +1382,10 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Add additionalUnitPrecisions
+     * Add additionalUnitPrecisions.
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -1385,9 +1402,10 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Remove additionalUnitPrecisions
+     * Remove additionalUnitPrecisions.
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -1404,7 +1422,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * Get additionalUnitPrecisions
+     * Get additionalUnitPrecisions.
      *
      * @return Collection|ProductUnitPrecision[]
      */
@@ -1423,6 +1441,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param AttributeFamily $attributeFamily
+     *
      * @return $this
      */
     public function setAttributeFamily(AttributeFamily $attributeFamily)
@@ -1450,11 +1469,12 @@ class Product extends ExtendProduct implements
 
     /**
      * @param bool $featured
+     *
      * @return $this
      */
     public function setFeatured($featured)
     {
-        $this->featured = (bool)$featured;
+        $this->featured = (bool) $featured;
 
         return $this;
     }
@@ -1469,11 +1489,12 @@ class Product extends ExtendProduct implements
 
     /**
      * @param bool $newArrival
+     *
      * @return $this
      */
     public function setNewArrival($newArrival)
     {
-        $this->newArrival = (bool)$newArrival;
+        $this->newArrival = (bool) $newArrival;
 
         return $this;
     }
@@ -1488,6 +1509,7 @@ class Product extends ExtendProduct implements
 
     /**
      * @param Brand $brand
+     *
      * @return $this
      */
     public function setBrand($brand)
@@ -1498,7 +1520,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * This field is read-only, updated automatically prior to persisting
+     * This field is read-only, updated automatically prior to persisting.
      *
      * @return string
      */
@@ -1508,7 +1530,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * This field is read-only, updated automatically prior to persisting
+     * This field is read-only, updated automatically prior to persisting.
      *
      * @return string
      */
@@ -1518,7 +1540,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * This field is read-only, updated automatically prior to persisting
+     * This field is read-only, updated automatically prior to persisting.
      *
      * @return string
      */
