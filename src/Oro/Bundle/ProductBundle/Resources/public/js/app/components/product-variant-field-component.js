@@ -225,9 +225,9 @@ define(function(require) {
             this._hierarchy.forEach(_.bind(function(field, index) {
                 var parentField = this._hierarchy[index - 1];
 
-                simpleProductVariants = _.isUndefined(parentField) ?
-                    simpleProductVariants :
-                    _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
+                simpleProductVariants = _.isUndefined(parentField)
+                    ? simpleProductVariants
+                    : _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
 
                 result = result.concat(_.uniq(_.pluck(simpleProductVariants, field)));
             }, this));
