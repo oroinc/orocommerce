@@ -90,7 +90,7 @@ oro_behat_extension:
         type: xpath
     PriceListFilterHint:
       selector:
-        locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/strong'
+        locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/b'
         type: 'xpath'
     PricingConfigurationForm:
       selector: 'form[name="pricing"]'
