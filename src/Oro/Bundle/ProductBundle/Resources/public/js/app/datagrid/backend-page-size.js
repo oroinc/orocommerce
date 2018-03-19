@@ -15,6 +15,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendPageSize() {
+            BackendPageSize.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendPageSize.__super__.initialize.call(this, options);
         },

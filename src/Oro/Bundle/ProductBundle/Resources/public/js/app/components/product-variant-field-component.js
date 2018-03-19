@@ -8,7 +8,6 @@ define(function(require) {
     var error = require('oroui/js/error');
 
     ProductVariantFieldComponent = ViewComponent.extend({
-
         /**
          * @property {Object}
          */
@@ -43,7 +42,14 @@ define(function(require) {
         state: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function ProductVariantFieldComponent() {
+            ProductVariantFieldComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

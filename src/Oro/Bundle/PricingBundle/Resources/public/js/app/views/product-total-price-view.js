@@ -19,6 +19,16 @@ define(function(require) {
 
         prices: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductTotalPriceView() {
+            ProductTotalPriceView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ProductTotalPriceView.__super__.initialize.apply(this, arguments);
             this.initModel(options);

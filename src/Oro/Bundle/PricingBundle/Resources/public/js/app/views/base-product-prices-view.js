@@ -53,6 +53,16 @@ define(function(require) {
 
         rendered: false,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function BaseProductPricesView() {
+            BaseProductPricesView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
             this.deferredInitializeCheck(options, ['productModel']);

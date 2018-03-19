@@ -20,6 +20,16 @@ define(function(require) {
 
         elementsEvents: {},
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function BaseProductVariantsView() {
+            BaseProductVariantsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
             BaseProductVariantsView.__super__.initialize.apply(this, arguments);

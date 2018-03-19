@@ -15,8 +15,17 @@ define(function(require) {
         }),
 
         lastSavedData: '',
+
         reloadEvents: [],
+
         buttonDisabled: false,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function SinglePageTransitionButtonComponent() {
+            SinglePageTransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @param {Object} options

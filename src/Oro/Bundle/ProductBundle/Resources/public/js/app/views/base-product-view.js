@@ -49,6 +49,16 @@ define(function(require) {
 
         originalProductId: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function BaseProductView() {
+            BaseProductView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 

@@ -24,6 +24,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ExpressionFieldSwitcher() {
+            ExpressionFieldSwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             ExpressionFieldSwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));

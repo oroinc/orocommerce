@@ -45,6 +45,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendGrid() {
+            BackendGrid.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.header = null;
             this.footer = null;

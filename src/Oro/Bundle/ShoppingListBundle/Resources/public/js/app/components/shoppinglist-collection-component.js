@@ -19,6 +19,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ShoppingListCollectionComponent() {
+            ShoppingListCollectionComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.collection = new BaseCollection(options.shoppingLists);
             this.collection.comparator = this.comparator;

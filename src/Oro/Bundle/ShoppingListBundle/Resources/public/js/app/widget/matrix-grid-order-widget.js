@@ -15,6 +15,16 @@ define(function(require) {
 
         shoppingListId: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function MatrixGridOrderWidget() {
+            MatrixGridOrderWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.model = this.model || options.productModel;
 

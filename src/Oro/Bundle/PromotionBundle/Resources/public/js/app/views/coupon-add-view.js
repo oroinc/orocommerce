@@ -43,7 +43,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function(options) {
+        constructor: function CouponAddView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
             CouponAddView.__super__.constructor.call(this, options);

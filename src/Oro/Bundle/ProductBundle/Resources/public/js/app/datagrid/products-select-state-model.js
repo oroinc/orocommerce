@@ -6,6 +6,13 @@ define(function(require) {
     var SelectStateModel = require('orodatagrid/js/datagrid/select-state-model');
 
     ProductsSelectStateModel = SelectStateModel.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductsSelectStateModel() {
+            ProductsSelectStateModel.__super__.constructor.apply(this, arguments);
+        },
+
         addRow: function(model) {
             this.set('rows', _.uniq(this.get('rows').concat(model)));
             return this;
