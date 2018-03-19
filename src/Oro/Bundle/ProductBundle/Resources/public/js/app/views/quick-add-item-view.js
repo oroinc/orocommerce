@@ -133,8 +133,8 @@ define(function(require) {
                 sku: obj.sku,
                 skuHiddenField: obj.sku,
                 quantity_changed_manually: true,
-                quantity: canBeUpdated ?
-                    parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
+                quantity: canBeUpdated
+                    ? parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
                 unit_deferred: obj.unit
             });
 
