@@ -45,7 +45,7 @@ class ProductPriceType extends AbstractType
                 ProductPriceUnitSelectorType::NAME,
                 [
                     'label' => 'oro.pricing.unit.label',
-                    'empty_value' => 'oro.product.productunitprecision.unit_precision_required',
+                    'placeholder' => 'oro.product.productunitprecision.unit_precision_required',
                     'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
