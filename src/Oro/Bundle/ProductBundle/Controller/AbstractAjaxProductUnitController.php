@@ -29,10 +29,10 @@ abstract class AbstractAjaxProductUnitController extends Controller
 
     /**
      * @param Product $product
-     *
+     * @param bool $isShort
      * @return JsonResponse
      */
-    protected function getProductUnits(Product $product)
+    protected function getProductUnits(Product $product, $isShort = false)
     {
         return new JsonResponse(
             [
