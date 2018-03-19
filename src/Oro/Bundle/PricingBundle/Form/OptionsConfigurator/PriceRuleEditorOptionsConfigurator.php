@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Price Rule Editor Options Configurator
+ */
 class PriceRuleEditorOptionsConfigurator
 {
     /**
@@ -55,7 +58,7 @@ class PriceRuleEditorOptionsConfigurator
     {
         $resolver->setDefault('numericOnly', false);
         $resolver->setDefault('dataProviderConfig', []);
-        $resolver->setDefault('rootEntities', []);
+        $resolver->setDefault('supportedNames', []);
         $resolver->setDefault('dataSource', []);
         $resolver->setAllowedTypes('numericOnly', 'bool');
 
@@ -66,7 +69,7 @@ class PriceRuleEditorOptionsConfigurator
             return $dataProviderConfig;
         });
 
-        $resolver->setNormalizer('rootEntities', function (Options $options, $rootEntities) {
+        $resolver->setNormalizer('supportedNames', function (Options $options, $rootEntities) {
             if (empty($rootEntities)) {
                 $entities = $this->autocompleteFieldsProvider->getRootEntities();
                 return !empty($entities) ? array_values($entities) : [];
@@ -76,11 +79,11 @@ class PriceRuleEditorOptionsConfigurator
         });
 
         $resolver->setNormalizer('dataSource', function (Options $options, $dataSource) {
-            if (empty($options['rootEntities'])) {
+            if (empty($options['supportedNames'])) {
                 return $dataSource;
             }
             $entityAlias = $this->entityAliasResolver->getAlias(PriceList::class);
-            if (in_array($entityAlias, $options['rootEntities'], true)) {
+            if (in_array($entityAlias, $options['supportedNames'], true)) {
                 $priceListSelectView = $this->formFactory
                     ->createNamed(
                         uniqid('price_list_select___name___', false),

@@ -72,7 +72,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'numericOnly' => false,
-            'rootEntities' => [],
+            'supportedNames' => [],
             'dataProviderConfig' => null,
             'dataSource' => [],
         ];
@@ -104,7 +104,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $options = [
             'numericOnly' => false,
-            'rootEntities' => ['price_list'],
+            'supportedNames' => ['price_list'],
             'dataProviderConfig' => [
                 'include' => [['type' => 'integer']],
             ],
@@ -113,7 +113,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'numericOnly' => false,
-            'rootEntities' => ['price_list'],
+            'supportedNames' => ['price_list'],
             'dataProviderConfig' => [
                 'include' => [['type' => 'integer']]
             ],
@@ -154,14 +154,14 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $options = [
             'numericOnly' => false,
-            'rootEntities' => [],
+            'supportedNames' => [],
             'dataProviderConfig' => [],
             'dataSource' => [],
         ];
 
         $expected = [
             'numericOnly' => false,
-            'rootEntities' => ['price_list'],
+            'supportedNames' => ['price_list'],
             'dataProviderConfig' => [
                 'include' => [['type' => 'integer']]
             ],
@@ -190,7 +190,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $options = [
             'numericOnly' => false,
-            'rootEntities' => ['price_list'],
+            'supportedNames' => ['price_list'],
             'dataProviderConfig' => [
                 'include' => [['type' => 'integer']],
             ],
@@ -199,7 +199,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'numericOnly' => false,
-            'rootEntities' => ['price_list'],
+            'supportedNames' => ['price_list'],
             'dataProviderConfig' => [
                 'include' => [['type' => 'integer']],
             ],
