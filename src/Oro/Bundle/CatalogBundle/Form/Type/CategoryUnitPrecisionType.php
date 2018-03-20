@@ -91,7 +91,7 @@ class CategoryUnitPrecisionType extends AbstractType
         if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
             $type = ProductUnitSelectionType::NAME;
             $options = [
-                'empty_value' => 'oro.catalog.category.unit.empty.value',
+                'placeholder' => 'oro.catalog.category.unit.empty.value',
             ];
         }
         $builder->add('unit', $type, $options);

@@ -82,7 +82,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $resolved = $resolver->resolve();
 
         $expected = [
-            'empty_value' => null,
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => self::METHODS,
             'choice_attr' => function () {

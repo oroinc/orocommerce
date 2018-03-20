@@ -184,13 +184,13 @@ class ProductType extends AbstractType
             ->add('featured', ChoiceType::class, [
                 'label' => 'oro.product.featured.label',
                 'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
-                'empty_value' => false,
+                'placeholder' => false,
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',
                 'choices' => ['oro.product.new_arrival.no', 'oro.product.new_arrival.yes'],
-                'empty_value' => false,
+                'placeholder' => false,
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])

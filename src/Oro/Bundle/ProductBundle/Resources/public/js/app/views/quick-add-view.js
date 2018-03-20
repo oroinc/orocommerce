@@ -44,7 +44,14 @@ define(function(require) {
         existingRows: [],
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddView() {
+            QuickAddView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options);

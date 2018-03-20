@@ -61,6 +61,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function CreditCardComponent() {
+            CreditCardComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 

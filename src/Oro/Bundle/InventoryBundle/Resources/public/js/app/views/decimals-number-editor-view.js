@@ -7,6 +7,16 @@ define(function(require) {
     DecimalsNumberEditorView = NumberEditorView.extend(/** @lends DecimalsNumberEditorView.prototype */{
         className: 'decimals-number-editor',
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function DecimalsNumberEditorView() {
+            DecimalsNumberEditorView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if (typeof options.decimalsField !== 'undefined') {
                 options.decimals = parseInt(options.model.get(options.decimalsField));

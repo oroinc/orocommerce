@@ -130,7 +130,6 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
             'test default options' => [
                 'options' => [],
                 'expectedOptions' => [
-                    'empty_value' => null,
                     'placeholder' => false,
                     'choices' => [
                         '{"shipping_method":"ups_4","shipping_method_type":"02"}' => 0,

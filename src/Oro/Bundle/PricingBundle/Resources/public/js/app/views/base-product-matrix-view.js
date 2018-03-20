@@ -34,6 +34,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BaseProductMatrixView() {
+            BaseProductMatrixView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.apply(this, arguments);
             this.initModel(options);

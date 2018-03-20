@@ -1,20 +1,21 @@
-# Expand Units of Length, Units of Weight and Freight Classes#
+# Expand Units of Length, Units of Weight and Freight Classes
 
-To expand "units" and/or "freight classes", first of all must be implemented migration ([example](#example-migration)), that contain all expected "units" and/or "freight classes" definitions.
+To expand "units" and/or "freight classes", first of all, you need to implement the migration ([example](#example-migration)) that contains all expected "units" and/or "freight classes" definitions.
 The migration must extend "LoadUnitsAndFreightClassesData" and should have the following properties regarding required items.
 
  * $weightUnits -- for Weight Units
  * $lengthUnits -- for Length Units
  * $freightClasses -- for Freight Classes
  
-At next step, translations should be added for all new "units" and/or "freight classes", at least, translations for default locale should be added. ([example](#example-translations))
+Next, add translations to all new "units" and/or "freight classes", or at least, to the default locale. ([example](#example-translations))
 
-After all above is done, "migration update script" must be executed to register new "units" and/or "freight classes" within application.
+Once the migration is implemented and translations are added, you need to execute "migration update script" to register new "units" and/or "freight classes" within the application.
+
 ```bash
 app/console cache:clear
 app/console oro:migration:data:load
 ```
-At final step, all new "units" and/or "freight classes" should be activated at system configuration
+Finally, activate all new "units" and/or "freight classes" in the system configuration.
 
 ```code
 System -> Configuration -> Commerce -> Shipping -> Shipping Options

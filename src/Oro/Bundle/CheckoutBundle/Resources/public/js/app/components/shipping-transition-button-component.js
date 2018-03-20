@@ -8,6 +8,13 @@ define(function(require) {
     var ShippingTransitionButtonComponent;
     ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
         /**
+         * @inheritDoc
+         */
+        constructor: function ShippingTransitionButtonComponent() {
+            ShippingTransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */

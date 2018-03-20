@@ -28,6 +28,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LineItemProductPricesView() {
+            LineItemProductPricesView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         deferredInitialize: function(options) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 

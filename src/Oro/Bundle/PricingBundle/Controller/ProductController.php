@@ -39,7 +39,7 @@ class ProductController extends Controller
             $priceList,
             [
                 'create_enabled' => false,
-                'empty_value' => false,
+                'placeholder' => false,
                 'empty_data' => $priceList,
                 'configs' => ['allowClear' => false],
                 'label' => 'oro.pricing.pricelist.entity_label',

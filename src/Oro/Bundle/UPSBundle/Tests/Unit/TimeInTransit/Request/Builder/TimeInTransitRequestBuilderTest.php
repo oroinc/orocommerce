@@ -121,6 +121,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit_Framework_TestCase
             'StateProvinceCode' => $this->address->getRegionCode(),
             'PostalCode' => $this->address->getPostalCode(),
             'CountryCode' => $this->address->getCountryIso2(),
+            'City' => $this->address->getCity(),
         ];
 
         $request = [

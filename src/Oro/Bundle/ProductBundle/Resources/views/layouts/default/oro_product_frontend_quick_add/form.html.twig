@@ -19,6 +19,7 @@
                 <label class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</label>
                 {{ form_widget(form.productDisplayName, {attr: {
                     placeholder: "oro.product.sku.placeholder",
+                    'data-value': form.productDisplayName.vars.value,
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
                         menu: 'select2-results',

@@ -46,6 +46,13 @@ define(function(require) {
         ],
 
         /**
+         * @inheritDoc
+         */
+        constructor: function TypeValueSwitcher() {
+            TypeValueSwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

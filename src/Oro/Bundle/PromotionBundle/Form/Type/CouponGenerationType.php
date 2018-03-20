@@ -52,7 +52,6 @@ class CouponGenerationType extends AbstractType
                     'label' => 'oro.user.owner.label',
                     'data' => $this->getCurrentBusinessUnit(),
                     'autocomplete_alias' => 'business_units_owner_search_handler',
-                    'empty_value' => 'oro.business_unit.form.choose_business_user',
                     'configs' => [
                         'multiple' => false,
                         'allowClear' => false,

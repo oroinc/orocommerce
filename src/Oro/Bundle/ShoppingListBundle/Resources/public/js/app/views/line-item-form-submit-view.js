@@ -18,6 +18,13 @@ define(function(require) {
 
         successMessage: __('oro.shoppinglist.line_item_save.flash.success'),
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemFormSubmitView() {
+            LineItemFormSubmitView.__super__.constructor.apply(this, arguments);
+        },
+
         _saveChanges: function(e) {
             var $form = $(e.currentTarget);
             var validator = $form.validate();

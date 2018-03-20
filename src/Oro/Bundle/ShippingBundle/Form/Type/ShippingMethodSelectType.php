@@ -49,7 +49,6 @@ class ShippingMethodSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'empty_value' => null,
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {

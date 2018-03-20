@@ -24,6 +24,16 @@ define(function(require) {
 
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductShoppingListsView() {
+            ProductShoppingListsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ProductShoppingListsView.__super__.initialize.apply(this, arguments);
 

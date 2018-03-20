@@ -46,6 +46,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductPricesEditableView() {
+            ProductPricesEditableView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
