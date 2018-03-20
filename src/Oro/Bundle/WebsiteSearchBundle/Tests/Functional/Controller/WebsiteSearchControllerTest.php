@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
-use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,8 +19,6 @@ class WebsiteSearchControllerTest extends WebTestCase
 
     public function testSearchResultsAction()
     {
-        $this->markTestSkipped('BB-12933: Unstable test');
-
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         // assert search widget exists on page
