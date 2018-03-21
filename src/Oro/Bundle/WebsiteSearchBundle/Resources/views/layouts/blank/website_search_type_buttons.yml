@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'website_search_type_buttons.html.twig'
+    conditions: 'context["search_query_string"]!==null'

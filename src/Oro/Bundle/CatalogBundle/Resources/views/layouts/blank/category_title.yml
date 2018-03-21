@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'category_title.html.twig'
+    conditions: 'context["search_query_string"]==null'

@@ -1437,3 +1437,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.website_search_type_provider.product:
+        class: Oro\Bundle\ProductBundle\Provider\ProductWebsiteSearchTypeProvider
+        public: false
+        tags:
+            - { name: oro_website_search.search_type, type: product, isDefault: true, order: 10 }

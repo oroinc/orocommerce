@@ -26,6 +26,7 @@ class OroWebsiteSearchExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('attribute_types.yml');
+        $loader->load('block_types.yml');
 
         $ymlLoader = new YamlCumulativeFileLoader(
             'Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml'

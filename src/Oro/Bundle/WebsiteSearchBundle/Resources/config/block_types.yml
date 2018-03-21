@@ -1,0 +1,35 @@
+services:
+    oro_website_search.layout.block_type.search_type_buttons:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['website_search_type_buttons']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        buttons:
+                            default: '=data["website_search_type_button_provider"].getAllAvailableSearchTypes()'
+                        search:
+                            required: true
+                            default: '=data["website_search_query_string_provider"].getSearchQueryString()'
+                        visible:
+                            default: '=data["website_search_type_button_provider"].isWidgetVisible()'
+        tags:
+            - { name: layout.block_type, alias: website_search_type_buttons }
+
+    oro_website_search.layout.block_type.search_query_string:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['website_search_query_string']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        search:
+                            required: true
+                            default: '=data["website_search_query_string_provider"].getSearchQueryString()'
+                        visible:
+                            default: '=data["website_search_query_string_provider"].getSearchQueryString()'
+        tags:
+            - { name: layout.block_type, alias: website_search_query_string }
+

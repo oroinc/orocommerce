@@ -311,3 +311,28 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         public: false
+
+    oro_website_search.search_type_chain_provider:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchTypeChainProvider'
+
+    oro_website_search.search_type_button_provider:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchTypeButtonProvider'
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_config.manager'
+            - '@oro_website_search.query_string.query_string_provider'
+            - '@oro_website_search.search_type_chain_provider'
+        tags:
+            - { name: layout.data_provider, alias: 'website_search_type_button_provider' }
+
+    oro_website_search.query_string.query_string_provider:
+        class: 'Oro\Bundle\WebsiteSearchBundle\QueryString\QueryStringProvider'
+        arguments: ['@request_stack']
+        tags:
+            - { name: layout.data_provider, alias: 'website_search_query_string_provider' }
+
+    oro_website_search.layout.context_configurator.website_search:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Layout\Extension\WebsiteSearchLayoutContextConfigurator'
+        arguments: ['@oro_website_search.query_string.query_string_provider']
+        tags:
+            - { name: layout.context_configurator }
