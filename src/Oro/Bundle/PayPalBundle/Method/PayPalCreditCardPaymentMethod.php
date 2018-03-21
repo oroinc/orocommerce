@@ -15,6 +15,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
+ * Implements interaction with PayPal credit card gateway. Proceed and set status of PaymentTransaction entity.
+ *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -240,6 +242,8 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
     {
+        $isSuccessful = $paymentTransaction->isSuccessful();
+
         // Mark successful false for generate token transaction
         // PayPal callback should update transaction
         $paymentTransaction->setSuccessful(false);
@@ -248,9 +252,7 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
-        $response['formAction'] = $this->gateway->getFormAction();
-
-        return $response;
+        return array_merge($response, ['formAction' => $this->gateway->getFormAction(), 'successful' => $isSuccessful]);
     }
 
     /**
