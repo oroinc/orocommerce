@@ -97,4 +97,16 @@ class SeoTitleDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($default, $this->seoTitleDataProvider->getTitle($default, null));
     }
+
+    public function testGetNodeTitle()
+    {
+        $default = 'default';
+
+        $this->titleDataProvider->expects($this->once())
+            ->method('getNodeTitle')
+            ->with($default)
+            ->willReturn($default);
+
+        $this->assertEquals($default, $this->seoTitleDataProvider->getNodeTitle($default));
+    }
 }

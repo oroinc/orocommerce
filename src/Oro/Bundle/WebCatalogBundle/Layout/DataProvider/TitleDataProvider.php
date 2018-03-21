@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class TitleDataProvider
+/**
+ * Layout data provider. Returns web catalog node title and page title based on current content node.
+ * Return default title in case if node title don't exist.
+ */
+class TitleDataProvider implements TitleDataProviderInterface
 {
     /**
      * @var RequestStack
@@ -33,10 +36,9 @@ class TitleDataProvider
     }
 
     /**
-     * @param string $default
-     * @return LocalizedFallbackValue|string
+     * {@inheritdoc}
      */
-    public function getTitle($default = '')
+    public function getNodeTitle($default = '')
     {
         $contentNode = $this->getContentNode();
         if ($contentNode && $contentNode->isRewriteVariantTitle()) {
@@ -47,6 +49,14 @@ class TitleDataProvider
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitle($default = '', $data = null)
+    {
+        return $this->getNodeTitle($default);
     }
 
     /**
