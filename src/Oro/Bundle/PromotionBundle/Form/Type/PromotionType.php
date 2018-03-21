@@ -40,7 +40,7 @@ class PromotionType extends AbstractType
                         false => 'oro.promotion.use_coupons.no',
                         true => 'oro.promotion.use_coupons.yes',
                     ],
-                    'empty_value' => false,
+                    'placeholder' => false,
                 ]
             )
             ->add('discountConfiguration', DiscountConfigurationType::NAME)

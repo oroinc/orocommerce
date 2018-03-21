@@ -36,6 +36,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ShippingCostView() {
+            ShippingCostView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));

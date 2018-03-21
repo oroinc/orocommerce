@@ -14,6 +14,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function PaymentTermView() {
+            PaymentTermView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             PaymentTermView.__super__.initialize.apply(this, arguments);
 

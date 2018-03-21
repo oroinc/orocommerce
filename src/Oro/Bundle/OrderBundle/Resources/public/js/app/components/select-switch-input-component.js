@@ -7,7 +7,6 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     SelectSwitchInputComponent = BaseComponent.extend({
-
         MODE_SELECT: 'select',
         MODE_INPUT: 'input',
 
@@ -25,6 +24,13 @@ define(function(require) {
         $input: null,
         $select_to_input_btn: '.select-to-input-btn',
         $input_to_select_btn: '.input-to-select-btn',
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function SelectSwitchInputComponent() {
+            SelectSwitchInputComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @param options

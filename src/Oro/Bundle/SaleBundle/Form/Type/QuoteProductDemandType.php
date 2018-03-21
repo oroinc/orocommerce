@@ -50,8 +50,10 @@ class QuoteProductDemandType extends AbstractType
                 'number',
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'read_only' => !$quoteProduct->hasIncrementalOffers(),
-                    'required' => true
+                    'required' => true,
+                    'attr' => [
+                        'readonly' => !$quoteProduct->hasIncrementalOffers(),
+                    ]
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,

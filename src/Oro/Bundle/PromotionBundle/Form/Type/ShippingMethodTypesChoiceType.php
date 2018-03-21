@@ -67,7 +67,6 @@ class ShippingMethodTypesChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'empty_value' => null,
             'placeholder' => false,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {

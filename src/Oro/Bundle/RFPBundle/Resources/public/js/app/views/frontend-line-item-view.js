@@ -37,6 +37,16 @@ define(function(require) {
 
         formState: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function FrontendLineItemView() {
+            FrontendLineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
             this.initializeElements(options);

@@ -14,7 +14,14 @@ define(function(require) {
 
         modelElements: _.extend({}, BaseProductView.prototype.modelElements, {
             id: 'id'
-        })
+        }),
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemProductView() {
+            LineItemProductView.__super__.constructor.apply(this, arguments);
+        }
     });
 
     return LineItemProductView;

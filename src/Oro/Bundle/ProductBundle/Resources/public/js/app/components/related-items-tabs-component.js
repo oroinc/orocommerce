@@ -8,6 +8,14 @@ define(function(require) {
     var $ = require('jquery');
 
     RelatedItemsTabsComponent = BaseComponent.extend({
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function RelatedItemsTabsComponent() {
+            RelatedItemsTabsComponent.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @param {Object} options
          * @param {Array<Object>} options.data collection of tabs build over entities category

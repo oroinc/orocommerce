@@ -9,6 +9,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductDataGidComponent() {
+            ProductDataGidComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         collectModules: function() {
             // If another Grid view is present
             if (this.metadata.GridView) {

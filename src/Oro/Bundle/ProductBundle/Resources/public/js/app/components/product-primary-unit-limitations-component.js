@@ -35,6 +35,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductPrimaryUnitLimitationsComponent() {
+            ProductPrimaryUnitLimitationsComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$select = this.options._sourceElement.find(this.options.unitSelect);

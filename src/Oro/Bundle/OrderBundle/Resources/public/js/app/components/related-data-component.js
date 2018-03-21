@@ -21,6 +21,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function RelatedDataComponent() {
+            RelatedDataComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);

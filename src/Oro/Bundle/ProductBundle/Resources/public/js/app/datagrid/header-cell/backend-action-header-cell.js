@@ -51,6 +51,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendSelectHeaderCell() {
+            BackendSelectHeaderCell.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendSelectHeaderCell.__super__.initialize.apply(this, arguments);
             this.selectState = options.selectState;

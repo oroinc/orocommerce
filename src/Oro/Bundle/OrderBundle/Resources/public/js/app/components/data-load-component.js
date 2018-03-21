@@ -21,6 +21,14 @@ define(function(require) {
             entityData: {}
         },
 
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function DataLoadComponent() {
+            DataLoadComponent.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @inheritDoc
          */

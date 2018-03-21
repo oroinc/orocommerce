@@ -35,6 +35,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AuthorizedCreditCardComponent() {
+            AuthorizedCreditCardComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options.saveForLaterUse = false;
             AuthorizedCreditCardComponent.__super__.initialize.call(this, options);

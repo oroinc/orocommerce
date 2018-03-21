@@ -10,6 +10,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ClearFieldData() {
+            ClearFieldData.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
             var triggerSelector = this.$el.data('trigger-selector') || '#trigger';

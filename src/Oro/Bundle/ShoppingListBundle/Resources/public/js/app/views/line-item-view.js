@@ -15,6 +15,16 @@ define(function(require) {
 
         lineItemId: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemView() {
+            LineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             LineItemView.__super__.initialize.apply(this, arguments);
             this.lineItemId = options.lineItemId;
