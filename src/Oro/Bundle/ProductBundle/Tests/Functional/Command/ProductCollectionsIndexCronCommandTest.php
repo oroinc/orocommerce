@@ -3,10 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
+use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadContentVariantSegmentsWithRelationsData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadSegmentsWithRelationsData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWebCatalogsData;
@@ -102,6 +106,24 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $traces = self::getMessageCollector()->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT);
 
         $this->assertCount(0, $traces);
+    }
+
+    public function testGetDefaultDefinitions()
+    {
+        /** @var ScheduleRepository $repo */
+        $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
+        /** @var Schedule $commandSchedule */
+        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::NAME]);
+        $this->assertNotEmpty($commandSchedule);
+        $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
+        $configManager->flush();
+        self::runCommand('oro:cron:definitions:load', []);
+
+        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::NAME]);
+        $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 
     /**
