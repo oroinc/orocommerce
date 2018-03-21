@@ -1,2 +1,3 @@
 oro.website_search:
-    search_field_placeholder: Search for a product
+    search_field_placeholder: 'Search for something'
+    search_results.label: 'Search Results for:'

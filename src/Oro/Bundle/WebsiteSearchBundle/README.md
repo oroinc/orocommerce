@@ -11,4 +11,5 @@ related information and provides all required interfaces to interact with it.
 * [Indexation process](./Resources/doc/indexation.md)
 * [Reindexation during platform update](Resources/doc/platform_update.md)
 * [ORM search engine](./Resources/doc/orm_engine.md)
+* [Website search types](./Resources/doc/website_search_type.md)
 * [Testing](./Resources/doc/testing.md)
