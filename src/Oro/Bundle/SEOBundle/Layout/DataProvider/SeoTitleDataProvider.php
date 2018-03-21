@@ -4,6 +4,10 @@ namespace Oro\Bundle\SEOBundle\Layout\DataProvider;
 
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider;
 
+/**
+ * Decorates `web_catalog_title` layout data provider.
+ * Returns web catalog meta title as a page title.
+ */
 class SeoTitleDataProvider
 {
     /**
@@ -16,7 +20,10 @@ class SeoTitleDataProvider
      */
     private $seoDataProvider;
 
-
+    /**
+     * @param SeoDataProvider $seoDataProvider
+     * @param TitleDataProvider $titleDataProvider
+     */
     public function __construct(
         SeoDataProvider $seoDataProvider,
         TitleDataProvider $titleDataProvider
@@ -26,10 +33,15 @@ class SeoTitleDataProvider
     }
 
     /**
-     * @param $defaultValue
-     * @param $data
-     *
-     * @return mixed
+     * {@inheritdoc}
+     */
+    public function getNodeTitle($default = '')
+    {
+        return $this->titleDataProvider->getNodeTitle($default);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getTitle($defaultValue, $data = null)
     {
