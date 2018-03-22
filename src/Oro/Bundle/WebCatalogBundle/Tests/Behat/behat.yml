@@ -27,6 +27,7 @@ oro_behat_extension:
                 mapping:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+                    Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

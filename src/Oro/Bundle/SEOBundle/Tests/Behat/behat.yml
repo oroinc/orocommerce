@@ -1,0 +1,13 @@
+oro_behat_extension:
+    suites:
+        OroSEOBundle:
+            contexts:
+                - OroApplicationBundle::CommerceMainContext
+                - OroProductBundle::FeatureContext
+                - OroConfigBundle::FeatureContext
+                - OroDataGridBundle::GridContext
+                - OroFormBundle::FormContext
+                - OroWebCatalogBundle::FeatureContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+            paths:
+                - '@OroSEOBundle/Tests/Behat/Features'

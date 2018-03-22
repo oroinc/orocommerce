@@ -13,6 +13,8 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
  */
 class ProductCollectionsScheduleConfigurationListener
 {
+    const CONFIG_FIELD = Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE;
+
     /**
      * @var DeferredScheduler
      */
@@ -31,26 +33,18 @@ class ProductCollectionsScheduleConfigurationListener
      */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
-        if ($event->isChanged($this->getScheduleFieldName())) {
+        if ($event->isChanged(self::CONFIG_FIELD)) {
             $this->deferredScheduler->removeSchedule(
                 ProductCollectionsIndexCronCommand::NAME,
                 [],
-                $event->getOldValue($this->getScheduleFieldName())
+                $event->getOldValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->addSchedule(
                 ProductCollectionsIndexCronCommand::NAME,
                 [],
-                $event->getNewValue($this->getScheduleFieldName())
+                $event->getNewValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->flush();
         }
-    }
-
-    /**
-     * @return string
-     */
-    private function getScheduleFieldName()
-    {
-        return sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE);
     }
 }
