@@ -541,7 +541,6 @@ oro:
             grid:
                 toolbar:
                     display.label: Display
-            website_search_type.label: Product catalog
 
         export:
             inventory_status_only: "Inventory statuses only"

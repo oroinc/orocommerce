@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit;
 
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler\WebsiteSearchCompilerPass;
-use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler\WebsiteSearchTypeProviderCompilerPass;
 use Oro\Bundle\WebsiteSearchBundle\OroWebsiteSearchBundle;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension;
 
@@ -25,17 +24,11 @@ class OroWebsiteSearchBundleTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $websiteSearchCompilerPass = new WebsiteSearchCompilerPass();
-        $websiteSearchTypeProviderCompilerPass = new WebsiteSearchTypeProviderCompilerPass();
 
         $containerBuilder
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('addCompilerPass')
             ->with($websiteSearchCompilerPass);
-
-        $containerBuilder
-            ->expects($this->at(1))
-            ->method('addCompilerPass')
-            ->with($websiteSearchTypeProviderCompilerPass);
 
         $bundle = new OroWebsiteSearchBundle();
 
