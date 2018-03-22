@@ -11,6 +11,8 @@ use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTes
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Forms;
 
 class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
@@ -39,6 +41,11 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->will($this->returnValue('Item'));
 
         $this->type = new ProductPriceFilterType($translator, $this->getRegistry(), $formatter);
+
+        $this->formExtensions[] = new PreloadedExtension([ProductPriceFilterType::class => $this->type], []);
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->getFormFactory();
     }
 
     /**

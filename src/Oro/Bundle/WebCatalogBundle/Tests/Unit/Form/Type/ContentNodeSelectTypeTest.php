@@ -10,7 +10,7 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ContentNodeSelectTypeTest extends FormIntegrationTestCase
@@ -51,7 +51,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EntityIdentifierType::NAME => $entityIdentifierType,
+                    EntityIdentifierType::class => $entityIdentifierType,
                 ],
                 []
             )

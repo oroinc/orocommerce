@@ -15,7 +15,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
 
 class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
@@ -79,7 +80,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
                     ),
                     OroChoiceType::NAME => new OroChoiceType(),
                     CategoryTreeType::NAME => new CategoryTreeType($treeHandler),
-                    'oro_entity_identifier' => new EntityIdentifierType(
+                    BaseEntityIdentifierType::class => new EntityIdentifierType(
                         [
                             1001 => $this->getCategory(1001),
                             2002 => $this->getCategory(2002),

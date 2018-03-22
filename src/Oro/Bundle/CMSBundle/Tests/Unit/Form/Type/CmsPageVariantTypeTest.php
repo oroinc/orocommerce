@@ -7,7 +7,7 @@ use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {

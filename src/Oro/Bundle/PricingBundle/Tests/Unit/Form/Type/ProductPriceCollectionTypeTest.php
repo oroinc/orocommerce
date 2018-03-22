@@ -28,7 +28,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
@@ -120,7 +120,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                     ),
                     PriceType::NAME => $priceType,
                     QuantityType::NAME => $this->getQuantityType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub()
                 ],
                 [
                     'form' => [
