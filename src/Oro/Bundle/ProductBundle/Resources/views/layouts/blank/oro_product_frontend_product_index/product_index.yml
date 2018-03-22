@@ -26,27 +26,3 @@ layout:
             id: product_datagrid_row_product_sticker_new_text
             optionName: visible
             optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")=="no-image-view"'
-
-        - '@add':
-            id: website_search_query_string
-            parentId: page_main_header
-            blockType: website_search_query_string
-            options:
-                search: '=data["website_search_query_string_provider"].getSearchQueryString()'
-
-        - '@add':
-            id: website_search_type_buttons
-            parentId: page_main_header
-            blockType: website_search_type_buttons
-            options:
-                search: '=data["website_search_query_string_provider"].getSearchQueryString()'
-
-        - '@move':
-            id: website_search_type_buttons
-            parentId: breadcrumbs
-            prepend: true
-
-        - '@move':
-            id: website_search_query_string
-            parentId: breadcrumbs
-            prepend: true

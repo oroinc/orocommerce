@@ -2,50 +2,35 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Controller\Frontend;
 
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchTypeChainProvider;
-use Oro\Bundle\WebsiteSearchBundle\QueryString\QueryStringProvider;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
+use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Provide actions for frontend search
- *
- * @package Oro\Bundle\WebsiteSearchBundle\Controller\Frontend
- */
 class WebsiteSearchController extends Controller
 {
     /**
      * @Route("/", name="oro_website_search_results")
      *
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function searchResultsAction()
+    public function searchResultsAction(Request $request)
     {
-        $queryStringProvider = $this->getQueryStringProvider();
+        $searchString = trim($request->get('search'));
 
-        $searchString      = $queryStringProvider->getSearchQueryString();
-        $searchType        = $queryStringProvider->getSearchQuerySearchType();
-        $websiteSearchType = $this->getSearchTypeChainProvider()->getSearchTypeOrDefault($searchType);
-        $route             = $websiteSearchType->getRoute($searchString);
-        $routeParameters   = $websiteSearchType->getRouteParameters($searchString);
+        // @todo It is just a simple temporary implementation of search . Proper one should be implemented in BB-5220
+        $urlParams = [];
+        if ($searchString) {
+            $urlParams['grid']['frontend-product-search-grid'] = http_build_query([
+                AbstractFilterExtension::MINIFIED_FILTER_PARAM => [
+                    'all_text' => ['value' => $searchString, 'type' => TextFilterType::TYPE_CONTAINS]
+                ],
+            ]);
+        }
 
-        return $this->redirectToRoute($route, $routeParameters);
-    }
-
-    /**
-     * @return WebsiteSearchTypeChainProvider
-     */
-    private function getSearchTypeChainProvider(): WebsiteSearchTypeChainProvider
-    {
-        return $this->get('oro_website_search.search_type_chain_provider');
-    }
-
-    /**
-     * @return QueryStringProvider
-     */
-    private function getQueryStringProvider(): QueryStringProvider
-    {
-        return $this->get('oro_website_search.query_string.query_string_provider');
+        return $this->redirectToRoute('oro_product_frontend_product_index', $urlParams);
     }
 }
