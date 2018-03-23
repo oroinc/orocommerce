@@ -9,21 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
  *      name="oro_price_product_combined",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="oro_combined_price_uidx",
- *              columns={"combined_price_list_id", "currency", "product_id", "quantity", "unit_code"}
+ *              name="oro_combined_price_unq_idx",
+ *              columns={"combined_price_list_id", "product_id", "currency", "unit_code", "quantity"}
  *          )
  *      },
  *     indexes={
- *         @ORM\Index(
- *              name="oro_combined_price_idx",
- *              columns={
- *                  "combined_price_list_id",
- *                  "product_id",
- *                  "unit_code",
- *                  "quantity",
- *                  "currency"
- *              }
- *         ),
  *         @ORM\Index(
  *              name="oro_cmb_price_mrg_idx",
  *              columns={

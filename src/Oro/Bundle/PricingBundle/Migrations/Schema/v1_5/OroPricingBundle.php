@@ -463,13 +463,6 @@ class OroPricingBundle implements
         $extension->addUniqueIndex(
             $schema,
             $queries,
-            'oro_price_product_combined',
-            ['product_id', 'combined_price_list_id', 'quantity', 'unit_code', 'currency'],
-            'oro_combined_price_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
             'oro_price_product_minimal',
             ['product_id', 'combined_price_list_id', 'currency'],
             'oro_minimal_price_uidx'
