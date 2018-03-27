@@ -31,7 +31,7 @@ class TotalCalculateListener
 
         if ($entity instanceof Invoice) {
             $form = $this->formFactory->create(InvoiceType::NAME, $entity);
-            $form->submit($request, false);
+            $form->submit($request->get($form->getName()), false);
         }
     }
 }
