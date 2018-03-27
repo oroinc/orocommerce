@@ -45,7 +45,7 @@ class PaymentMethodsConfigsRuleHandler
 
         $request = $this->requestStack->getCurrentRequest();
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if (!$request->get(self::UPDATE_FLAG, false) && $form->isValid()) {
                 $this->em->persist($entity);
                 $this->em->flush();

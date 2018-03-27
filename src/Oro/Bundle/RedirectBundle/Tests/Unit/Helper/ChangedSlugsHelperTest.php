@@ -78,7 +78,7 @@ class ChangedSlugsHelperTest extends \PHPUnit_Framework_TestCase
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
 
         $formData = $this->createMock(SluggableInterface::class);

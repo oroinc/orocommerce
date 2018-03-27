@@ -100,7 +100,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getMethod')
             ->will($this->returnValue('POST'));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
             ->method('isValid')

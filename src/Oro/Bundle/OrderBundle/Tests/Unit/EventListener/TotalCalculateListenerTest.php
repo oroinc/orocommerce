@@ -81,8 +81,8 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $request = $this->getRequest([OrderType::NAME => ['some data']]);
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
-            ->method('submit')
-            ->with($request, true);
+            ->method('handleRequest')
+            ->with($request);
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(OrderType::NAME, $entity)

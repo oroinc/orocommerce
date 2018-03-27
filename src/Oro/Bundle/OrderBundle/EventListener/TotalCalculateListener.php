@@ -51,7 +51,7 @@ class TotalCalculateListener
             }
 
             $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
-            $form->submit($request);
+            $form->handleRequest($request);
         }
     }
 
