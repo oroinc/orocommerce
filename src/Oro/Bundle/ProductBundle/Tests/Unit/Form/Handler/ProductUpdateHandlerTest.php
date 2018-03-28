@@ -471,15 +471,10 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject|Form $form
      * @param object $entity
-     * @param string $wid
      * @return array
      */
-    protected function assertSaveData($form, $entity, $wid = 'WID')
+    protected function assertSaveData($form, $entity)
     {
-//        $this->request->expects($this->atLeastOnce())
-//            ->method('get')
-//            ->with('_wid', false)
-//            ->will($this->returnValue($wid));
         $formView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
