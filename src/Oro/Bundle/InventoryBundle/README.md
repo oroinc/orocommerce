@@ -1,11 +1,9 @@
-Oro\Bundle\InventoryBundle\OroInventoryBundle
-=============================================
+# Oro\Bundle\InventoryBundle\OroInventoryBundle
 
-Table of Contents
------------------
+## Table of Contents
+
  - [Description](#description)
 
-Description:
-------------
+## Description:
 
 The OroInventoryBundle introduces the notion of Inventory Levels.
