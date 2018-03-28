@@ -1,12 +1,13 @@
-Oro\Bundle\PayPalBundle\OroPayPalBundle
-===============================================
+# OroPayPalBundle
 
-Table of Contents
------------------
+OroPayPalBundle adds [PayPal](https://www.paypal.com/) integration to the OroCommerce application. For the OroCommerce management console administrator, the bundle provides the ability to enable and configure PayPal payment methods for customer orders. Once PayPal payment methods are enabled, customer users can pay for orders using their existing PayPal account or credit and debit cards.
+
+## Table of Contents
+
  - [Testing the PayPal response](#testing-the-paypal-response)
 
-Testing the PayPal response:
-----------------------------
+## Testing the PayPal response:
+
 
 The process of paying with PayPal Payments Pro or Payflow Gateway includes listening for a notify response from PayPal servers. In order to make payments more secure we implemented the IP address filtering which will only accept responses from the white list of PayPal servers addresses. The white list itself is stored in the [`EventListener/Callback/PayflowIPCheckListener.php`](EventListener/Callback/PayflowIPCheckListener.php) class.
 

@@ -1,9 +1,3 @@
-# Oro\Bundle\InventoryBundle\OroInventoryBundle
+# OroInventoryBundle
 
-## Table of Contents
-
- - [Description](#description)
-
-## Description:
-
-The OroInventoryBundle introduces the notion of Inventory Levels.
+OroInventoryBundle enables the OroCommerce management console users to specify and manage current [inventory levels](http://www.businessdictionary.com/definition/inventory-level.html) for every product and set up a threshold for the low inventory status.
