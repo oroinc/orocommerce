@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /**
      * @var FormFactory|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -78,11 +80,14 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(ActionCurrentApplicationProvider::DEFAULT_APPLICATION);
 
         $entity = new Order();
-        $request = $this->getRequest([OrderType::NAME => ['some data']]);
+        $request = $this->getRequest([OrderType::NAME => ['some data'], 'formName' => self::FORM_DATA]);
         $form = $this->createMock(FormInterface::class);
+        $form->expects($this->any())
+            ->method('getName')
+            ->willReturn('formName');
         $form->expects($this->once())
-            ->method('handleRequest')
-            ->with($request);
+            ->method('submit')
+            ->with(self::FORM_DATA);
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(OrderType::NAME, $entity)

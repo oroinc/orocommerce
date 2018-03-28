@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class PaymentMethodsConfigsRuleHandler
 {
+    use RequestHandlerTrait;
+
     const UPDATE_FLAG = 'update_methods_flag';
 
     /** @var RequestStack */
@@ -45,7 +48,7 @@ class PaymentMethodsConfigsRuleHandler
 
         $request = $this->requestStack->getCurrentRequest();
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $form->handleRequest($request);
+            $this->submitPostPutRequest($form, $request);
             if (!$request->get(self::UPDATE_FLAG, false) && $form->isValid()) {
                 $this->em->persist($entity);
                 $this->em->flush();
