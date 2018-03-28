@@ -1,11 +1,15 @@
-# UPS time in transit.
+# UPS time in transit
 
-Service `oro_ups.provider.cacheable_time_in_transit` can get estimated time in transit and cached for 1 day, based on:
- * from zip code
- * to zip code
- * pickup date
+The `oro_ups.provider.cacheable_time_in_transit` service provides estimated time in transit based on the following:
 
-For example:
+ * a zip code of the shipping origin 
+ * a zip code of the shipping destination
+ * a pickup date
+
+This information is kept in cache for 1 day. 
+
+Example:
+
 ```code
 /** @var UPSTransport $transport */
 $transport = $upsChannel->getTransport();
@@ -24,4 +28,4 @@ $result = $timeInTransitProvider->getTimeInTransitResult(
     $pickupDate
 );
 ```
-In result you can get status of the interchange, estimated arrivals and other information. More details you can see in [TimeInTransitResultInterface](../../TimeInTransit/Result/TimeInTransitResultInterface.php).
+As a result, you get a status of the estimated arrivals and other information. For more details, refer to [TimeInTransitResultInterface](../../TimeInTransit/Result/TimeInTransitResultInterface.php).
