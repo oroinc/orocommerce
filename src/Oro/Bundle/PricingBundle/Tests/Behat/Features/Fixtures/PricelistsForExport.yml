@@ -6,7 +6,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
         name: 'Group with PriceList'
         organization: '@organization'
         owner: '@admin'
-        addCustomer: ['@customer1']
     groupWithPriceList2:
         name: 'Group with PriceList2'
         organization: '@organization'

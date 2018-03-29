@@ -1,17 +1,6 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
-    groupWithPriceList:
-        name: 'Group with PriceList'
-        organization: '@organization'
-        owner: '@admin'
-        addCustomer: ['@customer1']
-    groupWithPriceList2:
-        name: 'Group with PriceList2'
-        organization: '@organization'
-        owner: '@admin'
-
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
         string: 'Product 1'

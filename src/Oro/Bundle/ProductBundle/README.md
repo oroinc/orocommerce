@@ -1,9 +1,9 @@
-Oro\Bundle\ProductBundle\OroProductBundle
-===============================================
+# OroProductBundle
 
-Table of Contents
------------------
- - [Description](#description)
+OroProductBundle adds the Product entity to the OroCommerce application, provides UI for the OroCommerce management console user to create and manage simple or configurable products and product brands, and enables the configuration of product presentation in the storefront via the system configuration menu.
+
+## Table of Contents
+
  - [Expected dependencies](#expected-dependencies)
  - Formatting
     - [Product Unit Value Formatting](./Resources/doc/product-unit-value-formatting.md)
@@ -16,17 +16,7 @@ Table of Contents
  - [Related items](./Resources/doc/related-items.md)
  - [Actions](./Resources/doc/actions.md)
 
-Description:
-------------
-
-OroProductBundle introduces the notion of products into the system. Products are the foundation of most commerce business cases and functionality. 
-
-This bundle will provide a UI for product management by utilizing the functionality of other bundles. In other words, bundles of other features will be providing their pieces of product management functionality and the corresponding UI pieces for the product management UI (once installed in the system), with the exception of OroPricingBundle dependency (which should ideally be a replaceable dependency). 
-
-The OroProductBundle is expected to be admin-heavy, so a matching bundle for non-admin applications will be introduced as well.
-
-Expected dependencies:
-----------------------
+## Expected dependencies:
 
 - Doctrine\Common\Collections\ArrayCollection
 - Doctrine\Common\DataFixtures\AbstractFixture

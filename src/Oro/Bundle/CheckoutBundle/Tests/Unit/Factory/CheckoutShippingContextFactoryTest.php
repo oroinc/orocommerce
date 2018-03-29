@@ -69,9 +69,14 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreate()
+    /**
+     * @dataProvider createDataProvider
+     *
+     * @param float $shippingCost
+     */
+    public function testCreate($shippingCost)
     {
-        $checkout = $this->prepareCheckout();
+        $checkout = $this->prepareCheckout($shippingCost);
 
         $convertedLineItems = new DoctrineShippingLineItemCollection([
             new ShippingLineItem([])
@@ -88,6 +93,21 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($convertedLineItems);
 
         $this->factory->create($checkout);
+    }
+
+    /**
+     * @return array
+     */
+    public function createDataProvider()
+    {
+        return [
+            'zero shipping cost amount' => [
+                'shippingCost' => 0.0
+            ],
+            'with shipping cost' => [
+                'shippingCost' => 10.0
+            ]
+        ];
     }
 
     public function testWithNullLineItems()
@@ -107,9 +127,10 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param float $shippingCost
      * @return Checkout
      */
-    protected function prepareCheckout()
+    protected function prepareCheckout($shippingCost = 0.0)
     {
         /** @var AddressInterface $address */
         $address = $this->createMock(OrderAddress::class);
@@ -132,7 +153,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod($paymentMethod)
             ->setCustomer($customer)
             ->setCustomerUser($customerUser)
-            ->setWebsite($websiteMock);
+            ->setWebsite($websiteMock)
+            ->setShippingCost(Price::create($shippingCost, $currency));
 
         $this->contextBuilderMock
             ->method('setShippingAddress')
@@ -164,7 +186,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilderMock
             ->expects($this->once())
             ->method('setSubTotal')
-            ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
+            ->with(Price::create($subtotal->getAmount() - $shippingCost, $subtotal->getCurrency()))
             ->willReturnSelf();
 
         $this->contextBuilderMock
