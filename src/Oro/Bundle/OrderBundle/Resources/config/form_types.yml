@@ -51,7 +51,7 @@ services:
             - [setDataClass, ['%oro_order.entity.order.class%']]
             - [setExtendedType, ['oro_order_type']]
         tags:
-            - { name: form.type_extension, alias: oro_order_type }
+            - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
 
     oro_order.form.type.order_collection_table:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType'

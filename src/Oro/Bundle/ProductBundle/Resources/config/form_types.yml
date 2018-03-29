@@ -105,7 +105,7 @@ services:
     oro_product.form.type.extension.integer:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension'
         tags:
-            - { name: form.type_extension, alias: integer }
+            - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\IntegerType, alias: integer }
 
     oro_product.form.type.custom_variant_fields_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType'
@@ -228,7 +228,7 @@ services:
             - '@oro_entity_config.provider.attribute'
             - '@translator'
         tags:
-            - { name: form.type_extension, alias: oro_entity_config_type }
+            - { name: form.type_extension, alias: oro_entity_config_type, extended_type: Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType }
 
     oro_product.form.type.brand:
         class: 'Oro\Bundle\ProductBundle\Form\Type\BrandType'

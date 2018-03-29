@@ -67,7 +67,7 @@ services:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
             - [setExtendedType, [oro_sale_quote]]
         tags:
-            - { name: form.type_extension, alias: oro_sale_quote }
+            - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
 
     oro_sale.form.type.quote_address:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'
