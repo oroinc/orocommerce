@@ -8,15 +8,15 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
