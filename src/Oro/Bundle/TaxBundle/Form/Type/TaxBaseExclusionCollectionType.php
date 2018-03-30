@@ -15,7 +15,7 @@ class TaxBaseExclusionCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -25,7 +25,7 @@ class TaxBaseExclusionCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => TaxBaseExclusionType::NAME,
+                'entry_type' => TaxBaseExclusionType::class,
                 'show_form_when_empty' => false
             ]
         );

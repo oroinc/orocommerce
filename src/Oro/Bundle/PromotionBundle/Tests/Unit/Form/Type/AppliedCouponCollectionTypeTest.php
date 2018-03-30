@@ -5,25 +5,14 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var AppliedCouponCollectionType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new AppliedCouponCollectionType();
-    }
-
     /**
      * @return array
      */
@@ -48,7 +37,8 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 
         $widgetAlias = 'alias';
         $componentView = 'component-view';
-        $this->formType->finishView(
+        $formType = new AppliedCouponCollectionType();
+        $formType->finishView(
             $view,
             $form,
             [
@@ -77,7 +67,7 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType, null, ['entity' => new \stdClass()]);
+        $form = $this->factory->create(AppliedCouponCollectionType::class, null, ['entity' => new \stdClass()]);
 
         $this->assertArraySubset([
             'type' => AppliedCouponType::class,
@@ -97,21 +87,24 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
     {
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage('The required option "entity" is missing.');
-        $this->factory->create($this->formType);
+        $this->factory->create(AppliedCouponCollectionType::class);
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::class, $this->formType->getParent());
+        $formType = new AppliedCouponCollectionType();
+        $this->assertEquals(CollectionType::class, $formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(AppliedCouponCollectionType::NAME, $this->formType->getName());
+        $formType = new AppliedCouponCollectionType();
+        $this->assertEquals(AppliedCouponCollectionType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(AppliedCouponCollectionType::NAME, $this->formType->getBlockPrefix());
+        $formType = new AppliedCouponCollectionType();
+        $this->assertEquals(AppliedCouponCollectionType::NAME, $formType->getBlockPrefix());
     }
 }

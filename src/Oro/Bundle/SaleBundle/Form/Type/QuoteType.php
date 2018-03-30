@@ -17,6 +17,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -87,15 +88,15 @@ class QuoteType extends AbstractType
 
         $builder
             ->add('qid', HiddenType::class)
-            ->add('owner', 'oro_user_select', [
+            ->add('owner', UserSelectType::class, [
                 'label'     => 'oro.sale.quote.owner.label',
                 'required'  => true
             ])
-            ->add('customerUser', CustomerUserSelectType::NAME, [
+            ->add('customerUser', CustomerUserSelectType::class, [
                 'label'     => 'oro.sale.quote.customer_user.label',
                 'required'  => false
             ])
-            ->add('customer', CustomerSelectType::NAME, [
+            ->add('customer', CustomerSelectType::class, [
                 'label'     => 'oro.sale.quote.customer.label',
                 'required'  => false
             ])
@@ -131,10 +132,10 @@ class QuoteType extends AbstractType
                     ]
                 ]
             )
-            ->add('assignedUsers', UserMultiSelectType::NAME, [
+            ->add('assignedUsers', UserMultiSelectType::class, [
                 'label' => 'oro.sale.quote.assigned_users.label',
             ])
-            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::class, [
                 'label' => 'oro.sale.quote.assigned_customer_users.label',
             ]);
         $this->addShippingFields($builder, $quote);

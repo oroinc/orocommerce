@@ -46,7 +46,7 @@ class CouponGenerationType extends AbstractType
         $builder
             ->add(
                 'owner',
-                BusinessUnitSelectAutocomplete::NAME,
+                BusinessUnitSelectAutocomplete::class,
                 [
                     'required' => true,
                     'label' => 'oro.user.owner.label',

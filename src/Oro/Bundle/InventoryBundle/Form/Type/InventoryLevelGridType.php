@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -61,7 +62,7 @@ class InventoryLevelGridType extends AbstractType
      */
     public function getParent()
     {
-        return DataChangesetType::NAME;
+        return DataChangesetType::class;
     }
 
     /**
@@ -121,7 +122,7 @@ class InventoryLevelGridType extends AbstractType
     {
         // build fake field to get correct definitions of JS constraints
         $view = $this->formFactory->create(
-            'number',
+            NumberType::class,
             null,
             [
                 'constraints' => [

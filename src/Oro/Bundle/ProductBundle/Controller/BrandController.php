@@ -61,7 +61,7 @@ class BrandController extends Controller
     {
         return $this->get('oro_form.update_handler')->update(
             $brand,
-            $this->createForm(BrandType::NAME, $brand),
+            $this->createForm(BrandType::class, $brand),
             $this->get('translator')->trans('oro.product.brand.form.update.messages.saved'),
             $request,
             null

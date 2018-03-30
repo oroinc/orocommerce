@@ -4,6 +4,10 @@ namespace Oro\Bundle\PayPalBundle\Form\Type;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -22,7 +26,7 @@ class CreditCardType extends AbstractType
     {
         $builder->add(
             'ACCT',
-            'text',
+            TextType::class,
             [
                 'required' => true,
                 'label' => 'oro.paypal.credit_card.card_number.label',
@@ -52,7 +56,7 @@ class CreditCardType extends AbstractType
             ]
         )->add(
             'expirationDate',
-            CreditCardExpirationDateType::NAME,
+            CreditCardExpirationDateType::class,
             [
                 'required' => true,
                 'label' => 'oro.paypal.credit_card.expiration_date.label',
@@ -67,7 +71,7 @@ class CreditCardType extends AbstractType
             ]
         )->add(
             'EXPDATE',
-            'hidden',
+            HiddenType::class,
             [
                 'attr' => [
                     'data-gateway' => true,
@@ -78,7 +82,7 @@ class CreditCardType extends AbstractType
         if ($options['requireCvvEntryEnabled']) {
             $builder->add(
                 'CVV2',
-                'password',
+                PasswordType::class,
                 [
                     'required' => true,
                     'label' => 'oro.paypal.credit_card.cvv2.label',
@@ -101,7 +105,7 @@ class CreditCardType extends AbstractType
         if ($options['zeroAmountAuthorizationEnabled']) {
             $builder->add(
                 'save_for_later',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'label' => 'oro.paypal.credit_card.save_for_later.label',

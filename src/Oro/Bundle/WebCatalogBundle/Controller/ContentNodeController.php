@@ -150,7 +150,7 @@ class ContentNodeController extends Controller
      */
     protected function updateTreeNode(ContentNode $node)
     {
-        $form = $this->createForm(ContentNodeType::NAME, $node);
+        $form = $this->createForm(ContentNodeType::class, $node);
 
         $saveRedirectHandler = function (ContentNode $node) {
             if ($node->getParentNode()) {

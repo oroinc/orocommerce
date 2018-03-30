@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
@@ -10,9 +11,9 @@ use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInt
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
@@ -91,8 +92,9 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $localizedType->getName() => $localizedType,
-                    new OroEncodedPlaceholderPasswordType($this->encoder),
+                    PayPalSettingsType::class => $this->formType,
+                    LocalizedFallbackValueCollectionType::class => $localizedType,
+                    OroEncodedPlaceholderPasswordType::class => new OroEncodedPlaceholderPasswordType($this->encoder),
                 ],
                 []
             ),
@@ -145,7 +147,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
         $payPalSettings = new PayPalSettings();
 
-        $form = $this->factory->create($this->formType, $payPalSettings);
+        $form = $this->factory->create(PayPalSettingsType::class, $payPalSettings);
 
         $form->submit($submitData);
 
@@ -162,7 +164,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     public function testDefaultValuesAreSet($property, $value)
     {
         $payPalSettings = new PayPalSettings();
-        $form = $this->factory->create($this->formType, $payPalSettings);
+        $form = $this->factory->create(PayPalSettingsType::class, $payPalSettings);
 
         static::assertEquals($value, $form->get($property)->getData());
         static::assertEquals($payPalSettings, $form->getData());

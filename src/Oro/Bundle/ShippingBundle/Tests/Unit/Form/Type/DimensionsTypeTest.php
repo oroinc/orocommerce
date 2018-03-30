@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
 {
@@ -20,10 +20,9 @@ class DimensionsTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new DimensionsType();
         $this->formType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -40,7 +39,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($submittedData, $expectedData, $defaultData = null)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(DimensionsType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -118,7 +117,8 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    LengthUnitSelectType::NAME => new EntityType(
+                    DimensionsType::class => $this->formType,
+                    LengthUnitSelectType::class => new EntityType(
                         [
                             'm' => $this->getLengthUnit('m'),
                             'sm' => $this->getLengthUnit('sm'),

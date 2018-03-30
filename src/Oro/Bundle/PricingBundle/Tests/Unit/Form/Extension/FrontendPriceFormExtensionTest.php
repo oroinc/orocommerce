@@ -45,11 +45,11 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PriceType::NAME => PriceTypeGenerator::createPriceType($this),
+                    PriceType::class => PriceTypeGenerator::createPriceType($this),
                     CurrencySelectionType::class => $currencySelectionType,
                 ],
                 [
-                    PriceType::NAME => [
+                    PriceType::class => [
                         new FrontendPriceFormExtension($this->frontendHelper, $this->userCurrencyManager),
                     ],
 
@@ -63,7 +63,7 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         $this->frontendHelper->method('isFrontendRequest')
             ->willReturn(false);
 
-        $form = $this->factory->create(PriceType::NAME);
+        $form = $this->factory->create(PriceType::class);
         $form->setData(null);
         $this->assertNull($form->getData());
         $this->assertNull($form->get('currency')->getData());
@@ -77,7 +77,7 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         $this->frontendHelper->method('isFrontendRequest')
             ->willReturn(true);
 
-        $form = $this->factory->create(PriceType::NAME);
+        $form = $this->factory->create(PriceType::class);
         $form->setData(null);
         $formData = $form->getData();
         $this->assertNull($formData);

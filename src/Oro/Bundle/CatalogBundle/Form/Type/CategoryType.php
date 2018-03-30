@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
@@ -68,7 +69,7 @@ class CategoryType extends AbstractType
         $builder
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
@@ -77,12 +78,12 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'shortDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.catalog.category.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => OroRichTextType::NAME,
+                    'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
@@ -95,12 +96,12 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'longDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => OroRichTextType::NAME,
+                    'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
@@ -113,7 +114,7 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'appendProducts',
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 [
                     'class'    => $this->productClass,
                     'required' => false,
@@ -123,7 +124,7 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'removeProducts',
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 [
                     'class'    => $this->productClass,
                     'required' => false,
@@ -133,7 +134,7 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'smallImage',
-                'oro_image',
+                ImageType::class,
                 [
                     'label'    => 'oro.catalog.category.small_image.label',
                     'required' => false
@@ -141,7 +142,7 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'largeImage',
-                'oro_image',
+                ImageType::class,
                 [
                     'label'    => 'oro.catalog.category.large_image.label',
                     'required' => false
@@ -149,14 +150,14 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'defaultProductOptions',
-                CategoryDefaultProductOptionsType::NAME,
+                CategoryDefaultProductOptionsType::class,
                 [
                     'required' => false
                 ]
             )
             ->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
@@ -181,7 +182,7 @@ class CategoryType extends AbstractType
 
             $event->getForm()->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,

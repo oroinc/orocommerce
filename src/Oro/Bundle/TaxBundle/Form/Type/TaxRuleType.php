@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,24 +30,24 @@ class TaxRuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('description', 'textarea', [
+            ->add('description', TextareaType::class, [
                 'label' => 'oro.tax.taxrule.description.label',
                 'required' => false
             ])
-            ->add('customerTaxCode', CustomerTaxCodeAutocompleteType::NAME, [
+            ->add('customerTaxCode', CustomerTaxCodeAutocompleteType::class, [
                 'label' => 'oro.tax.taxrule.customer_tax_code.label',
                 'required' => true
             ])
-            ->add('productTaxCode', ProductTaxCodeAutocompleteType::NAME, [
+            ->add('productTaxCode', ProductTaxCodeAutocompleteType::class, [
                 'label' => 'oro.tax.taxrule.product_tax_code.label',
                 'required' => true
 
             ])
-            ->add('tax', TaxSelectType::NAME, [
+            ->add('tax', TaxSelectType::class, [
                 'label' => 'oro.tax.taxrule.tax.label',
                 'required' => true
             ])
-            ->add('taxJurisdiction', TaxJurisdictionSelectType::NAME, [
+            ->add('taxJurisdiction', TaxJurisdictionSelectType::class, [
                 'label' => 'oro.tax.taxrule.tax_jurisdiction.label',
                 'required' => true
             ]);

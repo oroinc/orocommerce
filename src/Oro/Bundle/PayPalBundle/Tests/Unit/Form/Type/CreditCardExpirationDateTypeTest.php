@@ -11,28 +11,13 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
     const YEAR_PERIOD = 10;
 
     /**
-     * @var CreditCardExpirationDateType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new CreditCardExpirationDateType();
-    }
-
-    /**
      * @dataProvider formConfigurationProvider
      * @param array $formFields
      * @param array $formOptions
      */
     public function testFormConfiguration(array $formFields, array $formOptions)
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(CreditCardExpirationDateType::class);
         $this->assertFormOptions($form->getConfig(), $formOptions);
         foreach ($formFields as $fieldname => $fieldData) {
             $this->assertTrue($form->has($fieldname));
@@ -90,6 +75,7 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('oro_paypal_credit_card_expiration_date', $this->formType->getName());
+        $formType = new CreditCardExpirationDateType();
+        $this->assertEquals('oro_paypal_credit_card_expiration_date', $formType->getName());
     }
 }

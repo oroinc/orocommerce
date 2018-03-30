@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentTermBundle\Form\Type;
 use Oro\Bundle\UIBundle\Form\DataTransformer\StripTagsTransformer;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -36,7 +37,7 @@ class PaymentTermType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label', 'text', ['required' => true, 'label' => 'oro.paymentterm.label.label']);
+            ->add('label', TextType::class, ['required' => true, 'label' => 'oro.paymentterm.label.label']);
 
         $builder->get('label')->addModelTransformer(new StripTagsTransformer($this->htmlTagHelper));
     }

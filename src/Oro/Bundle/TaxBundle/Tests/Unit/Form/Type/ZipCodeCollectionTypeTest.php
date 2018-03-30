@@ -44,7 +44,7 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertInternalType('string', $this->formType->getParent());
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
@@ -55,7 +55,7 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'entry_type' => ZipCodeType::NAME,
+                    'entry_type' => ZipCodeType::class,
                     'required' => false,
                 ]
             );

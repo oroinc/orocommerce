@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,7 +30,7 @@ class PageSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->formType->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
@@ -44,7 +45,7 @@ class PageSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
-                    $this->assertEquals('oro_cms_page', $options['autocomplete_alias']);
+                    $this->assertEquals(PageType::class, $options['autocomplete_alias']);
                     $this->assertEquals('oro_cms_page_create', $options['create_form_route']);
                     $this->assertEquals(
                         [

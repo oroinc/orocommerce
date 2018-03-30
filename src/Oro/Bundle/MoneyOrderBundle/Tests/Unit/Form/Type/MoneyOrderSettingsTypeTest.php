@@ -6,24 +6,14 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 {
-    /** @var MoneyOrderSettingsType */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new MoneyOrderSettingsType();
-    }
-
     /**
      * @return array
      */
@@ -32,7 +22,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                 ],
                 []
             ),
@@ -51,7 +41,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 
         $settings = new MoneyOrderSettings();
 
-        $form = $this->factory->create($this->formType, $settings);
+        $form = $this->factory->create(MoneyOrderSettingsType::class, $settings);
         $form->submit($submitData);
 
         $this->assertTrue($form->isValid());
@@ -60,7 +50,8 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefixReturnsCorrectString()
     {
-        static::assertSame('oro_money_order_settings', $this->formType->getBlockPrefix());
+        $formType = new MoneyOrderSettingsType();
+        static::assertSame('oro_money_order_settings', $formType->getBlockPrefix());
     }
 
     public function testConfigureOptions()
@@ -72,6 +63,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
             ->with([
                 'data_class' => MoneyOrderSettings::class
             ]);
-        $this->formType->configureOptions($resolver);
+        $formType = new MoneyOrderSettingsType();
+        $formType->configureOptions($resolver);
     }
 }

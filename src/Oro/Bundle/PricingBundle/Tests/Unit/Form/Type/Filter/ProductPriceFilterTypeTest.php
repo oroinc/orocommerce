@@ -29,8 +29,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         $translator = $this->createMockTranslator();
         $this->formExtensions[] = new CustomFormExtension([new NumberRangeFilterType($translator)]);
 
-        parent::setUp();
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $formatter */
         $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
@@ -40,12 +38,22 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->with('item')
             ->will($this->returnValue('Item'));
 
-        $this->type = new ProductPriceFilterType($translator, $this->getRegistry(), $formatter);
+        parent::setUp();
 
-        $this->formExtensions[] = new PreloadedExtension([ProductPriceFilterType::class => $this->type], []);
+        $this->type = new ProductPriceFilterType($translator, $this->getRegistry(), $formatter);
+        $this->formExtensions[] = new PreloadedExtension([$this->type], []);
+
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->getFormFactory();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getTestFormType()
+    {
+        return $this->type;
     }
 
     /**
@@ -140,6 +148,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 
     public function testGetParent()
     {
-        $this->assertEquals(NumberRangeFilterType::NAME, $this->type->getParent());
+        $this->assertEquals(NumberRangeFilterType::class, $this->type->getParent());
     }
 }

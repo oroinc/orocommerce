@@ -8,10 +8,12 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -51,15 +53,16 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->prepareChoices());
+        $entityType = new EntityTypeStub($this->prepareChoices());
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType
+                    $this->formType,
+                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    EntityType::class => $entityType
                 ],
                 [
-                    'form' => [new IntegerExtension()]
+                    FormType::class => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -79,7 +82,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         $submittedData,
         ProductUnitPrecision $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductPrimaryUnitPrecisionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());

@@ -5,10 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
@@ -19,6 +16,7 @@ use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
@@ -33,9 +31,9 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
 
     protected function setUp()
     {
-        parent::setUp();
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
         $this->formType = new ShippingMethodsConfigsRuleDestinationType($this->subscriber);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -61,7 +59,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('region_route', $options);
         $this->assertContains('oro_api_country_get_regions', $options['region_route']);
@@ -74,7 +72,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class, $data);
 
         $this->assertEquals($data, $form->getData());
 
@@ -158,15 +156,10 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         return [
             new PreloadedExtension(
                 [
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    TranslatableEntityType::class => $this->getTranslatableEntity(),
-                    'oro_region' => new RegionType(),
+                    $this->formType,
+                    TranslatableEntityType::class => $this->getTranslatableEntity()
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
                 ]]

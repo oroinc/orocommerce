@@ -141,7 +141,7 @@ class OrderController extends AbstractOrderController
             $order->setCustomerUser($this->getOrderRequestHandler()->getCustomerUser());
         }
 
-        $form = $this->createForm(OrderType::NAME, $order);
+        $form = $this->createForm(OrderType::class, $order);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -166,6 +166,7 @@ class OrderController extends AbstractOrderController
                 $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
                 $orderData = $event->getData()->getArrayCopy();
 
+                $view = $form->createView();
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,

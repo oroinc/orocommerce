@@ -40,7 +40,7 @@ class PageType extends AbstractType
         $builder
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label'    => 'oro.cms.page.titles.label',
                     'required' => true,
@@ -49,7 +49,7 @@ class PageType extends AbstractType
             )
             ->add(
                 'content',
-                OroRichTextType::NAME,
+                OroRichTextType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
                     'required' => false,
@@ -61,7 +61,7 @@ class PageType extends AbstractType
             )
             ->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => false,
@@ -83,7 +83,7 @@ class PageType extends AbstractType
 
             $event->getForm()->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => false,

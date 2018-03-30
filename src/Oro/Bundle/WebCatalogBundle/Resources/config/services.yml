@@ -133,7 +133,7 @@ services:
             - '%oro_web_catalog.entity.web_catalog.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_web_catalog, acl_resource: oro_web_catalog_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType, acl_resource: oro_web_catalog_view }
 
     oro_web_catalog.form.type.content_node_select:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType

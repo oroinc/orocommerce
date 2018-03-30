@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,7 +20,10 @@ class ShoppingListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label', 'text', ['required' => true, 'label' => 'oro.shoppinglist.create_new_form.input_label']);
+            ->add('label', TextType::class, [
+                'required' => true,
+                'label' => 'oro.shoppinglist.create_new_form.input_label'
+            ]);
     }
 
     /**

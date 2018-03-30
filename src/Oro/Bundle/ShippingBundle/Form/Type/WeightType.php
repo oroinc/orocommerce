@@ -39,7 +39,7 @@ class WeightType extends AbstractType
             )
             ->add(
                 'unit',
-                WeightUnitSelectType::NAME,
+                WeightUnitSelectType::class,
                 [
                     'placeholder' => 'oro.shipping.form.placeholder.weight_unit.label',
                     'required' => false,

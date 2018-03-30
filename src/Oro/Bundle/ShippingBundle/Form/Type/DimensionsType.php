@@ -30,14 +30,14 @@ class DimensionsType extends AbstractType
         $builder
             ->add(
                 'value',
-                DimensionsValueType::NAME,
+                DimensionsValueType::class,
                 [
                     'required' => false,
                 ]
             )
             ->add(
                 'unit',
-                LengthUnitSelectType::NAME,
+                LengthUnitSelectType::class,
                 [
                     'placeholder' => 'oro.shipping.form.placeholder.length_unit.label',
                     'required' => false,

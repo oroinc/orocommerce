@@ -280,7 +280,7 @@ services:
             - '%oro_promotion.entity.promotion.class%'
             - ["rule.name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PromotionBundle\Form\Type\PromotionType, acl_resource: oro_promotion_view }
 
     oro_promotion.form.autocomplete.promotion_use_coupons.search_handler:
         class: Oro\Bundle\PromotionBundle\Form\Autocomplete\PromotionsUseCouponsSearchHandler

@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 {
@@ -19,7 +19,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
+                    ProductAttributePriceType::class => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 []
             )
@@ -32,7 +32,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
     {
         $productPrice = new PriceAttributeProductPrice();
         $productPrice->setPrice(Price::create('100', 'USD'));
-        $form = $this->factory->create(ProductAttributePriceType::NAME, $productPrice, []);
+        $form = $this->factory->create(ProductAttributePriceType::class, $productPrice, []);
 
         $form->submit([ProductAttributePriceType::PRICE => '500']);
         $this->assertTrue($form->isValid());
@@ -43,7 +43,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
         $productPrice = new PriceAttributeProductPrice();
         $productPrice->setPrice(Price::create('100', 'USD'));
 
-        $form = $this->factory->create(ProductAttributePriceType::NAME, $productPrice, []);
+        $form = $this->factory->create(ProductAttributePriceType::class, $productPrice, []);
         $this->assertSame('100', $form->get(ProductAttributePriceType::PRICE)->getData());
 
         $form->submit([ProductAttributePriceType::PRICE => '500']);

@@ -62,7 +62,7 @@ class InventoryLevelController extends Controller
         }
 
         $form = $this->createForm(
-            InventoryLevelGridType::NAME,
+            InventoryLevelGridType::class,
             null,
             ['product' => $product]
         );

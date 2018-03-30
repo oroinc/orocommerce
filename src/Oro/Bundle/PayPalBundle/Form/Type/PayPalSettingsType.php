@@ -82,22 +82,22 @@ class PayPalSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.credit_card_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.credit_card_short_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_short_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],

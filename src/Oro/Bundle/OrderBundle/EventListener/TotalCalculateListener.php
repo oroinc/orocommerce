@@ -7,15 +7,14 @@ use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRegistryInterface;
 
 class TotalCalculateListener
 {
     /** @var array */
     protected $forms = [
-        ActionCurrentApplicationProvider::DEFAULT_APPLICATION => OrderType::NAME
+        ActionCurrentApplicationProvider::DEFAULT_APPLICATION => OrderType::class
     ];
 
     /** @var FormFactory */
@@ -24,14 +23,22 @@ class TotalCalculateListener
     /** @var CurrentApplicationProviderInterface */
     protected $applicationProvider;
 
+    /** @var FormRegistryInterface */
+    protected $formRegistry;
+
     /**
      * @param FormFactory $formFactory
      * @param CurrentApplicationProviderInterface $applicationProvider
+     * @param FormRegistryInterface $formRegistry
      */
-    public function __construct(FormFactory $formFactory, CurrentApplicationProviderInterface $applicationProvider)
-    {
+    public function __construct(
+        FormFactory $formFactory,
+        CurrentApplicationProviderInterface $applicationProvider,
+        FormRegistryInterface $formRegistry
+    ) {
         $this->formFactory = $formFactory;
         $this->applicationProvider = $applicationProvider;
+        $this->formRegistry = $formRegistry;
     }
 
     /**
@@ -45,14 +52,29 @@ class TotalCalculateListener
 
         if ($entity instanceof Order) {
             $currentApplication = $this->applicationProvider->getCurrentApplication();
-            if (!$this->isDefinedForm($currentApplication)
-                || !$request->request->has($this->forms[$currentApplication])) {
+            if (!$this->isDefinedForm($currentApplication)) {
+                return;
+            }
+
+            $formName = $this->getFormName($this->forms[$currentApplication]);
+            if (!$request->request->has($formName)) {
                 return;
             }
 
             $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
             $form->submit($request);
         }
+    }
+
+    /**
+     * @param string $formClass
+     * @return string
+     */
+    private function getFormName($formClass)
+    {
+        $type = $this->formRegistry->getType($formClass);
+
+        return $type->getName(); // TODO replace with getBlockPrefix in scope of BAP-15236
     }
 
     /**
