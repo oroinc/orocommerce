@@ -20,9 +20,9 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -612,7 +612,7 @@ class QuoteProductTypeTest extends AbstractTest
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     ProductUnitSelectionType::NAME              => new ProductUnitSelectionTypeStub(),
                     ProductSelectType::NAME                     => new ProductSelectTypeStub(),
-                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class                => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,

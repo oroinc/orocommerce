@@ -14,7 +14,6 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -46,7 +45,9 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                         'choice',
                         'oro_select2_choice'
                     ),
+                    //TODO: Remove excessive 'translatable_entity' mock in scope of BAP-
                     'translatable_entity' => $this->getTranslatableEntity(),
+                    TranslatableEntityType::class => $this->getTranslatableEntity(),
                     'oro_region' => new RegionType(),
                 ],
                 [
