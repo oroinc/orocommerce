@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 
 class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 {

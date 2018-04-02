@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendQuotePermissionVoterTest extends \PHPUnit_Framework_TestCase
 {

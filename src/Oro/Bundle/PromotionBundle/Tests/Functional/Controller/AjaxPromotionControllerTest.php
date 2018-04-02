@@ -4,8 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\PromotionInformationLoadAppliedPromotionData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\PromotionInformationLoadAppliedPromotionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxPromotionControllerTest extends WebTestCase

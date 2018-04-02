@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventSubscriber;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
@@ -11,6 +10,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
@@ -27,8 +27,8 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\PreloadedExtension;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
@@ -113,7 +113,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['setDefaultOptions', 'buildForm'])
+            ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -139,8 +139,11 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                         new AddressCountryAndRegionSubscriberStub()
                     ),
                     'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
+                    TranslatableEntityType::class => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [

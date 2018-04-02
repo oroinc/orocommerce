@@ -16,4 +16,12 @@ class TranslationPackagesProviderExtensionTest extends TranslationPackagesProvid
             'fileToLocate' => 'Oro/Bundle/FrontendLocalizationBundle/OroFrontendLocalizationBundle.php'
         ];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPackageName()
+    {
+        return 'commerce';
+    }
 }

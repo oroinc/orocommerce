@@ -4,21 +4,18 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Layout\Extension\ProductCategoriesContextConfigurator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCase
 {

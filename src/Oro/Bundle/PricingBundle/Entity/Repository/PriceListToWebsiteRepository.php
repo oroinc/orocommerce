@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
@@ -95,14 +94,23 @@ class PriceListToWebsiteRepository extends EntityRepository
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
+        return $this->getIteratorByPriceLists([$priceList]);
+    }
+
+    /**
+     * @param PriceList[] $priceLists
+     * @return BufferedQueryResultIterator
+     */
+    public function getIteratorByPriceLists($priceLists)
+    {
         $qb = $this->createQueryBuilder('priceListToWebsite');
 
         $qb->select(
             sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
-            ->where('priceListToWebsite.priceList = :priceList')
+            ->where($qb->expr()->in('priceListToWebsite.priceList', ':priceLists'))
             ->groupBy('priceListToWebsite.website')
-            ->setParameter('priceList', $priceList)
+            ->setParameter('priceLists', $priceLists)
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
             ->orderBy('priceListToWebsite.website')
         ;

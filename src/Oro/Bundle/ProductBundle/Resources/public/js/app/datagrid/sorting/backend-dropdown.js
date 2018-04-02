@@ -50,6 +50,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendSortingDropdown() {
+            BackendSortingDropdown.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendSortingDropdown.__super__.initialize.call(this, options);
             mediator.on('viewport:change', this.onViewportChange, this);

@@ -2,21 +2,20 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionGroup;
+use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroup;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 {
@@ -231,8 +230,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->expects($this->once())
             ->method('commit');
 
-        $expectedResponse = new RedirectResponse($redirectUrl);
-        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+        /** @var RedirectResponse $result */
+        $result = $this->processor->process($data, new Request());
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals($redirectUrl, $result->getTargetUrl());
     }
 
     public function testProcessWhenCommittedWithLimit()

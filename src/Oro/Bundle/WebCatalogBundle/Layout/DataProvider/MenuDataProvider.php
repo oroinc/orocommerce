@@ -3,13 +3,11 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuDataProvider extends AbstractWebCatalogDataProvider
 {

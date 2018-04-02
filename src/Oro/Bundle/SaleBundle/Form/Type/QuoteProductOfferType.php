@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
@@ -109,7 +108,7 @@ class QuoteProductOfferType extends AbstractType
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
                 'allow_prices_override' => true,
-                'intention' => 'sale_quote_product_offer',
+                'csrf_token_id' => 'sale_quote_product_offer',
             ]
         );
     }

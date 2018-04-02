@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
+use Symfony\Component\Validator\Constraint;
 
 class ZipCodeFieldsTest extends \PHPUnit_Framework_TestCase
 {

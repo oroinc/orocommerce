@@ -138,7 +138,7 @@
         'itemprop': 'image'
     } %}
 
-    {% set image = product.image is defined ? asset(product.image) : Image.url(null, 'product_large') %}
+    {% set image = product.image is defined ? asset(product.image|trim('/')) : Image.url(null, 'product_large') %}
 
     <picture {{ block('block_attributes') }}>
         <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">

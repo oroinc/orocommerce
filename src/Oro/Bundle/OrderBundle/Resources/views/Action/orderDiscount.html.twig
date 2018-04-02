@@ -5,9 +5,7 @@
 {% block form %}
     {% set buttonOptions = operation.definition.buttonOptions %}
     <div class="widget-content">
-        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-              method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-        >
+        {{ form_start(form, {'action': app.request.uri, 'attr': {'id': form.vars.id, 'data-collect': 'true', 'class': 'form-dialog'}}) }}
             {{ form_widget(form.orderDiscount) }}
 
             <div class="widget-actions">
@@ -16,8 +14,8 @@
                     {{ buttonOptions.data.submit_label|default('oro.form.collection.add')|trans }}
                 </button>
             </div>
-            {{  form_rest(form) }}
-        </form>
+            {{ form_rest(form) }}
+        {{ form_end(form) }}
         {{ oro_form_js_validation(form, {errorLabelContainer: 'div.js-errors'}) }}
     </div>
 {% endblock %}

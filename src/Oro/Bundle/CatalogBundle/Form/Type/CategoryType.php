@@ -3,18 +3,17 @@
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CategoryType extends AbstractType
 {
@@ -73,7 +72,7 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
@@ -83,8 +82,8 @@ class CategoryType extends AbstractType
                     'label' => 'oro.catalog.category.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
@@ -101,8 +100,8 @@ class CategoryType extends AbstractType
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
@@ -200,7 +199,7 @@ class CategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'category',
+            'csrf_token_id' => 'category',
         ]);
     }
 

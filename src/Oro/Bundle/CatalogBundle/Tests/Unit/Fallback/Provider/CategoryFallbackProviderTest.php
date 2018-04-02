@@ -4,11 +4,11 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 
 class CategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
 {

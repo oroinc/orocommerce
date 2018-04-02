@@ -3,11 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
-
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -19,6 +14,9 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandDa
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @dbIsolationPerTest

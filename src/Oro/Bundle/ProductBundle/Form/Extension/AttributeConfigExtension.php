@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Form\Extension\AttributeConfigExtensionApplicableTrait;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -9,12 +14,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Form\Extension\AttributeConfigExtensionApplicableTrait;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AttributeConfigExtension extends AbstractTypeExtension
 {

@@ -13,8 +13,8 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -38,8 +38,6 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->visibilityPostSetDataListener = $this->getMockBuilder(
             VisibilityPostSetDataListener::class
         )
@@ -55,6 +53,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             $this->visibilityPostSetDataListener,
             $this->visibilityChoicesProvider
         );
+        parent::setUp();
     }
 
     /**
@@ -72,8 +71,8 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    DataChangesetType::NAME => new DataChangesetTypeStub(),
-                    EntityChangesetType::NAME => new EntityChangesetTypeStub(),
+                    DataChangesetType::class => new DataChangesetTypeStub(),
+                    EntityChangesetType::class => new EntityChangesetTypeStub(),
                 ],
                 []
             ),

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Extension;
 
+use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
+use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-
-use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
-use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 
 class CheckoutWorkflowStateExtension extends AbstractTypeExtension
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 

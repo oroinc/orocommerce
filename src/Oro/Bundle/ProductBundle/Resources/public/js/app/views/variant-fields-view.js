@@ -12,6 +12,13 @@ define(function(require) {
             'click a.add-list-item': 'reindexValues'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function VariantFieldsView() {
+            VariantFieldsView.__super__.constructor.apply(this, arguments);
+        },
+
         render: function() {
             this.initSortable();
             this.reindexValues();

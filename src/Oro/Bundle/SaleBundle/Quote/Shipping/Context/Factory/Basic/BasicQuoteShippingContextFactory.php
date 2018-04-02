@@ -7,8 +7,8 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Quote\Calculable\Factory\CalculableQuoteFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 
 class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterface
 {

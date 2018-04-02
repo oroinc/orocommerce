@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\VisibilityBundle\EventListener\RestrictProductVariantEventVisibilityListener;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;

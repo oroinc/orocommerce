@@ -6,6 +6,13 @@ define(function(require) {
     var MatrixGridOrderWidget = require('oro/matrix-grid-order-widget');
 
     MatrixGridPopupButtonView = ProductAddToShoppingListView.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function MatrixGridPopupButtonView() {
+            MatrixGridPopupButtonView.__super__.constructor.apply(this, arguments);
+        },
+
         _openMatrixGridPopup: function(shoppingListId) {
             this.subview('popup', new MatrixGridOrderWidget({
                 model: this.model,

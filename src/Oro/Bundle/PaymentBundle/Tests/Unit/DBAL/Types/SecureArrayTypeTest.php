@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DBAL\Types;
 
+use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
-use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
 class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
 {

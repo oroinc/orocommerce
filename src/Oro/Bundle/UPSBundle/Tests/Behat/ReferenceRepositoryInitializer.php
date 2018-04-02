@@ -5,8 +5,8 @@ namespace Oro\Bundle\UPSBundle\Tests\Behat;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use Nelmio\Alice\Instances\Collection as AliceCollection;
-use Oro\Bundle\UPSBundle\Entity\ShippingService as UPSShippingService;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\UPSBundle\Entity\ShippingService as UPSShippingService;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {

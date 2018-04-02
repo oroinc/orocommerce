@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -13,6 +10,8 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {

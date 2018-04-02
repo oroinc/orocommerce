@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Symfony\Component\Form\FormInterface;
 
 class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
 {

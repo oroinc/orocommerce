@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Form\Type;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\OptionsResolver;

@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
-use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {

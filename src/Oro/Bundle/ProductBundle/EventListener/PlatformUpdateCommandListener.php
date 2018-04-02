@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\Console\Event\ConsoleEvent;
-
-use Oro\Bundle\InstallerBundle\Command\PlatformUpdateCommand;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
+use Oro\Bundle\InstallerBundle\Command\PlatformUpdateCommand;
+use Symfony\Component\Console\Event\ConsoleEvent;
 
 /**
  * This listener should be executed only once during update from alpha1 to later version

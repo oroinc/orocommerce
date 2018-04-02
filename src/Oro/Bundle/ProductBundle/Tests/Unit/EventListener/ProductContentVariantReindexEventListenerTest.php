@@ -3,26 +3,24 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
+use Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener;
+use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\Testing\Doctrine\EntityManagerMockBuilder;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
-use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
-use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
-use Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

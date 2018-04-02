@@ -4,16 +4,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Action\Condition;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\PropertyAccess\PropertyPath;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductHolderStub;
 use Oro\Bundle\ProductBundle\Action\Condition\AtLeastOneAvailableProduct;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductHolderStub;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class AtLeastOneAvailableProductTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\ImportExport\TemplateFixture;
 
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class CouponFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {

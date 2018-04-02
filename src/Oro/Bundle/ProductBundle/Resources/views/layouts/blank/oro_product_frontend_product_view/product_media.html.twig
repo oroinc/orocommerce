@@ -71,7 +71,7 @@
             {% set galleryImages = galleryImages|merge([{
                 src: Image.url(productImage.image, 'product_gallery_popup'),
                 thumb: Image.url(productImage.image, 'product_small'),
-                alt: (product.names|localized_value|oro_tag_filter)
+                alt: (product.names|localized_value|oro_html_strip_tags)
             }]) %}
         {% endfor %}
 
@@ -90,7 +90,7 @@
                 {% for productImage in productImages %}
                     <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-view-media-gallery__image"
-                             alt="{{ product.names|localized_value|oro_tag_filter }}"
+                             alt={{ product.names|localized_value|json_encode|raw }}
                              data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
                                 {% if loop.first %}
                                     src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
@@ -110,7 +110,7 @@
             <div class="product-view-media-gallery__image-item">
                 <img class="product-view-media-gallery__image"
                      src="{{ Image.url(null, 'product_gallery_main') }}"
-                     alt="{{ product.names|localized_value|oro_tag_filter }}"
+                     alt={{ product.names|localized_value|json_encode|raw }}
                      width="378"
                      height="378"
                      itemprop="image"
@@ -153,7 +153,7 @@
             <div class="product-view-media-slider__image-item">
                 <img class="product-view-media-slider__image"
                      src="{{ Image.url(null, 'product_gallery_main') }}"
-                     alt="{{ product.names|localized_value|oro_tag_filter }}"
+                     alt={{ product.names|localized_value|json_encode|raw }}
                      width="378"
                      height="378"
                 />
@@ -162,7 +162,7 @@
             {% for productImage in productImages %}
                 <div class="product-view-media-slider__image-item">
                     <img class="product-view-media-slider__image"
-                         alt="{{ product.names|localized_value|oro_tag_filter }}"
+                         alt={{ product.names|localized_value|json_encode|raw }}
                             {% if loop.first %}
                                 src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
                             {% else %}

@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -13,12 +11,13 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @dbIsolationPerTest

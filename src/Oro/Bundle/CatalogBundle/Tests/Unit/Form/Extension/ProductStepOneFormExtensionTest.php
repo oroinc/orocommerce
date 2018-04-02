@@ -3,18 +3,16 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

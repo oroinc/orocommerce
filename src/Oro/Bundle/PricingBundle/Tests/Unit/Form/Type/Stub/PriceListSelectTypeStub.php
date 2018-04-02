@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class PriceListSelectTypeStub extends StubEntityType
 {

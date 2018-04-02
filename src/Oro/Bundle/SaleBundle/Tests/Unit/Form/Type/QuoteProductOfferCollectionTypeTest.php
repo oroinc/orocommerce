@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -26,21 +25,21 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
         $this->formType = new QuoteProductOfferCollectionType();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => QuoteProductOfferType::NAME,
+                'entry_type' => QuoteProductOfferType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__namequoteproductoffer__',
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetParent()

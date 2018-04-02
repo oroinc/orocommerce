@@ -3,12 +3,11 @@
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ReindexProductOrderListener

@@ -59,12 +59,12 @@ class ProductPricesType extends AbstractContainerType
      */
     public function buildBlock(BlockBuilderInterface $builder, Options $options)
     {
-        if (null === $options->get('attributeFamily')) {
+        if (null === $options['attributeFamily']) {
             return;
         }
 
         /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $options->get('attributeFamily');
+        $attributeFamily = $options['attributeFamily'];
 
         $attribute = $this->getAttribute($attributeFamily);
 

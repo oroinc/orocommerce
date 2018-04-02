@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormView;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Symfony\Component\Form\FormView;
 
 abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 {

@@ -41,6 +41,7 @@ Feature: Inline Editing in Products Grids
     Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product2 |
+    And I reload the page
 
   Scenario Outline: Inline editing of Product fields in grid
     When I edit "Product2" <field> as "<input>"
@@ -52,6 +53,16 @@ Feature: Inline Editing in Products Grids
       | Status           | Disabled     | Disabled     |
       | Tax Code         | XCODE2       | TaxCode2     |
 
+  Scenario: Canceling inline editing on Changing Page URLs warning pop-up
+    When I edit "Product2" Name as "Product1" without saving
+    And I press "Save changes"
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
+    Then I click "Cancel" in modal window
+    Then I should see following records in grid:
+      | Product2 |
+    And I press "Cancel"
+    And I reload the page
+
   Scenario Outline: Canceling inline editing of Product fields in grid
     When I edit "Product2" <field> as "<newValue>" and cancel
     Then I should see following records in grid:
@@ -62,15 +73,6 @@ Feature: Inline Editing in Products Grids
       | Inventory Status | In stock | Out of Stock |
       | Status           | Enabled  | Disabled     |
       | Tax Code         | TaxCode1 | TaxCode2     |
-
-  Scenario: Canceling inline editing on Changing Page URLs warning pop-up
-    When I edit "Product2" Name as "Product1" without saving
-    And I press "Save changes"
-    Then I should see "Changing Page URLs" in the "UiWindow Title" element
-    Then I click "Cancel" in modal window
-    Then I should see following records in grid:
-      | Product2 |
-    And I press "Cancel"
 
   Scenario: Checking inline editing results on Product view page
     And I click View Product2 in grid

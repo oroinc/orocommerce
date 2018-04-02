@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
-use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {

@@ -4,6 +4,7 @@ define(function(require) {
     var BackendSelectHeaderCell;
     var _ = require('underscore');
     var $ = require('jquery');
+    var routing = require('routing');
     var template = require('tpl!oroproduct/templates/datagrid/backend-action-header-cell.html');
     var SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
@@ -50,6 +51,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendSelectHeaderCell() {
+            BackendSelectHeaderCell.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendSelectHeaderCell.__super__.initialize.apply(this, arguments);
             this.selectState = options.selectState;
@@ -77,38 +85,24 @@ define(function(require) {
         },
 
         _onShoppingListsRefresh: function() {
-            if (!this.shoppingListCollection) {
-                return;
-            }
-
             var datagrid = this.column.get('datagrid');
             datagrid.resetSelectionState();
 
-            var massActions = datagrid.getMassActions();
-            massActions = _.each(massActions, function(action, key) {
-                if (action.type === shoppingListAddAction.type) {
-                    delete massActions[key];
+            $.ajax({
+                method: 'GET',
+                url: routing.generate('oro_shopping_list_frontend_get_mass_actions'),
+                success: function(availableMassActions) {
+                    var newMassActions = {};
+
+                    _.each(availableMassActions, function(massAction, title) {
+                        newMassActions[title] = $.extend(true, {}, shoppingListAddAction, massAction, {
+                            name: title
+                        });
+                    });
+
+                    datagrid.setMassActions(newMassActions);
                 }
             });
-
-            var newMassActions = {};
-            this.shoppingListCollection.sort().each(function(shoppingList) {
-                var name = shoppingListAddAction.name + shoppingList.get('id');
-                var label = _.__(shoppingListAddAction.label, {
-                    shoppingList: shoppingList.get('label')
-                });
-                newMassActions[name] = $.extend(true, {}, shoppingListAddAction, {
-                    is_current: shoppingList.get('is_current'),
-                    name: name,
-                    label: label,
-                    route_parameters: {
-                        shoppingList: shoppingList.get('id')
-                    }
-                });
-            });
-
-            newMassActions = _.extend({}, newMassActions, massActions);
-            datagrid.setMassActions(newMassActions);
 
             this.render();
         },

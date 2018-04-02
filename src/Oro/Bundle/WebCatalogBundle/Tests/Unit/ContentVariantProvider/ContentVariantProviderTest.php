@@ -3,9 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
 use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider;
+use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 

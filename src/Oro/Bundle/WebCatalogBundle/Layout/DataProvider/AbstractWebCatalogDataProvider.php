@@ -3,12 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractWebCatalogDataProvider
 {

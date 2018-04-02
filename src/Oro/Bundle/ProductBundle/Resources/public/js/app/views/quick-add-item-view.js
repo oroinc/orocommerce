@@ -67,16 +67,40 @@ define(function(require) {
         validator: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddItemView() {
+            QuickAddItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             QuickAddItemView.__super__.initialize.apply(this, arguments);
             this.initModel(options);
             this.initializeElements(options);
-            this.clearModel();
-            this.clearSku();
-            this.setUnits();
+            this.initializeRow();
+        },
+
+        initializeRow: function() {
+            var currentSku = this.$elements.skuHiddenField.val();
+            if (!currentSku.length) {
+                this.clearModel();
+                this.clearSku();
+                this.setUnits();
+            } else {
+                this.updateModelFromData({
+                    $el: this.$el,
+                    item: {
+                        sku: this.$elements.sku.data('value'),
+                        skuHiddenField: currentSku,
+                        quantity: this.$elements.quantity.val(),
+                        unit: this.$elements.unit.val()
+                    }
+                });
+            }
         },
 
         initModel: function(options) {
@@ -133,8 +157,8 @@ define(function(require) {
                 sku: obj.sku,
                 skuHiddenField: obj.sku,
                 quantity_changed_manually: true,
-                quantity: canBeUpdated ?
-                    parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
+                quantity: canBeUpdated
+                    ? parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
                 unit_deferred: obj.unit
             });
 

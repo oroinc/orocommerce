@@ -15,7 +15,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
@@ -195,5 +194,39 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->willReturn($em);
+    }
+
+    public function testBuildByPriceListWithoutTriggers()
+    {
+        $fields = ['product', 'priceList', 'manual'];
+        $this->ruleCompiler->expects($this->once())
+            ->method('getOrderedFields')
+            ->willReturn($fields);
+
+        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        $priceList = $this->createMock(PriceList::class);
+        $priceList->expects($this->once())
+            ->method('getProductAssignmentRule')
+            ->willReturn('product.id < 100');
+        $this->assertClearGeneratedPricesCall($priceList);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->ruleCompiler->expects($this->once())
+            ->method('compile')
+            ->with($priceList)
+            ->willReturn($queryBuilder);
+
+        $this->insertFromSelectQueryExecutor->expects($this->once())
+            ->method('execute')
+            ->with(
+                PriceListToProduct::class,
+                $fields,
+                $queryBuilder
+            );
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->priceListProductAssignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
     }
 }

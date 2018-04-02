@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @method ContainerInterface getContainer()

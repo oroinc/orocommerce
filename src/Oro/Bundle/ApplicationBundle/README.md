@@ -1,7 +1,5 @@
-OroApplicationBundle
-====================
+# OroApplicationBundle
 
-Bundle used to provide functionality necessary to run multiple Symfony applications
-on the same codebase.
+OroApplicationBundle is deprecated and will be removed in version 3.0. Please, do not use this bundle.
 
-It will be removed entirely.
+The bundle is used to provide functionality necessary to run multiple Symfony applications on the same codebase.

@@ -13,6 +13,13 @@ define(function(require) {
      */
     TreeManageView = BaseTreeManageView.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function TreeManageView() {
+            TreeManageView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * Triggers after page move
          *
          * @param {Object} e

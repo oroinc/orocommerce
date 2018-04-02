@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Validator\Context\ExecutionContext;
-
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\Context\ExecutionContext;
 
 class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
 {

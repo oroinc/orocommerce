@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator;
+use Symfony\Component\Validator\Constraint;
 
 class EmptyVariantFieldInSimpleProductForVariantLinksTest extends \PHPUnit_Framework_TestCase
 {

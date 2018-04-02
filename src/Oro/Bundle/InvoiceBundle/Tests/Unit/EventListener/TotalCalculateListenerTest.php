@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormFactory;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\InvoiceBundle\EventListener\TotalCalculateListener;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {

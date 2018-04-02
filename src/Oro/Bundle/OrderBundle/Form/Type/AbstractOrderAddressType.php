@@ -2,6 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -9,16 +18,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressType extends AbstractType
 {

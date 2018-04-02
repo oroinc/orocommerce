@@ -3,9 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Query;
 
 use Doctrine\Common\Collections\Expr\Expression;
-
-use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
+use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class WebsiteSearchQuery extends AbstractSearchQuery

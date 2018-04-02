@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
-
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 

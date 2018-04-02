@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
 
 class CustomerTypeStub extends AbstractType
 {

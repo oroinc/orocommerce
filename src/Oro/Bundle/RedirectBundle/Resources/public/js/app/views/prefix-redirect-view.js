@@ -46,7 +46,14 @@ define(function(require) {
         $strategySelector: null,
 
         /**
-         * @inheritdoc
+         * @inheritDoc
+         */
+        constructor: function PrefixRedirect() {
+            PrefixRedirect.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

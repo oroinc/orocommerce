@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\FormHandlerTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {

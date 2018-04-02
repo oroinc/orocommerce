@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class PriceListsSettingsType extends AbstractType
 {
@@ -57,7 +56,7 @@ class PriceListsSettingsType extends AbstractType
                 [
                     'label' => 'oro.pricing.pricelist.entity_plural_label',
                     'mapped' => true,
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => $options[self::PRICE_LIST_RELATION_CLASS]
                     ]
                 ]

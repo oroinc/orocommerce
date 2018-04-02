@@ -33,6 +33,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ConfirmSlugChangeModal() {
+            ConfirmSlugChangeModal.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {

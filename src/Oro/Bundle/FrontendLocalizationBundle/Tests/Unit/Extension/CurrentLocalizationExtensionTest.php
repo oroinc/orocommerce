@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\Extension;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Oro\Bundle\FrontendLocalizationBundle\Extension\CurrentLocalizationExtension;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
 {

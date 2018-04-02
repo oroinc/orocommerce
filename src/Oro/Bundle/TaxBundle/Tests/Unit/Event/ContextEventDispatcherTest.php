@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContextEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {

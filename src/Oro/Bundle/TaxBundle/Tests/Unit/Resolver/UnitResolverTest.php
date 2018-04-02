@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
-
 use Oro\Bundle\TaxBundle\Calculator\Calculator;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;

@@ -3,11 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
-use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\CustomerListener;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;

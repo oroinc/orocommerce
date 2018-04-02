@@ -22,8 +22,13 @@ define(function(require) {
         sortingSwitcherSelector: '[data-role="fullscreen-sorting-switcher"]',
 
         /**
-         * @constructor
-         *
+         * @inheritDoc
+         */
+        constructor: function FullscreenSorting() {
+            FullscreenSorting.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

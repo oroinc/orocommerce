@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Yaml\Yaml;
-
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\Encoder;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Yaml\Yaml;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {

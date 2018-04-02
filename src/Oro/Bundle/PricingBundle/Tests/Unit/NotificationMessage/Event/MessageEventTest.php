@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage\Event;
 
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Event\MessageEvent;
+use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 
 class MessageEventTest extends \PHPUnit_Framework_TestCase
 {

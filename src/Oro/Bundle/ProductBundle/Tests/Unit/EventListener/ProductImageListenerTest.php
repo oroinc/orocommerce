@@ -2,13 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImageTypesCollection;
@@ -18,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Form\Type;
 
+use Oro\Bundle\UIBundle\Form\DataTransformer\StripTagsTransformer;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\UIBundle\Form\DataTransformer\StripTagsTransformer;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 class PaymentTermType extends AbstractType
 {
@@ -50,7 +49,7 @@ class PaymentTermType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'payment_term',
+                'csrf_token_id' => 'payment_term',
             ]
         );
     }

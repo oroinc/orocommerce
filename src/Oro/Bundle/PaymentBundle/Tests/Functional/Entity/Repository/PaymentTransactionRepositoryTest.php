@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class PaymentTransactionRepositoryTest extends WebTestCase
 {

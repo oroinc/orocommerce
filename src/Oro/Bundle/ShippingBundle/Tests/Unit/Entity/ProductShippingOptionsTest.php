@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
@@ -11,6 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
 {

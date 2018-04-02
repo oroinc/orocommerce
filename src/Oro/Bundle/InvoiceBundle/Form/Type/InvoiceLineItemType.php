@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
-use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -145,7 +144,7 @@ class InvoiceLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'invoice_line_item',
+                'csrf_token_id' => 'invoice_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [
                     'view' => 'oroinvoice/js/app/views/invoice-line-item-view',

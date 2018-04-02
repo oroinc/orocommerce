@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class PriceAttributePriceListType extends AbstractType
 {

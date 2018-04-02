@@ -6,15 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
@@ -24,34 +18,16 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Updates combined price lists in case of changes in structure of original price lists
+ */
 class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
-     * @var CombinedPriceListsBuilder
+     * @var CombinedPriceListsBuilderFacade
      */
-    protected $commonPriceListsBuilder;
-
-    /**
-     * @var WebsiteCombinedPriceListsBuilder
-     */
-    protected $websitePriceListsBuilder;
-
-    /**
-     * @var CustomerGroupCombinedPriceListsBuilder
-     */
-    protected $customerGroupPriceListsBuilder;
-
-    /**
-     * @var CustomerCombinedPriceListsBuilder
-     */
-    protected $customerPriceListsBuilder;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected $combinedPriceListsBuilderFacade;
 
     /**
      * @var PriceListRelationTriggerFactory
@@ -74,36 +50,32 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $databaseExceptionHelper;
 
     /**
-     * @param CombinedPriceListsBuilder $commonPriceListsBuilder
-     * @param WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder
-     * @param CustomerGroupCombinedPriceListsBuilder $customerGroupPriceListsBuilder
-     * @param CustomerCombinedPriceListsBuilder $customerPriceListsBuilder
-     * @param EventDispatcherInterface $dispatcher
+     * @var CombinedPriceListTriggerHandler
+     */
+    private $triggerHandler;
+
+    /**
      * @param LoggerInterface $logger
      * @param PriceListRelationTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
      * @param DatabaseExceptionHelper $databaseExceptionHelper
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @param CombinedPriceListsBuilderFacade $builderFacade
      */
     public function __construct(
-        CombinedPriceListsBuilder $commonPriceListsBuilder,
-        WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder,
-        CustomerGroupCombinedPriceListsBuilder $customerGroupPriceListsBuilder,
-        CustomerCombinedPriceListsBuilder $customerPriceListsBuilder,
-        EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
         PriceListRelationTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        CombinedPriceListsBuilderFacade $builderFacade
     ) {
-        $this->commonPriceListsBuilder = $commonPriceListsBuilder;
-        $this->websitePriceListsBuilder = $websitePriceListsBuilder;
-        $this->customerGroupPriceListsBuilder = $customerGroupPriceListsBuilder;
-        $this->customerPriceListsBuilder = $customerPriceListsBuilder;
-        $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->triggerHandler = $triggerHandler;
+        $this->combinedPriceListsBuilderFacade = $builderFacade;
     }
 
     /**
@@ -114,20 +86,23 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CombinedPriceList::class);
         $em->beginTransaction();
-        
+        $this->triggerHandler->startCollect();
+
         try {
-            $this->resetCache();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListRelationTrigger($trigger);
-            $this->dispatchChangeAssociationEvents();
+            $this->combinedPriceListsBuilderFacade->dispatchEvents();
+            $this->triggerHandler->commit();
             $em->commit();
         } catch (InvalidArgumentException $e) {
+            $this->triggerHandler->rollback();
             $em->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
+            $this->triggerHandler->rollback();
             $em->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
@@ -151,82 +126,27 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     {
         switch (true) {
             case !is_null($trigger->getCustomer()):
-                $this->customerPriceListsBuilder->build(
+                $this->combinedPriceListsBuilderFacade->rebuildForCustomers(
+                    [$trigger->getCustomer()],
                     $trigger->getWebsite(),
-                    $trigger->getCustomer(),
                     $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getCustomerGroup()):
-                $this->customerGroupPriceListsBuilder->build(
+                $this->combinedPriceListsBuilderFacade->rebuildForCustomerGroups(
+                    [$trigger->getCustomerGroup()],
                     $trigger->getWebsite(),
-                    $trigger->getCustomerGroup(),
                     $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $trigger->isForce());
+                $this->combinedPriceListsBuilderFacade->rebuildForWebsites(
+                    [$trigger->getWebsite()],
+                    $trigger->isForce()
+                );
                 break;
             default:
-                $this->commonPriceListsBuilder->build($trigger->isForce());
-        }
-    }
-
-    protected function dispatchChangeAssociationEvents()
-    {
-        $this->dispatchCustomerScopeEvent();
-        $this->dispatchCustomerGroupScopeEvent();
-        $this->dispatchWebsiteScopeEvent();
-        $this->dispatchConfigScopeEvent();
-    }
-
-    protected function dispatchCustomerScopeEvent()
-    {
-        $customerBuildList = $this->customerPriceListsBuilder->getBuiltList();
-        $customerScope = isset($customerBuildList['customer']) ? $customerBuildList['customer'] : null;
-        if ($customerScope) {
-            $data = [];
-            foreach ($customerScope as $websiteId => $customers) {
-                $data[] = [
-                    'websiteId' => $websiteId,
-                    'customers' => array_filter(array_keys($customers)),
-                ];
-            }
-            $event = new CustomerCPLUpdateEvent($data);
-            $this->dispatcher->dispatch(CustomerCPLUpdateEvent::NAME, $event);
-        }
-    }
-
-    protected function dispatchCustomerGroupScopeEvent()
-    {
-        $customerGroupBuildList = $this->customerGroupPriceListsBuilder->getBuiltList();
-        if ($customerGroupBuildList) {
-            $data = [];
-            foreach ($customerGroupBuildList as $websiteId => $customerGroups) {
-                $data[] = [
-                    'websiteId' => $websiteId,
-                    'customerGroups' => array_filter(array_keys($customerGroups)),
-                ];
-            }
-            $event = new CustomerGroupCPLUpdateEvent($data);
-            $this->dispatcher->dispatch(CustomerGroupCPLUpdateEvent::NAME, $event);
-        }
-    }
-
-    protected function dispatchWebsiteScopeEvent()
-    {
-        $websiteBuildList = $this->websitePriceListsBuilder->getBuiltList();
-        if ($websiteBuildList) {
-            $event = new WebsiteCPLUpdateEvent(array_filter(array_keys($websiteBuildList)));
-            $this->dispatcher->dispatch(WebsiteCPLUpdateEvent::NAME, $event);
-        }
-    }
-
-    protected function dispatchConfigScopeEvent()
-    {
-        if ($this->commonPriceListsBuilder->isBuilt()) {
-            $event = new ConfigCPLUpdateEvent();
-            $this->dispatcher->dispatch(ConfigCPLUpdateEvent::NAME, $event);
+                $this->combinedPriceListsBuilderFacade->rebuildAll($trigger->isForce());
         }
     }
 
@@ -236,13 +156,5 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     public static function getSubscribedTopics()
     {
         return [Topics::REBUILD_COMBINED_PRICE_LISTS];
-    }
-
-    protected function resetCache()
-    {
-        $this->commonPriceListsBuilder->resetCache();
-        $this->websitePriceListsBuilder->resetCache();
-        $this->customerGroupPriceListsBuilder->resetCache();
-        $this->customerPriceListsBuilder->resetCache();
     }
 }

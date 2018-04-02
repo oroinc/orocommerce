@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class CustomerGroupFormViewListener extends AbstractFormViewListener
 {

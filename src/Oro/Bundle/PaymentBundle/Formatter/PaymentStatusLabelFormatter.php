@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentStatusLabelFormatter

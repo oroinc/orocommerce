@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 
 class CombinedPriceListToCustomerGroupRepository extends PriceListToCustomerGroupRepository

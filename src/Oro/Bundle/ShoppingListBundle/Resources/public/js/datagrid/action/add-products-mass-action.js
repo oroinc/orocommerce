@@ -19,6 +19,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AddProductsAction() {
+            AddProductsAction.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
 
@@ -58,7 +65,9 @@ define(function(require) {
 
             widget.on('formSave', _.bind(function(response) {
                 datagrid.resetSelectionState(selectionState);
-                this._onSaveHandleWidget(response, datagrid);
+                this.listenToOnce(datagrid.massActions, 'reset', function() {
+                    this._onSaveHandleWidget(response, datagrid);
+                });
             }, this));
         },
 

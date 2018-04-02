@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
 
 class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 {

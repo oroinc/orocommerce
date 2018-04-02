@@ -621,7 +621,6 @@ Feature: Commerce smoke e2e
     And I signed in as BrandaJSanborn1@example.org on the store frontend
     And click "Phones"
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
-      |Unit    |item|
       |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
@@ -647,7 +646,6 @@ Feature: Commerce smoke e2e
     And click "Phones"
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|112 |
-      |Unit    |item|
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
     When I hover on "Shopping Cart"
     And click "New Front Shopping List"

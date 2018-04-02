@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 /**
  * {@inheritdoc}
@@ -28,7 +27,7 @@ class InvoiceLineItemsCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => InvoiceLineItemType::NAME,
+            'entry_type' => InvoiceLineItemType::NAME,
             'show_form_when_empty' => true,
             'error_bubbling' => false,
             'prototype_name' => '__nameinvoicelineitem__'

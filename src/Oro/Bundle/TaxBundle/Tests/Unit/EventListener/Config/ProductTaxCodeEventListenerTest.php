@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
 {

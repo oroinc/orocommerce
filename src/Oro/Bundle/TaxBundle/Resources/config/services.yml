@@ -28,7 +28,7 @@ services:
         class: Oro\Bundle\TaxBundle\Autocomplete\SearchHandler
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - %oro_tax.entity.product_tax_code.class%
+            - '%oro_tax.entity.product_tax_code.class%'
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
@@ -529,6 +529,7 @@ services:
             - '@translator'
             - '@oro_tax.provider.tax_provider_registry'
             - '@oro_tax.factory.tax'
+            - '@oro_tax.provider.taxation_settings_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
 
@@ -572,7 +573,7 @@ services:
             - "@oro_entity.doctrine_helper"
 
     oro_tax.event_listener.import_export_tax_subscriber:
-        class: %oro_tax.event_subscriber.import_export_tax_subscriber.class%
+        class: '%oro_tax.event_subscriber.import_export_tax_subscriber.class%'
         arguments:
             - '@translator'
             - '@oro_tax.manager.oro.customer_tax_code_manager'

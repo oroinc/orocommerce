@@ -3,14 +3,13 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
-use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 
 class TransitionProviderTest extends \PHPUnit_Framework_TestCase

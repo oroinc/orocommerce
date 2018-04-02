@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductShippingOptionsType extends AbstractType
 {

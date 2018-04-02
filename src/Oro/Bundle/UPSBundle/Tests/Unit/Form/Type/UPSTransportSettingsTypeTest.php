@@ -3,10 +3,9 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
@@ -22,9 +21,9 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -85,7 +84,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
+            ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -94,7 +93,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'OroAddressBundle:Country' => ['US' => $country],
         ];
 
-        $translatableEntity->expects(static::any())->method('setDefaultOptions')->will(
+        $translatableEntity->expects(static::any())->method('configureOptions')->will(
             static::returnCallback(
                 function (OptionsResolver $resolver) use ($choices) {
                     $choiceList = function (Options $options) use ($choices) {
@@ -151,8 +150,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     'entity' => $entityType,
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
+                    TranslatableEntityType::class => $translatableEntity,
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,

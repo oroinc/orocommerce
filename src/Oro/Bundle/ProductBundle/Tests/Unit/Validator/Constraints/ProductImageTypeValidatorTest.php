@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType as ProductImageTypeConstraint;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
 use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
 {

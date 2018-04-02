@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
-use Symfony\Component\Yaml\Yaml;
-
 use Doctrine\Common\Util\Inflector;
 use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
+use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
 {

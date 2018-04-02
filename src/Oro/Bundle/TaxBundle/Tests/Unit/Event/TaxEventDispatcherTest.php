@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TaxEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {

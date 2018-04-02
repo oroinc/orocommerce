@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\EventListener\UnitVisibilityModeDataGridListener;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 class UnitVisibilityModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
 {

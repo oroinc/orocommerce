@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -62,6 +63,14 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             $priceListToProduct->getPriceList(),
             [$priceListToProduct->getProduct()]
         );
+    }
+
+    /**
+     * @param PriceListToProductSaveAfterEvent $event
+     */
+    public function onPriceListToProductSave(PriceListToProductSaveAfterEvent $event)
+    {
+        $this->postPersist($event->getPriceListToProduct());
     }
 
     /**

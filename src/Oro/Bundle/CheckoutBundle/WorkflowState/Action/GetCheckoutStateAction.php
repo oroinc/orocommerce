@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Action;
 
-use Oro\Component\ConfigExpression\ContextAccessor;
+use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
+use Oro\Component\ConfigExpression\ContextAccessor;
 
 /**
  * Get checkout state from the storage

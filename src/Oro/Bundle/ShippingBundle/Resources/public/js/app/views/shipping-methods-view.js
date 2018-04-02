@@ -15,6 +15,16 @@ define(function(require) {
             template: ''
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShippingMethodsView() {
+            ShippingMethodsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ShippingMethodsView.__super__.initialize.apply(this, arguments);
 

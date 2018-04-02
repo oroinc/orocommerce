@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer;
 use Oro\Bundle\ProductBundle\Entity\Product;

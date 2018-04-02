@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request;
 
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
 
 class SaleRequest extends AbstractRequest

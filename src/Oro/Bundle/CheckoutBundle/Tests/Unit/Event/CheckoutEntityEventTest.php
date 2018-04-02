@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Event;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
 {

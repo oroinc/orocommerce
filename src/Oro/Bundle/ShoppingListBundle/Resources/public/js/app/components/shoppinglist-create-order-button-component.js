@@ -7,7 +7,11 @@ define(function(require) {
     var ShoppingListCreateOrderButtonComponent;
 
     ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
-        hasEmptyMatrix: false,
+        hasEmptyMatrix: null,
+
+        shoppingListCollection: null,
+
+        lineItemsCount: null,
 
         /**
          * @type {Object}
@@ -19,12 +23,35 @@ define(function(require) {
             cancelText: __('oro.shoppinglist.create_order_confirmation.cancel_button_title')
         },
 
+        listen: {
+            'line-items-init mediator': '_onLineItemsInit'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListCreateOrderButtonComponent() {
+            ShoppingListCreateOrderButtonComponent.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
             return ShoppingListCreateOrderButtonComponent.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * Listen line items init process
+         *
+         * @param {Array} lineItems
+         * @private
+         */
+        _onLineItemsInit: function(lineItems) {
+            this.lineItemsCount = lineItems.filter(function(lineItem) {
+                return lineItem.$el.attr('class').indexOf('--configurable') === -1;
+            }).length;
         },
 
         /**
@@ -45,7 +72,10 @@ define(function(require) {
         },
 
         showConfirmation: function(callback) {
-            if (!this.hasEmptyMatrix) {
+            if (
+                (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
+                (!this.hasEmptyMatrix) // not empty matrix or it doesn't exist in SL
+            ) {
                 callback();
                 return;
             }

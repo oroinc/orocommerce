@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;

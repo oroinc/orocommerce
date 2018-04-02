@@ -66,7 +66,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $parentProduct;
 
@@ -76,6 +76,20 @@ class OrderLineItem extends ExtendOrderLineItem implements
      * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="product_name", type="string", length=255, nullable=true)
+     */
+    protected $productName;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="product_variant_fields", type="array", nullable=true)
+     */
+    protected $productVariantFields = [];
 
     /**
      * @var string
@@ -262,6 +276,42 @@ class OrderLineItem extends ExtendOrderLineItem implements
     public function getProductSku()
     {
         return $this->productSku;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductName()
+    {
+        return (string)$this->productName;
+    }
+
+    /**
+     * @param string $productName
+     *
+     * @return $this
+     */
+    public function setProductName($productName)
+    {
+        $this->productName = $productName;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductVariantFields()
+    {
+        return (array)$this->productVariantFields;
+    }
+
+    /**
+     * @param array|null $productVariantFields
+     */
+    public function setProductVariantFields(array $productVariantFields = null)
+    {
+        $this->productVariantFields = $productVariantFields;
     }
 
     /**
@@ -548,8 +598,16 @@ class OrderLineItem extends ExtendOrderLineItem implements
 
     protected function updateItemInformation()
     {
-        if ($this->getProduct()) {
-            $this->productSku = $this->getProduct()->getSku();
+        $product = $this->getProduct();
+
+        if ($product) {
+            $this->productSku = $product->getSku();
+
+            if ($this->getParentProduct()) {
+                $product = $this->getParentProduct();
+            }
+
+            $this->productName = $product->getDenormalizedDefaultName();
         }
 
         if ($this->getProductUnit()) {

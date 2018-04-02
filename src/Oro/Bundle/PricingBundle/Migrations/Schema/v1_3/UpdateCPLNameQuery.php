@@ -3,12 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Connection;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class UpdateCPLNameQuery implements MigrationQuery, ConnectionAwareInterface
 {

@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
+use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
+use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
-use Oro\Bundle\TaxBundle\Form\Type\TaxType;
-use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
-use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
-use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
-use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
+use Symfony\Component\Form\PreloadedExtension;
 
 class TaxRuleTypeTest extends FormIntegrationTestCase
 {

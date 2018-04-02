@@ -8,7 +8,6 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractEngine implements EngineInterface

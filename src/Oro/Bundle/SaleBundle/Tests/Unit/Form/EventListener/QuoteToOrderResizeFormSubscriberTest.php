@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 {

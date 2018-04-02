@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Element;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 

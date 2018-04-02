@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteProductFormatter
 {

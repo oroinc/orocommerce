@@ -6,10 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -20,7 +17,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -83,6 +79,11 @@ class ShoppingListManager
     protected $productVariantProvider;
 
     /**
+     * @var GuestShoppingListManager
+     */
+    private $guestShoppingListManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
@@ -116,6 +117,14 @@ class ShoppingListManager
         $this->aclHelper = $aclHelper;
         $this->cache = $cache;
         $this->productVariantProvider = $productVariantProvider;
+    }
+
+    /**
+     * @param GuestShoppingListManager $guestShoppingListManager
+     */
+    public function setGuestShoppingListManager(GuestShoppingListManager $guestShoppingListManager)
+    {
+        $this->guestShoppingListManager = $guestShoppingListManager;
     }
 
     /**
@@ -321,8 +330,8 @@ class ShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
-            return $this->getShoppingListForCustomerVisitor();
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return $this->guestShoppingListManager->getShoppingListForCustomerVisitor();
         }
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
@@ -341,49 +350,6 @@ class ShoppingListManager
     }
 
     /**
-     * @return ShoppingList
-     */
-    private function getShoppingListForCustomerVisitor()
-    {
-        /** @var CustomerVisitor $customerVisitor */
-        $customerVisitor = $this->tokenStorage->getToken()->getVisitor();
-
-        /** @var EntityManager $em */
-        $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
-
-        /** @var ShoppingList $shoppingList */
-        foreach ($customerVisitor->getShoppingLists() as $shoppingList) {
-            if (!$website = $shoppingList->getWebsite()) {
-                continue;
-            }
-            if ($website->getId() === $this->getWebsiteId()) {
-                return $shoppingList->setCurrent(true);
-            }
-        }
-
-        //Create new SL if no one still exists
-        $shoppingList = new ShoppingList();
-        $website = $this->websiteManager->getCurrentWebsite();
-        $shoppingList
-            ->setOrganization($website->getOrganization())
-            ->setCustomer(null)
-            ->setCustomerUser(null)
-            ->setWebsite($website)
-            ->setCurrent(true);
-
-        $shoppingList->setLabel($this->translator->trans('oro.shoppinglist.default.label'));
-
-        $em->persist($shoppingList);
-        $em->flush($shoppingList);
-
-        //Link customer visitor to shopping list
-        $customerVisitor->addShoppingList($shoppingList);
-        $em->flush($customerVisitor);
-
-        return $shoppingList;
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @param bool $create
      * @param string $label
@@ -391,8 +357,8 @@ class ShoppingListManager
      */
     public function getCurrent($create = false, $label = '')
     {
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
-            return $this->getShoppingListForCustomerVisitor();
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return $this->guestShoppingListManager->getShoppingListForCustomerVisitor();
         }
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
@@ -436,18 +402,18 @@ class ShoppingListManager
 
     /**
      * @param array $sortCriteria
-     * @return array
+     * @return ShoppingList[]
      */
     public function getShoppingLists(array $sortCriteria = [])
     {
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return [$this->guestShoppingListManager->getShoppingListForCustomerVisitor()];
+        }
+
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
-            return [$this->getShoppingListForCustomerVisitor()];
-        }
-
-        return $repository->findByUser($this->aclHelper, $sortCriteria, $this->getWebsiteId());
+        return $repository->findByUser($this->aclHelper, $sortCriteria, null, $this->getWebsiteId());
     }
 
     /**
@@ -456,8 +422,8 @@ class ShoppingListManager
      */
     public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
     {
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
-            return [$this->getShoppingListForCustomerVisitor()];
+        if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
+            return [$this->guestShoppingListManager->getShoppingListForCustomerVisitor()];
         }
         $shoppingLists = [];
         $currentShoppingList = $this->getCurrent();

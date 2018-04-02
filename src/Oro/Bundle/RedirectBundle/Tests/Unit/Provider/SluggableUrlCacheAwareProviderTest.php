@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
+use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider;
 
 class SluggableUrlCacheAwareProviderTest extends \PHPUnit_Framework_TestCase

@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\EventListener\AbstractCustomerFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use Oro\Bundle\PricingBundle\EventListener\AbstractCustomerFormViewListener;
 
 abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTestCase
 {

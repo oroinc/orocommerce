@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Provider;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -11,6 +9,7 @@ use Oro\Bundle\EntityBundle\Exception\Fallback\FallbackFieldConfigurationMissing
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ProductUpcomingProvider
 {

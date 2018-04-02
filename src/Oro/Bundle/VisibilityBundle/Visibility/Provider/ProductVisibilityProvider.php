@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
-
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityProvider
@@ -179,13 +178,13 @@ class ProductVisibilityProvider
 
         $qb
             ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %s ELSE %s END as visibility_new',
+                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_new',
                 $productVisibilityTerm,
                 BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 BaseVisibilityResolved::VISIBILITY_HIDDEN
             ))
             ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %s ELSE %s END as visibility_anonymous',
+                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_anonymous',
                 $anonymousGroupVisibilityTerm,
                 BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 BaseVisibilityResolved::VISIBILITY_HIDDEN
@@ -474,7 +473,8 @@ class ProductVisibilityProvider
 
         $queryBuilder
             ->select('product.id as productId')
-            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, $defaultVisibility))
+            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, ':defaultVisibility'))
+            ->setParameter('defaultVisibility', $defaultVisibility)
             ->addOrderBy('product.id');
 
         $productsResult = $queryBuilder->getQuery()->getArrayResult();

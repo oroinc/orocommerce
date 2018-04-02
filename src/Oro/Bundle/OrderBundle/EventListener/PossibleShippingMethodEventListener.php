@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
+use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
-use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 
 class PossibleShippingMethodEventListener
 {

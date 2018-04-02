@@ -15,7 +15,14 @@ define([
      * @class   oro.filter.FrontendProductPriceFilter
      * @extends oro.filter.ProductPriceFilter
      */
-    FrontendProductPriceFilter = ProductPriceFilter.extend({});
+    FrontendProductPriceFilter = ProductPriceFilter.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function FrontendProductPriceFilter() {
+            FrontendProductPriceFilter.__super__.constructor.apply(this, arguments);
+        }
+    });
 
     return FrontendProductPriceFilter;
 });

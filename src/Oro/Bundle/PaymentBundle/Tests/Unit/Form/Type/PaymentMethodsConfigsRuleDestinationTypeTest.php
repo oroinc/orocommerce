@@ -2,22 +2,23 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
@@ -163,8 +164,11 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
             new PreloadedExtension(
                 [
                     'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
+                    'oro_select2_translatable_entity' => new Select2Type(
+                        'translatable_entity',
+                        'oro_select2_translatable_entity'
+                    ),
+                    TranslatableEntityType::class => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [

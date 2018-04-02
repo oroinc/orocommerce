@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormView;
 use Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 
 class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
 {

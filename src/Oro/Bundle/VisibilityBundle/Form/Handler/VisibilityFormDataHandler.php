@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Handler;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityFormDataHandler
 {

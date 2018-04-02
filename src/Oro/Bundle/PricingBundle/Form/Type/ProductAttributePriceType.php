@@ -2,33 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-
+/**
+ * Adds price value field and handles mapping it correct
+ */
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
-
-    /**
-     * @var RoundingServiceInterface
-     */
-    protected $roundingService;
-
-    /**
-     * @param RoundingServiceInterface $roundingService
-     */
-    public function __construct(RoundingServiceInterface $roundingService)
-    {
-        $this->roundingService = $roundingService;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -37,9 +25,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::PRICE, 'number', [
-            'scale' => $this->roundingService->getPrecision(),
-            'rounding_mode' => $this->roundingService->getRoundType(),
-            'attr' => ['data-scale' => $this->roundingService->getPrecision()]
+            'scale' => Price::MAX_VALUE_SCALE
         ])
             ->setDataMapper($this);
     }

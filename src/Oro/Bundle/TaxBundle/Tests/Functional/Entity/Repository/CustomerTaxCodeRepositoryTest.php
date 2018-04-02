@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes as TaxFixture;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

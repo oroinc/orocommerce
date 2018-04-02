@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Checker;
 
+use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker;
 
 class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_TestCase
 {

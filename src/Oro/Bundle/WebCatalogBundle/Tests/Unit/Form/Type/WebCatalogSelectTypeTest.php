@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,7 +32,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->formType->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
@@ -55,6 +55,6 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 }

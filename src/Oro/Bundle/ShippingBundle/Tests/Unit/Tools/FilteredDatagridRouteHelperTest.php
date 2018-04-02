@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Helper;
 
-use Symfony\Component\Routing\RouterInterface;
 use Oro\Bundle\DataGridBundle\Extension\Pager\PagerInterface;
 use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper;
+use Symfony\Component\Routing\RouterInterface;
 
 class FilteredDatagridRouteHelperTest extends \PHPUnit_Framework_TestCase
 {

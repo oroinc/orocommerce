@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 class ProductPriceTest extends WebTestCase
 {

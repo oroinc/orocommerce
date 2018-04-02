@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit_Framework_TestCase
 {

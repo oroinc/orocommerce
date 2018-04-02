@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Event;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Symfony\Component\EventDispatcher\Event;
 
 class ProductsChangeRelationEvent extends Event

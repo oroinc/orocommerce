@@ -6,19 +6,16 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
-
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
-
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddRowCollectionBuilder
 {
@@ -67,11 +64,8 @@ class QuickAddRowCollectionBuilder
     public function buildFromRequest(Request $request)
     {
         $collection = new QuickAddRowCollection();
-        $products = $request->request->get(
-            QuickAddType::NAME . '[' . QuickAddType::PRODUCTS_FIELD_NAME . ']',
-            [],
-            true
-        );
+        $formData = $request->request->get(QuickAddType::NAME);
+        $products = $formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? [];
 
         if (!is_array($products) || empty($products)) {
             return $collection;

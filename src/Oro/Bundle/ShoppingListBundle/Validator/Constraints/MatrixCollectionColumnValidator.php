@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class MatrixCollectionColumnValidator extends ConstraintValidator
 {

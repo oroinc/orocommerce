@@ -5,8 +5,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceListRelations;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -24,6 +27,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->loadFixtures([
             LoadPriceListRelations::class,
             LoadProductPrices::class,
+            LoadDependentPriceLists::class,
+            LoadDependentPriceListRelations::class,
             LoadPriceListFallbackSettings::class,
         ]);
     }
@@ -36,6 +41,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
      * @param array $websites
      * @param array $customerGroups
      * @param array $customers
+     * @param array $priceLists
      */
     public function testCommand(
         $expectedMessage,
@@ -43,7 +49,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $expectedCount,
         array $websites = [],
         array $customerGroups = [],
-        array $customers = []
+        array $customers = [],
+        array $priceLists = []
     ) {
         $this->clearCombinedPrices();
         $this->assertCombinedPriceCount(0);
@@ -66,6 +73,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
 
         foreach ($customers as $customerName) {
             $params[] = '--customer='.$this->getReference($customerName)->getId();
+        }
+
+        foreach ($priceLists as $priceListName) {
+            $params[] = '--price-list='.$this->getReference($priceListName)->getId();
         }
 
         if (false !== array_search('--disable-triggers', $params, true)) {
@@ -94,12 +105,12 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all'],
-                'expectedCount' => 40 // 2 + 38 = config + website1
+                'expectedCount' => 64 // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
             ],
             'all with triggers off' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--disable-triggers'],
-                'expectedCount' => 40 // 2 + 38 = config + website1
+                'expectedCount' => 64 // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
             ],
             'empty run' => [
                 'expected_message' => 'ATTENTION',
@@ -146,15 +157,33 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
             ],
+            'price_list_1' => [
+                'expected_message' => 'Start the process',
+                'params' => [],
+                'expectedCount' => 60,
+                'website' => [],
+                'customerGroup' => [],
+                'customer' => [],
+                'priceLists'=> [LoadPriceLists::PRICE_LIST_1]
+            ],
+            'price_list_1 with dependant' => [
+                'expected_message' => 'Start the process',
+                'params' => ['--include-dependent'],
+                'expectedCount' => 62,
+                'website' => [],
+                'customerGroup' => [],
+                'customer' => [],
+                'priceLists'=> [LoadPriceLists::PRICE_LIST_1]
+            ],
             'verbosity_verbose' => [
                 'expected_message' => 'Processing combined price list id:',
                 'params' => ['--all', '-v'],
-                'expectedCount' => 40
+                'expectedCount' => 64
             ],
             'verbosity_very_verbose' => [
                 'expected_message' => 'Processing price list:',
                 'params' => ['--all', '-vv'],
-                'expectedCount' => 40
+                'expectedCount' => 64
             ],
         ];
     }

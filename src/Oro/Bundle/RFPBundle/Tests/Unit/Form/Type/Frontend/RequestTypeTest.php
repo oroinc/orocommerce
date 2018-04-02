@@ -2,32 +2,26 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
-
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -238,7 +232,7 @@ class RequestTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $requestProductType->getName()          => $requestProductType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
+                    CurrencySelectionType::class            => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     $customerUserMultiSelectType->getName()  => $customerUserMultiSelectType,

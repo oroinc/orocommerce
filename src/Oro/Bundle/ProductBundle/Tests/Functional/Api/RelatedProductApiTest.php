@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadUserData as CatalogLoadUserData;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\LoadUserData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -3,12 +3,12 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {

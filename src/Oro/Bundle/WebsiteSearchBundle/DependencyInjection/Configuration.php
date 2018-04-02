@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
+use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfiguration;
 
 class Configuration implements ConfigurationInterface
 {

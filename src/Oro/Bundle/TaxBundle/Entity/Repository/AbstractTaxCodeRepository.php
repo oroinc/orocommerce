@@ -4,9 +4,8 @@ namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -72,6 +71,7 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
     protected function getFindOneByEntityQuery($type, $id)
     {
         $type = (string)$type;
+        QueryBuilderUtil::checkIdentifier($type);
 
         $alias = sprintf('%s%s', $type, self::ALIAS_SUFFIX);
         $field = $this->getInflector()->camelize($this->getInflector()->pluralize($type));

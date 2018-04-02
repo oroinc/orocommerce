@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CatalogVisibilityTypeTest extends FormIntegrationTestCase
 {

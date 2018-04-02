@@ -23,6 +23,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
@@ -43,9 +44,9 @@ class PageTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
-        $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
@@ -133,7 +134,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()

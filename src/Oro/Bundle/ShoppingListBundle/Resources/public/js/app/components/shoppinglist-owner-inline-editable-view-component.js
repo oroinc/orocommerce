@@ -10,6 +10,13 @@ define(function(require) {
 
     ShoppingListOwnerInlineEditableViewComponent = ViewComponent.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListOwnerInlineEditableViewComponent() {
+            ShoppingListOwnerInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

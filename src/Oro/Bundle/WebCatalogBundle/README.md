@@ -1,20 +1,13 @@
-Oro\Bundle\WebCatalogBundle\OroWebCatalogBundle
-===============================================
+# OroWebCatalogBundle
 
-Table of Contents
------------------
- - [Description](#description)
+OroWebCatalogBundle enables the OroCommerce management console administrators to set a different structure and content of the storefront for individual customers, customer groups, or all visitors of the website by combining product pages, category pages, system pages, and product collections into custom catalogs for these audiences.
+
+## Table of Contents
+
  - [Breadcrumbs](#breadcrumbs)
  - [How to create own content variant](#how-to-create-own-content-variant)
 
-Description
-------------
-
-The OroWebCatalogBundle introduces ability to manage multiple WebCatalogs from the UI.
-
-
-Breadcrumbs
-------------
+## Breadcrumbs
 
 With OroWebCatalogBundle you can override the default breadcrumbs data source.
 
@@ -43,8 +36,7 @@ will like look following:
 WebCatalog <name of the webcatalog> \ Medical Apparel \ Medical Uniforms
 ```
 
-How to create own content variant:
----------------------------------
+## How to create own content variant:
 
 There are 5 content variant types registered out of the box:
 - System page
@@ -189,9 +181,9 @@ For render `Add Content Variant` dropdown button with all available content vari
 As a result, you will have possibility to add content node variant for your entity.
 And rendering this content variant on store frontend according selected scopes.
 
-### Default content variant ###
+### Default content variant
 Each content variant of content node may be selected as default using `ContentVariant` `is_default` flag.
 It's mean that if Content Node has scopes not assigned to any Content Variant of this node, that scopes will be assigned to content variant marked as default.
 
-### Sitemap ###
+### Sitemap
 For adding created content variant to Sitemap you should create appropriate provider. Please see OroSeoBundle documentation, section Sitemap.

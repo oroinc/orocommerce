@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
-use Symfony\Component\Form\PreloadedExtension;
 
 class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
@@ -73,10 +74,13 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    'oro_select2_choice' => new Select2Type(
+                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
+                        'oro_select2_choice'
+                    ),
                     OroChoiceType::NAME => new OroChoiceType(),
                     CategoryTreeType::NAME => new CategoryTreeType($treeHandler),
-                    'oro_entity_identifier' => new EntityIdentifierType(
+                    BaseEntityIdentifierType::class => new EntityIdentifierType(
                         [
                             1001 => $this->getCategory(1001),
                             2002 => $this->getCategory(2002),

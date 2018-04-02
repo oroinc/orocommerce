@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class ProductFormViewListener extends AbstractFormViewListener
 {

@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
 {

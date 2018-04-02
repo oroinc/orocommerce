@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
@@ -124,6 +124,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
         $type = $this->createMock(ResolvedFormTypeInterface::class);
         $type->expects($this->any())->method('getName')->willReturn('entity');
+        $type->expects($this->any())->method('getInnerType')->willReturn(new EntityType([]));
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())->method('getOptions')->willReturn([]);
@@ -142,7 +143,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
             ),
             $this->logicalAnd(
                 $this->isType('string'),
-                $this->equalTo('entity')
+                $this->equalTo(EntityType::class)
             ),
             $this->logicalAnd(
                 $this->isType('array'),

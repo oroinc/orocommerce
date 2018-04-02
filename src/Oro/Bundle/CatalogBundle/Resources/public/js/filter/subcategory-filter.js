@@ -36,6 +36,14 @@ define(function(require) {
             'metadata-loaded': 'onMetadataLoaded'
         },
 
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function SubcategoryFilter() {
+            SubcategoryFilter.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @inheritDoc
          */

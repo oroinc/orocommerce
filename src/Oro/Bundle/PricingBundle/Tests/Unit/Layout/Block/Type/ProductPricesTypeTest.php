@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\Block\Type;
 
-use Symfony\Component\ExpressionLanguage\Expression;
-
-use Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
-use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
-use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
-use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-
+use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
+use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
+use Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Layout\Block\Type\ContainerType;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
+use Symfony\Component\ExpressionLanguage\Expression;
 
 class ProductPricesTypeTest extends BlockTypeTestCase
 {

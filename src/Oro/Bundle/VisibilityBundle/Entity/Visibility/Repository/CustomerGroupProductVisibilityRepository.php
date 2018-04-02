@@ -3,9 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
-
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 
 class CustomerGroupProductVisibilityRepository extends AbstractProductVisibilityRepository
 {

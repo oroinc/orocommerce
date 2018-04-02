@@ -9,6 +9,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function PriceListsComponent() {
+            PriceListsComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             var $el = options._sourceElement;
             $el.find('input[type="hidden"]').on('change', function(e) {

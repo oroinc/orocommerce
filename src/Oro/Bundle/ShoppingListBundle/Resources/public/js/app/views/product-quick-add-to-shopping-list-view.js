@@ -6,6 +6,16 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductQuickAddToShoppingListView() {
+            ProductQuickAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ProductQuickAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.options.quickAddComponentPrefix = options.quickAddComponentPrefix;

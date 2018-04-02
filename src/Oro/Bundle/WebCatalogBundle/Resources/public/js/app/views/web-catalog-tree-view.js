@@ -27,6 +27,13 @@ define(function(require) {
          */
         confirmState: true,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function WebCatalogTreeView() {
+            WebCatalogTreeView.__super__.constructor.apply(this, arguments);
+        },
+
         onConfirmModalOk: function() {
             this._doMove(this.confirmState);
         },

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {

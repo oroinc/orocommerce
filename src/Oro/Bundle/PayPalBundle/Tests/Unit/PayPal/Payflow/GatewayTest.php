@@ -4,12 +4,12 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 
 class GatewayTest extends \PHPUnit_Framework_TestCase
 {

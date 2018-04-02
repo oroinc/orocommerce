@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class QuoteProductRequestType extends AbstractType
 {
@@ -39,7 +38,9 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.price.label',
-                    'read_only' => true,
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
@@ -48,8 +49,10 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
-                    'read_only' => true,
                     'compact' => $options['compact_units'],
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
@@ -58,8 +61,10 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.quantity.label',
-                    'read_only' => true,
                     'product_holder' => $builder->getData(),
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             );
     }
@@ -73,7 +78,7 @@ class QuoteProductRequestType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
-                'intention' => 'sale_quote_product_request',
+                'csrf_token_id' => 'sale_quote_product_request',
             ]
         );
     }

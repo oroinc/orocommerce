@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class TaxRuleTest extends \PHPUnit_Framework_TestCase
 {

@@ -22,7 +22,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * Request
+ * Request for Quote entity
  *
  * @ORM\Table("oro_rfp_request")
  * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestRepository")
@@ -47,7 +47,9 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_customer_field_name"="customer",
+ *              "frontend_customer_column_name"="customer_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

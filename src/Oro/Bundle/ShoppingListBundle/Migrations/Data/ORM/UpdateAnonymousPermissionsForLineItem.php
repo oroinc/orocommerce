@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class UpdateAnonymousPermissionsForLineItem extends AbstractUpdateCustomerUserRolePermissions
 {

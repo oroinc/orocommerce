@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class FeaturedCategoriesProvider
 {

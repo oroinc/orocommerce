@@ -24,6 +24,11 @@ oro:
             message: 'This shopping list contains configurable products with no variations. Proceed to checkout without these products?'
             accept_button_title: 'Proceed'
             cancel_button_title: 'Cancel'
+        create_rfp_confirmation:
+            title: 'Confirmation'
+            message: 'This shopping list contains configurable products with no variations. Proceed to RFQ without these products?'
+            accept_button_title: 'Proceed'
+            cancel_button_title: 'Cancel'
     frontend:
         shoppinglist:
             messages:

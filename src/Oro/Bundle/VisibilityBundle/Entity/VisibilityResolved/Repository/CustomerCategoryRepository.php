@@ -11,8 +11,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 
 /**
  * Composite primary key fields order:
@@ -354,11 +354,12 @@ class CustomerCategoryRepository extends EntityRepository
             return;
         }
 
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
             ->select(
                 'acv.id',
                 'IDENTITY(acv.category)',
-                (string)$visibility,
+                (string)$queryBuilder->expr()->literal($visibility),
                 (string)CustomerCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
                 'IDENTITY(acv.scope)'
             )
@@ -390,10 +391,10 @@ class CustomerCategoryRepository extends EntityRepository
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved', 'acvr')
-            ->set('acvr.visibility', $visibility)
+            ->set('acvr.visibility', ':visibility')
             ->where($qb->expr()->eq('acvr.scope', ':scope'))
             ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
-            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds, 'visibility' => $visibility]);
 
         $qb->getQuery()->execute();
     }

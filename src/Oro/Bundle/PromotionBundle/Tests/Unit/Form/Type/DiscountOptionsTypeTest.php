@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
@@ -15,9 +14,9 @@ use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -192,7 +191,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
@@ -226,7 +225,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testFinishView()
@@ -248,13 +247,6 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService
-            ->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
-
         /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
@@ -270,8 +262,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    MultiCurrencyType::NAME => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter)
                 ],
                 [

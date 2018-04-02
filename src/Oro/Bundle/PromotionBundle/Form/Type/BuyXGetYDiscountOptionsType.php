@@ -66,7 +66,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                     'choices' => $options['apply_to_choices'],
                     'required' => false,
                     'label' => 'oro.discount_options.buy_x_get_y_type.apply_to.label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                 ]
             )
             ->add(

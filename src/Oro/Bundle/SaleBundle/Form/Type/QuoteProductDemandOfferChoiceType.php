@@ -52,6 +52,7 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
             [
                 'expanded' => true,
                 'multiple' => false,
+                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                 'choices_as_values' => true,
                 'choice_label' => function ($value) {
                     $label = '';

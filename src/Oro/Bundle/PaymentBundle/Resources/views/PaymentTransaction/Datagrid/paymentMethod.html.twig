@@ -1,3 +1,3 @@
 {% set paymentMethod = record.getValue('paymentMethod') %}
 
-{{ get_payment_method_admin_label(paymentMethod) }}
+{{ get_payment_method_admin_label(paymentMethod)|oro_html_sanitize }}

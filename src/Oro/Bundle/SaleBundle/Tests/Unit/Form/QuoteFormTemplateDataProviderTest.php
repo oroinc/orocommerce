@@ -2,12 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
@@ -15,6 +9,11 @@ use Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Stub\ClassWithToString;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuoteFormTemplateDataProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,9 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @ORM\Table(name="oro_category_def_prod_opts")

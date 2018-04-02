@@ -27,7 +27,7 @@ datagrids:
                 title:
                     data_name: title
             default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                id: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 id:

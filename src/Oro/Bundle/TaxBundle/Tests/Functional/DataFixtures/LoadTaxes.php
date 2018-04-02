@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\TaxBundle\Entity\Tax;
 
 class LoadTaxes extends AbstractFixture

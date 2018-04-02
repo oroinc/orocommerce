@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository\RelatedItem;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadUpsellProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

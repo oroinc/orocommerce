@@ -49,7 +49,7 @@ class LineItemDiscountOptionsType extends AbstractType
             [
                 'choices' => $options['apply_to_choices'],
                 'label' => 'oro.discount_options.line_item_type.apply_to.label',
-                'empty_value' => false,
+                'placeholder' => false,
                 'required' => false,
             ]
         )

@@ -6,6 +6,13 @@ define(function(require) {
     var _ = require('underscore');
 
     MatrixGridAddToShoppingListView = ProductAddToShoppingListView.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function MatrixGridAddToShoppingListView() {
+            MatrixGridAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        },
+
         _saveLineItem: function(url, urlOptions, formData) {
             return this._addLineItem(url, urlOptions, formData);
         },

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductUnitValueExtension extends \Twig_Extension
 {

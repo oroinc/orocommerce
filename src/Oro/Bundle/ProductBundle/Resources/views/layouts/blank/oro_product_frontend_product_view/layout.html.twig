@@ -22,6 +22,7 @@
         'itemscope': '',
         'itemtype': 'http://schema.org/Product',
         'data-layout': 'separate',
+        'data-role': 'product-item',
         '~class': ' product-view ' ~ productTheme|default('default') ~ '-theme'
     }) %}
 
@@ -156,18 +157,18 @@
         'itemprop': 'name'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ translated_value|oro_tag_filter }}</h1>
+    <h1 {{ block('block_attributes') }}>{{ translated_value|oro_html_strip_tags }}</h1>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     <p class="sku">
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|oro_tag_filter }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|oro_html_strip_tags }}</span>
     </p>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_brand_widget %}
     <div class="brand">
-        <span class="product-view-brand">{{ 'oro.product.brand.entity_label'|trans }}:</span>
+        <span class="product-view-brand">{{ 'oro.product.brand.label'|trans }}:</span>
         <span class="product-view-brand-title" itemprop="brand">{{ block_widget(block) }}</span>
     </div>
 {% endblock %}

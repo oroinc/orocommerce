@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\Processor;
-
 use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Configuration;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

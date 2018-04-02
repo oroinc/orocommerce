@@ -8,7 +8,6 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Component\Routing\RouterInterface;
 
 class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase

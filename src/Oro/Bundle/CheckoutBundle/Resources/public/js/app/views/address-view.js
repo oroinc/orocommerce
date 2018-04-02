@@ -22,6 +22,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AddressView() {
+            AddressView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options);
 
@@ -54,20 +61,31 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
-            var disabled = this.needCheckAddressTypes ? this.$shipToBillingCheckbox.prop('checked') : false;
+            var disabled = false;
+            if (this.needCheckAddressTypes) {
+                disabled = this.$shipToBillingCheckbox.prop('checked') && this.$externalShipToBillingCheckbox;
+            }
+
             if (!disabled) {
                 this.$addressSelector.find('option.' + this.options.addedAddressOptionClass).remove();
             }
 
-            var isOneOption = this.$addressSelector[0].length === 1;
-            if (disabled || this._isFormVisible()) {
+            var isFormVisible = this._isFormVisible();
+            var showNewAddressForm = !disabled && isFormVisible;
+            this._handleNewAddressForm(showNewAddressForm);
+
+            if (!showNewAddressForm) {
                 this.$addressSelector.focus();
             }
-            this.$addressSelector.prop('disabled', isOneOption).inputWidget('refresh');
+
+            var isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();
+
+            this.$addressSelector.prop('disabled', disabled || isSelectorNotAvailable).inputWidget('refresh');
+
             mediator.trigger('checkout:ship_to_checkbox:changed', this.$shipToBillingCheckbox);
-            if (isOneOption) {
+            if (isSelectorNotAvailable) {
                 this.$addressSelector.inputWidget('dispose');
-                this.$addressSelector.hide();
+                this.$addressSelector.hide().attr('data-skip-input-widgets', true);
             }
 
             // if external checkbox exists - synchronize it
@@ -81,14 +99,30 @@ define(function(require) {
             }
         },
 
-        _handleExternalShipToBillingAddressCheckbox: function(e) {
+        /**
+         * @param {Boolean} show
+         * @private
+         */
+        _handleNewAddressForm: function(show) {
+            if (!this.$externalShipToBillingCheckbox) {
+                return;
+            }
+
+            if (show) {
+                this._showForm();
+            } else {
+                this._hideForm(true);
+            }
+        },
+
+        _handleExternalShipToBillingAddressCheckbox: function() {
             this.$shipToBillingCheckbox.prop(
                 'checked',
                 this.$externalShipToBillingCheckbox.prop('checked')
             ).trigger('change');
         },
 
-        _onAddressChanged: function(e) {
+        _onAddressChanged: function() {
             if (this._isFormVisible()) {
                 this._showForm();
             } else {
@@ -129,7 +163,11 @@ define(function(require) {
         },
 
         _isFormVisible: function() {
-            return this.$addressSelector[0].length === 1 || this.$addressSelector.val() === '0';
+            return this.$addressSelector.val() === '0';
+        },
+
+        _isOnlyOneOption: function() {
+            return this.$addressSelector[0].length === 1;
         },
 
         _showForm: function() {
@@ -140,9 +178,9 @@ define(function(require) {
             this.$fieldsContainer.removeClass('hidden');
         },
 
-        _hideForm: function() {
+        _hideForm: function(showCheckbox) {
             if (this.needCheckAddressTypes) {
-                if (_.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
+                if (showCheckbox || _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
                     this.shipToBillingContainer.removeClass('hidden');
                 } else {
                     this.$shipToBillingCheckbox.prop('checked', false);

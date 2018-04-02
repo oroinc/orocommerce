@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaymentTermApiTest extends RestJsonApiTestCase
 {

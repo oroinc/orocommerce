@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
 use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class TaxTypeTest extends FormIntegrationTestCase
 {

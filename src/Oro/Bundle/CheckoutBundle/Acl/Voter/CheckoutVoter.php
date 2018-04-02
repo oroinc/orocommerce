@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Acl\Voter;
 
+use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
@@ -28,6 +26,7 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
 
     /**
      * {@inheritdoc}
+     * TODO: change public to protected in scope of BAP-15236
      */
     public function supportsClass($class)
     {
@@ -43,11 +42,16 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
             return self::ACCESS_ABSTAIN;
         }
 
+        $authorizationChecker = $this->getAuthorizationChecker();
+        $class = $this->getEntityClass($object);
+        if (!$this->supportsClass($class)) {
+            return self::ACCESS_ABSTAIN;
+        }
+
         if (!in_array(self::ATTRIBUTE_CREATE, $attributes, true)) {
             return self::ACCESS_ABSTAIN;
         }
 
-        $authorizationChecker = $this->getAuthorizationChecker();
         if ($authorizationChecker->isGranted(BasicPermissionMap::PERMISSION_VIEW, $object)
             && $authorizationChecker->isGranted(sprintf(
                 '%s;entity:OroCheckoutBundle:Checkout',

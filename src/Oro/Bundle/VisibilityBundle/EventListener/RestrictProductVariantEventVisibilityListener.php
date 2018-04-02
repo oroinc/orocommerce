@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 /** This listener modify product variants queries with visibility conditions */
 class RestrictProductVariantEventVisibilityListener

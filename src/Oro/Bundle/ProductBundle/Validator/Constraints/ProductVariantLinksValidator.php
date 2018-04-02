@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductVariantLinksValidator extends ConstraintValidator
 {
@@ -58,7 +57,9 @@ class ProductVariantLinksValidator extends ConstraintValidator
     private function validateLinksWithoutFields(Product $value, ProductVariantLinks $constraint)
     {
         if (count($value->getVariantFields()) === 0 && $value->getVariantLinks()->count() !== 0) {
-            $this->context->addViolationAt('variantFields', $constraint->variantFieldRequiredMessage);
+            $this->context->buildViolation($constraint->variantFieldRequiredMessage)
+                ->atPath('variantFields')
+                ->addViolation();
         }
     }
 

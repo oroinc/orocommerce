@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
 {

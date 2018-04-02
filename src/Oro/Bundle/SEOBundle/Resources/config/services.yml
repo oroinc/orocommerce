@@ -53,11 +53,10 @@ services:
     oro_seo.layout.data_provider.webcatalog_title:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoTitleDataProvider
         decorates: oro_web_catalog.layout.data_provider.title_data
+        public: false
         arguments:
             - '@oro_seo.layout.data_provider.seo_data'
             - '@oro_seo.layout.data_provider.webcatalog_title.inner'
-        tags:
-            - { name: layout.data_provider, alias: web_catalog_title }
 
     oro_seo.layout.data_provider.localized_urls_data:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\LocalizedLinksDataProvider
@@ -167,7 +166,7 @@ services:
     oro_seo.sitemap.provider.url_items_provider_registry_index:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
         arguments:
-            - { index: @oro_seo.sitemap.provider.sitemap_files_provider }
+            - { index: '@oro_seo.sitemap.provider.sitemap_files_provider' }
 
     oro_seo.sitemap.sitemap_index_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper

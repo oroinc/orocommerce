@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 {

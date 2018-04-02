@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -20,7 +19,7 @@ class ProductStepOneType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'intention'            => 'product',
+            'csrf_token_id'        => 'product',
             'data_class'           => Product::class,
             'validation_groups'    => ['product_create_step_one'],
             'enable_attribute_family' => true,

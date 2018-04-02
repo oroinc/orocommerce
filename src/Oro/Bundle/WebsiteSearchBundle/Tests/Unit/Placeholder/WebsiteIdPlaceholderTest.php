@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 {

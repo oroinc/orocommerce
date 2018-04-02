@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductContentVariants;

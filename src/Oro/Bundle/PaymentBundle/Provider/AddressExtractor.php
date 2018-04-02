@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 
 class AddressExtractor
 {

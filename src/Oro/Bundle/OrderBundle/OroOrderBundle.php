@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\OrderBundle\DependencyInjection\OroOrderExtension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroOrderBundle extends Bundle
 {

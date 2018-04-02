@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UnitVisibilityExtension extends \Twig_Extension
 {

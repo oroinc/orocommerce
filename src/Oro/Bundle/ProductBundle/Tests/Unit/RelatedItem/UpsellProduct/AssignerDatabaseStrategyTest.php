@@ -4,8 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\UpsellProduct;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
@@ -13,6 +11,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\AssignerDatabaseStrategy;
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 {

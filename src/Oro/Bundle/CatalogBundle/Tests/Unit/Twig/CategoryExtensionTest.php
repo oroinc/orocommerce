@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class CategoryExtensionTest extends \PHPUnit_Framework_TestCase

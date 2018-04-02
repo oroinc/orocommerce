@@ -3,7 +3,6 @@ define(function(require) {
 
     var BaseProductMatrixView;
     var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var PricesHelper = require('oropricing/js/app/prices-helper');
     var ScrollView = require('orofrontend/js/app/views/scroll-view');
@@ -11,25 +10,17 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    BaseProductMatrixView = BaseView.extend(_.extend({}, ElementsHelper, {
-        autoRender: true,
+    BaseProductMatrixView = BaseView.extend({
+        autoRender: false,
 
         optionNames: BaseView.prototype.optionNames.concat([
             'dimension'
         ]),
 
-        elements: {
-            fields: '[data-name="field__quantity"]:enabled',
-            totalQty: '[data-role="total-quantity"]',
-            totalPrice: '[data-role="total-price"]',
-            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]',
-            clearButton: '[data-role="clear"]'
-        },
-
-        elementsEvents: {
-            'fields input': ['input', '_onQuantityChange'],
-            'fields change': ['change', '_onQuantityChange'],
-            'clearButton': ['click', 'clearForm']
+        events: {
+            'input [data-name="field__quantity"]:enabled': '_onQuantityChange',
+            'change [data-name="field__quantity"]:enabled': '_onQuantityChange',
+            'click [data-role="clear"]': 'clearForm'
         },
 
         total: null,
@@ -43,11 +34,17 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BaseProductMatrixView() {
+            BaseProductMatrixView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.apply(this, arguments);
             this.initModel(options);
             this.setPrices(options);
-            this.initializeElements(options);
             if (_.isDesktop()) {
                 if (this.dimension === 1) {
                     this.subview('fitMatrixView', new FitMatrixView({
@@ -78,7 +75,6 @@ define(function(require) {
             delete this.total;
             delete this.minValue;
 
-            this.disposeElements();
             BaseProductMatrixView.__super__.dispose.apply(this, arguments);
         },
 
@@ -122,6 +118,7 @@ define(function(require) {
             }
 
             this.updateTotal($(event.currentTarget));
+            this.checkClearButtonVisibility();
             this.render();
         },
 
@@ -129,7 +126,7 @@ define(function(require) {
          * Update all totals
          */
         updateTotals: function() {
-            _.each(this.getElement('fields'), function(element) {
+            _.each(this.$('[data-name="field__quantity"]:enabled'), function(element) {
                 this.updateTotal($(element));
             }, this);
         },
@@ -220,10 +217,9 @@ define(function(require) {
          * Update totals
          */
         render: function() {
-            this.checkClearButtonVisibility();
-            this.getElement('totalQty').text(this.total.quantity);
-            this.getElement('totalPrice').text(
-                NumberFormatter.formatCurrency(this.total.price)
+            this.$('[data-role="total-quantity"]').text(this.total.quantity);
+            this.$('[data-role="total-price"]').text(
+                NumberFormatter.formatCurrency(this.total.price, this.total.currency)
             );
 
             _.each(_.pick(this.total, 'rows', 'columns'), this.renderSubTotals, this);
@@ -240,8 +236,10 @@ define(function(require) {
                 var $quantity = this.$el.find('[data-' + key + '-quantity="' + index + '"]');
                 var $price = this.$el.find('[data-' + key + '-price="' + index + '"]');
 
+                var formattedCurrency = NumberFormatter.formatCurrency(total.price, total.currency);
+
                 $quantity.toggleClass('valid', total.quantity > 0).html(total.quantity);
-                $price.toggleClass('valid', total.price > 0).html(NumberFormatter.formatCurrency(total.price));
+                $price.toggleClass('valid', total.price > 0).html(formattedCurrency);
             }, this);
         },
 
@@ -253,28 +251,28 @@ define(function(require) {
          * @private
          */
         _isSafeNumber: function(value) {
-            return Number.isSafeInteger(parseFloat(value === '' ? 0 : value));
+            return _.isSafeInteger(parseFloat(value === '' ? 0 : value));
         },
 
         /**
          * Toggle visibility of clear button
          */
         checkClearButtonVisibility: function() {
-            var isFieldsEmpty = _.every(this.getElement('fields'), function(field) {
+            var isFieldsEmpty = _.every(this.$('[data-name="field__quantity"]:enabled'), function(field) {
                 return _.isEmpty(field.value);
             });
 
-            this.getElement('clearButton').toggleClass('disabled', isFieldsEmpty);
+            this.$('[data-role="clear"]').toggleClass('disabled', isFieldsEmpty);
         },
 
         /**
          * Clear matrix form fields and totals info
          */
         clearForm: function() {
-            this.getElement('fields').filter(function() {
+            this.$('[data-name="field__quantity"]:enabled').filter(function() {
                 return this.value.length > 0;
             }).val('').trigger('change');
         }
-    }));
+    });
     return BaseProductMatrixView;
 });

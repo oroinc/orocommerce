@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Router;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Router;
 
 class CategoryBreadcrumbProvider
 {
@@ -69,7 +68,7 @@ class CategoryBreadcrumbProvider
                     [
                         'categoryId'           => $category->getId(),
                         'includeSubcategories' =>
-                            $this->categoryProvider->getIncludeSubcategoriesChoice()
+                            $this->categoryProvider->getIncludeSubcategoriesChoice(true)
                     ]
                 );
             }

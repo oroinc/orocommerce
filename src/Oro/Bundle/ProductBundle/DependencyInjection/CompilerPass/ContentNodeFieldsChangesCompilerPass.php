@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass;
 
+use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 
 class ContentNodeFieldsChangesCompilerPass implements CompilerPassInterface
 {

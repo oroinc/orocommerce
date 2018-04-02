@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
-use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
+use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;

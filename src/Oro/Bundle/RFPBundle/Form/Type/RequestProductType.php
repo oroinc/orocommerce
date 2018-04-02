@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
 class RequestProductType extends AbstractType
 {
@@ -47,7 +46,7 @@ class RequestProductType extends AbstractType
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
                 'label'     => 'oro.rfp.requestproductitem.entity_plural_label',
                 'add_label' => 'oro.rfp.requestproductitem.add_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])
@@ -67,7 +66,7 @@ class RequestProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'compact_units' => false,
-            'intention'  => 'rfp_request_product',
+            'csrf_token_id' => 'rfp_request_product',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'ororfp/js/app/views/line-item-view'],
         ]);

@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -460,13 +459,6 @@ class OroPricingBundle implements
             'oro_price_product',
             ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
             'oro_pricing_price_list_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_price_product_combined',
-            ['product_id', 'combined_price_list_id', 'quantity', 'unit_code', 'currency'],
-            'oro_combined_price_uidx'
         );
         $extension->addUniqueIndex(
             $schema,

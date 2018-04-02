@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class WeightTest extends \PHPUnit_Framework_TestCase
 {

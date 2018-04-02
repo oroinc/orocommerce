@@ -3,7 +3,19 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
-
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
+use Oro\Bundle\ProductBundle\Exception\EmptyCollectionException;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,20 +25,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-use Oro\Bundle\ProductBundle\Exception\EmptyCollectionException;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
-use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 
 class QuickAddHandler
 {
@@ -133,11 +131,8 @@ class QuickAddHandler
                 $products
             );
 
-            $additionalData = $request->get(
-                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
-                null,
-                true
-            );
+            $formData = $request->request->get(QuickAddType::NAME);
+            $additionalData = $formData[QuickAddType::ADDITIONAL_FIELD_NAME] ?? null;
 
             $response = $processor->process(
                 [
