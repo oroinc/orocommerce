@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\CatalogBundle\EventListener\ProductsChangeRelationListener;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductsChangeRelationListenerTest extends \PHPUnit_Framework_TestCase
 {

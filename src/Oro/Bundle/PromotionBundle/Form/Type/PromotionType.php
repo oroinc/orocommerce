@@ -40,7 +40,7 @@ class PromotionType extends AbstractType
                         false => 'oro.promotion.use_coupons.no',
                         true => 'oro.promotion.use_coupons.yes',
                     ],
-                    'empty_value' => false,
+                    'placeholder' => false,
                 ]
             )
             ->add('discountConfiguration', DiscountConfigurationType::NAME)
@@ -49,7 +49,7 @@ class PromotionType extends AbstractType
                 ScheduleIntervalsCollectionType::NAME,
                 [
                     'label' => 'oro.promotion.dates.label',
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => PromotionSchedule::class,
                     ]
                 ]
@@ -90,8 +90,8 @@ class PromotionType extends AbstractType
                     'tooltip' => 'oro.promotion.descriptions.tooltip',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::NAME,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,

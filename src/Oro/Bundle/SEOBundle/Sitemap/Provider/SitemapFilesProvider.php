@@ -6,8 +6,8 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
-use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Finder\Finder;
 

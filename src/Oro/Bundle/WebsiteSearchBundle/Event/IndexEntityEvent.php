@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-
 use Symfony\Component\EventDispatcher\Event;
 
 class IndexEntityEvent extends Event

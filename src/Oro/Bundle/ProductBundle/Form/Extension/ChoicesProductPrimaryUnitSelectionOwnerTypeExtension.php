@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeExtension
 {
@@ -71,6 +70,9 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $options['choices_updated'] = true;
         $options['choice_loader'] = null;
         $options['choice_list'] = null;
+
+        //@TODO Remove in scope BAP-15236
+        unset($options['cascade_validation']);
 
         $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
     }

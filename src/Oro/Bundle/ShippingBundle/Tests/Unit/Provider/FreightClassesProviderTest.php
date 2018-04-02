@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
 use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
+use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
 
 class FreightClassesProviderTest extends MeasureUnitProviderTest
 {

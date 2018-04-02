@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class OrderAddressType extends AbstractOrderAddressType
 {

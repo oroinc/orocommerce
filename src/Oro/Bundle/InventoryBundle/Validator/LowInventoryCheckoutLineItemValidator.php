@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class LowInventoryCheckoutLineItemValidator
 {

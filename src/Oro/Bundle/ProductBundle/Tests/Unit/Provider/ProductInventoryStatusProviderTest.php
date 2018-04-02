@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider;
 

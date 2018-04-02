@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
 {

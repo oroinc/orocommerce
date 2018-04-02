@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Bridge\Twig\Form\TwigRenderer;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class MatrixGridOrderFormProvider extends AbstractFormProvider
 {

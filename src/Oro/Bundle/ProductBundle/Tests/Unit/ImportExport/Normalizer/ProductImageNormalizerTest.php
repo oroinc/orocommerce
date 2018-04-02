@@ -5,12 +5,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

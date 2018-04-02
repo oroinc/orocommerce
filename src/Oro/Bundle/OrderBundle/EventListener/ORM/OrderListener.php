@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 

@@ -12,7 +12,7 @@ services:
              - [setDataConverter, ["@oro_inventory.importexport.inventory_level_converter"]]
              - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %oro_inventory.entity.inventory_level.class%, alias: oro_inventory.detailed_inventory_levels }
+            - { name: oro_importexport.processor, type: export, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.detailed_inventory_levels }
 
     # Strategy
     oro_inventory.importexport.strategy.inventory_level:

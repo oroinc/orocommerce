@@ -3,15 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Schedule re-indexation for products by combined price lists
+ */
 class CombinedPriceListTriggerHandler
 {
     /**
@@ -158,7 +159,9 @@ class CombinedPriceListTriggerHandler
             }
 
             foreach ($websiteIds as $websiteId) {
-                $this->productsSchedule[$websiteId][$productId] = $productId;
+                if (!isset($this->productsSchedule[null][$productId])) {
+                    $this->productsSchedule[$websiteId][$productId] = $productId;
+                }
             }
         }
     }

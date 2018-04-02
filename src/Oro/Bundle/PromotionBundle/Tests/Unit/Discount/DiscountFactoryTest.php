@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
+use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedDiscountException;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedTypeException;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;

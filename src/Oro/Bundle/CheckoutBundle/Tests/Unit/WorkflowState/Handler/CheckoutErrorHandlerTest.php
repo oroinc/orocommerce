@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Handler;
 
+use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-
-use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 
 class CheckoutErrorHandlerTest extends \PHPUnit_Framework_TestCase
 {

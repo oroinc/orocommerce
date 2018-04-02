@@ -2,29 +2,26 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
-
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Form\Type\RequestType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -55,7 +52,7 @@ class RequestTypeTest extends AbstractTest
             ->with(
                 [
                     'data_class' => 'Oro\Bundle\RFPBundle\Entity\Request',
-                    'intention'  => 'rfp_request',
+                    'csrf_token_id'  => 'rfp_request',
                 ]
             );
 
@@ -470,7 +467,7 @@ class RequestTypeTest extends AbstractTest
                     $requestProductType->getName()          => $requestProductType,
                     $userMultiSelectType->getName()         => $userMultiSelectType,
                     $customerUserSelectType->getName()       => $customerUserSelectType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
+                    CurrencySelectionType::class            => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     $customerMultiSelectType->getName()      => $customerMultiSelectType,

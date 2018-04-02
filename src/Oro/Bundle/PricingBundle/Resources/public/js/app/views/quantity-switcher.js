@@ -25,6 +25,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function QuantitySwitcher() {
+            QuantitySwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             QuantitySwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));

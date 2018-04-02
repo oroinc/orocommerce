@@ -70,7 +70,7 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank()]],
             ]
         );
         $builder->add(

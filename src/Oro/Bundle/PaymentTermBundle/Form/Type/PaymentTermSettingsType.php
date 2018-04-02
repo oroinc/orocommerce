@@ -34,7 +34,7 @@ class PaymentTermSettingsType extends AbstractType
                 [
                     'label' => 'oro.paymentterm.settings.labels.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
@@ -43,7 +43,7 @@ class PaymentTermSettingsType extends AbstractType
                 [
                     'label' => 'oro.paymentterm.settings.short_labels.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             );
     }

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Handler;
 
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 {

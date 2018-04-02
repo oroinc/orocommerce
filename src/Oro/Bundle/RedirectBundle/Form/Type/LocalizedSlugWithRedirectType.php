@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -65,7 +64,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
                 LocalizedSlugType::NAME,
                 [
                     'required' => !empty($options['required']),
-                    'options'  => ['constraints' => $constraints],
+                    'entry_options'  => ['constraints' => $constraints],
                     'source_field' => $options['source_field'],
                     'label' => false,
                     'slug_suggestion_enabled' => $options['slug_suggestion_enabled'],

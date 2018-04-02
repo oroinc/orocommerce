@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class LineItemProductTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +33,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
     public function testValidateException()
     {
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
         $validator->validate(null, $this->constraint);
@@ -52,7 +51,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
 

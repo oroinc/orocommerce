@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
@@ -12,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
@@ -36,9 +36,9 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
@@ -197,7 +197,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                     => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
                     ShippingMethodTypeConfigCollectionType::class =>
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
@@ -221,7 +221,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                         'translatable_entity',
                         'oro_select2_translatable_entity'
                     ),
-                    'translatable_entity' => $translatableEntity,
+                    TranslatableEntityType::class => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [

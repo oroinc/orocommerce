@@ -3,10 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\RFPBundle\Form\Type\UserSelectType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

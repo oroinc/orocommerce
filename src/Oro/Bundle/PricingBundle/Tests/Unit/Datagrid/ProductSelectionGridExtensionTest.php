@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
-use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
 class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 {

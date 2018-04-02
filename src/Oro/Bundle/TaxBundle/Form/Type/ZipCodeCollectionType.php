@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ZipCodeCollectionType extends AbstractType
 {
@@ -18,7 +17,7 @@ class ZipCodeCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ZipCodeType::NAME,
+                'entry_type' => ZipCodeType::NAME,
                 'required' => false,
             ]
         );

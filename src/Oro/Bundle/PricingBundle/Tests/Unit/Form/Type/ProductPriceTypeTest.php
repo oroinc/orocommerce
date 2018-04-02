@@ -2,29 +2,30 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Form\Type\ProductPriceType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 class ProductPriceTypeTest extends FormIntegrationTestCase
 {
@@ -94,7 +95,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     ProductPriceUnitSelectorType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
@@ -247,5 +248,87 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $method->setAccessible(true);
         $method->setValue($entity, $id);
         return $entity;
+    }
+
+    public function testOnPreSetData()
+    {
+        /** @var PriceList $existingProductPriceList */
+        $existingProductPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1);
+        $existingProductPriceList->addCurrencyByCode('NewUSD');
+        $existingProductPrice = new ProductPrice();
+
+        $existingProductPrice->setPriceList($existingProductPriceList);
+
+        /**
+         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         */
+        $formMock = $this->createMock(FormInterface::class);
+
+        $event = new FormEvent($formMock, $existingProductPrice);
+
+        $formMock->expects($this->once())
+            ->method('add')
+            ->with(
+                'price',
+                PriceType::class,
+                [
+                    'label' => 'oro.pricing.price.label',
+                    'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
+                    'currencies_list' => ['NewUSD'],
+                    'full_currency_list' => false
+                ]
+            );
+
+        $this->formType->onPreSetData($event);
+    }
+
+    public function testOnPreSetDataNoPrice()
+    {
+        /**
+         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, null);
+
+        $formMock->expects($this->once())
+            ->method('add')
+            ->with(
+                'price',
+                PriceType::class,
+                [
+                    'label' => 'oro.pricing.price.label',
+                    'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
+                    'currencies_list' => null,
+                    'full_currency_list' => true
+                ]
+            );
+
+        $this->formType->onPreSetData($event);
+    }
+
+    public function testOnPreSetDataNoPriceList()
+    {
+        $existingProductPrice = new ProductPrice();
+
+        /**
+         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, $existingProductPrice);
+
+        $formMock->expects($this->once())
+            ->method('add')
+            ->with(
+                'price',
+                PriceType::class,
+                [
+                    'label' => 'oro.pricing.price.label',
+                    'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
+                    'currencies_list' => null,
+                    'full_currency_list' => true
+                ]
+            );
+
+        $this->formType->onPreSetData($event);
     }
 }

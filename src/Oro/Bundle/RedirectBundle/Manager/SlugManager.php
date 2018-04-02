@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class SlugManager

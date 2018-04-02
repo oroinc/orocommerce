@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
 {

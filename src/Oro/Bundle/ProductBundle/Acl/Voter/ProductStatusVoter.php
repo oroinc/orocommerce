@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Acl\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Security voter that prevents direct access to the pages of disabled products on the front store

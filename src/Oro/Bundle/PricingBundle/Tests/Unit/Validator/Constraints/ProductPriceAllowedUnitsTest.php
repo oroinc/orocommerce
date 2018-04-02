@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits;
-use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -36,7 +37,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new ProductPriceAllowedUnits();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new ProductPriceAllowedUnitsValidator();
         $this->validator->initialize($this->context);
@@ -70,7 +71,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $price->setUnit($unit);
 
         $this->context->expects($this->never())
-            ->method('addViolation');
+            ->method('buildViolation');
 
         $this->validator->validate($price, $this->constraint);
     }
@@ -83,9 +84,24 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $price = $this->getProductPrice();
         $price->setUnit($unit);
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with('unit', $this->constraint->notAllowedUnitMessage);
+            ->method('buildViolation')
+            ->with($this->constraint->notAllowedUnitMessage)
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('unit')
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('setParameters')
+            ->with([
+                '%product%' => $price->getProduct()->getSku(),
+                '%unit%' => $unit->getCode()
+            ])
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('addViolation');
 
         $this->validator->validate($price, $this->constraint);
     }
@@ -100,9 +116,17 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $prop->setAccessible(true);
         $prop->setValue($price, null);
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with('unit', $this->constraint->notExistingUnitMessage);
+            ->method('buildViolation')
+            ->with($this->constraint->notExistingUnitMessage)
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('unit')
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('addViolation');
 
         $this->validator->validate($price, $this->constraint);
     }
@@ -121,9 +145,17 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $productSku->setAccessible(true);
         $productSku->setValue($price, null);
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with('product', $this->constraint->notExistingProductMessage);
+            ->method('buildViolation')
+            ->with($this->constraint->notExistingProductMessage)
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('product')
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('addViolation');
 
         $this->validator->validate($price, $this->constraint);
     }

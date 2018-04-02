@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 
 class UserSelectType extends AbstractType
 {

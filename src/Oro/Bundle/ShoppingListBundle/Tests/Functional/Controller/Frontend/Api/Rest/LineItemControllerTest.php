@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class LineItemControllerTest extends WebTestCase
 {

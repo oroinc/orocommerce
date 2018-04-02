@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class TransitionFormProvider extends AbstractFormProvider
 {

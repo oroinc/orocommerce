@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -33,7 +32,7 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => RequestProductItemType::NAME,
+                'entry_type' => RequestProductItemType::NAME,
                 'show_form_when_empty'  => false,
                 'error_bubbling'        => false,
                 'prototype_name'        => '__namerequestproductitem__',

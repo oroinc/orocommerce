@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;

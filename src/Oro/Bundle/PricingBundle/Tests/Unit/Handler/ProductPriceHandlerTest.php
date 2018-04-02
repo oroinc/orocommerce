@@ -2,21 +2,21 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\FormBundle\Event\FormHandler\Events;
+use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Handler\ProductPriceHandler;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\FormBundle\Event\FormHandler\Events;
-use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
-use Oro\Bundle\PricingBundle\Handler\ProductPriceHandler;
-
 class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /**
      * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -33,7 +33,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     private $form;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request
      */
     private $request;
 
@@ -50,7 +50,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->form = $this->createMock(FormInterface::class);
-        $this->request = $this->createMock(Request::class);
+        $this->request = new Request();
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->priceManager = $this->createMock(PriceManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -98,12 +98,11 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('setData')
             ->with($entity);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('POST');
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

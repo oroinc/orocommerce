@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductUnitsTypeTest extends FormIntegrationTestCase
 {

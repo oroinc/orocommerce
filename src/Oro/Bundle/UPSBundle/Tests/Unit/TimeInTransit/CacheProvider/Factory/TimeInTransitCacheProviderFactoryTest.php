@@ -4,9 +4,9 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\CacheProvider\Factory;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class TimeInTransitCacheProviderFactoryTest extends \PHPUnit_Framework_TestCase
 {

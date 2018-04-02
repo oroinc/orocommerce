@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
-use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
-use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
+use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ExtractOptionsProvider
 {

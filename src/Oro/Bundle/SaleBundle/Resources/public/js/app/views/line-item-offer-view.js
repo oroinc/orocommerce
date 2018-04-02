@@ -20,6 +20,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LineItemOfferView() {
+            LineItemOfferView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.elements.id = $(options.$.product);
             this.options = $.extend(true, {}, this.options, options || {});

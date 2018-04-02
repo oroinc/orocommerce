@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 
 class ParentCategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
 {

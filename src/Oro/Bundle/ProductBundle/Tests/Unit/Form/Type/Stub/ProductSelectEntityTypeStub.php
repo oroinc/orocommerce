@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductSelectEntityTypeStub extends EntityType
 {
@@ -22,8 +21,8 @@ class ProductSelectEntityTypeStub extends EntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'choice_list'     => $this->choiceList,
             'query_builder'   => null,
             'create_enabled'  => false,
             'class'           => 'Oro\Bundle\ProductBundle\Entity\Product',

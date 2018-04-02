@@ -48,6 +48,16 @@ define(function(require) {
             $form: ['submit', 'onSaveForm']
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function PossibleShippingMethodsView() {
+            PossibleShippingMethodsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             PossibleShippingMethodsView.__super__.initialize.apply(this, arguments);
 

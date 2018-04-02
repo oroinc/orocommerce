@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 
 class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 {

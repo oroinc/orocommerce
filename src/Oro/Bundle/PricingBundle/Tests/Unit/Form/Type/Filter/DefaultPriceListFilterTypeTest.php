@@ -63,7 +63,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(ChoiceFilterType::NAME, $this->type->getParent());
+        $this->assertEquals(ChoiceFilterType::class, $this->type->getParent());
     }
 
     /**

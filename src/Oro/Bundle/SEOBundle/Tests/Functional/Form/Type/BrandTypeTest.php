@@ -3,21 +3,18 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Doctrine\Common\Collections\Collection;
-
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-
-use Oro\Bundle\ProductBundle\Entity\Brand;
-use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class BrandTypeTest extends WebTestCase
 {

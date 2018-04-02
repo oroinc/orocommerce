@@ -42,7 +42,7 @@ Feature: Product attribute many-to-one
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
-      | Customer User | Nancy Sallee |
+      | ManyToOneField | Nancy Sallee |
     And I save and close form
     Then I should see "Product has been saved" flash message
 

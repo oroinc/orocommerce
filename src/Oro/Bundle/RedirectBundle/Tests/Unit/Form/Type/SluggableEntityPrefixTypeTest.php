@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
@@ -13,6 +13,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 {
@@ -39,9 +40,9 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
-        $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));

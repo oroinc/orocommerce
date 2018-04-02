@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -170,13 +169,6 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
                 'item' => 'oro.product_unit.item.label.full',
                 'set' => 'oro.product_unit.set.label.full',
             ]);
-
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
-
         /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
@@ -189,7 +181,7 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
                 [
                     ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
                     DiscountOptionsType::NAME => new DiscountOptionsType(),
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
+                    MultiCurrencyType::NAME => new MultiCurrencyType(),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
                         $localeSettings,

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 {

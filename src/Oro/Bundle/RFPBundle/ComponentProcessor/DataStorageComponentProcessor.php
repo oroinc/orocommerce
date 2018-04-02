@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcess
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

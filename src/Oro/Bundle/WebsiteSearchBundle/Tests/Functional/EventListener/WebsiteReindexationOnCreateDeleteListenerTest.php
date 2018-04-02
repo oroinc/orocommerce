@@ -3,11 +3,10 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 {

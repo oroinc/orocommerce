@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
 class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -33,7 +32,7 @@ class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => QuoteProductRequestType::NAME,
+                'entry_type' => QuoteProductRequestType::NAME,
                 'show_form_when_empty' => false,
                 'prototype_name' => '__namequoteproductrequest__',
                 'allow_add' => false,

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestAdditionalNoteData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Symfony\Component\HttpFoundation\Response;
 
 class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
 {

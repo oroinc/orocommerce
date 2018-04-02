@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
+use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
-use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
 class ProductStepOneTypeTest extends FormIntegrationTestCase
 {
@@ -34,7 +33,7 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             'product',
-            $form->getConfig()->getOptions()['intention']
+            $form->getConfig()->getOptions()['csrf_token_id']
         );
     }
 

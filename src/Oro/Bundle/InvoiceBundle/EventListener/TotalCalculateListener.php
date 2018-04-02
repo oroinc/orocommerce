@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InvoiceBundle\EventListener;
 
-use Symfony\Component\Form\FormFactory;
-
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Symfony\Component\Form\FormFactory;
 
 class TotalCalculateListener
 {
@@ -32,7 +31,7 @@ class TotalCalculateListener
 
         if ($entity instanceof Invoice) {
             $form = $this->formFactory->create(InvoiceType::NAME, $entity);
-            $form->submit($request, false);
+            $form->submit($request->get($form->getName()), false);
         }
     }
 }

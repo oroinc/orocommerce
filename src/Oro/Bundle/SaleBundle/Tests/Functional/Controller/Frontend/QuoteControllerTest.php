@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 class QuoteControllerTest extends WebTestCase
 {
@@ -88,7 +87,6 @@ class QuoteControllerTest extends WebTestCase
             'poNumber',
             'shipUntil',
             'view_link',
-            'action_configuration',
         ];
 
         return [
@@ -521,22 +519,20 @@ class QuoteControllerTest extends WebTestCase
     /**
      * @dataProvider ACLProvider
      *
-     * @param string $route
-     * @param string $quote
      * @param string $user
      * @param int $status
      */
-    public function testViewAccessDenied($route, $quote, $user, $status)
+    public function testViewAccessDenied($user, $status)
     {
         $this->loginUser($user);
 
         /* @var $quote Quote */
-        $quote = $this->getReference($quote);
+        $quote = $this->getReference(LoadQuoteData::QUOTE2);
 
         $this->client->request(
             'GET',
             $this->getUrl(
-                $route,
+                'oro_sale_quote_frontend_view',
                 ['id' => $quote->getId()]
             )
         );
@@ -552,20 +548,14 @@ class QuoteControllerTest extends WebTestCase
     {
         return [
             'VIEW (nanonymous user)' => [
-                'route' => 'oro_sale_quote_frontend_view',
-                'quote' => LoadQuoteData::QUOTE2,
                 'user' => '',
                 'status' => 401
             ],
             'VIEW (user from another customer)' => [
-                'route' => 'oro_sale_quote_frontend_view',
-                'quote' => LoadQuoteData::QUOTE2,
                 'user' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
             'VIEW (user from parent customer : LOCAL)' => [
-                'route' => 'oro_sale_quote_frontend_view',
-                'quote' => LoadQuoteData::QUOTE2,
                 'user' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],

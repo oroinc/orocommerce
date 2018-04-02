@@ -36,7 +36,7 @@ class MoneyOrderSettingsType extends AbstractType
                 [
                     'label' => 'oro.money_order.settings.labels.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
@@ -45,7 +45,7 @@ class MoneyOrderSettingsType extends AbstractType
                 [
                     'label' => 'oro.money_order.settings.short_labels.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator;
+use Symfony\Component\Validator\Constraint;
 
 class AttributeFamilyUsageInVariantFieldTest extends \PHPUnit_Framework_TestCase
 {

@@ -23,6 +23,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function PaymentValidateComponent() {
+            PaymentValidateComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
 

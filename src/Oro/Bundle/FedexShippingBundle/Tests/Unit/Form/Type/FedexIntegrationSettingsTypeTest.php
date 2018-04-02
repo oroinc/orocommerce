@@ -8,6 +8,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexIntegrationSettingsType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
@@ -74,7 +75,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     new LocalizedPropertyType(),
-                    new LocalizationCollectionTypeStub(),
+                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     EntityType::class => $entityType,
                     new OroEncodedPlaceholderPasswordType($crypter),

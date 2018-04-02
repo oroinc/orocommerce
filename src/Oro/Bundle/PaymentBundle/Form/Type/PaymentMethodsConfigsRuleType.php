@@ -58,7 +58,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             ])
             ->add('currency', CurrencySelectionType::class, [
                 'label'       => 'oro.payment.paymentmethodsconfigsrule.currency.label',
-                'empty_value' => 'oro.currency.currency.form.choose',
+                'placeholder' => 'oro.currency.currency.form.choose',
             ])
             ->add('rule', RuleType::class, [
                 'label' => 'oro.payment.paymentmethodsconfigsrule.rule.label',

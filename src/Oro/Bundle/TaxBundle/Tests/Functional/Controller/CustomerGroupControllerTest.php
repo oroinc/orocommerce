@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CustomerGroupControllerTest extends WebTestCase
 {

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DefaultCategoryVisibilityListener
 {

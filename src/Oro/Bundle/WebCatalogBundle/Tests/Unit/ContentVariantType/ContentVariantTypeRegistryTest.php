@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantType;
 
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
-use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase

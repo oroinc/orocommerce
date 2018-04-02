@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;

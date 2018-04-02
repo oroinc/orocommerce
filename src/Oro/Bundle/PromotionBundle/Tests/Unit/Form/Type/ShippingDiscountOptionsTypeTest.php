@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
@@ -23,9 +22,9 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
@@ -138,13 +137,6 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService
-            ->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
-
         /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
@@ -181,8 +173,8 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    MultiCurrencyType::NAME => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     DiscountOptionsType::NAME => new DiscountOptionsType(),
                     OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter),
                     ShippingMethodTypesChoiceType::NAME =>

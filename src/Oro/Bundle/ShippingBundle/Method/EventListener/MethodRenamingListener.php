@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\EventListener;
 
-use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEvent;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
+use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEvent;
 
 class MethodRenamingListener
 {

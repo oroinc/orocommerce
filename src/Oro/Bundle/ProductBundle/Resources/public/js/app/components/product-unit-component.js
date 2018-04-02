@@ -48,7 +48,14 @@ define(function(require) {
         unitSelector: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function ProductUnitComponent() {
+            ProductUnitComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /** Please use this trait if you need reindex actions in your tests */
 trait WebsiteSearchExtensionTrait

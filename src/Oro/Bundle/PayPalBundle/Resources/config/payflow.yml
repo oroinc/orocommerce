@@ -33,9 +33,14 @@ services:
         public: false
         calls:
             - ['addProcessor', ['@oro_paypal.paypal.payflow.processor.paypal']]
+            - ['addProcessor', ['@oro_paypal.paypal.payflow.processor.paypalca']]
 
     oro_paypal.paypal.payflow.processor.paypal:
         class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\PayPal'
+        public: false
+
+    oro_paypal.paypal.payflow.processor.paypalca:
+        class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\PayPalCA'
         public: false
 
     oro_paypal.paypal.payflow_gateway.gateway:

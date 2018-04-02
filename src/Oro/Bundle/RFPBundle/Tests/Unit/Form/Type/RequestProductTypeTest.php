@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -50,7 +48,7 @@ class RequestProductTypeTest extends AbstractTest
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
                 $this->assertArrayHasKey('page_component', $options);
                 $this->assertArrayHasKey('page_component_options', $options);
 
@@ -330,7 +328,7 @@ class RequestProductTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $productSelectType->getName()           => $productSelectType,
                     $requestProductItemType->getName()      => $requestProductItemType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
+                    CurrencySelectionType::class            => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],

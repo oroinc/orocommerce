@@ -95,7 +95,7 @@ class FrontendLineItemWidgetType extends AbstractType
 
                         return $qb;
                     },
-                    'empty_value' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
+                    'placeholder' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
                 ]
             )
             ->add(

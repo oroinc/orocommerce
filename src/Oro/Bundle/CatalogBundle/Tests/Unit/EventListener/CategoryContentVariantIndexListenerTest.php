@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\Testing\Doctrine\EntityManagerMockBuilder;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
-use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
-use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

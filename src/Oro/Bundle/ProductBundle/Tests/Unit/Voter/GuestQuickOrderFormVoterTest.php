@@ -3,10 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Voter;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\ProductBundle\Voter\GuestQuickOrderFormVoter;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class GuestQuickOrderFormVoterTest extends \PHPUnit_Framework_TestCase
 {

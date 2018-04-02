@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Voter;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Voter\ShoppingListCreateVoter;
-use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListCreateVoterTest extends \PHPUnit_Framework_TestCase

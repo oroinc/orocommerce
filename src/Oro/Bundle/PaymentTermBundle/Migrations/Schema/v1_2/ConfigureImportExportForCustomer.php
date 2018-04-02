@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;

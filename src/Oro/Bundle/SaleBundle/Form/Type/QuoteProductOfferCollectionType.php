@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class QuoteProductOfferCollectionType extends AbstractType
 {
@@ -25,7 +24,7 @@ class QuoteProductOfferCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => QuoteProductOfferType::NAME,
+            'entry_type'                  => QuoteProductOfferType::NAME,
             'show_form_when_empty'  => false,
             'error_bubbling'        => false,
             'prototype_name'        => '__namequoteproductoffer__',

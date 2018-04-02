@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Action;
 
+use Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction;
+use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
-
-use Oro\Component\ConfigExpression\ContextAccessor;
-use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
-use Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction;
 
 class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit_Framework_TestCase
 {

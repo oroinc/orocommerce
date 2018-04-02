@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class OrderLineItemsCollectionType extends AbstractType
 {
@@ -26,7 +25,7 @@ class OrderLineItemsCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => OrderLineItemType::NAME,
+                'entry_type' => OrderLineItemType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__nameorderlineitem__',

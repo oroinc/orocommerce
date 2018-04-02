@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
+use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
-use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
-use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
-use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
-use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -94,7 +92,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     {
         return [
             'text with null data' => [
-                'options' => ['type' => 'text'],
+                'entry_options' => ['entry_type' => 'text'],
                 'defaultData' => null,
                 'viewData' => [
                     WebsitePropertyType::FIELD_DEFAULT => null,
@@ -113,7 +111,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'checkbox with full data' => [
-                'options' => ['type' => CheckboxTypeStub::NAME, 'options' => ['value' => 't']],
+                'entry_options' => ['entry_type' => CheckboxTypeStub::NAME, 'entry_options' => ['value' => 't']],
                 'defaultData' => [
                     null => true,
                     1    => false,
@@ -146,9 +144,6 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return ManagerRegistry
-     */
     protected function setRegistryExpectations()
     {
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')

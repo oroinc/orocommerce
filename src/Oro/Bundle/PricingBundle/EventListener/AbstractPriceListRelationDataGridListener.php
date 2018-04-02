@@ -3,9 +3,8 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;

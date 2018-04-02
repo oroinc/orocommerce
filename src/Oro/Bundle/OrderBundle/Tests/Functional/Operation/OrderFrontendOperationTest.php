@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Operation;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\HttpFoundation\Response;
 

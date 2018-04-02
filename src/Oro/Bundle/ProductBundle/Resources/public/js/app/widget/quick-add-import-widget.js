@@ -7,6 +7,16 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     QuickAddImportWidget = DialogWidget.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function QuickAddImportWidget() {
+            QuickAddImportWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             QuickAddImportWidget.__super__.initialize.apply(this, arguments);

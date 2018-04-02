@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider;
 
 class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
 {

@@ -5,7 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogUsageListener;
 use Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider;

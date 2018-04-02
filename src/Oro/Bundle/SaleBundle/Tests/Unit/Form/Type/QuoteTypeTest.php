@@ -5,11 +5,12 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -34,8 +35,8 @@ use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -110,7 +111,7 @@ class QuoteTypeTest extends AbstractTest
             ->with(
                 [
                     'data_class' => 'Oro\Bundle\SaleBundle\Entity\Quote',
-                    'intention' => 'sale_quote',
+                    'csrf_token_id' => 'sale_quote',
                     'allow_prices_override' => true,
                     'allow_add_free_form_items' => false,
                 ]
@@ -475,7 +476,7 @@ class QuoteTypeTest extends AbstractTest
                     $quoteProductType->getName()                => $quoteProductType,
                     $productSelectType->getName()               => $productSelectType,
                     $userMultiSelectType->getName()             => $userMultiSelectType,
-                    $currencySelectionType->getName()           => $currencySelectionType,
+                    CurrencySelectionType::class                => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,

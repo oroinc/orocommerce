@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Provider;
 
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
+use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 
 class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
 {

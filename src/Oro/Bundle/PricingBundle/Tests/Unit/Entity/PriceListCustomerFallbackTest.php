@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceListCustomerFallbackTest extends \PHPUnit_Framework_TestCase
 {

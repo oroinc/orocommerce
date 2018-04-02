@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CouponTest extends \PHPUnit_Framework_TestCase

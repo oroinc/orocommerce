@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
+use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Yaml\Yaml;
-
-use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
-use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolationPerTest

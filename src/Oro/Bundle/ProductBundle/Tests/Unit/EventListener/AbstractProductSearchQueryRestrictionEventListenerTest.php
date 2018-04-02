@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Query;
 

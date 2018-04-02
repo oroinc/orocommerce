@@ -32,7 +32,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label'    => 'oro.fedex.integration.settings.labels.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'entry_options'  => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(

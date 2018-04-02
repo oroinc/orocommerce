@@ -61,9 +61,7 @@ class ScopeNormalizer implements NormalizerInterface
         $resolver = new OptionsResolver();
         $resolver->setRequired(self::REQUIRED_OPTIONS);
 
-        $resolver->setAllowedTypes([
-            'id' => ['integer']
-        ]);
+        $resolver->setAllowedTypes('id', ['integer']);
 
         return $resolver;
     }

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -9,9 +11,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {

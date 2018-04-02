@@ -4,9 +4,7 @@ namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendLocalizationProvider;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Layout\ContextInterface;
 

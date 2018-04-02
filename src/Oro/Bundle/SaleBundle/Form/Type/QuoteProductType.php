@@ -3,19 +3,17 @@
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
 class QuoteProductType extends AbstractType
 {
@@ -186,7 +184,7 @@ class QuoteProductType extends AbstractType
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'oro.sale.quoteproductoffer.add_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => $options['compact_units'],
                     'allow_prices_override' => $options['allow_prices_override'],
                 ],
@@ -196,8 +194,10 @@ class QuoteProductType extends AbstractType
             ])
             ->add('commentCustomer', 'textarea', [
                 'required' => false,
-                'read_only' => true,
                 'label' => 'oro.sale.quoteproduct.comment_customer.label',
+                'attr' => [
+                    'readonly' => true
+                ]
             ])
             ->add('comment', 'textarea', [
                 'required' => false,
@@ -213,7 +213,7 @@ class QuoteProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'sale_quote_product',
+            'csrf_token_id' => 'sale_quote_product',
             'compact_units' => false,
             'allow_prices_override' => true,
             'allow_add_free_form_items' => true,

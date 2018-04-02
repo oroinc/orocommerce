@@ -3,12 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class QuickAddRowCollection extends ArrayCollection
 {

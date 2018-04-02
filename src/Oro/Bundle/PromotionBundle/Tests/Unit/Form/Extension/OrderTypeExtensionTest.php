@@ -4,9 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionCollectionTableType;
-use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;

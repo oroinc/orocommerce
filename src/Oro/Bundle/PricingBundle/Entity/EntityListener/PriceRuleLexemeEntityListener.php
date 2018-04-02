@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
 /**

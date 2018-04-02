@@ -141,9 +141,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->andX(
                         $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
                         $qb->expr()->eq('pp.product', 'cpp2.product'),
+                        $qb->expr()->eq('pp.currency', 'cpp2.currency'),
                         $qb->expr()->eq('pp.unit', 'cpp2.unit'),
-                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
-                        $qb->expr()->eq('pp.currency', 'cpp2.currency')
+                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity')
                     )
                 );
             $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery2->getQuery()->getDQL())));

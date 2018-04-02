@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
+use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
-use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper;
 
 class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
 {

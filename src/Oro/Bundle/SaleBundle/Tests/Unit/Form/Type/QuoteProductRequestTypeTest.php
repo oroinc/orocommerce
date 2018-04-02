@@ -2,24 +2,21 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductRequestTypeTest extends AbstractTest
 {
@@ -50,7 +47,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
 
                 return true;
             }))
@@ -222,7 +219,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    CurrencySelectionType::NAME             => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class            => new CurrencySelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),

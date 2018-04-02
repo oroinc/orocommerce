@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SitemapFileWriter implements SitemapFileWriterInterface
 {

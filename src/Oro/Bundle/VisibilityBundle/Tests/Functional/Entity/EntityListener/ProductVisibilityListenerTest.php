@@ -372,7 +372,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForCustomerProductVisibility();
 
         $expectedMessage = [
-            VisibilityMessageFactory::ID => null, // because default value will e deleted
+            VisibilityMessageFactory::ID => null, // because default value will be deleted
             VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
             VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
             VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),

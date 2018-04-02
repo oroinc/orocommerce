@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * Provides scope of data required to calculate correct shipping cost for checkout.
+ */
 class CheckoutShippingContextFactory
 {
     /**
@@ -69,14 +72,10 @@ class CheckoutShippingContextFactory
             (string)$checkout->getId()
         );
 
-        $total = $this->totalProcessor->getTotal($checkout);
-        $subtotal = Price::create(
-            $total->getAmount(),
-            $total->getCurrency()
-        );
+        $total = $this->getTotal($checkout);
 
         $shippingContextBuilder
-            ->setSubTotal($subtotal)
+            ->setSubTotal($total)
             ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getWebsite()) {
@@ -106,5 +105,26 @@ class CheckoutShippingContextFactory
         }
 
         return $shippingContextBuilder->getResult();
+    }
+
+    /**
+     * Get checkout grand total and subtract shipping cost if it exists, because we need to calculate shipping cost
+     * based on total that should not include shipping subtotal.
+     *
+     * @param Checkout $checkout
+     * @return Price
+     */
+    private function getTotal(Checkout $checkout)
+    {
+        $total = $this->totalProcessor->getTotal($checkout);
+
+        $shippingCost = $checkout->getShippingCost();
+        $totalValue = $total->getAmount();
+
+        if ($shippingCost && $total->getCurrency() === $shippingCost->getCurrency()) {
+            $totalValue -= $shippingCost->getValue();
+        }
+
+        return Price::create($totalValue, $total->getCurrency());
     }
 }

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
+use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
-use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
 
 class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
 {

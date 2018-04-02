@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceType extends AbstractType
 {
@@ -93,7 +92,7 @@ class InvoiceType extends AbstractType
                 InvoiceLineItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.invoice.invoicelineitem.add_label',
-                    'options' => ['currency' => $invoice->getCurrency()],
+                    'entry_options' => ['currency' => $invoice->getCurrency()],
                 ]
             );
     }
@@ -106,7 +105,7 @@ class InvoiceType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'invoice',
+                'csrf_token_id' => 'invoice',
             ]
         );
     }

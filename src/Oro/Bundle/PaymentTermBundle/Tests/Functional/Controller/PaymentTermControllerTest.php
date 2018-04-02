@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;

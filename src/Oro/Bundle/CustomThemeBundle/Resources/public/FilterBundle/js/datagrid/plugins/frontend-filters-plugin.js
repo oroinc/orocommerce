@@ -11,6 +11,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function FrontendCustomFiltersTogglePlugin() {
+            FrontendCustomFiltersTogglePlugin.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(main, options) {
             if (this.changeBehavior()) {
                 this.filtersActions = {

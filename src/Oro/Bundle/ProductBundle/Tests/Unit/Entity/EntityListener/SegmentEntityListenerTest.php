@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Cache\Layout\DataProviderCacheCleaner;

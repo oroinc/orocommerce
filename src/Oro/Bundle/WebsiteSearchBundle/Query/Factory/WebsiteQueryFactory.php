@@ -5,8 +5,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\YamlToSearchQueryConverter;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
-use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
 class WebsiteQueryFactory implements QueryFactoryInterface
 {

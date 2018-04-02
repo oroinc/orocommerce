@@ -7,7 +7,6 @@ define(function(require) {
     var _ = require('underscore');
 
     ProductUnitSelectComponent = BaseComponent.extend({
-
         /**
          * @property {Object}
          */
@@ -16,6 +15,13 @@ define(function(require) {
             singleUnitMode: false,
             singleUnitModeCodeVisible: false,
             configDefaultUnit: null
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductUnitSelectComponent() {
+            ProductUnitSelectComponent.__super__.constructor.apply(this, arguments);
         },
 
         /**

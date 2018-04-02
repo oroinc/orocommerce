@@ -4,9 +4,6 @@ namespace Oro\Bundle\InventoryBundle\CacheWarmer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
@@ -15,6 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\NoteBundle\Entity\Note;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Psr\Log\LoggerInterface;
 
 class EntityConfigRelationsMigration
 {

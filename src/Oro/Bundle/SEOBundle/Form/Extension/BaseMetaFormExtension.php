@@ -27,7 +27,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
                     'required' => false,
-                    'type' => 'text',
+                    'entry_type' => 'text',
                     'constraints' => new Valid()
                 ]
             )
@@ -38,7 +38,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => 'textarea',
+                    'entry_type' => 'textarea',
                     'constraints' => new Valid()
                 ]
             )
@@ -49,7 +49,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_keywords.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => 'textarea',
+                    'entry_type' => 'textarea',
                     'constraints' => new Valid()
                 ]
             );

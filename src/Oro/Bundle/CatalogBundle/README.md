@@ -1,27 +1,20 @@
-Oro\Bundle\CatalogBundle\OroCatalogBundle
-===============================================
+# OroCatalogBundle
 
-Table of Contents
------------------
- - [Description](#description)
+OroCatalogBundle defines master catalog and categories that aimed to structure products set in the OroCommerce applications. The bundle provides the ability to manage categories and assign products to them.
+
+## Table of Contents
+
  - Category creation
     - [Default Product Options](./Resources/doc/default-product-options.md)
  - [Breadcrumbs](#breadcrumbs)
 
-Description
-------------
+## Breadcrumbs
 
-The OroCatalogBundle introduces the notion of categories, which are using for products structuring in the system. This bundle provides an UI for category management.
-
-
-Breadcrumbs
-------------
-
-Default breadcrumbs behavoiur of OroCatalogBundle is building them based on the category tree.
+Default breadcrumbs of OroCatalogBundle are built based on the category tree.
 
 **Example:**
 
-With this simple category tree for ```category-1-1-1``` 
+Following the example below, a simple category tree for ```category-1-1-1``` 
 ```
     - category-1
         - category-1-1

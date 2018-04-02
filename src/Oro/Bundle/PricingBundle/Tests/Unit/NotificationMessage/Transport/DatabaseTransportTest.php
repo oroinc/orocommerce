@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage\Transport;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\NotificationMessage;
 use Oro\Bundle\PricingBundle\Entity\Repository\NotificationMessageRepository;

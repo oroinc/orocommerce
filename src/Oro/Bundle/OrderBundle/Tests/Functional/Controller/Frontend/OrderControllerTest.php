@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -11,7 +12,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 class OrderControllerTest extends WebTestCase
 {

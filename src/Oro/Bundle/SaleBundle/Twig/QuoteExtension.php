@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class QuoteExtension extends \Twig_Extension
 {

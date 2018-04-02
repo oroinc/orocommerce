@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Async;
 
 use Oro\Bundle\CheckoutBundle\Async\RecalculateCheckoutSubtotalsProcessor;
-use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;

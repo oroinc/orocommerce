@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
 class ProductVariantLinksType extends AbstractType
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;

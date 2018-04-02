@@ -185,6 +185,7 @@
                         {% set lineItem = lineItem.lineItems|first %}
                         {% set mainProduct = lineItem.parentProduct|default(lineItem.product) %}
                         {% set totals = totalPrices[mainProduct.id] is defined ? totalPrices[mainProduct.id] : null %}
+                        {% set matrixFormPrices = productsWithConfigurableVariants[mainProduct.id]|default([]) %}
 
                         {% do block|merge_context({
                             shoppingList: shoppingList,
@@ -194,6 +195,7 @@
                             loop: loop,
                             matrixForm: matrixForm,
                             matrixFormType: matrixFormType,
+                            matrixFormPrices: matrixFormPrices,
                             productsAllPrices: productsAllPrices,
                             totals: totals
                         }) %}
@@ -218,7 +220,7 @@
             product: mainProduct,
             shoppingList: shoppingList,
             form: matrixForm,
-            prices: productsAllPrices,
+            prices: matrixFormPrices
         }) %}
         <div {{ UI.renderPageComponentAttributes({
             view: 'oroshoppinglist/js/app/views/line-item-form-submit-view',
@@ -331,14 +333,14 @@
 
 {% block _shopping_list_line_items_list_item_name_widget %}
     <h3 class="product-item__title product-item__title--in-cart">
-        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_tag_filter }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value|oro_html_strip_tags }}</a>
     </h3>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_sku_widget %}
     <div>
         {{ 'oro.frontend.shoppinglist.view.item.label'|trans }}
-        <span class="product-item__sku-value">{{ mainProduct.sku|oro_tag_filter }}</span>
+        <span class="product-item__sku-value">{{ mainProduct.sku|oro_html_strip_tags }}</span>
     </div>
 {% endblock %}
 
@@ -448,8 +450,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th class="text-uppercase">qty</th>
-                <th >Unit Price</th>
+                <th class="text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty#}
+                <th>{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
             </tr>
             </thead>
             <tbody>

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Menu\Frontend;
 
 use Knp\Menu\ItemInterface;
-
 use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 

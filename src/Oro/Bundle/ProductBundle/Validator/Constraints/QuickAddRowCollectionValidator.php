@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 
 class QuickAddRowCollectionValidator extends ConstraintValidator
 {

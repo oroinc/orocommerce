@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
 {

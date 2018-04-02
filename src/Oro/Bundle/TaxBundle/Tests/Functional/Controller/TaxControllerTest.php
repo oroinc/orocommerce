@@ -3,9 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TaxBundle\Entity\Tax;
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class TaxControllerTest extends WebTestCase
 {

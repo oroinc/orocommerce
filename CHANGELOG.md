@@ -1,4 +1,5 @@
-## 1.7.0 (Unreleased)
+## 3.0.0-beta (2018-03-30)
+[Show detailed list of changes](incompatibilities-3-0-beta.md)
 
 ### Added
 #### ProductBundle
@@ -9,7 +10,7 @@
 * Removed listener `oro_product.event_listener.restrict.display_product_variations`. The service `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
 * Removed listener `oro_product.event_listener.datagrid.frontend_product_search.display_product_variations`. The service  `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
 
-## 1.6.0 (Unreleased)
+## 1.6.0 (2018-01-31)
 [Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added

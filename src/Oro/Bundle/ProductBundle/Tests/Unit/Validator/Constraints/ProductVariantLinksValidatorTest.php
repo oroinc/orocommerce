@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks;
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -83,9 +83,17 @@ class ProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with($this->isType('string'), (new ProductVariantLinks())->variantFieldRequiredMessage);
+            ->method('buildViolation')
+            ->with((new ProductVariantLinks())->variantFieldRequiredMessage)
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with($this->isType('string'))
+            ->willReturnSelf();
+        $builder->expects($this->once())
+            ->method('addViolation');
 
         $this->service->validate($product, new ProductVariantLinks());
     }

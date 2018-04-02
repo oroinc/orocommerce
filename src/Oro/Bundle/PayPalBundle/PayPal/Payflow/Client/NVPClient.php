@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Client;
 
 use Guzzle\Http\ClientInterface as HTTPClientInterface;
-
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
 
 class NVPClient implements ClientInterface

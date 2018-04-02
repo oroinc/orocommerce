@@ -6,8 +6,8 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator;
+use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 

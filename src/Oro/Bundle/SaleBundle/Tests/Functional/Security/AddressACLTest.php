@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Security;
 
+use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)

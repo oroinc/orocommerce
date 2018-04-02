@@ -15,7 +15,7 @@ datagrids:
                     - priceList.updatedAt
                     - CASE WHEN priceList.active <> true THEN 'disabled' ELSE CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN 'active' ELSE 'inactive' END ELSE 'active' END END as activity
                 from:
-                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
                 join:
                     left:
                         - { join: '%oro_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
@@ -58,7 +58,7 @@ datagrids:
                 activity:
                     data_name: activity
             default:
-                createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt:     '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 name:
@@ -147,7 +147,7 @@ datagrids:
                 name:
                     data_name: relatedEntity.name
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                name: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 name:
@@ -169,10 +169,10 @@ datagrids:
                     - customerGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
                 join:
                     inner:
-                        - { join: %oro_pricing.entity.price_list_to_customer.class%, alias: priceListToCustomer, conditionType: 'WITH', condition: 'priceListToCustomer.priceList = priceList'}
+                        - { join: '%oro_pricing.entity.price_list_to_customer.class%', alias: priceListToCustomer, conditionType: 'WITH', condition: 'priceListToCustomer.priceList = priceList'}
                         - { join: priceListToCustomer.customer, alias: relatedEntity }
                     left:
                         - { join: relatedEntity.group, alias: customerGroup }
@@ -201,7 +201,7 @@ datagrids:
                     options:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
-                            class:    %oro_customer.entity.customer_group.class%
+                            class:    '%oro_customer.entity.customer_group.class%'
                             property: name
                 parentName:
                     type:      string
@@ -217,10 +217,10 @@ datagrids:
                 select:
                     - relatedEntity.id as relatedEntityId
                 from:
-                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: '%oro_pricing.entity.price_list.class%', alias: priceList }
                 join:
                     inner:
-                        - { join: %oro_pricing.entity.price_list_to_customer_group.class%, alias: priceListToCustomerGroup, conditionType: 'WITH', condition: 'priceListToCustomerGroup.priceList = priceList'}
+                        - { join: '%oro_pricing.entity.price_list_to_customer_group.class%', alias: priceListToCustomerGroup, conditionType: 'WITH', condition: 'priceListToCustomerGroup.priceList = priceList'}
                         - { join: priceListToCustomerGroup.customerGroup, alias: relatedEntity }
         columns:
             name:
@@ -277,8 +277,8 @@ datagrids:
                 name:
                     data_name:  relatedEntity.name
             default:
-                has_price_list: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                name:           %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                has_price_list: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                name:           '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         properties:
             id: ~
         options:
@@ -294,10 +294,10 @@ datagrids:
                     - customerGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %oro_customer.entity.customer.class%, alias: relatedEntity }
+                    - { table: '%oro_customer.entity.customer.class%', alias: relatedEntity }
                 join:
                     left:
-                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
+                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
                         - { join: relatedEntity.group, alias: customerGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
@@ -315,7 +315,7 @@ datagrids:
                     options:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
-                            class:    %oro_customer.entity.customer_group.class%
+                            class:    '%oro_customer.entity.customer_group.class%'
                             property: name
                 parentName:
                     type:       string
@@ -337,10 +337,10 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %oro_customer.entity.customer_group.class%, alias: relatedEntity }
+                    - { table: '%oro_customer.entity.customer_group.class%', alias: relatedEntity }
                 join:
                     left:
-                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
+                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
         columns:
             name:
                 label:          oro.customer.customergroup.name.label
@@ -357,10 +357,10 @@ datagrids:
                 select:
                     - relatedEntity.url
                 from:
-                    - { table: %oro_website.entity.website.class%, alias: relatedEntity }
+                    - { table: '%oro_website.entity.website.class%', alias: relatedEntity }
                 join:
                     left:
-                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
+                        - { join: '%oro_pricing.entity.price_list.class%', alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
         columns:
             name:
                 label:          oro.website.name.label
@@ -401,7 +401,7 @@ datagrids:
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
-                    - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
+                    - { table: '%oro_pricing.entity.product_price.class%', alias: productPrice }
                 join:
                     inner:
                         - { join: productPrice.product, alias: product }
@@ -450,7 +450,7 @@ datagrids:
                 currency:
                     data_name: productPrice.currency
             default:
-                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 productSku:
@@ -550,7 +550,7 @@ datagrids:
                     - productPrice.value
                     - productPrice.currency
                 from:
-                    - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
+                    - { table: '%oro_pricing.entity.product_price.class%', alias: productPrice }
                 join:
                     left:
                         - { join: productPrice.priceList, alias: priceList }
@@ -591,7 +591,7 @@ datagrids:
                 currency:
                     data_name: productPrice.currency
             default:
-                priceListName: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                priceListName: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 priceListName:
@@ -642,7 +642,7 @@ datagrids:
                 select:
                     - priceAttributepriceList
                 from:
-                    - { table: %oro_pricing.entity.price_attribute_price_list.class%, alias: priceAttributepriceList }
+                    - { table: '%oro_pricing.entity.price_attribute_price_list.class%', alias: priceAttributepriceList }
 
         columns:
             name:
@@ -682,7 +682,7 @@ datagrids:
                 updatedAt:
                     data_name: priceAttributepriceList.updatedAt
             default:
-                createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt:     '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 name:

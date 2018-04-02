@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -16,7 +15,6 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class IndexDataProviderTest extends \PHPUnit_Framework_TestCase

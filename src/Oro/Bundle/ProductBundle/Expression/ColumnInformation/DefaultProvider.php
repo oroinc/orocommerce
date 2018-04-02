@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\ColumnInformation;
 
+use Oro\Component\Expression\ColumnInformationProviderInterface;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
-use Oro\Component\Expression\ColumnInformationProviderInterface;
 
 class DefaultProvider implements ColumnInformationProviderInterface
 {

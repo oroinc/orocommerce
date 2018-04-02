@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Oro\Bundle\FilterBundle\Filter\FilterUtility;
+use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormInterface;
-
-use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {

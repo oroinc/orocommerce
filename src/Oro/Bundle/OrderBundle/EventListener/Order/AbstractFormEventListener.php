@@ -47,12 +47,16 @@ abstract class AbstractFormEventListener
         $orderFormName = $orderForm->getName();
         $field = $orderForm->get($fieldName);
 
+        //@TODO remove in scope BAP-15236
+        $options = $field->getConfig()->getOptions();
+        unset($options['cascade_validation']);
+
         $form = $this->formFactory
             ->createNamedBuilder($orderFormName)
             ->add(
                 $fieldName,
                 $field->getConfig()->getType()->getName(),
-                $field->getConfig()->getOptions()
+                $options
             )
             ->getForm();
 

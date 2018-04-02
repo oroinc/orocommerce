@@ -4,9 +4,7 @@ namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;

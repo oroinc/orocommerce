@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class IntegerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Integer */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var IntegerValidator */
@@ -24,7 +24,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Integer();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new IntegerValidator();
         $this->validator->initialize($this->context);
 

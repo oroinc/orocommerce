@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
 {

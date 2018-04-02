@@ -10,7 +10,6 @@ use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;

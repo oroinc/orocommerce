@@ -17,6 +17,13 @@ define(function(require) {
         },
 
         /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListWidgetViewComponent() {
+            ShoppingListWidgetViewComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\Form\Form;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Symfony\Component\Form\Form;
 
 class ProductController extends Controller
 {
@@ -41,7 +39,7 @@ class ProductController extends Controller
             $priceList,
             [
                 'create_enabled' => false,
-                'empty_value' => false,
+                'placeholder' => false,
                 'empty_data' => $priceList,
                 'configs' => ['allowClear' => false],
                 'label' => 'oro.pricing.pricelist.entity_label',

@@ -3,20 +3,19 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Validator\Constraint;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
 {
     /** @var UniqueProductUnitShippingOptions */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var UniqueProductUnitShippingOptionsValidator */
@@ -25,7 +24,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new UniqueProductUnitShippingOptions();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new UniqueProductUnitShippingOptionsValidator();
         $this->validator->initialize($this->context);

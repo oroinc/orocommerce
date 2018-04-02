@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class ZipCodeTransformer implements DataTransformerInterface
 {

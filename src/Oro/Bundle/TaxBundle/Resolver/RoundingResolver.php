@@ -5,7 +5,6 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
 use Brick\Math\RoundingMode;
-
 use Oro\Bundle\TaxBundle\Model\AbstractResult;
 use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\ResultElement;

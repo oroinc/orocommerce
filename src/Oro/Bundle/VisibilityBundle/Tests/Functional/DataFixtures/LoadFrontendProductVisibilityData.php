@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
-use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements DependentFixtureInterface
 {

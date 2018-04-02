@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Calculator;
 
-use Oro\Component\Math\BigDecimal;
-
 use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Component\Math\BigDecimal;
 
 class TaxCalculator implements TaxCalculatorInterface
 {

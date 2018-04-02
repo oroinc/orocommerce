@@ -16,6 +16,16 @@ define(function(require) {
 
         dropdownWidget: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductAddToRfqView() {
+            ProductAddToRfqView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ProductAddToRfqView.__super__.initialize.apply(this, arguments);
             this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);

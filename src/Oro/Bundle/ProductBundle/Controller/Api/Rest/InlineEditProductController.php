@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
-
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

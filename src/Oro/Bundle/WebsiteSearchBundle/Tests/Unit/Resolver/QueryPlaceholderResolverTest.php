@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
 use Doctrine\Common\Collections\Expr\Comparison as DoctrineComparison;
-
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;

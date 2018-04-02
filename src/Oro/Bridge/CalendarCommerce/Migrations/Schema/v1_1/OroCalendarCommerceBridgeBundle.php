@@ -3,7 +3,6 @@
 namespace Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\InstallerBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;

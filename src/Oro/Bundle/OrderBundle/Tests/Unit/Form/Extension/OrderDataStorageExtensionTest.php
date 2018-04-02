@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {

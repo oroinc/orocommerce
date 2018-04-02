@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;

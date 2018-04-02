@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
-
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
@@ -16,6 +13,7 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
@@ -30,8 +28,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
@@ -123,7 +120,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                     ),
                     PriceType::NAME => $priceType,
                     QuantityType::NAME => $this->getQuantityType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub()
                 ],
                 [
                     'form' => [
@@ -151,9 +148,9 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
 
         $expectedOptions = [
-            'type' => ProductPriceType::NAME,
+            'entry_type' => ProductPriceType::NAME,
             'show_form_when_empty' => false,
-            'options' => ['data_class' => ProductPrice::class]
+            'entry_options' => ['data_class' => ProductPrice::class]
         ];
 
         $this->assertArraySubset($expectedOptions, $form->getConfig()->getOptions());

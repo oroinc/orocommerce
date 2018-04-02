@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 

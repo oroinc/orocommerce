@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver;
 
 use Brick\Math\BigDecimal;
-
 use Oro\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;

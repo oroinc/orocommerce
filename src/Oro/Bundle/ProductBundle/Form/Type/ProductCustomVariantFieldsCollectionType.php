@@ -5,13 +5,12 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantFieldsTransformer;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
-
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class ProductCustomVariantFieldsCollectionType extends AbstractType
 {

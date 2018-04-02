@@ -12,6 +12,10 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
+/**
+ * Provides methods to get prices with currencies, units and quantities
+ * for regular products, configurable products and product variants
+ */
 class FrontendProductPricesProvider
 {
     /**
@@ -95,6 +99,26 @@ class FrontendProductPricesProvider
         $this->prepareAndSetProductsPrices([$product]);
 
         return $this->getVariantsPrices($product->getId());
+    }
+
+    /**
+     * @param Product[] $products
+     *
+     * @return array
+     */
+    public function getVariantsPricesByProducts($products)
+    {
+        $this->prepareAndSetProductsPrices($products);
+        $productPrices = [];
+
+        foreach ($products as $product) {
+            if ($product->getType() === Product::TYPE_CONFIGURABLE) {
+                $productId = $product->getId();
+                $productPrices[$productId] = $this->getVariantsPrices($productId);
+            }
+        }
+
+        return $productPrices;
     }
 
     /**

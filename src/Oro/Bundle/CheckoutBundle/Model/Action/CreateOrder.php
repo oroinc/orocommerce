@@ -5,8 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Model\Action;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Component\Action\Action\AbstractAction;
-use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Action\Exception\InvalidParameterException;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class CreateOrder extends AbstractAction

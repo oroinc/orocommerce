@@ -3,9 +3,8 @@
 namespace Oro\Bundle\PricingBundle\ORM\Query\AST\Functions\String;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\Lexer;
-
+use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
 class UUID extends FunctionNode

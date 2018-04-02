@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
 use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener;
+use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
 
 class ProductUrlItemsProviderEndListenerTest extends \PHPUnit_Framework_TestCase
 {

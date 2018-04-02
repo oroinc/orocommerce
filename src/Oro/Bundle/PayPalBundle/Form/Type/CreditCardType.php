@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -9,8 +10,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class CreditCardType extends AbstractType
 {

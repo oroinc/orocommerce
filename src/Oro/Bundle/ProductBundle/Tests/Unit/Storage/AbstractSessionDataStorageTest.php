@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Storage;
 
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
 use Oro\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Storage\Stub\StubAbstractSessionDataStorage;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
 {

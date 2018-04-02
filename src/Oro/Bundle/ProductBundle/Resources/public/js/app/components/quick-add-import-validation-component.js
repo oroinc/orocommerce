@@ -20,7 +20,14 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddImportValidationComponent() {
+            QuickAddImportValidationComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

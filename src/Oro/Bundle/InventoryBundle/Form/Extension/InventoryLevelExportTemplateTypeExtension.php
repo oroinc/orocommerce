@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
 {

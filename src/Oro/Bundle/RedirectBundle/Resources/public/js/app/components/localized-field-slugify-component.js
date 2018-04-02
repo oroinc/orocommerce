@@ -9,6 +9,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LocalizedFieldSlugifyComponent() {
+            LocalizedFieldSlugifyComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         syncField: function(event) {
             var $source = $(event.target);
             var $target;

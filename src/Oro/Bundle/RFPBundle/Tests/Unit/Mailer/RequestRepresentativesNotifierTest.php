@@ -3,14 +3,13 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Mailer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase

@@ -4,8 +4,8 @@ namespace Oro\Bundle\RFPBundle\Layout\DataProvider;
 
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
 class RfpProductPricesProvider
 {

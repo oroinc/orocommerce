@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\OverriddenCost;
 
-use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AbstractShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AbstractShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
 class OverriddenCostShippingConfiguredPriceProviderDecorator extends AbstractShippingConfiguredPriceProviderDecorator

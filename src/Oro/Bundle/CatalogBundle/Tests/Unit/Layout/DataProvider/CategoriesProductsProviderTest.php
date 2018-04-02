@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
-
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;

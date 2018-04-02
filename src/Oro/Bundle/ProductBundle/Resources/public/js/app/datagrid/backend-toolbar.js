@@ -27,7 +27,14 @@ define(function(require) {
         },
 
         /**
-         *  @inheritDoc
+         * @inheritDoc
+         */
+        constructor: function BackendToolbar() {
+            BackendToolbar.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             options = options || {};

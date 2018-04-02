@@ -2,25 +2,23 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-
-use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {

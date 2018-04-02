@@ -9,18 +9,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_TestCase
 {

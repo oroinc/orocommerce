@@ -3,12 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ProductBySkuValidator extends ConstraintValidator
 {

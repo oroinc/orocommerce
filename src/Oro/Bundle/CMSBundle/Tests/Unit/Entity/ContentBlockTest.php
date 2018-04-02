@@ -8,7 +8,6 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ContentBlockTest extends \PHPUnit_Framework_TestCase

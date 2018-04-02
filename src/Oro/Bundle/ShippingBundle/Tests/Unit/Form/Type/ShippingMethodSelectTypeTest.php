@@ -7,8 +7,8 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
 {
@@ -82,7 +82,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $resolved = $resolver->resolve();
 
         $expected = [
-            'empty_value' => null,
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => self::METHODS,
             'choice_attr' => function () {

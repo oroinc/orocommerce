@@ -170,7 +170,7 @@ operations:
         routes:
             - oro_sale_quote_frontend_view
         order: 20
-        acl_resource: [CHECKOUT_CREATE, $.data]
+        acl_resource: [CHECKOUT_CREATE, 'entity:Oro\Bundle\SaleBundle\Entity\QuoteDemand']
         button_options:
             icon: fa-pencil-square-o
             class:  quota-accept-btn
@@ -261,8 +261,8 @@ action_groups:
                     - [[setNull], [propertyName, [demands]]]
                     - [[setNull], [propertyName, [internal_status]]]
                     - [[setNull], [propertyName, [customer_status]]]
-                    - [[replaceValue, 'false'], [property, ['%oro_sale.entity.quote.class%', expired]]]
-                    - [[replaceValue, 'false'], [property, ['%oro_sale.entity.quote.class%', pricesChanged]]]
+                    - [[replaceValue, false], [property, ['%oro_sale.entity.quote.class%', expired]]]
+                    - [[replaceValue, false], [property, ['%oro_sale.entity.quote.class%', pricesChanged]]]
                     - [[keep], [propertyName, [customerUser]]]
                     - [[keep], [propertyName, [customer]]]
                     - [[keep], [propertyName, [organization]]]

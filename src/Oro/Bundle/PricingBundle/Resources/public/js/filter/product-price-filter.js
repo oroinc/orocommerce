@@ -39,6 +39,13 @@ define([
         /**
          * @inheritDoc
          */
+        constructor: function ProductPriceFilter() {
+            ProductPriceFilter.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             ProductPriceFilter.__super__.initialize.apply(this, arguments);
 

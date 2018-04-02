@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
 /**

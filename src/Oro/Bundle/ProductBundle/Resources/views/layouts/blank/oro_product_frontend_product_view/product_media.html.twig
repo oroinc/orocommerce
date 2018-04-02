@@ -71,7 +71,7 @@
             {% set galleryImages = galleryImages|merge([{
                 src: Image.url(productImage.image, 'product_gallery_popup'),
                 thumb: Image.url(productImage.image, 'product_small'),
-                alt: (product.names|localized_value|oro_tag_filter)
+                alt: (product.names|localized_value|oro_html_strip_tags)
             }]) %}
         {% endfor %}
 
