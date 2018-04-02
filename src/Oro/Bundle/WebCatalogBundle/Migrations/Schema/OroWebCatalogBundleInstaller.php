@@ -13,6 +13,8 @@ use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 /**
+ * Standart Oro Installer for WebCatalogBundle
+ *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
@@ -55,7 +57,7 @@ class OroWebCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_0_1';
     }
 
     /**
