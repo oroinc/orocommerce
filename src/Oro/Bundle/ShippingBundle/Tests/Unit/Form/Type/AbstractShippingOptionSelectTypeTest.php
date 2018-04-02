@@ -9,8 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase

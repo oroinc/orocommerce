@@ -38,9 +38,8 @@ use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -399,11 +398,11 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return StubEntityType
      */
     protected function prepareProductEntityType()
     {
-        $entityType = new EntityType(
+        $entityType = new StubEntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
@@ -414,7 +413,7 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {
