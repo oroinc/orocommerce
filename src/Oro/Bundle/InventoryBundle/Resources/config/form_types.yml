@@ -10,12 +10,12 @@ services:
     oro_inventory.form.type.extension.inventory_status_export:
         class: Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension
         tags:
-            - { name: form.type_extension, alias: oro_importexport_export }
+            - { name: form.type_extension, alias: oro_importexport_export, extended_type: Oro\Bundle\ImportExportBundle\Form\Type\ExportType }
 
     oro_inventory.form.type.extension.inventory_level_export_template:
         class: Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
         tags:
-            - { name: form.type_extension, alias: oro_importexport_export_template }
+            - { name: form.type_extension, alias: oro_importexport_export_template, extended_type: Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType }
 
     oro_inventory.form.type.extension.product_manage_inventory_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\ProductManageInventoryFormExtension
