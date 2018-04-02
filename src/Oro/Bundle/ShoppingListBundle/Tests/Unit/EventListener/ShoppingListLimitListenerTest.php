@@ -3,11 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
-
-use Psr\Log\LoggerInterface;
-
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\CheckoutBundle\Event\LoginOnCheckoutEvent;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -15,6 +10,8 @@ use Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 class ShoppingListLimitListenerTest extends \PHPUnit_Framework_TestCase
 {

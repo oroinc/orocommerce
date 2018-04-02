@@ -2,16 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CheckoutBundle\Event\LoginOnCheckoutEvent;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
-
-use Doctrine\ORM\EntityManager;
-
 use Psr\Log\LoggerAwareTrait;
-
 use Symfony\Component\EventDispatcher\Event;
 
 /**
