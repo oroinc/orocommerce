@@ -22,6 +22,11 @@ class LoadContentVariantSlugsData extends AbstractFixture implements DependentFi
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
 
         $variant->addSlug($slug);
+
+        $variant = $this->getReference(LoadContentVariantsData::CONTENT_VARIANT_SUBNODE_1);
+        $variant->addSlug($this->getReference(LoadSlugsData::SLUG_URL_PAGE));
+        $variant->addSlug($this->getReference(LoadSlugsData::SLUG_URL_PAGE_2));
+
         $manager->flush();
     }
 

@@ -1,5 +1,12 @@
 # OroTaxBundle
-This bundle introduces tax functionality. Administrator can setup taxes and tax rules.
+
+OroTaxBundle introduces tax-related features in the OroCommerce application.
+
+The bundle enables management console users to create taxes, configure tax types for products, customers, and jurisdictions, as well as setup tax application rules based on the tax types.
+
+With the corresponding configuration of the bundle, customers can view applied taxes for orders and quotes.
+
+The bundle also provides an interface that enables developers to implement integrations with additional third-party tax providers to the OroCommerce applications.
 
 ## Table of Contents
  - [Create Custom Tax Provider](#create-custom-tax-provider)

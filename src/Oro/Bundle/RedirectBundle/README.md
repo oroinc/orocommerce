@@ -1,8 +1,8 @@
-Oro\Bundle\RedirectBundle
-=========================
+# OroRedirectBundle
 
-# Description
-OroRedirectBundle provides an extension to routing such as Semantic URLs and redirect functionality.
+OroRedirectBundle enables slug management for the product, category, brand, and landing pages in the OroCommerce storefront.
+
+The bundle enables OroCommerce management console administrators to configure automatic slug generation and related options in the system configuration UI. It also provides the ability for content managers to modify slugs manually for every sluggable page.
 
 # Semantic URLs
 ## Entity interfaces

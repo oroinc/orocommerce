@@ -13,11 +13,12 @@ use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
@@ -167,7 +168,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
                         'translatable_entity',
                         'oro_select2_translatable_entity'
                     ),
-                    'translatable_entity' => $translatableEntity,
+                    TranslatableEntityType::class => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [

@@ -14,9 +14,9 @@ use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -263,7 +263,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     MultiCurrencyType::NAME => new MultiCurrencyType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter)
                 ],
                 [

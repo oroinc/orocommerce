@@ -1,8 +1,11 @@
-# Oro\Bundle\PromotionBundle\OroPromotionBundle
+# OroPromotionBundle
+
+OroPromotionBundle adds coupon and promotion features to the OroCommerce application.
+
+With this bundle, the management console administrator can enable or disable these features in the system configuration UI. For sales representatives, the bundle introduces UI in the management console to create and manage coupons and promotions, and apply promotions to the customer orders via special discounts and coupon codes. For the customer users on the storefront, it provides the ability to apply coupons to the orders and review the applied promotions and discounts.
 
 ## Table of Contents
 
- * [Description](#description)
  * [Discounts](#discounts)
     * [Creation and Types](#discoucnts-creation-and-types)
     * [Add discount](#add-discount)
@@ -17,12 +20,6 @@
     * [Filters skippability during checkout](#filters-skippability-during-checkout)
  * [Discount Strategy](#discount-strategy)
  * [Applied Promotions](#applied-promotions)
-
-## Description
-
-This bundle introduces the promotions functionality.
-An administrator can setup discounts by adding promotions.
-Promotions have basic information: name, sort order, status, schedule, discount options, conditions with scope and expression, matching items, etc. Matched promotions give discounts during the checkout process.
 
 ## Discounts
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -13,7 +14,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductOfferTypeTest extends AbstractTest
@@ -268,7 +269,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 [
                     ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
+                    CurrencySelectionType::class            => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType()
                 ],

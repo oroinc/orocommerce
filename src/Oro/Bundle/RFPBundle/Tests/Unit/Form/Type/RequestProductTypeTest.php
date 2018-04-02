@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -13,9 +14,9 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestProductTypeTest extends AbstractTest
@@ -327,7 +328,7 @@ class RequestProductTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $productSelectType->getName()           => $productSelectType,
                     $requestProductItemType->getName()      => $requestProductItemType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
+                    CurrencySelectionType::class            => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],

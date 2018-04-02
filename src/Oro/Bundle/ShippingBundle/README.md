@@ -1,11 +1,12 @@
 # OroShippingBundle
 
+OroShippingBundle introduces the shipping methods integration framework for the OroCommerce applications.
+
+The bundle enables developers to add new Shipping Methods by implementing shipping method interfaces. It also provides UI for management console users to enable Shipping Methods and configure their visibility in storefront orders via Shipping Rules.
+
+For more details, refer to the [Add a New Shipping Method](https://oroinc.com/orocommerce/doc/current/dev-guide/extend-and-customize/shipping-method-add) user guide.
+
 ## Table of Contents
 
- - [Description](#description)
  - [Provide Units and Freight Classes](./Resources/doc/provide-units.md)
  - [Freight Classes Extension](./Resources/doc/freight-classes-extension.md)
-
-## Description:
-
-The ***OroShippingBundle*** provides functionality to manage shipping attributes for a product.

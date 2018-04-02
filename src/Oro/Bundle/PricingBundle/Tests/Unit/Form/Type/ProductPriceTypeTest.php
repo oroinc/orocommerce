@@ -20,10 +20,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -95,7 +95,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     ProductPriceUnitSelectorType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []

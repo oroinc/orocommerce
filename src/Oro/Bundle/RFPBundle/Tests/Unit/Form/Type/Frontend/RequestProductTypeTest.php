@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -12,7 +13,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -167,7 +168,7 @@ class RequestProductTypeTest extends AbstractTest
                     $entityType->getName()                 => $entityType,
                     $requestProductType->getName()         => $requestProductType,
                     $requestProductItemType->getName()     => $requestProductItemType,
-                    $currencySelectionType->getName()      => $currencySelectionType,
+                    CurrencySelectionType::class           => $currencySelectionType,
                     $productUnitSelectionType->getName()   => $productUnitSelectionType,
                     QuantityTypeTrait::$name               => $this->getQuantityType(),
                 ],
