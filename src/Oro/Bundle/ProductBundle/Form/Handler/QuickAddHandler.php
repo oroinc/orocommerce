@@ -109,7 +109,7 @@ class QuickAddHandler
         $options = $this->configureFormOptions($request, $processor);
 
         $form = $this->productFormProvider->getQuickAddForm([], $options);
-        $form->submit($request);
+        $form->handleRequest($request);
 
         if (!$processor || !$processor->isAllowed()) {
             /** @var Session $session */

@@ -133,7 +133,7 @@ class ContentNodeController extends Controller
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 
         $form = $this->createForm(ContentNodeType::class, $node);
-        $form->submit($request);
+        $form->handleRequest($request);
 
         $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
 

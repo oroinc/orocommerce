@@ -229,7 +229,7 @@ class CheckoutController extends Controller
             return;
         }
 
-        $transitionForm->submit($request);
+        $transitionForm->handleRequest($request);
         if (!$transitionForm->isValid()) {
             $this->handleFormErrors($transitionForm->getErrors());
             return;
