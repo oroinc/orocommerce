@@ -7,9 +7,7 @@ use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\FormInterface;
 
 class TotalCalculateListener
 {
@@ -51,7 +49,7 @@ class TotalCalculateListener
             }
 
             $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
-            $form->submit($request);
+            $form->submit($request->get($form->getName()));
         }
     }
 

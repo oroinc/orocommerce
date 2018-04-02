@@ -27,8 +27,8 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\PreloadedExtension;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
@@ -143,7 +143,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                         'translatable_entity',
                         'oro_select2_translatable_entity'
                     ),
-                    'translatable_entity' => $translatableEntity,
+                    TranslatableEntityType::class => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [

@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductRequestTypeTest extends AbstractTest
@@ -219,7 +219,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    CurrencySelectionType::NAME             => new CurrencySelectionTypeStub(),
+                    CurrencySelectionType::class            => new CurrencySelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),

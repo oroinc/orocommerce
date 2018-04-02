@@ -22,10 +22,10 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Routing\RouterInterface;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
