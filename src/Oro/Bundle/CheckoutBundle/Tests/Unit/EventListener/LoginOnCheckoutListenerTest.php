@@ -9,13 +9,11 @@ use Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Symfony\Component\HttpFoundation\Request;
 
 class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 {

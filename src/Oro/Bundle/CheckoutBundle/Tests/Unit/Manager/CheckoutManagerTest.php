@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;

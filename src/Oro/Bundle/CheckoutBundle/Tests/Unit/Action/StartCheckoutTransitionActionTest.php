@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Oro\Bundle\CheckoutBundle\Action\StartCheckoutTransitionAction;
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Component\ConfigExpression\ContextAccessor;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class StartCheckoutTransitionActionTest extends \PHPUnit_Framework_TestCase

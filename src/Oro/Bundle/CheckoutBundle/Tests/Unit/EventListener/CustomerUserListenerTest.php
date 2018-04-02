@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
+use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
+use Oro\Bundle\CustomerBundle\Mailer\Processor;
+use Oro\Bundle\CustomerBundle\Security\LoginManager;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
-use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Security\LoginManager;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\CustomerBundle\Mailer\Processor;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 
 class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
 {

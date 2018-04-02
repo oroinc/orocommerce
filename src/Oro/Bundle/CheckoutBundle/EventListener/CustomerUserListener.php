@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
+use Oro\Bundle\CustomerBundle\Security\LoginManager;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerUserListener
 {

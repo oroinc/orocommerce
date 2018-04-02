@@ -5,11 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\LoginOnCheckoutEvent;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 

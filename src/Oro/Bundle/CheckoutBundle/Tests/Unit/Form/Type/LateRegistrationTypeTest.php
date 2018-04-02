@@ -4,12 +4,11 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LateRegistrationTypeTest extends FormIntegrationTestCase
 {
