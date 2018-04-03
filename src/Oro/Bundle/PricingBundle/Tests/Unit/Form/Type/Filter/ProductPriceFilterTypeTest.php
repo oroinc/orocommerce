@@ -49,14 +49,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function getTestFormType()
-    {
-        return $this->type;
-    }
-
-    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     public function getRegistry()

@@ -21,7 +21,6 @@ class SectionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->formRegistry = $this->createMock(FormRegistryInterface::class);
 
-
         $this->sectionProvider = new SectionProvider($this->formRegistry);
     }
 

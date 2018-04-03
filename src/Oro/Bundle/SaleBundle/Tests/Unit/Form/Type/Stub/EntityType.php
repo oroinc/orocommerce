@@ -15,7 +15,7 @@ class EntityType extends StubEntityType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'class' => '',
-            'choice_label' => '',
+            'property' => '',
             'configs' => [],
         ]);
     }

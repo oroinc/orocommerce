@@ -385,9 +385,8 @@ system_configuration:
                 label: oro.product.system_configuration.fields.show_on_product_view.label
                 tooltip: oro.product.form.tooltip.show_on_product_view
                 required: true
-#               Should be fixed in scope of BAP-16505
-#                constraints:
-#                    - NotBlank: ~
+                constraints:
+                    - NotBlank: ~
                 choice_translation_domain: messages
                 choices_as_values: true
                 choices:
