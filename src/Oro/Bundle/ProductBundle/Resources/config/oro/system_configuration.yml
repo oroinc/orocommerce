@@ -309,7 +309,6 @@ system_configuration:
             type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
             priority: 10
             options:
-                choices_as_values: true
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
@@ -388,10 +387,9 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                choices_as_values: true
                 choices:
-                    oro.product.system_configuration.fields.show_on_product_view.type.no.label: false
-                    oro.product.system_configuration.fields.show_on_product_view.type.yes.label: true
+                    false: oro.product.system_configuration.fields.show_on_product_view.type.no.label
+                    true: oro.product.system_configuration.fields.show_on_product_view.type.yes.label
 
         oro_product.new_arrivals_products_segment_id:
             data_type: string
