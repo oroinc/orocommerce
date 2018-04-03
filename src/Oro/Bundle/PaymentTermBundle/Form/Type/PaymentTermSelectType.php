@@ -17,7 +17,7 @@ class PaymentTermSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => PaymentTermType::class,
+                'autocomplete_alias' => 'oro_payment_term',
                 'create_form_route' => 'oro_payment_term_create',
                 'configs' => [
                     'placeholder' => 'oro.paymentterm.form.choose',

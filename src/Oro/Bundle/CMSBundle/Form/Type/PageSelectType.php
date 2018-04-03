@@ -17,7 +17,7 @@ class PageSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => PageType::class,
+                'autocomplete_alias' => 'oro_cms_page',
                 'create_form_route' => 'oro_cms_page_create',
                 'configs' => [
                     'placeholder' => 'oro.cms.page.form.choose',

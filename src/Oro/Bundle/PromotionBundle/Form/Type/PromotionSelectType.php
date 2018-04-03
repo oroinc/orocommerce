@@ -17,7 +17,7 @@ class PromotionSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => PromotionType::class,
+                'autocomplete_alias' => 'oro_promotion',
                 'create_form_route' => 'oro_promotion_create',
                 'create_enabled' => false,
                 'configs' => [

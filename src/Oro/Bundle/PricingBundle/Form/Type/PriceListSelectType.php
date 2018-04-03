@@ -17,7 +17,7 @@ class PriceListSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => PriceListType::class,
+                'autocomplete_alias' => 'oro_pricing_price_list',
                 'create_form_route' => 'oro_pricing_price_list_create',
                 'configs' => [
                     'placeholder' => 'oro.pricing.form.choose_price_list'

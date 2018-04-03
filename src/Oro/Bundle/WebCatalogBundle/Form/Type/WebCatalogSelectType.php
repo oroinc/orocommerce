@@ -17,7 +17,7 @@ class WebCatalogSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => WebCatalogType::class,
+                'autocomplete_alias' => 'oro_web_catalog',
                 'create_form_route' => 'oro_web_catalog_create',
                 'configs' => [
                     'placeholder' => 'oro.webcatalog.form.choose',
