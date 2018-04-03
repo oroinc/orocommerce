@@ -47,7 +47,7 @@ services:
             - '%oro_pricing.entity.price_list.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_pricing_price_list, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'

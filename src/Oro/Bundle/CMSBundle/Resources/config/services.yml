@@ -11,7 +11,7 @@ services:
             - '%oro_cms.entity.page.class%'
             - [ "defaultTitle.string"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\CMSBundle\Form\Type\PageType, acl_resource: oro_cms_page_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page, acl_resource: oro_cms_page_view }
 
     oro_cms.provider.login_page_data_provider:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
