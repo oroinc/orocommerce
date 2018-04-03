@@ -15,6 +15,9 @@ use Oro\Component\MessageQueue\Client\Message;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Adds new columns to oro_checkout_subtotal and oro_checkout tables
+ */
 class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabasePlatformAwareInterface
 {
     use ContainerAwareTrait;
