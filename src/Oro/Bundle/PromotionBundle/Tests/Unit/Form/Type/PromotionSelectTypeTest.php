@@ -46,7 +46,7 @@ class PromotionSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertFalse($options['create_enabled']);
-                    $this->assertEquals(PromotionType::class, $options['autocomplete_alias']);
+                    $this->assertEquals('oro_promotion', $options['autocomplete_alias']);
                     $this->assertEquals('oro_promotion_create', $options['create_form_route']);
                     $this->assertEquals(
                         [

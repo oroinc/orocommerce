@@ -45,7 +45,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
-                    $this->assertEquals(WebCatalogType::class, $options['autocomplete_alias']);
+                    $this->assertEquals('oro_web_catalog', $options['autocomplete_alias']);
                     $this->assertEquals('oro_web_catalog_create', $options['create_form_route']);
                     $this->assertEquals(
                         [

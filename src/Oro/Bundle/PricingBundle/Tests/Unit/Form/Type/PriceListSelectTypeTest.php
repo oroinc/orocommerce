@@ -30,7 +30,7 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function (array $options) {
                     $this->assertArrayHasKey('autocomplete_alias', $options);
-                    $this->assertEquals(PriceListType::class, $options['autocomplete_alias']);
+                    $this->assertEquals('oro_pricing_price_list', $options['autocomplete_alias']);
 
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertEquals('oro_pricing_price_list_create', $options['create_form_route']);
