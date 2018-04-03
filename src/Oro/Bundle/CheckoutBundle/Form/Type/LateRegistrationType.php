@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Represents late registration form type for guests checkout
+ */
 class LateRegistrationType extends AbstractType
 {
     /**

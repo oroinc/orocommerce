@@ -6,6 +6,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Handles logic for reassigning Customer if he was registered as guest (sets registered_id to null)
+ */
 class CheckoutManager
 {
     /**

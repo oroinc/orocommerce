@@ -8,6 +8,9 @@ use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 
+/**
+ * Executes start checkout action and sets transision whatever gust or not
+ */
 class StartCheckoutTransitionAction extends AbstractAction
 {
     const OPTION_KEY_ATTRIBUTE = 'attribute';

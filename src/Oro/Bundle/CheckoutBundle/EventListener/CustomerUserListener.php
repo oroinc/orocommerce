@@ -10,6 +10,9 @@ use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Executes autologin depending on CustomerUser status and adds email template params for autologin link
+ */
 class CustomerUserListener
 {
     /**

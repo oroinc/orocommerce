@@ -23,6 +23,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Handles checkout logic
+ */
 class CheckoutController extends Controller
 {
     /**

@@ -21,6 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
+ * Handles logic related to shopping list and lineitem manipulations (create, remove, etc.)
  * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)

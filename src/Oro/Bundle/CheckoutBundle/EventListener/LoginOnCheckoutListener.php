@@ -11,6 +11,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
+/**
+ * Assigns checkout to newly logged CustomerUser (registered from guest checkout)
+ */
 class LoginOnCheckoutListener
 {
     /**

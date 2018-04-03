@@ -6,6 +6,9 @@ use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Includes methods for checking is workflow start from shopping list allowed for logged, not logged or any users
+ */
 class IsWorkflowStartFromShoppingListAllowed
 {
     /**
