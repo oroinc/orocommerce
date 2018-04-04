@@ -143,7 +143,7 @@ services:
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     oro_product.storage.product_data_bag:
-        class: '%session.attribute_bag.class%'
+        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         public: false
         arguments:
             - '_product_data_bag'
