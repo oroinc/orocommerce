@@ -296,8 +296,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
-    Then I should see "Shopping list \"Shopping list\" was updated successfully"
-    And I click "Shopping list"
+    Then I should see "Shopping list \"Shopping List\" was updated successfully"
+    And I click "Shopping List"
 
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -405,7 +405,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I click "Add to Shopping List" for "CNF_B" product
-    Then I should see "Shopping list \"Shopping list\" was updated successfully"
+    Then I should see "Shopping list \"Shopping List\" was updated successfully"
     And I click "Shopping List"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -424,10 +424,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "Total QTY 5 | Subtotal $60.00" in the "Matrix Grid Form Totals" element
     And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
     And I click "Clear All"
-    Given I click "Create Order"
-    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
-    And I click "Proceed"
-    Then I should see "Shopping List"
+    And I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items" flash message
 
   Scenario: Create request for quote with empty matrix form
@@ -440,7 +437,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given type "SKU123" in "search"
     And click "Search Button"
     And I click "Add to Shopping List" for "SKU123" product
-    And I should see "Product has been added to \"Shopping list\""
+    And I should see "Product has been added to \"Shopping List\""
     And I click "Shopping List"
     Given I click "Create Order"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
@@ -690,9 +687,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And type "CNF_B" in "search"
     And click "Search Button"
     And I click "Gallery View"
-    Then I should see "Add to Shopping list" for "CNF_B" product
+    Then I should see "Add to Shopping List" for "CNF_B" product
     And I should not see an "Matrix Grid Form" element
-    And I click "Add to Shopping list" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
     And I click "Matrix Grid Popup Close Button"
     And I click "List View"
@@ -707,7 +704,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
     And I should see "No Shopping Lists"
-    And I click "Add to Shopping list" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNF_B" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -911,7 +908,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List"
+    And I click "Add to List 2"
     Then I should see "Shopping list \"List 2\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
@@ -999,7 +996,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "Configurable Product B" product
     Then I should not see an "Matrix Grid Form" element
-    And I press "Add to Shopping List"
+    And I press "Add to Product C Shopping List"
     Then I should see an "Matrix Grid Form" element
 
   Scenario: Check matrix form disabled

@@ -123,7 +123,7 @@ Feature: Guest Shopping Lists
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10   |
       | Unit     | each |
-    And I click "Update Shopping list"
+    And I click "Update Shopping List"
     Then I should see "Record has been successfully updated" flash message
     And I click "NewCategory"
     Then I should see "In shopping list"
