@@ -56,7 +56,7 @@ class PaymentTermExtension implements ExtendExtensionAwareInterface
                     ],
                     'form' => [
                         'is_enabled' => true,
-                        'form_type' => PaymentTermSelectType::NAME,
+                        'form_type' => PaymentTermSelectType::class, // TODO: BAP-16688, migration?
                     ],
                     'view' => ['is_displayable' => true],
                     'dataaudit' => ['auditable' => true],
