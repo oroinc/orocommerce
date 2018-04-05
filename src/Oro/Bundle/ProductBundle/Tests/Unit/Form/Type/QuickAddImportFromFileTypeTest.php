@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
@@ -44,7 +44,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $data, array $expectedData, $isValid)
     {
-        $formBuilder = $this->factory->createBuilder($this->formType);
+        $formBuilder = $this->factory->createBuilder(QuickAddImportFromFileType::class);
         $formBuilder->get(QuickAddImportFromFileType::FILE_FIELD_NAME)
             ->setRequestHandler(new HttpFoundationRequestHandler());
         $form = $formBuilder->getForm();

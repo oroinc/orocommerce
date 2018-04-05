@@ -23,9 +23,9 @@ use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -49,12 +49,11 @@ class CategoryTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->type = new CategoryType($this->urlGenerator);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -70,7 +69,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
@@ -83,7 +82,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'shortDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label')
             )
             ->will($this->returnSelf());
@@ -92,7 +91,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'longDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 $this->getOroRichTextTypeConfiguration('oro.catalog.category.long_descriptions.label')
             )
             ->will($this->returnSelf());
@@ -101,7 +100,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'appendProducts',
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 ['class' => self::PRODUCT_CLASS, 'required' => false, 'mapped' => false, 'multiple' => true]
             )
             ->will($this->returnSelf());
@@ -110,7 +109,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'removeProducts',
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 ['class' => self::PRODUCT_CLASS, 'required' => false, 'mapped' => false, 'multiple' => true]
             )
             ->will($this->returnSelf());
@@ -119,7 +118,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'smallImage',
-                'oro_image',
+                ImageType::class,
                 ['label' => 'oro.catalog.category.small_image.label', 'required' => false]
             )->will($this->returnSelf());
 
@@ -127,7 +126,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'largeImage',
-                'oro_image',
+                ImageType::class,
                 ['label' => 'oro.catalog.category.large_image.label', 'required' => false]
             )->will($this->returnSelf());
 
@@ -135,7 +134,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'defaultProductOptions',
-                CategoryDefaultProductOptionsType::NAME,
+                CategoryDefaultProductOptionsType::class,
                 ['required' => false]
             )->will($this->returnSelf());
 
@@ -143,7 +142,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label' => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
@@ -191,7 +190,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
         ]);
 
         /** @var Form $form */
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(CategoryType::class, $existingData);
 
         $formView = $form->createView();
 
@@ -219,15 +218,16 @@ class CategoryTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ImageType::NAME => new ImageTypeStub(),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([
+                    $this->type,
+                    ImageType::class => new ImageTypeStub(),
+                    EntityIdentifierType::class => new StubEntityIdentifierType([
                         1 => $this->getEntity(Category::class, ['id' => 1])
                     ]),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    CategoryDefaultProductOptionsType::NAME => new CategoryDefaultProductOptionsType(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($confirmHelper),
-                    CategoryUnitPrecisionType::NAME => new CategoryUnitPrecisionType($visibilityProvider)
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+                    CategoryDefaultProductOptionsType::class => new CategoryDefaultProductOptionsType(),
+                    LocalizedSlugType::class => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::class => new LocalizedSlugWithRedirectType($confirmHelper),
+                    CategoryUnitPrecisionType::class => new CategoryUnitPrecisionType($visibilityProvider)
                 ],
                 []
             ),
@@ -244,7 +244,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             'label' => $label,
             'required' => false,
             'field' => 'text',
-            'entry_type' => OroRichTextType::NAME,
+            'entry_type' => OroRichTextType::class,
             'entry_options' => [
                 'wysiwyg_options' => [
                     'statusbar' => true,

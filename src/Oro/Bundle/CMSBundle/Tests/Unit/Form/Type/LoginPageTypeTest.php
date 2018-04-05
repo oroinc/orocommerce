@@ -5,34 +5,11 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class LoginPageTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var LoginPageType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new LoginPageType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-    }
-
     /**
      * @return array
      */
@@ -41,7 +18,7 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ImageType::NAME => new ImageTypeStub(),
+                    ImageType::class => new ImageTypeStub(),
                 ],
                 []
             )
@@ -50,13 +27,13 @@ class LoginPageTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(LoginPageType::NAME, $this->formType->getName());
+        $formType = new LoginPageType();
+        $this->assertEquals(LoginPageType::NAME, $formType->getName());
     }
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(LoginPageType::class);
 
         $this->assertTrue($form->has('topContent'));
         $this->assertTrue($form->has('bottomContent'));

@@ -9,23 +9,12 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OrderDiscountCollectionTableType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new OrderDiscountCollectionTableType();
-    }
-
     /**
      * @return array
      */
@@ -34,7 +23,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    OrderDiscountCollectionRowType::NAME => new OrderDiscountCollectionRowType(),
+                    OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
                 ],
                 []
             ),
@@ -43,12 +32,13 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertEquals(OrderCollectionTableType::class, $this->formType->getParent());
+        $formType = new OrderDiscountCollectionTableType();
+        static::assertEquals(OrderCollectionTableType::class, $formType->getParent());
     }
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType, null, ['order' => new Order()]);
+        $form = $this->factory->create(OrderDiscountCollectionTableType::class, null, ['order' => new Order()]);
 
         static::assertArraySubset([
             'template_name' => 'OroOrderBundle:Discount:order_discount_collection.html.twig',
@@ -59,7 +49,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
                 'totalType' => LineItemSubtotalProvider::TYPE,
             ],
             'attr' => ['class' => 'oro-discount-collection'],
-            'entry_type' => OrderDiscountCollectionRowType::NAME
+            'entry_type' => OrderDiscountCollectionRowType::class
         ], $form->getConfig()->getOptions());
     }
 
@@ -74,7 +64,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
-        $this->factory->create($this->formType, null, $formOptions);
+        $this->factory->create(OrderDiscountCollectionTableType::class, null, $formOptions);
     }
 
     public function orderOptionRequiredDataProvider()
@@ -96,18 +86,20 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        static::assertEquals('oro_order_discount_collection_table', $this->formType->getName());
+        $formType = new OrderDiscountCollectionTableType();
+        static::assertEquals('oro_order_discount_collection_table', $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals('oro_order_discount_collection_table', $this->formType->getBlockPrefix());
+        $formType = new OrderDiscountCollectionTableType();
+        static::assertEquals('oro_order_discount_collection_table', $formType->getBlockPrefix());
     }
 
     public function testView()
     {
         $order = new Order();
-        $form = $this->factory->create($this->formType, null, [
+        $form = $this->factory->create(OrderDiscountCollectionTableType::class, null, [
             'order' => $order
         ]);
         $formView = $form->createView();

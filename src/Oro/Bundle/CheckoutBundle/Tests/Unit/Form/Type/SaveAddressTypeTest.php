@@ -4,9 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SaveAddressTypeTest extends FormIntegrationTestCase

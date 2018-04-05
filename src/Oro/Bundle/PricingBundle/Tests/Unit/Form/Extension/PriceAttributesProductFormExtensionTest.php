@@ -18,8 +18,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
@@ -56,12 +56,12 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    ProductType::NAME => new ProductTypeStub(),
-                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType($translator),
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
+                    ProductType::class => new ProductTypeStub(),
+                    ProductAttributePriceCollectionType::class => new ProductAttributePriceCollectionType($translator),
+                    ProductAttributePriceType::class => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 [
-                    ProductType::NAME => [
+                    ProductTypeStub::class => [
                         new PriceAttributesProductFormExtension($this->registry)
                     ]
                 ]
@@ -87,7 +87,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
-        $form = $this->factory->create(ProductType::NAME, new Product(), []);
+        $form = $this->factory->create(ProductType::class, new Product(), []);
 
         $form->submit([]);
         $this->assertTrue($form->isValid());
@@ -140,7 +140,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
-        $form = $this->factory->create(ProductType::NAME, $product, []);
+        $form = $this->factory->create(ProductType::class, $product, []);
         $expected = [
             1 => [
                 $price1USD,
@@ -206,7 +206,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
-        $form = $this->factory->create(ProductType::NAME, $product, []);
+        $form = $this->factory->create(ProductType::class, $product, []);
 
         // Expect that persist method for new price instance was called on post submit
         $em->expects($this->once())->method('persist')->with(
@@ -261,7 +261,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
-        $form = $this->factory->create(ProductType::NAME, $product, []);
+        $form = $this->factory->create(ProductType::class, $product, []);
 
         // Expect that remove method for nullable price instance was called on post submit
         $em->expects($this->once())->method('remove')->with($priceUSD);
@@ -281,6 +281,6 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     public function testGetExtendedType()
     {
         $extension = new PriceAttributesProductFormExtension($this->registry);
-        $this->assertEquals(ProductType::NAME, $extension->getExtendedType());
+        $this->assertEquals(ProductType::class, $extension->getExtendedType());
     }
 }

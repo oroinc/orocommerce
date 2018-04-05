@@ -9,9 +9,9 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -44,7 +44,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
             ->willReturn(['webCatalog' => WebCatalog::class]);
 
         $form = $this->factory->create(
-            ScopeType::NAME,
+            ScopeType::class,
             null,
             [
                 ScopeType::SCOPE_TYPE_OPTION => 'web_content',
@@ -60,7 +60,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The option "web_catalog" must be set.');
         $this->factory->create(
-            ScopeType::NAME,
+            ScopeType::class,
             null,
             [
                 ScopeType::SCOPE_TYPE_OPTION => 'web_content'
@@ -85,15 +85,15 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ScopeType::NAME => new ScopeType($this->scopeManager),
-                    EntityIdentifierType::NAME => new EntityIdentifierTypeStub(
+                    ScopeType::class => new ScopeType($this->scopeManager),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
                         [
                             1 => $this->getEntity(WebCatalog::class, ['id' => 1])
                         ]
                     ),
                 ],
                 [
-                    ScopeType::NAME => [$this->extension],
+                    ScopeType::class => [$this->extension],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

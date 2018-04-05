@@ -109,7 +109,7 @@ class PaymentTermController extends Controller
      */
     protected function update(PaymentTerm $paymentTerm, Request $request)
     {
-        $form = $this->createForm(PaymentTermType::NAME, $paymentTerm);
+        $form = $this->createForm(PaymentTermType::class, $paymentTerm);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $paymentTerm,

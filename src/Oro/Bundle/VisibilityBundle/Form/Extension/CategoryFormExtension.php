@@ -17,7 +17,7 @@ class CategoryFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CategoryType::NAME;
+        return CategoryType::class;
     }
 
     /**
@@ -28,7 +28,7 @@ class CategoryFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 EntityVisibilityType::VISIBILITY,
-                EntityVisibilityType::NAME,
+                EntityVisibilityType::class,
                 [
                     'data' => $options['data'],
                     EntityVisibilityType::ALL_CLASS => CategoryVisibility::class,

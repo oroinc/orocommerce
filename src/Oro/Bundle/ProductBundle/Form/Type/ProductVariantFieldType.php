@@ -3,8 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductVariantFieldType extends AbstractType
 {
@@ -16,10 +17,10 @@ class ProductVariantFieldType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('priority', 'hidden', ['empty_data' => 9999])
+            ->add('priority', HiddenType::class, ['empty_data' => 9999])
             ->add(
                 'is_selected',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'attr' => ['data-original-name' => $builder->getName()],

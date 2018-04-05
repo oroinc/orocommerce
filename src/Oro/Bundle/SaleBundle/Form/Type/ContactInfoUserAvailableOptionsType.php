@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\SaleBundle\Provider\OptionsProviderInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -80,6 +81,6 @@ class ContactInfoUserAvailableOptionsType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 }

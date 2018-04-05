@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FormBundle\Form\DataTransformer\EntitiesToIdsTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -59,7 +60,7 @@ class ProductInventoryStatusSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_enum_choice';
+        return EnumChoiceType::class;
     }
 
     /**

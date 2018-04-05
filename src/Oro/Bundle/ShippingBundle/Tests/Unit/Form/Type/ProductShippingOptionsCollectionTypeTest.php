@@ -35,7 +35,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => ProductShippingOptionsType::NAME,
+                'entry_type' => ProductShippingOptionsType::class,
                 'show_form_when_empty' => false,
                 'entry_options' => [
                     'data_class' => self::DATA_CLASS
@@ -48,7 +48,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testGetBlockPrefix()
