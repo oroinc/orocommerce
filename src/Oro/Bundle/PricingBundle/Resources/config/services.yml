@@ -432,6 +432,8 @@ services:
             - '@doctrine'
             - '@oro_website.manager'
             - '@oro_config.global'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
