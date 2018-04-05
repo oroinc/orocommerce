@@ -17,15 +17,21 @@ use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
 use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+/**
+ * CRUD controller for InventoryLevel entity
+ */
 class InventoryLevelController extends Controller
 {
     /**
      * @Route("/", name="oro_inventory_level_index")
      * @Template
-     * @AclAncestor("oro_inventory_level_index")
-     *
+     * @Acl(
+     *      id="oro_inventory_level_view",
+     *      type="entity",
+     *      class="OroInventoryBundle:InventoryLevel",
+     *      permission="VIEW"
+     * )
      * @return array
      */
     public function indexAction()
