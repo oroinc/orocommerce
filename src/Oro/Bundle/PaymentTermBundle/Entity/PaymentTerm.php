@@ -26,7 +26,7 @@ use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType", # TODO: BAP-16688, migration?
+ *              "form_type"="Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType",
  *              "grid_name"="payment-terms-select-grid",
  *          }
  *      }
