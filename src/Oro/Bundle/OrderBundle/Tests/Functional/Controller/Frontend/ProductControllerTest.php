@@ -11,9 +11,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchase
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
-/**
- * @dbIsolationPerTest
- */
 class ProductControllerTest extends FrontendWebTestCase
 {
     use WebsiteSearchExtensionTrait;
@@ -57,20 +54,6 @@ class ProductControllerTest extends FrontendWebTestCase
         $this->assertArrayHasKey(LoadProductData::PRODUCT_6, $skus);
     }
 
-    public function testPreviouslyPurchasedGridIfUserNonAuth()
-    {
-        /** login as anonymous user */
-        $this->initClient([]);
-
-        $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, [], true);
-
-        $this->assertResponseStatusCodeEquals(
-            $response,
-            401,
-            sprintf('Please check acl for "%s"', self::FRONTEND_GRID_NAME)
-        );
-    }
-
     /**
      * @param array $gridParam
      * @param array $expected
@@ -79,8 +62,6 @@ class ProductControllerTest extends FrontendWebTestCase
      */
     public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected)
     {
-        $this->markTestSkipped('will be unskipped in BB-13532');
-
         $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, $gridParam, true);
 
         $result = static::getJsonResponseContent($response, 200);
