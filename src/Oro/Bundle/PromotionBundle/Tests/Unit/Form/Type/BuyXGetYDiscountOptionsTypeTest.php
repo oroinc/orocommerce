@@ -20,6 +20,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -49,7 +50,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getParent());
+        $this->assertEquals(DiscountOptionsType::class, $this->formType->getParent());
     }
 
     /**
@@ -61,7 +62,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $existingData, array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType, $existingData);
+        $form = $this->factory->create(BuyXGetYDiscountOptionsType::class, $existingData);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -173,14 +174,14 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
-                    DiscountOptionsType::NAME => new DiscountOptionsType(),
-                    MultiCurrencyType::NAME => new MultiCurrencyType(),
+                    ProductUnitsType::class => new ProductUnitsType($productUnitsProvider),
+                    DiscountOptionsType::class => new DiscountOptionsType(),
+                    MultiCurrencyType::class => new MultiCurrencyType(),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter),
+                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter),
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

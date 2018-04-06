@@ -102,7 +102,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
      */
     public function getParent()
     {
-        return DiscountOptionsType::NAME;
+        return DiscountOptionsType::class;
     }
 
     /**

@@ -12,9 +12,9 @@ use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
@@ -33,9 +33,9 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->subscriber = new RuleMethodConfigCollectionSubscriberStub();
         $this->type = new PaymentMethodConfigCollectionType($this->subscriber);
+        parent::setUp();
     }
 
     /**
@@ -53,7 +53,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
             ]
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(PaymentMethodConfigCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
@@ -108,8 +108,9 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME          => new CollectionType(),
-                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodProvider, $methodViewProvider),
+                    $this->type,
+                    CollectionType::class          => new CollectionType(),
+                    PaymentMethodConfigType::class => new PaymentMethodConfigType($methodProvider, $methodViewProvider),
                 ],
                 []
             ),

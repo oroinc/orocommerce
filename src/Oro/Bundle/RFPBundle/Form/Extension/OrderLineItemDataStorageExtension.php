@@ -5,10 +5,12 @@ namespace Oro\Bundle\RFPBundle\Form\Extension;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Type\OffersType;
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -85,10 +87,10 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
                 $offers = $this->getOffers($form);
                 $form->add(
                     OffersFormStorage::DATA_KEY,
-                    'hidden',
+                    HiddenType::class,
                     ['data' => $this->formStorage->getRawData($offers), 'mapped' => false]
                 );
-                $form->add(self::OFFERS_DATA_KEY, OffersType::NAME, [OffersType::OFFERS_OPTION => $offers]);
+                $form->add(self::OFFERS_DATA_KEY, OffersType::class, [OffersType::OFFERS_OPTION => $offers]);
             }
         );
 
@@ -97,7 +99,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
             function (FormEvent $event) {
                 $event->getForm()->add(
                     self::OFFERS_DATA_KEY,
-                    OffersType::NAME,
+                    OffersType::class,
                     [OffersType::OFFERS_OPTION => $this->formStorage->getData($event->getData())]
                 );
             }
@@ -185,6 +187,6 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     /** {@inheritdoc} */
     public function getExtendedType()
     {
-        return 'oro_order_line_item';
+        return OrderLineItemType::class;
     }
 }

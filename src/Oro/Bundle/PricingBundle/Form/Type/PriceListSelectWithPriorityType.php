@@ -23,7 +23,7 @@ class PriceListSelectWithPriorityType extends AbstractType
         $builder
             ->add(
                 self::PRICE_LIST_FIELD,
-                PriceListSelectType::NAME,
+                PriceListSelectType::class,
                 [
                     'empty_data' => null,
                     'required' => true,

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -25,7 +26,7 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()

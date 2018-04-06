@@ -22,6 +22,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -74,8 +75,8 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         /** @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject $propertyAccessor */
         $propertyAccessor = $this->createMock(PropertyAccessor::class);
 
-        parent::setUp();
         $this->type = new ProductCollectionSegmentType($this->definitionConverter, $propertyAccessor);
+        parent::setUp();
     }
 
     /**
@@ -102,10 +103,11 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    SegmentFilterBuilderType::NAME => $segmentFilterBuilderType
+                    $this->type,
+                    SegmentFilterBuilderType::class => $segmentFilterBuilderType
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             $this->getValidatorExtension(false)
@@ -114,7 +116,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, null);
 
         $this->assertTrue($form->has('includedProducts'));
         $this->assertTrue($form->has('excludedProducts'));
@@ -135,7 +137,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             ]);
 
         $segment = $this->getEntity(Segment::class, ['id' => 1, 'definition' => $segmentDefinition]);
-        $form = $this->factory->create($this->type, $segment, ['add_name_field' => true]);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, $segment, ['add_name_field' => true]);
 
         $this->assertTrue($form->has('name'));
         $this->assertArraySubset(
@@ -159,7 +161,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, null);
 
         $expectedDefaultOptions = [
             'results_grid' => 'product-collection-grid',
@@ -190,7 +192,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
                 ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY => $excludedProductsString
             ]);
 
-        $form = $this->factory->create($this->type, $segment);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, $segment);
 
         $this->assertEquals($includedProductsString, $form->get('includedProducts')->getData());
         $this->assertEquals($excludedProductsString, $form->get('excludedProducts')->getData());
@@ -252,7 +254,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $form = $this->factory->create($this->type, $segment, ['segment_columns' => ['sku']]);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, $segment, ['segment_columns' => ['sku']]);
         $form->submit([
             'name' => 'Product Collection Name',
             'entity' => Product::class,
@@ -288,7 +290,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
                 ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY => $excludedProducts
             ]);
 
-        $form = $this->factory->create($this->type, $segment);
+        $form = $this->factory->create(ProductCollectionSegmentType::class, $segment);
         $formView = $form->createView();
 
         $this->assertEquals($modifiedDefinition, $formView->children['definition']->vars['value']);
@@ -298,7 +300,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(ProductCollectionSegmentType::class);
 
         $view = $form->createView();
         $segmentDefinition = '

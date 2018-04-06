@@ -7,25 +7,14 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType;
 use Oro\Bundle\OrderBundle\Form\Type\SelectSwitchInputType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var OrderShippingTrackingType
-     */
-    protected $type;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new OrderShippingTrackingType();
-    }
 
     /**
      * @dataProvider submitDataProvider
@@ -35,7 +24,7 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submitted, OrderShippingTracking $expected)
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(OrderShippingTrackingType::class);
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
@@ -78,11 +67,13 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        static::assertSame(OrderShippingTrackingType::NAME, $this->type->getName());
+        $type = new OrderShippingTrackingType();
+        static::assertSame(OrderShippingTrackingType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertSame(OrderShippingTrackingType::NAME, $this->type->getBlockPrefix());
+        $type = new OrderShippingTrackingType();
+        static::assertSame(OrderShippingTrackingType::NAME, $type->getBlockPrefix());
     }
 }

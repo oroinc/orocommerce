@@ -4,39 +4,15 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ContentBlockType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new TextContentVariantType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
     /**
      * @return array
      */
@@ -57,8 +33,8 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
+                    ScopeCollectionType::class => new ScopeCollectionTypeStub(),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider),
                 ],
                 []
             )
@@ -67,7 +43,7 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(TextContentVariantType::class);
 
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('content'));
@@ -83,7 +59,7 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(TextContentVariantType::class, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
 

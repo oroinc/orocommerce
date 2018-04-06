@@ -57,7 +57,7 @@ class AjaxLineItemController extends AbstractLineItemController
             $lineItem->setParentProduct($parentProduct);
         }
 
-        $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
+        $form = $this->createForm(FrontendLineItemType::class, $lineItem);
 
         $handler = new LineItemHandler(
             $form,
@@ -170,7 +170,7 @@ class AjaxLineItemController extends AbstractLineItemController
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $manager->create();
 
-        $form = $this->createForm(ShoppingListType::NAME, $shoppingList);
+        $form = $this->createForm(ShoppingListType::class, $shoppingList);
         $form->handleRequest($request);
 
         $response = [];

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
@@ -180,7 +181,7 @@ class DiscountOptionsType extends AbstractType
         $form
             ->add(
                 self::AMOUNT_DISCOUNT_VALUE_FIELD,
-                'oro_multicurrency',
+                MultiCurrencyType::class,
                 [
                     'currency_empty_value' => null,
                     'required' => true,

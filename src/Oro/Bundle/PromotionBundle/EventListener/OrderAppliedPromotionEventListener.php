@@ -43,7 +43,7 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
             $this->appliedPromotionManager->createAppliedPromotions($event->getOrder());
 
             $form = $this->formFactory->create(
-                $orderForm->getConfig()->getType()->getName(),
+                \get_class($orderForm->getConfig()->getType()->getInnerType()),
                 $event->getOrder()
             );
 

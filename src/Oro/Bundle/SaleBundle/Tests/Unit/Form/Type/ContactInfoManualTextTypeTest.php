@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\Form\Type\ContactInfoManualTextType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
 {
@@ -28,6 +29,21 @@ class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    ContactInfoManualTextType::class => $this->formType
+                ],
+                []
+            ),
+        ];
+    }
+
     public function testConfigOptions()
     {
         $this->configManager->expects(static::once())
@@ -38,7 +54,7 @@ class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
             'disabled' => true
         ];
 
-        $form = $this->factory->create($this->formType, null, []);
+        $form = $this->factory->create(ContactInfoManualTextType::class, null, []);
         $formConfig = $form->getConfig();
 
         static::assertTrue($formConfig->hasOption('disabled'));

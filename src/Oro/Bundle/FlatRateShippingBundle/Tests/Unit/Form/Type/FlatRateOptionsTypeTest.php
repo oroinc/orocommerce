@@ -6,7 +6,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateOptionsType;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class FlatRateOptionsTypeTest extends FormIntegrationTestCase
 {
@@ -15,8 +15,6 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-        
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
@@ -26,6 +24,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
         $this->formType = new FlatRateOptionsType($roundingService);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -35,7 +34,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
 
     public function testSubmitDefaultNull()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(FlatRateOptionsType::class);
 
         $data = [
             FlatRateMethodType::PRICE_OPTION => '42',
@@ -50,7 +49,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $form = $this->factory->create($this->formType, [
+        $form = $this->factory->create(FlatRateOptionsType::class, [
             FlatRateMethodType::PRICE_OPTION => 1,
             FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
             FlatRateMethodType::HANDLING_FEE_OPTION => 2,
@@ -73,11 +72,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
     public function getExtensions()
     {
         return [
-            new PreloadedExtension(
-                [
-                ],
-                []
-            ),
+            new PreloadedExtension([$this->formType], []),
             $this->getValidatorExtension(true)
         ];
     }

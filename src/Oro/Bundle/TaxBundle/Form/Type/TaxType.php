@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,15 +32,15 @@ class TaxType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('code', 'text', [
+            ->add('code', TextType::class, [
                 'label' => 'oro.tax.code.label',
                 'required' => true
             ])
-            ->add('description', 'textarea', [
+            ->add('description', TextareaType::class, [
                 'label' => 'oro.tax.description.label',
                 'required' => false
             ])
-            ->add('rate', 'oro_percent', [
+            ->add('rate', OroPercentType::class, [
                 'label' => 'oro.tax.rate.label',
                 'required' => true
             ]);

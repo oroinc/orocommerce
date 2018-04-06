@@ -42,7 +42,7 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
 
     public function testGetFormType()
     {
-        $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getFormType());
+        $this->assertEquals(ProductCollectionVariantType::class, $this->type->getFormType());
     }
 
     public function testIsAllowed()
