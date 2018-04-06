@@ -1,0 +1,5 @@
+trusted_data:
+    variables:
+        Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener:
+            getWebCatalogEntityIdsQueryBuilder:
+                rootAlias: true

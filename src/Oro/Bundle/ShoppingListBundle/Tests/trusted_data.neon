@@ -1,0 +1,8 @@
+trusted_data:
+    variables:
+        Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType:
+            buildForm:
+                criteria: true
+        Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager:
+            isUserAssignable:
+                criteria: true
