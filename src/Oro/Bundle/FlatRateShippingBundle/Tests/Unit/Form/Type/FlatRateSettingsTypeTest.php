@@ -18,6 +18,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionType
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,17 +34,8 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var FlatRateSettingsType */
-    protected $formType;
-
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $translator;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new FlatRateSettingsType();
-    }
 
     /**
      * @return array
@@ -82,8 +74,8 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    LocalizedPropertyType::NAME => new LocalizedPropertyType(),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType(
+                    LocalizedPropertyType::class => new LocalizedPropertyType(),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
                         $this->registry
                     ),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(
@@ -91,10 +83,10 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                             $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
                         ]
                     ),
-                    FallbackValueType::NAME => new FallbackValueType(),
-                    FallbackPropertyType::NAME => new FallbackPropertyType($this->translator),
+                    FallbackValueType::class => new FallbackValueType(),
+                    FallbackPropertyType::class => new FallbackPropertyType($this->translator),
                 ],
-                ['form' => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
+                [FormType::class => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];
@@ -114,7 +106,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                 ],
             ],
         ];
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(FlatRateSettingsType::class);
 
         $form->submit($submitData);
         $expected = (new FlatRateSettings())
@@ -148,7 +140,8 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefixReturnsString()
     {
-        static::assertTrue(is_string($this->formType->getBlockPrefix()));
+        $formType = new FlatRateSettingsType();
+        static::assertTrue(is_string($formType->getBlockPrefix()));
     }
 
     public function testConfigureOptions()
@@ -161,6 +154,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                 'data_class' => FlatRateSettings::class,
             ]);
 
-        $this->formType->configureOptions($resolver);
+        $formType = new FlatRateSettingsType();
+        $formType->configureOptions($resolver);
     }
 }

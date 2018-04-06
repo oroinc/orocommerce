@@ -107,7 +107,7 @@ class EntityVisibilityType extends AbstractType
             )
             ->add(
                 self::ACCOUNT_FIELD,
-                EntityChangesetType::NAME,
+                EntityChangesetType::class,
                 [
                     'class' => Customer::class,
                     'context' => ['customer' => ScopeCriteria::IS_NOT_NULL],
@@ -116,7 +116,7 @@ class EntityVisibilityType extends AbstractType
             )
             ->add(
                 self::ACCOUNT_GROUP_FIELD,
-                EntityChangesetType::NAME,
+                EntityChangesetType::class,
                 [
                     'class' => CustomerGroup::class,
                     'context' => ['customerGroup' => ScopeCriteria::IS_NOT_NULL],

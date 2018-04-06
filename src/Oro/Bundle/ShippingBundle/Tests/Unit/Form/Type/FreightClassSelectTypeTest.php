@@ -19,13 +19,14 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     
     protected function setUp()
     {
-        parent::setUp();
-
         $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->configureFormatter();
+
         $this->formType = new FreightClassSelectType($this->provider, $this->formatter);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()

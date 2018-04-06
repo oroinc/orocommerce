@@ -11,9 +11,11 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -24,7 +26,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType([]);
+        $entityType = new EntityTypeStub([]);
 
         $configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
@@ -37,13 +39,13 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
-                    $entityType->getName() => $entityType,
-                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityType(),
+                    EntityType::class => $entityType,
+                    PriceListSelectType::class => new PriceListSelectTypeStub(),
                 ],
                 [
-                    'form' => [new SortableExtension()],
-                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
+                    FormType::class => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::class => [new PriceListFormExtension($configManager)]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),
@@ -58,7 +60,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, $expectedData)
     {
-        $form = $this->factory->create(PriceListSelectWithPriorityType::NAME, $defaultData);
+        $form = $this->factory->create(PriceListSelectWithPriorityType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 

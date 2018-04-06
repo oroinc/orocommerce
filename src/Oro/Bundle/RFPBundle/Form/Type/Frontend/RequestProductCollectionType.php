@@ -15,7 +15,7 @@ class RequestProductCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -24,7 +24,7 @@ class RequestProductCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'entry_type' => RequestProductType::NAME,
+            'entry_type' => RequestProductType::class,
             'show_form_when_empty' => true,
             'error_bubbling' => false,
             'prototype_name' => '__namerequestproduct__',

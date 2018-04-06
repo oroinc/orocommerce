@@ -15,7 +15,7 @@ class OrderLineItemsCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -25,7 +25,7 @@ class OrderLineItemsCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => OrderLineItemType::NAME,
+                'entry_type' => OrderLineItemType::class,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__nameorderlineitem__',

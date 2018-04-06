@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
@@ -65,7 +66,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->extension->getExtendedType());
-        $this->assertEquals('oro_order_line_item', $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildViewNoFeatures()

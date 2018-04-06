@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
 {
@@ -15,10 +16,9 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->type = new OrderDiscountCollectionRowType();
         $this->type->setDataClass(OrderDiscount::class);
+        parent::setUp();
     }
 
     public function testGetName()
@@ -47,7 +47,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
             'data_class' => OrderDiscount::class
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(OrderDiscountCollectionRowType::class, $existing, $options);
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
@@ -93,13 +93,16 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        return [$this->getValidatorExtension(false)];
+        return [
+            new PreloadedExtension([$this->type], []),
+            $this->getValidatorExtension(false)
+        ];
     }
 
     public function testDefaultOptions()
     {
         $this->type->setDataClass(\stdClass::class);
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(OrderDiscountCollectionRowType::class);
         static::assertArraySubset(['data_class' => \stdClass::class], $form->getConfig()->getOptions());
     }
 }

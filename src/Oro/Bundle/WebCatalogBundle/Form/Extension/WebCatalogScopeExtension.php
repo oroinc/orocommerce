@@ -23,7 +23,7 @@ class WebCatalogScopeExtension extends AbstractTypeExtension
         if (array_key_exists(self::SCOPE_FIELD, $options['scope_fields'])) {
             $builder->add(
                 self::SCOPE_FIELD,
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 [
                     'data' => $options['web_catalog'],
                     'class' => WebCatalog::class,

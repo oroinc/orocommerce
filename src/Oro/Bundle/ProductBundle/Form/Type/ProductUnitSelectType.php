@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -48,7 +49,7 @@ class ProductUnitSelectType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
@@ -74,7 +75,7 @@ class ProductUnitSelectType extends AbstractProductAwareType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 
     /**

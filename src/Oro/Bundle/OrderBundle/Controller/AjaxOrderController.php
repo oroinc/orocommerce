@@ -47,6 +47,6 @@ class AjaxOrderController extends Controller
      */
     protected function getType(Order $order)
     {
-        return $this->createForm(OrderType::NAME, $order);
+        return $this->createForm(OrderType::class, $order);
     }
 }

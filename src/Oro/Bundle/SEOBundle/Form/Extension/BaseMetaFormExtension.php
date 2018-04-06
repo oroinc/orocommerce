@@ -23,7 +23,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'metaTitles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
                     'required' => false,
@@ -33,7 +33,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
             )
             ->add(
                 'metaDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_descriptions.label',
                     'required' => false,
@@ -44,7 +44,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
             )
             ->add(
                 'metaKeywords',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_keywords.label',
                     'required' => false,

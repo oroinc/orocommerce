@@ -21,7 +21,7 @@ class ProductCollectionVariantType extends AbstractType
         $builder
             ->add(
                 self::PRODUCT_COLLECTION_SEGMENT,
-                ProductCollectionSegmentType::NAME,
+                ProductCollectionSegmentType::class,
                 [
                     'add_name_field' => true,
                     'scope_value' => $builder->getName()

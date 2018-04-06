@@ -22,7 +22,7 @@ class CategoryPageVariantType extends AbstractType
         $builder
             ->add(
                 'excludeSubcategories',
-                OroChoiceType::NAME,
+                OroChoiceType::class,
                 [
                     'label' => 'oro.catalog.subcategory.form.exclude_subcategories.label',
                     'choices' => [
@@ -35,7 +35,7 @@ class CategoryPageVariantType extends AbstractType
             )
             ->add(
                 'categoryPageCategory',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'label' => 'oro.catalog.category.entity_label',
                     'required' => true,

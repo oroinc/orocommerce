@@ -38,7 +38,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
         $builder
             ->add(
                 'coupon',
-                CouponAutocompleteType::NAME,
+                CouponAutocompleteType::class,
                 [
                     'label' => 'oro.promotion.coupon.code.label',
                     'mapped' => false
@@ -46,7 +46,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
             )
             ->add(
                 'addedCoupons',
-                EntityIdentifierType::NAME,
+                EntityIdentifierType::class,
                 [
                     'class' => Coupon::class,
                     'multiple' => true

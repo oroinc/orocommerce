@@ -38,7 +38,7 @@ class QuickAddType extends AbstractType
         $builder
             ->add(
                 self::PRODUCTS_FIELD_NAME,
-                ProductRowCollectionType::NAME,
+                ProductRowCollectionType::class,
                 [
                     'required' => false,
                     'entry_options' => [
