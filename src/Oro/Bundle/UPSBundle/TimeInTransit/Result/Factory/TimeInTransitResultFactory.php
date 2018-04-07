@@ -53,7 +53,13 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
             $responseStatusCode = (string) $timeInTransitResponse['Response']['ResponseStatus']['Code'];
             $responseStatusDescription = $timeInTransitResponse['Response']['ResponseStatus']['Description'];
 
-            foreach ($timeInTransitResponse['TransitResponse']['ServiceSummary'] as $serviceTimeInTransit) {
+            $serviceSummary = $timeInTransitResponse['TransitResponse']['ServiceSummary'];
+
+            if (isset($serviceSummary['EstimatedArrival'])) {
+                $serviceSummary = [$timeInTransitResponse['TransitResponse']['ServiceSummary']];
+            }
+
+            foreach ($serviceSummary as $serviceTimeInTransit) {
                 $estimatedArrival =& $serviceTimeInTransit['EstimatedArrival'];
 
                 $arrivalDate = $this
