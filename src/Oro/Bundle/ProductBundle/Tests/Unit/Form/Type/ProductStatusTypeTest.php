@@ -5,7 +5,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductStatusTypeTest extends FormIntegrationTestCase
@@ -18,7 +20,6 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
 
     public function setup()
     {
-        parent::setUp();
         $this->productStatusProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductStatusProvider')
                 ->disableOriginalConstructor()
@@ -32,6 +33,17 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
             ]);
 
         $this->productStatusType = new ProductStatusType($this->productStatusProvider);
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([$this->productStatusType], [])
+        ];
     }
 
     public function testGetName()
@@ -41,12 +53,12 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->productStatusType->getParent());
+        $this->assertEquals(ChoiceType::class, $this->productStatusType->getParent());
     }
 
     public function testChoices()
     {
-        $form = $this->factory->create($this->productStatusType);
+        $form = $this->factory->create(ProductStatusType::class);
         $availableProductStatuses = $this->productStatusProvider->getAvailableProductStatuses();
         $choices = [];
 

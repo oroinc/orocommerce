@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductImageCollectionTypeTest extends FormIntegrationTestCase
@@ -56,9 +56,10 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'oro_collection' => new CollectionType(),
-                    ProductImageType::NAME => new ProductImageType(),
-                    ImageType::NAME => new ImageTypeStub()
+                    ProductImageCollectionType::class => $this->formType,
+                    CollectionType::class => new CollectionType(),
+                    ProductImageType::class => new ProductImageType(),
+                    ImageType::class => new ImageTypeStub()
                 ],
                 []
             )
@@ -82,7 +83,7 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData, array $options)
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(ProductImageCollectionType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 

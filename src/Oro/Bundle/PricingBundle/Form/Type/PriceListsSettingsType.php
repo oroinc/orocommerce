@@ -52,7 +52,7 @@ class PriceListsSettingsType extends AbstractType
         )
             ->add(
                 self::PRICE_LIST_COLLECTION_FIELD,
-                PriceListCollectionType::NAME,
+                PriceListCollectionType::class,
                 [
                     'label' => 'oro.pricing.pricelist.entity_plural_label',
                     'mapped' => true,

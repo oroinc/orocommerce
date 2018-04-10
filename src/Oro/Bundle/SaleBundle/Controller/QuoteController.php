@@ -82,7 +82,7 @@ class QuoteController extends Controller
             return $this->update($quote, $request);
         }
 
-        $this->createForm(QuoteType::NAME, $quote);
+        $this->createForm(QuoteType::class, $quote);
 
         if (!$quote->getWebsite()) {
             $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());

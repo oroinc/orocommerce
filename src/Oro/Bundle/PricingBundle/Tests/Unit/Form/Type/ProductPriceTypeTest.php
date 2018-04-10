@@ -91,10 +91,11 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     $entityType->getName() => $entityType,
-                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                    ProductPriceUnitSelectorType::NAME => $productUnitSelection,
-                    PriceType::NAME => $priceType,
+                    PriceListSelectType::class => new PriceListSelectTypeStub(),
+                    ProductPriceUnitSelectorType::class => $productUnitSelection,
+                    PriceType::class => $priceType,
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
@@ -116,7 +117,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         ProductPrice $expectedData
     ) {
         $this->addRoundingServiceExpect();
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 

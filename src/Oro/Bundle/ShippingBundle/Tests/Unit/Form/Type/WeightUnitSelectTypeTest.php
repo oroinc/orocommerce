@@ -8,9 +8,11 @@ class WeightUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
     protected function setUp()
     {
-        parent::setUp();
+        $this->configureProvider();
+        $this->configureFormatter();
 
         $this->formType = new WeightUnitSelectType($this->provider, $this->formatter);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()

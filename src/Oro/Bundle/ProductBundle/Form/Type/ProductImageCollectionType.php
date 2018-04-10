@@ -32,7 +32,7 @@ class ProductImageCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'entry_type' => new ProductImageType(),
+            'entry_type' => ProductImageType::class,
             'entry_options' => [
                 'image_types' => $this->imageTypeProvider->getImageTypes()
             ],
@@ -56,7 +56,7 @@ class ProductImageCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**

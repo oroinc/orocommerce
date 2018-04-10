@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermExtension;
+use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -35,7 +36,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtended()
     {
-        $this->assertSame('oro_payment_term_select', $this->extension->getExtendedType());
+        $this->assertSame(PaymentTermSelectType::class, $this->extension->getExtendedType());
     }
 
     /**

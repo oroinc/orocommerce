@@ -27,7 +27,7 @@ class ProductRowType extends AbstractProductAwareType
         $builder
             ->add(
                 ProductDataStorage::PRODUCT_DISPLAY_NAME,
-                ProductAutocompleteType::NAME,
+                ProductAutocompleteType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.sku.label',
@@ -41,7 +41,7 @@ class ProductRowType extends AbstractProductAwareType
             )
             ->add(
                 ProductDataStorage::PRODUCT_UNIT_KEY,
-                ProductUnitsType::NAME,
+                ProductUnitsType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.productunitprecision.unit.label'

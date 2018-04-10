@@ -41,7 +41,7 @@ class FrontendLineItemType extends AbstractType
         $builder
             ->add(
                 self::UNIT_FILED_NAME,
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.lineitem.unit.label',
@@ -51,7 +51,7 @@ class FrontendLineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.lineitem.quantity.enter',

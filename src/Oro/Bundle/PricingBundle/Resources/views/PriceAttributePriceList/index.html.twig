@@ -4,7 +4,7 @@
 {% set pageTitle = 'oro.pricing.priceattributepricelist.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if is_granted('oro_pricing_price_list_create') %}
+    {% if is_granted('oro_pricing_price_attribute_price_list_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('oro_pricing_price_attribute_price_list_create'),

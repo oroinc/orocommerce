@@ -93,7 +93,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->createForm(RequestType::NAME, $rfpRequest),
+            $this->createForm(RequestType::class, $rfpRequest),
             function (RFPRequest $request) {
                 return [
                     'route' => 'oro_rfp_request_update',

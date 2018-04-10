@@ -24,7 +24,7 @@ class ProductRowCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -60,7 +60,7 @@ class ProductRowCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => ProductRowType::NAME,
+                'entry_type' => ProductRowType::class,
                 'required' => false,
                 'handle_primary' => false,
                 'row_count_add' => self::ROW_COUNT_ADD,

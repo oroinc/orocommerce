@@ -41,7 +41,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $builder->add(
             self::FORM_ELEMENT_NAME,
-            ProductShippingOptionsCollectionType::NAME,
+            ProductShippingOptionsCollectionType::class,
             [
                 'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                 'required' => false,
@@ -187,6 +187,6 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 }
