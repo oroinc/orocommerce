@@ -8,6 +8,9 @@ use Oro\Bundle\UPSBundle\Client\Result\UpsErrorResultTrait;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\EstimatedArrivalInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResult;
 
+/**
+ * Creates result object from a response
+ */
 class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
 {
     use UpsErrorResultTrait;
