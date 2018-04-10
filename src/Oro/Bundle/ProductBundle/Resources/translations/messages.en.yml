@@ -512,6 +512,7 @@ oro:
                     description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
                     label_directions: 'Get Directions'
                     continue.label: Submit
+                    choose_file.label: Choose File
                 import_validation:
                     back: Back
                     title: Import validation results
