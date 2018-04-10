@@ -79,6 +79,6 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return CustomerType::class;
     }
 }

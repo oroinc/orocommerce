@@ -27,7 +27,7 @@ class CategoryInventoryDecrementFormExtension extends AbstractFallbackCategoryTy
 
         $builder->add(
             'decrementQuantity',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.decrement_inventory.label',
             ]

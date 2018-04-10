@@ -44,7 +44,7 @@ class ContentNodeType extends AbstractType
         $builder
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentnode.titles.label',
                     'required' => true,
@@ -53,7 +53,7 @@ class ContentNodeType extends AbstractType
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'entry_options' => [
                         'scope_type' => 'web_content',
@@ -71,7 +71,7 @@ class ContentNodeType extends AbstractType
             )
             ->add(
                 'contentVariants',
-                ContentVariantCollectionType::NAME,
+                ContentVariantCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentvariant.entity_plural_label',
                     'entry_options' => [
@@ -101,7 +101,7 @@ class ContentNodeType extends AbstractType
 
                 $form->add(
                     'slugPrototypesWithRedirect',
-                    LocalizedSlugWithRedirectType::NAME,
+                    LocalizedSlugWithRedirectType::class,
                     [
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,

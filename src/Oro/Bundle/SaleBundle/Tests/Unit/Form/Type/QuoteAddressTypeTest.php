@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
@@ -15,6 +15,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -40,8 +41,6 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
@@ -70,11 +69,20 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         );
 
         $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteAddress');
+        parent::setUp();
     }
 
     protected function tearDown()
     {
         unset($this->formType);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return array_merge([new PreloadedExtension([$this->formType], [])], parent::getExtensions());
     }
 
     public function testConfigureOptions()
@@ -100,7 +108,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_address', $this->formType->getParent());
+        $this->assertEquals(AddressType::class, $this->formType->getParent());
     }
 
     /**
@@ -355,7 +363,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             ->willReturn(false);
 
         $form = $this->factory->create(
-            $this->formType,
+            QuoteAddressType::class,
             new QuoteAddress(),
             ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()]
         );

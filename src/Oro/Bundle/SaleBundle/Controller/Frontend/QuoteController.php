@@ -94,7 +94,7 @@ class QuoteController extends Controller
             return $this->redirectToRoute('oro_sale_quote_frontend_index');
         }
 
-        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        $form = $this->createForm(QuoteDemandType::class, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isValid()) {
@@ -145,7 +145,7 @@ class QuoteController extends Controller
      */
     public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
     {
-        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        $form = $this->createForm(QuoteDemandType::class, $quoteDemand);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);

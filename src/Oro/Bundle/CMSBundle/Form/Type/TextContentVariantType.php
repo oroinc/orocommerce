@@ -28,7 +28,7 @@ class TextContentVariantType extends AbstractType
             )
             ->add(
                 'content',
-                OroRichTextType::NAME,
+                OroRichTextType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
                     'required' => false,
@@ -40,7 +40,7 @@ class TextContentVariantType extends AbstractType
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'label' => 'oro.cms.contentblock.scopes.label',
                     'entry_options' => [

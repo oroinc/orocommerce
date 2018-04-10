@@ -90,7 +90,7 @@ class LoginPageController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $loginPage,
-            $this->createForm(LoginPageType::NAME, $loginPage),
+            $this->createForm(LoginPageType::class, $loginPage),
             function (LoginPage $loginPage) {
                 return [
                     'route' => 'oro_cms_loginpage_update',

@@ -12,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -66,7 +67,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initCustomerAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
-        $builder->add('phone', 'text', ['required' => false, StripTagsExtension::OPTION_NAME => true,]);
+        $builder->add('phone', TextType::class, ['required' => false, StripTagsExtension::OPTION_NAME => true,]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,

@@ -27,7 +27,7 @@ class CategoryInventoryBackOrderFormExtension extends AbstractFallbackCategoryTy
 
         $builder->add(
             'backOrder',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.backorders.label',
             ]

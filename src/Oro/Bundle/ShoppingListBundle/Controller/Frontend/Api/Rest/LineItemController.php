@@ -66,7 +66,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $entity = $this->getManager()->find($id);
 
         if ($entity) {
-            $form = $this->createForm(FrontendLineItemType::NAME, $entity, ['csrf_protection' => false]);
+            $form = $this->createForm(FrontendLineItemType::class, $entity, ['csrf_protection' => false]);
 
             $handler = new LineItemHandler(
                 $form,

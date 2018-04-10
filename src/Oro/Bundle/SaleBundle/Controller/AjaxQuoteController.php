@@ -148,7 +148,7 @@ class AjaxQuoteController extends Controller
      */
     protected function getQuoteFormTypeName()
     {
-        return QuoteType::NAME;
+        return QuoteType::class;
     }
 
     /**

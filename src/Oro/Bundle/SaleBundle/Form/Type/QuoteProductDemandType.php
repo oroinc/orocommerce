@@ -57,7 +57,7 @@ class QuoteProductDemandType extends AbstractType
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,
-                QuoteProductDemandOfferChoiceType::NAME,
+                QuoteProductDemandOfferChoiceType::class,
                 [
                     'choices' => $quoteProduct->getQuoteProductOffers(),
                     'required' => true

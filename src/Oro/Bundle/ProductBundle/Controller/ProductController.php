@@ -184,7 +184,7 @@ class ProductController extends Controller
     {
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
-            $this->createForm(ProductType::NAME, $product),
+            $this->createForm(ProductType::class, $product),
             function (Product $product) use ($routeName) {
                 return [
                     'route' => $routeName,
@@ -207,7 +207,7 @@ class ProductController extends Controller
      */
     protected function createStepOne(Request $request)
     {
-        $form = $this->createForm(ProductStepOneType::NAME);
+        $form = $this->createForm(ProductStepOneType::class);
         $handler = new ProductCreateStepOneHandler($form, $request);
 
         if ($handler->process()) {
@@ -228,12 +228,12 @@ class ProductController extends Controller
     protected function createStepTwo(Request $request, Product $product)
     {
         if ($request->get('input_action') === 'oro_product_create') {
-            $form = $this->createForm(ProductStepOneType::NAME, $product);
+            $form = $this->createForm(ProductStepOneType::class, $product);
             $form->handleRequest($request);
             $formData = $form->all();
 
             if (!empty($formData)) {
-                $form = $this->createForm(ProductType::NAME, $product);
+                $form = $this->createForm(ProductType::class, $product);
                 foreach ($formData as $key => $item) {
                     $data = $item->getData();
                     $form->get($key)->setData($data);
@@ -247,7 +247,7 @@ class ProductController extends Controller
             ];
         }
 
-        $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
+        $form = $this->createForm(ProductStepOneType::class, $product, ['validation_groups'=> false]);
         $form->submit($request->request->get(ProductType::NAME));
 
         return $this->update($product);

@@ -6,10 +6,25 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
 use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormView;
 
 class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 {
+    /**
+     * @var DiscountFormTypeProvider
+     */
+    private $discountFormTypeProvider;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->discountFormTypeProvider = new DiscountFormTypeProvider();
+        parent::setUp();
+    }
+
     /**
      * @dataProvider submitDataProvider
      * @param mixed $defaultData
@@ -18,13 +33,10 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, DiscountConfiguration $expectedData)
     {
-        $discountFormTypeProvider = new DiscountFormTypeProvider();
-        $discountFormTypeProvider->addFormType('discount_type', 'text');
-        $discountFormTypeProvider->setDefaultFormType('text');
+        $this->discountFormTypeProvider->addFormType('discount_type', 'text');
+        $this->discountFormTypeProvider->setDefaultFormType('text');
 
-        $formType = new DiscountConfigurationType($discountFormTypeProvider);
-
-        $form = $this->factory->create($formType, $defaultData);
+        $form = $this->factory->create(DiscountConfigurationType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -78,11 +90,8 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
     public function testBuildView()
     {
-        $discountFormTypeProvider = new DiscountFormTypeProvider();
-        $discountFormTypeProvider->addFormType('discount_type', 'text');
-        $discountFormTypeProvider->setDefaultFormType('text');
-
-        $formType = new DiscountConfigurationType($discountFormTypeProvider);
+        $this->discountFormTypeProvider->addFormType('discount_type', 'text');
+        $this->discountFormTypeProvider->setDefaultFormType('text');
 
         $existingConfiguration = new DiscountConfiguration();
         $existingConfiguration->setType('existing_type');
@@ -90,7 +99,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
             'existing_type_option' => 'some_value'
         ]);
 
-        $form = $this->factory->create($formType, $existingConfiguration);
+        $form = $this->factory->create(DiscountConfigurationType::class, $existingConfiguration);
 
         $formView = $form->createView();
 
@@ -110,5 +119,20 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
         $formType = new DiscountConfigurationType(new DiscountFormTypeProvider());
 
         $this->assertEquals(DiscountConfigurationType::NAME, $formType->getBlockPrefix());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    DiscountConfigurationType::class => new DiscountConfigurationType($this->discountFormTypeProvider)
+                ],
+                []
+            ),
+        ];
     }
 }

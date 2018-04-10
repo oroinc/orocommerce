@@ -4,25 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var QuickAddCopyPasteType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new QuickAddCopyPasteType();
-
-        parent::setUp();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -41,7 +26,7 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $data, $isValid)
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(QuickAddCopyPasteType::class);
 
         $form->submit($data);
         $this->assertEquals($isValid, $form->isValid());
@@ -165,13 +150,5 @@ TEXT
                 'isValid' => false
             ],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
     }
 }

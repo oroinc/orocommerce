@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,7 +33,7 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_jqueryselect2_hidden', $this->formType->getParent());
+        $this->assertEquals(OroJquerySelect2HiddenType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()

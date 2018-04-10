@@ -20,7 +20,8 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
@@ -50,14 +51,14 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    PriceListsSettingsType::NAME => new PriceListsSettingsType(),
-                    WebsiteScopedDataType::NAME => $websiteScopedDataType,
-                    CustomerType::NAME => new CustomerTypeStub()
+                    PriceListsSettingsType::class => new PriceListsSettingsType(),
+                    WebsiteScopedDataType::class => $websiteScopedDataType,
+                    CustomerType::class => new CustomerTypeStub()
                 ],
                 [
-                    CustomerType::NAME => [new CustomerFormExtension($listener)],
-                    'form' => [new SortableExtension()],
-                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
+                    CustomerTypeStub::class => [new CustomerFormExtension($listener)],
+                    FormType::class => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::class => [new PriceListFormExtension($configManager)]
 
                 ]
             )
@@ -74,7 +75,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submitted, array $expected)
     {
-        $form = $this->factory->create(CustomerType::NAME, [], []);
+        $form = $this->factory->create(CustomerType::class, [], []);
         $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME => $submitted]);
         $data = $form->get(CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->getData();
         $this->assertTrue($form->isValid());

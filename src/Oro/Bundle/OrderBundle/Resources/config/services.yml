@@ -249,6 +249,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_action.provider.current_application'
+            - '@form.registry'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 

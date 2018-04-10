@@ -8,27 +8,12 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OrderCollectionTableType
-     */
-    private $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new OrderCollectionTableType();
-    }
-
     public function testRequiredOptionsPageComponentRequired()
     {
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage('The required option "page_component" is missing.');
 
-        $this->factory->create($this->formType, null, ['template_name' => 'some_template']);
+        $this->factory->create(OrderCollectionTableType::class, null, ['template_name' => 'some_template']);
     }
 
     public function testRequiredOptionsTemplateNameRequired()
@@ -36,12 +21,12 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage('The required option "template_name" is missing.');
 
-        $this->factory->create($this->formType, null, ['page_component' => 'some_component']);
+        $this->factory->create(OrderCollectionTableType::class, null, ['page_component' => 'some_component']);
     }
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType, null, [
+        $form = $this->factory->create(OrderCollectionTableType::class, null, [
             'page_component' => 'SomeComponent',
             'template_name' => 'some_template'
         ]);
@@ -64,7 +49,7 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testView()
     {
-        $form = $this->factory->create($this->formType, null, [
+        $form = $this->factory->create(OrderCollectionTableType::class, null, [
             'page_component' => 'SomeComponent',
             'page_component_options' => ['option' => 'value'],
             'template_name' => 'some_template',
@@ -83,7 +68,7 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testViewWithParent()
     {
-        $form = $this->factory->create($this->formType, null, [
+        $form = $this->factory->create(OrderCollectionTableType::class, null, [
             'page_component' => 'SomeComponent',
             'page_component_options' => ['option' => 'value'],
             'template_name' => 'some_template',
@@ -102,11 +87,13 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('oro_order_collection_table', $this->formType->getName());
+        $formType = new OrderCollectionTableType();
+        $this->assertEquals('oro_order_collection_table', $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals('oro_order_collection_table', $this->formType->getBlockPrefix());
+        $formType = new OrderCollectionTableType();
+        $this->assertEquals('oro_order_collection_table', $formType->getBlockPrefix());
     }
 }

@@ -36,7 +36,7 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return CustomerType::class;
     }
 
     /**
@@ -46,9 +46,9 @@ class CustomerFormExtension extends AbstractTypeExtension
     {
         $builder->add(
             CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
-            WebsiteScopedDataType::NAME,
+            WebsiteScopedDataType::class,
             [
-                'type' => PriceListsSettingsType::NAME,
+                'type' => PriceListsSettingsType::class,
                 'options' => [
                     PriceListsSettingsType::PRICE_LIST_RELATION_CLASS => $this->relationClass,
                     PriceListsSettingsType::FALLBACK_CHOICES => $this->getFallbackChoices(),
