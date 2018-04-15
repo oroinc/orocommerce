@@ -11,7 +11,7 @@ class PageFormExtension extends BaseMetaFormExtension
      */
     public function getExtendedType()
     {
-        return PageType::NAME;
+        return PageType::class;
     }
 
     /**

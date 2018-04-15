@@ -65,8 +65,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->aclHelper = $this->getMockBuilder(AclHelper::class)
             ->disableOriginalConstructor()
@@ -83,6 +81,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -102,9 +101,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    FrontendLineItemType::NAME     => $this->getParentForm(),
+                    FrontendLineItemWidgetType::class => $this->type,
+                    FrontendLineItemType::class     => $this->getParentForm(),
                     EntityType::class              => $entityType,
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
+                    ProductUnitSelectionType::class => $productUnitSelection,
                     QuantityTypeTrait::$name       => $this->getQuantityType(),
                 ],
                 []
@@ -117,7 +117,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $lineItem = (new LineItem())
             ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3));
 
-        $form = $this->factory->create($this->type, $lineItem);
+        $form = $this->factory->create(FrontendLineItemWidgetType::class, $lineItem);
 
         $this->assertTrue($form->has('shoppingList'));
         $this->assertTrue($form->has('quantity'));
@@ -135,7 +135,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData, ShoppingList $expectedShoppingList)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(FrontendLineItemWidgetType::class, $defaultData, []);
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()

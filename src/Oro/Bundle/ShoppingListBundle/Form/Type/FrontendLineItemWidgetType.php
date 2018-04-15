@@ -11,6 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -100,7 +101,7 @@ class FrontendLineItemWidgetType extends AbstractType
             )
             ->add(
                 'shoppingListLabel',
-                'text',
+                TextType::class,
                 [
                     'mapped' => false,
                     'required' => true,
@@ -166,7 +167,7 @@ class FrontendLineItemWidgetType extends AbstractType
      */
     public function getParent()
     {
-        return FrontendLineItemType::NAME;
+        return FrontendLineItemType::class;
     }
 
     /**

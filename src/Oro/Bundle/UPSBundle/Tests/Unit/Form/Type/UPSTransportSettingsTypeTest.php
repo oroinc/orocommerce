@@ -5,12 +5,10 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
@@ -151,12 +149,8 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     EntityType::class => $entityType,
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
+                    UPSTransportSettingsType::class => $this->formType,
                     TranslatableEntityType::class => $translatableEntity,
-                    LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
                     new OroEncodedPlaceholderPasswordType($this->crypter),
@@ -205,7 +199,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(UPSTransportSettingsType::class, $defaultData, []);
 
         static::assertEquals($defaultData, $form->getData());
 

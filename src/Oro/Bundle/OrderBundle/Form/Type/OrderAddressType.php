@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class OrderAddressType extends AbstractOrderAddressType
@@ -43,7 +45,7 @@ class OrderAddressType extends AbstractOrderAddressType
                 $customerAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }
 
-            $builder->add('customerAddress', 'oro_select2_choice', $customerAddressOptions);
+            $builder->add('customerAddress', Select2ChoiceType::class, $customerAddressOptions);
         }
     }
 
@@ -52,7 +54,7 @@ class OrderAddressType extends AbstractOrderAddressType
      */
     public function getParent()
     {
-        return 'oro_address';
+        return AddressType::class;
     }
 
     /**

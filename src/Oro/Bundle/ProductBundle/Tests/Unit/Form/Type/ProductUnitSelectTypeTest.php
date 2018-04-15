@@ -57,7 +57,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    $this->formType,
                     EntityType::class => $entityType
                 ],
                 []
@@ -80,7 +80,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(ProductUnitSelectType::class, null, $inputOptions);
 
         $this->assertNull($form->getData());
 
@@ -158,7 +158,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     public function testsFinishView()
     {
-        $form = $this->factory->create($this->formType, null, ['compact' => false,]);
+        $form = $this->factory->create(ProductUnitSelectType::class, null, ['compact' => false,]);
         $this->assertNull($form->getData());
 
         $view = $form->createView();

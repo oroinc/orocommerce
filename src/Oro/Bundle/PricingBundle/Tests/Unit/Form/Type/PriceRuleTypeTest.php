@@ -35,7 +35,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 array_merge(
                     [
-                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                        CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
                             $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
@@ -51,7 +51,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $form = $this->factory->create(new PriceRuleType(), new PriceRule());
+        $form = $this->factory->create(PriceRuleType::class, new PriceRule());
 
         $form->submit([
             PriceRuleType::CURRENCY => 'USD',

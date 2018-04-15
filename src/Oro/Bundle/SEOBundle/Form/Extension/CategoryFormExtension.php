@@ -11,7 +11,7 @@ class CategoryFormExtension extends BaseMetaFormExtension
      */
     public function getExtendedType()
     {
-        return CategoryType::NAME;
+        return CategoryType::class;
     }
 
     /**

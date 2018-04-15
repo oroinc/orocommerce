@@ -56,7 +56,7 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
             'requireCvvEntryEnabled' => $this->config->isRequireCvvEntryEnabled(),
         ];
 
-        $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
+        $formView = $this->formFactory->create(CreditCardType::class, null, $formOptions)->createView();
 
         $viewOptions = [
             'formView' => $formView,

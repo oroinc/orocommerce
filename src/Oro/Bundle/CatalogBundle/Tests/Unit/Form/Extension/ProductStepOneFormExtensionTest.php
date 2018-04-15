@@ -40,7 +40,7 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(ProductStepOneType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(ProductStepOneType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildForm()
@@ -51,7 +51,7 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped'   => false,

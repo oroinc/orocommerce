@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -56,11 +57,12 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    $this->formType,
+                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => $entityType
                 ],
                 [
-                    'form' => [new IntegerExtension()]
+                    FormType::class => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -80,7 +82,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         $submittedData,
         ProductUnitPrecision $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductPrimaryUnitPrecisionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());

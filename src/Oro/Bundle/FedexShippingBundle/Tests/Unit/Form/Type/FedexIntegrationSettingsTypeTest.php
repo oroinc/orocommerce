@@ -10,7 +10,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -28,18 +27,6 @@ use Symfony\Component\Validator\Validation;
 class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var FedexIntegrationSettingsType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new FedexIntegrationSettingsType();
-    }
 
     /**
      * {@inheritDoc}
@@ -74,7 +61,6 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     EntityType::class => $entityType,
@@ -114,7 +100,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ->addLabel((new LocalizedFallbackValue())->setString('label'))
             ->addShippingService(new FedexShippingService());
 
-        $form = $this->factory->create($this->formType, $settings);
+        $form = $this->factory->create(FedexIntegrationSettingsType::class, $settings);
 
         static::assertSame($settings, $form->getData());
 
@@ -126,7 +112,8 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        static::assertSame('oro_fedex_settings', $this->formType->getBlockPrefix());
+        $formType = new FedexIntegrationSettingsType();
+        static::assertSame('oro_fedex_settings', $formType->getBlockPrefix());
     }
 
     public function testConfigureOptions()
@@ -139,6 +126,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                 'data_class' => FedexIntegrationSettings::class
             ]);
 
-        $this->formType->configureOptions($resolver);
+        $formType = new FedexIntegrationSettingsType();
+        $formType->configureOptions($resolver);
     }
 }

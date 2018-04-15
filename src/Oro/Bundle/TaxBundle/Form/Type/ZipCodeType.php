@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,10 +32,10 @@ class ZipCodeType extends AbstractType
     {
         $builder->addModelTransformer(new ZipCodeTransformer());
         $builder
-            ->add('zipRangeStart', 'text', [
+            ->add('zipRangeStart', TextType::class, [
                 'required' => true,
             ])
-            ->add('zipRangeEnd', 'text', [
+            ->add('zipRangeEnd', TextType::class, [
                 'required' => false,
             ]);
     }

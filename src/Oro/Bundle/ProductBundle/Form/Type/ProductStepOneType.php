@@ -32,7 +32,7 @@ class ProductStepOneType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('type', ProductTypeType::NAME, ['label' => 'oro.product.type.label']);
+        $builder->add('type', ProductTypeType::class, ['label' => 'oro.product.type.label']);
     }
 
     /**

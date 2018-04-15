@@ -75,7 +75,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
             ->method('getAvailablePrimaryUnitChoices')
             ->willReturn($choices);
         $formBuilder = $this->factory->createNamedBuilder('test');
-        $formBuilder->add($this->childName, ProductUnitSelectType::NAME, $this->getDefaultOptions());
+        $formBuilder->add($this->childName, ProductUnitSelectType::class, $this->getDefaultOptions());
         $this->choicesProductPrimaryUnitSelectionOwnerTypeExtension->buildForm(
             $formBuilder,
             []
@@ -131,7 +131,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => $productUnitSelectType,
+                    ProductUnitSelectType::class => $productUnitSelectType,
                     EntityType::class => $type,
                 ],
                 []

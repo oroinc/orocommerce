@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -75,13 +74,12 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $entityType = new EntityTypeStub($this->prepareChoices());
-        $productUnitSelectionType = new ProductUnitSelectionTypeStub([1], ProductUnitSelectionType::NAME);
 
         return [
             new PreloadedExtension(
                 [
                     EntityType::class => $entityType,
-                    $productUnitSelectionType->getName() => $productUnitSelectionType,
+                    ProductUnitSelectionType::class => $this->formType
                 ],
                 []
             ),
@@ -216,7 +214,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $inputOptions, array $expectedOptions, array $expectedLabels, $submittedData)
     {
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputOptions);
 
         $precision1 = new ProductUnitPrecision();
         $unit1 = new ProductUnit();
@@ -237,7 +235,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             )
         );
 
-        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
+        $formParent = $this->factory->create(ProductUnitHolderTypeStub::class, $productUnitHolder);
         $form->setParent($formParent);
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -327,10 +325,10 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView(array $inputData = [], array $expectedData = [], $withParent = true)
     {
-        $form = $this->factory->create($this->formType, null, $inputData['options']);
+        $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $inputData['productUnitHolder']);
+            $formParent = $this->factory->create(ProductUnitHolderTypeStub::class, $inputData['productUnitHolder']);
         } else {
             $formParent = null;
         }
@@ -577,7 +575,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         array $options = [],
         $expectedFieldOverride = false
     ) {
-        $form = $this->factory->create($this->formType, $productUnitHolder, $options);
+        $form = $this->factory->create(ProductUnitSelectionType::class, $productUnitHolder, $options);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
         $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
@@ -682,7 +680,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function testPreSubmit($product, $data, $expectedError = '')
     {
-        $form = $this->factory->create($this->formType, null, ['product' => $product]);
+        $form = $this->factory->create(ProductUnitSelectionType::class, null, ['product' => $product]);
 
         $event = new FormEvent($form, $data);
         $this->formType->validateUnits($event);

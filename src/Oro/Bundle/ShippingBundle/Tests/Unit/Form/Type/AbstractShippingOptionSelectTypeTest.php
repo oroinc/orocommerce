@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
@@ -25,17 +25,18 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var array */
     protected $units = ['lbs', 'kg', 'custom'];
 
-    protected function setUp()
+    protected function configureProvider()
     {
         $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
+    }
 
+    protected function configureFormatter()
+    {
         $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-
-        parent::setUp();
     }
 
     protected function tearDown()
@@ -96,7 +97,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
             $units = $customChoices;
         }
 
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(get_class($this->formType), null, $inputOptions);
 
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -173,6 +174,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     EntityType::class => new EntityTypeStub($this->prepareChoices())
                 ],
                 []

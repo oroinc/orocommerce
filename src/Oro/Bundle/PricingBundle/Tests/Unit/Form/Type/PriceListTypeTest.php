@@ -31,29 +31,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
-     * @var PriceListType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new PriceListType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
-    /**
      * @return array
      */
     protected function getExtensions()
@@ -90,17 +67,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     [
                         $currencySelectType->getName() => $currencySelectType,
                         $entityIdentifierType->getName() => $entityIdentifierType,
-                        CollectionType::NAME => new CollectionType(),
-                        ScheduleIntervalsCollectionType::NAME => new ScheduleIntervalsCollectionType(),
-                        ScheduleIntervalType::NAME =>new ScheduleIntervalType(),
-                        OroDateTimeType::NAME => new OroDateTimeType(),
-                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                        CollectionType::class => new CollectionType(),
+                        ScheduleIntervalsCollectionType::class => new ScheduleIntervalsCollectionType(),
+                        ScheduleIntervalType::class =>new ScheduleIntervalType(),
+                        OroDateTimeType::class => new OroDateTimeType(),
+                        CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
                             $currencyNameHelper
                         ),
-                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')]),
-                        PriceRuleType::NAME => new PriceRuleType(),
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),
@@ -111,7 +87,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(PriceListType::class);
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('currencies'));
@@ -142,7 +118,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
             $defaultData = $existingPriceList;
         }
 
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(PriceListType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         if (isset($existingPriceList)) {
@@ -253,7 +229,8 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(PriceListType::NAME, $this->type->getName());
+        $type = new PriceListType();
+        $this->assertEquals(PriceListType::NAME, $type->getName());
     }
 
     /**

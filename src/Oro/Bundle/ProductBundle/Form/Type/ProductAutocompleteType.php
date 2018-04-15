@@ -32,7 +32,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
      */
     public function getParent()
     {
-        return OroAutocompleteType::NAME;
+        return OroAutocompleteType::class;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class StubProductAutocompleteType extends AbstractType
 {
@@ -20,6 +21,6 @@ class StubProductAutocompleteType extends AbstractType
      */
     public function getParent()
     {
-        return 'text';
+        return TextType::class;
     }
 }

@@ -51,7 +51,7 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::CURRENCY,
-                CurrencySelectionType::NAME,
+                CurrencySelectionType::class,
                 [
                     'label' => 'oro.pricing.pricerule.currency.label'
                 ]

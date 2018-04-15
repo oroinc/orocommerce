@@ -796,6 +796,7 @@ datagrids:
                 rowAction:     true
 
     brand-grid:
+        acl_resource: oro_product_brand_view
         extended_entity_name: '%oro_product.entity.brand.class%'
         source:
             type: orm

@@ -34,7 +34,7 @@ class QuoteProductRequestType extends AbstractType
         $builder
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.price.label',
@@ -45,7 +45,7 @@ class QuoteProductRequestType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
@@ -57,7 +57,7 @@ class QuoteProductRequestType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.quantity.label',

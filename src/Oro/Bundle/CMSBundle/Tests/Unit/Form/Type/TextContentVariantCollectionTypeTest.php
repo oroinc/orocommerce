@@ -36,6 +36,6 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->type->getParent());
+        $this->assertEquals(CollectionType::class, $this->type->getParent());
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductVisibilityType extends AbstractType
@@ -30,7 +31,7 @@ class ProductVisibilityType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /**

@@ -29,7 +29,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OroAutocompleteType::NAME, $this->type->getParent());
+        $this->assertEquals(OroAutocompleteType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()
