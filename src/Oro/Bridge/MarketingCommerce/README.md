@@ -1,8 +1,5 @@
-MarketingCommerce
-=================
+# OroMarketingCommerceBridgeBundle
 
-What is MarketingCommerce?
---------------------------
+OroMarketingCommerceBridgeBundle is a bridge that integrates features of the marketing package into the OroCommerce applications.
 
-MarketingCommerce is a bridge that integrates certain commerce related features of the marketing package
-(CampaignBundle, MarketingListBundle, TrackingBundle) into B2B applications.
+The bundle redefines security firewall **tracking_data** to enable OroCommerce applications to receive marketing tracking data.
