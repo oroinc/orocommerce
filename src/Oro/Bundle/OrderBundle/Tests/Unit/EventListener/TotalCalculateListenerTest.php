@@ -122,7 +122,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $formType = $this->createMock(FormTypeInterface::class);
         $formType
             ->expects($this->any())
-            ->method('getName')
+            ->method('getBlockPrefix')
             ->willReturn($formName);
 
         $this->formRegistry

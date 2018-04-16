@@ -39,7 +39,7 @@ class SectionProviderTest extends \PHPUnit_Framework_TestCase
 
         $formType
             ->expects($this->any())
-            ->method('getName')
+            ->method('getBlockPrefix')
             ->willReturn($formName);
 
         $this->formRegistry

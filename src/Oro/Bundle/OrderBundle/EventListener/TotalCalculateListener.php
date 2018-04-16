@@ -74,7 +74,7 @@ class TotalCalculateListener
     {
         $type = $this->formRegistry->getType($formClass);
 
-        return $type->getName(); // TODO replace with getBlockPrefix in scope of BAP-15236
+        return $type->getBlockPrefix();
     }
 
     /**

@@ -60,8 +60,6 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
                 'No' => false,
                 'Yes' => true,
             ],
-            // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-            'choices_as_values' => true,
             'choice_attr' => $choiceAttrCallback,
             'auto_initialize' => false
         ];

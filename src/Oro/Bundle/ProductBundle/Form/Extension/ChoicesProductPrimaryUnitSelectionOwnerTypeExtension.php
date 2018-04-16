@@ -71,9 +71,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $options['choice_loader'] = null;
         $options['choice_list'] = null;
 
-        //@TODO Remove in scope BAP-15236
-        unset($options['cascade_validation']);
-
         $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
     }
 
