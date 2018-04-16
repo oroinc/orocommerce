@@ -28,18 +28,34 @@ define(function(require) {
 
             //Bind activeImage event of slick gallery
             this.element.on('slider:activeImage', _.bind(function(e, activeImage) {
-                this._removeZoomContainer();
-                this._zoomInit(activeImage);
+                if (!this.element.is(activeImage)) {
+                    this._removeZoomContainer();
+                    this._ensureLoadedZoomInit(activeImage);
+                }
             }, this));
 
-            var initImage = this.element.data('slider:activeImage') || this.element;
-            this._zoomInit(initImage);
+            var initImage = this.element.data('slider:activeImage') || this.element.get(0);
+            this._ensureLoadedZoomInit(initImage);
+        },
+
+        /**
+         * Inits of elevatezoom on image that completely loaded
+         *
+         * @param {HTMLElement} activeImage
+         * @private
+         */
+        _ensureLoadedZoomInit: function(activeImage) {
+            if (activeImage.complete) {
+                this._zoomInit(activeImage);
+            } else {
+                $(activeImage).one('load', this._zoomInit.bind(this, activeImage));
+            }
         },
 
         /**
          * Init of elevatezoom and set needed options
          *
-         * @param {DOM.Element} activeImage
+         * @param {HTMLElement} activeImage
          * @private
          */
         _zoomInit: function(activeImage) {
@@ -83,7 +99,7 @@ define(function(require) {
         /**
          * Set size of zoom window
          *
-         * @param {DOM.Element} activeImage
+         * @param {HTMLElement} activeImage
          * @private
          */
         _setZoomWindowSize: function(activeImage) {
