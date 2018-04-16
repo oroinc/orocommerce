@@ -120,7 +120,7 @@ class InvoiceController extends Controller
      */
     protected function update(Invoice $invoice)
     {
-        $form = $this->createForm(InvoiceType::NAME, $invoice);
+        $form = $this->createForm(InvoiceType::class, $invoice);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $invoice,

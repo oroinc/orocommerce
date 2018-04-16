@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserOptionsType;
 use Oro\Bundle\SaleBundle\Provider\OptionProviderWithDefaultValueInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 
@@ -35,6 +36,21 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
         $this->optionProvider = $this->createMock(OptionProviderWithDefaultValueInterface::class);
         $this->formType = new ContactInfoUserOptionsType($this->optionProvider, $this->configManager);
         parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    ContactInfoUserOptionsType::class => $this->formType
+                ],
+                []
+            ),
+        ];
     }
 
     public function testSubmit()
@@ -73,7 +89,7 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function doTestForm(array $inputOptions, array $expectedOptions, $submittedData)
     {
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(ContactInfoUserOptionsType::class, null, $inputOptions);
         $formConfig = $form->getConfig();
 
         foreach ($expectedOptions as $key => $value) {

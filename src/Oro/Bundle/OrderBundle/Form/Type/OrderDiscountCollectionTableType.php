@@ -42,7 +42,7 @@ class OrderDiscountCollectionTableType extends AbstractType
                     'percentType' => OrderDiscount::TYPE_PERCENT
                 ],
                 'attr' => ['class' => 'oro-discount-collection'],
-                'entry_type' => OrderDiscountCollectionRowType::NAME
+                'entry_type' => OrderDiscountCollectionRowType::class
             ]
         );
     }

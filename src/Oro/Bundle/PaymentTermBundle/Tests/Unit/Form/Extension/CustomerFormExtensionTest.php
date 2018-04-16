@@ -49,7 +49,7 @@ class CustomerFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(CustomerType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(CustomerType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildFormWithoutData()

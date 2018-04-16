@@ -29,7 +29,7 @@ class SystemPageVariantType extends AbstractType
         $builder
             ->add(
                 'systemPageRoute',
-                RouteChoiceType::NAME,
+                RouteChoiceType::class,
                 [
                     'label' => 'oro.webcatalog.contentvariant.system_page_route.label',
                     'required' => true,
@@ -41,7 +41,7 @@ class SystemPageVariantType extends AbstractType
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentvariant.scopes.label',
                     'required' => false,

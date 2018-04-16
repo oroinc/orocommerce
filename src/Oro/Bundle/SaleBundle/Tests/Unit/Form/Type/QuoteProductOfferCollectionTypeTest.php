@@ -32,7 +32,7 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => QuoteProductOfferType::NAME,
+                'entry_type' => QuoteProductOfferType::class,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
                 'prototype_name' => '__namequoteproductoffer__',
@@ -44,7 +44,7 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testGetName()

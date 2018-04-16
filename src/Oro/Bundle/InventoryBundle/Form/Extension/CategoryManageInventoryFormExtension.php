@@ -27,7 +27,7 @@ class CategoryManageInventoryFormExtension extends AbstractFallbackCategoryTypeE
 
         $builder->add(
             'manageInventory',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.manage_inventory.label',
             ]

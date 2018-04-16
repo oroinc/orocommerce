@@ -21,7 +21,7 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
             ->method('add')
             ->with(
                 'taxCode',
-                CustomerTaxCodeAutocompleteType::NAME,
+                CustomerTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,

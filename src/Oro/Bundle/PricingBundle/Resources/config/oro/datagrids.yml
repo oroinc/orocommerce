@@ -199,7 +199,7 @@ datagrids:
                     type:      entity
                     data_name: customerGroup.id
                     options:
-                        field_type: entity
+                        field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
                             property: name
@@ -313,7 +313,7 @@ datagrids:
                     type:      entity
                     data_name: customerGroup.id
                     options:
-                        field_type: entity
+                        field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
                             property: name

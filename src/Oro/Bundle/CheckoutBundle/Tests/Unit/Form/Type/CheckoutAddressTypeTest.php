@@ -3,8 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
@@ -13,7 +12,8 @@ use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
 {
@@ -35,7 +35,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_address', $this->formType->getParent());
+        $this->assertEquals(AddressType::class, $this->formType->getParent());
     }
 
     /**
@@ -46,10 +46,11 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $ext = parent::getExtensions();
         return array_merge($ext, [new PreloadedExtension(
             [
-            'oro_frontend_country' => new CountryType(),
-            'oro_frontend_region' => new RegionType(),
+                $this->formType,
+                CountryType::class => new CountryType(),
+                RegionType::class => new RegionType(),
             ],
-            ['form' => [new AdditionalAttrExtension()]]
+            [FormType::class => [new AdditionalAttrExtension()]]
         )]);
     }
 

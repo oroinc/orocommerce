@@ -16,7 +16,7 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
      */
     public function getExtendedType()
     {
-        return CustomerGroupType::NAME;
+        return CustomerGroupType::class;
     }
 
     /**
@@ -27,7 +27,7 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
         $builder
             ->add(
                 'taxCode',
-                CustomerTaxCodeAutocompleteType::NAME,
+                CustomerTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,

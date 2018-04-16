@@ -15,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -26,42 +27,21 @@ use Symfony\Component\Validator\Validation;
  */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var DiscountOptionsType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new DiscountOptionsType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-    }
-
     public function testGetName()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getName());
+        $formType = new DiscountOptionsType();
+        $this->assertEquals(DiscountOptionsType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getBlockPrefix());
+        $formType = new DiscountOptionsType();
+        $this->assertEquals(DiscountOptionsType::NAME, $formType->getBlockPrefix());
     }
 
     public function testInitialForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(DiscountOptionsType::class);
 
         $this->assertFormFieldsPreset($form);
         $this->assertFieldIsHidden($form, DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD);
@@ -70,7 +50,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testFormWithTypeAmountSelected()
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             [AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT]
         );
 
@@ -81,7 +61,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testFormWithTypePercentSelected()
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             [AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT]
         );
 
@@ -98,7 +78,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testSubmit($submittedData, $expectedData)
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             []
         );
         $form->submit($submittedData);
@@ -145,7 +125,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testSubmitInvalid($submittedData)
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             []
         );
         $form->submit($submittedData);
@@ -225,12 +205,13 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType->configureOptions($resolver);
+        $formType = new DiscountOptionsType();
+        $formType->configureOptions($resolver);
     }
 
     public function testFinishView()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(DiscountOptionsType::class);
         $view = $form->createView();
         $this->assertArrayHasKey('attr', $view->vars);
         $this->assertArraySubset(
@@ -262,12 +243,12 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::NAME => new MultiCurrencyType(),
+                    MultiCurrencyType::class => new MultiCurrencyType(),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter)
+                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter)
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

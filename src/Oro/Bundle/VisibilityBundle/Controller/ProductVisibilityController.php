@@ -5,7 +5,6 @@ namespace Oro\Bundle\VisibilityBundle\Controller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
@@ -93,7 +92,7 @@ class ProductVisibilityController extends Controller
     protected function createScopedDataForm(Product $product, array $preloadedScopes = [])
     {
         return $this->createForm(
-            ScopedDataType::NAME,
+            ScopedDataType::class,
             $product,
             [
                 'ownership_disabled' => true,

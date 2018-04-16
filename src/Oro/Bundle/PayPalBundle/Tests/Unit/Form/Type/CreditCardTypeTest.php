@@ -4,30 +4,15 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 class CreditCardTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var CreditCardType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new CreditCardType();
-    }
-
     /**
      * @return array
      */
@@ -36,7 +21,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CreditCardExpirationDateType::NAME => new CreditCardExpirationDateType(),
+                    CreditCardExpirationDateType::class => new CreditCardExpirationDateType(),
                 ],
                 []
             ),
@@ -46,21 +31,21 @@ class CreditCardTypeTest extends FormIntegrationTestCase
 
     public function testFormConfigurationWhenCvvEntryNotRequired()
     {
-        $form = $this->factory->create($this->formType, null, ['requireCvvEntryEnabled' => false]);
+        $form = $this->factory->create(CreditCardType::class, null, ['requireCvvEntryEnabled' => false]);
         $this->assertFalse($form->has('CVV2'));
         $this->assertFalse($form->has('save_for_later'));
     }
 
     public function testFormConfigurationWithoutOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(CreditCardType::class);
         $this->assertTrue($form->has('CVV2'));
         $this->assertFalse($form->has('save_for_later'));
     }
 
     public function testFormConfigurationWhenCvvEntryRequired()
     {
-        $form = $this->factory->create($this->formType, null, ['requireCvvEntryEnabled' => true]);
+        $form = $this->factory->create(CreditCardType::class, null, ['requireCvvEntryEnabled' => true]);
         $this->assertTrue($form->has('CVV2'));
         $this->assertTrue($form->has('ACCT'));
         $this->assertTrue($form->has('expirationDate'));
@@ -69,19 +54,20 @@ class CreditCardTypeTest extends FormIntegrationTestCase
 
     public function testSafeForLaterFieldWithZeroAmountAuthorizationEnabledOption()
     {
-        $form = $this->factory->create($this->formType, null, ['zeroAmountAuthorizationEnabled' => true]);
+        $form = $this->factory->create(CreditCardType::class, null, ['zeroAmountAuthorizationEnabled' => true]);
         $this->assertTrue($form->has('save_for_later'));
     }
 
     public function testSafeForLaterFieldWithZeroAmountAuthorizationEnabledOptionDisabled()
     {
-        $form = $this->factory->create($this->formType, null, ['zeroAmountAuthorizationEnabled' => false]);
+        $form = $this->factory->create(CreditCardType::class, null, ['zeroAmountAuthorizationEnabled' => false]);
         $this->assertFalse($form->has('save_for_later'));
     }
 
     public function testGetName()
     {
-        $this->assertEquals('oro_paypal_credit_card', $this->formType->getName());
+        $formType = new CreditCardType();
+        $this->assertEquals('oro_paypal_credit_card', $formType->getName());
     }
 
     public function testFinishView()
@@ -97,7 +83,8 @@ class CreditCardTypeTest extends FormIntegrationTestCase
         ];
         $formView->children = [$formChildrenView];
 
-        $this->formType->finishView($formView, $form, []);
+        $formType = new CreditCardType();
+        $formType->finishView($formView, $form, []);
 
         foreach ($formView->children as $formItemData) {
             $this->assertEquals('name', $formItemData->vars['full_name']);

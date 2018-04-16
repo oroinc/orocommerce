@@ -65,7 +65,7 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
-            - [setExtendedType, [oro_sale_quote]]
+            - [setExtendedType, [Oro\Bundle\SaleBundle\Form\Type\QuoteType]]
         tags:
             - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
 

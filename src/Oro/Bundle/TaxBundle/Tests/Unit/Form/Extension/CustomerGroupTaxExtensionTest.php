@@ -20,7 +20,7 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(CustomerGroupType::NAME, $this->getExtension()->getExtendedType());
+        $this->assertEquals(CustomerGroupType::class, $this->getExtension()->getExtendedType());
     }
 
     public function testOnPostSubmitNewCustomerGroup()

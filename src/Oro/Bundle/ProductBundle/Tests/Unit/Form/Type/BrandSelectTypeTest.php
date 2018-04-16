@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BrandSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -25,7 +26,7 @@ class BrandSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()

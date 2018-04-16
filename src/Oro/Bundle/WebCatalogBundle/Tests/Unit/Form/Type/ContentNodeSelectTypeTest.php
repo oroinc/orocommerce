@@ -29,12 +29,11 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->formType = new ContentNodeSelectType($this->treeHandler);
+        parent::setUp();
     }
 
     /**
@@ -51,6 +50,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    ContentNodeSelectType::class => $this->formType,
                     EntityIdentifierType::class => $entityIdentifierType,
                 ],
                 []
@@ -89,7 +89,10 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
             ->with($root, true)
             ->willReturn($treeData);
 
-        $form = $this->factory->create($this->formType, null, ['web_catalog' => $webCatalog, 'tree_key' => 'test']);
+        $form = $this->factory->create(ContentNodeSelectType::class, null, [
+            'web_catalog' => $webCatalog,
+            'tree_key' => 'test'
+        ]);
         $form->submit(null);
         $view = $form->createView();
 

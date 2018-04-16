@@ -67,7 +67,7 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
-            - [setExtendedType, ['oro_rfp_frontend_request']]
+            - [setExtendedType, ['Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType']]
             - [setConfigManager, ['@oro_config.manager']]
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]
@@ -93,7 +93,7 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.model.price_list_tree_handler'
         calls:
-            - [setExtendedType, ['oro_order_type']]
+            - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
             - { name: oro_featuretogle.feature, feature: rfp }

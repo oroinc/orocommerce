@@ -3,8 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -49,7 +53,7 @@ class OriginAddressType extends AbstractType
         $builder
             ->add(
                 'country',
-                'oro_country',
+                CountryType::class,
                 [
                     'required' => false,
                     'label' => 'oro.address.country.label',
@@ -58,7 +62,7 @@ class OriginAddressType extends AbstractType
             )
             ->add(
                 'region',
-                'oro_region',
+                RegionType::class,
                 [
                     'required' => false,
                     'label' => 'oro.address.region.label',
@@ -67,7 +71,7 @@ class OriginAddressType extends AbstractType
             )
             ->add(
                 'postal_code',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'oro.address.postal_code.label',
@@ -77,7 +81,7 @@ class OriginAddressType extends AbstractType
             )
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 [
                     'required' => false,
                     'label' => 'oro.address.region_text.label',

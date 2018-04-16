@@ -3,20 +3,19 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -223,21 +222,18 @@ class RequestTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                    => new CollectionType(),
-                    RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
-                    RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    ProductSelectType::NAME                 => new ProductSelectTypeStub(),
-                    OroDateType::NAME                       => new OroDateType(),
-                    $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
-                    $requestProductType->getName()          => $requestProductType,
-                    CurrencySelectionType::class            => $currencySelectionType,
-                    $requestProductItemType->getName()      => $requestProductItemType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $customerUserMultiSelectType->getName()  => $customerUserMultiSelectType,
-                    $frontendRequestProductType->getName()  => $frontendRequestProductType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType(),
+                    $this->formType,
+                    ProductUnitSelectionType::class    => new ProductUnitSelectionTypeStub(),
+                    ProductSelectType::class           => new ProductSelectTypeStub(),
+                    PriceType::class                   => $priceType,
+                    ProductSelectType::class           => $entityType,
+                    RequestProductType::class          => $requestProductType,
+                    CurrencySelectionType::class       => $currencySelectionType,
+                    RequestProductItemType::class      => $requestProductItemType,
+                    ProductUnitSelectionType::class    => $productUnitSelectionType,
+                    CustomerUserMultiSelectType::class => $customerUserMultiSelectType,
+                    FrontendRequestProductType::class  => $frontendRequestProductType,
+                    QuantityType::class                => $this->getQuantityType(),
                 ],
                 []
             ),

@@ -31,7 +31,7 @@ services:
         parent: oro_payment_term.form.extension.abstract_acl_type
         calls:
             - [setAclResource, ['oro_order_payment_term_customer_can_override']]
-            - [setExtendedType, ['oro_order_type']]
+            - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
 
@@ -39,7 +39,7 @@ services:
         parent: oro_payment_term.form.extension.abstract_acl_type
         calls:
             - [setAclResource, ['oro_quote_payment_term_customer_can_override']]
-            - [setExtendedType, ['oro_sale_quote']]
+            - [setExtendedType, ['Oro\Bundle\SaleBundle\Form\Type\QuoteType']]
         tags:
             - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
 
