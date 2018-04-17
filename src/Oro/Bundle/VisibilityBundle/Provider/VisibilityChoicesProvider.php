@@ -42,7 +42,7 @@ class VisibilityChoicesProvider
         $className = strtolower($sourceClassReflection->getShortName());
         $translationPattern = 'oro.visibility.' . $className . '.choice.%s';
 
-        return $this->formatChoices($translationPattern, $choices);
+        return array_flip($this->formatChoices($translationPattern, $choices));
     }
 
     /**

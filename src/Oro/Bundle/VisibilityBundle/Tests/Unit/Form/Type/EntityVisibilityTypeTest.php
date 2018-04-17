@@ -91,8 +91,8 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         $this->visibilityChoicesProvider->expects($this->once())
             ->method('getFormattedChoices')
             ->willReturn([
-                'visible' => 'Visible',
-                'hidden' => 'Hidden'
+                'Visible' => 'visible',
+                'Hidden' => 'hidden'
             ]);
 
         $options = [
