@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -27,7 +28,8 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
-        $richTextType = new OroRichTextType($configManager, $htmlTagProvider);
+        $context = $this->createMock(ContextInterface::class);
+        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context);
 
         return [
             new PreloadedExtension(
