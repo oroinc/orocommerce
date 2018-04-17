@@ -100,6 +100,8 @@ oro_behat_extension:
           Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
           Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
+          Pricing Precision System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
+          Pricing Precision: 'pricing[oro_pricing___precision][value]'
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'

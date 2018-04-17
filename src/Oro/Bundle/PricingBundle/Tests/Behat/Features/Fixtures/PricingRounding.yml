@@ -1,0 +1,57 @@
+include:
+  - '@OroCheckoutBundle:Payment.yml'
+  - '@OroCheckoutBundle:Shipping.yml'
+  - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: 'Common Business Unit'
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@item'
+    precision: '1'
+  precision2:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue1:
+    string: 'Phone'
+  locValue2:
+    string: 'Light'
+  localNewCategory:
+    string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU123'
+    type: 'simple'
+    primaryUnitPrecision: '@precision1'
+    addName: ['@locValue1']
+    attributeFamily: '@defaultProductFamily'
+    inventoryStatus: '@enumInventoryStatuses'
+    organization: '@organization'
+    owner: '@businessUnit'
+    status: 'enabled'
+  product2:
+    sku: 'SKU456'
+    type: 'simple'
+    primaryUnitPrecision: '@precision2'
+    addName: ['@locValue2']
+    attributeFamily: '@defaultProductFamily'
+    inventoryStatus: '@enumInventoryStatuses'
+    organization: '@organization'
+    owner: '@businessUnit'
+    status: 'enabled'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+  products:
+    __construct: [['@product1','@product2']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+  categoryLightingProducts:
+    addTitle: ['@localNewCategory']
+    setParentCategory: [1]
+    setProducts: ['@products']

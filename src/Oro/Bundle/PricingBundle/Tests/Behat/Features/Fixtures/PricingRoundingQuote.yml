@@ -1,0 +1,62 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+  quote1:
+    currency: 'USD'
+    customer: '@customer'
+    customerUser: '@amanda'
+    owner: '@admin'
+    organization: '@organization'
+    poNumber: 'Q123'
+    qid: '1'
+    website: '@website1'
+  quote2:
+    currency: 'USD'
+    customer: '@customer'
+    customerUser: '@amanda'
+    owner: '@admin'
+    organization: '@organization'
+    poNumber: 'Q456'
+    qid: '2'
+    website: '@website1'
+
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+  quoteProduct1:
+    product: '@product1'
+    quote: '@quote1'
+  quoteProduct2:
+    product: '@product2'
+    quote: '@quote2'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+  quoteProductPrice1:
+    value: 7.45
+    currency: USD
+  quoteProductPrice2:
+    value: 5.54
+    currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+  quoteProductOffer1:
+    quote_product: '@quoteProduct1'
+    product_unit: '@item'
+    price: '@quoteProductPrice1'
+    quantity: 1
+    allow_increments: true
+  quoteProductOffer2:
+    quote_product: '@quoteProduct2'
+    product_unit: '@item'
+    price: '@quoteProductPrice2'
+    quantity: 1
+    allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+  quoteProductRequest1:
+    quote_product: '@quoteProduct1'
+    product_unit: '@item'
+    price: '@quoteProductPrice1'
+    quantity: 1
+  quoteProductRequest2:
+    quote_product: '@quoteProduct2'
+    product_unit: '@item'
+    price: '@quoteProductPrice2'
+    quantity: 1
