@@ -172,7 +172,7 @@ oro:
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
                     continue_checkout_as_guest.label: Continue as a Guest
-                    continue_checkout_as_guest.tooltip: You'll have the option to register for an accout after your purchase
+                    continue_checkout_as_guest.tooltip: You'll have the option to register for an account after your purchase
                     place_order:
                         label: Submit Order
                         condition.extendable.message: There was an error while processing the order
