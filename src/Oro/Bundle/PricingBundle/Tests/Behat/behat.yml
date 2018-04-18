@@ -9,6 +9,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroProductBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroCheckoutBundle::FeatureContext
         - OroApplicationBundle::CommerceMainContext
         - OroUIBundle::TypeaheadContext
         - OroImportExportBundle::ImportExportContext:
@@ -115,6 +116,18 @@ oro_behat_extension:
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
 
+    Order Review Form:
+      selector: '[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          PO Number: 'oro_workflow_transition[po_number]'
+
     Price list Product prices Grid:
       selector: 'div[data-page-component-name="price-list-product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    PO Number:
+      selector:
+        locator: '//div[@class="datagrid-manager__label"]/label/span[text()="PO Number"]/../span[@class="custom-checkbox__icon"]'
+        type: 'xpath'
