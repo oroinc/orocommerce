@@ -198,16 +198,16 @@ oro_behat_extension:
         locator: '//div[@class="shopping-lists"]'
         type: xpath
 
-    Update Shopping list button:
+    Update Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Update Shopping list"]'
+        locator: '//div/a[@title="Update Shopping List"]'
         type: xpath
 
     Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Add to Shopping list"]'
+        locator: '//div/a[@title="Add to Shopping List"]'
         type: xpath
 
     Gallery View:
@@ -282,13 +282,13 @@ oro_behat_extension:
     Add to Shopping List form Matrix Grid:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping list"]'
+        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping List"]'
         type: xpath
 
-    Add to Shopping list button:
+    Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//a[@title="Add to Shopping list"]'
+        locator: '//a[@title="Add to Shopping List"]'
         type: xpath
 
     Create New Shopping List popup:
@@ -418,6 +418,7 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
 
     Save on conf window:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -445,6 +446,16 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+          Allow Registration Default: 'checkout[oro_checkout___registration_allowed][use_parent_scope_value]'
+          Allow Checkout Without Email Confirmation Default: 'checkout[oro_checkout___allow_checkout_without_email_confirmation][use_parent_scope_value]'
+
+    Customer Users Registration Form:
+      selector: 'form[name="customer_users"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Registration Allowed Default: 'customer_users[oro_customer___registration_allowed][use_parent_scope_value]'
+          Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
 
     Reset Any Text filter:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

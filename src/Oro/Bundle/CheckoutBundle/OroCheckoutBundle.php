@@ -7,6 +7,9 @@ use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * Loads additional extensions
+ */
 class OroCheckoutBundle extends Bundle
 {
     /**

@@ -1035,7 +1035,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Click on button in matrix order window
-     * Example: Given I click "Add to Shopping list" in matrix order window
+     * Example: Given I click "Add to Shopping List" in matrix order window
      * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in matrix order window$/
      */
     public function pressButtonInModalWindow($button)

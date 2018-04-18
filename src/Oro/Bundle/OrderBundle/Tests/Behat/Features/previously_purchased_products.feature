@@ -42,7 +42,7 @@ Feature: Previously purchased products
     Given I operate as the Buyer
     When I click "Account"
     And I click "Previously Purchased"
-    And I click "Add to Shopping list" for "PSKU2" product
+    And I click "Add to Shopping List" for "PSKU2" product
     Then I should see "Product has been added to" flash message
 
   Scenario: Time restriction changes are applicable

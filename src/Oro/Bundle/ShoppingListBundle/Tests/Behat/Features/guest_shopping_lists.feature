@@ -80,7 +80,7 @@ Feature: Guest Shopping Lists
     When type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "Product3"
-    But I should not see "Add to Shopping list"
+    But I should not see "Add to Shopping List"
 
   Scenario: Configurable product variants and matrix button shouldn't be available on front store
     And I open product with sku "1GB83" on the store frontend
@@ -103,7 +103,7 @@ Feature: Guest Shopping Lists
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
     Then I should see an "Matrix Grid Form" element
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
 
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I am on homepage
@@ -111,10 +111,10 @@ Feature: Guest Shopping Lists
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
     When I click "View Details" for "PSKU1" product
-    Then I should see "Add to Shopping list"
-    When I click "Add to Shopping list"
+    Then I should see "Add to Shopping List"
+    When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
 
@@ -123,7 +123,7 @@ Feature: Guest Shopping Lists
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10   |
       | Unit     | each |
-    And I click "Update Shopping list"
+    And I click "Update Shopping List"
     Then I should see "Record has been successfully updated" flash message
     And I click "NewCategory"
     Then I should see "In shopping list"
@@ -132,11 +132,11 @@ Feature: Guest Shopping Lists
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
-    When I click "Add to Shopping list" for "CONTROL1" product
+    When I click "Add to Shopping List" for "CONTROL1" product
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List
-    Given I click "Shopping list"
+    Given I click "Shopping List"
     Then  I should see "Control Product"
     And  I should see "Product1"
     And I should not see following buttons:
