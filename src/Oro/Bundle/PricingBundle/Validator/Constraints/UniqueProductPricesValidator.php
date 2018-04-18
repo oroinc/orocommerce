@@ -7,6 +7,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validate all product prices to be unique within given collection of values.
+ */
 class UniqueProductPricesValidator extends ConstraintValidator
 {
     /**
@@ -14,7 +17,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_array($value) && !($value instanceof \Traversable && $value instanceof \ArrayAccess)) {
+        if (!\is_array($value) && !($value instanceof \Traversable && $value instanceof \ArrayAccess)) {
             throw new UnexpectedTypeException($value, 'array or Traversable and ArrayAccess');
         }
 
@@ -22,7 +25,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
 
         foreach ($value as $productPrice) {
             if (!$productPrice instanceof ProductPrice) {
-                throw new UnexpectedTypeException($productPrice, 'Oro\Bundle\PricingBundle\Entity\ProductPrice');
+                throw new UnexpectedTypeException($productPrice, ProductPrice::class);
             }
 
             $hash = $this->getHash($productPrice);
@@ -32,7 +35,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
                 $this->context->addViolation($constraint->message);
                 break;
             } else {
-                $productPricesByHash[$hash] = $productPrice;
+                $productPricesByHash[$hash] = true;
             }
         }
     }
@@ -45,10 +48,13 @@ class UniqueProductPricesValidator extends ConstraintValidator
     {
         $key = sprintf(
             '%s_%s_%F_%s',
-            $productPrice->getProduct(),
-            $productPrice->getPriceList(),
+            // SKU is unique, id can not be used as validator is also called for new products
+            $productPrice->getProduct()->getSku(),
+            // Price list creation is separated from prices, only id is unique
+            $productPrice->getPriceList()->getId(),
             $productPrice->getQuantity(),
-            $productPrice->getUnit()
+            // Unit code is unique
+            $productPrice->getUnit()->getCode()
         );
 
         if ($productPrice->getPrice()) {

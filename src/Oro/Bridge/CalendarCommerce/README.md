@@ -1,7 +1,5 @@
-CalendarCommerce
-===========
+# OroCalendarCommerceBridgeBundle
 
-What is CalendarCommerce?
-------------
+OroCalendarCommerceBridgeBundle is a bridge that integrates [OroCalendarBundle](https://github.com/oroinc/OroCalendarBundle) into OroCommerce applications.
 
-CalendarCommerce is a bridge that integrates certain commerce related features of the OroCalendarBundle into B2B applications.
+The bundle enables the Calendar Event [activity](https://github.com/oroinc/platform/tree/master/src/Oro/Bundle/ActivityBundle) for Customer users, Orders, RFP requests, and Quotes.

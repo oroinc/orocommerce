@@ -61,6 +61,29 @@
             {% if form.state_token is defined %}
                 {{ form_row(form.state_token) }}
             {% endif %}
+
+            {% if feature_enabled('checkout_customer_users_registration') and
+                checkout.registeredCustomerUser == null and
+                checkout.customerUser.isGuest
+            %}
+                <fieldset class="grid__row grid__row--offset-none"
+                  data-page-component-module="oroui/js/app/components/view-component",
+                  data-page-component-options="{{ {
+                      view: 'orocheckout/js/app/views/late-checkout-registration-view',
+                      selectors: {
+                          switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
+                          fieldsContainer: '#checkout-late-registration-fields'
+                      }
+                  }|json_encode }}">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                        <div id="checkout-late-registration-fields">
+                            {{ form_widget(form.late_registration) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+            {% endif %}
         </div>
     </div>
 {% endblock %}

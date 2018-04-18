@@ -1,4 +1,4 @@
-{% macro transitionAttrbiutes(transitionData, checkout) %}
+{% macro transitionAttrbiutes(transitionData, checkout, componentOptions) %}
 {% spaceless %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
@@ -6,6 +6,9 @@
 
     {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orocheckout/js/app/components/transition-button-component') %}
     {% set pageComponentOptions = transition.frontendOptions.page_component_options|default({}) %}
+    {% if componentOptions is iterable %}
+        {% set pageComponentOptions = pageComponentOptions|merge(componentOptions) %}
+    {% endif %}
     
     {{ UI.renderPageComponentAttributes({
         module: pageComponentModule,
@@ -68,7 +71,7 @@
                 class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout-form__submit"
                 disabled="disabled"
                 autocomplete="off"
-                {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+                {{ _self.transitionAttrbiutes(transitionData, checkout, componentOptions) }}
             >
                 {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right"></i>
             </button>

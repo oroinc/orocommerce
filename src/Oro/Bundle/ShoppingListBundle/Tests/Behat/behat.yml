@@ -160,8 +160,8 @@ oro_behat_extension:
     In Shopping List:
       selector: 'a.shopping-lists__area-trigger'
 
-    Add To Shopping List:
-      selector: 'a.add-to-shopping-list-button'
+    Add to Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
