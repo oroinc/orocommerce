@@ -153,15 +153,6 @@ Feature: Pricing rounding
       |Order Number|Total |
       |2           |$8.00 |
       |1           |$10.00|
-#    And grig
-#    And click on "PO Number"
-#    When click view "10.00" in grid
-#    Then should see "Subtotal $7"
-#    And should see "Total $10"
-#    And click "Order History"
-#    When click view "8.00" in grid
-#    Then should see "Subtotal $5"
-#    And should see "Total $8"
 
     And I proceed as the admin
     When go to Sales/ Orders
@@ -281,4 +272,19 @@ Feature: Pricing rounding
       |3           |$10.50|
       |2           |$8.00 |
       |1           |$10.00|
-    And I wait for action
+
+    And I proceed as the admin
+    When go to Sales/ Orders
+    Then should see following grid:
+      |Order Number|Total |
+      |1           |$10.00|
+      |2           |$8.00 |
+      |3           |$10.50|
+      |4           |$7.50 |
+    When click view "Order3" in grid
+    Then should see "Subtotal $7.50"
+    And should see "Total $10.50"
+    And go to Sales/ Orders
+    When click view "Order4" in grid
+    Then should see "Subtotal $4.50"
+    And should see "Total $7.50"
