@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
@@ -75,6 +76,10 @@ class PaymentTransactionProvider
 
         if ($user instanceof CustomerUser) {
             return $user;
+        }
+
+        if ($token instanceof AnonymousCustomerUserToken && $token->getVisitor()) {
+            return $token->getVisitor()->getCustomerUser();
         }
 
         return null;
