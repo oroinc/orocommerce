@@ -15,6 +15,9 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Provides functionality to work with payment transactions such as creating for current runtime, saving and fetching.
+ */
 class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
