@@ -1,6 +1,9 @@
 @fixture-OroRFPBundle:RFQ_with_removed_unit.yml
 @ticket-BB-14067
-Feature: RFQ containing line items with removed units must be available from admin area
+Feature: RFQ containing line items with removed units
+  In order to process RFQ
+  As an Administrator
+  I want to be able to have access to RFQs that contains line items with removed units
 
   Scenario: View RFQ containing line items with removed units
     Given I login as administrator
