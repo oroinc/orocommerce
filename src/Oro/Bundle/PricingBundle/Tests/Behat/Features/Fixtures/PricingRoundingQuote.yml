@@ -17,7 +17,15 @@ Oro\Bundle\SaleBundle\Entity\Quote:
     poNumber: 'Q456'
     qid: '2'
     website: '@website1'
-
+  quote3:
+    currency: 'USD'
+    customer: '@customer'
+    customerUser: '@amanda'
+    owner: '@admin'
+    organization: '@organization'
+    poNumber: 'Q789'
+    qid: '3'
+    website: '@website1'
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
   quoteProduct1:
@@ -26,6 +34,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
   quoteProduct2:
     product: '@product2'
     quote: '@quote2'
+  quoteProduct3:
+    product: '@product1'
+    quote: '@quote3'
 
 Oro\Bundle\CurrencyBundle\Entity\Price (local):
   quoteProductPrice1:
@@ -33,6 +44,9 @@ Oro\Bundle\CurrencyBundle\Entity\Price (local):
     currency: USD
   quoteProductPrice2:
     value: 4.54
+    currency: USD
+  quoteProductPrice3:
+    value: 7.66
     currency: USD
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
@@ -48,6 +62,12 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     price: '@quoteProductPrice2'
     quantity: 1
     allow_increments: true
+  quoteProductOffer3:
+    quote_product: '@quoteProduct3'
+    product_unit: '@item'
+    price: '@quoteProductPrice3'
+    quantity: 1
+    allow_increments: true
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
   quoteProductRequest1:
@@ -59,4 +79,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
     quote_product: '@quoteProduct2'
     product_unit: '@item'
     price: '@quoteProductPrice2'
+    quantity: 1
+  quoteProductRequest3:
+    quote_product: '@quoteProduct3'
+    product_unit: '@item'
+    price: '@quoteProductPrice3'
     quantity: 1

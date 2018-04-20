@@ -49,6 +49,11 @@ Feature: Pricing rounding
     And click "Send to Customer"
     And click "Send"
     And I should see "Quote #2 successfully sent to customer" flash message
+    And go to Sales/ Quotes
+    And click view "Q789" in grid
+    And click "Send to Customer"
+    And click "Send"
+    And I should see "Quote #3 successfully sent to customer" flash message
 
   Scenario: Default system stage
     Given I proceed as the admin
@@ -80,7 +85,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $4.54"
     And should see "Total $4.54"
 
-  Scenario: Set Pricing Precision value to 0
+  Scenario: Set Pricing Precision value to 0 (Half Up)
     Given I proceed as the admin
     And fill "PricingConfigurationForm" with:
       |Pricing Precision System|false|
@@ -168,7 +173,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $5"
     And should see "Total $8"
 
-  Scenario: Set Pricing Precision value to 1
+  Scenario: Set Pricing Precision value to 1 (Half Up)
     Given I proceed as the admin
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
@@ -288,3 +293,95 @@ Feature: Pricing rounding
     When click view "Order4" in grid
     Then should see "Subtotal $4.50"
     And should see "Total $7.50"
+
+  Scenario: Set Pricing Precision value to 0 (Half Down)
+    Given I proceed as the admin
+    And go to System/ Configuration
+    And follow "Commerce/Catalog/Pricing" on configuration sidebar
+    And fill "PricingConfigurationForm" with:
+      |Pricing Precision System     |false    |
+      |Pricing Precision            |0        |
+      |Pricing Rounding Type System |false    |
+      |Pricing Rounding Type        |Half Down|
+    And click "Save settings"
+    And I proceed as the customer
+    And click "Account"
+    And click "Quotes"
+    When click on Q123 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $7"
+    And should see "Total $7"
+    And click "Account"
+    And click "Quotes"
+    When click on Q456 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $4"
+    And should see "Total $4"
+    And I wait for action
+    And click "Account"
+    And click "Quotes"
+    When click on Q789 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $8"
+    And should see "Total $8"
+
+  Scenario: Set Pricing Precision value to 0 (Ceil)
+    Given I proceed as the admin
+    And go to System/ Configuration
+    And follow "Commerce/Catalog/Pricing" on configuration sidebar
+    And fill "PricingConfigurationForm" with:
+      |Pricing Precision System     |false |
+      |Pricing Precision            |0     |
+      |Pricing Rounding Type System |false |
+      |Pricing Rounding Type        |Ceil  |
+    And click "Save settings"
+    And I proceed as the customer
+    And click "Account"
+    And click "Quotes"
+    When click on Q123 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $8"
+    And should see "Total $8"
+    And click "Account"
+    And click "Quotes"
+    When click on Q456 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $5"
+    And should see "Total $5"
+    And click "Account"
+    And click "Quotes"
+    When click on Q789 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $8"
+    And should see "Total $8"
+
+  Scenario: Set Pricing Precision value to 0 (Floor)
+    Given I proceed as the admin
+    And go to System/ Configuration
+    And follow "Commerce/Catalog/Pricing" on configuration sidebar
+    And fill "PricingConfigurationForm" with:
+      |Pricing Precision System     |false |
+      |Pricing Precision            |0     |
+      |Pricing Rounding Type System |false |
+      |Pricing Rounding Type        |Floor |
+    And click "Save settings"
+    And I proceed as the customer
+    And click "Account"
+    And click "Quotes"
+    When click on Q123 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $7"
+    And should see "Total $7"
+    And click "Account"
+    And click "Quotes"
+    When click on Q456 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $4"
+    And should see "Total $4"
+    And click "Account"
+    And click "Quotes"
+    When click on Q789 in grid
+    And click "Accept and Submit to Order"
+    Then should see "Subtotal $7"
+    And should see "Total $7"
+

@@ -103,6 +103,8 @@ oro_behat_extension:
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
           Pricing Precision System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
           Pricing Precision: 'pricing[oro_pricing___precision][value]'
+          Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
+          Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'
