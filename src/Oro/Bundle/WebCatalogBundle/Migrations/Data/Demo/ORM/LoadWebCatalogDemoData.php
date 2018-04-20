@@ -165,6 +165,11 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $this->resolveScopes($node);
             $this->generateSlugs($node);
 
+            //Adds possibility to work with nodes by reference name if needed
+            if (!empty($contentNode['setReference'])) {
+                $this->setReference($contentNode['setReference'], $node);
+            }
+
             if (isset($contentNode['children'])) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
             }
@@ -230,12 +235,14 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
     }
 
     /**
+     * @param string $filePath
      * @return array
      */
-    protected function getWebCatalogData()
-    {
+    protected function getWebCatalogData(
+        $filePath = '@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml'
+    ) {
         $locator = $this->container->get('file_locator');
-        $fileName = $locator->locate('@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml');
+        $fileName = $locator->locate($filePath);
 
         return Yaml::parse(file_get_contents($fileName));
     }
