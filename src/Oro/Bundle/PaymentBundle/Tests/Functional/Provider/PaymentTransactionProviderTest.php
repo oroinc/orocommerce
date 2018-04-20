@@ -15,6 +15,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentTransactionProviderTest extends WebTestCase
 {
     use EntityTrait;
