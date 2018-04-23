@@ -26,6 +26,24 @@ Oro\Bundle\SaleBundle\Entity\Quote:
     poNumber: 'Q789'
     qid: '3'
     website: '@website1'
+  quote4:
+    currency: 'USD'
+    customer: '@customer'
+    customerUser: '@amanda'
+    owner: '@admin'
+    organization: '@organization'
+    poNumber: 'Q321'
+    qid: '4'
+    website: '@website1'
+  quote5:
+    currency: 'USD'
+    customer: '@customer'
+    customerUser: '@amanda'
+    owner: '@admin'
+    organization: '@organization'
+    poNumber: 'Q654'
+    qid: '5'
+    website: '@website1'
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
   quoteProduct1:
@@ -37,6 +55,12 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
   quoteProduct3:
     product: '@product1'
     quote: '@quote3'
+  quoteProduct4:
+    product: '@product2'
+    quote: '@quote4'
+  quoteProduct5:
+    product: '@product2'
+    quote: '@quote5'
 
 Oro\Bundle\CurrencyBundle\Entity\Price (local):
   quoteProductPrice1:
@@ -47,6 +71,12 @@ Oro\Bundle\CurrencyBundle\Entity\Price (local):
     currency: USD
   quoteProductPrice3:
     value: 7.66
+    currency: USD
+  quoteProductPrice4:
+    value: 4.5
+    currency: USD
+  quoteProductPrice5:
+    value: 3.5
     currency: USD
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
@@ -68,6 +98,18 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     price: '@quoteProductPrice3'
     quantity: 1
     allow_increments: true
+  quoteProductOffer4:
+    quote_product: '@quoteProduct4'
+    product_unit: '@item'
+    price: '@quoteProductPrice4'
+    quantity: 1
+    allow_increments: true
+  quoteProductOffer5:
+    quote_product: '@quoteProduct5'
+    product_unit: '@item'
+    price: '@quoteProductPrice5'
+    quantity: 1
+    allow_increments: true
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
   quoteProductRequest1:
@@ -84,4 +126,14 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
     quote_product: '@quoteProduct3'
     product_unit: '@item'
     price: '@quoteProductPrice3'
+    quantity: 1
+  quoteProductRequest4:
+    quote_product: '@quoteProduct4'
+    product_unit: '@item'
+    price: '@quoteProductPrice4'
+    quantity: 1
+  quoteProductRequest5:
+    quote_product: '@quoteProduct5'
+    product_unit: '@item'
+    price: '@quoteProductPrice5'
     quantity: 1
