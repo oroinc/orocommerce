@@ -29,7 +29,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
 
         $builder->add(
             Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER,
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.fields.category.minimum_quantity_to_order.label',
                 'required' => false,
@@ -38,7 +38,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
 
         $builder->add(
             Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.fields.category.maximum_quantity_to_order.label',
                 'required' => false,

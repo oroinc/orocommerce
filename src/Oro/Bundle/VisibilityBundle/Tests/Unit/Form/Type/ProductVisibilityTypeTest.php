@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\ProductVisibilityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -43,6 +44,6 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->type->getParent());
+        $this->assertEquals(ChoiceType::class, $this->type->getParent());
     }
 }

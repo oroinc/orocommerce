@@ -59,7 +59,7 @@ services:
             - '@oro_tax.provider.tax_provider_registry'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.form.section.provider'
-            - 'oro_order_line_item'
+            - Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType
         tags:
             - { name: form.type_extension, alias: oro_order_line_item, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType }
 
@@ -68,7 +68,7 @@ services:
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.manager.tax_value_manager'
-            - 'oro_order_line_items_collection'
+            - Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
         tags:
             - { name: form.type_extension, alias: oro_order_line_items_collection, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType }
 

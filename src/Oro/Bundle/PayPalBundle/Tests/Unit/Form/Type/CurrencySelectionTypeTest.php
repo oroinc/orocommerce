@@ -16,7 +16,6 @@ class CurrencySelectionTypeTest extends CurrencyBundleCurrencySelectionTypeTest
     protected function setUp()
     {
         parent::setUp();
-
         $this->formType = new CurrencySelectionType(
             $this->currencyProvider,
             $this->localeSettings,

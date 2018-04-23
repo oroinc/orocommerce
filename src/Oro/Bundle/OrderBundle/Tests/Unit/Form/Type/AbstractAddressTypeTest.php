@@ -21,7 +21,7 @@ abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
     protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions)
     {
         $form = $this->factory->create(
-            $this->formType,
+            get_class($this->formType),
             $defaultData,
             $formOptions
         );

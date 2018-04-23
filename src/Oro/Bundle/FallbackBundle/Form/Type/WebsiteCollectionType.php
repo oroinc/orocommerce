@@ -76,7 +76,7 @@ class WebsiteCollectionType extends AbstractType
 
         $resolver->setDefaults([
             'entry_options'           => [],
-            'fallback_type'     => FallbackPropertyType::NAME,
+            'fallback_type'     => FallbackPropertyType::class,
             'enabled_fallbacks' => [],
         ]);
     }
@@ -89,7 +89,7 @@ class WebsiteCollectionType extends AbstractType
         foreach ($this->getWebsites() as $website) {
             $builder->add(
                 $website->getId(),
-                FallbackValueType::NAME,
+                FallbackValueType::class,
                 [
                     'label'             => $website->getName(),
                     'entry_type'        => $options['entry_type'],

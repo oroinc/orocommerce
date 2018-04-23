@@ -16,7 +16,7 @@ class ProductTaxExtension extends AbstractTaxExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /** {@inheritdoc} */
@@ -25,7 +25,7 @@ class ProductTaxExtension extends AbstractTaxExtension
         $builder
             ->add(
                 'taxCode',
-                ProductTaxCodeAutocompleteType::NAME,
+                ProductTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,

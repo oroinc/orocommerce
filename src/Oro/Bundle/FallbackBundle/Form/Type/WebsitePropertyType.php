@@ -44,7 +44,7 @@ class WebsitePropertyType extends AbstractType
                 $formType,
                 array_merge($formOptions, ['label' => 'oro.fallback.value.default'])
             )
-            ->add(self::FIELD_WEBSITES, WebsiteCollectionType::NAME, [
+            ->add(self::FIELD_WEBSITES, WebsiteCollectionType::class, [
                 'entry_type' => $formType, 'entry_options' => $formOptions
             ]);
 

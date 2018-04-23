@@ -21,7 +21,7 @@ class CmsPageVariantType extends AbstractType
         $builder
             ->add(
                 'cmsPage',
-                PageSelectType::NAME,
+                PageSelectType::class,
                 [
                     'label' => 'oro.cms.page.entity_label',
                     'required' => true,

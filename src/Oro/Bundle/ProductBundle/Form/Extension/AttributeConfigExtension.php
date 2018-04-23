@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Extension;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Form\Extension\AttributeConfigExtensionApplicableTrait;
+use Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -156,6 +157,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_entity_config_type';
+        return ConfigType::class;
     }
 }

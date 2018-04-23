@@ -9,9 +9,10 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class PriceRuleTypeTest extends FormIntegrationTestCase
 {
@@ -34,12 +35,12 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 array_merge(
                     [
-                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                        CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
                             $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                         ),
-                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')])
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),
@@ -50,7 +51,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $form = $this->factory->create(new PriceRuleType(), new PriceRule());
+        $form = $this->factory->create(PriceRuleType::class, new PriceRule());
 
         $form->submit([
             PriceRuleType::CURRENCY => 'USD',

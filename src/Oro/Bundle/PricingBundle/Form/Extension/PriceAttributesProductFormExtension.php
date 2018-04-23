@@ -41,7 +41,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**
@@ -51,7 +51,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     {
         $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, 'collection', [
             'mapped' => false,
-            'type' => ProductAttributePriceCollectionType::NAME,
+            'type' => ProductAttributePriceCollectionType::class,
             'label' => false,
             'required' => false,
         ]);

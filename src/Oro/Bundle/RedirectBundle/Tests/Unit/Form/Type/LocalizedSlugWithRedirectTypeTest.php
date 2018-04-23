@@ -55,7 +55,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
             ->withConsecutive(
                 [
                     LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME,
-                    LocalizedSlugType::NAME,
+                    LocalizedSlugType::class,
                     [
                         'required' => false,
                         'entry_options' => ['constraints' => [new UrlSafe()]],

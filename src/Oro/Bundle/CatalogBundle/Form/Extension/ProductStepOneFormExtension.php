@@ -31,7 +31,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductStepOneType::NAME;
+        return ProductStepOneType::class;
     }
 
     /**
@@ -42,7 +42,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped' => false,

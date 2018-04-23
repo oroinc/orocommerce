@@ -36,7 +36,7 @@ class ProductLowInventoryThresholdFormExtension extends AbstractTypeExtension
 
         $builder->add(
             LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION,
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.low_inventory_threshold.label',
                 'required' => false,

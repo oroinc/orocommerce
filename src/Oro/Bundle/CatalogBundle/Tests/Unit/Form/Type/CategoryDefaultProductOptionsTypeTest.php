@@ -11,8 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -45,8 +46,9 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CategoryUnitPrecisionType::NAME => $categoryUnitPrecisionType,
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                    $this->formType,
+                    CategoryUnitPrecisionType::class => $categoryUnitPrecisionType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
                             'kg' => (new ProductUnit())->setCode('kg')
@@ -54,7 +56,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
                     )
                 ],
                 [
-                    'form' => [new IntegerExtension()]
+                    FormType::class => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -72,7 +74,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         $submittedData,
         CategoryDefaultProductOptions $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(CategoryDefaultProductOptionsType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 

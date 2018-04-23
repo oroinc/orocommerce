@@ -17,7 +17,7 @@ class ZipCodeCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => ZipCodeType::NAME,
+                'entry_type' => ZipCodeType::class,
                 'required' => false,
             ]
         );
@@ -44,6 +44,6 @@ class ZipCodeCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 }

@@ -7,7 +7,9 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -38,7 +40,7 @@ class InvoiceType extends AbstractType
         $builder
             ->add(
                 'owner',
-                'oro_user_select',
+                UserSelectType::class,
                 [
                     'label' => 'oro.invoice.owner.label',
                     'required' => true,
@@ -46,7 +48,7 @@ class InvoiceType extends AbstractType
             )
             ->add(
                 'customerUser',
-                CustomerUserSelectType::NAME,
+                CustomerUserSelectType::class,
                 [
                     'label' => 'oro.invoice.customer_user.label',
                     'required' => false,
@@ -54,7 +56,7 @@ class InvoiceType extends AbstractType
             )
             ->add(
                 'customer',
-                CustomerSelectType::NAME,
+                CustomerSelectType::class,
                 [
                     'label' => 'oro.invoice.customer.label',
                     'required' => true,
@@ -62,7 +64,7 @@ class InvoiceType extends AbstractType
             )
             ->add(
                 'invoiceDate',
-                OroDateType::NAME,
+                OroDateType::class,
                 [
                     'label' => 'oro.invoice.invoice_date.label',
                     'required' => true,
@@ -70,18 +72,18 @@ class InvoiceType extends AbstractType
             )
             ->add(
                 'paymentDueDate',
-                OroDateType::NAME,
+                OroDateType::class,
                 [
                     'label' => 'oro.invoice.payment_due_date.label',
                     'required' => true,
                 ]
             )
-            ->add('poNumber', 'text', [
+            ->add('poNumber', TextType::class, [
                 'required' => false
             ])
             ->add(
                 'currency',
-                CurrencySelectionType::NAME,
+                CurrencySelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.invoice.currency.label',
@@ -89,7 +91,7 @@ class InvoiceType extends AbstractType
             )
             ->add(
                 'lineItems',
-                InvoiceLineItemsCollectionType::NAME,
+                InvoiceLineItemsCollectionType::class,
                 [
                     'add_label' => 'oro.invoice.invoicelineitem.add_label',
                     'entry_options' => ['currency' => $invoice->getCurrency()],

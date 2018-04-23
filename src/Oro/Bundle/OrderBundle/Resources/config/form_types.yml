@@ -28,6 +28,8 @@ services:
     oro_order.form.section.provider:
         class: 'Oro\Bundle\OrderBundle\Form\Section\SectionProvider'
         public: false
+        arguments:
+             - '@form.registry'
 
     oro_order.form.type.order_line_item:
         class: '%oro_order.form.type.order_line_item.class%'
@@ -49,7 +51,7 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_order.entity.order.class%']]
-            - [setExtendedType, ['oro_order_type']]
+            - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
 

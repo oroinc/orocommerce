@@ -34,7 +34,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped' => false,

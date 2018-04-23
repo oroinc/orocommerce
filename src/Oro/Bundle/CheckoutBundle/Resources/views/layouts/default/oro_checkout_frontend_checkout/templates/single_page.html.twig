@@ -215,7 +215,7 @@
 
             {{ form_row(form.shipping_address.customerAddress) }}
 
-            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, compact) }}
+            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, null, compact) }}
 
             {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                 {{ form_row(form.ship_to_billing_address) }}
@@ -250,9 +250,7 @@
 
                 {{ form_row(form.billing_address.customerAddress) }}
 
-                {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.visitor.email'|trans}}) }}
-
-                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
+                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email, compact) }}
                 {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                     <label for="checkout_ship_to_billing_address_checkbox" id="checkout_ship_to_billing_address_label" class="custom-checkbox input-widget">
                         <input type="checkbox" id="checkout_ship_to_billing_address_checkbox" class=" custom-checkbox__input" value="1"><span class="custom-checkbox__icon"></span>
@@ -362,6 +360,29 @@
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
                 </fieldset>
+            {% endif %}
+
+            {% if feature_enabled('checkout_customer_users_registration') and
+            checkout.registeredCustomerUser == null and
+            checkout.customerUser.isGuest
+            %}
+                <fieldset class="grid__row grid__row--offset-none"
+                          data-page-component-module="oroui/js/app/components/view-component",
+                          data-page-component-options="{{ {
+                              view: 'orocheckout/js/app/views/late-checkout-registration-view',
+                              selectors: {
+                                  switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
+                                  fieldsContainer: '#checkout-late-registration-fields'
+                              }
+                          }|json_encode }}">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                        <div id="checkout-late-registration-fields">
+                            {{ form_widget(form.late_registration) }}
+                        </div>
+                    </div>
+                </fieldset>
+
             {% endif %}
         </div>
     </div>

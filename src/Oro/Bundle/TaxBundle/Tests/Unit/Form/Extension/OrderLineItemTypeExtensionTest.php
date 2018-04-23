@@ -66,7 +66,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             $taxProviderRegistry,
             $this->totalProvider,
             $this->sectionProvider,
-            OrderLineItemType::NAME
+            OrderLineItemType::class
         );
     }
 
@@ -77,7 +77,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(OrderLineItemType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
     }
 
     public function testFinishViewDisabledProvider()

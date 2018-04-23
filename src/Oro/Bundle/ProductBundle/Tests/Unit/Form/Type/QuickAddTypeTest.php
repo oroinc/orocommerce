@@ -14,8 +14,8 @@ use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -46,11 +46,12 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension([
-                ProductRowCollectionType::NAME => new ProductRowCollectionType(),
-                ProductRowType::NAME => new ProductRowType(),
-                CollectionType::NAME => new CollectionType(),
-                ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
-                ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
+                $this->formType,
+                ProductRowCollectionType::class => new ProductRowCollectionType(),
+                ProductRowType::class => new ProductRowType(),
+                CollectionType::class => new CollectionType(),
+                ProductAutocompleteType::class => new StubProductAutocompleteType(),
+                ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
             ], []),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -69,7 +70,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
             'products' => $products,
         ];
 
-        $form = $this->factory->create($this->formType, null, $options);
+        $form = $this->factory->create(QuickAddType::class, null, $options);
         $form->submit($submittedData);
 
         $collectionProducts = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getConfig()->getOption('products');
@@ -112,7 +113,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
     public function testInvalidSubmit()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(QuickAddType::class);
         $form->submit([]);
         $this->assertFalse($form->isValid());
     }

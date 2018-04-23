@@ -63,16 +63,16 @@ class RequestType extends AbstractType
                 'required' => false,
                 'label' => 'oro.rfp.request.po_number.label'
             ])
-            ->add('shipUntil', OroDateType::NAME, [
+            ->add('shipUntil', OroDateType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.ship_until.label'
             ])
-            ->add('requestProducts', RequestProductCollectionType::NAME, [
+            ->add('requestProducts', RequestProductCollectionType::class, [
                 'entry_options' => [
                     'compact_units' => true,
                 ],
             ])
-            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::class, [
                 'label' => 'oro.frontend.rfp.request.assigned_customer_users.label',
             ]);
 

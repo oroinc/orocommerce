@@ -12,6 +12,7 @@ oro_behat_extension:
                 - OroConfigBundle::FeatureContext
                 - OroNavigationBundle::FeatureContext
                 - OroUIBundle::TypeaheadContext
+                - OroProductBundle::FeatureContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 

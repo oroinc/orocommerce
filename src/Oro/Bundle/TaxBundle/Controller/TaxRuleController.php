@@ -90,7 +90,7 @@ class TaxRuleController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $taxRule,
-            $this->createForm(TaxRuleType::NAME, $taxRule),
+            $this->createForm(TaxRuleType::class, $taxRule),
             function (TaxRule $taxRule) {
                 return [
                     'route' => 'oro_tax_rule_update',

@@ -14,7 +14,7 @@ oro:
         owner.label: Owner
         line_items.label: Line Items
         current.label: Current
-        default.label: 'Shopping list'
+        default.label: 'Shopping List'
         items.label: 'Item|Items'
         subtotal.label: Subtotal
         total.label: Grand Total

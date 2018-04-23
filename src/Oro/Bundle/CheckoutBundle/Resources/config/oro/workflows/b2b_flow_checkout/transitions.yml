@@ -7,8 +7,33 @@ workflows:
             start_from_shoppinglist:
                 step_to: enter_billing_address
 
-            start_from_quickorderform:
+            #Starts checkout as guest
+            start_from_shoppinglist_as_guest:
+                step_to: enter_credentials_step
+                is_start: true
+                is_unavailable_hidden: true #
+                transition_definition: start_from_shoppinglist_as_guest_definition
+                frontend_options:
+                    icon: fa-briefcase
+                init_routes:
+                    - oro_shopping_list_frontend_view
+                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
+
+            # Continue checkout as guest from credentias step
+            continue_checkout_as_guest:
                 step_to: enter_billing_address
+                transition_definition: back_to_billing_address_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
+
+            start_checkout_as_guest_system:
+                step_to: enter_credentials_step
+                is_hidden: true
+                transition_definition: start_checkout_as_guest_system_definition
+
+            start_from_quickorderform:
+                step_to: enter_credentials_step
 
             finish_checkout:
                 step_to: order_created
@@ -52,7 +77,7 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-                        visitor_email:
+                        email:
                             form_type: oro_customer_visitor_email_address
             continue_to_shipping_method:
                 step_to: enter_shipping_method
@@ -208,6 +233,8 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@assign_value': [$late_registration.email, $visitor_email]
+
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
@@ -215,6 +242,10 @@ workflows:
                             form_type: oro_checkout_ship_until
                             options:
                                 checkout: $checkout
+                        late_registration:
+                          form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                          options:
+                              required: true
                         customer_notes:
                             form_type: textarea
                         state_token:

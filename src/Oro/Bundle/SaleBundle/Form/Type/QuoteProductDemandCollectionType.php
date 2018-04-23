@@ -23,7 +23,7 @@ class QuoteProductDemandCollectionType extends CollectionType
             [
                 'allow_add' => false,
                 'allow_delete' => false,
-                'entry_type' => QuoteProductDemandType::NAME
+                'entry_type' => QuoteProductDemandType::class
             ]
         );
     }
