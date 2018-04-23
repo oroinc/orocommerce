@@ -72,6 +72,19 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * @param int $websiteId
+     */
+    public function invalidateGuestShoppingLists($websiteId)
+    {
+        $qb = $this->getBaseInvalidateQb($websiteId);
+        $qb->join('shoppingList.visitors', 'visitor');
+
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
+        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
+        $this->invalidateTotals($iterator);
+    }
+
+    /**
+     * @param int $websiteId
      * @return QueryBuilder
      */
     protected function getBaseInvalidateQb($websiteId)

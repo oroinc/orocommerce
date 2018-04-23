@@ -144,7 +144,7 @@ Feature: Showing upsell products
       And I should see "PSKU1" product
       And I click "Product 1"
       And I should see "Up-sell Products"
-      Then I should not see "Add to Shopping list" in upsell products
+      Then I should not see "Add to Shopping List" in upsell products
 
 #  Scenario: Check up-sell items are displayed as slider when "use slider on mobile" option is checked
 #  TODO: Fix this check when we will be able to emulate mobile

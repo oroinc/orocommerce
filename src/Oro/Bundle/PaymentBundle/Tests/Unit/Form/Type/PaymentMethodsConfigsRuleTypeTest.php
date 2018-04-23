@@ -11,7 +11,6 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -34,6 +33,7 @@ use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 {
@@ -60,12 +60,12 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         $this->createMocks();
         $this->formType = new PaymentMethodsConfigsRuleType(
             $this->paymentMethodProvider,
             $this->compositePaymentMethodViewProvider
         );
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -75,7 +75,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
     }
@@ -87,7 +87,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class, $data);
 
         $this->assertEquals($data, $form->getData());
 
@@ -146,31 +146,28 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
+                    PaymentMethodsConfigsRuleType::class => $this->formType,
+                    CollectionType::class => new CollectionType(),
                     RuleType::BLOCK_PREFIX => new RuleType(),
-                    PaymentMethodConfigType::NAME =>
+                    PaymentMethodConfigType::class =>
                         new PaymentMethodConfigType(
                             $this->paymentMethodProvider,
                             $this->compositePaymentMethodViewProvider
                         ),
-                    PaymentMethodsConfigsRuleDestinationType::NAME =>
+                    PaymentMethodsConfigsRuleDestinationType::class =>
                         new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
                     PaymentMethodConfigCollectionType::class =>
                         new PaymentMethodConfigCollectionType($subscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->createMock(LocaleSettings::class),
                         $this->createMock(CurrencyNameHelper::class)
                     ),
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
+                    CountryType::class => new CountryType(),
                     TranslatableEntityType::class => $translatableEntity,
-                    'oro_region' => new RegionType(),
+                    RegionType::class => new RegionType(),
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                 ]]

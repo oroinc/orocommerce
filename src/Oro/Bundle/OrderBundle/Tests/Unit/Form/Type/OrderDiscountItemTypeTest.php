@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -29,11 +30,10 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->totalHelper = $this->createMock(TotalHelper::class);
         $this->formType = new OrderDiscountItemType($this->totalHelper);
         $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderDiscount');
+        parent::setUp();
     }
 
     public function testGetName()
@@ -101,7 +101,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $order = new Order();
         $order->addDiscount($data);
 
-        $form = $this->factory->create($this->formType, $data, ['currency' => 'USD', 'total' => 99]);
+        $form = $this->factory->create(OrderDiscountItemType::class, $data, ['currency' => 'USD', 'total' => 99]);
 
         $submittedData = [
             'value' => '10',
@@ -133,6 +133,9 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        return [new ValidatorExtension(Validation::createValidator())];
+        return [
+            new PreloadedExtension([$this->formType], []),
+            new ValidatorExtension(Validation::createValidator())
+        ];
     }
 }

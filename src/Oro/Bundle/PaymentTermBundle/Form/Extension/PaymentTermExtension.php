@@ -75,7 +75,7 @@ class PaymentTermExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return PaymentTermSelectType::NAME;
+        return PaymentTermSelectType::class;
     }
 
     /**

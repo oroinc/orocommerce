@@ -44,13 +44,13 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit_Framework_TestC
         $this->extension = new OrderLineItemsCollectionTypeExtension(
             $this->taxationSettingsProvider,
             $this->taxValueManager,
-            OrderLineItemsCollectionType::NAME
+            OrderLineItemsCollectionType::class
         );
     }
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(OrderLineItemsCollectionType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemsCollectionType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildViewWhenTaxationIsDisabled()

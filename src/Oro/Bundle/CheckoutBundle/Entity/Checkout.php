@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
@@ -212,6 +213,16 @@ class Checkout extends ExtendCheckout implements
      * )
      **/
     protected $subtotals;
+
+    /**
+     * @var CustomerUser
+     *
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(
+     *     name="registered_customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL"
+     * )
+     */
+    protected $registeredCustomerUser;
 
     public function __construct()
     {
@@ -572,5 +583,24 @@ class Checkout extends ExtendCheckout implements
         }
 
         return null;
+    }
+
+    /**
+     * @return CustomerUser|null
+     */
+    public function getRegisteredCustomerUser()
+    {
+        return $this->registeredCustomerUser;
+    }
+
+    /**
+     * @param CustomerUser|null $customerUser
+     * @return $this
+     */
+    public function setRegisteredCustomerUser($customerUser)
+    {
+        $this->registeredCustomerUser = $customerUser;
+
+        return $this;
     }
 }

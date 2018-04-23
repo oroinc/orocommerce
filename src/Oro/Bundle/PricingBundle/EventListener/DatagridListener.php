@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class DatagridListener
 {
@@ -80,7 +81,7 @@ class DatagridListener
             'type' => 'entity',
             'data_name' => 'priceList.id',
             'options' => [
-                'field_type' => 'entity',
+                'field_type' => EntityType::class,
                 'field_options' => [
                     'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
                     'property' => 'name',

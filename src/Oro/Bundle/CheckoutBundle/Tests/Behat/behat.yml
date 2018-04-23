@@ -150,7 +150,7 @@ oro_behat_extension:
           Billing Address: 'oro_workflow_transition[billing_address][customerAddress]'
           First Name: 'oro_workflow_transition[billing_address][firstName]'
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
-          Email: 'oro_workflow_transition[visitor_email]'
+          Email: 'oro_workflow_transition[email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'

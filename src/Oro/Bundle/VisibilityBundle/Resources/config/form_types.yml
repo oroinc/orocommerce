@@ -37,7 +37,7 @@ services:
     oro_visibility.form.extension.category_type:
         class: 'Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension'
         tags:
-            - { name: form.type_extension, alias: oro_catalog_category }
+            - { name: form.type_extension, alias: oro_catalog_category, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
 
     oro_visibility.form.type.catalog_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType'

@@ -7,35 +7,13 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class WebCatalogTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var WebCatalogType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new WebCatalogType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
     /**
      * @return array
      */
@@ -50,12 +28,12 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
-        $richTextType = new OroRichTextType($configManager, $htmlTagProvider);
+        $context = $this->createMock(ContextInterface::class);
+        $richTextType = new OroRichTextType($configManager, $htmlTagProvider, $context);
 
         return [
             new PreloadedExtension(
                 [
-
                     TextType::class => new TextType(),
                     OroRichTextType::class => $richTextType
                 ],
@@ -66,7 +44,7 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(WebCatalogType::class);
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('description'));
@@ -74,12 +52,14 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(WebCatalogType::NAME, $this->type->getName());
+        $type = new WebCatalogType();
+        $this->assertEquals(WebCatalogType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(WebCatalogType::NAME, $this->type->getBlockPrefix());
+        $type = new WebCatalogType();
+        $this->assertEquals(WebCatalogType::NAME, $type->getBlockPrefix());
     }
 
     /**
@@ -91,7 +71,7 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(WebCatalogType::class, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
 

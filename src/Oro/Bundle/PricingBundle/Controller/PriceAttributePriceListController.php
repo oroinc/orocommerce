@@ -90,7 +90,7 @@ class PriceAttributePriceListController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceAttribute,
-            $this->createForm(PriceAttributePriceListType::NAME, $priceAttribute),
+            $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
             function (PriceAttributePriceList $priceAttribute) {
                 return [
                     'route' => 'oro_pricing_price_attribute_price_list_update',

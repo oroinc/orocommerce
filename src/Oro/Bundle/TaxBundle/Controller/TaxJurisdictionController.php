@@ -90,7 +90,7 @@ class TaxJurisdictionController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $taxJurisdiction,
-            $this->createForm(TaxJurisdictionType::NAME, $taxJurisdiction),
+            $this->createForm(TaxJurisdictionType::class, $taxJurisdiction),
             function (TaxJurisdiction $taxJurisdiction) {
                 return [
                     'route' => 'oro_tax_jurisdiction_update',

@@ -69,7 +69,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 ProductFormExtension::FORM_ELEMENT_NAME,
-                ProductShippingOptionsCollectionType::NAME,
+                ProductShippingOptionsCollectionType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                     'required' => false,
@@ -99,7 +99,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals($this->extension->getExtendedType(), ProductType::NAME);
+        $this->assertEquals($this->extension->getExtendedType(), ProductType::class);
     }
 
     /**

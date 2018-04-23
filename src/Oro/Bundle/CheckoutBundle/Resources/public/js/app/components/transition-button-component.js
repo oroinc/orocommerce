@@ -13,6 +13,7 @@ define(function(require) {
             enabled: true,
             enableOnLoad: true,
             hasForm: false,
+            flashMessageOnSubmit: null,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
@@ -77,6 +78,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
+            if (this.options.flashMessageOnSubmit) {
+                e.preventDefault();
+                mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
+                return false;
+            }
             this.$form.validate();
 
             if (this.$form.valid()) {

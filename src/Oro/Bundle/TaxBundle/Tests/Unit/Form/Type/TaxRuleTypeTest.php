@@ -11,7 +11,7 @@ use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class TaxRuleTypeTest extends FormIntegrationTestCase
 {
@@ -64,10 +64,11 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CustomerTaxCodeAutocompleteType::NAME => $customerTaxCodeAutocomplete,
-                    ProductTaxCodeAutocompleteType::NAME => $productTaxCodeAutocomplete,
-                    TaxSelectType::NAME => $taxSelect,
-                    TaxJurisdictionSelectType::NAME => $taxJurisdictionSelect
+                    TaxRuleType::class => $this->formType,
+                    CustomerTaxCodeAutocompleteType::class => $customerTaxCodeAutocomplete,
+                    ProductTaxCodeAutocompleteType::class => $productTaxCodeAutocomplete,
+                    TaxSelectType::class => $taxSelect,
+                    TaxJurisdictionSelectType::class => $taxJurisdictionSelect
                 ],
                 []
             )
@@ -79,10 +80,9 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new TaxRuleType();
         $this->formType->setDataClass(static::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -103,7 +103,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(TaxRuleType::class);
 
         $this->assertTrue($form->has('description'));
         $this->assertTrue($form->has('customerTaxCode'));
@@ -126,7 +126,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         array $submittedData,
         $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(TaxRuleType::class, $defaultData, $options);
 
         $formConfig = $form->getConfig();
         $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));

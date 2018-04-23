@@ -11,6 +11,8 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -76,7 +78,7 @@ class InvoiceLineItemType extends AbstractType
         $builder
             ->add(
                 'product',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.entity_label',
@@ -85,7 +87,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'productSku',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.sku.label',
@@ -93,7 +95,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'freeFormProduct',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.entity_label',
@@ -101,7 +103,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.order.invoicelineitem.quantity.label',
@@ -111,7 +113,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
@@ -119,7 +121,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'error_bubbling' => false,
                     'required' => true,
@@ -128,10 +130,10 @@ class InvoiceLineItemType extends AbstractType
                     'default_currency' => $options['currency'],
                 ]
             )
-            ->add('sortOrder', 'hidden')
+            ->add('sortOrder', HiddenType::class)
             ->add(
                 'priceType',
-                PriceTypeSelectorType::NAME
+                PriceTypeSelectorType::class
             );
     }
 

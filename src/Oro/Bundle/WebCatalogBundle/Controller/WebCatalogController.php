@@ -160,7 +160,7 @@ class WebCatalogController extends Controller
      */
     protected function update(WebCatalog $webCatalog)
     {
-        $form = $this->createForm(WebCatalogType::NAME, $webCatalog);
+        $form = $this->createForm(WebCatalogType::class, $webCatalog);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $webCatalog,

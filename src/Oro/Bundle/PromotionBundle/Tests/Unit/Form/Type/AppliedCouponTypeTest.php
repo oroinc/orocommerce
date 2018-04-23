@@ -8,20 +8,9 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class AppliedCouponTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var AppliedCouponType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new AppliedCouponType();
-    }
-
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(AppliedCouponType::class);
 
         $this->assertTrue($form->has('couponCode'));
         $this->assertTrue($form->has('sourcePromotionId'));
@@ -37,7 +26,7 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(AppliedCoupon $defaultData, array $submittedData, AppliedCoupon $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(AppliedCouponType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
@@ -82,7 +71,7 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(AppliedCouponType::class);
 
         $this->assertArraySubset([
             'data_class' => AppliedCoupon::class,
@@ -91,11 +80,13 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(AppliedCouponType::NAME, $this->formType->getName());
+        $formType = new AppliedCouponType();
+        $this->assertEquals(AppliedCouponType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(AppliedCouponType::NAME, $this->formType->getBlockPrefix());
+        $formType = new AppliedCouponType();
+        $this->assertEquals(AppliedCouponType::NAME, $formType->getBlockPrefix());
     }
 }

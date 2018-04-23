@@ -37,7 +37,7 @@ class RequestProductItemType extends AbstractType
         $builder
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'currency_empty_value' => null,
                     'required' => true,
@@ -47,7 +47,7 @@ class RequestProductItemType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
@@ -56,7 +56,7 @@ class RequestProductItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => false,
                     'label' => 'oro.rfp.requestproductitem.quantity.label',

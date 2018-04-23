@@ -33,7 +33,7 @@ workflows:
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
                         page-component-options:
                             component_name: '[name$="[component]"]'
-                            confirmation: $.result.isReachedLimit
+                            confirmation: $.result.doShowConfirmation
                             shopping_list_limit: $.result.shoppingListLimit
                 init_routes:
                     - oro_product_frontend_quick_add

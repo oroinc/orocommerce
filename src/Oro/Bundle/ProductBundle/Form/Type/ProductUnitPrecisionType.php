@@ -4,6 +4,9 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -33,15 +36,15 @@ class ProductUnitPrecisionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('precision', 'integer', [
+            ->add('precision', IntegerType::class, [
                 'type' => 'number',
                 'required' => false,
                 'attr' => [
                     'data-precision' => 0
                 ]
             ])
-            ->add('conversionRate', 'number', ['required' => false])
-            ->add('sell', 'checkbox', ['required' => false]);
+            ->add('conversionRate', NumberType::class, ['required' => false])
+            ->add('sell', CheckboxType::class, ['required' => false]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $unitPrecision = $event->getData();
@@ -52,7 +55,7 @@ class ProductUnitPrecisionType extends AbstractType
 
                 $form->add(
                     'unit_disabled',
-                    ProductUnitSelectType::NAME,
+                    ProductUnitSelectType::class,
                     [
                        'compact' => $options['compact'],
                        'disabled' => $disabled,
@@ -61,12 +64,12 @@ class ProductUnitPrecisionType extends AbstractType
                     ]
                 );
 
-                $form->add('unit', ProductUnitSelectType::NAME, [
+                $form->add('unit', ProductUnitSelectType::class, [
                     'attr' => ['class' => 'hidden-unit'],
                     'product' => $unitPrecision->getProduct(),
                 ]);
             } else {
-                $form->add('unit', ProductUnitSelectType::NAME, ['compact' => $options['compact']]);
+                $form->add('unit', ProductUnitSelectType::class, ['compact' => $options['compact']]);
             }
         });
     }

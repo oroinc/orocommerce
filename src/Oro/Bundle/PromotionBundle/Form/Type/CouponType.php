@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +19,7 @@ class CouponType extends AbstractType
     {
         $builder->add(
             'code',
-            'text',
+            TextType::class,
             [
                 'required' => true,
                 'tooltip' => 'oro.promotion.coupon.form.tooltip.coupon_code',
