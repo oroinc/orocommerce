@@ -128,8 +128,3 @@ oro_behat_extension:
     Price list Product prices Grid:
       selector: 'div[data-page-component-name="price-list-product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-
-    PO Number:
-      selector:
-        locator: '//div[@class="datagrid-manager__label"]/label/span[text()="PO Number"]/../span[@class="custom-checkbox__icon"]'
-        type: 'xpath'
