@@ -21,11 +21,6 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
         $this->type = new SelectSwitchInputType();
     }
 
-    public function testGetName()
-    {
-        static::assertEquals(SelectSwitchInputType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         static::assertSame(ChoiceType::class, $this->type->getParent());

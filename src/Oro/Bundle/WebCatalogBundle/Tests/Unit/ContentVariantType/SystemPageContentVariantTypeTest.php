@@ -19,11 +19,6 @@ class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new SystemPageContentVariantType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('system_page', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.webcatalog.contentvariant.variant_type.system_page.label', $this->type->getTitle());

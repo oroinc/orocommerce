@@ -45,7 +45,7 @@ class QuoteDemandType extends AbstractType
         $quoteDemand = $options['data'];
         $builder->add(
             'demandProducts',
-            QuoteProductDemandCollectionType::NAME,
+            QuoteProductDemandCollectionType::class,
             [
                 'data' => $quoteDemand->getDemandProducts()
             ]

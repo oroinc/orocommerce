@@ -71,6 +71,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    EntityVisibilityType::class => $this->formType,
                     DataChangesetType::class => new DataChangesetTypeStub(),
                     EntityChangesetType::class => new EntityChangesetTypeStub(),
                 ],
@@ -78,11 +79,6 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             ),
             new ValidatorExtension($validator),
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(EntityVisibilityType::NAME, $this->formType->getName());
     }
 
     public function testBuildForm()
@@ -100,7 +96,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             'customerClass' => CustomerProductVisibility::class,
         ];
 
-        $form = $this->factory->create($this->formType, [], $options);
+        $form = $this->factory->create(EntityVisibilityType::class, [], $options);
 
         $customerGroupData = '{"1":{"visibility":"hidden"},"2":{"visibility":"hidden"}}';
         $customerData = '{"1":{"visibility":"customer_group"},"2":{"visibility":"visible"}}';

@@ -22,7 +22,7 @@ class BaseCouponType extends AbstractType
         $builder
             ->add(
                 'promotion',
-                PromotionSelectType::NAME,
+                PromotionSelectType::class,
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.promotion.label',
@@ -58,7 +58,7 @@ class BaseCouponType extends AbstractType
             )
             ->add(
                 'validFrom',
-                OroDateTimeType::NAME,
+                OroDateTimeType::class,
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.valid_from.label',
@@ -66,7 +66,7 @@ class BaseCouponType extends AbstractType
             )
             ->add(
                 'validUntil',
-                OroDateTimeType::NAME,
+                OroDateTimeType::class,
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.valid_until.label',

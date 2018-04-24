@@ -15,7 +15,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -25,7 +25,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => ProductUnitPrecisionType::NAME,
+                'entry_type' => ProductUnitPrecisionType::class,
                 'show_form_when_empty' => false
             ]
         );

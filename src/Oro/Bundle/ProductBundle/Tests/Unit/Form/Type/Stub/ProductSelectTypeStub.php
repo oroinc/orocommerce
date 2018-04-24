@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -11,7 +12,7 @@ class ProductSelectTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return ProductSelectType::NAME;
     }
@@ -37,6 +38,6 @@ class ProductSelectTypeStub extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 }

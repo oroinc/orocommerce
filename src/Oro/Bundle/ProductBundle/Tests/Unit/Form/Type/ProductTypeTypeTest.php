@@ -5,7 +5,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
 use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductTypeTypeTest extends FormIntegrationTestCase
@@ -18,24 +20,29 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
 
     public function setup()
     {
-        parent::setUp();
         $this->productTypeProvider = new ProductTypeProvider();
         $this->productTypeType = new ProductTypeType($this->productTypeProvider);
+        parent::setUp();
     }
 
-    public function testGetName()
+    /**
+     * @return array
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals('oro_product_type', $this->productTypeType->getName());
+        return [
+            new PreloadedExtension([$this->productTypeType], [])
+        ];
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->productTypeType->getParent());
+        $this->assertEquals(ChoiceType::class, $this->productTypeType->getParent());
     }
 
     public function testChoices()
     {
-        $form = $this->factory->create($this->productTypeType);
+        $form = $this->factory->create(ProductTypeType::class);
         $availableProductTypes = $this->productTypeProvider->getAvailableProductTypes();
         $choices = [];
 

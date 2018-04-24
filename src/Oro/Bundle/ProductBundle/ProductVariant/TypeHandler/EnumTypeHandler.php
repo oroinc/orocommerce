@@ -7,6 +7,9 @@ use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
 use Symfony\Component\Form\FormFactory;
 
+/**
+ * Provides Enum form type instance for variant selector of configurable product.
+ */
 class EnumTypeHandler implements ProductVariantTypeHandlerInterface
 {
     const TYPE = 'enum';
@@ -40,7 +43,7 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
     public function createForm($fieldName, array $availability, array $options = [])
     {
         $options = array_merge($this->getOptions($fieldName, $availability), $options);
-        $form = $this->formFactory->createNamed($fieldName, EnumSelectType::NAME, null, $options);
+        $form = $this->formFactory->createNamed($fieldName, EnumSelectType::class, null, $options);
 
         return $form;
     }
@@ -64,7 +67,7 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
             return $item === false;
         });
 
-        $disabledValues = array_keys($notAvailableVariants);
+        $disabledValues = array_map('\strval', array_keys($notAvailableVariants));
 
         $config = $this->configManager->getConfigFieldModel($this->productClass, $fieldName);
         $extendConfig = $config->toArray('extend');

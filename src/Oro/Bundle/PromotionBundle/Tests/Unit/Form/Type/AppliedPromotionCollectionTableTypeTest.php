@@ -6,21 +6,10 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionCollectionTableType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var AppliedPromotionCollectionTableType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new AppliedPromotionCollectionTableType();
-    }
-
     /**
      * @return array
      */
@@ -38,7 +27,7 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(AppliedPromotionCollectionTableType::class);
 
         $this->assertArraySubset([
             'template_name' => 'OroPromotionBundle:AppliedPromotion:applied_promotions_edit_table.html.twig',
@@ -51,16 +40,19 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OrderCollectionTableType::class, $this->formType->getParent());
+        $formType = new AppliedPromotionCollectionTableType();
+        $this->assertEquals(OrderCollectionTableType::class, $formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $this->formType->getName());
+        $formType = new AppliedPromotionCollectionTableType();
+        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $this->formType->getBlockPrefix());
+        $formType = new AppliedPromotionCollectionTableType();
+        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $formType->getBlockPrefix());
     }
 }

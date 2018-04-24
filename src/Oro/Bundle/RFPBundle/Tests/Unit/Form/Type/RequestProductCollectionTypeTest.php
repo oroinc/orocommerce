@@ -32,7 +32,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => RequestProductType::NAME,
+                'entry_type' => RequestProductType::class,
                 'show_form_when_empty'  => true,
                 'error_bubbling'        => false,
                 'prototype_name'        => '__namerequestproduct__',
@@ -44,11 +44,6 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 }

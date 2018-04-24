@@ -49,11 +49,12 @@ class CategoryHandlerTest extends FormHandlerTestCase
             $this->assertCategoryUnitPrecisionUpdate();
         }
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
 
         $this->mockProductCategory();
 
@@ -72,11 +73,12 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('setData')
             ->with($this->entity);
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('isValid')
@@ -110,7 +112,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('getData')
             ->will($this->returnValue([new Product()]));
 
-        $this->form->expects($this->at(3))
+        $this->form->expects($this->at(5))
             ->method('get')
             ->with('appendProducts')
             ->will($this->returnValue($appendProducts));
@@ -123,7 +125,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('getData')
             ->will($this->returnValue([new Product()]));
 
-        $this->form->expects($this->at(4))
+        $this->form->expects($this->at(6))
             ->method('get')
             ->with('removeProducts')
             ->will($this->returnValue($removeProducts));

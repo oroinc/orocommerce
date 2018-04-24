@@ -7,6 +7,7 @@ use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
 use Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
@@ -47,17 +48,27 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
 
+        $this->formType = new SluggableEntityPrefixType($this->storage, $this->configManager);
+
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->addTypeExtension(new FormTypeValidatorExtension($validator))
             ->getFormFactory();
-
-        $this->formType = new SluggableEntityPrefixType($this->storage, $this->configManager);
     }
 
-    public function testGetName()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals(SluggableEntityPrefixType::NAME, $this->formType->getName());
+        return [
+            new PreloadedExtension(
+                [
+                    SluggableEntityPrefixType::class => $this->formType
+                ],
+                []
+            ),
+        ];
     }
 
     public function testGetBlockPrefix()
@@ -79,7 +90,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->method('getName')
             ->willReturn('test___config');
 
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(SluggableEntityPrefixType::class, $defaultData);
         $form->setParent($parentForm);
 
         $this->assertEquals($defaultData, $form->getData());

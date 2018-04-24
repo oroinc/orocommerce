@@ -9,19 +9,10 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class RuleTypeTest extends FormIntegrationTestCase
 {
-    /** @var RuleType */
-    protected $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new RuleType();
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(RuleType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        $formType = new RuleType();
+        $this->assertEquals(RuleType::BLOCK_PREFIX, $formType->getBlockPrefix());
     }
 
     /**
@@ -31,7 +22,7 @@ class RuleTypeTest extends FormIntegrationTestCase
      */
     public function testSubmitValid(RuleInterface $rule)
     {
-        $form = $this->factory->create($this->formType, $rule);
+        $form = $this->factory->create(RuleType::class, $rule);
 
         $this->assertSame($rule, $form->getData());
 

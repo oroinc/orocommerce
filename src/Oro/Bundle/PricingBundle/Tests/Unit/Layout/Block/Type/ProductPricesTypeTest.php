@@ -97,13 +97,6 @@ class ProductPricesTypeTest extends BlockTypeTestCase
         $this->assertNull($view->vars['product']);
     }
 
-    public function testGetName()
-    {
-        $type = $this->getBlockType(ProductPricesType::NAME);
-
-        $this->assertSame(ProductPricesType::NAME, $type->getName());
-    }
-
     public function testGetParent()
     {
         $type = $this->getBlockType(ProductPricesType::NAME);

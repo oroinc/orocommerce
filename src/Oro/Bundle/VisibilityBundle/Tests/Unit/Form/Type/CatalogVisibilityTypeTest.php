@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -36,13 +37,8 @@ class CatalogVisibilityTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CatalogVisibilityType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->type->getParent());
+        $this->assertEquals(ChoiceType::class, $this->type->getParent());
     }
 }

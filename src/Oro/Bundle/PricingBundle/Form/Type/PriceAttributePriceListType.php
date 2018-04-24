@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -35,15 +36,15 @@ class PriceAttributePriceListType extends AbstractType
         $priceAttributePriceList = $builder->getData();
 
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
+            ->add('name', TextType::class, ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 'fieldName',
-                'text',
+                TextType::class,
                 ['required' => true, 'label' => 'oro.pricing.priceattributepricelist.field_name.label']
             )
             ->add(
                 'currencies',
-                CurrencySelectionType::NAME,
+                CurrencySelectionType::class,
                 [
                     'multiple' => true,
                     'required' => true,

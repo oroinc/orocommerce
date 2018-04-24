@@ -32,7 +32,7 @@ class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => QuoteProductRequestType::NAME,
+                'entry_type' => QuoteProductRequestType::class,
                 'show_form_when_empty' => false,
                 'prototype_name' => '__namequoteproductrequest__',
                 'allow_add' => false,
@@ -45,11 +45,6 @@ class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteProductRequestCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 }

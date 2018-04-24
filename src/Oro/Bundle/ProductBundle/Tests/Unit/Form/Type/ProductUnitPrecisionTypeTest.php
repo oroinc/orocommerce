@@ -8,10 +8,12 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -46,7 +48,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -56,11 +58,12 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType
+                    ProductUnitPrecisionType::class => $this->formType,
+                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    EntityType::class => $entityType
                 ],
                 [
-                    'form' => [new IntegerExtension()]
+                    FormType::class => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -80,7 +83,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         $submittedData,
         ProductUnitPrecision $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductUnitPrecisionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -164,13 +167,5 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                     ->setSell(true)
             ]
         ];
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitPrecisionType::NAME, $this->formType->getName());
     }
 }

@@ -17,11 +17,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -64,8 +65,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->aclHelper = $this->getMockBuilder(AclHelper::class)
             ->disableOriginalConstructor()
@@ -82,6 +81,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -89,7 +89,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 1 => $this->getShoppingList(1, 'Shopping List 1'),
                 2 => $this->getShoppingList(2, 'Shopping List 2'),
@@ -101,9 +101,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    FrontendLineItemType::NAME     => $this->getParentForm(),
-                    $entityType->getName()         => $entityType,
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
+                    FrontendLineItemWidgetType::class => $this->type,
+                    FrontendLineItemType::class     => $this->getParentForm(),
+                    EntityType::class              => $entityType,
+                    ProductUnitSelectionType::class => $productUnitSelection,
                     QuantityTypeTrait::$name       => $this->getQuantityType(),
                 ],
                 []
@@ -116,7 +117,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $lineItem = (new LineItem())
             ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3));
 
-        $form = $this->factory->create($this->type, $lineItem);
+        $form = $this->factory->create(FrontendLineItemWidgetType::class, $lineItem);
 
         $this->assertTrue($form->has('shoppingList'));
         $this->assertTrue($form->has('quantity'));
@@ -134,7 +135,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData, ShoppingList $expectedShoppingList)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(FrontendLineItemWidgetType::class, $defaultData, []);
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()

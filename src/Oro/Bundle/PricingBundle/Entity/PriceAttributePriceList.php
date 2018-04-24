@@ -8,12 +8,20 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * This entity represents price list with price attributes
+ *
  * @ORM\Table(name="oro_price_attribute_pl")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
  * @Config(
  *      routeName="oro_pricing_price_attribute_price_list_index",
  *      routeView="oro_pricing_price_attribute_price_list_view",
- *      routeUpdate="oro_pricing_price_attribute_price_list_update"
+ *      routeUpdate="oro_pricing_price_attribute_price_list_update",
+ *      defaultValues={
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
+ *      }
  * )
  */
 class PriceAttributePriceList extends BasePriceList

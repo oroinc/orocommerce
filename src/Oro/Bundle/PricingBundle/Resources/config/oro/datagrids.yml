@@ -199,7 +199,7 @@ datagrids:
                     type:      entity
                     data_name: customerGroup.id
                     options:
-                        field_type: entity
+                        field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
                             property: name
@@ -313,7 +313,7 @@ datagrids:
                     type:      entity
                     data_name: customerGroup.id
                     options:
-                        field_type: entity
+                        field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
                             property: name
@@ -468,7 +468,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -604,7 +604,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                 value:
                     type:      number
                     data_name: productPrice.value

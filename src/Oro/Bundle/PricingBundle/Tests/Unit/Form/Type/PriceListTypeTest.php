@@ -17,8 +17,9 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PriceListTypeTest extends FormIntegrationTestCase
@@ -28,29 +29,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
     const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
     const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
-
-    /**
-     * @var PriceListType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new PriceListType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
 
     /**
      * @return array
@@ -89,17 +67,17 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     [
                         $currencySelectType->getName() => $currencySelectType,
                         $entityIdentifierType->getName() => $entityIdentifierType,
-                        CollectionType::NAME => new CollectionType(),
-                        ScheduleIntervalsCollectionType::NAME => new ScheduleIntervalsCollectionType(),
-                        ScheduleIntervalType::NAME =>new ScheduleIntervalType(),
-                        OroDateTimeType::NAME => new OroDateTimeType(),
-                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                        CollectionType::class => new CollectionType(),
+                        ScheduleIntervalsCollectionType::class => new ScheduleIntervalsCollectionType(),
+                        ScheduleIntervalType::class =>new ScheduleIntervalType(),
+                        OroDateTimeType::class => new OroDateTimeType(),
+                        CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
                             $currencyNameHelper
                         ),
-                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
-                        PriceRuleType::NAME => new PriceRuleType(),
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')]),
+                        PriceRuleType::class => new PriceRuleType(),
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),
@@ -110,7 +88,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(PriceListType::class);
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('currencies'));
@@ -141,7 +119,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
             $defaultData = $existingPriceList;
         }
 
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(PriceListType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         if (isset($existingPriceList)) {
@@ -248,11 +226,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ]
             ]
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListType::NAME, $this->type->getName());
     }
 
     /**

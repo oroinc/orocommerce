@@ -66,7 +66,7 @@ class AjaxProductShippingOptionsController extends Controller
     private function buildProduct(array $productData)
     {
         $product = new Product();
-        $form = $this->createForm(ProductType::NAME, $product);
+        $form = $this->createForm(ProductType::class, $product);
         $form->submit($productData);
 
         return $product;
@@ -88,7 +88,7 @@ class AjaxProductShippingOptionsController extends Controller
         $activeShippingOptions = null;
         foreach ($shippingOptionsData as $shippingOptionsRow) {
             $shippingOptions = new ProductShippingOptions();
-            $form = $this->createForm(ProductShippingOptionsType::NAME, $shippingOptions, ['by_reference' => true]);
+            $form = $this->createForm(ProductShippingOptionsType::class, $shippingOptions, ['by_reference' => true]);
             $form->submit($shippingOptionsRow);
             $productUnit = $shippingOptions->getProductUnit();
             if ($productUnit && $unitCode === $productUnit->getCode()) {

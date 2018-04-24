@@ -30,7 +30,7 @@ class PriceListSystemConfigType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'entry_type' => PriceListSelectWithPriorityType::NAME,
+            'entry_type' => PriceListSelectWithPriorityType::class,
             'entry_options' => [
                 'data_class' => $this->priceListConfigClassName,
             ],
@@ -48,7 +48,7 @@ class PriceListSystemConfigType extends AbstractType
      */
     public function getParent()
     {
-        return PriceListCollectionType::NAME;
+        return PriceListCollectionType::class;
     }
 
     /**

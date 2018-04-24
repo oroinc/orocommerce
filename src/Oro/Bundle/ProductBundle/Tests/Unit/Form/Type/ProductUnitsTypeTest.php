@@ -4,7 +4,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductUnitsTypeTest extends FormIntegrationTestCase
@@ -17,7 +19,6 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
 
     public function setup()
     {
-        parent::setUp();
         $this->productUnitsProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider')
                 ->disableOriginalConstructor()
@@ -32,21 +33,27 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
             ]);
 
         $this->productUnitsType = new ProductUnitsType($this->productUnitsProvider);
+        parent::setUp();
     }
 
-    public function testGetName()
+    /**
+     * @return array
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals(ProductUnitsType::NAME, $this->productUnitsType->getName());
+        return [
+            new PreloadedExtension([$this->productUnitsType], [])
+        ];
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->productUnitsType->getParent());
+        $this->assertEquals(ChoiceType::class, $this->productUnitsType->getParent());
     }
 
     public function testChoices()
     {
-        $form = $this->factory->create($this->productUnitsType);
+        $form = $this->factory->create(ProductUnitsType::class);
         $availableUnits = $this->productUnitsProvider->getAvailableProductUnits();
         $choices = [];
 
@@ -71,7 +78,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         $submittedData,
         $expectedData
     ) {
-        $form = $this->factory->create($this->productUnitsType);
+        $form = $this->factory->create(ProductUnitsType::class);
         $this->assertEquals($defaultData, $form->getViewData());
 
         $form->submit($submittedData);

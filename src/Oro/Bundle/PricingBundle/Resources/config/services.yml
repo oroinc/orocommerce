@@ -47,7 +47,7 @@ services:
             - '%oro_pricing.entity.price_list.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_pricing_price_list, acl_resource: oro_pricing_price_list_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
@@ -431,6 +431,7 @@ services:
             - '@doctrine'
             - '@oro_website.manager'
             - '@oro_config.global'
+            - '@oro_security.token_accessor'
 
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
@@ -481,6 +482,7 @@ services:
             - '@oro_filter.filter_utility'
         calls:
             - [setFormatter, ['@oro_product.formatter.product_unit_label']]
+            - [setConfigManager, ['@oro_config.global']]
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 

@@ -7,24 +7,10 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductPageVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductPageVariantType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new ProductPageVariantType();
-    }
-
     /**
      * @return array
      */
@@ -33,7 +19,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductSelectType::NAME => new EntityType([], ProductSelectType::NAME)
+                    ProductSelectType::class => new EntityType([], ProductSelectType::NAME)
                 ],
                 []
             ),
@@ -43,18 +29,14 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductPageVariantType::class, null);
         $this->assertTrue($form->has('productPageProduct'));
         $this->assertEquals(ProductPageContentVariantType::TYPE, $form->getConfig()->getOption('content_variant_type'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getBlockPrefix());
+        $type = new ProductPageVariantType();
+        $this->assertEquals(ProductPageVariantType::NAME, $type->getBlockPrefix());
     }
 }

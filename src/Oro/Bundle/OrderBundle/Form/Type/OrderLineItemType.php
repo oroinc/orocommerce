@@ -7,6 +7,8 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -54,7 +56,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
         $builder
             ->add(
                 'product',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'error_bubbling' => true,
                     'required' => true,
@@ -67,7 +69,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             )
             ->add(
                 'productSku',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.sku.label',
@@ -75,7 +77,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             )
             ->add(
                 'freeFormProduct',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.entity_label',
@@ -83,7 +85,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             )
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'error_bubbling' => false,
                     'required' => true,
@@ -92,7 +94,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'default_currency' => $options['currency'],
                 ]
             )
-            ->add('priceType', 'hidden', [
+            ->add('priceType', HiddenType::class, [
                 'data' => OrderLineItem::PRICE_TYPE_UNIT,
             ]);
     }
@@ -127,7 +129,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
         $form->remove('productUnit');
         $form->add(
             'productUnit',
-            ProductUnitSelectionType::NAME,
+            ProductUnitSelectionType::class,
             [
                 'label' => 'oro.product.productunit.entity_label',
                 'required' => true,

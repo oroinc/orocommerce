@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -35,7 +36,7 @@ class RequestProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductSelectType::class, [
                 'required'  => true,
                 'label'     => 'oro.product.entity_label',
                 'create_enabled' => false,
@@ -43,14 +44,14 @@ class RequestProductType extends AbstractType
                     'scope' => 'rfp'
                 ]
             ])
-            ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
+            ->add('requestProductItems', RequestProductItemCollectionType::class, [
                 'label'     => 'oro.rfp.requestproductitem.entity_plural_label',
                 'add_label' => 'oro.rfp.requestproductitem.add_label',
                 'entry_options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])
-            ->add('comment', 'textarea', [
+            ->add('comment', TextareaType::class, [
                 'required'  => false,
                 'label'     => 'oro.rfp.requestproduct.comment.label',
                 StripTagsExtension::OPTION_NAME => true,

@@ -11,10 +11,15 @@ class CheckoutShipUntilType extends AbstractType
 {
     const NAME = 'oro_checkout_ship_until';
 
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

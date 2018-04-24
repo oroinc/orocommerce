@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,15 +19,29 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->type = new ShoppingListType();
         $this->type->setDataClass(self::DATA_CLASS);
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    ShoppingListType::class => $this->type
+                ],
+                []
+            ),
+        ];
     }
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(ShoppingListType::class);
 
         $this->assertTrue($form->has('label'));
     }
@@ -40,7 +55,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(ShoppingListType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -97,11 +112,6 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
             ->with(['data_class' => self::DATA_CLASS]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ShoppingListType::NAME, $this->type->getName());
     }
 
     /**

@@ -32,7 +32,7 @@ class ContentBlockType extends AbstractType
             )
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.cms.contentblock.titles.label',
                     'required' => true,
@@ -49,7 +49,7 @@ class ContentBlockType extends AbstractType
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'label' => 'oro.cms.contentblock.scopes.label',
                     'entry_options' => [

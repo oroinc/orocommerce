@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Form\Type\BrandStatusType;
 use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -18,7 +19,6 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
 
     public function setup()
     {
-        parent::setUp();
         $this->brandStatusProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\BrandStatusProvider')
                 ->disableOriginalConstructor()
@@ -32,11 +32,17 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
             ]);
 
         $this->brandStatusType = new BrandStatusType($this->brandStatusProvider);
+        parent::setUp();
     }
 
-    public function testGetName()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals(BrandStatusType::class, $this->brandStatusType->getName());
+        return [
+            new PreloadedExtension([$this->brandStatusType], [])
+        ];
     }
 
     public function testGetParent()
@@ -49,7 +55,7 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
 
     public function testChoices()
     {
-        $form = $this->factory->create($this->brandStatusType);
+        $form = $this->factory->create(BrandStatusType::class);
         $availableBrandStatuses = $this->brandStatusProvider->getAvailableBrandStatuses();
         $choices = [];
 

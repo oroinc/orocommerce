@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\TaxBundle\Form\Type\TaxProviderType;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
@@ -64,13 +65,8 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['name1' => 'label1', 'name2' => 'label2'], $options['choices']);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(TaxProviderType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->formType->getParent());
+        $this->assertEquals(ChoiceType::class, $this->formType->getParent());
     }
 }

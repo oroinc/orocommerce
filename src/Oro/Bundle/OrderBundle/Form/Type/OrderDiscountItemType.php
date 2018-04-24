@@ -112,7 +112,7 @@ class OrderDiscountItemType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add('percent', 'hidden')
+            ->add('percent', HiddenType::class)
             ->add(
                 'amount',
                 HiddenType::class,

@@ -588,3 +588,40 @@ services:
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
+
+    oro_checkout.event_listener.login_on_checkout:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'
+        arguments:
+            - '@logger'
+            - '@oro_config.manager'
+            - '@oro_checkout.manager'
+            - '@event_dispatcher'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 255 }
+
+    oro_checkout.event_listener.customer_user_register:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
+        arguments:
+            - '@request_stack'
+            - '@oro_checkout.manager'
+            - '@oro_config.manager'
+            - '@oro_customer.security.login_manager'
+            - '%oro_customer.firewall_name%'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_customer_frontend_customer_user_register, method: afterFlush }
+            - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
+
+    oro_checkout.manager:
+        class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
+    oro_checkout.action.get_start_checkout_transition:
+        class: 'Oro\Bundle\CheckoutBundle\Action\StartCheckoutTransitionAction'
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+        tags:
+            - { name: oro_action.action, alias: get_start_checkout_transition }

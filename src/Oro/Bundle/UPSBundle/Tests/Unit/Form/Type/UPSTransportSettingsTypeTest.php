@@ -5,12 +5,10 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
@@ -22,6 +20,7 @@ use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -114,6 +113,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                         return new ArrayChoiceList([]);
                     };
 
+                    // TODO: remove 'choice_list' in scope of BAP-16967
                     $resolver->setDefault('choice_list', $choiceList);
                 }
             )
@@ -149,13 +149,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'entity' => $entityType,
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
+                    EntityType::class => $entityType,
+                    UPSTransportSettingsType::class => $this->formType,
+                    EntityType::class => $entityType,
                     TranslatableEntityType::class => $translatableEntity,
-                    LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
                     new OroEncodedPlaceholderPasswordType($this->crypter),
@@ -204,7 +201,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(UPSTransportSettingsType::class, $defaultData, []);
 
         static::assertEquals($defaultData, $form->getData());
 

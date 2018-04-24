@@ -29,7 +29,7 @@ class EnumSelectTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

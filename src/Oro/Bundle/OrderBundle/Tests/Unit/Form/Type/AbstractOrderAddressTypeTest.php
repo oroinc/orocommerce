@@ -41,8 +41,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
@@ -64,6 +62,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->getMock();
 
         $this->initFormType();
+        parent::setUp();
     }
 
     abstract protected function initFormType();
@@ -88,8 +87,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $this->formType->configureOptions($resolver);
     }
-
-    abstract public function testGetName();
 
     abstract public function testGetParent();
 
@@ -406,7 +403,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->willReturn(false);
 
         $form = $this->factory->create(
-            $this->formType,
+            get_class($this->formType),
             new OrderAddress(),
             ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => $this->getEntity(), 'isEditEnabled' => true]
         );

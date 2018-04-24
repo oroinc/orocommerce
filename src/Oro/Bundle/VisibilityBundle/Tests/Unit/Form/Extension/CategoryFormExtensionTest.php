@@ -36,6 +36,7 @@ use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -97,34 +98,34 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EntityVisibilityType::NAME => new EntityVisibilityType(
+                    EntityVisibilityType::class => new EntityVisibilityType(
                         $postSetDataListener,
                         $visibilityChoicesProvider
                     ),
-                    CategoryType::NAME => new CategoryType($router),
-                    CategoryDefaultProductOptionsType::NAME => $defaultProductOptions,
-                    CategoryUnitPrecisionType::NAME => $categoryUnitPrecision,
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                    CategoryType::class => new CategoryType($router),
+                    CategoryDefaultProductOptionsType::class => $defaultProductOptions,
+                    CategoryUnitPrecisionType::class => $categoryUnitPrecision,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
                             'kg' => (new ProductUnit())->setCode('kg')
                         ]
                     ),
-                    EntityIdentifierType::NAME => new EntityIdentifierTypeStub([]),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
-                    LocalizedPropertyType::NAME => new LocalizedPropertyType(),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub([]),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType($registry),
+                    LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
-                    DataChangesetType::NAME => new DataChangesetTypeStub(),
-                    EntityChangesetType::NAME => new EntityChangesetTypeStub(),
-                    OroRichTextType::NAME => new OroRichTextTypeStub(),
-                    ImageType::NAME => new ImageTypeStub(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME
+                    DataChangesetType::class => new DataChangesetTypeStub(),
+                    EntityChangesetType::class => new EntityChangesetTypeStub(),
+                    OroRichTextType::class => new OroRichTextTypeStub(),
+                    ImageType::class => new ImageTypeStub(),
+                    LocalizedSlugType::class => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 [
-                    CategoryType::NAME => [$this->categoryFormExtension],
-                    'form' => [new IntegerExtension()]
+                    CategoryType::class => [$this->categoryFormExtension],
+                    FormType::class => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),
@@ -134,7 +135,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     public function testBuildForm()
     {
         $form = $this->factory->create(
-            CategoryType::NAME,
+            CategoryType::class,
             new CategoryStub(),
             ['data_class' => Category::class]
         );
@@ -143,6 +144,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals($this->categoryFormExtension->getExtendedType(), CategoryType::NAME);
+        $this->assertEquals($this->categoryFormExtension->getExtendedType(), CategoryType::class);
     }
 }

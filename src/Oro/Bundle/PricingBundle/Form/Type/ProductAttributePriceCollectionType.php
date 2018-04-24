@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -76,7 +77,7 @@ class ProductAttributePriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductAttributePriceType::NAME,
+                'entry_type' => ProductAttributePriceType::class,
             ]
         );
     }
@@ -86,7 +87,7 @@ class ProductAttributePriceCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'collection';
+        return CollectionType::class;
     }
 
     /**

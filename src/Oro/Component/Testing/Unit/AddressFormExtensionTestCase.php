@@ -8,12 +8,12 @@ use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -35,23 +35,13 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    'oro_select2_choice' => new Select2Type(
-                        'choice',
-                        'oro_select2_choice'
-                    ),
-                    //TODO: Remove excessive 'translatable_entity' mock in scope of BAP-
-                    'translatable_entity' => $this->getTranslatableEntity(),
+                    AddressType::class => new AddressType(new AddressCountryAndRegionSubscriberStub()),
+                    CountryType::class => new CountryType(),
                     TranslatableEntityType::class => $this->getTranslatableEntity(),
-                    'oro_region' => new RegionType(),
+                    RegionType::class => new RegionType(),
                 ],
                 [
-                    'form' => [
+                    FormType::class => [
                         new AdditionalAttrExtension(),
                         new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                     ],
@@ -112,6 +102,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                         return new ArrayChoiceList([]);
                     };
 
+                    // TODO: remove 'choice_list' in scope of BAP-16967
                     $resolver->setDefault('choice_list', $choiceList);
                 }
             )

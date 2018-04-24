@@ -29,3 +29,8 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: form.type, alias: oro_save_address }
+
+    oro_checkout.form.type.late_registration:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType'
+        tags:
+            - { name: form.type, alias: oro_late_registration }

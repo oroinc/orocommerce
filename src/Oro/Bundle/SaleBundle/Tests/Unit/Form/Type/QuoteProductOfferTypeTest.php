@@ -4,10 +4,12 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -31,10 +33,10 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        parent::setUp();
-
+        $this->configureQuoteProductOfferFormatter();
         $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
         $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        parent::setUp();
     }
 
     public function testConfigureOptions()
@@ -55,11 +57,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_sale_quote_product_offer', $this->formType->getName());
-    }
-
     /**
      * @param QuoteProductOffer $inputData
      * @param array $expectedData
@@ -68,7 +65,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
     {
-        $form = $this->factory->create($this->formType, $inputData);
+        $form = $this->factory->create(QuoteProductOfferType::class, $inputData);
 
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $form->get($key)->getData(), $key);
@@ -267,11 +264,12 @@ class QuoteProductOfferTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    $priceType->getName()                   => $priceType,
-                    CurrencySelectionType::class            => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType()
+                    QuoteProductOfferType::class => $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
+                    PriceType::class => $priceType,
+                    CurrencySelectionType::class => $currencySelectionType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    QuantityType::class => $this->getQuantityType()
                 ],
                 []
             ),

@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -97,6 +98,6 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 }

@@ -30,11 +30,6 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
         $this->type = new ProductCollectionContentVariantType($this->authorizationChecker);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('product_collection', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.product.content_variant.product_collection.label', $this->type->getTitle());
@@ -42,7 +37,7 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
 
     public function testGetFormType()
     {
-        $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getFormType());
+        $this->assertEquals(ProductCollectionVariantType::class, $this->type->getFormType());
     }
 
     public function testIsAllowed()

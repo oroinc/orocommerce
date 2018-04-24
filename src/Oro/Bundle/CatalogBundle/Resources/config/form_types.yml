@@ -37,7 +37,7 @@ services:
         arguments:
             - "@doctrine"
         tags:
-            - { name: form.type_extension, alias: oro_product }
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_catalog.form.extension.product_step_one_type:
         class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
@@ -45,7 +45,7 @@ services:
             - "@oro_catalog.provider.default_product_unit_provider.category"
         public: true
         tags:
-            - { name: form.type_extension, alias: oro_product_step_one }
+            - { name: form.type_extension, alias: oro_product_step_one, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType }
 
     oro_catalog.form.type.category_page_content_variant:
         class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType

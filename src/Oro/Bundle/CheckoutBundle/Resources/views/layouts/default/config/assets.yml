@@ -5,4 +5,5 @@ styles:
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-container-config.scss'
         - 'bundles/orocheckout/default/scss/variables/single-page-checkout-view-config.scss'
+        - 'bundles/orocheckout/default/scss/variables/checkout-credentials-config.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'

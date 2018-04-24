@@ -283,7 +283,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(ProductType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(ProductType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildForm()
@@ -294,7 +294,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'prices',
-                ProductPriceCollectionType::NAME,
+                ProductPriceCollectionType::class,
                 [
                     'label' => 'oro.pricing.productprice.entity_plural_label',
                     'required' => false,
