@@ -1,18 +1,17 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema\v1_4;
+namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_14;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
-class UpdatePaymentTermFormType implements Migration, PaymentTermExtensionAwareInterface
+class UpdatePaymentTermAssociationFormType implements Migration, PaymentTermExtensionAwareInterface
 {
     use PaymentTermExtensionAwareTrait;
 
@@ -21,23 +20,11 @@ class UpdatePaymentTermFormType implements Migration, PaymentTermExtensionAwareI
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateFormTypeForEntity($schema, $queries, Customer::class);
-        $this->updateFormTypeForEntity($schema, $queries, CustomerGroup::class);
-    }
-
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param string $entity
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    private function updateFormTypeForEntity(Schema $schema, QueryBag $queries, string $entity)
-    {
         $associationName = $this->paymentTermExtension->getAssociationName($schema);
 
         $queries->addQuery(
             new UpdateEntityConfigFieldValueQuery(
-                $entity,
+                Order::class,
                 $associationName,
                 'form',
                 'form_type',

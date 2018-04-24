@@ -11,7 +11,7 @@ use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareIn
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
-class UpdatePaymentTermFormType implements Migration, PaymentTermExtensionAwareInterface
+class UpdatePaymentTermAssociationFormType implements Migration, PaymentTermExtensionAwareInterface
 {
     use PaymentTermExtensionAwareTrait;
 
