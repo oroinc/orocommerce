@@ -124,7 +124,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         //@TODO remove setDefaultOptions in scope BAP-16496
         $type->method('setDefaultOptions')->willReturnCallback(
             function (OptionsResolver $resolver) {
-                $resolver->setDefined(['auto_initialize', 'choice_list', 'choice_loader', 'choices']);
+                $resolver->setDefined(['auto_initialize', 'choice_loader', 'choices']);
             }
         );
 
