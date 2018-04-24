@@ -38,11 +38,6 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryTreeType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(EntityTreeSelectType::class, $this->type->getParent());

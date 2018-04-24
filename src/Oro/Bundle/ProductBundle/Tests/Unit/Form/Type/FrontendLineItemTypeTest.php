@@ -89,14 +89,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Method testBuildForm
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(FrontendLineItemType::NAME, $this->type->getName());
-    }
-
-    /**
      * Method testConfigureOptions
      */
     public function testConfigureOptions()

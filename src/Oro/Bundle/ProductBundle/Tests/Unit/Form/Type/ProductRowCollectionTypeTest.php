@@ -143,12 +143,6 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
         $formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $formType = new ProductRowCollectionType();
-        $this->assertEquals(ProductRowCollectionType::NAME, $formType->getName());
-    }
-
     /**
      * @param string $sku
      * @param string $qty

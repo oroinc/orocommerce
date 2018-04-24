@@ -33,11 +33,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new ContentVariantCollectionType($this->variantTypeRegistry);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_web_catalog_content_variant_collection', $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals('oro_web_catalog_content_variant_collection', $this->type->getBlockPrefix());

@@ -43,11 +43,6 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());

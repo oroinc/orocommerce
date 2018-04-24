@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -20,7 +21,7 @@ class QuickAddImportFromFileType extends AbstractType
         $builder
             ->add(
                 self::FILE_FIELD_NAME,
-                'file',
+                FileType::class,
                 [
                     'required' => true,
                     'label' => false,

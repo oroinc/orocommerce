@@ -216,12 +216,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
         $type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $type = new PromotionType();
-        $this->assertEquals(PromotionType::NAME, $type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new PromotionType();

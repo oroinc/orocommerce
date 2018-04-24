@@ -136,9 +136,4 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
         $this->formType->configureOptions($resolver);
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuickAddType::NAME, $this->formType->getName());
-    }
 }

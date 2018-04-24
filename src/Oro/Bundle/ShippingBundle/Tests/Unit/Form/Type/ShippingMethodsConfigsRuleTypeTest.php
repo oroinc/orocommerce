@@ -7,6 +7,9 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -238,16 +241,31 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
-                    new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
-                    new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
-                    new CurrencySelectionType(
+                    ShippingMethodConfigCollectionType::class
+                    => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
+                    ShippingMethodConfigType::class
+                    => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
+                    ShippingMethodTypeConfigCollectionType::class =>
+                        new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
-                    new ShippingMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
-                    new ShippingMethodSelectType($this->choicesProvider, $this->iconProvider, $this->assetHelper),
+                    CollectionType::class => new CollectionType(),
+                    ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
+                        new AddressCountryAndRegionSubscriberStub()
+                    ),
+                    'oro_select2_choice' => new Select2Type(
+                        'choice',
+                        'oro_select2_choice'
+                    ),
+                    OroChoiceType::class => new OroChoiceType(),
+                    ShippingMethodSelectType::class => new ShippingMethodSelectType(
+                        $this->choicesProvider,
+                        $this->iconProvider,
+                        $this->assetHelper
+                    ),
                     TranslatableEntityType::class => $translatableEntity
                 ],
                 [FormType::class => [

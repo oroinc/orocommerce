@@ -22,7 +22,7 @@ class SubcategoryFilter extends AbstractFilter
      */
     protected function getFormType()
     {
-        return SearchEntityFilterType::NAME;
+        return SearchEntityFilterType::class;
     }
 
     /**

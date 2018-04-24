@@ -65,12 +65,6 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $type = new OrderShippingTrackingType();
-        static::assertSame(OrderShippingTrackingType::NAME, $type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new OrderShippingTrackingType();

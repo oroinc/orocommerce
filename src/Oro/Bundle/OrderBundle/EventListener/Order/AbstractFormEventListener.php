@@ -55,7 +55,7 @@ abstract class AbstractFormEventListener
             ->createNamedBuilder($orderFormName)
             ->add(
                 $fieldName,
-                $field->getConfig()->getType()->getName(),
+                get_class($field->getConfig()->getType()->getInnerType()),
                 $options
             )
             ->getForm();

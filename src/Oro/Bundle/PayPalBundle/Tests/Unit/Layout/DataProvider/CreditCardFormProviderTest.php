@@ -45,7 +45,7 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME, null, [])
+            ->with(CreditCardType::class, null, [])
             ->willReturn($form);
 
         $creditCardForm = $this->provider->getCreditCardFormView();

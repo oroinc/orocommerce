@@ -65,7 +65,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $priceHandler = $this->get('oro_pricing.handler.product_price_handler');
         return $handler->update(
             $productPrice,
-            PriceListProductPriceType::NAME,
+            PriceListProductPriceType::class,
             null,
             $request,
             $priceHandler,

@@ -50,12 +50,6 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('description'));
     }
 
-    public function testGetName()
-    {
-        $type = new WebCatalogType();
-        $this->assertEquals(WebCatalogType::NAME, $type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new WebCatalogType();

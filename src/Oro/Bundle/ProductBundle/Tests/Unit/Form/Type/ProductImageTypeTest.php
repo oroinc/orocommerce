@@ -79,10 +79,4 @@ class ProductImageTypeTest extends FormIntegrationTestCase
             ]
         ];
     }
-
-    public function testGetName()
-    {
-        $formType = new ProductImageType();
-        $this->assertEquals(ProductImageType::NAME, $formType->getName());
-    }
 }

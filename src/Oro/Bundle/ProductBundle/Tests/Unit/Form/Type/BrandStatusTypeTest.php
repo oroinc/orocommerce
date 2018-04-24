@@ -45,11 +45,6 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(BrandStatusType::class, $this->brandStatusType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(

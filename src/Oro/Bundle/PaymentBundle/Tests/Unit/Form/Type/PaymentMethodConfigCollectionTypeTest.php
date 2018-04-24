@@ -118,11 +118,6 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(PaymentMethodConfigCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         static::assertSame(CollectionType::class, $this->type->getParent());

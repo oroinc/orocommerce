@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -49,9 +50,9 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, 'collection', [
+        $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, CollectionType::class, [
             'mapped' => false,
-            'type' => ProductAttributePriceCollectionType::class,
+            'entry_type' => ProductAttributePriceCollectionType::class,
             'label' => false,
             'required' => false,
         ]);

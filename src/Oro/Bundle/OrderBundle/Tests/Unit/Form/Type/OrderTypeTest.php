@@ -153,11 +153,6 @@ class OrderTypeTest extends TypeTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_order_type', $this->type->getName());
-    }
-
     /**
      * @dataProvider submitDataProvider
      *

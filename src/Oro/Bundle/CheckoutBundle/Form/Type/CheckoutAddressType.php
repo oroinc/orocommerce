@@ -10,6 +10,7 @@ use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -98,7 +99,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 );
             }
             $builder
-                ->add('customerAddress', 'choice', $customerAddressOptions)
+                ->add('customerAddress', ChoiceType::class, $customerAddressOptions)
                 ->add('country', CountryType::class, ['required' => true, 'label' => 'oro.address.country.label'])
                 ->add('region', RegionType::class, ['required' => true, 'label' => 'oro.address.region.label']);
 

@@ -29,12 +29,6 @@ use Symfony\Component\Validator\Validation;
 
 class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new ShippingDiscountOptionsType();
-        $this->assertEquals(ShippingDiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new ShippingDiscountOptionsType();

@@ -57,11 +57,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_sale_quote_product_request', $this->formType->getName());
-    }
-
     /**
      * @return array
      */
