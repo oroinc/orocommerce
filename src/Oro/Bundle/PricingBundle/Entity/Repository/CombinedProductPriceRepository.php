@@ -266,11 +266,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
      */
     protected function getQbForMinimalPrices($websiteId, array $products, $configCpl)
     {
-        $cplIds = $this->getCplIdsForWebsite($websiteId);
-        if ($configCpl) {
-            $cplIds[] = $configCpl;
-        }
-
         $qb = $this->createQueryBuilder('mp');
 
         return $qb
@@ -280,20 +275,42 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->in('mp.product', ':products')
                 )
             )
-            ->setParameter('cplIds', $cplIds)
-            ->setParameter('products', $products);
+            ->setParameter('cplIds', $this->getCplIdsForWebsite($websiteId, $configCpl))
+            ->setParameter(
+                'products',
+                array_map(
+                    function ($product) {
+                        return (int)($product instanceof Product ? $product->getId() : $product);
+                    },
+                    $products
+                )
+            );
     }
 
     /**
      * @param int $websiteId
+     * @param CombinedPriceList|null $configCpl
      * @return array|int[]
      */
-    private function getCplIdsForWebsite($websiteId)
+    private function getCplIdsForWebsite($websiteId, $configCpl = null)
     {
         $em = $this->getEntityManager();
 
-        $qb = new UnionQueryBuilder($em);
-        $qb->addSelect('cplId', 'id', Type::INTEGER);
+        $qb = new UnionQueryBuilder($em, false);
+        $qb->addSelect('cplId', 'id', Type::INTEGER)
+            ->addOrderBy('id');
+
+        if ($configCpl) {
+            $subQb = $em->getRepository(CombinedPriceList::class)->createQueryBuilder('cpl');
+            $subQb->select('cpl.id AS cplId')
+                ->where(
+                    $subQb->expr()->eq('cpl.id', ':configCpl')
+                )
+                ->setParameter('configCpl', $configCpl)
+                ->setMaxResults(1);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
 
         $cplRelations = [
             CombinedPriceListToWebsite::class,
