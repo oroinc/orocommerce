@@ -1,3 +1,5 @@
+@import "oroui/css/scss/variables";
+
 .web-catalog-page-container {
   position: relative;
 
@@ -22,6 +24,7 @@
 
     .entity-create-or-select-container {
       margin-left: 0;
+
       @media (max-width: $smallScreen) {
         width: auto;
       }
