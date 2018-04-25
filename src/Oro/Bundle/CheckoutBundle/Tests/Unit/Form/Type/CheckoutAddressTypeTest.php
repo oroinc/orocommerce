@@ -12,6 +12,7 @@ use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 
@@ -39,11 +40,12 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
     protected function getExtensions()
     {
         $ext = parent::getExtensions();
+
         return array_merge($ext, [new PreloadedExtension(
             [
                 $this->formType,
-                CountryType::class => new CountryType(),
-                RegionType::class => new RegionType(),
+                CountryType::class => new EntityType($this->getCountryChoices(), 'oro_frontend_country'),
+                RegionType::class => new EntityType($this->getRegionChoices(), 'oro_frontend_region'),
             ],
             [FormType::class => [new AdditionalAttrExtension()]]
         )]);
