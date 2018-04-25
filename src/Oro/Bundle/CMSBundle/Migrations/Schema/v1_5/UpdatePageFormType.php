@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_4;
+namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CMSBundle\Entity\Page;
