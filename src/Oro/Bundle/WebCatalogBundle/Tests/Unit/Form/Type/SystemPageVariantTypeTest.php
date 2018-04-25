@@ -68,11 +68,6 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('type'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SystemPageVariantType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new SystemPageVariantType();

@@ -114,11 +114,6 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $this->assertEquals($this->testPriceListConfigs, $form->getData());
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListSystemConfigType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(PriceListCollectionType::class, $this->formType->getParent());

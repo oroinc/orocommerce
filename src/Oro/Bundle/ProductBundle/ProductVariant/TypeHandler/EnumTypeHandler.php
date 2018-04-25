@@ -43,7 +43,7 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
     public function createForm($fieldName, array $availability, array $options = [])
     {
         $options = array_merge($this->getOptions($fieldName, $availability), $options);
-        $form = $this->formFactory->createNamed($fieldName, EnumSelectType::NAME, null, $options);
+        $form = $this->formFactory->createNamed($fieldName, EnumSelectType::class, null, $options);
 
         return $form;
     }

@@ -95,12 +95,6 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(TaxRuleType::NAME, $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $form = $this->factory->create(TaxRuleType::class);

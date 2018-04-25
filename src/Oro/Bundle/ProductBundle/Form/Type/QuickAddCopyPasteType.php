@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
 class QuickAddCopyPasteType extends AbstractType
@@ -26,7 +26,7 @@ class QuickAddCopyPasteType extends AbstractType
     {
         $builder->add(
             self::COPY_PASTE_FIELD_NAME,
-            'textarea',
+            TextareaType::class,
             [
                 'constraints' => [
                     new Regex([

@@ -81,11 +81,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getBlockPrefix());

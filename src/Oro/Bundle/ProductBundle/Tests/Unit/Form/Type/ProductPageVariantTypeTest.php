@@ -34,12 +34,6 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals(ProductPageContentVariantType::TYPE, $form->getConfig()->getOption('content_variant_type'));
     }
 
-    public function testGetName()
-    {
-        $type = new ProductPageVariantType();
-        $this->assertEquals(ProductPageVariantType::NAME, $type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new ProductPageVariantType();

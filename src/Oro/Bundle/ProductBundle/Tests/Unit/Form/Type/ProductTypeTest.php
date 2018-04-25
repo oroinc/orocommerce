@@ -486,11 +486,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('additionalUnitPrecisions'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product', $this->type->getName());
-    }
-
     /**
      * @param string|null $string
      * @param string|null $text

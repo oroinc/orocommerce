@@ -142,15 +142,6 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $type = new PriceListSelectWithPriorityType();
-        $this->assertEquals(PriceListSelectWithPriorityType::NAME, $type->getName());
-    }
-
-    /**
      * @param int $id
      * @return PriceList
      */

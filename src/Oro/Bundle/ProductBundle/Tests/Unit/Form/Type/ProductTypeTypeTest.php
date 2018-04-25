@@ -35,11 +35,6 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_type', $this->productTypeType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productTypeType->getParent());

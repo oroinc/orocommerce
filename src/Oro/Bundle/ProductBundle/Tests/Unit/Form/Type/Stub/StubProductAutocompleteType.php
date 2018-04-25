@@ -11,7 +11,7 @@ class StubProductAutocompleteType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return ProductAutocompleteType::NAME;
     }

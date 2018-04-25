@@ -7,6 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormEvent;
 
 class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
@@ -56,9 +58,9 @@ class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->prophesize('Symfony\Component\Form\FormInterface');
         $form->getData()->willReturn($productImage);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_MAIN, 'radio', true);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_ADDITIONAL, 'checkbox', false);
-        $this->addFormAddExpectation($form, ProductImageType::TYPE_LISTING, 'checkbox', false);
+        $this->addFormAddExpectation($form, ProductImageType::TYPE_MAIN, RadioType::class, true);
+        $this->addFormAddExpectation($form, ProductImageType::TYPE_ADDITIONAL, CheckboxType::class, false);
+        $this->addFormAddExpectation($form, ProductImageType::TYPE_LISTING, CheckboxType::class, false);
 
         $event = new FormEvent($form->reveal(), null);
 

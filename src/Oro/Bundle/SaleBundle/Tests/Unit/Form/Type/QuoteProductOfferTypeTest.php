@@ -57,11 +57,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_sale_quote_product_offer', $this->formType->getName());
-    }
-
     /**
      * @param QuoteProductOffer $inputData
      * @param array $expectedData
@@ -269,7 +264,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    $this->formType,
+                    QuoteProductOfferType::class => $this->formType,
                     ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
                     PriceType::class => $priceType,
                     CurrencySelectionType::class => $currencySelectionType,

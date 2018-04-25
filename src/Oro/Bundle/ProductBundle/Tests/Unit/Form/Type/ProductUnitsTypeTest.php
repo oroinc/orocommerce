@@ -46,11 +46,6 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitsType::NAME, $this->productUnitsType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productUnitsType->getParent());

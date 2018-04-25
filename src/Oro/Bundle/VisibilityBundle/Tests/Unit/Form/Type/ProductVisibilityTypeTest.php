@@ -37,11 +37,6 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductVisibilityType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->type->getParent());

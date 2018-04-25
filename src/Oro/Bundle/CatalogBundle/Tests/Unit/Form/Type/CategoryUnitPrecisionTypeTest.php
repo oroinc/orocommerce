@@ -169,9 +169,4 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
             ]
         ];
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryUnitPrecisionType::NAME, $this->formType->getName());
-    }
 }

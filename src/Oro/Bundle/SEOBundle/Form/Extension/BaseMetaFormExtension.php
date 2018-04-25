@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Valid;
 
@@ -27,7 +28,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
                     'required' => false,
-                    'entry_type' => 'text',
+                    'entry_type' => TextType::class,
                     'constraints' => new Valid()
                 ]
             )
@@ -38,7 +39,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => 'textarea',
+                    'entry_type' => TextType::class,
                     'constraints' => new Valid()
                 ]
             )
@@ -49,7 +50,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => $this->getMetaFieldLabelPrefix() . '.meta_keywords.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => 'textarea',
+                    'entry_type' => TextType::class,
                     'constraints' => new Valid()
                 ]
             );

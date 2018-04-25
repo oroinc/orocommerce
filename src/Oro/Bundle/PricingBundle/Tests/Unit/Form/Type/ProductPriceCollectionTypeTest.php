@@ -133,12 +133,6 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(ProductPriceCollectionType::NAME, $this->formType->getName());
-    }
-
     public function testConfigureOptions()
     {
         $form = $this->factory->create(ProductPriceCollectionType::class);

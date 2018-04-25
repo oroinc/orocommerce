@@ -60,11 +60,6 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(InventoryLevelGridType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(DataChangesetType::class, $this->type->getParent());

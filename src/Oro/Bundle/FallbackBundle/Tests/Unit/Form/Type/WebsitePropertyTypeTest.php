@@ -204,10 +204,4 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
         return $website;
     }
-
-    public function testGetName()
-    {
-        $formType = new WebsitePropertyType();
-        $this->assertEquals(WebsitePropertyType::NAME, $formType->getName());
-    }
 }

@@ -28,12 +28,6 @@ use Symfony\Component\Validator\Validation;
 
 class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new LineItemDiscountOptionsType();
-        $this->assertEquals(LineItemDiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new LineItemDiscountOptionsType();

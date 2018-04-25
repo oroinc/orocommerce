@@ -156,7 +156,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         return [
             new PreloadedExtension(
                 [
-                    $this->formType,
+                    ShippingMethodsConfigsRuleDestinationType::class => $this->formType,
                     TranslatableEntityType::class => $this->getTranslatableEntity()
                 ],
                 [FormType::class => [

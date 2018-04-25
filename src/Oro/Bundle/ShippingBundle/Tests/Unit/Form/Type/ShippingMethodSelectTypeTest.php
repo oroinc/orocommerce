@@ -110,11 +110,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $this->assertSame(OroChoiceType::class, $this->type->getParent());
     }
 
-    public function testGetName()
-    {
-        $this->assertSame(ShippingMethodSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertSame(ShippingMethodSelectType::NAME, $this->type->getBlockPrefix());

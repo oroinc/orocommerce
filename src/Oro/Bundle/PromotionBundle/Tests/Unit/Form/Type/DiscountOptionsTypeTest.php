@@ -27,12 +27,6 @@ use Symfony\Component\Validator\Validation;
  */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new DiscountOptionsType();
-        $this->assertEquals(DiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new DiscountOptionsType();

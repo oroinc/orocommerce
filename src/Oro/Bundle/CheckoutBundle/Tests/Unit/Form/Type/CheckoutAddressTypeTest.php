@@ -28,11 +28,6 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CheckoutAddressType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(AddressType::class, $this->formType->getParent());

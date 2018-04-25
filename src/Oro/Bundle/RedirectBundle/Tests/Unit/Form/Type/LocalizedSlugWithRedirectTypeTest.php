@@ -36,11 +36,6 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
         $this->formType = new LocalizedSlugWithRedirectType($this->confirmSlugChangeFormHelper);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(LocalizedSlugWithRedirectType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(LocalizedSlugWithRedirectType::NAME, $this->formType->getBlockPrefix());

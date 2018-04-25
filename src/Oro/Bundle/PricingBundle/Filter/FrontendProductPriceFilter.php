@@ -79,6 +79,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
      */
     protected function getFormType()
     {
-        return ProductPriceFilterType::NAME;
+        return ProductPriceFilterType::class;
     }
 }
