@@ -41,9 +41,4 @@ class RuleEditorCurrencyExpressionTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->type->configureOptions($resolver);
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RuleEditorCurrencyExpressionType::NAME, $this->type->getName());
-    }
 }

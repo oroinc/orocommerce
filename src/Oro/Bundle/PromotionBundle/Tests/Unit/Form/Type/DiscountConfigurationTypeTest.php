@@ -7,6 +7,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
 use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormView;
 
 class DiscountConfigurationTypeTest extends FormIntegrationTestCase
@@ -33,8 +34,8 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, DiscountConfiguration $expectedData)
     {
-        $this->discountFormTypeProvider->addFormType('discount_type', 'text');
-        $this->discountFormTypeProvider->setDefaultFormType('text');
+        $this->discountFormTypeProvider->addFormType('discount_type', TextType::class);
+        $this->discountFormTypeProvider->setDefaultFormType(TextType::class);
 
         $form = $this->factory->create(DiscountConfigurationType::class, $defaultData);
 
@@ -90,8 +91,8 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
     public function testBuildView()
     {
-        $this->discountFormTypeProvider->addFormType('discount_type', 'text');
-        $this->discountFormTypeProvider->setDefaultFormType('text');
+        $this->discountFormTypeProvider->addFormType('discount_type', TextType::class);
+        $this->discountFormTypeProvider->setDefaultFormType(TextType::class);
 
         $existingConfiguration = new DiscountConfiguration();
         $existingConfiguration->setType('existing_type');
@@ -105,13 +106,6 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
         $this->assertArrayHasKey('discount_type', $formView->vars['prototypes']);
         $this->assertInstanceOf(FormView::class, $formView->vars['prototypes']['discount_type']);
-    }
-
-    public function testGetName()
-    {
-        $formType = new DiscountConfigurationType(new DiscountFormTypeProvider());
-
-        $this->assertEquals(DiscountConfigurationType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()

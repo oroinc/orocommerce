@@ -21,11 +21,6 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        static::assertSame(OrderDiscountCollectionRowType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         static::assertSame(OrderDiscountCollectionRowType::NAME, $this->type->getBlockPrefix());

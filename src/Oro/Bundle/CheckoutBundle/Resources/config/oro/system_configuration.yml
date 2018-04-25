@@ -13,6 +13,12 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.guest_checkout.title
         guest_checkout_owner_section:
             title: oro.checkout.system_configuration.groups.guest_checkout_owner.title
+        checkout_customer_users_registration:
+            title: oro.checkout.system_configuration.groups.customer_users_registration.title
+            icon: 'fa-user-plus'
+        allow_checkout_without_email_confirmation_section:
+            title: oro.checkout.system_configuration.groups.allow_checkout_without_email_confirmation.title
+            icon: 'fa-user-plus'
 
     fields:
         oro_checkout.frontend_open_orders_separate_page:
@@ -31,15 +37,30 @@ system_configuration:
             options:
                 label: oro.checkout.system_configuration.fields.guest_checkout.title
                 tooltip: oro.checkout.system_configuration.fields.guest_checkout.tooltip
+        oro_checkout.registration_allowed:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.checkout.system_configuration.fields.registration_allowed.title
+                tooltip: oro.checkout.system_configuration.fields.registration_allowed.tooltip
         oro_checkout.default_guest_checkout_owner:
             ui_only: true
             data_type: string
             type: oro_user_select
-            priority: 20
+            priority: 30
             options:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
                 tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
                 required: true
+
+        oro_checkout.allow_checkout_without_email_confirmation:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 15
+            options:
+                label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.title
+                tooltip: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.tooltip
 
     tree:
         system_configuration:
@@ -49,6 +70,10 @@ system_configuration:
                         children:
                             checkout:
                                 children:
+                                    checkout_customer_users_registration:
+                                        children:
+                                            - oro_checkout.registration_allowed
+                                            - oro_checkout.allow_checkout_without_email_confirmation
                                     guest_checkout:
                                         children:
                                             - oro_checkout.guest_checkout

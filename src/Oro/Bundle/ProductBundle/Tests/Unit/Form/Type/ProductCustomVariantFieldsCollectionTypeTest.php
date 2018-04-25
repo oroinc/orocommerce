@@ -224,9 +224,4 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     {
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCustomVariantFieldsCollectionType::NAME, $this->formType->getName());
-    }
 }

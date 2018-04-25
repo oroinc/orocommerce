@@ -75,11 +75,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('addedCoupons'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CouponAddType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(CouponAddType::NAME, $this->formType->getBlockPrefix());

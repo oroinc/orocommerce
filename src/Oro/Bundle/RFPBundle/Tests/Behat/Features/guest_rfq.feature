@@ -30,9 +30,9 @@ Feature: Guest RFQ
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
-    When I click "Add to Shopping List"
+    When I click "Add to Shopping List" for "PSKU1" product
     Then I should see "Product has been added to" flash message
-    And I click "Shopping list"
+    And I click "Shopping List"
     And click "Request Quote"
     And I fill form with:
       | First Name             | Tester               |

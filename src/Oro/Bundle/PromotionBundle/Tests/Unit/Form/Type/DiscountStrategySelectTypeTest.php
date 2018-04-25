@@ -29,11 +29,6 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new DiscountStrategySelectType($this->strategyRegistry);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(DiscountStrategySelectType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->formType->getParent());

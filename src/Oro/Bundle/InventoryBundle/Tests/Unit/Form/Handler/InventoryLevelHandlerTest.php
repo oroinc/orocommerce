@@ -60,7 +60,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessGet()
     {
         $this->form->expects($this->never())
-            ->method('submit');
+            ->method('handleRequest');
 
         $this->handler->process();
     }
@@ -70,7 +70,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
             ->method('isValid')
@@ -92,7 +92,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
             ->method('isValid')

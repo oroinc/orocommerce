@@ -138,12 +138,6 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         ];
     }
 
-    public function testGetName()
-    {
-        $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
-        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $type->getName());
-    }
-
     public function testGetParent()
     {
         $type = new PaymentMethodsConfigsRuleDestinationCollectionType();

@@ -51,12 +51,6 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('currencies'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PriceAttributePriceListType::NAME, $this->priceAttributePriceListType->getName());
-    }
-
-
     public function testSubmitWithoutDefaultData()
     {
         $submittedData = [

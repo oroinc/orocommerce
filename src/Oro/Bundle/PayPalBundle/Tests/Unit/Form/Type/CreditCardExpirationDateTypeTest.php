@@ -72,10 +72,4 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
             $this->assertEquals($formOptionData, $options[$formOptionName]);
         }
     }
-
-    public function testGetName()
-    {
-        $formType = new CreditCardExpirationDateType();
-        $this->assertEquals('oro_paypal_credit_card_expiration_date', $formType->getName());
-    }
 }

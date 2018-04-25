@@ -110,11 +110,6 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Form type name test
-     */
-    abstract public function testGetName();
-
-    /**
      * Return data class string
      *
      * @return string

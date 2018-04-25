@@ -31,11 +31,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $this->formType = new LocalizedSlugType($this->slugifyFormHelper);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(LocalizedSlugType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(LocalizedSlugType::NAME, $this->formType->getBlockPrefix());

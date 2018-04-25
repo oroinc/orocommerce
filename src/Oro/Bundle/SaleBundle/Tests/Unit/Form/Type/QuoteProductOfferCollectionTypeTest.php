@@ -46,9 +46,4 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
     {
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteProductOfferCollectionType::NAME, $this->formType->getName());
-    }
 }

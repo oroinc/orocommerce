@@ -8,7 +8,7 @@ Feature: Check shopping list popup
     Then I click "Shopping List Edit"
     And I should see "Choose list"
     And I fill "Shopping List Form" with:
-      | List      | Shopping list |
+      | List      | Shopping List |
       | Unit      | set           |
       | Quantity  | 5             |
     And press "Item Add"

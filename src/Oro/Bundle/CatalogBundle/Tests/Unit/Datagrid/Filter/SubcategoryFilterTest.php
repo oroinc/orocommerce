@@ -47,7 +47,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
-                SearchEntityFilterType::NAME,
+                SearchEntityFilterType::class,
                 [],
                 [
                     'class' => Category::class,
@@ -106,7 +106,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
-                SearchEntityFilterType::NAME,
+                SearchEntityFilterType::class,
                 [],
                 ['csrf_protection' => false, 'choices' => [$category], 'class' => Category::class]
             )

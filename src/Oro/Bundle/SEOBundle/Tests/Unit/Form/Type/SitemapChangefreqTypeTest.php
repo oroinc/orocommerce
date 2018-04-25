@@ -25,11 +25,6 @@ class SitemapChangefreqTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SitemapChangefreqType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SitemapChangefreqType::NAME, $this->type->getBlockPrefix());

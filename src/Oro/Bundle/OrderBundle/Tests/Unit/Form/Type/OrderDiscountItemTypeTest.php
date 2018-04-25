@@ -36,11 +36,6 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(OrderDiscountItemType::NAME, $this->formType->getName());
-    }
-
     public function testBuildView()
     {
         $view = new FormView();

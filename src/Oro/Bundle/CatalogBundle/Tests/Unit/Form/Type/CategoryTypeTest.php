@@ -169,11 +169,6 @@ class CategoryTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryType::NAME, $this->type->getName());
-    }
-
     public function testGenerateChangedSlugsUrlOnPresetData()
     {
         $generatedUrl = '/some/url';

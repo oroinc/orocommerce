@@ -10,7 +10,7 @@ services:
             - '%oro_payment_term.entity.payment_term.class%'
             - ["label"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_payment_term, acl_resource: oro_payment_term_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType, acl_resource: oro_payment_term_view }
 
     oro_payment_term.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator'

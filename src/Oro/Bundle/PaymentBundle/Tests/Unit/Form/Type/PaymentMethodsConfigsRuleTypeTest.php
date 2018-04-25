@@ -149,11 +149,10 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
                     PaymentMethodsConfigsRuleType::class => $this->formType,
                     CollectionType::class => new CollectionType(),
                     RuleType::BLOCK_PREFIX => new RuleType(),
-                    PaymentMethodConfigType::class =>
-                        new PaymentMethodConfigType(
-                            $this->paymentMethodProvider,
-                            $this->compositePaymentMethodViewProvider
-                        ),
+                    PaymentMethodConfigType::class => new PaymentMethodConfigType(
+                        $this->paymentMethodProvider,
+                        $this->compositePaymentMethodViewProvider
+                    ),
                     PaymentMethodsConfigsRuleDestinationType::class =>
                         new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
                     PaymentMethodConfigCollectionType::class =>

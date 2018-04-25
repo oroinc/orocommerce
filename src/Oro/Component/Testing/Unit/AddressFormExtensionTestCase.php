@@ -102,6 +102,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                         return new ArrayChoiceList([]);
                     };
 
+                    // TODO: remove 'choice_list' in scope of BAP-16967
                     $resolver->setDefault('choice_list', $choiceList);
                 }
             )

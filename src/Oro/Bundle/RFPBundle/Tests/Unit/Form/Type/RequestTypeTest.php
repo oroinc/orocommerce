@@ -62,11 +62,6 @@ class RequestTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(RequestType::NAME, $this->formType->getName());
-    }
-
     /**
      * @return array
      *

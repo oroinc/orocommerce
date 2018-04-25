@@ -28,11 +28,6 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
         $this->couponGenerationType = new CouponGenerationType($this->tokenAccessor);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CouponGenerationType::NAME, $this->couponGenerationType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(CouponGenerationType::NAME, $this->couponGenerationType->getBlockPrefix());

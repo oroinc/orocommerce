@@ -99,7 +99,7 @@ class ProductVisibilityController extends Controller
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
                 ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
-                ScopedDataType::TYPE_OPTION => EntityVisibilityType::NAME,
+                ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     EntityVisibilityType::ALL_CLASS => $this
                         ->getParameter('oro_visibility.entity.product_visibility.class'),

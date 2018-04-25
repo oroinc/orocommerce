@@ -451,3 +451,14 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.line_item.class%', event: prePersist }
+
+    oro_shopping_list.event_listener.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener
+        arguments:
+          - '@oro_shopping_list.manager.shopping_list_limit'
+          - '@oro_entity.doctrine_helper'
+        calls:
+          - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }

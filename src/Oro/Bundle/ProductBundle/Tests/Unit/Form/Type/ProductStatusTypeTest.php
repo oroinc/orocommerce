@@ -46,11 +46,6 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductStatusType::NAME, $this->productStatusType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productStatusType->getParent());

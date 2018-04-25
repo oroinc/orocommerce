@@ -24,11 +24,6 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_origin_address', $this->formType->getName());
-    }
-
     public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();

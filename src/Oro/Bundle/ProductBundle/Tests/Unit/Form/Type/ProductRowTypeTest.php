@@ -160,12 +160,6 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $formType = new ProductRowType();
-        $this->assertEquals(ProductRowType::NAME, $formType->getName());
-    }
-
     public function testBuildView()
     {
         $product = new Product();

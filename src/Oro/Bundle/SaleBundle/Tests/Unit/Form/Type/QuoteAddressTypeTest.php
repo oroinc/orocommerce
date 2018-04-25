@@ -101,11 +101,6 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteAddressType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(AddressType::class, $this->formType->getParent());

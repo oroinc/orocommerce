@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -43,7 +44,7 @@ class PriceListsSettingsType extends AbstractType
     {
         $builder->add(
             self::FALLBACK_FIELD,
-            'choice',
+            ChoiceType::class,
             [
                 'label' => 'oro.pricing.fallback.label',
                 'mapped' => true,
