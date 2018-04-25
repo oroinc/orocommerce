@@ -53,7 +53,7 @@ system_configuration:
                 label: oro.seo.system_configuration.fields.priority_page.label
         oro_seo.sitemap_cron_definition:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             priority: 500
             options:

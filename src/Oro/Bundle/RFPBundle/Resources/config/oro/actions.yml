@@ -64,7 +64,7 @@ operations:
         form_options:
             attribute_fields:
                 request:
-                    form_type: oro_rfp_request
+                    form_type: Oro\Bundle\RFPBundle\Form\Type\RequestType
             attribute_default_values:
                 request:
                     $.data

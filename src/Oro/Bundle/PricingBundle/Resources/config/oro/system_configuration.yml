@@ -14,13 +14,13 @@ system_configuration:
     fields:
         oro_pricing.default_price_lists:
             data_type: array
-            type: oro_pricing_price_list_system_config
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
             options:
                 label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
         oro_pricing.rounding_type:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             priority: 10
             options:
@@ -38,7 +38,7 @@ system_configuration:
                     4: oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label
         oro_pricing.precision:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
             search_type: text
             priority: 20
             options:
@@ -52,7 +52,7 @@ system_configuration:
                         type: integer
         oro_pricing.offset_of_processing_cpl_prices:
             data_type: float
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             options:
                 label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
@@ -64,7 +64,7 @@ system_configuration:
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
         oro_pricing.price_strategy:
             data_type: string
-            type: oro_pricing_list_strategy_selection
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType
             options:
                 label: oro.pricing.system_configuration.fields.pricing_strategy.label
                 required: true

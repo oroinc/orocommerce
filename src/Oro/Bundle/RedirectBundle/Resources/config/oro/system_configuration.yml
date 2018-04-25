@@ -6,7 +6,7 @@ system_configuration:
     fields:
         oro_redirect.enable_direct_url:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 500
             options:
                 label: oro.redirect.system_configuration.fields.enable_direct_url.label
