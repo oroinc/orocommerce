@@ -63,7 +63,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME)
+            ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -81,7 +81,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME)
+            ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -104,7 +104,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddCopyPasteType::NAME)
+            ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -122,7 +122,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddCopyPasteType::NAME)
+            ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -145,7 +145,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::NAME)
+            ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -163,7 +163,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::NAME)
+            ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -186,7 +186,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -209,7 +209,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->exactly(2))
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -236,7 +236,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         $product = $this->createMock(Product::class);
@@ -275,7 +275,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
-                FrontendVariantFiledType::NAME,
+                FrontendVariantFiledType::class,
                 $productVariant,
                 $this->getProductVariantExpectedOptions($product, 2)
             )
@@ -306,7 +306,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
-                FrontendVariantFiledType::NAME,
+                FrontendVariantFiledType::class,
                 $productVariant,
                 $this->getProductVariantExpectedOptions($product, 2)
             )

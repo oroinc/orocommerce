@@ -46,9 +46,4 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
     {
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductCollectionType::NAME, $this->formType->getName());
-    }
 }

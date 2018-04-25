@@ -203,6 +203,7 @@
         <div {{ block('block_attributes') }} data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
+                 hideNewAddressForm: true,
                  selectors: {
                      address: '#' ~ form.shipping_address.customerAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,
@@ -210,7 +211,6 @@
                      shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                      externalShipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox',
                  },
-                 hideInputOnShipTo: false
              }|json_encode }}">
 
             {{ form_row(form.shipping_address.customerAddress) }}
@@ -244,7 +244,8 @@
                      selectors: {
                          address: '#' ~ form.billing_address.customerAddress.vars.id,
                          region: '#' ~ form.billing_address.region.vars.id,
-                         fieldsContainer: '#checkout-address-fields-container'
+                         fieldsContainer: '#checkout-address-fields-container',
+                         shipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox'
                      }
                  }|json_encode }}">
 

@@ -28,14 +28,6 @@ class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(UserSelectType::NAME, $this->formType->getName());
-    }
-
-    /**
      * Test getParent
      */
     public function testGetParent()

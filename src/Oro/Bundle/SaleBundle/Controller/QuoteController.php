@@ -143,7 +143,7 @@ class QuoteController extends Controller
         $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $quote,
-            QuoteType::NAME,
+            QuoteType::class,
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,

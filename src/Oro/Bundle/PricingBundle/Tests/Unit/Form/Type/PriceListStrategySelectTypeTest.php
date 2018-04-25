@@ -39,11 +39,6 @@ class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         unset($this->type, $this->strategyRegister, $this->translator);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_pricing_list_strategy_selection', $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->type->getParent());

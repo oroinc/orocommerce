@@ -84,12 +84,6 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $formType = new OrderDiscountCollectionTableType();
-        static::assertEquals('oro_order_discount_collection_table', $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new OrderDiscountCollectionTableType();

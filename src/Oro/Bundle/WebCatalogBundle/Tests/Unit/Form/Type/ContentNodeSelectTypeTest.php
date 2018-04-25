@@ -58,11 +58,6 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ContentNodeSelectType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(ContentNodeSelectType::NAME, $this->formType->getBlockPrefix());

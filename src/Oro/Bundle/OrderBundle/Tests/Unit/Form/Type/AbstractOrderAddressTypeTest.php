@@ -88,8 +88,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->formType->configureOptions($resolver);
     }
 
-    abstract public function testGetName();
-
     abstract public function testGetParent();
 
     /**

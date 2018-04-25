@@ -47,7 +47,7 @@ class VisibilityFormDataHandler
         $this->form->setData($entity);
 
         if ($this->request->isMethod('POST')) {
-            $this->form->submit($this->request);
+            $this->form->handleRequest($this->request);
 
             if ($this->form->isValid()) {
                 $this->eventDispatcher->dispatch(

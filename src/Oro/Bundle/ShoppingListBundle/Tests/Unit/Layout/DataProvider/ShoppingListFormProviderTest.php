@@ -47,7 +47,7 @@ class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->formFactory
             ->expects($this->once())
             ->method('create')
-            ->with(ShoppingListType::NAME, $shoppingList, ['action' => $action])
+            ->with(ShoppingListType::class, $shoppingList, ['action' => $action])
             ->willReturn($form);
 
         $this->router
@@ -80,7 +80,7 @@ class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->formFactory
             ->expects($this->once())
             ->method('create')
-            ->with(ShoppingListType::NAME, $shoppingList, ['action' => $action])
+            ->with(ShoppingListType::class, $shoppingList, ['action' => $action])
             ->willReturn($form);
 
         $this->router

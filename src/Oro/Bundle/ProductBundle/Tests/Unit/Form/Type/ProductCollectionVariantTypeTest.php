@@ -64,12 +64,6 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $type = new ProductCollectionVariantType();
-        $this->assertEquals(ProductCollectionVariantType::NAME, $type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $type = new ProductCollectionVariantType();

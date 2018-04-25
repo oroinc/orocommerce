@@ -49,6 +49,14 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected function getTestFormType()
+    {
+        return $this->type;
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     public function getRegistry()
@@ -87,14 +95,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->will($this->returnValue($entityManager));
 
         return $this->registry;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductPriceFilterType::NAME, $this->type->getName());
     }
 
     /**

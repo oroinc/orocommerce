@@ -29,11 +29,6 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_base_exclusion', $this->formType->getName());
-    }
-
     public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();

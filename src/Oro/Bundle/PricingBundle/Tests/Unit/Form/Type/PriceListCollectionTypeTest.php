@@ -102,12 +102,6 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return $provider->getExtensions();
     }
 
-    public function testGetName()
-    {
-        $type = new PriceListCollectionType();
-        $this->assertSame(PriceListCollectionType::NAME, $type->getName());
-    }
-
     public function testGetParent()
     {
         $type = new PriceListCollectionType();

@@ -122,11 +122,6 @@ class QuoteTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteType::NAME, $this->formType->getName());
-    }
-
     /**
      * @param int $ownerId
      * @param int $customerUserId

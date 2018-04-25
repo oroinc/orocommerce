@@ -182,7 +182,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
             id: ~
             productId: ~

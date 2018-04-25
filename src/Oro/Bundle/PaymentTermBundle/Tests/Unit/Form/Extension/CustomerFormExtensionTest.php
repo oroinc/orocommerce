@@ -12,6 +12,7 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
+use Symfony\Component\Form\Tests\Fixtures\Type;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CustomerFormExtensionTest extends \PHPUnit_Framework_TestCase
@@ -143,11 +144,11 @@ class CustomerFormExtensionTest extends \PHPUnit_Framework_TestCase
         $field->expects($this->once())->method('getName')->willReturn('name');
         $type = $this->createMock(ResolvedFormTypeInterface::class);
         $field->expects($this->once())->method('getType')->willReturn($type);
-        $type->expects($this->once())->method('getName')->willReturn('type');
+        $type->expects($this->once())->method('getInnerType')->willReturn(new Type());
 
         $builder->expects($this->once())->method('add')->with(
             'name',
-            'type',
+            Type::class,
             ['configs' => ['placeholder' => '[trans]oro.paymentterm.customer.customer_group_defined[/trans]']]
         );
 

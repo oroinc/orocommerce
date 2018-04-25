@@ -71,11 +71,6 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SluggableEntityPrefixType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SluggableEntityPrefixType::NAME, $this->formType->getBlockPrefix());

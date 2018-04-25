@@ -55,11 +55,6 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SlugWithRedirectType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SlugWithRedirectType::NAME, $this->formType->getBlockPrefix());

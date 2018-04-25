@@ -147,11 +147,6 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $this->assertEquals(OroChoiceType::class, $this->formType->getParent());
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShippingMethodTypesChoiceType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(ShippingMethodTypesChoiceType::NAME, $this->formType->getBlockPrefix());

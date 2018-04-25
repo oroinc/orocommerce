@@ -37,11 +37,6 @@ class CatalogVisibilityTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CatalogVisibilityType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->type->getParent());

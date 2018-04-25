@@ -228,12 +228,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $type = new PriceListType();
-        $this->assertEquals(PriceListType::NAME, $type->getName());
-    }
-
     /**
      * @param string $className
      * @param int $id

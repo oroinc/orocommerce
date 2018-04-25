@@ -26,11 +26,6 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_product_tax_code_multiselect', $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroJquerySelect2HiddenType::class, $this->formType->getParent());

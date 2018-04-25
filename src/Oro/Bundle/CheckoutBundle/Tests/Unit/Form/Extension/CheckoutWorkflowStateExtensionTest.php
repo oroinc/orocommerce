@@ -36,7 +36,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishView()
     {
-        $form = $this->createForm('main');
+        $form = $this->createForm();
         $view = new FormView();
         $view->vars['errors'] = new FormErrorIterator($form, [new FormError('')]);
         $expectedErrors = new FormErrorIterator($form, []);
@@ -53,7 +53,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishViewWithEmptyErrors()
     {
-        $form = $this->createForm('main');
+        $form = $this->createForm();
 
         $this->checkoutErrorHandler->expects($this->once())
             ->method('filterWorkflowStateError')
@@ -78,19 +78,14 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $name
      * @return FormInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createForm($name)
+    protected function createForm()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMockBuilder(FormInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $form->expects($this->any())
-            ->method('getName')
-            ->willReturn($name);
 
         return $form;
     }
