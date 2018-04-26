@@ -54,7 +54,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
     {
         $productPrice = new PriceAttributeProductPrice();
         $productPrice->setPrice(Price::create('100', 'USD'));
-        $form = $this->factory->create(ProductAttributePriceType::NAME, $productPrice, []);
+        $form = $this->factory->create(ProductAttributePriceType::class, $productPrice, []);
 
         $form->submit([ProductAttributePriceType::PRICE => '500.1234']);
         $this->assertTrue($form->isValid());

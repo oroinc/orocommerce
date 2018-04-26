@@ -70,11 +70,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         return new OrderLineItemType($this->productUnitsProvider);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(OrderLineItemType::NAME, $this->formType->getName());
-    }
-
     /**
      * {@inheritdoc}
      */

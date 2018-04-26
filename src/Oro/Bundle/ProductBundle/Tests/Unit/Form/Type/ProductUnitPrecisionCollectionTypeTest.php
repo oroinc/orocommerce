@@ -38,9 +38,4 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitPrecisionCollectionType::NAME, $this->formType->getName());
-    }
 }

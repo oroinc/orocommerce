@@ -30,7 +30,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *              "auditable"=true
  *          },
  *          "form"={
- *              "form_type"="oro_web_catalog_select",
+ *              "form_type"="Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType",
  *              "grid_name"="web-catalog-select-grid"
  *          },
  *          "security"={

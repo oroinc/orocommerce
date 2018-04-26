@@ -7,6 +7,7 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
@@ -131,10 +132,11 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                         $this->createMock(LocaleSettings::class),
                         $this->createMock(CurrencyNameHelper::class)
                     ),
+                    CollectionType::class => new CollectionType(),
                     PaymentMethodsConfigsRuleDestinationType::class => new PaymentMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-                    TranslatableEntityType::class => $translatableEntity
+                    TranslatableEntityType::class => $translatableEntity,
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),

@@ -42,12 +42,11 @@ use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType as SymfonyEntityType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -151,11 +150,6 @@ class OrderTypeTest extends TypeTestCase
 
         $this->type->setDataClass('Order');
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_order_type', $this->type->getName());
     }
 
     /**
@@ -359,7 +353,7 @@ class OrderTypeTest extends TypeTestCase
                     CollectionType::class => new CollectionType(),
                     OroDateType::class => new OroDateType(),
                     PriceType::class => $priceType,
-                    SymfonyEntityType::class => $entityType,
+                    EntityType::class => $entityType,
                     UserSelectType::class => $userSelectType,
                     ProductSelectType::class => $productSelectType,
                     ProductUnitSelectionType::class => $productUnitSelectionType,
@@ -406,11 +400,11 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return StubEntityType
      */
     protected function prepareProductEntityType()
     {
-        $entityType = new EntityType(
+        $entityType = new StubEntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
@@ -421,7 +415,7 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {

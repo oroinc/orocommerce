@@ -177,6 +177,9 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodChoicesProviderInterface */
         $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $choicesProvider->expects($this->any())
+            ->method('getMethods')
+            ->willReturn([]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodIconProviderInterface */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);

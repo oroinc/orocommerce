@@ -70,7 +70,7 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(AppliedCouponCollectionType::class, null, ['entity' => new \stdClass()]);
 
         $this->assertArraySubset([
-            'type' => AppliedCouponType::class,
+            'entry_type' => AppliedCouponType::class,
             'dialog_widget_alias' => 'add-coupons-dialog',
             'page_component_view' => 'oropromotion/js/app/views/applied-coupon-collection-view',
             'page_component_options' => [],

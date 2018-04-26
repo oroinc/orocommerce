@@ -104,11 +104,6 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         static::assertSame(CollectionType::class, $this->type->getParent());

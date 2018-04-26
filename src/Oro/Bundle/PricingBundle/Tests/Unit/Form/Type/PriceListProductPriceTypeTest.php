@@ -263,14 +263,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListProductPriceType::NAME, $this->formType->getName());
-    }
-
-    /**
      * @return array
      */
     protected function prepareProductUnitSelectionChoices()

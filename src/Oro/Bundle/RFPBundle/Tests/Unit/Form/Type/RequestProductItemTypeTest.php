@@ -37,11 +37,6 @@ class RequestProductItemTypeTest extends AbstractTest
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductItemType::NAME, $this->formType->getName());
-    }
-
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */

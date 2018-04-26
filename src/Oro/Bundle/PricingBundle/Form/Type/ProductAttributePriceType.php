@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +25,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(self::PRICE, 'number', [
+        $builder->add(self::PRICE, NumberType::class, [
             'scale' => Price::MAX_VALUE_SCALE
         ])
             ->setDataMapper($this);

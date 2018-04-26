@@ -82,7 +82,7 @@ class VisibilityChoicesProvider
     {
         $result = [];
         foreach ($choices as $choice) {
-            $result[$choice] = $this->format($translationPattern, $choice);
+            $result[$this->format($translationPattern, $choice)] = $choice;
         }
 
         return $result;
@@ -91,7 +91,7 @@ class VisibilityChoicesProvider
     /**
      * @param string $translationPattern
      * @param string $choice
-     * @return array
+     * @return string
      */
     public function format($translationPattern, $choice)
     {

@@ -130,8 +130,8 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->formatChoices('test.%s', ['test_1', 'test_2']);
         $expected = [
-            'test_1' => '[trans]test.test_1[/trans]',
-            'test_2' => '[trans]test.test_2[/trans]'
+            '[trans]test.test_1[/trans]' => 'test_1',
+            '[trans]test.test_2[/trans]' => 'test_2',
         ];
         $this->assertEquals($expected, $actual);
     }

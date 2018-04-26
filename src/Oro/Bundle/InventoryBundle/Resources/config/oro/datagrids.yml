@@ -168,6 +168,8 @@ datagrids:
                     data_name:       precisionUnit
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
                             multiple: true
         options:

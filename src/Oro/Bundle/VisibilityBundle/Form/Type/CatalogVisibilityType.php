@@ -18,9 +18,11 @@ class CatalogVisibilityType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => [
-                    CategoryVisibility::VISIBLE => 'oro.visibility.catalog.visibility.visible.label',
-                    CategoryVisibility::HIDDEN => 'oro.visibility.catalog.visibility.hidden.label',
+                    'oro.visibility.catalog.visibility.visible.label' => CategoryVisibility::VISIBLE,
+                    'oro.visibility.catalog.visibility.hidden.label' => CategoryVisibility::HIDDEN,
                 ],
             ]
         );

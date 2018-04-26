@@ -29,7 +29,7 @@ use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="oro_pricing_price_list_select",
+ *              "form_type"="Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType",
  *              "grid_name"="pricing-price-list-select-grid",
  *          }
  *      }

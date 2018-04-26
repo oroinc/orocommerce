@@ -41,9 +41,4 @@ class RuleEditorUnitExpressionTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->type->configureOptions($resolver);
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RuleEditorUnitExpressionType::NAME, $this->type->getName());
-    }
 }

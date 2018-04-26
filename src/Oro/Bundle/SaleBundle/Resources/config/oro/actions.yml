@@ -67,7 +67,7 @@ operations:
         form_options:
             attribute_fields:
                 email:
-                    form_type: oro_email_email
+                    form_type: Oro\Bundle\EmailBundle\Form\Type\EmailType
 
         form_init:
             - '@call_service_method':

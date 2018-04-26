@@ -81,7 +81,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     {
         $parentForm = $this->factory->createNamed('parentForm', FormType::class);
         $parentForm->add(AbstractProductAwareTypeStub::NAME, AbstractProductAwareTypeStub::class);
-        $parentForm->add('product', 'form', ['data' => $data]);
+        $parentForm->add('product', FormType::class, ['data' => $data]);
 
         $child = $parentForm->get(AbstractProductAwareTypeStub::NAME);
 
@@ -112,15 +112,15 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
 
         $options = ['compound' => true];
         $root = $this->factory->createNamed('root', FormType::class, $options);
-        $root->add('first', 'form');
-        $root->get('first')->add('second', 'form', ['compound' => true]);
+        $root->add('first', FormType::class);
+        $root->get('first')->add('second', FormType::class, ['compound' => true]);
         $root->get('first')->get('second')->add(
             AbstractProductAwareTypeStub::NAME,
             AbstractProductAwareTypeStub::class,
             ['data' => null]
         );
 
-        $root->add('product', 'form', ['data' => $product]);
+        $root->add('product', FormType::class, ['data' => $product]);
 
         $child = $root->get('first')->get('second')->get(AbstractProductAwareTypeStub::NAME);
 

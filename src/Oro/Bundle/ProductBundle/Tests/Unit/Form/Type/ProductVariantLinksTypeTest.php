@@ -50,14 +50,6 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductVariantLinksType::NAME, $this->formType->getName());
-    }
-
-    /**
      * @dataProvider submitProvider
      *
      * @param $submittedData

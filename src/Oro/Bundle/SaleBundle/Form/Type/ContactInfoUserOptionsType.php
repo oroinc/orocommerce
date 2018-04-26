@@ -43,18 +43,17 @@ class ContactInfoUserOptionsType extends AbstractType
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_USER_CONFIGURATION);
         $configValue = $this->configManager->get($key) ? false : true;
+        $choices = $this->optionsProvider->getOptions();
 
         $resolver->setDefaults([
-            'choices' => array_flip($this->optionsProvider->getOptions()),
+            'choices' => array_combine($choices, $choices),
             'multiple' => false,
             'disabled' => $configValue
         ]);
 
         $resolver->setNormalizer('choice_label', function () {
             return function ($optionValue) {
-                $label = sprintf('oro.sale.contact_info_user_options.type.%s.label', $optionValue);
-
-                return $label;
+                return sprintf('oro.sale.contact_info_user_options.type.%s.label', $optionValue);
             };
         });
     }

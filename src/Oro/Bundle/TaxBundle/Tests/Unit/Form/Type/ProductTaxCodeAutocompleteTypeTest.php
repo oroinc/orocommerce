@@ -38,11 +38,6 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         return new ProductTaxCodeAutocompleteType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_tax_code_autocomplete', $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->formType->getParent());

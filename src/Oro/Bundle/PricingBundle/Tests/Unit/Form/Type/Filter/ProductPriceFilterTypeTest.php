@@ -49,6 +49,14 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected function getTestFormType()
+    {
+        return $this->type;
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     public function getRegistry()
@@ -92,14 +100,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductPriceFilterType::NAME, $this->type->getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function configureOptionsDataProvider()
     {
         return [
@@ -107,12 +107,12 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
                 'defaultOptions' => [
                     'data_type' => NumberRangeFilterType::DATA_DECIMAL,
                     'operator_choices' => [
-                        NumberRangeFilterType::TYPE_BETWEEN          => 'oro.filter.form.label_type_range_between',
-                        NumberRangeFilterType::TYPE_EQUAL            => 'oro.filter.form.label_type_range_equals',
-                        NumberRangeFilterType::TYPE_GREATER_THAN     => 'oro.filter.form.label_type_range_more_than',
-                        NumberRangeFilterType::TYPE_LESS_THAN        => 'oro.filter.form.label_type_range_less_than',
-                        NumberRangeFilterType::TYPE_GREATER_EQUAL    => 'oro.filter.form.label_type_range_more_equals',
-                        NumberRangeFilterType::TYPE_LESS_EQUAL        => 'oro.filter.form.label_type_range_less_equals',
+                        'oro.filter.form.label_type_range_between' => NumberRangeFilterType::TYPE_BETWEEN,
+                        'oro.filter.form.label_type_range_equals' => NumberRangeFilterType::TYPE_EQUAL,
+                        'oro.filter.form.label_type_range_more_than' => NumberRangeFilterType::TYPE_GREATER_THAN,
+                        'oro.filter.form.label_type_range_less_than' => NumberRangeFilterType::TYPE_LESS_THAN,
+                        'oro.filter.form.label_type_range_more_equals' => NumberRangeFilterType::TYPE_GREATER_EQUAL,
+                        'oro.filter.form.label_type_range_less_equals' => NumberRangeFilterType::TYPE_LESS_EQUAL,
                     ]
                 ]
             ]

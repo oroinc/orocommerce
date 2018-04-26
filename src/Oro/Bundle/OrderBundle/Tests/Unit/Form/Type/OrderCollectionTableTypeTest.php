@@ -85,12 +85,6 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
         ], $formView->vars);
     }
 
-    public function testGetName()
-    {
-        $formType = new OrderCollectionTableType();
-        $this->assertEquals('oro_order_collection_table', $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new OrderCollectionTableType();
