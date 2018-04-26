@@ -90,6 +90,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
 
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $this->choicesProvider->expects($this->any())
+            ->method('getMethods')
+            ->willReturn([]);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $this->assetHelper = $this->createMock(AssetHelper::class);
 

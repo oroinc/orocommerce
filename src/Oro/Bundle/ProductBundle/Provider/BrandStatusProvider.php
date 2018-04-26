@@ -12,8 +12,8 @@ class BrandStatusProvider
     public function getAvailableBrandStatuses()
     {
         return [
-            Brand::STATUS_DISABLED => 'oro.product.brand.status.disabled',
-            Brand::STATUS_ENABLED => 'oro.product.brand.status.enabled'
+            'oro.product.brand.status.disabled' => Brand::STATUS_DISABLED,
+            'oro.product.brand.status.enabled' => Brand::STATUS_ENABLED,
         ];
     }
 }

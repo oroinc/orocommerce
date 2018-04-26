@@ -592,9 +592,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         function (array $options) use ($productUnit) {
                             $this->assertArrayHasKey('choices_updated', $options);
                             $this->assertTrue($options['choices_updated']);
+                            $this->assertArrayHasKey('choices_as_values', $options);
+                            $this->assertTrue($options['choices_as_values']);
 
                             $this->assertArrayHasKey('choices', $options);
-                            $this->assertEquals([$productUnit], $options['choices']);
+                            $this->assertEquals([$productUnit->getCode() => 0], $options['choices']);
 
                             return true;
                         }

@@ -36,9 +36,11 @@ class PromotionType extends AbstractType
                 [
                     'label' => 'oro.promotion.use_coupons.label',
                     'required' => false,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        false => 'oro.promotion.use_coupons.no',
-                        true => 'oro.promotion.use_coupons.yes',
+                        'oro.promotion.use_coupons.no' => 0,
+                        'oro.promotion.use_coupons.yes' => 1,
                     ],
                     'placeholder' => false,
                 ]

@@ -47,8 +47,11 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
-            ->method('setDefault')
-            ->with('choices', ['test' => 'test_strategy']);
+            ->method('setDefaults')
+            ->with([
+                'choices_as_values' => true,
+                'choices' => ['test_strategy' => 'test'],
+            ]);
 
         $this->formType->configureOptions($resolver);
     }

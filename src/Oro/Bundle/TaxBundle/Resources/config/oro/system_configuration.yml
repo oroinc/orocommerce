@@ -52,9 +52,11 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    unit_price: oro.tax.system_configuration.fields.start_calculation_with.unit_price.label
-                    row_total: oro.tax.system_configuration.fields.start_calculation_with.row_total.label
+                    oro.tax.system_configuration.fields.start_calculation_with.unit_price.label: unit_price
+                    oro.tax.system_configuration.fields.start_calculation_with.row_total.label: row_total
 
         oro_tax.start_calculation_on:
             data_type: string
@@ -65,9 +67,11 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    total: oro.tax.system_configuration.fields.start_calculation_on.total.label
-                    item: oro.tax.system_configuration.fields.start_calculation_on.item.label
+                    oro.tax.system_configuration.fields.start_calculation_on.total.label: total
+                    oro.tax.system_configuration.fields.start_calculation_on.item.label: item
 
         oro_tax.product_prices_include_tax:
             data_type: boolean
@@ -86,9 +90,11 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    shipping_origin: oro.tax.system_configuration.fields.use_as_base.shipping_origin.label
-                    destination: oro.tax.system_configuration.fields.use_as_base.destination.label
+                    oro.tax.system_configuration.fields.use_as_base.shipping_origin.label: shipping_origin
+                    oro.tax.system_configuration.fields.use_as_base.destination.label: destination
 
         oro_tax.address_resolver_granularity:
             data_type: string
@@ -100,10 +106,12 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    country: oro.tax.system_configuration.fields.address_resolver_granularity.country.label
-                    region: oro.tax.system_configuration.fields.address_resolver_granularity.region.label
-                    zip_code: oro.tax.system_configuration.fields.address_resolver_granularity.zip.label
+                    oro.tax.system_configuration.fields.address_resolver_granularity.country.label: country
+                    oro.tax.system_configuration.fields.address_resolver_granularity.region.label: region
+                    oro.tax.system_configuration.fields.address_resolver_granularity.zip.label: zip_code
 
         oro_tax.use_as_base_exclusions:
             data_type: array
@@ -122,9 +130,11 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    billing_address: oro.tax.system_configuration.fields.destination.billing_address.label
-                    shipping_address: oro.tax.system_configuration.fields.destination.shipping_addressl.label
+                    oro.tax.system_configuration.fields.destination.billing_address.label: billing_address
+                    oro.tax.system_configuration.fields.destination.shipping_addressl.label: shipping_address
 
         oro_tax.digital_products_us:
             data_type: array

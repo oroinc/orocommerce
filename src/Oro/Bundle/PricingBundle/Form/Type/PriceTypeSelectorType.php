@@ -18,9 +18,11 @@ class PriceTypeSelectorType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => [
-                    PriceTypeAwareInterface::PRICE_TYPE_UNIT => 'oro.pricing.price_type.unit',
-                    PriceTypeAwareInterface::PRICE_TYPE_BUNDLED => 'oro.pricing.price_type.bundled',
+                    'oro.pricing.price_type.unit' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
+                    'oro.pricing.price_type.bundled' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                 ]
             ]
         );

@@ -74,11 +74,13 @@ class TaxBaseExclusionType extends AbstractType
                 ChoiceType::class,
                 [
                     'required' => true,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN =>
-                            'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label',
-                        TaxationSettingsProvider::USE_AS_BASE_DESTINATION =>
-                            'oro.tax.system_configuration.fields.use_as_base.destination.label',
+                        'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label' =>
+                            TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        'oro.tax.system_configuration.fields.use_as_base.destination.label' =>
+                            TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
                     ],
                     'constraints' => [new NotBlank()],
                 ]

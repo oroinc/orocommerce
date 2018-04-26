@@ -70,10 +70,10 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->getMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
-        $visibilityChoicesProvider = $this
-            ->getMockBuilder('Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
+        $visibilityChoicesProvider->expects($this->any())
+            ->method('getFormattedChoices')
+            ->willReturn([]);
 
         /** @var CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility */
         $defaultProductOptionsVisibility = $this
