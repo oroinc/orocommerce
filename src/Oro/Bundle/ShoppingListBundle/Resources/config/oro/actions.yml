@@ -71,7 +71,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_frontend_line_item_widget
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
         form_init:
             - '@get_active_user': $.currentUser
             - '@call_service_method':
@@ -106,7 +106,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_line_item
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                     options:
                         required: true
             attribute_default_values:

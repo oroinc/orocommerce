@@ -84,7 +84,7 @@ class DatagridListener
                 'field_type' => EntityType::class,
                 'field_options' => [
                     'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                 ]
             ]
         ];

@@ -51,7 +51,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                 'field_options' => [
                                     'multiple' => false,
                                     'class' => AbstractTaxCode::class,
-                                    'property' => 'code',
+                                    'choice_label' => 'code',
                                 ]
                             ]
                         ]

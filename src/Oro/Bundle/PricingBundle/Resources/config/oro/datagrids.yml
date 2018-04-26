@@ -202,7 +202,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:      string
                     data_name: parent.name
@@ -316,7 +316,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:       string
                     data_name:  parentName
