@@ -58,10 +58,12 @@ system_configuration:
             priority: 500
             options:
                 label: oro.seo.system_configuration.fields.sitemap_cron_definition.label
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    0 0 * * 0: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label
-                    0 0 * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label
-                    0 * * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label: '0 0 * * 0'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label: '0 0 * * *'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label: '0 * * * *'
 
     tree:
         system_configuration:

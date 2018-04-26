@@ -137,8 +137,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                   - Disabled
-                   - Enabled
+                   Disabled: 0
+                   Enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime
@@ -172,9 +172,11 @@ datagrids:
                     data_name: contentBlock.enabled
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                1: Enabled
-                                2: Disabled
+                                Enabled: 1
+                                Disabled: 2
                 createdAt:
                     type: datetime
                     data_name: contentBlock.createdAt

@@ -18,8 +18,8 @@ class BrandStatusProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAvailableBrandStatus()
     {
         $expected = [
-            Product::STATUS_DISABLED => 'oro.product.brand.status.disabled',
-            Product::STATUS_ENABLED => 'oro.product.brand.status.enabled'
+            'oro.product.brand.status.disabled' => Product::STATUS_DISABLED,
+            'oro.product.brand.status.enabled' => Product::STATUS_ENABLED,
         ];
 
         $this->assertEquals($expected, $this->brandStatusProvider->getAvailableBrandStatuses());

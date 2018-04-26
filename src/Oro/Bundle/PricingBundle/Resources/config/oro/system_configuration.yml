@@ -30,12 +30,14 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    0: oro.pricing.system_configuration.fields.rounding_type.choices.ceil.label
-                    1: oro.pricing.system_configuration.fields.rounding_type.choices.floor.label
-                    5: oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label
-                    6: oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label
-                    4: oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label
+                    oro.pricing.system_configuration.fields.rounding_type.choices.ceil.label: 0
+                    oro.pricing.system_configuration.fields.rounding_type.choices.floor.label: 1
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label: 5
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label: 6
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label: 4
         oro_pricing.precision:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType

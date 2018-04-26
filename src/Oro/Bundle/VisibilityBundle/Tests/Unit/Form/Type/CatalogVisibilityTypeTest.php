@@ -30,8 +30,8 @@ class CatalogVisibilityTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             [
-                CategoryVisibility::VISIBLE => 'oro.visibility.catalog.visibility.visible.label',
-                CategoryVisibility::HIDDEN => 'oro.visibility.catalog.visibility.hidden.label',
+                'oro.visibility.catalog.visibility.visible.label' => CategoryVisibility::VISIBLE,
+                'oro.visibility.catalog.visibility.hidden.label' => CategoryVisibility::HIDDEN,
             ],
             $resolvedOptions['choices']
         );

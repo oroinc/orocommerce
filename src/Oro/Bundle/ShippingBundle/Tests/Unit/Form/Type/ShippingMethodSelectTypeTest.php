@@ -83,6 +83,7 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
 
         $expected = [
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
+            'choices_as_values' => true,
             'choices' => self::METHODS,
             'choice_attr' => function () {
             },

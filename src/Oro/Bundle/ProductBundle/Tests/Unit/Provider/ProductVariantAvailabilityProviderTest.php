@@ -358,18 +358,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'size' => [
                         'type' => 'enum',
                         'values' => [
-                            's' => 'S',
-                            'm' => 'M',
-                            'l' => 'L',
-                            'xl' => 'XL',
+                            'S' => 's',
+                            'M' => 'm',
+                            'L' => 'l',
+                            'XL' => 'xl',
                         ]
                     ],
                     'slim_fit' => [
@@ -425,9 +425,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'extended_field' => [
@@ -478,6 +478,14 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($fieldName) use ($variantsData) {
                     return isset($variantsData[$fieldName]['values']) ? $variantsData[$fieldName]['values'] : [];
+                }
+            );
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
                 }
             );
 

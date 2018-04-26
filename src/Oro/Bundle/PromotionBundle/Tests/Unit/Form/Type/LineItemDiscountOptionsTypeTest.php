@@ -60,8 +60,8 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 'apply_to_choices',
                 [
-                    'each_item' => 'oro.discount_options.line_item_type.apply_to.choices.each_item',
-                    'line_items_total' => 'oro.discount_options.line_item_type.apply_to.choices.line_items_total'
+                    'oro.discount_options.line_item_type.apply_to.choices.each_item' => 'each_item',
+                    'oro.discount_options.line_item_type.apply_to.choices.line_items_total' => 'line_items_total',
                 ]
             );
         $formType = new LineItemDiscountOptionsType();
@@ -145,8 +145,8 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
-                'item' => 'oro.product_unit.item.label.full',
-                'set' => 'oro.product_unit.set.label.full',
+                'oro.product_unit.item.label.full' => 'item',
+                'oro.product_unit.set.label.full' => 'set',
             ]);
         /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)

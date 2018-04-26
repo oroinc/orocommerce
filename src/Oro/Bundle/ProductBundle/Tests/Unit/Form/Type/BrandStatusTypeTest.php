@@ -27,8 +27,8 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
         $this->brandStatusProvider
             ->method('getAvailableBrandStatuses')
             ->willReturn([
-                Brand::STATUS_DISABLED => 'Disabled',
-                Brand::STATUS_ENABLED => 'Enabled'
+                'Disabled' => Brand::STATUS_DISABLED,
+                'Enabled' => Brand::STATUS_ENABLED,
             ]);
 
         $this->brandStatusType = new BrandStatusType($this->brandStatusProvider);
@@ -59,8 +59,8 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
         $availableBrandStatuses = $this->brandStatusProvider->getAvailableBrandStatuses();
         $choices = [];
 
-        foreach ($availableBrandStatuses as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableBrandStatuses as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(
