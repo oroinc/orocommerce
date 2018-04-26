@@ -30,6 +30,8 @@ class ProductUnitsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
             'choices' => $this->productUnitsProvider->getAvailableProductUnits(),
         ));
     }

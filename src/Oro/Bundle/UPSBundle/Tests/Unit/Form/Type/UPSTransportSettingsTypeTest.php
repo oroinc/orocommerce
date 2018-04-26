@@ -151,7 +151,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 [
                     EntityType::class => $entityType,
                     UPSTransportSettingsType::class => $this->formType,
-                    EntityType::class => $entityType,
                     TranslatableEntityType::class => $translatableEntity,
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,

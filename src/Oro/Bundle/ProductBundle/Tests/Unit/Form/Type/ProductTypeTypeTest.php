@@ -46,8 +46,8 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         $availableProductTypes = $this->productTypeProvider->getAvailableProductTypes();
         $choices = [];
 
-        foreach ($availableProductTypes as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableProductTypes as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(

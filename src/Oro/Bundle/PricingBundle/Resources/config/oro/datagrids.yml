@@ -78,10 +78,12 @@ datagrids:
                     data_name: activity
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                disabled: oro.pricing.pricelist_schedule.disabled
-                                inactive: oro.pricing.pricelist_schedule.inactive
-                                active: oro.pricing.pricelist_schedule.active
+                                oro.pricing.pricelist_schedule.disabled: disabled
+                                oro.pricing.pricelist_schedule.inactive: inactive
+                                oro.pricing.pricelist_schedule.active: active
                     label: oro.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
@@ -202,7 +204,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:      string
                     data_name: parent.name
@@ -316,7 +318,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:       string
                     data_name:  parentName
@@ -484,9 +486,11 @@ datagrids:
                     label:      oro.pricing.productprice.type.label
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                generated: oro.pricing.productprice.generated.label
-                                manual: oro.pricing.productprice.manual.label
+                                oro.pricing.productprice.generated.label: generated
+                                oro.pricing.productprice.manual.label: manual
 
         properties:
             id: ~

@@ -91,7 +91,7 @@ abstract class AbstractPriceListRelationDataGridListener
                     'field_options' => [
                         'multiple' => false,
                         'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
-                        'property' => 'name'
+                        'choice_label' => 'name'
                     ]
                 ]
             ]

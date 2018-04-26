@@ -47,7 +47,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         email:
-                            form_type: oro_email_email
+                            form_type: Oro\Bundle\EmailBundle\Form\Type\EmailType
                             options:
                                 translation_domain: messages
                     form_init:
@@ -89,17 +89,17 @@ workflows:
                 form_options:
                     attribute_fields:
                         copy_notes:
-                            form_type: checkbox
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                             options:
                                 data: true
                         expire_quote:
-                            form_type: choice
+                            form_type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
                             options:
                                 required: true
                                 choices:
-                                    no: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.no.label
-                                    yes: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.yes.label
-                                    after_accept: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.after_accept.label
+                                    oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.no.label: no
+                                    oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.yes.label: yes
+                                    oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.after_accept.label: after_accept
             accept_transition:
                 step_to: closed
                 transition_definition: accept_transition_definition

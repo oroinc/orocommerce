@@ -30,10 +30,12 @@ class ProductStatusType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
             'choices' => $this->productStatusProvider->getAvailableProductStatuses(),
             'preferred_choices' => Product::STATUS_DISABLED
-        ));
+        ]);
     }
 
     /**

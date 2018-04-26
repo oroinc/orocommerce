@@ -52,8 +52,8 @@ class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         ];
 
         $expectedChoices = [
-            'merge_by_priority' => PriceListStrategySelectType::ALIAS.'merge_by_priority',
-            'test_strategy' => PriceListStrategySelectType::ALIAS.'test_strategy'
+            PriceListStrategySelectType::ALIAS.'merge_by_priority' => 'merge_by_priority',
+            PriceListStrategySelectType::ALIAS.'test_strategy' => 'test_strategy',
         ];
 
         $this->translator->expects($this->any())
@@ -72,8 +72,11 @@ class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $resolver->expects($this->once())
-            ->method('setDefault')
-            ->with('choices', $expectedChoices);
+            ->method('setDefaults')
+            ->with([
+                'choices_as_values' => true,
+                'choices' => $expectedChoices,
+            ]);
 
         $this->type->configureOptions($resolver);
     }

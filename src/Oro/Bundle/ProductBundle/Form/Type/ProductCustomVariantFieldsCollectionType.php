@@ -33,7 +33,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => ProductVariantFieldType::class,
+            'entry_type' => ProductVariantFieldType::class,
             'multiple' => true,
             'expanded' => true,
             'allow_add' => false,

@@ -94,7 +94,7 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
                                     ]
                                 ),
                             ],
-                        'result' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
+                        'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
                         'translate' => false,
                     ],
                 'some_methods_with_translation' =>
@@ -122,7 +122,7 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
                                     ]
                                 ),
                             ],
-                        'result' => ['flat_rate' => 'flat rate translated', 'ups' => 'ups translated'],
+                        'result' => ['flat rate translated' => 'flat_rate', 'ups translated' => 'ups'],
                         'translate' => true,
                     ],
                 'no_methods' =>

@@ -31,7 +31,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**

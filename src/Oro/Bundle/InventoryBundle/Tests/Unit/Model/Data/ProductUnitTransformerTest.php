@@ -19,7 +19,7 @@ class ProductUnitTransformerTest extends \PHPUnit_Framework_TestCase
         $productUnitProvider->expects($this->exactly(1))
             ->method('getAvailableProductUnits')
             ->will($this->returnValue([
-                'kg' => 'kilogram',
+                'kilogram' => 'kg',
                 'item' => 'item',
                 'set' => 'set',
                 'piece' => 'piece',
