@@ -58,7 +58,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => $entityType
                 ],
                 []
