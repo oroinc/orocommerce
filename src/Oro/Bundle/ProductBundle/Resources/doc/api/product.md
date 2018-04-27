@@ -2437,28 +2437,6 @@ Replace the variant products for a specific product.
 
 Remove the variant products of a specific product record.
 
-### images
-
-#### get_subresource
-
-Get the related productImages entity for a specific product
-
-#### get_relationship
-
-Retrieve the ID of productImages for a specific product
-
-#### add_relationship
-
-Set the productImages of a specific product record
-
-#### update_relationship
-
-Replace the productImages for a specific product
-
-#### delete_relationship
-
-Remove the productImages of a specific product record.
-
 # Extend\Entity\EV_Prod_Inventory_Status
 
 ## ACTIONS

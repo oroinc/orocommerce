@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\Options;
@@ -24,6 +25,16 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
     const REGION_WITH_COUNTRY = 'RO-MS';
 
     /**
+     * @var Country
+     */
+    private $validCountry;
+
+    /**
+     * @var Country
+     */
+    private $noRegionsCountry;
+
+    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
@@ -32,13 +43,16 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             'Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser'
         );
 
+        $countryType = new EntityType($this->getCountryChoices(), 'oro_country', ['configs' => []]);
+
+        $regionType = new EntityType($this->getRegionChoices(), 'oro_region', ['configs' => []]);
+
         return [
             new PreloadedExtension(
                 [
                     AddressType::class => new AddressType(new AddressCountryAndRegionSubscriberStub()),
-                    CountryType::class => new CountryType(),
-                    TranslatableEntityType::class => $this->getTranslatableEntity(),
-                    RegionType::class => new RegionType(),
+                    CountryType::class => $countryType,
+                    RegionType::class => $regionType
                 ],
                 [
                     FormType::class => [
@@ -48,6 +62,29 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                 ],
                 $typeGuesser
             )
+        ];
+    }
+
+    protected function getCountryChoices(): array
+    {
+        $countryAndRegion = $this->getValidCountryAndRegion();
+        $country = reset($countryAndRegion);
+
+        return [
+            'CA' => $this->getCountryWithoutRegions(),
+            self::COUNTRY_WITH_REGION => $country,
+            self::COUNTRY_WITHOUT_REGION => new Country(self::COUNTRY_WITHOUT_REGION)
+        ];
+    }
+
+    protected function getRegionChoices(): array
+    {
+        $countryAndRegion = $this->getValidCountryAndRegion();
+        $region = end($countryAndRegion);
+
+        return [
+            self::REGION_WITH_COUNTRY => $region,
+            'CA-QC' => (new Region('CA-QC'))->setCountry($this->getCountryWithoutRegions()),
         ];
     }
 
@@ -114,13 +151,27 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
     /**
      * @return array
      */
-    protected function getValidCountryAndRegion()
+    protected function getValidCountryAndRegion(): array
     {
-        $country = new Country(self::COUNTRY_WITH_REGION);
-        $region = new Region(self::REGION_WITH_COUNTRY);
-        $region->setCountry($country);
-        $country->addRegion($region);
+        if (!$this->validCountry) {
+            $this->validCountry = new Country(self::COUNTRY_WITH_REGION);
+            $region = new Region(self::REGION_WITH_COUNTRY);
+            $region->setCountry($this->validCountry);
+            $this->validCountry->addRegion($region);
+        }
 
-        return [$country, $region];
+        return [$this->validCountry, $this->validCountry->getRegions()->first()];
+    }
+
+    /**
+     * @return Country
+     */
+    private function getCountryWithoutRegions(): Country
+    {
+        if (!$this->noRegionsCountry) {
+            $this->noRegionsCountry = new Country('CA');
+        }
+
+        return $this->noRegionsCountry;
     }
 }
