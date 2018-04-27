@@ -46,6 +46,12 @@ class QuoteProductDemandType extends AbstractType
         $quoteProductDemand = $options['data'];
 
         $quoteProduct = $quoteProductDemand->getQuoteProductOffer()->getQuoteProduct();
+        $attr = [];
+
+        if (!$quoteProduct->hasIncrementalOffers()) {
+            $attr['readonly'] = true;
+        }
+
         $builder
             ->add(
                 self::FIELD_QUANTITY,
@@ -53,9 +59,7 @@ class QuoteProductDemandType extends AbstractType
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
                     'required' => true,
-                    'attr' => [
-                        'readonly' => !$quoteProduct->hasIncrementalOffers(),
-                    ]
+                    'attr' => $attr
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,
