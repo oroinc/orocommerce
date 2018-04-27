@@ -539,9 +539,9 @@ workflows:
                     - '@assign_value': [$.result.doShowConfirmation, false]
                     - '@assign_value':
                         conditions:
-                          @and:
-                            - @equal: [$.result.isReachedLimit, true]
-                            - @equal: [$.result.isCurrentShoppingListEmpty, false]
+                          '@and':
+                            - '@equal': [$.result.isReachedLimit, true]
+                            - '@equal': [$.result.isCurrentShoppingListEmpty, false]
                         parameters: [$.result.doShowConfirmation, true]
                 preconditions:
                     '@and':
