@@ -157,7 +157,7 @@ class OrderShippingTrackingType extends AbstractType
 
         if ($this->getTrackingMethodsChoices()) {
             if (null === $options['choices'] || !in_array($data['method'], $options['choices'], true)) {
-                unset($options['choices'], $options['choice_list']);
+                unset($options['choices']);
                 $newChoices = $this->getTrackingMethodsChoices();
                 $newChoices[$data['method']] = $data['method'];
                 $form->add(
