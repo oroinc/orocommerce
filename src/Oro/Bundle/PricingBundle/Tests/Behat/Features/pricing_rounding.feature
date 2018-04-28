@@ -101,6 +101,17 @@ Feature: Pricing rounding
       |Pricing Precision System|false|
       |Pricing Precision       |0    |
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
+    When click "Edit"
+    And click "Product Prices"
+    Then Value field should has 7.4500 value
+    And click "Cancel"
     And I proceed as the customer
     When I hover on "Shopping Cart"
     And click "Shopping List"
@@ -191,6 +202,17 @@ Feature: Pricing rounding
       |Pricing Precision System|false|
       |Pricing Precision       |1    |
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
+    When click "Edit"
+    And click "Product Prices"
+    Then Value field should has 7.4500 value
+    And click "Cancel"
     When go to Sales/ Orders
     Then should see following grid:
       |Order Number|Total |
@@ -314,6 +336,13 @@ Feature: Pricing rounding
       |Pricing Rounding Type System |false    |
       |Pricing Rounding Type        |Half Down|
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -351,6 +380,13 @@ Feature: Pricing rounding
       |Pricing Rounding Type System |false |
       |Pricing Rounding Type        |Ceil  |
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -381,6 +417,13 @@ Feature: Pricing rounding
       |Pricing Rounding Type System |false |
       |Pricing Rounding Type        |Floor |
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
@@ -411,6 +454,13 @@ Feature: Pricing rounding
       |Pricing Rounding Type System |false    |
       |Pricing Rounding Type        |Half Even|
     And click "Save settings"
+    And should see "Configuration saved" flash message
+    When go to Products/ Products
+    And click view "SKU123" in grid
+    And click "Product Prices"
+    Then should see following grid:
+      |Price List         |Quantity|Unit|Value |
+      |Default Price List |1       |item|7.4500|
     And I proceed as the customer
     And click "Account"
     And click "Quotes"
