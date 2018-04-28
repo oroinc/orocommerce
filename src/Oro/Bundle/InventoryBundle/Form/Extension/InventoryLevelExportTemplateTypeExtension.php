@@ -47,8 +47,6 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
             ChoiceType::class,
             [
                 'label' => 'oro.inventory.export.popup.options.label',
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => array_flip($processorAliases),
                 'required' => true,
                 'placeholder' => false,

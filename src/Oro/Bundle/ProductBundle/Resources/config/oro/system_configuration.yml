@@ -215,8 +215,6 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.rounding.type.ceil.label: 0
                     oro.product.rounding.type.floor.label: 1
@@ -295,8 +293,6 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.product_image_watermark_position.topleft.label: topleft
                     oro.product.system_configuration.fields.product_image_watermark_position.top.label: top
@@ -313,7 +309,6 @@ system_configuration:
             type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
             priority: 10
             options:
-                choices_as_values: true
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
@@ -360,8 +355,6 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.label
                 tooltip: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.tooltip
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_hour.label: '0 * * * *'
                     oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_two_hours.label: '0 */2 * * *'
@@ -394,8 +387,6 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.show_on_product_view.type.no.label: 0
                     oro.product.system_configuration.fields.show_on_product_view.type.yes.label: 1
@@ -467,8 +458,6 @@ system_configuration:
             options:
                 tooltip: oro.product.system_configuration.fields.matrix_form_on_product_view.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_product_view.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.matrix_form_on_product_view.none.label: none
                     oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label: inline
@@ -481,8 +470,6 @@ system_configuration:
             options:
                 tooltip: oro.product.system_configuration.fields.matrix_form_on_product_listing.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_product_listing.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.none.label: none
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label: inline
@@ -495,8 +482,6 @@ system_configuration:
             options:
                 tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.matrix_form_on_shopping_list.none.label: none
                     oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label: inline
@@ -517,8 +502,6 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.display_simple_variations.label
                 tooltip: oro.product.system_configuration.fields.display_simple_variations.tooltip
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.product.system_configuration.fields.display_simple_variations.everywhere.label: everywhere
                     oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely

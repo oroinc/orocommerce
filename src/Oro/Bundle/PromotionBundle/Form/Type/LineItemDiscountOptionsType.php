@@ -47,8 +47,6 @@ class LineItemDiscountOptionsType extends AbstractType
             LineItemsDiscount::APPLY_TO,
             ChoiceType::class,
             [
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => $options['apply_to_choices'],
                 'label' => 'oro.discount_options.line_item_type.apply_to.label',
                 'placeholder' => false,

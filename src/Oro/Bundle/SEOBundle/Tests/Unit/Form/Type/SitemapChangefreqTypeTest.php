@@ -43,7 +43,6 @@ class SitemapChangefreqTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'choices_as_values' => true,
                     'choices' => [
                         'oro.seo.system_configuration.fields.changefreq.choice.always.label'
                             => Configuration::CHANGEFREQ_ALWAYS,

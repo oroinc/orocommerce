@@ -31,8 +31,6 @@ class ContactInfoSourceOptionsType extends AbstractType
     {
         $options = $this->optionsProvider->getOptions();
         $resolver->setDefaults([
-            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-            'choices_as_values' => true,
             'choices' => array_combine($options, $options),
         ]);
 

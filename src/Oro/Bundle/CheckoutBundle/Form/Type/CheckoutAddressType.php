@@ -81,8 +81,6 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 'label' => sprintf('oro.checkout.form.address.%s.%s.label', $action, $type),
                 'required' => true,
                 'mapped' => false,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),

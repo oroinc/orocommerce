@@ -27,8 +27,6 @@ system_configuration:
             priority: 10
             options:
                 label: oro.checkout.system_configuration.fields.frontend_open_orders_separate_page.title
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                      No: 0
                      Yes: 1

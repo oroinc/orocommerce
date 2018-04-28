@@ -82,8 +82,6 @@ class CouponGenerationType extends AbstractType
                 ChoiceType::class,
                 [
                     'label' => 'oro.promotion.coupon.generation.codeType.label',
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => $this->getCodeTypes(),
                     'attr' => ['class' => 'promotion-coupon-generation-preview'],
                 ]
