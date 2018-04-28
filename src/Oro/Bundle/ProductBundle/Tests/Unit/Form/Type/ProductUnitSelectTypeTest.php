@@ -58,18 +58,12 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => $entityType
                 ],
                 []
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitSelectType::NAME, $this->formType->getName());
     }
 
     /**

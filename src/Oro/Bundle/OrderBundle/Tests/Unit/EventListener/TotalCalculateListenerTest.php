@@ -8,10 +8,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
@@ -119,7 +119,8 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function configureFormRegistry($className, $formName)
     {
-        $formType = $this->createMock(FormTypeInterface::class);
+        //@TODO revert to FormTypeInterface in scope BAP-15236
+        $formType = $this->createMock(AbstractType::class);
         $formType
             ->expects($this->any())
             ->method('getBlockPrefix')

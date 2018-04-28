@@ -11,6 +11,7 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -97,11 +98,13 @@ class EntityVisibilityType extends AbstractType
         $builder
             ->add(
                 self::ALL_FIELD,
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => true,
                     'mapped' => false,
                     'label' => 'oro.visibility.to_all.label',
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $choices,
                 ]
             )

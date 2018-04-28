@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\FormTypeInterface;
 
 class SectionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +35,8 @@ class SectionProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function configureFormRegistry($formClass, $formName)
     {
-        $formType = $this->createMock(FormTypeInterface::class);
+        //@TODO revert to FormTypeInterface in scope BAP-15236
+        $formType = $this->createMock(AbstractType::class);
 
         $formType
             ->expects($this->any())

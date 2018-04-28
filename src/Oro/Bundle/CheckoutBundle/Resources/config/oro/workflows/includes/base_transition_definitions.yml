@@ -31,8 +31,19 @@ workflows:
                        method: getShoppingListLimitForUser
                     - '@call_service_method':
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowed
+                        method: isAllowedForAny
                         attribute: $.result.isCheckoutAllowed
+                    - '@call_service_method':
+                        service: oro_shopping_list.shopping_list.manager
+                        method: isCurrentShoppingListEmpty
+                        attribute: $.result.isCurrentShoppingListEmpty
+                    - '@assign_value': [$.result.doShowConfirmation, false]
+                    - '@assign_value':
+                        conditions:
+                          '@and':
+                            - '@equal': [$.result.isReachedLimit, true]
+                            - '@equal': [$.result.isCurrentShoppingListEmpty, false]
+                        parameters: [$.result.doShowConfirmation, true]
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
@@ -50,7 +61,7 @@ workflows:
                             attribute: $.result.shoppingList
                     - '@call_service_method':
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowed
+                        method: isAllowedForAny
                         attribute: $isAllowed
                     - '@call_service_method':
                         service: oro_shopping_list.manager.empty_matrix_grid

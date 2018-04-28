@@ -34,11 +34,6 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('cms_page', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.cms.page.entity_label', $this->type->getTitle());

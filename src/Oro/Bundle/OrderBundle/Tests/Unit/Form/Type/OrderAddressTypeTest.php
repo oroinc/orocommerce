@@ -20,11 +20,6 @@ class OrderAddressTypeTest extends AbstractOrderAddressTypeTest
         $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(OrderAddressType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(AddressType::class, $this->formType->getParent());

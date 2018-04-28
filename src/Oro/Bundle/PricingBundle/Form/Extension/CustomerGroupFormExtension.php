@@ -77,10 +77,10 @@ class CustomerGroupFormExtension extends AbstractTypeExtension
     protected function getFallbackChoices()
     {
         return [
-            PriceListCustomerGroupFallback::WEBSITE =>
-                'oro.pricing.fallback.website.label',
-            PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
-                'oro.pricing.fallback.current_customer_group_only.label',
+            'oro.pricing.fallback.website.label' =>
+                PriceListCustomerGroupFallback::WEBSITE,
+            'oro.pricing.fallback.current_customer_group_only.label' =>
+                PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
         ];
     }
 }

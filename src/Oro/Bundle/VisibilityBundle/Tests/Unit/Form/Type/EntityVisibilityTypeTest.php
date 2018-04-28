@@ -81,18 +81,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(EntityVisibilityType::NAME, $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $this->visibilityChoicesProvider->expects($this->once())
             ->method('getFormattedChoices')
             ->willReturn([
-                'visible' => 'Visible',
-                'hidden' => 'Hidden'
+                'Visible' => 'visible',
+                'Hidden' => 'hidden',
             ]);
 
         $options = [

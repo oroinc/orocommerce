@@ -96,7 +96,7 @@ services:
             - '%oro_product.entity.product.class%'
             - ["sku", "defaultName.string"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_product, acl_resource: oro_product_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\ProductType, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
 
     oro_product.form.autocomplete.brand.search_handler:
@@ -106,7 +106,7 @@ services:
             - '%oro_product.entity.brand.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_product_brand }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'

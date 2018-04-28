@@ -140,8 +140,8 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 'apply_to_choices',
                 [
-                    'apply_to_each_y' => 'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_each_y',
-                    'apply_to_xy_total' => 'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_xy_total'
+                    'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_each_y' => 'apply_to_each_y',
+                    'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_xy_total' => 'apply_to_xy_total',
                 ]
             );
         $this->formType->configureOptions($resolver);
@@ -157,8 +157,8 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
-                'item' => 'oro.product_unit.item.label.full',
-                'set' => 'oro.product_unit.set.label.full',
+                'oro.product_unit.item.label.full' => 'item',
+                'oro.product_unit.set.label.full' => 'set',
             ]);
 
         /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */

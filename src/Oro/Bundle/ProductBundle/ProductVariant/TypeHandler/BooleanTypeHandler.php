@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ProductVariant\TypeHandler;
 
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormFactory;
 
 class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
@@ -30,7 +31,7 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
             $options
         );
 
-        return $this->formFactory->createNamed($fieldName, 'choice', null, $options);
+        return $this->formFactory->createNamed($fieldName, ChoiceType::class, null, $options);
     }
 
     /**

@@ -149,11 +149,6 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCollectionSegmentType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(ProductCollectionSegmentType::NAME, $this->type->getBlockPrefix());

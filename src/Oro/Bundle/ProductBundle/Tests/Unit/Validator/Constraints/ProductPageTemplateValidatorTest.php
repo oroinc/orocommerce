@@ -49,7 +49,7 @@ class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
         $this->pageTemplatesManager->expects($this->any())
             ->method('getRoutePageTemplates')
             ->willReturn([
-                ProductType::PAGE_TEMPLATE_ROUTE_NAME => ["choices" => array_flip($this->validChoices)]
+                ProductType::PAGE_TEMPLATE_ROUTE_NAME => ["choices" => $this->validChoices]
             ]);
 
         $this->constraint = new ProductPageTemplate(['route' => ProductType::PAGE_TEMPLATE_ROUTE_NAME]);

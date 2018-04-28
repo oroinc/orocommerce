@@ -238,7 +238,7 @@ class Order extends ExtendOrder implements
      * @ConfigField(
      *  defaultValues={
      *      "form"={
-     *          "form_type"="oro_money",
+     *          "form_type"="Oro\Bundle\FormBundle\Form\Type\OroMoneyType",
      *          "form_options"={
      *              "constraints"={{"Range":{"min":0}}},
      *          }
@@ -305,7 +305,7 @@ class Order extends ExtendOrder implements
      * @ConfigField(
      *  defaultValues={
      *      "form"={
-     *          "form_type"="oro_money",
+     *          "form_type"="Oro\Bundle\FormBundle\Form\Type\OroMoneyType",
      *          "form_options"={
      *              "constraints"={{"Range":{"min":0}}},
      *          }

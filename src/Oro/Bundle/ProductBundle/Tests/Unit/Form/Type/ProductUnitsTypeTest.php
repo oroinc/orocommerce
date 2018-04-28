@@ -46,11 +46,6 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitsType::NAME, $this->productUnitsType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productUnitsType->getParent());
@@ -62,8 +57,8 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         $availableUnits = $this->productUnitsProvider->getAvailableProductUnits();
         $choices = [];
 
-        foreach ($availableUnits as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableUnits as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(

@@ -62,6 +62,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
                 ['name' => 'shippingAddress'],
                 ['name' => 'billingAddress'],
                 ['name' => 'currency'],
+                ['name' => 'someRelationEntity:someRelationField'],
             ]
         );
 

@@ -130,7 +130,8 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, $priceListId);
-        $priceList->setName('price_list_' . $priceListId);
+        // Name is not unique for Price List, so it is set same for all price lists in test
+        $priceList->setName('price_list');
 
         $productPrice = new ProductPrice();
         $productPrice

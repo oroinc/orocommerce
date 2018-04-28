@@ -28,7 +28,7 @@ operations:
         form_options:
             attribute_fields:
                 price:
-                    form_type: oro_pricing_price_list_product_price
+                    form_type: Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
                     options:
                         required: true
             attribute_default_values:

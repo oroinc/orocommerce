@@ -49,7 +49,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
 
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
@@ -83,7 +83,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
 
         $this->form->expects($this->once())

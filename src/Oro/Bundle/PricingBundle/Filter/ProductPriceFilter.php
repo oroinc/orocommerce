@@ -62,7 +62,7 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     protected function getFormType()
     {
-        return ProductPriceFilterType::NAME;
+        return ProductPriceFilterType::class;
     }
 
     /**

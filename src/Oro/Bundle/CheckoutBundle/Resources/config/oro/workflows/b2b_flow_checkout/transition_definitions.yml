@@ -1,6 +1,72 @@
 workflows:
     b2b_flow_checkout:
         transition_definitions:
+            start_from_shoppinglist_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowedForLogged
+                        attribute: $isAllowed
+                preconditions:
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                            showErrors: true
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+
+            start_from_shoppinglist_as_guest_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowedForGuest
+                        attribute: $isAllowed
+                preconditions:
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
+                actions:
+                    - '@assign_value': [$is_guest_checkout, true]
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                            showErrors: true
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+                    - '@transit_workflow':
+                       [$checkout, 'start_checkout_as_guest_system', 'b2b_flow_checkout']
+
+            start_checkout_as_guest_system_definition:
+                actions:
+                    - '@redirect':
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+
+            continue_checkout_as_guest_definition: ~
+
             back_to_billing_address_definition:
                 preconditions:
                     '@equal': [$checkout.completed, false]
@@ -75,7 +141,7 @@ workflows:
                         action_group: b2b_flow_checkout_create_guest_customer_user
                         parameters_mapping:
                             checkout: $checkout
-                            visitor_email: $visitor_email
+                            email: $email
                             billing_address: $billing_address
 
                     - '@generate_checkout_state_snapshot':
@@ -553,7 +619,15 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
+
                 actions:
+                    - '@run_action_group':
+                        action_group: handle_late_registration
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            late_registration_data: $late_registration
+
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_finish_checkout
                         parameters_mapping:
@@ -562,3 +636,4 @@ workflows:
                             auto_remove_source: $auto_remove_source
                             allow_manual_source_remove: $allow_manual_source_remove
                             remove_source: $remove_source
+                            email: $email

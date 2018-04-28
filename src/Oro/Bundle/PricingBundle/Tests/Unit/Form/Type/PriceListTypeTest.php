@@ -76,8 +76,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                             $localeSettings,
                             $currencyNameHelper
                         ),
-                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')]),
-                        PriceRuleType::class => new PriceRuleType(),
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),
@@ -226,12 +225,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ]
             ]
         ];
-    }
-
-    public function testGetName()
-    {
-        $type = new PriceListType();
-        $this->assertEquals(PriceListType::NAME, $type->getName());
     }
 
     /**

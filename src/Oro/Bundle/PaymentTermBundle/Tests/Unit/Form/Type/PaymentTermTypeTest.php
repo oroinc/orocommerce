@@ -70,11 +70,6 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData['label'], $result->getLabel());
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PaymentTermType::NAME, $this->formType->getName());
-    }
-
     /**
      * @return array
      */

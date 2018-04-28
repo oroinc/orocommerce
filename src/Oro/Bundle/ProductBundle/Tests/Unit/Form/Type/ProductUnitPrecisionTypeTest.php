@@ -168,12 +168,4 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
             ]
         ];
     }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitPrecisionType::NAME, $this->formType->getName());
-    }
 }

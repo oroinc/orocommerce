@@ -34,11 +34,6 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('category_page', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.catalog.category.entity_label', $this->type->getTitle());

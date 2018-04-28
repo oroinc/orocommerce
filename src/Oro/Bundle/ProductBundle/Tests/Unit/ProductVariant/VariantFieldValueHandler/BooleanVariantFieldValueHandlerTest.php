@@ -44,7 +44,7 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetValues()
     {
-        $this->assertEquals([0 => 'No', 1 => 'Yes'], $this->handler->getPossibleValues('testField'));
+        $this->assertEquals(['No' => 0, 'Yes' => 1], $this->handler->getPossibleValues('testField'));
     }
 
     /**

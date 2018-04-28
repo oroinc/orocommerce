@@ -28,8 +28,8 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
         $this->productStatusProvider
             ->method('getAvailableProductStatuses')
             ->willReturn([
-                Product::STATUS_DISABLED => 'Disabled',
-                Product::STATUS_ENABLED => 'Enabled'
+                'Disabled' => Product::STATUS_DISABLED,
+                'Enabled' => Product::STATUS_ENABLED,
             ]);
 
         $this->productStatusType = new ProductStatusType($this->productStatusProvider);
@@ -46,11 +46,6 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductStatusType::NAME, $this->productStatusType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productStatusType->getParent());
@@ -62,8 +57,8 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
         $availableProductStatuses = $this->productStatusProvider->getAvailableProductStatuses();
         $choices = [];
 
-        foreach ($availableProductStatuses as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableProductStatuses as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(

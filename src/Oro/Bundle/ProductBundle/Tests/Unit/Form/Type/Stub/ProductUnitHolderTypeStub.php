@@ -17,7 +17,7 @@ class ProductUnitHolderTypeStub extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('productUnit', ProductUnitSelectionType::NAME, [
+            ->add('productUnit', ProductUnitSelectionType::class, [
                 'label' =>  'oro.productunit.entity_label',
             ])
         ;
@@ -26,7 +26,7 @@ class ProductUnitHolderTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

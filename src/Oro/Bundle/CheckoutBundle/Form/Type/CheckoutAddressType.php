@@ -10,6 +10,7 @@ use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -80,6 +81,8 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 'label' => sprintf('oro.checkout.form.address.%s.%s.label', $action, $type),
                 'required' => true,
                 'mapped' => false,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
@@ -94,11 +97,11 @@ class CheckoutAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $customerAddressOptions['choices'] = array_merge(
                     $customerAddressOptions['choices'],
-                    [self::ENTER_MANUALLY => 'oro.checkout.form.address.manual']
+                    ['oro.checkout.form.address.manual' => self::ENTER_MANUALLY]
                 );
             }
             $builder
-                ->add('customerAddress', 'choice', $customerAddressOptions)
+                ->add('customerAddress', ChoiceType::class, $customerAddressOptions)
                 ->add('country', CountryType::class, ['required' => true, 'label' => 'oro.address.country.label'])
                 ->add('region', RegionType::class, ['required' => true, 'label' => 'oro.address.region.label']);
 

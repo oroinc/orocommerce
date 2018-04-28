@@ -35,11 +35,11 @@ class PaymentStatusLabelFormatter
     public function getAvailableStatuses()
     {
         return [
-            PaymentStatusProvider::FULL => $this->formatPaymentStatusLabel(PaymentStatusProvider::FULL),
-            PaymentStatusProvider::AUTHORIZED => $this->formatPaymentStatusLabel(PaymentStatusProvider::AUTHORIZED),
-            PaymentStatusProvider::PENDING => $this->formatPaymentStatusLabel(PaymentStatusProvider::PENDING),
-            PaymentStatusProvider::DECLINED => $this->formatPaymentStatusLabel(PaymentStatusProvider::DECLINED),
-            PaymentStatusProvider::PARTIALLY => $this->formatPaymentStatusLabel(PaymentStatusProvider::PARTIALLY),
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::FULL) => PaymentStatusProvider::FULL,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::AUTHORIZED) => PaymentStatusProvider::AUTHORIZED,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::PENDING) => PaymentStatusProvider::PENDING,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::DECLINED) => PaymentStatusProvider::DECLINED,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::PARTIALLY) => PaymentStatusProvider::PARTIALLY,
         ];
     }
 }

@@ -25,12 +25,6 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $formType = new LoginPageType();
-        $this->assertEquals(LoginPageType::NAME, $formType->getName());
-    }
-
     public function testBuildForm()
     {
         $form = $this->factory->create(LoginPageType::class);

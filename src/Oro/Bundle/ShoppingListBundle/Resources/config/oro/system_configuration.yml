@@ -19,18 +19,18 @@ system_configuration:
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
-            type: oro_product_inventory_status_select
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.shoppinglist.system_configuration.fields.backend_product_visibility.title
         oro_shopping_list.availability_for_guests:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
                 tooltip: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
         oro_shopping_list.shopping_list_limit:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
             search_type: text
             options:
                 label: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
@@ -39,7 +39,7 @@ system_configuration:
         oro_shopping_list.default_guest_shopping_list_owner:
             ui_only: true
             data_type: string
-            type: oro_user_select
+            type: Oro\Bundle\UserBundle\Form\Type\UserSelectType
             priority: 110
             options:
                 label: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.title
@@ -55,7 +55,7 @@ system_configuration:
 
         oro_shopping_list.mass_adding_on_product_listing_enabled:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.shoppinglist.system_configuration.fields.mass_adding_on_product_listing_enabled.label
                 tooltip: oro.shoppinglist.system_configuration.fields.mass_adding_on_product_listing_enabled.tooltip
