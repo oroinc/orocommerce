@@ -9,8 +9,6 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
@@ -61,11 +59,6 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'oro_select2_choice' => new Select2Type(
-                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
-                        'oro_select2_choice'
-                    ),
-                    OroChoiceType::class => new OroChoiceType(),
                     CategoryTreeType::class => new CategoryTreeType($treeHandler),
                     EntityIdentifierType::class => new EntityIdentifierTypeStub(
                         [

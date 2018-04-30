@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\LocaleSettings;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
@@ -28,7 +26,6 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -131,8 +128,6 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function getExtensions()
     {
-        $translatableEntity = $this->getTranslatableEntity();
-
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->expects($this->any())
@@ -143,7 +138,9 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 
         $subscriber = new RuleMethodConfigCollectionSubscriber($this->paymentMethodProvider);
 
-        return [
+        return array_merge(
+            parent::getExtensions(),
+            [
             new PreloadedExtension(
                 [
                     PaymentMethodsConfigsRuleType::class => $this->formType,
@@ -162,9 +159,6 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
                         $this->createMock(LocaleSettings::class),
                         $this->createMock(CurrencyNameHelper::class)
                     ),
-                    CountryType::class => new CountryType(),
-                    TranslatableEntityType::class => $translatableEntity,
-                    RegionType::class => new RegionType(),
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
@@ -172,7 +166,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
                 ]]
             ),
             $this->getValidatorExtension(true)
-        ];
+        ]);
     }
 
     /**
