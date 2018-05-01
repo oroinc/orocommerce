@@ -141,32 +141,33 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         return array_merge(
             parent::getExtensions(),
             [
-            new PreloadedExtension(
-                [
-                    PaymentMethodsConfigsRuleType::class => $this->formType,
-                    CollectionType::class => new CollectionType(),
-                    RuleType::BLOCK_PREFIX => new RuleType(),
-                    PaymentMethodConfigType::class => new PaymentMethodConfigType(
-                        $this->paymentMethodProvider,
-                        $this->compositePaymentMethodViewProvider
-                    ),
-                    PaymentMethodsConfigsRuleDestinationType::class =>
-                        new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
-                    PaymentMethodConfigCollectionType::class =>
-                        new PaymentMethodConfigCollectionType($subscriber),
-                    CurrencySelectionType::class => new CurrencySelectionType(
-                        $currencyProvider,
-                        $this->createMock(LocaleSettings::class),
-                        $this->createMock(CurrencyNameHelper::class)
-                    ),
-                ],
-                [FormType::class => [
-                    new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
-                ]]
-            ),
-            $this->getValidatorExtension(true)
-        ]);
+                new PreloadedExtension(
+                    [
+                        PaymentMethodsConfigsRuleType::class => $this->formType,
+                        CollectionType::class => new CollectionType(),
+                        RuleType::BLOCK_PREFIX => new RuleType(),
+                        PaymentMethodConfigType::class => new PaymentMethodConfigType(
+                            $this->paymentMethodProvider,
+                            $this->compositePaymentMethodViewProvider
+                        ),
+                        PaymentMethodsConfigsRuleDestinationType::class =>
+                            new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
+                        PaymentMethodConfigCollectionType::class =>
+                            new PaymentMethodConfigCollectionType($subscriber),
+                        CurrencySelectionType::class => new CurrencySelectionType(
+                            $currencyProvider,
+                            $this->createMock(LocaleSettings::class),
+                            $this->createMock(CurrencyNameHelper::class)
+                        ),
+                    ],
+                    [FormType::class => [
+                        new AdditionalAttrExtension(),
+                        new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    ]]
+                ),
+                $this->getValidatorExtension(true)
+            ]
+        );
     }
 
     /**
