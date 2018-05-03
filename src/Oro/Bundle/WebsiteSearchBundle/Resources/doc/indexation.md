@@ -52,7 +52,7 @@ optional parameters:
 Below is an example of the reindex triggered via CLI:
 
 ```
-> php app/console oro:website-search:reindex --website-id=2
+> php bin/console oro:website-search:reindex --website-id=2
 Starting reindex task for all mapped entities and website ID 2...
 Reindex finished successfully.
 ```

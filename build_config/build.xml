@@ -290,7 +290,7 @@
         <for list="${run.env}" param="iterate">
             <sequential>
                 <exec dir="${basedir}" executable="php" failonerror="true">
-                    <arg line="app/console"/>
+                    <arg line="bin/console"/>
                     <arg line="doctrine:fixture:load"/>
                     <arg line="--no-debug"/>
                     <arg line="--append"/>
@@ -306,7 +306,7 @@
         <for list="${run.env}" param="iterate">
             <sequential>
                 <exec dir="${basedir}" executable="php" failonerror="true">
-                    <arg line="app/console"/>
+                    <arg line="bin/console"/>
                     <arg line="oro:migration:data:load"/>
                     <arg line="--fixtures-type=demo"/>
                     <arg line="--bundles=AcmeDemoGridBundle"/>
@@ -407,7 +407,7 @@
                 </else>
             </if>
             <exec dir="${basedir}" executable="php" failonerror="true">
-                <arg line="app/console oro:install"/>
+                <arg line="bin/console oro:install"/>
                 <arg line="--env=@{env}"/>
                 <arg line="--user-name=@{user-name}"/>
                 <arg line="--user-email=&quot;@{user-email}&quot;"/>
