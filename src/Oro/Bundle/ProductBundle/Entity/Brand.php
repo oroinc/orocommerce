@@ -73,7 +73,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="oro_product_brand_select",
+ *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\BrandSelectType",
  *              "grid_name"="brand-select-grid",
  *          },
  *          "dataaudit"={

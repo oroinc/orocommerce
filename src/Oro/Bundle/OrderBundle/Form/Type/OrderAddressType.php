@@ -29,6 +29,8 @@ class OrderAddressType extends AbstractOrderAddressType
                 'label' => false,
                 'required' => false,
                 'mapped' => false,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => $this->getChoices($addresses),
                 'configs' => ['placeholder' => 'oro.order.form.address.choose'],
                 'attr' => [
@@ -40,7 +42,7 @@ class OrderAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $customerAddressOptions['choices'] = array_merge(
                     $customerAddressOptions['choices'],
-                    ['oro.order.form.address.manual']
+                    ['oro.order.form.address.manual' => 0]
                 );
                 $customerAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }

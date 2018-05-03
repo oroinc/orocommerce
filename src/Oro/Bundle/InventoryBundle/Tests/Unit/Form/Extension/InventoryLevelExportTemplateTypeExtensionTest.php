@@ -46,11 +46,11 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
             ->method('add')
             ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
                 $choices = $options['choices'];
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[0],
                     $choices
                 );
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[1],
                     $choices
                 );

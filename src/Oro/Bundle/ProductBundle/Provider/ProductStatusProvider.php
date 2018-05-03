@@ -12,8 +12,8 @@ class ProductStatusProvider
     public function getAvailableProductStatuses()
     {
         return [
-            Product::STATUS_DISABLED => 'oro.product.status.disabled',
-            Product::STATUS_ENABLED => 'oro.product.status.enabled'
+            'oro.product.status.disabled' => Product::STATUS_DISABLED,
+            'oro.product.status.enabled' => Product::STATUS_ENABLED,
         ];
     }
 }

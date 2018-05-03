@@ -130,8 +130,8 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'placeholder' => false,
                     'choices' => [
-                        '{"shipping_method":"ups_4","shipping_method_type":"02"}' => 0,
-                        '{"shipping_method":"ups_4","shipping_method_type":"12"}' => 1
+                        'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
+                        'UPS 3 Day Select' => '{"shipping_method":"ups_4","shipping_method_type":"12"}',
                     ],
                     'configs' => [
                         'showIcon' => true,

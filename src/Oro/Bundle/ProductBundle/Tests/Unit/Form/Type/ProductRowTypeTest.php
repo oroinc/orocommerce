@@ -78,9 +78,10 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(

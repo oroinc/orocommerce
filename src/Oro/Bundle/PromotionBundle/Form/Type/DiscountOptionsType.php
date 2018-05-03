@@ -37,6 +37,8 @@ class DiscountOptionsType extends AbstractType
                 AbstractDiscount::DISCOUNT_TYPE,
                 ChoiceType::class,
                 [
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $options['type_choices'],
                     'mapped' => false,
                     'label' => 'oro.discount_options.general.type.label',
@@ -165,7 +167,7 @@ class DiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::TYPE_FIELD_CHOICES as $type) {
-            $choices[$type] = 'oro.discount_options.general.type.choices.' . $type;
+            $choices['oro.discount_options.general.type.choices.' . $type] = $type;
         }
 
         return $choices;

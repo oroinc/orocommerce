@@ -25,21 +25,23 @@ class SitemapChangefreqType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
             'choices' => [
-                Configuration::CHANGEFREQ_ALWAYS
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.always.label',
-                Configuration::CHANGEFREQ_HOURLY
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.hourly.label',
-                Configuration::CHANGEFREQ_DAILY
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.daily.label',
-                Configuration::CHANGEFREQ_WEEKLY
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.weekly.label',
-                Configuration::CHANGEFREQ_MONTHLY
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.monthly.label',
-                Configuration::CHANGEFREQ_YEARLY
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.yearly.label',
-                Configuration::CHANGEFREQ_NEVER
-                    => 'oro.seo.system_configuration.fields.changefreq.choice.never.label',
+                'oro.seo.system_configuration.fields.changefreq.choice.always.label'
+                    => Configuration::CHANGEFREQ_ALWAYS,
+                'oro.seo.system_configuration.fields.changefreq.choice.hourly.label'
+                    => Configuration::CHANGEFREQ_HOURLY,
+                'oro.seo.system_configuration.fields.changefreq.choice.daily.label'
+                    => Configuration::CHANGEFREQ_DAILY,
+                'oro.seo.system_configuration.fields.changefreq.choice.weekly.label'
+                    => Configuration::CHANGEFREQ_WEEKLY,
+                'oro.seo.system_configuration.fields.changefreq.choice.monthly.label'
+                    => Configuration::CHANGEFREQ_MONTHLY,
+                'oro.seo.system_configuration.fields.changefreq.choice.yearly.label'
+                    => Configuration::CHANGEFREQ_YEARLY,
+                'oro.seo.system_configuration.fields.changefreq.choice.never.label'
+                    => Configuration::CHANGEFREQ_NEVER,
             ],
         ]);
     }

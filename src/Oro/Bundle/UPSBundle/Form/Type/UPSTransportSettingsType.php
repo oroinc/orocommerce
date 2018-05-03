@@ -127,13 +127,15 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.pickup_type.label',
                 'required' => true,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => [
-                    UPSTransport::PICKUP_TYPE_REGULAR_DAILY => 'oro.ups.transport.pickup_type.regular_daily.label',
-                    UPSTransport::PICKUP_TYPE_CUSTOMER_COUNTER =>
-                        'oro.ups.transport.pickup_type.customer_counter.label',
-                    UPSTransport::PICKUP_TYPE_ONE_TIME => 'oro.ups.transport.pickup_type.one_time.label',
-                    UPSTransport::PICKUP_TYPE_ON_CALL_AIR => 'oro.ups.transport.pickup_type.on_call_air.label',
-                    UPSTransport::PICKUP_TYPE_LETTER_CENTER => 'oro.ups.transport.pickup_type.letter_center.label',
+                    'oro.ups.transport.pickup_type.regular_daily.label' => UPSTransport::PICKUP_TYPE_REGULAR_DAILY,
+                    'oro.ups.transport.pickup_type.customer_counter.label' =>
+                        UPSTransport::PICKUP_TYPE_CUSTOMER_COUNTER,
+                    'oro.ups.transport.pickup_type.one_time.label' => UPSTransport::PICKUP_TYPE_ONE_TIME,
+                    'oro.ups.transport.pickup_type.on_call_air.label' => UPSTransport::PICKUP_TYPE_ON_CALL_AIR,
+                    'oro.ups.transport.pickup_type.letter_center.label' => UPSTransport::PICKUP_TYPE_LETTER_CENTER,
                 ]
             ]
         );
@@ -143,9 +145,11 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.unit_of_weight.label',
                 'required' => true,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => [
-                    UPSTransport::UNIT_OF_WEIGHT_LBS => 'oro.ups.transport.unit_of_weight.lbs.label',
-                    UPSTransport::UNIT_OF_WEIGHT_KGS => 'oro.ups.transport.unit_of_weight.kgs.label'
+                    'oro.ups.transport.unit_of_weight.lbs.label' => UPSTransport::UNIT_OF_WEIGHT_LBS,
+                    'oro.ups.transport.unit_of_weight.kgs.label' => UPSTransport::UNIT_OF_WEIGHT_KGS,
                 ]
             ]
         );
