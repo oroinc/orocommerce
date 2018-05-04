@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Extension\DateTimeExtension;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\DateTimeExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
