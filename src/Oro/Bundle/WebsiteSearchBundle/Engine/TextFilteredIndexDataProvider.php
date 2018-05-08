@@ -21,6 +21,7 @@ class TextFilteredIndexDataProvider extends IndexDataProvider
     {
         if ($type === Query::TYPE_TEXT) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
+            $value = $this->htmlTagHelper->stripLongWords($value);
         }
 
         return $value;

@@ -21,6 +21,8 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
     }
 
     /**
+     * @todo Overwritten due to ORM limitations, resolved here: https://magecore.atlassian.net/browse/BB-12955
+     *
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -138,6 +140,45 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         ],
                     ],
                 ],
+                'all_text has long strings' => [
+                    'entityConfig' => [
+                        'fields' => [
+                            [
+                                'name' => 'title',
+                                'type' => Query::TYPE_TEXT,
+                            ],
+                            [
+                                'name' => 'description',
+                                'type' => Query::TYPE_TEXT,
+                            ],
+                        ],
+                    ],
+                    'indexData' => [
+                        [1, 'title', 'The long entry', true],
+                        [
+                            1,
+                            'description',
+                            'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                            'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                            'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                            'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                            'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                            ' ' .
+                            'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            true
+                        ],
+                    ],
+                    'expected' => [
+                        1 => [
+                            'text' => [
+                                'title' => 'The long entry',
+                                'description' =>
+                                    'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                                'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            ],
+                        ],
+                    ],
+                ]
             ]
         );
     }
