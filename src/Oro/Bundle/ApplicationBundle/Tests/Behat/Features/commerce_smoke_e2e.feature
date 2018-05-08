@@ -26,48 +26,48 @@ Feature: Commerce smoke e2e
     And go to System/ Configuration
     And follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
     And fill "Tax Calculation Form" with:
-    |Use As Base By Default Use Default|false      |
-    |Use As Base By Default            |Destination|
+      |Use As Base By Default Use Default|false      |
+      |Use As Base By Default            |Destination|
     And click "Save settings"
     And go to Taxes/ Product Tax Code
     When click "Create Product Tax Code"
     And fill form with:
-    |Code       |Phone_Tax_Code                    |
-    |Description|Description of Phone Tax Code code|
+      |Code       |Phone_Tax_Code                    |
+      |Description|Description of Phone Tax Code code|
     And save and close form
     Then should see "Product Tax Code has been saved" flash message
     And go to Taxes/ Customer Tax Code
     When click "Create Customer Tax Code"
     And fill form with:
-    |Code       |New_Customer_Tax_Code                    |
-    |Description|Description of New_Customer_Tax_Code code|
+      |Code       |New_Customer_Tax_Code                    |
+      |Description|Description of New_Customer_Tax_Code code|
     And save and close form
     Then should see "Customer Tax Code has been saved" flash message
     And go to Taxes/ Taxes
     When click "Create Tax"
     And fill form with:
-    |Code       |CA |
-    |Description|CA |
-    |Rate (%)   |9.5|
+      |Code       |CA |
+      |Description|CA |
+      |Rate (%)   |9.5|
     And save and close form
     Then should see "Tax has been saved" flash message
     And go to Taxes/ Tax Jurisdiction
     When click "Create Tax Jurisdiction"
     And fill form with:
-    |Code       |CA_Jurisdiction|
-    |Description|CA_Jurisdiction|
-    |Country    |United States  |
-    |State      |California     |
+      |Code       |CA_Jurisdiction|
+      |Description|CA_Jurisdiction|
+      |Country    |United States  |
+      |State      |California     |
     And save and close form
     Then should see "Tax Jurisdiction has been saved" flash message
     And go to Taxes/ Tax Rules
     When click "Create Tax Rule"
     And fill "Tax Rule Form" with:
-    |Customer Tax Code|New_Customer_Tax_Code|
-    |Product Tax Code |Phone_Tax_Code       |
-    |Tax Jurisdiction |CA_Jurisdiction      |
-    |Tax              |CA                   |
-    |Description      |New Tax Rule         |
+      |Customer Tax Code|New_Customer_Tax_Code|
+      |Product Tax Code |Phone_Tax_Code       |
+      |Tax Jurisdiction |CA_Jurisdiction      |
+      |Tax              |CA                   |
+      |Description      |New Tax Rule         |
     And save and close form
     Then should see "Tax Rule has been saved" flash message
 
@@ -76,27 +76,27 @@ Feature: Commerce smoke e2e
     When go to Products/ Master Catalog
     And click "Create Category"
     And fill "Create Category Form" with:
-    |Title              |Phones|
-    |Inventory Threshold|0     |
+      |Title              |Phones|
+      |Inventory Threshold|0     |
     And click "Save"
     And go to Products/ Products
     And click "Create Product"
     And fill form with:
-    |Type    |Simple|
+      |Type    |Simple|
     And click "Phones"
     And click "Continue"
     And fill "Create Product Form" with:
-    |SKU             |Lenovo_Vibe_sku|
-    |Name            |Lenovo Vibe    |
-    |Status          |Enable         |
-    |Unit Of Quantity|item           |
-    |Tax Code        |Phone_Tax_Code |
+      |SKU             |Lenovo_Vibe_sku|
+      |Name            |Lenovo Vibe    |
+      |Status          |Enable         |
+      |Unit Of Quantity|item           |
+      |Tax Code        |Phone_Tax_Code |
     And I click "Add Image"
     And fill "Create Product Form" with:
-    |Product Image   |Lenovo_vibe.jpg|
-    |Main Image      |true           |
-    |Listing Image   |true           |
-    |Additional Image|true           |
+      |Product Image   |Lenovo_vibe.jpg|
+      |Main Image      |true           |
+      |Listing Image   |true           |
+      |Additional Image|true           |
     And click "AddPrice"
     And fill "Product Price Form" with:
       | Price List     | Default Price List |
@@ -157,8 +157,9 @@ Feature: Commerce smoke e2e
       | L      |
       | M      |
     When I save and close form
-    And click update schema
-    Then should see Schema updated flash message
+#    And click update schema
+    And I wait for action
+#    Then should see Schema updated flash message
 
     And go to Products/ Product Families
     When I press "Create Product Family"
@@ -197,8 +198,8 @@ Feature: Commerce smoke e2e
     And go to Products/ Master Catalog
     And click "Create Category"
     And fill "Create Category Form" with:
-    |Title              |Shirts|
-    |Inventory Threshold|0     |
+      |Title              |Shirts|
+      |Inventory Threshold|0     |
     And click "Save"
 
     And go to Products/ Products
@@ -398,10 +399,10 @@ Feature: Commerce smoke e2e
     When go to Customers/ Customers
     And click "Create Customer"
     And fill "Customer Form" with:
-    |Name       |Smoke Customer       |
-    |Tax Code   |New_Customer_Tax_Code|
-    |Price List |SecondPriceList      |
-    |Payment Term|net_10|
+      |Name       |Smoke Customer       |
+      |Tax Code   |New_Customer_Tax_Code|
+      |Price List |SecondPriceList      |
+      |Payment Term|net_10|
     And save and close form
     Then should see "Customer has been saved" flash message
 
@@ -410,29 +411,29 @@ Feature: Commerce smoke e2e
     When go to Customers/ Customer Users
     And click "Create Customer User"
     And fill form with:
-    |First Name      |Branda                     |
-    |Last Name       |Sanborn                    |
-    |Email Address   |BrandaJSanborn1@example.org|
+      |First Name      |Branda                     |
+      |Last Name       |Sanborn                    |
+      |Email Address   |BrandaJSanborn1@example.org|
     And click "Today"
     And fill form with:
-    |Password        |BrandaJSanborn1@example.org|
-    |Confirm Password|BrandaJSanborn1@example.org|
-    |Customer        |Smoke Customer             |
+      |Password        |BrandaJSanborn1@example.org|
+      |Confirm Password|BrandaJSanborn1@example.org|
+      |Customer        |Smoke Customer             |
     And fill "Customer User Addresses Form" with:
-    |Primary                   |true         |
-    |First Name Add            |Branda       |
-    |Last Name Add             |Sanborn      |
-    |Organization              |Smoke Org    |
-    |Country                   |United States|
-    |Street                    |Market St. 12|
-    |City                      |San Francisco|
-    |State                     |California   |
-    |Zip/Postal Code           |90001        |
-    |Billing                   |true         |
-    |Shipping                  |true         |
-    |Default Billing           |true         |
-    |Default Shipping          |true         |
-    |Administrator (Predefined)|true         |
+      |Primary                   |true         |
+      |First Name Add            |Branda       |
+      |Last Name Add             |Sanborn      |
+      |Organization              |Smoke Org    |
+      |Country                   |United States|
+      |Street                    |Market St. 12|
+      |City                      |San Francisco|
+      |State                     |California   |
+      |Zip/Postal Code           |90001        |
+      |Billing                   |true         |
+      |Shipping                  |true         |
+      |Default Billing           |true         |
+      |Default Shipping          |true         |
+      |Administrator (Predefined)|true         |
     And save and close form
     Then should see "Customer User has been saved" flash message
 
@@ -467,7 +468,7 @@ Feature: Commerce smoke e2e
     And go to Customers/ Customers
     And click edit "OroCommerce" in grid
     And fill form with:
-    |Payment Term|net_10|
+      |Payment Term|net_10|
     And save and close form
     And I proceed as the User
     And fill form with:
@@ -587,7 +588,7 @@ Feature: Commerce smoke e2e
     And should see "Your Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Green Box" for "Lenovo_Vibe_sku" product
-    And should see "Update Shopping list button" for "Lenovo_Vibe_sku" product
+    And should see "Update Shopping List button" for "Lenovo_Vibe_sku" product
     And should see "View Details" for "Xiaomi_Redmi_3S_sku" product
     And should see "Product Image" for "Xiaomi_Redmi_3S_sku" product
     And should see "Product Name" for "Xiaomi_Redmi_3S_sku" product
@@ -612,10 +613,10 @@ Feature: Commerce smoke e2e
       |       | L | M |
       | Black | 2 | 3 |
       | White | 1 | 5 |
-    And click "Add to Shopping list"
+    And click "Add to Shopping List"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
-    And click "Shopping list"
+    And click "Shopping List"
     And should see "Subtotal $175.20"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
@@ -626,10 +627,10 @@ Feature: Commerce smoke e2e
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
     When click "View Details" for "Xiaomi_Redmi_3S_sku" product
-    Then should see "1 $120.00"
-    And should see "10 $135.00"
+    Then should see "1 $ 120.00"
+    And should see "10 $ 135.00"
     When I hover on "Shopping Cart"
-    And click "Shopping list"
+    And click "Shopping List"
     Then should see "Subtotal $900.00"
 
   Scenario: Create shopping list, update shopping list, delete shopping list from front store
@@ -652,7 +653,9 @@ Feature: Commerce smoke e2e
     And I type "52" in "ShoppingListLineItemForm > Quantity"
     And I click on empty space
     And should see "Subtotal $4,680.00"
-    When I click "Edit Shoppping List Label"
+    Then I should see "Record has been successfully updated" flash message
+    When I click on "Flash Message Close Button"
+    And I click "Edit Shoppping List Label"
     And type "Updated Shopping List" in "Shopping List Label"
     And click "Save"
     Then should see "Record has been successfully updated" flash message
@@ -727,7 +730,7 @@ Feature: Commerce smoke e2e
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
     When I hover on "Shopping Cart"
-    And click "Shopping list"
+    And click "Shopping List"
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
@@ -768,10 +771,9 @@ Feature: Commerce smoke e2e
     And click "Phones"
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
-      |Unit    |item|
     And click "Add to Shopping List"
     When I hover on "Shopping Cart"
-    And click "Shopping list"
+    And click "Shopping List"
     And click "Request Quote"
     And fill form with:
       |PO Number|PO00001|
@@ -779,7 +781,6 @@ Feature: Commerce smoke e2e
     And fill "Frontstore RFQ Line Item Form1" with:
       |SKU         |Xiaomi_Redmi_3S_sku Xiaomi Redmi 3S|
       |Quantity    |20                 |
-      |Unit        |item               |
       |Target Price|110                |
     And click "Update Line Item"
     And should see "Xiaomi Redmi 3S QTY: 20 item Target Price $110.00 Listed Price: $120.00"
@@ -789,7 +790,6 @@ Feature: Commerce smoke e2e
     And fill "Frontstore RFQ Line Item Form2" with:
       |SKU         |Xiaomi_Redmi_3S_sku Xiaomi Redmi 3S|
       |Quantity    |30             |
-      |Unit        |item           |
       |Target Price|110            |
     And click "Update Line Item"
     And should see "Xiaomi Redmi 3S QTY: 30 item Target Price $110.00 Listed Price: $120.00"
@@ -851,29 +851,29 @@ Feature: Commerce smoke e2e
     And go to Customers/ Customer Users
     And click "Create Customer User"
     And fill form with:
-    |First Name      |Lonnie                      |
-    |Last Name       |Townsend                    |
-    |Email Address   |LonnieVTownsend1@example.org|
+      |First Name      |Lonnie                      |
+      |Last Name       |Townsend                    |
+      |Email Address   |LonnieVTownsend1@example.org|
     And click "Today"
     And fill form with:
-    |Password        |LonnieVTownsend1@example.org|
-    |Confirm Password|LonnieVTownsend1@example.org|
-    |Customer        |OroCommerce                 |
+      |Password        |LonnieVTownsend1@example.org|
+      |Confirm Password|LonnieVTownsend1@example.org|
+      |Customer        |OroCommerce                 |
     And fill "Customer User Addresses Form" with:
-    |Primary                   |true           |
-    |First Name Add            |Lonnie         |
-    |Last Name Add             |Townsend       |
-    |Organization              |OroCommerce    |
-    |Country                   |United States  |
-    |Street                    |Parnasus Ave 12|
-    |City                      |San Francisco  |
-    |State                     |California     |
-    |Zip/Postal Code           |90001          |
-    |Billing                   |true           |
-    |Shipping                  |true           |
-    |Default Billing           |true           |
-    |Default Shipping          |true           |
-    |Administrator (Predefined)|true           |
+      |Primary                   |true           |
+      |First Name Add            |Lonnie         |
+      |Last Name Add             |Townsend       |
+      |Organization              |OroCommerce    |
+      |Country                   |United States  |
+      |Street                    |Parnasus Ave 12|
+      |City                      |San Francisco  |
+      |State                     |California     |
+      |Zip/Postal Code           |90001          |
+      |Billing                   |true           |
+      |Shipping                  |true           |
+      |Default Billing           |true           |
+      |Default Shipping          |true           |
+      |Administrator (Predefined)|true           |
     And save and close form
     When go to Sales/ Quotes
     And click "Create Quote"
