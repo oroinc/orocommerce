@@ -351,6 +351,7 @@ class IndexDataProvider
     {
         if ($type === Query::TYPE_TEXT && strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
+            $value = $this->htmlTagHelper->stripLongWords($value);
         }
 
         return $value;
