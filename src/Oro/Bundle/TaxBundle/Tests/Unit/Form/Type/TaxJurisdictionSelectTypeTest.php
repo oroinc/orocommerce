@@ -23,14 +23,9 @@ class TaxJurisdictionSelectTypeTest extends \PHPUnit_Framework_TestCase
         unset($this->type);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(TaxJurisdictionSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()

@@ -8,6 +8,7 @@ use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 {
@@ -55,14 +56,9 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         return $this->type;
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(DefaultPriceListFilterType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(ChoiceFilterType::NAME, $this->type->getParent());
+        $this->assertEquals(ChoiceFilterType::class, $this->type->getParent());
     }
 
     /**
@@ -76,7 +72,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $defaultOptions = [
             'field_options' => [
                 'class' => $this->priceListClass,
-                'property' => 'name'
+                'choice_label' => 'name'
             ],
             'required' => true,
         ];
@@ -107,7 +103,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $defaultOptions = [
             'field_options' => [
                 'class' => $this->priceListClass,
-                'property' => 'name'
+                'choice_label' => 'name'
             ],
             'required' => false,
         ];
@@ -136,7 +132,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         return [
             [
                 'parentDefaultOptions' => [
-                    'field_type' => 'entity',
+                    'field_type' => EntityType::class,
                     'field_options' => [],
                     'translatable'  => false,
                 ],

@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractPriceListRelationDataGridListener
 {
@@ -86,11 +87,11 @@ abstract class AbstractPriceListRelationDataGridListener
                 'data_name' => 'price_list',
                 PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => $this->getRelationClassName(),
                 'options' => [
-                    'field_type' => 'entity',
+                    'field_type' => EntityType::class,
                     'field_options' => [
                         'multiple' => false,
                         'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
-                        'property' => 'name'
+                        'choice_label' => 'name'
                     ]
                 ]
             ]

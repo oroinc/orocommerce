@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\FormInterface;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LineItemHandler
 {
+    use RequestHandlerTrait;
+
     /** @var FormInterface */
     protected $form;
 
@@ -64,7 +67,7 @@ class LineItemHandler
             $this->request->request->set($formName, $formData);
         }
 
-        $this->form->submit($this->request);
+        $this->submitPostPutRequest($this->form, $this->request);
         if ($this->form->isValid()) {
             $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), true, true);
             $manager->commit();

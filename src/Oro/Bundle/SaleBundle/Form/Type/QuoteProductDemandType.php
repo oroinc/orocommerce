@@ -6,6 +6,8 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -47,22 +49,26 @@ class QuoteProductDemandType extends AbstractType
         $builder
             ->add(
                 self::FIELD_QUANTITY,
-                'number',
+                NumberType::class,
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'read_only' => !$quoteProduct->hasIncrementalOffers(),
-                    'required' => true
+                    'required' => true,
+                    'attr' => [
+                        'readonly' => !$quoteProduct->hasIncrementalOffers(),
+                    ]
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,
-                QuoteProductDemandOfferChoiceType::NAME,
+                QuoteProductDemandOfferChoiceType::class,
                 [
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $quoteProduct->getQuoteProductOffers(),
                     'required' => true
                 ]
             )->add(
                 self::FIELD_UNIT,
-                'hidden',
+                HiddenType::class,
                 [
                     'mapped' => false,
                     'data' => $quoteProductDemand->getQuoteProductOffer()->getProductUnitCode()

@@ -13,7 +13,7 @@ class TextContentVariantCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -23,7 +23,7 @@ class TextContentVariantCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => TextContentVariantType::class,
+                'entry_type' => TextContentVariantType::class,
                 'prototype_name' => '__variant_idx__',
             ]
         );

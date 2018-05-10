@@ -85,7 +85,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             ];
         }
 
-        $this->sectionProvider->addSections(OrderLineItemType::NAME, $sections);
+        $this->sectionProvider->addSections($this->getExtendedType(), $sections);
     }
 
     /**

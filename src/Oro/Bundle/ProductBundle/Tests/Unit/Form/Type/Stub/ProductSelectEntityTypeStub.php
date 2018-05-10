@@ -21,13 +21,13 @@ class ProductSelectEntityTypeStub extends EntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'choice_list'     => $this->choiceList,
             'query_builder'   => null,
             'create_enabled'  => false,
             'class'           => 'Oro\Bundle\ProductBundle\Entity\Product',
             'data_parameters' => [],
-            'property'        => 'sku',
+            'choice_label'    => 'sku',
             'configs'         => [
                 'placeholder' => null,
             ],

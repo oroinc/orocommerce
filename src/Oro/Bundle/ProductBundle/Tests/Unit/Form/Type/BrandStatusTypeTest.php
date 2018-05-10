@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Form\Type\BrandStatusType;
 use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -18,7 +19,6 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
 
     public function setup()
     {
-        parent::setUp();
         $this->brandStatusProvider =
             $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\BrandStatusProvider')
                 ->disableOriginalConstructor()
@@ -27,16 +27,22 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
         $this->brandStatusProvider
             ->method('getAvailableBrandStatuses')
             ->willReturn([
-                Brand::STATUS_DISABLED => 'Disabled',
-                Brand::STATUS_ENABLED => 'Enabled'
+                'Disabled' => Brand::STATUS_DISABLED,
+                'Enabled' => Brand::STATUS_ENABLED,
             ]);
 
         $this->brandStatusType = new BrandStatusType($this->brandStatusProvider);
+        parent::setUp();
     }
 
-    public function testGetName()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals(BrandStatusType::class, $this->brandStatusType->getName());
+        return [
+            new PreloadedExtension([$this->brandStatusType], [])
+        ];
     }
 
     public function testGetParent()
@@ -49,12 +55,12 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
 
     public function testChoices()
     {
-        $form = $this->factory->create($this->brandStatusType);
+        $form = $this->factory->create(BrandStatusType::class);
         $availableBrandStatuses = $this->brandStatusProvider->getAvailableBrandStatuses();
         $choices = [];
 
-        foreach ($availableBrandStatuses as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableBrandStatuses as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(

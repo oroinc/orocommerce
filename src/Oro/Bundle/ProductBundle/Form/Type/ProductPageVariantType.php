@@ -21,7 +21,7 @@ class ProductPageVariantType extends AbstractType
         $builder
             ->add(
                 'productPageProduct',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'label' => 'oro.product.entity_label',
                     'required' => true,

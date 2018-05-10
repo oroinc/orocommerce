@@ -32,7 +32,7 @@ class ProductPriceType extends AbstractType
         $builder
             ->add(
                 'priceList',
-                PriceListSelectType::NAME,
+                PriceListSelectType::class,
                 [
                     'label' => 'oro.pricing.pricelist.entity_label',
                     'create_enabled' => false,
@@ -42,17 +42,17 @@ class ProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductPriceUnitSelectorType::NAME,
+                ProductPriceUnitSelectorType::class,
                 [
                     'label' => 'oro.pricing.unit.label',
-                    'empty_value' => 'oro.product.productunitprecision.unit_precision_required',
+                    'placeholder' => 'oro.product.productunitprecision.unit_precision_required',
                     'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'label' => 'oro.pricing.quantity.label',
                     'product' => $options['product'],

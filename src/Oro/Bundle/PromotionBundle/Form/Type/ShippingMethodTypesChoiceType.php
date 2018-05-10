@@ -67,8 +67,9 @@ class ShippingMethodTypesChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'empty_value' => null,
             'placeholder' => false,
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
                 return $this->getChoiceAttributes($choice);
@@ -137,7 +138,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
                     ShippingDiscount::SHIPPING_METHOD => $shippingMethod->getIdentifier(),
                     ShippingDiscount::SHIPPING_METHOD_TYPE => $shippingType->getIdentifier()
                 ]);
-                $shippingTypeChoices[$info] = $shippingType->getLabel();
+                $shippingTypeChoices[$shippingType->getLabel()] = $info;
             }
         }
 

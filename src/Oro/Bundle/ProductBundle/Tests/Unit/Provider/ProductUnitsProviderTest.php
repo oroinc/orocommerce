@@ -106,13 +106,12 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ]));
 
         $expected = [
-            'each' => 'oro.product_unit.each.label.full',
-            'kg' => 'oro.product_unit.kg.label.full',
-            'hour' => 'oro.product_unit.hour.label.full',
-            'item' => 'oro.product_unit.item.label.full',
-            'set' => 'oro.product_unit.set.label.full',
-            'piece' => 'oro.product_unit.piece.label.full',
-
+            'oro.product_unit.each.label.full' => 'each',
+            'oro.product_unit.kg.label.full' => 'kg',
+            'oro.product_unit.hour.label.full' => 'hour',
+            'oro.product_unit.item.label.full' => 'item',
+            'oro.product_unit.set.label.full' => 'set',
+            'oro.product_unit.piece.label.full' => 'piece',
         ];
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());

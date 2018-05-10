@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactInfoManualTextType extends AbstractType
@@ -58,6 +59,6 @@ class ContactInfoManualTextType extends AbstractType
      */
     public function getParent()
     {
-        return 'textarea';
+        return TextareaType::class;
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxProviderType extends AbstractType
@@ -33,10 +34,14 @@ class TaxProviderType extends AbstractType
         $choices = [];
 
         foreach ($choicesRaw as $choiceRaw) {
-            $choices[$choiceRaw->getName()] = $choiceRaw->getLabel();
+            $choices[$choiceRaw->getLabel()] = $choiceRaw->getName();
         }
 
-        $resolver->setDefaults(['choices' => $choices]);
+        $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
+            'choices' => $choices,
+        ]);
     }
 
     /**
@@ -44,7 +49,7 @@ class TaxProviderType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /**

@@ -113,6 +113,21 @@ oro_behat_extension:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
 
+    ConfigurableProductForm:
+      selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      options:
+        mapping:
+          Attributes_1:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_1]"]'
+          Attributes_2:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_2]"]'
+          Attributes_3:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
+
     LineItemQuantity:
       selector:
         type: 'xpath'
@@ -145,8 +160,8 @@ oro_behat_extension:
     In Shopping List:
       selector: 'a.shopping-lists__area-trigger'
 
-    Add To Shopping List:
-      selector: 'a.add-to-shopping-list-button'
+    Add to Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'

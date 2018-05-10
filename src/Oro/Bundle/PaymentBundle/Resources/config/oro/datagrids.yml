@@ -1,7 +1,7 @@
 datagrids:
     payment-methods-configs-rule-grid:
         acl_resource: oro_payment_methods_configs_rule_view
-        extended_entity_name: %oro_payment.entity.payment_methods_configs_rule.class%
+        extended_entity_name: '%oro_payment.entity.payment_methods_configs_rule.class%'
         options:
             entityHint:        payment methods configs rules
             entity_pagination: true
@@ -17,7 +17,7 @@ datagrids:
                     - rule.expression
                     - payment_rule.currency
                 from:
-                    - { table: %oro_payment.entity.payment_methods_configs_rule.class%, alias: payment_rule }
+                    - { table: '%oro_payment.entity.payment_methods_configs_rule.class%', alias: payment_rule }
                 join:
                     inner:
                         - { join: payment_rule.rule, alias: rule }
@@ -130,14 +130,14 @@ datagrids:
                 acl_resource: oro_payment_methods_configs_rule_update
                 label:        oro.payment.datagrid.action.enable
                 icon:         check
-                entity_name:  %oro_payment.entity.payment_methods_configs_rule.class%
+                entity_name:  '%oro_payment.entity.payment_methods_configs_rule.class%'
                 data_identifier: payment_rule.id
             disable:
                 type:         paymentruledisable
                 acl_resource: oro_payment_methods_configs_rule_update
                 label:        oro.payment.datagrid.action.disable
                 icon:         close
-                entity_name:  %oro_payment.entity.payment_methods_configs_rule.class%
+                entity_name:  '%oro_payment.entity.payment_methods_configs_rule.class%'
                 data_identifier: payment_rule.id
 
     payment-transactions-grid:
@@ -157,7 +157,7 @@ datagrids:
                     - payment_transaction.createdAt
                     - payment_transaction.updatedAt
                 from:
-                    - { table: %oro_payment.entity.payment_transaction.class%, alias: payment_transaction }
+                    - { table: '%oro_payment.entity.payment_transaction.class%', alias: payment_transaction }
         columns:
             id:
                 label: oro.payment.paymenttransaction.id.label

@@ -113,11 +113,6 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->type->convertToDatabaseValue(null, $platform));
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->type->getName());
-    }
-
     public function testTextIsUsedToStoreData()
     {
         /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */

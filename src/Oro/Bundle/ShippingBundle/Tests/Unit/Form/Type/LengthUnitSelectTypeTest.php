@@ -8,9 +8,11 @@ class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
     protected function setUp()
     {
-        parent::setUp();
+        $this->configureFormatter();
+        $this->configureProvider();
 
         $this->formType = new LengthUnitSelectType($this->provider, $this->formatter);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()

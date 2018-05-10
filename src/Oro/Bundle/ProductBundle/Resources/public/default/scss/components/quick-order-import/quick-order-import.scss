@@ -33,15 +33,8 @@
     margin: $quick-order-import-link-margin;
   }
 
-  .uploader { //platform styles override
-    position: static;
-
-    display: block;
-    margin: 0 0 10px;
-
-    .action {
-      background: $quick-order-import-uploader-action-background;
-    }
+  &__content {
+    margin-bottom: $offset-y-m;
   }
 
   .filename {

@@ -1,6 +1,6 @@
 datagrids:
     base-orders-grid:
-        extended_entity_name: %oro_order.entity.order.class%
+        extended_entity_name: '%oro_order.entity.order.class%'
         options:
             entityHint:        orders
             entity_pagination: true
@@ -21,7 +21,7 @@ datagrids:
                     - order1.shippingMethod
                     - order1.shippingMethodType
                 from:
-                    - { table: %oro_order.entity.order.class%, alias: order1 }
+                    - { table: '%oro_order.entity.order.class%', alias: order1 }
                 join:
                     left:
                         - { join: '%oro_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%oro_order.entity.order.class%'" }
@@ -129,7 +129,7 @@ datagrids:
                 total:
                     data_name: total
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 poNumber:
@@ -149,6 +149,7 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
+                            choices_as_values: true
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 identifier:
                     type:      string
@@ -290,7 +291,7 @@ datagrids:
                 updatedAt:
                     data_name: order1.updatedAt
         default:
-            createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+            createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 identifier:
@@ -333,6 +334,7 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
+                            choices_as_values: true
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 totalDiscountsAmount:
                     type:      number
@@ -355,7 +357,7 @@ datagrids:
 
     embed-orders-grid:
         acl_resource: oro_order_view
-        extended_entity_name: %oro_order.entity.order.class%
+        extended_entity_name: '%oro_order.entity.order.class%'
         options:
             entityHint:        orders
             entity_pagination: true
@@ -374,7 +376,7 @@ datagrids:
                     - order1.createdAt
                     - order1.updatedAt
                 from:
-                    - { table: %oro_order.entity.order.class%, alias: order1 }
+                    - { table: '%oro_order.entity.order.class%', alias: order1 }
                 join:
                     left:
                         - { join: order1.lineItems, alias: lineItems}
@@ -430,7 +432,7 @@ datagrids:
                 updatedAt:
                     data_name: order1.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 identifier:
@@ -516,7 +518,7 @@ datagrids:
                     data_name: customerUserName
 
     base-order-line-items-grid:
-        extended_entity_name: %oro_order.entity.order_line_item.class%
+        extended_entity_name: '%oro_order.entity.order_line_item.class%'
         options:
             entityHint: order line items
         source:
@@ -532,7 +534,7 @@ datagrids:
                     - order_item.comment
                     - order_item.productName
                 from:
-                    - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
+                    - { table: '%oro_order.entity.order_line_item.class%', alias: order_item }
                 join:
                     left:
                         - { join: order_item.product, alias: product }
@@ -600,7 +602,7 @@ datagrids:
             frontend: true
 
     order-shipping-trackings-grid:
-        extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
+        extended_entity_name: '%oro_order.entity.order_shipping_tracking.class%'
         options:
             entityHint: order shipping trackings
             entity_pagination: false
@@ -615,7 +617,7 @@ datagrids:
                     - shipping_tracking.method
                     - shipping_tracking.number
                 from:
-                    - { table: %oro_order.entity.order_shipping_tracking.class%, alias: shipping_tracking }
+                    - { table: '%oro_order.entity.order_shipping_tracking.class%', alias: shipping_tracking }
                 where:
                     and:
                         - shipping_tracking.order = :order_id
@@ -634,7 +636,7 @@ datagrids:
                 frontend_type: html
 
     best-selling-products:
-        entity_name: %oro_report.calendar_date.entity.class%
+        entity_name: '%oro_report.calendar_date.entity.class%'
         options:
             entityHint: calendar dates
             export: true
@@ -648,11 +650,11 @@ datagrids:
                     - SUM (lineitem.quantity) as qtySold
                     - lineitem.productUnitCode as unitCode
                 from:
-                    - { table: %oro_report.calendar_date.entity.class%, alias: calendarDate }
+                    - { table: '%oro_report.calendar_date.entity.class%', alias: calendarDate }
                 join:
                     left:
                         -
-                            join: %oro_order.entity.order.class%
+                            join: '%oro_order.entity.order.class%'
                             alias: orderAlias
                             conditionType: WITH
                             condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
@@ -687,8 +689,8 @@ datagrids:
                 qtySold:
                     data_name: qtySold
             default:
-                timePeriod: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                timePeriod: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 timePeriod:
@@ -707,27 +709,31 @@ datagrids:
                     data_name:          productId
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                0: No
-                                1: Yes
+                                No: 0
+                                Yes: 1
                         default_value: Yes
                 grouping:
                     label:              oro.report.filter.grouping.label
                     type:               date_grouping
                     data_name:          calendarDate.date
                     column_name:        timePeriod
-                    calendar_entity:    %oro_report.calendar_date.entity.class%
-                    target_entity:      %oro_order.entity.order.class%
+                    calendar_entity:    '%oro_report.calendar_date.entity.class%'
+                    target_entity:      '%oro_order.entity.order.class%'
                     not_nullable_field: product.id
                     joined_column:      createdAt
                     joined_table:       joinedTableAlias
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                day:     Day
-                                month:   Month
-                                quarter: Quarter
-                                year:    Year
+                                Day:     day
+                                Month:   month
+                                Quarter: quarter
+                                Year:    year
                         default_value: Day
             default:
                 grouping:
@@ -769,4 +775,4 @@ datagrids:
                     type: datetime
                     data_name: ordered_at_by_CUSTOMER_USER_ID
             default:
-                recency: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                recency: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'

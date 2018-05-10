@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\SaleBundle\Provider\OptionsProviderInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactInfoSourceOptionsType extends AbstractType
@@ -28,16 +29,16 @@ class ContactInfoSourceOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $options = array_flip($this->optionsProvider->getOptions());
+        $options = $this->optionsProvider->getOptions();
         $resolver->setDefaults([
-            'choices' => $options
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
+            'choices' => array_combine($options, $options),
         ]);
 
         $resolver->setNormalizer('choice_label', function () {
             return function ($optionValue) {
-                $label = sprintf('oro.sale.available_customer_options.type.%s.label', $optionValue);
-
-                return $label;
+                return sprintf('oro.sale.available_customer_options.type.%s.label', $optionValue);
             };
         });
     }
@@ -63,6 +64,6 @@ class ContactInfoSourceOptionsType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 }

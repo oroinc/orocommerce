@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -10,7 +11,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
 {
@@ -44,11 +45,11 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PriceType::NAME => PriceTypeGenerator::createPriceType($this),
-                    $currencySelectionType->getName() => $currencySelectionType,
+                    PriceType::class => PriceTypeGenerator::createPriceType($this),
+                    CurrencySelectionType::class => $currencySelectionType,
                 ],
                 [
-                    PriceType::NAME => [
+                    PriceType::class => [
                         new FrontendPriceFormExtension($this->frontendHelper, $this->userCurrencyManager),
                     ],
 
@@ -62,7 +63,7 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         $this->frontendHelper->method('isFrontendRequest')
             ->willReturn(false);
 
-        $form = $this->factory->create(PriceType::NAME);
+        $form = $this->factory->create(PriceType::class);
         $form->setData(null);
         $this->assertNull($form->getData());
         $this->assertNull($form->get('currency')->getData());
@@ -76,7 +77,7 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         $this->frontendHelper->method('isFrontendRequest')
             ->willReturn(true);
 
-        $form = $this->factory->create(PriceType::NAME);
+        $form = $this->factory->create(PriceType::class);
         $form->setData(null);
         $formData = $form->getData();
         $this->assertNull($formData);

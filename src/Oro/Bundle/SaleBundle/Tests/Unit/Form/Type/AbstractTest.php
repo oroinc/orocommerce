@@ -46,10 +46,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected $quoteProductOfferFormatter;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function configureQuoteProductOfferFormatter()
     {
         $this->quoteProductFormatter = $this->getMockBuilder(
             'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
@@ -78,8 +75,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
                 return $types;
             }))
         ;
-
-        parent::setUp();
     }
 
     /**
@@ -93,7 +88,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null, $options = [])
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(get_class($this->formType), $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 

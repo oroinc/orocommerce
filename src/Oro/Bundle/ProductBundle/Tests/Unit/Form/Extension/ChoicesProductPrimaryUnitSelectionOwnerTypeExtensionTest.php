@@ -9,11 +9,12 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormIntegrationTestCase
@@ -74,7 +75,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
             ->method('getAvailablePrimaryUnitChoices')
             ->willReturn($choices);
         $formBuilder = $this->factory->createNamedBuilder('test');
-        $formBuilder->add($this->childName, ProductUnitSelectType::NAME, $this->getDefaultOptions());
+        $formBuilder->add($this->childName, ProductUnitSelectType::class, $this->getDefaultOptions());
         $this->choicesProductPrimaryUnitSelectionOwnerTypeExtension->buildForm(
             $formBuilder,
             []
@@ -123,15 +124,15 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         //@TODO remove setDefaultOptions in scope BAP-16496
         $type->method('setDefaultOptions')->willReturnCallback(
             function (OptionsResolver $resolver) {
-                $resolver->setDefined(['auto_initialize', 'choice_list', 'choice_loader', 'choices']);
+                $resolver->setDefined(['auto_initialize', 'choice_loader', 'choices']);
             }
         );
 
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => $productUnitSelectType,
-                    'entity' => $type,
+                    ProductUnitSelectType::class => $productUnitSelectType,
+                    EntityType::class => $type,
                 ],
                 []
             ),

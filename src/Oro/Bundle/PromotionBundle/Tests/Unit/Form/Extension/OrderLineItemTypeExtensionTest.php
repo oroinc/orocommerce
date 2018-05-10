@@ -80,7 +80,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->sectionProvider->expects($this->once())->method('addSections')
             ->with(
-                $this->equalTo('oro_order_line_item'),
+                $this->equalTo(OrderLineItemType::class),
                 $this->logicalAnd(
                     $this->isType('array'),
                     $this->arrayHasKey('applied_discounts')

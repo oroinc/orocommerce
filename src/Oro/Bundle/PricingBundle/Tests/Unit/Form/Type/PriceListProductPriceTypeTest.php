@@ -16,11 +16,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -65,14 +67,14 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
                 2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
             ]
         );
 
-        $productUnitSelection = new EntityType(
+        $productUnitSelection = new EntityTypeStub(
             $this->prepareProductUnitSelectionChoices(),
             ProductUnitSelectionType::NAME
         );
@@ -105,16 +107,17 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $entityType->getName() => $entityType,
-                    ProductSelectType::NAME => $productSelect,
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
-                    PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    $this->formType,
+                    EntityType::class => $entityType,
+                    ProductSelectType::class => $productSelect,
+                    ProductUnitSelectionType::class => $productUnitSelection,
+                    PriceType::class => $priceType,
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $localeSettings,
                         $currencyNameHelper
                     ),
-                    QuantityTypeTrait::$name => $this->getQuantityType()
+                    QuantityType::class => $this->getQuantityType()
                 ],
                 []
             ),
@@ -139,7 +142,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             $this->addRoundingServiceExpect();
         }
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(PriceListProductPriceType::class, $defaultData, []);
 
         // unit placeholder must not be available for specific entity
         $unitPlaceholder = $form->get('unit')->getConfig()->getOption('placeholder');
@@ -248,7 +251,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                 'currency' => 'CAD'
             ]
         ];
-        $form = $this->factory->create($this->formType, $defaultProductPrice, []);
+        $form = $this->factory->create(PriceListProductPriceType::class, $defaultProductPrice, []);
         $form->submit($submittedData);
 
         $errors = $form->getErrors(true, true);
@@ -257,14 +260,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $error = $errors->current();
         $this->assertEquals('This value is not valid.', $error->getMessage());
         $this->assertEquals(['{{ value }}' => 'CAD'], $error->getMessageParameters());
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListProductPriceType::NAME, $this->formType->getName());
     }
 
     /**

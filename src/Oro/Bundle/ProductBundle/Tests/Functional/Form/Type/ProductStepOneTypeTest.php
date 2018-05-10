@@ -55,7 +55,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
         $submitData['attributeFamily'] = $this->defaultFamily->getId();
         // submit form
-        $form = $this->formFactory->create(ProductStepOneType::NAME, null);
+        $form = $this->formFactory->create(ProductStepOneType::class, null);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         if ($isValid) {

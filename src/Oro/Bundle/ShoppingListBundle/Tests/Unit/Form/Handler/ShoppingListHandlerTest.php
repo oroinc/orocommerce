@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     const SHOPPING_LIST_SHORTCUT = 'OroShoppingListBundle:ShoppingList';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface */
@@ -32,9 +34,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = new Request();
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -49,9 +49,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWrongMethod()
     {
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('GET'));
+        $this->request->setMethod('GET');
 
         $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
         $this->assertFalse($handler->process($this->shoppingList));
@@ -59,13 +57,11 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessFormNotValid()
     {
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
+        $this->request = Request::create('/', 'POST', self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(false));
@@ -76,13 +72,11 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNotExistingShoppingList()
     {
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('PUT'));
+        $this->request = Request::create('/', 'PUT', self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
@@ -100,13 +94,12 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn(1);
 
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('PUT'));
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('PUT');
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

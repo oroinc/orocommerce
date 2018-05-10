@@ -11,6 +11,16 @@ define(function(require) {
     LineItemsView = BaseView.extend({
         lineItems: [],
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemsView() {
+            LineItemsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
 

@@ -31,10 +31,14 @@ class DiscountStrategySelectType extends AbstractType
     {
         $choices = [];
         foreach ($this->strategyRegistry->getStrategies() as $alias => $strategy) {
-            $choices[$alias] = $strategy->getLabel();
+            $choices[$strategy->getLabel()] = $alias;
         }
 
-        $resolver->setDefault('choices', $choices);
+        $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
+            'choices' => $choices,
+        ]);
     }
 
     /**

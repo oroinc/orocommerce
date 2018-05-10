@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -42,7 +43,11 @@ class PriceListStrategySelectType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('choices', $this->getChoices());
+        $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
+            'choices' => $this->getChoices(),
+        ]);
     }
 
     /**
@@ -50,7 +55,7 @@ class PriceListStrategySelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /**
@@ -77,7 +82,7 @@ class PriceListStrategySelectType extends AbstractType
         $choices = [];
 
         foreach ($this->getStrategies() as $strategy => $value) {
-            $choices[$strategy] = $this->translator->trans(self::ALIAS.$strategy);
+            $choices[$this->translator->trans(self::ALIAS.$strategy)] = $strategy;
         }
 
         return $choices;

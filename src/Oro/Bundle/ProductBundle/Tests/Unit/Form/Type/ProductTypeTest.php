@@ -10,8 +10,8 @@ use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -24,15 +24,11 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
@@ -51,9 +47,11 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -207,7 +205,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -217,33 +215,29 @@ class ProductTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $stubEnumSelectType->getName() => $stubEnumSelectType,
-                    ImageType::NAME => new ImageTypeStub(),
-                    OroCollectionType::NAME => new OroCollectionType(),
-                    ProductPrimaryUnitPrecisionType::NAME => $productPrimaryUnitPrecision,
-                    ProductUnitPrecisionType::NAME => $productUnitPrecision,
-                    ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType,
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionType(
+                    $this->type,
+                    EnumSelectType::class => $stubEnumSelectType,
+                    ImageType::class => new ImageTypeStub(),
+                    ProductPrimaryUnitPrecisionType::class => $productPrimaryUnitPrecision,
+                    ProductUnitPrecisionType::class => $productUnitPrecision,
+                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    EntityType::class => $entityType,
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+                    ProductCustomVariantFieldsCollectionType::class => new ProductCustomVariantFieldsCollectionType(
                         $variantFieldProvider
                     ),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
-                    ProductVariantLinksType::NAME => new ProductVariantLinksType(),
-                    ProductStatusType::NAME => new ProductStatusType(new ProductStatusProvider()),
-                    ProductImageCollectionType::NAME => new ProductImageCollectionType($imageTypeProvider),
-                    ProductImageType::NAME => new ProductImageType(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    ProductVariantFieldType::NAME => new ProductVariantFieldType(),
-                    EntityFieldFallbackValueType::NAME => new EntityFieldFallbackValueType($entityFallbackResolver),
+                    EntityIdentifierType::class => new StubEntityIdentifierType([]),
+                    ProductStatusType::class => new ProductStatusType(new ProductStatusProvider()),
+                    ProductImageCollectionType::class => new ProductImageCollectionType($imageTypeProvider),
+                    LocalizedSlugType::class => new LocalizedSlugTypeStub(),
+                    EntityFieldFallbackValueType::class => new EntityFieldFallbackValueType($entityFallbackResolver),
                     PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
-                    LocalizedSlugWithRedirectType::NAME
+                    LocalizedSlugWithRedirectType::class
                     => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
-                    BrandSelectType::NAME => new BrandSelectTypeStub(),
+                    BrandSelectType::class => new BrandSelectTypeStub(),
                 ],
                 [
-                    'form' => [
+                    FormType::class => [
                         new TooltipFormExtension($configProvider, $translator),
                         new IntegerExtension()
                     ]
@@ -261,7 +255,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(Product $defaultData, $submittedData, Product $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData);
+        $form = $this->factory->create(ProductType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
@@ -475,16 +469,11 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, $this->createDefaultProductEntity());
+        $form = $this->factory->create(ProductType::class, $this->createDefaultProductEntity());
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('primaryUnitPrecision'));
         $this->assertTrue($form->has('additionalUnitPrecisions'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product', $this->type->getName());
     }
 
     /**
@@ -563,7 +552,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $existingData->setAttributeFamily($this->getAttributeFamily());
 
         /** @var Form $form */
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(ProductType::class, $existingData);
 
         $formView = $form->createView();
 

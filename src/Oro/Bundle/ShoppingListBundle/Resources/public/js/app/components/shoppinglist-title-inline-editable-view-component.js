@@ -13,6 +13,13 @@ define(function(require) {
         shoppingListCollection: null,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListTitleInlineEditableViewComponent() {
+            ShoppingListTitleInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

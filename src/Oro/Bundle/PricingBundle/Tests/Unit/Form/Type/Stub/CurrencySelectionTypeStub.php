@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CurrencySelectionTypeStub extends AbstractType
@@ -26,7 +27,7 @@ class CurrencySelectionTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return CurrencySelectionType::NAME;
     }
@@ -36,6 +37,6 @@ class CurrencySelectionTypeStub extends AbstractType
      */
     public function getParent()
     {
-        return 'currency';
+        return CurrencyType::class;
     }
 }

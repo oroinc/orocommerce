@@ -32,7 +32,7 @@ class MoneyOrderSettingsType extends AbstractType
         $builder
             ->add(
                 'labels',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.money_order.settings.labels.label',
                     'required' => true,
@@ -41,7 +41,7 @@ class MoneyOrderSettingsType extends AbstractType
             )
             ->add(
                 'shortLabels',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.money_order.settings.short_labels.label',
                     'required' => true,

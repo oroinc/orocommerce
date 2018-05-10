@@ -56,9 +56,7 @@ class SegmentNormalizer implements NormalizerInterface
         $resolver = new OptionsResolver();
         $resolver->setRequired(self::REQUIRED_OPTIONS);
 
-        $resolver->setAllowedTypes([
-            'definition' => ['string']
-        ]);
+        $resolver->setAllowedTypes('definition', ['string']);
 
         return $resolver;
     }

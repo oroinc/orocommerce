@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /**
      * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -31,7 +33,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     private $form;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request
      */
     private $request;
 
@@ -48,7 +50,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->form = $this->createMock(FormInterface::class);
-        $this->request = $this->createMock(Request::class);
+        $this->request = new Request();
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->priceManager = $this->createMock(PriceManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -96,12 +98,11 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('setData')
             ->with($entity);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('POST');
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

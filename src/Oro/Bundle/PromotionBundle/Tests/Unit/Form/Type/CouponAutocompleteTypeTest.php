@@ -21,14 +21,9 @@ class CouponAutocompleteTypeTest extends FormIntegrationTestCase
         $this->formType = new CouponAutocompleteType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CouponAutocompleteType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->formType->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()

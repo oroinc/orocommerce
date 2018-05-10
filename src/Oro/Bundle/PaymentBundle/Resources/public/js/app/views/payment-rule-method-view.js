@@ -6,15 +6,27 @@ define([
 ], function($, Backbone, _, mediator) {
     'use strict';
 
+    var PaymentRuleMethodView;
+
     /**
      * @export  orointegration/js/channel-view
      * @class   orointegration.channelView
      * @extends Backbone.View
      */
-    return Backbone.View.extend({
+    PaymentRuleMethodView = Backbone.View.extend({
 
         requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function PaymentRuleMethodView() {
+            PaymentRuleMethodView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         /**
          * @param options Object
          */
@@ -106,4 +118,6 @@ define([
             return $(element).find('input[data-name="field__type"]').val();
         }
     });
+
+    return PaymentRuleMethodView;
 });

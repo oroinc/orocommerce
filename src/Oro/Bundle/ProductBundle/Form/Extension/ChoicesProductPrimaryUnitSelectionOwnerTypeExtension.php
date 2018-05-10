@@ -69,9 +69,14 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $options['choices'] = $this->productFormUnitFieldsSettings->getAvailablePrimaryUnitChoices($product);
         $options['choices_updated'] = true;
         $options['choice_loader'] = null;
+        //@TODO Remove in scope BAP-15236
         $options['choice_list'] = null;
 
-        $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
+        //@TODO Remove in scope BAP-15236
+        unset($options['cascade_validation']);
+
+        //@TODO Check in scope of BAP-15236
+        $form->add($child->getName(), get_class($child->getConfig()->getType()->getInnerType()), $options);
     }
 
     /**

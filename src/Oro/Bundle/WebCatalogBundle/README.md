@@ -1,20 +1,13 @@
-Oro\Bundle\WebCatalogBundle\OroWebCatalogBundle
-===============================================
+# OroWebCatalogBundle
 
-Table of Contents
------------------
- - [Description](#description)
+OroWebCatalogBundle enables the OroCommerce management console administrators to set a different structure and content of the storefront for individual customers, customer groups, or all visitors of the website by combining product pages, category pages, system pages, and product collections into custom catalogs for these audiences.
+
+## Table of Contents
+
  - [Breadcrumbs](#breadcrumbs)
  - [How to create own content variant](#how-to-create-own-content-variant)
 
-Description
-------------
-
-The OroWebCatalogBundle introduces ability to manage multiple WebCatalogs from the UI.
-
-
-Breadcrumbs
-------------
+## Breadcrumbs
 
 With OroWebCatalogBundle you can override the default breadcrumbs data source.
 
@@ -43,8 +36,7 @@ will like look following:
 WebCatalog <name of the webcatalog> \ Medical Apparel \ Medical Uniforms
 ```
 
-How to create own content variant:
----------------------------------
+## How to create own content variant:
 
 There are 5 content variant types registered out of the box:
 - System page

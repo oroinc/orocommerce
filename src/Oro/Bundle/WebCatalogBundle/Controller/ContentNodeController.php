@@ -133,7 +133,7 @@ class ContentNodeController extends Controller
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 
         $form = $this->createForm(ContentNodeType::class, $node);
-        $form->submit($request);
+        $form->handleRequest($request);
 
         $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
 
@@ -150,7 +150,7 @@ class ContentNodeController extends Controller
      */
     protected function updateTreeNode(ContentNode $node)
     {
-        $form = $this->createForm(ContentNodeType::NAME, $node);
+        $form = $this->createForm(ContentNodeType::class, $node);
 
         $saveRedirectHandler = function (ContentNode $node) {
             if ($node->getParentNode()) {

@@ -53,6 +53,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['completed', true],
             ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
             ['subtotals', new ArrayCollection([$this->createMock(CheckoutSubtotal::class)]), false],
+            ['registeredCustomerUser', new CustomerUser()]
         ];
 
         $entity = new Checkout();

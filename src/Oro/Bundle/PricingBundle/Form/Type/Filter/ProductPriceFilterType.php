@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -65,7 +66,7 @@ class ProductPriceFilterType extends AbstractType
      */
     public function getParent()
     {
-        return NumberRangeFilterType::NAME;
+        return NumberRangeFilterType::class;
     }
 
     /**
@@ -75,9 +76,11 @@ class ProductPriceFilterType extends AbstractType
     {
         $builder->add(
             'unit',
-            'choice',
+            ChoiceType::class,
             [
                 'required' => true,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => $this->getUnitChoices(),
             ]
         );
@@ -89,18 +92,18 @@ class ProductPriceFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $operatorChoices = [
-            NumberRangeFilterType::TYPE_BETWEEN            =>
-                $this->translator->trans('oro.filter.form.label_type_range_between'),
-            NumberRangeFilterType::TYPE_EQUAL              =>
-                $this->translator->trans('oro.filter.form.label_type_range_equals'),
-            NumberRangeFilterType::TYPE_GREATER_THAN       =>
-                $this->translator->trans('oro.filter.form.label_type_range_more_than'),
-            NumberRangeFilterType::TYPE_LESS_THAN          =>
-                $this->translator->trans('oro.filter.form.label_type_range_less_than'),
-            NumberRangeFilterType::TYPE_GREATER_EQUAL      =>
-                $this->translator->trans('oro.filter.form.label_type_range_more_equals'),
-            NumberRangeFilterType::TYPE_LESS_EQUAL         =>
-                $this->translator->trans('oro.filter.form.label_type_range_less_equals'),
+            $this->translator->trans('oro.filter.form.label_type_range_between')
+                => NumberRangeFilterType::TYPE_BETWEEN,
+            $this->translator->trans('oro.filter.form.label_type_range_equals')
+                => NumberRangeFilterType::TYPE_EQUAL,
+            $this->translator->trans('oro.filter.form.label_type_range_more_than')
+                => NumberRangeFilterType::TYPE_GREATER_THAN,
+            $this->translator->trans('oro.filter.form.label_type_range_less_than')
+                => NumberRangeFilterType::TYPE_LESS_THAN,
+            $this->translator->trans('oro.filter.form.label_type_range_more_equals')
+                => NumberRangeFilterType::TYPE_GREATER_EQUAL,
+            $this->translator->trans('oro.filter.form.label_type_range_less_equals')
+                => NumberRangeFilterType::TYPE_LESS_EQUAL,
         ];
 
         $resolver->setDefaults([
@@ -123,7 +126,7 @@ class ProductPriceFilterType extends AbstractType
 
         $choices = [];
         foreach ($unitCodes as $unitCode) {
-            $choices[$unitCode] = $this->formatter->format($unitCode);
+            $choices[$this->formatter->format($unitCode)] = $unitCode;
         }
 
         return $choices;

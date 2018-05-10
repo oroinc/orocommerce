@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -95,7 +96,7 @@ class RelatedItemsProductEditListener
         if ($this->authorizationChecker->isGranted('oro_related_products_edit')) {
             $event->getForm()->add(
                 'appendRelated',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class' => Product::class,
                     'required' => false,
@@ -105,7 +106,7 @@ class RelatedItemsProductEditListener
             );
             $event->getForm()->add(
                 'removeRelated',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class' => Product::class,
                     'required' => false,
@@ -121,7 +122,7 @@ class RelatedItemsProductEditListener
         if ($this->authorizationChecker->isGranted('oro_upsell_products_edit')) {
             $event->getForm()->add(
                 'appendUpsell',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class' => Product::class,
                     'required' => false,
@@ -131,7 +132,7 @@ class RelatedItemsProductEditListener
             );
             $event->getForm()->add(
                 'removeUpsell',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class' => Product::class,
                     'required' => false,

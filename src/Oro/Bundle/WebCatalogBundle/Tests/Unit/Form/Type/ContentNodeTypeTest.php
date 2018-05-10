@@ -22,10 +22,10 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Routing\RouterInterface;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
@@ -47,11 +47,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->router = $this->createMock(RouterInterface::class);
 
         $this->type = new ContentNodeType($this->router);
+        parent::setUp();
     }
 
     /**
@@ -89,18 +88,19 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    ContentNodeType::class => $this->type,
                     TextType::class => new TextType(),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    ContentVariantCollectionType::NAME => $variantCollection,
-                    RouteChoiceType::NAME => new RouteChoiceTypeStub(
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+                    ScopeCollectionType::class => new ScopeCollectionTypeStub(),
+                    ContentVariantCollectionType::class => $variantCollection,
+                    RouteChoiceType::class => new RouteChoiceTypeStub(
                         [
                             'some_route' => 'some_route',
                             'other_route' => 'other_route'
                         ]
                     ),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME
+                    LocalizedSlugType::class => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 []
@@ -111,7 +111,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormRootEntity()
     {
-        $form = $this->factory->create($this->type, new ContentNode());
+        $form = $this->factory->create(ContentNodeType::class, new ContentNode());
 
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
@@ -124,7 +124,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         $node = new ContentNode();
         $node->setParentNode(new ContentNode());
-        $form = $this->factory->create($this->type, $node);
+        $form = $this->factory->create(ContentNodeType::class, $node);
 
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
@@ -136,7 +136,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     public function testBuildFormForExistingEntity()
     {
         $node = $this->getEntity(ContentNode::class, ['id' => 1]);
-        $form = $this->factory->create($this->type, $node);
+        $form = $this->factory->create(ContentNodeType::class, $node);
 
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
@@ -156,7 +156,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(ContentNodeType::class, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
 
@@ -196,7 +196,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $existingData->setParentNode(new ContentNode());
 
         /** @var Form $form */
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(ContentNodeType::class, $existingData);
 
         $formView = $form->createView();
 

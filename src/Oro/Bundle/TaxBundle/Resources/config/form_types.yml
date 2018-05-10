@@ -34,7 +34,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '%oro_tax.entity.product_tax_code.class%'
         tags:
-            - { name: form.type_extension, alias: oro_product }
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_tax.form.extension.customer_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension'
@@ -42,7 +42,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '%oro_tax.entity.customer_tax_code.class%'
         tags:
-            - { name: form.type_extension, alias: oro_customer_type }
+            - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
 
     oro_tax.form.extension.customer_group_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerGroupTaxExtension'
@@ -50,7 +50,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '%oro_tax.entity.customer_tax_code.class%'
         tags:
-            - { name: form.type_extension, alias: oro_customer_group_type }
+            - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
 
     oro_tax.form.extension.order_line_item:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension'
@@ -59,18 +59,18 @@ services:
             - '@oro_tax.provider.tax_provider_registry'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.form.section.provider'
-            - 'oro_order_line_item'
+            - Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType
         tags:
-            - { name: form.type_extension, alias: oro_order_line_item }
+            - { name: form.type_extension, alias: oro_order_line_item, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType }
 
     oro_tax.form.extension.order_line_items_collection:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemsCollectionTypeExtension'
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.manager.tax_value_manager'
-            - 'oro_order_line_items_collection'
+            - Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
         tags:
-            - { name: form.type_extension, alias: oro_order_line_items_collection }
+            - { name: form.type_extension, alias: oro_order_line_items_collection, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType }
 
     oro_tax.form.type.tax:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxType'

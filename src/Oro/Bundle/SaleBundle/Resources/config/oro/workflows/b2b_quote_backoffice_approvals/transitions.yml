@@ -13,7 +13,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 strip_tags: true
                                 required: true
@@ -37,7 +37,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 strip_tags: true
                                 required: true
@@ -62,7 +62,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         email:
-                            form_type: oro_email_email
+                            form_type: Oro\Bundle\EmailBundle\Form\Type\EmailType
                             options:
                                 translation_domain: messages
                     form_init:
@@ -86,7 +86,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 strip_tags: true
                                 required: true
@@ -102,7 +102,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         comment:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 strip_tags: true
                                 required: true

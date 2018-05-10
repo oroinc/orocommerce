@@ -6,6 +6,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -80,18 +81,9 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label' => 'oro.fedex.integration.settings.pickup_type.label',
                     'required' => true,
-                    'choices' => [
-                        FedexIntegrationSettings::PICKUP_TYPE_REGULAR =>
-                            'oro.fedex.integration.settings.pickup_type.regular.label',
-                        FedexIntegrationSettings::PICKUP_TYPE_REQUEST_COURIER =>
-                            'oro.fedex.integration.settings.pickup_type.request_courier.label',
-                        FedexIntegrationSettings::PICKUP_TYPE_DROP_BOX =>
-                            'oro.fedex.integration.settings.pickup_type.drop_box.label',
-                        FedexIntegrationSettings::PICKUP_TYPE_BUSINESS_SERVICE_CENTER =>
-                            'oro.fedex.integration.settings.pickup_type.business_service_center.label',
-                        FedexIntegrationSettings::PICKUP_TYPE_STATION =>
-                            'oro.fedex.integration.settings.pickup_type.station.label',
-                    ]
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
+                    'choices' => $this->getChoices(),
                 ]
             )
             ->add(
@@ -100,20 +92,22 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label' => 'oro.fedex.integration.settings.unit_of_weight.label',
                     'required' => true,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        FedexIntegrationSettings::UNIT_OF_WEIGHT_LB =>
-                            'oro.fedex.integration.settings.unit_of_weight.lb.label',
-                        FedexIntegrationSettings::UNIT_OF_WEIGHT_KG =>
-                            'oro.fedex.integration.settings.unit_of_weight.kg.label',
+                        'oro.fedex.integration.settings.unit_of_weight.lb.label' =>
+                            FedexIntegrationSettings::UNIT_OF_WEIGHT_LB,
+                        'oro.fedex.integration.settings.unit_of_weight.kg.label' =>
+                            FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
                     ]
                 ]
             )
             ->add(
                 'shippingServices',
-                'entity',
+                EntityType::class,
                 [
                     'class' => FedexShippingService::class,
-                    'property' => 'description',
+                    'choice_label' => 'description',
                     'label' => 'oro.fedex.integration.settings.shipping_services.label',
                     'required' => true,
                     'multiple' => true,
@@ -139,5 +133,24 @@ class FedexIntegrationSettingsType extends AbstractType
     public function getBlockPrefix()
     {
         return self::BLOCK_PREFIX;
+    }
+
+    /**
+     * @return array
+     */
+    private function getChoices()
+    {
+        return [
+            'oro.fedex.integration.settings.pickup_type.regular.label' =>
+                FedexIntegrationSettings::PICKUP_TYPE_REGULAR,
+            'oro.fedex.integration.settings.pickup_type.request_courier.label' =>
+                FedexIntegrationSettings::PICKUP_TYPE_REQUEST_COURIER,
+            'oro.fedex.integration.settings.pickup_type.drop_box.label' =>
+                FedexIntegrationSettings::PICKUP_TYPE_DROP_BOX,
+            'oro.fedex.integration.settings.pickup_type.business_service_center.label'=>
+                FedexIntegrationSettings::PICKUP_TYPE_BUSINESS_SERVICE_CENTER,
+            'oro.fedex.integration.settings.pickup_type.station.label' =>
+                FedexIntegrationSettings::PICKUP_TYPE_STATION,
+        ];
     }
 }

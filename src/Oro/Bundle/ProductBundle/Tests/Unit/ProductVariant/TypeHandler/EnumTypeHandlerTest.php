@@ -43,6 +43,9 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
             'green' => true,
             'yellow' => false,
             'black' => true,
+            '10' => false,
+            '10 mm' => true,
+            '10mm' => true,
         ];
 
         $fieldConfig = $this->createMock(FieldConfigModel::class);
@@ -61,8 +64,8 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('createNamed')
-            ->with($fieldName, EnumSelectType::NAME, null, $this->callback(function (array $options) use ($fieldName) {
-                $disabledValues = ['red', 'yellow'];
+            ->with($fieldName, EnumSelectType::class, null, $this->callback(function (array $options) use ($fieldName) {
+                $disabledValues = ['red', 'yellow', '10'];
 
                 $this->assertEquals([
                     'class' => '\stdClass',

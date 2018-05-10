@@ -70,7 +70,7 @@ class CustomerFormExtension extends AbstractTypeExtension
                 ]
             );
 
-            $builder->add($field->getName(), $field->getType()->getName(), $options);
+            $builder->add($field->getName(), get_class($field->getType()->getInnerType()), $options);
         }
     }
 
@@ -79,6 +79,6 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return CustomerType::class;
     }
 }

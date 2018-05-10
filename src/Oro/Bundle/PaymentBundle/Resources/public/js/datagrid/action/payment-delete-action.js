@@ -24,6 +24,16 @@ define([
         /** @property {String} */
         confirm_content: __('Are you sure you want to delete this item?'),
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function PaymentDeleteAction() {
+            PaymentDeleteAction.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if (this.model.has('payment_delete_message')) {
                 this.confirm_content = this.model.get('payment_delete_message');

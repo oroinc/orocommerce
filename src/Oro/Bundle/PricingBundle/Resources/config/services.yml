@@ -47,7 +47,7 @@ services:
             - '%oro_pricing.entity.price_list.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_pricing_price_list, acl_resource: oro_pricing_price_list_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
@@ -226,6 +226,17 @@ services:
             - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.website_combined_price_list_builder'
+
+    oro_pricing.builder.combined_price_list_builder_facade:
+        class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.builder.customer_combined_price_list_builder'
+            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
+            - '@oro_pricing.builder.website_combined_price_list_builder'
+            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
@@ -420,6 +431,7 @@ services:
             - '@doctrine'
             - '@oro_website.manager'
             - '@oro_config.global'
+            - '@oro_security.token_accessor'
 
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
@@ -470,6 +482,7 @@ services:
             - '@oro_filter.filter_utility'
         calls:
             - [setFormatter, ['@oro_product.formatter.product_unit_label']]
+            - [setConfigManager, ['@oro_config.global']]
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 
@@ -672,7 +685,7 @@ services:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
         class: Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener
         arguments:
-            - '@oro_pricing.builder.combined_price_list_builder'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
         calls:
@@ -925,17 +938,12 @@ services:
     oro_pricing.async.combined_price_list_processor:
         class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
         arguments:
-            - '@oro_pricing.builder.combined_price_list_builder'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_combined_price_list_builder'
-            - '@event_dispatcher'
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
             - '@oro_entity.database_exception_helper'
-        calls:
-            - [setCombinedPriceListTriggerHandler, ['@oro_pricing.model.combined_price_list_trigger_handler']]
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -944,8 +952,7 @@ services:
         arguments:
             - '@oro_pricing.price_list_trigger_factory'
             - '@doctrine'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@event_dispatcher'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
             - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
@@ -1003,6 +1010,7 @@ services:
             - "@oro_pricing.model.price_list_request_handler"
             - "@doctrine"
             - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
 

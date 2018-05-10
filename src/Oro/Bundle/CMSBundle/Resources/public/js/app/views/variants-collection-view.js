@@ -10,6 +10,13 @@ define(function(require) {
         events: {
             'click [name$="[default]"]': 'onPrimaryClick',
             'change >*': 'onChangeInFiledGroup'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function VariantsCollectionView() {
+            VariantsCollectionView.__super__.constructor.apply(this, arguments);
         }
     });
 

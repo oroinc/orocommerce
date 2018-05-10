@@ -71,7 +71,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="oro_cms_page_select",
+ *              "form_type"="Oro\Bundle\CMSBundle\Form\Type\PageSelectType",
  *              "grid_name"="cms-page-select-grid"
  *          }
  *      }

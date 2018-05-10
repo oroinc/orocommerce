@@ -1,7 +1,7 @@
 datagrids:
     category-products-grid:
         acl_resource: oro_product_update
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         source:
             type:         orm
             query:
@@ -26,7 +26,7 @@ datagrids:
                             END
                         ) as inCategory
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
@@ -78,7 +78,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                inCategory: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                inCategory: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 inCategory:
@@ -99,6 +99,8 @@ datagrids:
                     type: choice
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 createdAt:
                     type:      datetime
@@ -135,7 +137,7 @@ datagrids:
                         data_name: text.category_title_LOCALIZATION_ID
                         type: string
                 default:
-                    categoryTitle: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                    categoryTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
             options:
                 toolbarOptions:
                     pagination:

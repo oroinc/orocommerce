@@ -39,7 +39,7 @@ class ProductUnitsProvider
         $unitsFull = [];
         foreach ($productUnits as $unit) {
             $code = $unit->getCode();
-            $unitsFull[$code] = $this->formatter->format($code);
+            $unitsFull[$this->formatter->format($code)] = $code;
         }
 
         return $unitsFull;

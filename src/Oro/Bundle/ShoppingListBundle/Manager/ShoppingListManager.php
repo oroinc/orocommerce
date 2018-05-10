@@ -21,9 +21,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
+ * Handles logic related to shopping list and lineitem manipulations (create, remove, etc.)
  * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingListManager
 {
@@ -386,6 +388,20 @@ class ShoppingListManager
     }
 
     /**
+     * @return bool
+     */
+    public function isCurrentShoppingListEmpty()
+    {
+        $shoppingLists = $this->getShoppingListsWithCurrentFirst();
+
+        if (count($shoppingLists) != 1) {
+            return false;
+        }
+
+        return $shoppingLists[0]->getLineItems()->count() == 0;
+    }
+
+    /**
      * @param array $sortCriteria
      * @return ShoppingList[]
      */
@@ -403,7 +419,7 @@ class ShoppingListManager
 
     /**
      * @param array $sortCriteria
-     * @return array
+     * @return ShoppingList[]
      */
     public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
     {

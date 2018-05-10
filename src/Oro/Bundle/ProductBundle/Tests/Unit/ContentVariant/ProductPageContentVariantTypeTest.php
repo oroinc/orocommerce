@@ -34,11 +34,6 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('product_page', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.product.content_variant.product_page.label', $this->type->getTitle());

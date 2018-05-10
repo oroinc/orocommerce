@@ -85,10 +85,14 @@
                                     </td>
                                 {% endif %}
                                 <td class="rfp-line_item-requested_quantity rfp-line_item-requested_quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                    {% if oro_is_unit_code_visible(subItem.productUnit.code) %}
-                                        {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
+                                    {% if subItem.productUnit %}
+                                        {% if oro_is_unit_code_visible(subItem.productUnit.code) %}
+                                            {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
+                                        {% else %}
+                                            {{ quantity ? quantity : 'N/A'|trans }}
+                                        {% endif %}
                                     {% else %}
-                                        {{ quantity ? quantity : 'N/A'|trans }}
+                                        {{ quantity ? quantity ~ ' ' ~ 'oro.rfp.message.requestproductitem.unit.removed'|trans({'{title}': subItem.productUnitCode}) : 'N/A'|trans }}
                                     {% endif %}
                                 </td>
                                 <td class="rfp-line_item-target_price rfp-line_item-target_price-{% if loop.first %}first{% else %}not_first{% endif %}">

@@ -8,20 +8,9 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class AppliedPromotionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var AppliedPromotionType
-     */
-    private $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new AppliedPromotionType();
-    }
-
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(AppliedPromotionType::class);
 
         $this->assertTrue($form->has('active'));
         $this->assertTrue($form->has('sourcePromotionId'));
@@ -36,7 +25,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(AppliedPromotion $defaultData, array $submittedData, AppliedPromotion $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(AppliedPromotionType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
@@ -71,7 +60,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(AppliedPromotionType::class);
 
         $this->assertArraySubset([
             'data_class' => AppliedPromotion::class,
@@ -80,11 +69,13 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(AppliedPromotionType::NAME, $this->formType->getName());
+        $formType = new AppliedPromotionType();
+        $this->assertEquals(AppliedPromotionType::NAME, $formType->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(AppliedPromotionType::NAME, $this->formType->getBlockPrefix());
+        $formType = new AppliedPromotionType();
+        $this->assertEquals(AppliedPromotionType::NAME, $formType->getBlockPrefix());
     }
 }

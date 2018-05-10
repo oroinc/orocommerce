@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class LoginPageType extends AbstractType
@@ -17,7 +19,7 @@ class LoginPageType extends AbstractType
         $builder
             ->add(
                 'topContent',
-                'textarea',
+                TextareaType::class,
                 [
                     'label' => 'oro.cms.loginpage.top_content.label',
                     'required' => false
@@ -25,7 +27,7 @@ class LoginPageType extends AbstractType
             )
             ->add(
                 'bottomContent',
-                'textarea',
+                TextareaType::class,
                 [
                     'label' => 'oro.cms.loginpage.bottom_content.label',
                     'required' => false
@@ -33,7 +35,7 @@ class LoginPageType extends AbstractType
             )
             ->add(
                 'css',
-                'textarea',
+                TextareaType::class,
                 [
                     'label' => 'oro.cms.loginpage.css.label',
                     'required' => false
@@ -41,7 +43,7 @@ class LoginPageType extends AbstractType
             )
             ->add(
                 'logoImage',
-                'oro_image',
+                ImageType::class,
                 [
                     'label'    => 'oro.cms.loginpage.logo_image.label',
                     'required' => false
@@ -49,7 +51,7 @@ class LoginPageType extends AbstractType
             )
             ->add(
                 'backgroundImage',
-                'oro_image',
+                ImageType::class,
                 [
                     'label'    => 'oro.cms.loginpage.background_image.label',
                     'required' => false

@@ -67,7 +67,7 @@ operations:
         form_options:
             attribute_fields:
                 email:
-                    form_type: oro_email_email
+                    form_type: Oro\Bundle\EmailBundle\Form\Type\EmailType
 
         form_init:
             - '@call_service_method':
@@ -261,8 +261,8 @@ action_groups:
                     - [[setNull], [propertyName, [demands]]]
                     - [[setNull], [propertyName, [internal_status]]]
                     - [[setNull], [propertyName, [customer_status]]]
-                    - [[replaceValue, 'false'], [property, ['%oro_sale.entity.quote.class%', expired]]]
-                    - [[replaceValue, 'false'], [property, ['%oro_sale.entity.quote.class%', pricesChanged]]]
+                    - [[replaceValue, false], [property, ['%oro_sale.entity.quote.class%', expired]]]
+                    - [[replaceValue, false], [property, ['%oro_sale.entity.quote.class%', pricesChanged]]]
                     - [[keep], [propertyName, [customerUser]]]
                     - [[keep], [propertyName, [customer]]]
                     - [[keep], [propertyName, [organization]]]

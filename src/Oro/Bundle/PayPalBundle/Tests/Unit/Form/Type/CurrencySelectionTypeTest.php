@@ -5,6 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\CurrencySelectionTypeTest as CurrencyBundleCurrencySelectionTypeTest;
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Intl\Intl;
 
 class CurrencySelectionTypeTest extends CurrencyBundleCurrencySelectionTypeTest
@@ -15,12 +16,15 @@ class CurrencySelectionTypeTest extends CurrencyBundleCurrencySelectionTypeTest
     protected function setUp()
     {
         parent::setUp();
-
         $this->formType = new CurrencySelectionType(
             $this->currencyProvider,
             $this->localeSettings,
             $this->currencyNameHelper
         );
+
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->getFormFactory();
     }
 
     /**

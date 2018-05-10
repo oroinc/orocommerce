@@ -1,7 +1,7 @@
-@skip
-#TODO: unskip after BB-13064
-
 Feature: Rule Editor with Autocomplete in Price List
+  In order to simplify editing of the rules
+  As admin
+  I need to have autocomplete and validation in rule editors
 
   Scenario: Checking of autocomplete for Product Assignment Rule
     Given I login as administrator
@@ -101,6 +101,26 @@ Feature: Rule Editor with Autocomplete in Price List
     When I save and close form
     Then I should see "Price List has been saved" flash message
 
+    And I go to Sales/ Price Lists
+    And click "Create Price List"
+    And click "Price Calculation Add"
+    And I fill form with:
+     | Name       | TestPriceList2 |
+     | Currencies | US Dollar ($)  |
+     | Active     | true           |
+     | Priority   | 10             |
+    And I type "1" in "Price Calculation Quantity"
+
+    And I click "Price Calculation Unit Expression Button"
+    And I type "pricelist[1].prices.unit" in "Price Calculation Unit Expression"
+    And I click "Price Calculation Currency Expression Button"
+    And I type "pricelist[1].prices.currency" in "Price Calculation Currency Expression"
+    When I click on "Price Calculation Calculate As"
+    And I select "product…" from typeahead suggestions for "Price Calculation Calculate As"
+    Then I should not see "attributeFamily…" in typeahead suggestions for "Price Calculation Calculate As"
+    And I should see "category…" in typeahead suggestions for "Price Calculation Calculate As"
+    And I click "Cancel"
+
   Scenario: Checking backend validation for Price Calculation Rules
     And I go to Sales/ Price Lists
     And click "Create Price List"
@@ -120,11 +140,11 @@ Feature: Rule Editor with Autocomplete in Price List
       | Calculate As | pricelist[1].pri  |
       | Condition    | pricelist[12].pri |
     And I save form
-    Then I should see "Expected name around position 14."
-    And I should not see "Expected name around position 14.; Expected name around position 14."
-    And I should see "Expected name around position 15."
-    And I should not see "Expected name around position 15.; Expected name around position 15."
-    And I should see "Expected name around position 21."
-    And I should not see "Expected name around position 21.; Expected name around position 21."
-    And I should see "Expected name around position 22."
-    And I should not see "Expected name around position 22.; Expected name around position 22."
+    Then I should see "Unexpected end of expression around position 14."
+    And I should not see "Unexpected end of expression around position 14.; Unexpected end of expression around position 14."
+    And I should see "Unexpected end of expression around position 15."
+    And I should not see "Unexpected end of expression around position 15.; Unexpected end of expression around position 15."
+    And I should see "Unexpected end of expression around position 21."
+    And I should not see "Unexpected end of expression around position 21.; Unexpected end of expression around position 21."
+    And I should see "Unexpected end of expression around position 22."
+    And I should not see "Unexpected end of expression around position 22.; Unexpected end of expression around position 22."

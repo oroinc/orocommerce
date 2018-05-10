@@ -26,6 +26,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductVariantComponent() {
+            ProductVariantComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.variantFieldCheckboxes = this.options._sourceElement.find(this.options.productVariantFieldsSelector);

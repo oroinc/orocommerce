@@ -12,6 +12,13 @@ define(function(require) {
      */
     ProductsPricesComponent = BaseProductsPricesComponent.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function ProductsPricesComponent() {
+            ProductsPricesComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Array} products
          * @param {Function} callback
          */

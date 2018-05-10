@@ -20,10 +20,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -91,11 +91,12 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     $entityType->getName() => $entityType,
-                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                    ProductPriceUnitSelectorType::NAME => $productUnitSelection,
-                    PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    PriceListSelectType::class => new PriceListSelectTypeStub(),
+                    ProductPriceUnitSelectorType::class => $productUnitSelection,
+                    PriceType::class => $priceType,
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
@@ -116,7 +117,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         ProductPrice $expectedData
     ) {
         $this->addRoundingServiceExpect();
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 

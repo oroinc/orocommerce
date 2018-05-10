@@ -130,7 +130,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
 
         $this->productFormProvider->expects($this->once())
@@ -155,7 +155,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
 
         $this->productFormProvider->expects($this->once())
@@ -198,7 +198,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
         $form->expects($this->once())
             ->method('isValid')
@@ -261,7 +261,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
         $mainForm->expects($this->once())
             ->method('isValid')
@@ -340,7 +340,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
         $form->expects($this->once())
             ->method('isValid')

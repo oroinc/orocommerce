@@ -15,8 +15,8 @@ class ScopeCollectionTypeStub extends ScopeCollectionType
     {
         $resolver->setDefault('allow_add', true);
         $resolver->setDefault('allow_delete', true);
-        $resolver->setNormalizer('type', function () {
-            return new ScopeTypeStub();
+        $resolver->setNormalizer('entry_type', function () {
+            return ScopeTypeStub::class;
         });
     }
 

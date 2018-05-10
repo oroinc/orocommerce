@@ -809,6 +809,12 @@ oro_behat_extension:
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
 
+    Add Product Price:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//div[contains (@id,"oro_product_prices-uid")]/../a'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

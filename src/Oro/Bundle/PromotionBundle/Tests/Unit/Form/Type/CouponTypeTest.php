@@ -9,30 +9,17 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType;
+use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class CouponTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var CouponType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new CouponType();
-    }
 
     /**
      * {@inheritDoc}
@@ -51,7 +38,7 @@ class CouponTypeTest extends FormIntegrationTestCase
             ],
             PromotionSelectType::NAME,
             [
-                'autocomplete_alias' => 'oro_promotion',
+                'autocomplete_alias' => PromotionType::class,
                 'grid_name' => 'promotion-for-coupons-select-grid',
             ]
         );
@@ -59,11 +46,11 @@ class CouponTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $promotionSelectType->getName() => $promotionSelectType,
-                    OroDateTimeType::NAME => new OroDateTimeType(),
+                    PromotionSelectType::class => $promotionSelectType,
+                    OroDateTimeType::class => new OroDateTimeType(),
                 ],
                 [
-                    'form' => [
+                    FormType::class => [
                         new TooltipFormExtension($configProvider, $translator),
                     ],
                 ]
@@ -79,7 +66,7 @@ class CouponTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($submittedData, Coupon $expectedData)
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(CouponType::class);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
@@ -91,7 +78,7 @@ class CouponTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType, $this->createCoupon('test'));
+        $form = $this->factory->create(CouponType::class, $this->createCoupon('test'));
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('promotion'));

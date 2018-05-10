@@ -73,6 +73,7 @@ layout:
                         lineItemsUnitVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getLineItemsUnitVisibilities(data["entity"])'
                         vars:
                             totalPrices: '=data["oro_shopping_list_matrix_grid_order"].getTotalsQuantityPrice(data["oro_shopping_list_products"].getConfigurableProductsFromShoppingList(data["entity"]), data["entity"])'
+                            productsWithConfigurableVariants: '=data["frontend_product_prices"].getVariantsPricesByProducts(data["oro_shopping_list_products"].getConfigurableProductsFromShoppingList(data["entity"]))'
 
                 shopping_list_line_items_list_row:
                     blockType: container

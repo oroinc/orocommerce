@@ -22,12 +22,14 @@ class CategoryPageVariantType extends AbstractType
         $builder
             ->add(
                 'excludeSubcategories',
-                OroChoiceType::NAME,
+                OroChoiceType::class,
                 [
                     'label' => 'oro.catalog.subcategory.form.exclude_subcategories.label',
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        'oro.catalog.subcategory.form.exclude_subcategories.include.label',
-                        'oro.catalog.subcategory.form.exclude_subcategories.exclude.label',
+                        'oro.catalog.subcategory.form.exclude_subcategories.include.label' => 0,
+                        'oro.catalog.subcategory.form.exclude_subcategories.exclude.label' => 1,
                     ],
                     'required' => true,
                     'tooltip' => 'oro.catalog.subcategory.form.exclude_subcategories.tooltip',
@@ -35,7 +37,7 @@ class CategoryPageVariantType extends AbstractType
             )
             ->add(
                 'categoryPageCategory',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'label' => 'oro.catalog.category.entity_label',
                     'required' => true,

@@ -12,7 +12,7 @@ services:
         tags:
             - name: oro_importexport.processor
               type: export
-              entity: %oro_tax.entity.tax_rule.class%
+              entity: '%oro_tax.entity.tax_rule.class%'
               alias:  oro_tax_tax_rule
 
     oro_tax.importexport.processor.import.tax_rule:
@@ -23,11 +23,11 @@ services:
         tags:
             - name: oro_importexport.processor
               type: import
-              entity: %oro_tax.entity.tax_rule.class%
+              entity: '%oro_tax.entity.tax_rule.class%'
               alias:  oro_tax_tax_rule
             - name: oro_importexport.processor
               type: import_validation
-              entity: %oro_tax.entity.tax_rule.class%
+              entity: '%oro_tax.entity.tax_rule.class%'
               alias: oro_tax_tax_rule
 
     oro_tax.importexport.data_converter.tax:
@@ -43,7 +43,7 @@ services:
         tags:
             - name: oro_importexport.processor
               type: export
-              entity: %oro_tax.entity.tax.class%
+              entity: '%oro_tax.entity.tax.class%'
               alias:  oro_tax_tax
 
     oro_tax.importexport.processor.import.tax:
@@ -54,11 +54,11 @@ services:
         tags:
             - name: oro_importexport.processor
               type: import
-              entity: %oro_tax.entity.tax.class%
+              entity: '%oro_tax.entity.tax.class%'
               alias:  oro_tax_tax
             - name: oro_importexport.processor
               type: import_validation
-              entity: %oro_tax.entity.tax.class%
+              entity: '%oro_tax.entity.tax.class%'
               alias:  oro_tax_tax
 
     oro_tax.importexport.configuration_provider.tax_rule:

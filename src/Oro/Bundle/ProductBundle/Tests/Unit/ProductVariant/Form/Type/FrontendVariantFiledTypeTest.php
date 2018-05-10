@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -44,8 +45,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,6 +60,17 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([$this->type], [])
+        ];
     }
 
     /**
@@ -69,11 +79,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getName());
     }
 
     public function testGetBlockPrefix()
@@ -167,7 +172,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->with($attributeFamily)
             ->willReturn($customFields);
 
-        $form = $this->factory->create($this->type, $defaultVariant, $options);
+        $form = $this->factory->create(FrontendVariantFiledType::class, $defaultVariant, $options);
 
         $this->assertTrue($form->has(self::FIELD_COLOR));
         $this->assertTrue($form->has(self::FIELD_NEW));
@@ -220,7 +225,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     public function testBuildFormWithoutProductInOptions()
     {
-        $this->factory->create($this->type);
+        $this->factory->create(FrontendVariantFiledType::class);
     }
 
     // @codingStandardsIgnoreStart
@@ -232,7 +237,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     public function testBuildWhenRequiredFieldProductHasOtherObject()
     {
         $options['parentProduct'] = new \stdClass();
-        $this->factory->create($this->type, [], $options);
+        $this->factory->create(FrontendVariantFiledType::class, [], $options);
     }
 
     /**

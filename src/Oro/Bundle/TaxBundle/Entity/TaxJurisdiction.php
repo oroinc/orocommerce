@@ -13,13 +13,22 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Entity that represents tax jusrisdiction
+ *
  * @ORM\Entity
  * @ORM\Table("oro_tax_jurisdiction")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",
  *     routeName="oro_tax_jurisdiction_index",
- *     routeUpdate="oro_tax_jurisdiction_update"
+ *     routeView="oro_tax_jurisdiction_view",
+ *     routeUpdate="oro_tax_jurisdiction_update",
+ *     defaultValues={
+ *         "security"={
+ *             "type"="ACL",
+ *             "group_name"=""
+ *         },
+ *     }
  * )
  */
 class TaxJurisdiction implements DatesAwareInterface

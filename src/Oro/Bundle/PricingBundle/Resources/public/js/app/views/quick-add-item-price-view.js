@@ -45,7 +45,14 @@ define(function(require) {
         templates: {},
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddItemView() {
+            QuickAddItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -115,7 +122,8 @@ define(function(require) {
 
             if (priceObj && quantity) {
                 return NumberFormatter.formatCurrency(
-                    priceObj.price * quantity
+                    priceObj.price * quantity,
+                    priceObj.currency
                 );
             } else if (this.model.get('showSubtotalPlaceholder')) {
                 return this.options.subtotalNotAvailable;

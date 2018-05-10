@@ -22,9 +22,9 @@ class EnumSelectType extends EntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults(
             [
-                'choice_list' => $this->choiceList,
                 'enum_code' => null,
                 'configs' => []
             ]

@@ -53,11 +53,10 @@ services:
     oro_seo.layout.data_provider.webcatalog_title:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoTitleDataProvider
         decorates: oro_web_catalog.layout.data_provider.title_data
+        public: false
         arguments:
             - '@oro_seo.layout.data_provider.seo_data'
             - '@oro_seo.layout.data_provider.webcatalog_title.inner'
-        tags:
-            - { name: layout.data_provider, alias: web_catalog_title }
 
     oro_seo.layout.data_provider.localized_urls_data:
         class: Oro\Bundle\SEOBundle\Layout\DataProvider\LocalizedLinksDataProvider
@@ -73,12 +72,12 @@ services:
     oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
         tags:
-            - { name: form.type_extension, alias: oro_cms_page }
+            - { name: form.type_extension, alias: oro_cms_page, extended_type: Oro\Bundle\CMSBundle\Form\Type\PageType }
 
     oro_seo.form.extension.product_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
         tags:
-            - { name: form.type_extension, alias: oro_product }
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_seo.form.extension.brand_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\BrandFormExtension'
@@ -88,7 +87,7 @@ services:
     oro_seo.form.extension.category_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         tags:
-            - { name: form.type_extension, alias: oro_catalog_category }
+            - { name: form.type_extension, alias: oro_catalog_category, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
 
     oro_seo.event_listener.website_search_index:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener'
@@ -102,7 +101,7 @@ services:
     oro_seo.form.extension.content_node_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ContentNodeFormExtension'
         tags:
-            - { name: form.type_extension, alias: oro_web_catalog_content_node }
+            - { name: form.type_extension, alias: oro_web_catalog_content_node, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType }
 
     oro_seo.provider.content_node_content_variant_provider:
         class: Oro\Bundle\SEOBundle\Provider\ContentNodeContentVariantProvider

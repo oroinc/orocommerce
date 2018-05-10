@@ -14,6 +14,7 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
@@ -150,7 +151,7 @@ oro_behat_extension:
           Billing Address: 'oro_workflow_transition[billing_address][customerAddress]'
           First Name: 'oro_workflow_transition[billing_address][firstName]'
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
-          Email: 'oro_workflow_transition[visitor_email]'
+          Email: 'oro_workflow_transition[email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'
@@ -185,3 +186,9 @@ oro_behat_extension:
     Submit Order:
         selector: '.order-checkout-widget button:contains("Submit Order")'
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Customer Users List button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        type: xpath
