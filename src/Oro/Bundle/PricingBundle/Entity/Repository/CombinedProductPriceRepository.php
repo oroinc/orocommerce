@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -15,6 +16,7 @@ use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
@@ -141,9 +143,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->andX(
                         $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
                         $qb->expr()->eq('pp.product', 'cpp2.product'),
+                        $qb->expr()->eq('pp.currency', 'cpp2.currency'),
                         $qb->expr()->eq('pp.unit', 'cpp2.unit'),
-                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
-                        $qb->expr()->eq('pp.currency', 'cpp2.currency')
+                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity')
                     )
                 );
             $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery2->getQuery()->getDQL())));
@@ -201,7 +203,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             'IDENTITY(mp.priceList) as cpl',
             'IDENTITY(mp.unit) as unit'
         );
-        $qb->groupBy('mp.product, mp.priceList, mp.currency, mp.unit');
+        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -221,7 +223,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             'mp.currency',
             'IDENTITY(mp.priceList) as cpl'
         );
-        $qb->groupBy('mp.product, mp.priceList, mp.currency');
+        $qb->groupBy('mp.priceList, mp.product, mp.currency');
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -262,47 +264,69 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     protected function getQbForMinimalPrices($websiteId, array $products, $configCpl)
     {
         $qb = $this->createQueryBuilder('mp');
-        $qb->where('mp.product in (:products)')
-            ->setParameter('products', $products);
-        $expr = $qb->expr()->orX(
-            $qb->expr()->orX(
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToWebsite::class, 'cpl_w')
-                        ->select('cpl_w.id')
-                        ->where('cpl_w.website = :websiteId')
-                        ->andWhere('cpl_w.priceList = mp.priceList')
-                        ->getDQL()
-                ),
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToCustomer::class, 'cpl_a')
-                        ->select('cpl_a.id')
-                        ->where('cpl_a.website = :websiteId')
-                        ->andWhere('cpl_a.priceList = mp.priceList')
-                        ->getDQL()
-                ),
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToCustomerGroup::class, 'cpl_ag')
-                        ->select('cpl_ag.id')
-                        ->where('cpl_ag.website = :websiteId')
-                        ->andWhere('cpl_ag.priceList = mp.priceList')
-                        ->getDQL()
+
+        return $qb
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->in('mp.priceList', ':cplIds'),
+                    $qb->expr()->in('mp.product', ':products')
                 )
             )
-        );
-        if ($configCpl) {
-            $expr->add('mp.priceList = :conf_cpl');
-            $qb->setParameter('conf_cpl', $configCpl);
-        }
-        $qb->andWhere($expr)
-            ->setParameter('websiteId', $websiteId);
+            ->setParameter('cplIds', $this->getCplIdsForWebsite($websiteId, $configCpl))
+            ->setParameter(
+                'products',
+                array_map(
+                    function ($product) {
+                        return (int)($product instanceof Product ? $product->getId() : $product);
+                    },
+                    $products
+                )
+            );
+    }
 
-        return $qb;
+    /**
+     * @param int $websiteId
+     * @param CombinedPriceList|null $configCpl
+     * @return array|int[]
+     */
+    private function getCplIdsForWebsite($websiteId, $configCpl = null)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = new UnionQueryBuilder($em, false);
+        $qb->addSelect('cplId', 'id', Type::INTEGER)
+            ->addOrderBy('id');
+
+        if ($configCpl) {
+            $subQb = $em->getRepository(CombinedPriceList::class)->createQueryBuilder('cpl');
+            $subQb->select('cpl.id AS cplId')
+                ->where(
+                    $subQb->expr()->eq('cpl.id', ':configCpl')
+                )
+                ->setParameter('configCpl', $configCpl)
+                ->setMaxResults(1);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        $cplRelations = [
+            CombinedPriceListToWebsite::class,
+            CombinedPriceListToCustomerGroup::class,
+            CombinedPriceListToCustomer::class
+        ];
+
+        foreach ($cplRelations as $entityClass) {
+            $subQb = $em->getRepository($entityClass)->createQueryBuilder('relation');
+            $subQb->select('IDENTITY(relation.priceList) AS cplId')
+                ->where(
+                    $subQb->expr()->eq('relation.website', ':websiteId')
+                )
+                ->setParameter('websiteId', $websiteId);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
     }
 
     /**

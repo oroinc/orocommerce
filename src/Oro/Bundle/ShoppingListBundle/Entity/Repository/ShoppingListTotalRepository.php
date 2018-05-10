@@ -22,24 +22,28 @@ class ShoppingListTotalRepository extends EntityRepository
             return;
         }
 
-        $qb = $this->createQueryBuilder('total');
-        $qb->select('DISTINCT total.id')
-            ->join(
-                'OroShoppingListBundle:LineItem',
-                'lineItem',
-                Join::WITH,
-                $qb->expr()->eq('total.shoppingList', 'lineItem.shoppingList')
-            )
+        $subQuery = $this->getEntityManager()->createQueryBuilder();
+        $subQuery->select('1')
+            ->from('OroShoppingListBundle:LineItem', 'lineItem')
             ->join(
                 'OroPricingBundle:CombinedProductPrice',
                 'productPrice',
                 Join::WITH,
-                $qb->expr()->eq('lineItem.product', 'productPrice.product')
+                $subQuery->expr()->eq('lineItem.product', 'productPrice.product')
             )
-            ->where($qb->expr()->in('productPrice.priceList', ':priceLists'))
-            ->andWhere('total.valid = :isValid')
-            ->setParameter(':isValid', true)
-            ->setParameter('priceLists', $combinedPriceListIds);
+            ->where(
+                $subQuery->expr()->eq('total.shoppingList', 'lineItem.shoppingList'),
+                $subQuery->expr()->in('productPrice.priceList', ':priceLists')
+            );
+
+        $qb = $this->createQueryBuilder('total');
+        $qb->select('total.id')
+            ->where(
+                $qb->expr()->eq('total.valid', ':isValid'),
+                $qb->expr()->exists($subQuery)
+            )
+            ->setParameter('priceLists', $combinedPriceListIds)
+            ->setParameter('isValid', true);
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
@@ -58,6 +62,19 @@ class ShoppingListTotalRepository extends EntityRepository
         $qb = $this->getBaseInvalidateQb($websiteId);
         $qb->andWhere($qb->expr()->in('shoppingList.customer', ':customers'))
             ->setParameter('customers', $customerIds);
+
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
+        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
+        $this->invalidateTotals($iterator);
+    }
+
+    /**
+     * @param int $websiteId
+     */
+    public function invalidateGuestShoppingLists($websiteId)
+    {
+        $qb = $this->getBaseInvalidateQb($websiteId);
+        $qb->join('shoppingList.visitors', 'visitor');
 
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);

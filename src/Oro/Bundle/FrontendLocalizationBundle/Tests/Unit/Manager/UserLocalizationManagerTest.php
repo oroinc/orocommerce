@@ -95,12 +95,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
 
-        $this->configManager->expects($this->at(0))
-            ->method('get')
-            ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
-            ->willReturn([]);
-
-        $this->configManager->expects($this->at(1))
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
             ->willReturn($localization->getId());
@@ -128,12 +123,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
 
-        $this->configManager->expects($this->at(0))
-            ->method('get')
-            ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
-            ->willReturn([]);
-
-        $this->configManager->expects($this->at(1))
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
             ->willReturn($localization1->getId());
@@ -218,7 +208,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetCurrentLocalizationNotLoggedUser()
+    public function testGetCurrentLocalizationNotLoggedUserAndSessionWasStarted()
     {
         /** @var Localization $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
@@ -234,6 +224,9 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn([$localization->getId(), 4]);
         $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(true);
+        $this->session->expects($this->once())
             ->method('get')
             ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
             ->willReturn($sessionLocalizations);
@@ -243,6 +236,36 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with([$localization->getId(), 4])
             ->willReturn([$localization->getId() => $localization]);
 
+        $this->localizationManager->expects($this->once())
+            ->method('getLocalization')
+            ->with($localization->getId())
+            ->willReturn($localization);
+
+        $this->assertEquals($localization, $this->userLocalizationManager->getCurrentLocalization());
+    }
+
+    public function testGetCurrentLocalizationNotLoggedUserAndSessionWasNotStarted()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
+            ->willReturn(1);
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(false);
+        $this->session->expects($this->never())
+            ->method('get');
+
+        $this->localizationManager->expects($this->never())
+            ->method('getLocalizations');
         $this->localizationManager->expects($this->once())
             ->method('getLocalization')
             ->with($localization->getId())
@@ -289,7 +312,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->userLocalizationManager->setCurrentLocalization($localization, $website);
     }
 
-    public function testSetCurrentLocalizationNotLoggedUser()
+    public function testSetCurrentLocalizationNotLoggedUserAndSessionWasStarted()
     {
         /** @var Localization|\PHPUnit_Framework_MockObject_MockObject $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
@@ -301,6 +324,9 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
         $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(true);
+        $this->session->expects($this->once())
             ->method('get')
             ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
             ->willReturn($sessionLocalizations);
@@ -310,6 +336,27 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
                 UserLocalizationManager::SESSION_LOCALIZATIONS,
                 [2 => 3, $website->getId() => $localization->getId()]
             );
+
+        $this->userLocalizationManager->setCurrentLocalization($localization);
+    }
+
+    public function testSetCurrentLocalizationNotLoggedUserAndSessionWasNotStarted()
+    {
+        /** @var Localization|\PHPUnit_Framework_MockObject_MockObject $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 4]);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(false);
+        $this->session->expects($this->never())
+            ->method('get');
+        $this->session->expects($this->never())
+            ->method('set');
 
         $this->userLocalizationManager->setCurrentLocalization($localization);
     }

@@ -17,6 +17,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
     /**
@@ -215,14 +218,14 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
+                'value' => '1.1000',
+                'currency' => 'USD',
                 'unit' => 'bottle',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
             [
                 'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.2000',
                 'currency' => 'USD',
                 'unit' => 'liter',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
@@ -275,13 +278,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
-                'cpl' => $this->getReference('1t_2t_3t')->getId(),
-            ],
-            [
-                'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.1000',
                 'currency' => 'USD',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
@@ -361,7 +358,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->getRepository(CombinedProductPrice::class);
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
-        $this->assertCount(6, $result);
+        $this->assertCount(4, $result);
 
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         $repo->deleteByProductUnit($shardManager, $product, $productUnit);

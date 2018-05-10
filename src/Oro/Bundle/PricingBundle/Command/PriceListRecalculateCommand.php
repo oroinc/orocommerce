@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -94,6 +95,10 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var CombinedPriceListTriggerHandler $triggerHandler */
+        $triggerHandler = $this->getContainer()->get('oro_pricing.model.combined_price_list_trigger_handler');
+        $triggerHandler->startCollect();
+
         $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
             ->getCurrentStrategy()
             ->setOutput($output);
@@ -122,6 +127,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         if (true === $disableTriggers) {
             $this->enableAllTriggers($output);
         }
+
+        $triggerHandler->commit();
     }
 
     /**

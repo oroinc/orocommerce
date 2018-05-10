@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SearchBundle\Tests\Unit\Datagrid\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Filter;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;

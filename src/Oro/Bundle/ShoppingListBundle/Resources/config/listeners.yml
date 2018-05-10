@@ -4,6 +4,8 @@ services:
         public: true
         arguments:
             - '@doctrine'
+        calls:
+            - [setConfigManager, ["@oro_config.global"]]
         tags:
             - { name: kernel.event_listener, event: oro_pricing.combined_price_list.update, method: onPriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.customer.combined_price_list.update, method: onCustomerPriceListUpdate }

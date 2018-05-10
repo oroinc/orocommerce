@@ -11,11 +11,14 @@ use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 
 /**
+ * API CRUD controller for Brand entity
+ *
  * @RouteResource("brand")
  * @NamePrefix("oro_api_")
  */
@@ -27,12 +30,7 @@ class BrandController extends RestController implements ClassResourceInterface
      *     description="Get sissue",
      *     resource=true
      * )
-     * @Acl(
-     *      id="oro_product_brand_view",
-     *      type="entity",
-     *      class="OroProductBundle:Brand",
-     *      permission="VIEW"
-     * )
+     * @AclAncestor("oro_product_brand_view")
      * @Get(requirements={"id"="\d+"})
      *
      * @return \Symfony\Component\HttpFoundation\Response

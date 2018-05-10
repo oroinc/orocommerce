@@ -3,13 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -36,6 +39,11 @@ class PriceListTreeHandler
     protected $configManager;
 
     /**
+     * @var TokenAccessorInterface
+     */
+    protected $tokenAccessor;
+
+    /**
      * @var CombinedPriceList[]
      */
     protected $priceLists = [];
@@ -53,6 +61,14 @@ class PriceListTreeHandler
         $this->registry = $registry;
         $this->websiteManager = $websiteManager;
         $this->configManager = $configManager;
+    }
+
+    /**
+     * @param TokenAccessorInterface $tokenAccessor
+     */
+    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor)
+    {
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -74,6 +90,9 @@ class PriceListTreeHandler
         $priceList = null;
         if ($customer) {
             $priceList = $this->getPriceListByCustomer($customer, $website);
+        }
+        if (!$priceList) {
+            $priceList = $this->getPriceListByAnonymousCustomerGroup($website);
         }
         if (!$priceList) {
             $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
@@ -113,6 +132,21 @@ class PriceListTreeHandler
         $priceList = null;
         $customerGroup = $customer->getGroup();
         if ($customerGroup && $customerGroup->getId()) {
+            $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
+        }
+
+        return $priceList;
+    }
+
+    /**
+     * @param Website|null $website
+     * @return null|CombinedPriceList
+     */
+    protected function getPriceListByAnonymousCustomerGroup(Website $website)
+    {
+        $priceList = null;
+        $customerGroup = $this->getAnonymousCustomerGroup();
+        if ($customerGroup) {
             $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
         }
 
@@ -163,5 +197,29 @@ class PriceListTreeHandler
         }
 
         return $this->priceListRepository;
+    }
+
+    /**
+     * @return CustomerGroup|null
+     */
+    private function getAnonymousCustomerGroup()
+    {
+        if (!$this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
+            return null;
+        }
+
+        $id = (int)$this->configManager->get('oro_customer.anonymous_customer_group');
+
+        return $id ? $this->getCustomerGroupRepository()->find($id) : null;
+    }
+
+    /**
+     * @return CustomerGroupRepository
+     */
+    private function getCustomerGroupRepository()
+    {
+        return $this->registry
+            ->getManagerForClass(CustomerGroup::class)
+            ->getRepository(CustomerGroup::class);
     }
 }

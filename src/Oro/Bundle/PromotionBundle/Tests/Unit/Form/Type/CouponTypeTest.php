@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\DateTimeExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -67,6 +68,9 @@ class CouponTypeTest extends FormIntegrationTestCase
                     'form' => [
                         new TooltipFormExtension($configProvider, $translator),
                     ],
+                    'datetime' => [
+                        new DateTimeExtension()
+                    ]
                 ]
             ),
         ];
