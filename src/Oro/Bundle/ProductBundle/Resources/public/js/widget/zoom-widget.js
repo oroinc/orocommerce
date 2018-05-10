@@ -71,6 +71,12 @@ define(function(require) {
          */
         _resetImageProperty: function() {
             var imageZoomData = this.element.data('elevateZoom');
+
+            if (!imageZoomData) {
+                // Widget was destroyed, nothing to do
+                return;
+            }
+
             var imageLargeWidth = imageZoomData.largeWidth;
             var imageLargeHeight = imageZoomData.largeHeight;
 
