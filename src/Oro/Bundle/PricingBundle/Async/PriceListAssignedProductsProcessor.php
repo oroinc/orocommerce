@@ -113,15 +113,8 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                 'Unexpected exception occurred during Price List Assigned Products build',
                 ['exception' => $e]
             );
-            if ($trigger && $trigger->getPriceList()) {
-                $this->messenger->send(
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    Message::STATUS_ERROR,
-                    $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
-                    PriceList::class,
-                    $trigger->getPriceList()->getId()
-                );
+            if ($trigger && !empty($plId)) {
+                $this->onFailedPriceListId($plId);
             }
 
             return self::REJECT;
@@ -144,5 +137,20 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
         );
 
         $this->assignmentBuilder->buildByPriceList($priceList, $products);
+    }
+
+    /**
+     * @param int $priceListId
+     */
+    private function onFailedPriceListId($priceListId)
+    {
+        $this->messenger->send(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+            Message::STATUS_ERROR,
+            $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
+            PriceList::class,
+            $priceListId
+        );
     }
 }

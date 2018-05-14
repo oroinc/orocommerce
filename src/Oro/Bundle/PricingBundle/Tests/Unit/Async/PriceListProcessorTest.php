@@ -15,7 +15,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -244,7 +243,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
         $productIds = [2];
-        $trigger = new PriceListTrigger($priceList, $productIds);
+        $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -302,7 +301,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->once())
             ->method('createFromArray')
             ->with($data)
-            ->willReturn(new PriceListProductsTrigger($data[PriceListTriggerFactory::PRODUCT]));
+            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
 
         /** @var CombinedPriceList $priceList */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 3003]);

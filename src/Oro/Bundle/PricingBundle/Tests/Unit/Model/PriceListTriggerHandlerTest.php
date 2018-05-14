@@ -153,8 +153,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
         $message1 = [
-            PriceListTriggerFactory::PRICE_LIST => $priceList1->getId(),
-            PriceListTriggerFactory::PRODUCT => []
+            PriceListTriggerFactory::PRODUCT => [$priceList1->getId() => []]
         ];
         $message2 = [
             PriceListTriggerFactory::PRODUCT => [$product2->getId() => [$product2->getId()]]
@@ -163,8 +162,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('createFromIds')
             ->willReturnMap(
                 [
-                    [$priceList1->getId(), [], $message1],
-                    [null, [$product2->getId() => [$product2->getId()]], $message2],
+                    [[$priceList1->getId() => []], $message1],
+                    [[$priceList2->getId() => [$product2->getId()]], $message2],
                 ]
             );
 

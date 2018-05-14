@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
@@ -114,7 +113,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             ->willReturn($priceList);
 
         $productIds = [2];
-        $trigger = new PriceListTrigger($priceList, $productIds);
+        $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
@@ -169,7 +168,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $priceList = $this->getEntity(PriceList::class, ['id' => 1, 'updatedAt' => $updateDate]);
         /** @var Product $product */
         $productId = 2;
-        $trigger = new PriceListTrigger($priceList, [$productId]);
+        $trigger = new PriceListTrigger([$priceList->getId() => [$productId]]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -222,7 +221,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $this->triggerFactory->expects($this->once())
             ->method('createFromArray')
             ->with($data)
-            ->willReturn(new PriceListProductsTrigger($data[PriceListTriggerFactory::PRODUCT]));
+            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => $updateDate]);

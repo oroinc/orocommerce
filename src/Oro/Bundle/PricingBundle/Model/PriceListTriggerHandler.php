@@ -74,13 +74,13 @@ class PriceListTriggerHandler
     {
         $this->removeDuplicatedData();
         foreach ($this->triggersData as $topic => $triggers) {
-            if (array_key_exists(self::PRICE_LISTS_KEY, $triggers)) {
-                foreach ($triggers[self::PRICE_LISTS_KEY] as $priceListId) {
-                    $this->messageProducer->send(
-                        $topic,
-                        $this->triggerFactory->createFromIds($priceListId, [])
-                    );
-                }
+            if (array_key_exists(self::PRICE_LISTS_KEY, $triggers) && $triggers[self::PRICE_LISTS_KEY]) {
+                $this->messageProducer->send(
+                    $topic,
+                    $this->triggerFactory->createFromIds(
+                        array_fill_keys($triggers[self::PRICE_LISTS_KEY], [])
+                    )
+                );
             }
             if (array_key_exists(self::PRODUCTS_KEY, $triggers) && $triggers[self::PRODUCTS_KEY]) {
                 $products = array_map(
@@ -92,7 +92,7 @@ class PriceListTriggerHandler
 
                 $this->messageProducer->send(
                     $topic,
-                    $this->triggerFactory->createFromIds(null, $products)
+                    $this->triggerFactory->createFromIds($products)
                 );
             }
         }

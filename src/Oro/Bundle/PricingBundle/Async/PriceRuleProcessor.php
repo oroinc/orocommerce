@@ -121,15 +121,8 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 'Unexpected exception occurred during Price Rule build',
                 ['exception' => $e]
             );
-            if ($trigger && $trigger->getPriceList()) {
-                $this->messenger->send(
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                    Message::STATUS_ERROR,
-                    $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
-                    PriceList::class,
-                    $trigger->getPriceList()->getId()
-                );
+            if ($trigger && !empty($plId)) {
+                $this->onFailedPriceListId($plId);
             }
 
             return self::REJECT;
@@ -155,6 +148,21 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
         $this->priceBuilder->buildByPriceListWithoutTriggerSend($priceList, $products);
         $this->updatePriceListActuality($priceList, $startTime);
+    }
+
+    /**
+     * @param int $priceListId
+     */
+    private function onFailedPriceListId($priceListId)
+    {
+        $this->messenger->send(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+            Message::STATUS_ERROR,
+            $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
+            PriceList::class,
+            $priceListId
+        );
     }
 
     /**
