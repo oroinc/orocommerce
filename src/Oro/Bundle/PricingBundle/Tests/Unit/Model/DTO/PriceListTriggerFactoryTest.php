@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -45,6 +46,17 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([$product], $trigger->getProducts());
     }
 
+    public function testCreateWithoutPriceList()
+    {
+        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product **/
+        $product = $this->createMock(Product::class);
+
+        $trigger = $this->priceRuleTriggerFactory->createWithoutPriceList([$product]);
+        $this->assertInstanceOf(PriceListTrigger::class, $trigger);
+        $this->assertNull($trigger->getPriceList());
+        $this->assertSame([$product], $trigger->getProducts());
+    }
+
     public function testTriggerToArray()
     {
         /** @var PriceList $priceList */
@@ -58,6 +70,30 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             PriceListTriggerFactory::PRODUCT => [2]
         ];
         $this->assertSame($expected, $this->priceRuleTriggerFactory->triggerToArray($trigger));
+    }
+
+    public function testCreateFromIds()
+    {
+        $this->assertSame(
+            [
+                PriceListTriggerFactory::PRICE_LIST => 1001,
+                PriceListTriggerFactory::PRODUCT => [2002]
+            ],
+            $this->priceRuleTriggerFactory->createFromIds(1001, [2002])
+        );
+    }
+
+    public function testCreateFromIdsWithoutPriceList()
+    {
+        $this->assertSame(
+            [
+                PriceListTriggerFactory::PRODUCT => [1001 => [2002]]
+            ],
+            $this->priceRuleTriggerFactory->createFromIds(
+                null,
+                [1001 => [$this->getEntity(Product::class, ['id' => 2002])]]
+            )
+        );
     }
 
     public function testCreateFromArray()
@@ -96,24 +132,17 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromArrayNoPriceList()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Price List is required.');
-
         $data = [
-            PriceListTriggerFactory::PRICE_LIST => 1,
-            PriceListTriggerFactory::PRODUCT => 2
+            PriceListTriggerFactory::PRODUCT => [1 => [2]]
         ];
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(PriceList::class, 1)
-            ->willReturn(null);
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->priceRuleTriggerFactory->createFromArray($data);
+        $result = $this->priceRuleTriggerFactory->createFromArray($data);
+        $this->assertInstanceOf(PriceListTrigger::class, $result);
+        $this->assertInstanceOf(PriceListProductsTrigger::class, $result);
+        $this->assertNull($result->getPriceList());
+        $this->assertSame($data[PriceListTriggerFactory::PRODUCT], $result->getProducts());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
@@ -76,6 +77,60 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
                 'expectedPriceLists' => [],
             ],
         ];
+    }
+
+    /**
+     * @dataProvider cplByPriceListProductDataProvider
+     * @param string $priceList
+     * @param int $result
+     * @param bool $calculatedPrices
+     */
+    public function testGetCombinedPriceListsByActualPriceLists($priceList, $result, $calculatedPrices)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByActualPriceLists([$priceList], $calculatedPrices);
+        $this->assertCount($result, $cPriceLists);
+    }
+
+    /**
+     * @return array
+     */
+    public function cplByPriceListProductDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'result' => 4,
+                'calculatedPrices' => null,
+            ],
+            [
+                'priceList' => 'price_list_3',
+                'result' => 0,
+                'calculatedPrices' => false,
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'result' => 0,
+                'calculatedPrices' => true,
+            ],
+        ];
+    }
+
+    public function testGetPriceListIdsByCpls()
+    {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getReference('1t_2t_3t');
+
+        $this->assertEquals(
+            [
+                $this->getReference('price_list_1')->getId(),
+                $this->getReference('price_list_2')->getId(),
+                $this->getReference('price_list_3')->getId(),
+            ],
+            $this->getRepository()->getPriceListIdsByCpls([$cpl])
+        );
     }
 
     /**

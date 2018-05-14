@@ -8,7 +8,10 @@ use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -145,18 +148,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
+        $this->assertEntityManagerCalled();
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -192,6 +184,78 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
             );
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+    }
+
+    public function testProcessWithoutPriceList()
+    {
+        $priceListId = 1001;
+        $productId = 2002;
+
+        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => [$productId]]];
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId]);
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode($data));
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->triggerFactory->expects($this->once())
+            ->method('createFromArray')
+            ->with($data)
+            ->willReturn(new PriceListProductsTrigger($data[PriceListTriggerFactory::PRODUCT]));
+
+        $this->assignmentBuilder->expects($this->once())
+            ->method('buildByPriceList')
+            ->with($priceList, [$productId]);
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+                PriceList::class,
+                $priceList->getId()
+            );
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+    }
+
+    /**
+     * @return PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function assertEntityManagerCalled()
+    {
+        $repository = $this->createMock(PriceListRepository::class);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+
+        $manager->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($manager);
+
+        return $repository;
     }
 
     public function testGetSubscribedTopics()

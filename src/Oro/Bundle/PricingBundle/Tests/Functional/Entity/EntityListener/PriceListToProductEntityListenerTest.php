@@ -51,8 +51,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
 
@@ -60,8 +63,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -86,8 +92,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
 
@@ -95,8 +104,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -148,8 +160,12 @@ class PriceListToProductEntityListenerTest extends WebTestCase
                 // Recalculation for old product
                 // Recalculation for new product
                 [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId(), $changedProduct->getId()]
+                    PriceListTriggerFactory::PRODUCT => [
+                        $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                            $product->getId(),
+                            $changedProduct->getId()
+                        ]
+                    ]
                 ],
             ]
         );
@@ -159,8 +175,12 @@ class PriceListToProductEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId(), $changedProduct->getId()]
+                    PriceListTriggerFactory::PRODUCT => [
+                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                            $product->getId(),
+                            $changedProduct->getId()
+                        ]
+                    ]
                 ],
             ]
         );
@@ -217,8 +237,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -265,8 +288,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
 
@@ -274,8 +300,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                        $product->getId()
+                    ]
+                ]
             ]
         );
     }

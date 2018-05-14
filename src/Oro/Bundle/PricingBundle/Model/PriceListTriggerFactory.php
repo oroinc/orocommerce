@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -37,12 +38,25 @@ class PriceListTriggerFactory
     }
 
     /**
+     * @param array|int[] $productIds
+     * @return PriceListTrigger
+     */
+    public function createWithoutPriceList(array $productIds = [])
+    {
+        return new PriceListProductsTrigger($productIds);
+    }
+
+    /**
      * @param int $priceListId
      * @param array|int[] $productIds
      * @return array
      */
     public function createFromIds($priceListId, array $productIds)
     {
+        if (!$priceListId) {
+            return [self::PRODUCT => array_map([$this, 'getProductIds'], $productIds)];
+        }
+
         return [
             self::PRICE_LIST => $priceListId,
             self::PRODUCT => $this->getProductIds($productIds)
@@ -72,11 +86,10 @@ class PriceListTriggerFactory
         }
 
         $priceList = $this->getPriceList($data);
-        if (!$priceList) {
-            throw new InvalidArgumentException('Price List is required.');
-        }
 
-        return $this->create($priceList, $this->getProducts($data));
+        return $priceList
+            ? $this->create($priceList, $this->getProducts($data))
+            : $this->createWithoutPriceList(array_map([$this, 'getProductIds'], $data[self::PRODUCT]));
     }
 
     /**

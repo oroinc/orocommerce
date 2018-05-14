@@ -102,17 +102,20 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $this->messenger->remove(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                PriceList::class,
-                $trigger->getPriceList()->getId()
-            );
-
             $priceList = $trigger->getPriceList();
-            $startTime = $priceList->getUpdatedAt();
-            $this->priceBuilder->buildByPriceList($priceList, $trigger->getProducts());
-            $this->updatePriceListActuality($priceList, $startTime);
+
+            if ($priceList) {
+                $this->processPriceList($priceList, $trigger->getProducts());
+            } else {
+                $repository = $this->registry->getManagerForClass(PriceList::class)->getRepository(PriceList::class);
+
+                foreach ($trigger->getProducts() as $plId => $plProducts) {
+                    $this->processPriceList($repository->find($plId), $plProducts);
+                }
+            }
+
+            $this->priceBuilder->flush();
+
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
@@ -140,6 +143,25 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         }
 
         return self::ACK;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function processPriceList(PriceList $priceList, array $products)
+    {
+        $this->messenger->remove(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+            PriceList::class,
+            $priceList->getId()
+        );
+
+        $startTime = $priceList->getUpdatedAt();
+
+        $this->priceBuilder->buildByPriceList($priceList, $products);
+        $this->updatePriceListActuality($priceList, $startTime);
     }
 
     /**
