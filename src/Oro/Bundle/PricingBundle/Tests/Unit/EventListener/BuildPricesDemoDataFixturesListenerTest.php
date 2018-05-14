@@ -99,8 +99,6 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
             ->with($priceList);
-        $this->priceBuilder->expects($this->once())
-            ->method('flush');
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
             ->method('rebuildAll');

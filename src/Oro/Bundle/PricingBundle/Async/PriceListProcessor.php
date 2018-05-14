@@ -124,25 +124,17 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            if ($trigger->getPriceList()) {
-                $iterator = $this->getCombinedPriceListRepository()
-                    ->getCombinedPriceListsByPriceList($trigger->getPriceList(), true);
+            /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
+            $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+            $allProducts = $trigger->getProducts();
 
-                $this->combinedPriceListsBuilderFacade->rebuild($iterator, $trigger->getProducts());
-            } else {
-                /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
-                $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+            foreach ($cpls as $cpl) {
+                $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
 
-                $allProducts = $trigger->getProducts();
+                $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
 
-                $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
-                foreach ($cpls as $cpl) {
-                    $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
-
-                    $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
-
-                    $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
-                }
+                $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
             }
             $this->dispatchEvent([]);
             $em->commit();

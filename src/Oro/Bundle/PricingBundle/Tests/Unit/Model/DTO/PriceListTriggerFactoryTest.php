@@ -35,7 +35,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList **/
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1001]);
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product **/
         $product = $this->createMock(Product::class);
@@ -43,7 +43,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $trigger = $this->priceRuleTriggerFactory->create($priceList, [$product]);
         $this->assertInstanceOf(PriceListTrigger::class, $trigger);
         $this->assertSame($priceList, $trigger->getPriceList());
-        $this->assertSame([$product], $trigger->getProducts());
+        $this->assertSame([$priceList->getId() => [$product]], $trigger->getProducts());
     }
 
     public function testCreateWithoutPriceList()
@@ -66,7 +66,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListTrigger($priceList, [$product]);
 
         $expected = [
-            PriceListTriggerFactory::PRICE_LIST => 1,
+            PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
             PriceListTriggerFactory::PRODUCT => [2]
         ];
         $this->assertSame($expected, $this->priceRuleTriggerFactory->triggerToArray($trigger));
@@ -120,7 +120,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $trigger = $this->priceRuleTriggerFactory->createFromArray($data);
         $this->assertInstanceOf(PriceListTrigger::class, $trigger);
         $this->assertSame($priceList, $trigger->getPriceList());
-        $this->assertSame([$productId], $trigger->getProducts());
+        $this->assertSame([$priceList->getId() => [$productId]], $trigger->getProducts());
     }
 
     public function testCreateFromArrayInvalidData()

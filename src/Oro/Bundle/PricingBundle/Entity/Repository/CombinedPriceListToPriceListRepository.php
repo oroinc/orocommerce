@@ -47,14 +47,13 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
 
     /**
      * @param PriceList[] $priceLists
-     * @param null|bool $hasCalculatedPrices
      * @return BufferedQueryResultIteratorInterface
      */
-    public function getCombinedPriceListsByActualPriceLists(array $priceLists, $hasCalculatedPrices = null)
+    public function getCombinedPriceListsByActualPriceLists(array $priceLists)
     {
-        $subQb = $this->createQueryBuilder('cpl2pl');
-        $subQb->resetDQLPart('select')
-            ->select('1')
+        $subQb = $qb = $this->getEntityManager()->createQueryBuilder();
+        $subQb->select('1')
+            ->from($this->getEntityName(), 'cpl2pl')
             ->innerJoin('cpl2pl.priceList', 'pl')
             ->where(
                 $subQb->expr()->eq('pl.actual', ':isActual'),
@@ -65,7 +64,7 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
         $qb->select('DISTINCT cpl')
             ->from(CombinedPriceList::class, 'cpl')
             ->innerJoin(
-                CombinedPriceListToPriceList::class,
+                $this->getEntityName(),
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
@@ -81,11 +80,6 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
             ->setParameter('priceLists', $priceLists)
             ->setParameter('isActual', false);
 
-        if ($hasCalculatedPrices !== null) {
-            $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':hasCalculatedPrices'))
-                ->setParameter('hasCalculatedPrices', $hasCalculatedPrices);
-        }
-
         return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
@@ -95,9 +89,9 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
      */
     public function getPriceListIdsByCpls(array $cpls)
     {
-        $qb = $this->createQueryBuilder('cpl2pl');
-        $qb->resetDQLPart('select')
-            ->select('DISTINCT IDENTITY(cpl2pl.priceList) as priceListId')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('DISTINCT IDENTITY(cpl2pl.priceList) as priceListId')
+            ->from($this->getEntityName(), 'cpl2pl')
             ->where(
                 $qb->expr()->in('cpl2pl.combinedPriceList', ':cpls')
             )

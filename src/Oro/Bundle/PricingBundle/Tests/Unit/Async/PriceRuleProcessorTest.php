@@ -108,6 +108,11 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
+        $this->priceListRepository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
+
         $productIds = [2];
         $trigger = new PriceListTrigger($priceList, $productIds);
 
@@ -120,11 +125,11 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             ->willReturn($trigger);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, $productIds);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, $productIds)
             ->willThrowException($exception);
 
@@ -181,7 +186,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             ->willReturn($trigger);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, [$productId]);
         $this->priceBuilder->expects($this->once())
             ->method('flush');
@@ -189,6 +194,10 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $repository = $this->assertEntityManagerCalled();
         $repository->expects($this->once())
             ->method('updatePriceListsActuality');
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
 
         $this->messenger->expects($this->once())
             ->method('remove')
@@ -219,7 +228,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => $updateDate]);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, [$productId]);
         $this->priceBuilder->expects($this->once())
             ->method('flush');

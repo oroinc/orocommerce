@@ -102,16 +102,9 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $priceList = $trigger->getPriceList();
-
-            if ($priceList) {
-                $this->processPriceList($priceList, $trigger->getProducts());
-            } else {
-                $repository = $this->registry->getManagerForClass(PriceList::class)->getRepository(PriceList::class);
-
-                foreach ($trigger->getProducts() as $plId => $plProducts) {
-                    $this->processPriceList($repository->find($plId), $plProducts);
-                }
+            $repository = $em->getRepository(PriceList::class);
+            foreach ($trigger->getProducts() as $plId => $plProducts) {
+                $this->processPriceList($repository->find($plId), $plProducts);
             }
 
             $this->priceBuilder->flush();
@@ -160,7 +153,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
         $startTime = $priceList->getUpdatedAt();
 
-        $this->priceBuilder->buildByPriceList($priceList, $products);
+        $this->priceBuilder->buildByPriceListWithoutTriggerSend($priceList, $products);
         $this->updatePriceListActuality($priceList, $startTime);
     }
 
