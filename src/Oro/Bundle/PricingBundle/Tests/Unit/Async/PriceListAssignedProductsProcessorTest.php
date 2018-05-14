@@ -13,7 +13,6 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -44,10 +43,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         parent::setUp();
 
         $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->triggerFactory,
@@ -96,6 +92,11 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+
+        $this->priceListRepository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
 
         $productIds = [2];
         $trigger = new PriceListTrigger($priceList, $productIds);
@@ -148,10 +149,14 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $this->assertEntityManagerCalled();
-
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
 
         $productId = 2;
         $trigger = new PriceListTrigger($priceList, [$productId]);
@@ -242,6 +247,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->any())
             ->method('getRepository')
+            ->with(PriceList::class)
             ->willReturn($repository);
 
         $manager->expects($this->once())

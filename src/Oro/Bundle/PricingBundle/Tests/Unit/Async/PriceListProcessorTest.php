@@ -240,8 +240,6 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $this->assertEntityManagerCalled();
-
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
@@ -263,6 +261,15 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($trigger);
 
         $cpl = new CombinedPriceList();
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->method('getCombinedPriceListsByActualPriceLists')
+            ->with([$priceList->getId()])
+            ->willReturn([$cpl]);
+        $repository->method('getPriceListIdsByCpls')
+            ->with([$cpl])
+            ->willReturn([$priceList->getId()]);
+
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)
             ->willReturn([$cpl]);

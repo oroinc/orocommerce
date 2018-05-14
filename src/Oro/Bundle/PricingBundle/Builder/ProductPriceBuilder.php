@@ -76,6 +76,16 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, array $products = [])
     {
+        $this->buildByPriceListWithoutTriggerSend($priceList, $products);
+        $this->flush();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function buildByPriceListWithoutTriggerSend(PriceList $priceList, array $products = [])
+    {
         $this->buildByPriceListWithoutTriggers($priceList, $products);
 
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);

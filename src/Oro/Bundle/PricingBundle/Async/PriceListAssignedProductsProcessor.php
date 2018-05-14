@@ -96,16 +96,9 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $priceList = $trigger->getPriceList();
-
-            if ($priceList) {
-                $this->processPriceList($priceList, $trigger->getProducts());
-            } else {
-                $repository = $this->registry->getManagerForClass(PriceList::class)->getRepository(PriceList::class);
-
-                foreach ($trigger->getProducts() as $plId => $plProducts) {
-                    $this->processPriceList($repository->find($plId), $plProducts);
-                }
+            $repository = $em->getRepository(PriceList::class);
+            foreach ($trigger->getProducts() as $plId => $plProducts) {
+                $this->processPriceList($repository->find($plId), $plProducts);
             }
 
             $em->commit();

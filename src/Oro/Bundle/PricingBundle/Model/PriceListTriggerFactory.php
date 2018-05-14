@@ -69,10 +69,13 @@ class PriceListTriggerFactory
      */
     public function triggerToArray(PriceListTrigger $trigger)
     {
-        return [
-            self::PRICE_LIST => $trigger->getPriceList()->getId(),
-            self::PRODUCT => $this->getProductIds($trigger->getProducts())
-        ];
+        $priceList = $trigger->getPriceList();
+        $products = $trigger->getProducts();
+
+        return $this->createFromIds(
+            $priceList ? $priceList->getId() : null,
+            $priceList ? $products[$priceList->getId()] : $products
+        );
     }
 
     /**

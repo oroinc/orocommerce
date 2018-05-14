@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
@@ -13,6 +14,11 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceListRepository;
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -35,17 +41,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->priceListRepository = $this->createMock(PriceListRepository::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->messenger = $this->getMockBuilder(Messenger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
+        $this->messenger = $this->createMock(Messenger::class);
     }
 
 
@@ -64,6 +64,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
         $em->expects(($this->once()))
             ->method('rollback');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -106,6 +111,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
         $em->expects(($this->once()))
             ->method('rollback');
 
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
+
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
@@ -141,6 +151,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
         $em->expects(($this->once()))
             ->method('rollback');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')

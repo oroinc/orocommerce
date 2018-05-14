@@ -83,14 +83,13 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
      * @dataProvider cplByPriceListProductDataProvider
      * @param string $priceList
      * @param int $result
-     * @param bool $calculatedPrices
      */
-    public function testGetCombinedPriceListsByActualPriceLists($priceList, $result, $calculatedPrices)
+    public function testGetCombinedPriceListsByActualPriceLists($priceList, $result)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceList);
 
-        $cPriceLists = $this->getRepository()->getCombinedPriceListsByActualPriceLists([$priceList], $calculatedPrices);
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByActualPriceLists([$priceList]);
         $this->assertCount($result, $cPriceLists);
     }
 
@@ -103,17 +102,10 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
             [
                 'priceList' => 'price_list_1',
                 'result' => 4,
-                'calculatedPrices' => null,
-            ],
-            [
-                'priceList' => 'price_list_3',
-                'result' => 0,
-                'calculatedPrices' => false,
             ],
             [
                 'priceList' => 'price_list_4',
                 'result' => 0,
-                'calculatedPrices' => true,
             ],
         ];
     }
