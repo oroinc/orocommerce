@@ -1,4 +1,4 @@
-@import "oroui/css/less/variables";
+@import "oroui/css/scss/variables";
 
 .tax-address-row {
   margin-bottom: 3px !important;
@@ -39,7 +39,7 @@
   }
 
   .other-scroll-container & {
-    border: 1px solid @generalBorderColor !important;
+    border: 1px solid $generalBorderColor !important;
   }
 }
 
