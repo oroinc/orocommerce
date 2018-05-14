@@ -1,4 +1,4 @@
-@import "oroui/css/less/variables";
+@import "oroui/css/scss/variables";
 @import "shipping-methods-grid";
 
 .system-configuration-container {
@@ -52,7 +52,7 @@ table.shipping-options-result-grid {
 
 .shipping-options-result-grid {
   .other-scroll-container & {
-    border: 1px solid @generalBorderColor;
+    border: 1px solid $generalBorderColor;
     thead {
       position: inherit !important;
       display: table-header-group !important;
