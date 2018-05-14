@@ -79,6 +79,10 @@ class ProductPriceBuilder
         $this->buildByPriceListWithoutTriggers($priceList, $products);
 
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);
+    }
+
+    public function flush()
+    {
         $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 

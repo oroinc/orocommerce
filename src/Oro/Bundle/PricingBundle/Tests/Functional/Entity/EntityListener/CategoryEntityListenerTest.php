@@ -126,12 +126,14 @@ class CategoryEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
-                ],
-                [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                    PriceListTriggerFactory::PRODUCT => [
+                        $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                            $product->getId()
+                        ],
+                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                            $product->getId()
+                        ]
+                    ]
                 ],
             ]
         );
@@ -155,12 +157,14 @@ class CategoryEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
             [
                 [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
-                ],
-                [
-                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
-                    PriceListTriggerFactory::PRODUCT => [$product->getId()]
+                    PriceListTriggerFactory::PRODUCT => [
+                        $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
+                            $product->getId()
+                        ],
+                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                            $product->getId()
+                        ]
+                    ]
                 ],
             ]
         );

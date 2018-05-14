@@ -68,6 +68,7 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         foreach ($priceLists as $priceList) {
             $this->assignmentBuilder->buildByPriceList($priceList);
             $this->priceBuilder->buildByPriceList($priceList);
+            $this->priceBuilder->flush();
         }
 
         $this->combinedPriceListsBuilderFacade->rebuildAll(time());
