@@ -56,7 +56,8 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
             $responseStatusCode = (string) $timeInTransitResponse['Response']['ResponseStatus']['Code'];
             $responseStatusDescription = $timeInTransitResponse['Response']['ResponseStatus']['Description'];
 
-            $serviceSummary = $timeInTransitResponse['TransitResponse']['ServiceSummary'];
+            // TransitResponse might not be present if shipping address is not valid.
+            $serviceSummary = $timeInTransitResponse['TransitResponse']['ServiceSummary'] ?? [];
 
             if (isset($serviceSummary['EstimatedArrival'])) {
                 $serviceSummary = [$timeInTransitResponse['TransitResponse']['ServiceSummary']];
