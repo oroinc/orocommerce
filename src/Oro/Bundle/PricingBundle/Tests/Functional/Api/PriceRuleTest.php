@@ -113,8 +113,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $priceRule->getPriceList()->getId(),
-                'product' => [],
+                'product' => [$priceRule->getPriceList()->getId() => []],
             ]
         );
 
@@ -150,8 +149,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $priceRule->getPriceList()->getId(),
-                'product' => [],
+                'product' => [$priceRule->getPriceList()->getId() => []],
             ]
         );
 
@@ -187,16 +185,14 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $priceList1->getId(),
-                'product' => [],
+                'product' => [$priceList1->getId() => []],
             ]
         );
 
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $priceList2->getId(),
-                'product' => [],
+                'product' => [$priceList2->getId() => []],
             ]
         );
     }
@@ -240,8 +236,11 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $updatedPriceRule->getPriceList()->getId(),
-                'product' => [],
+                'product' => [
+                    $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [],
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [],
+                    $this->getReference(LoadPriceLists::PRICE_LIST_4)->getId() => [],
+                ],
             ]
         );
     }
@@ -265,8 +264,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                'priceList' => $priceList->getId(),
-                'product' => [],
+                'product' => [$priceList->getId() => []],
             ]
         );
     }

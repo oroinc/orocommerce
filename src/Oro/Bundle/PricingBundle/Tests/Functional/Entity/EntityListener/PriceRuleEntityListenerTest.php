@@ -41,8 +41,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
-                PriceListTriggerFactory::PRODUCT => []
+                PriceListTriggerFactory::PRODUCT => [$rule->getPriceList()->getId() => []]
             ]
         );
     }
@@ -62,8 +61,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
-                PriceListTriggerFactory::PRODUCT => []
+                PriceListTriggerFactory::PRODUCT => [$rule->getPriceList()->getId() => []]
             ]
         );
     }
