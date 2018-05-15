@@ -10,7 +10,7 @@ layout:
             namespace: matrix_shopping_list
     actions:
         - '@setBlockTheme':
-            themes: 'view.html.twig'
+            themes: 'OroShoppingListBundle:layouts:default/oro_shopping_list_frontend_view/view.html.twig'
 
         - '@setOption':
             id:  matrix_shopping_list_total_text

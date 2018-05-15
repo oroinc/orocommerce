@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroRFPBundle:layouts:default/imports/oro_rfp_frontend_request_edit/layout.html.twig'
 
         - '@addTree':
             items:

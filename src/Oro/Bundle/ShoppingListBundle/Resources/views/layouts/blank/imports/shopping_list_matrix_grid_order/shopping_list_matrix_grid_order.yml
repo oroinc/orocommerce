@@ -6,7 +6,7 @@ layout:
             namespace: matrix
     actions:
         - '@setBlockTheme':
-            themes: 'shopping_list_matrix_grid_order.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/shopping_list_matrix_grid_order/shopping_list_matrix_grid_order.html.twig'
         - '@setOption':
             id:  __matrix_total_text
             optionName: text

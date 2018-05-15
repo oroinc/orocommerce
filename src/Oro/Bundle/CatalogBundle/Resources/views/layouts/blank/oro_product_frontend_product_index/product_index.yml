@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'product_index.html.twig'
+            themes: 'OroCatalogBundle:layouts:blank/oro_product_frontend_product_index/product_index.html.twig'
         - '@addTree':
             items:
                 breadcrumbs:

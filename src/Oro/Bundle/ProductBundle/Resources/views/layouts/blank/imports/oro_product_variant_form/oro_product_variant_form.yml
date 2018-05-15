@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_variant_form.html.twig'
+            themes: 'OroProductBundle:layouts:blank/imports/oro_product_variant_form/oro_product_variant_form.html.twig'
         - '@addTree':
             items:
                 __variant_field_form:

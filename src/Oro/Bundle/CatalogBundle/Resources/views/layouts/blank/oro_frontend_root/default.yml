@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'default.html.twig'
+            themes: 'OroCatalogBundle:layouts:blank/oro_frontend_root/default.html.twig'
         - '@appendOption':
             id: page_main
             optionName: attr.class
