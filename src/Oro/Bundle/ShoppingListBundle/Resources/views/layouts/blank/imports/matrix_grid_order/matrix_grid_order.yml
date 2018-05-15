@@ -5,9 +5,9 @@ layout:
             root: __form_summary
     actions:
         - '@setBlockTheme':
-            themes: 'matrix_grid_order.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/matrix_grid_order/matrix_grid_order.html.twig'
         - '@setFormTheme':
-            themes: 'matrix_grid_order_form.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/matrix_grid_order/matrix_grid_order_form.html.twig'
         - '@add':
             id: __matrix_form_clear_button
             blockType: button

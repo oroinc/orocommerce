@@ -52,7 +52,7 @@ class AjaxProductVariantController extends Controller
         $form = $this->createForm(FrontendVariantFiledType::class, new Product(), $options);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             return $form->getData();
         }
 

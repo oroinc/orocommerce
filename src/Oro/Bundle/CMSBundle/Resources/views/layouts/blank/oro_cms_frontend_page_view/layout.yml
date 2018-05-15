@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroCMSBundle:layouts:blank/oro_cms_frontend_page_view/layout.html.twig'
         - '@setOption':
             id: title
             optionName: params

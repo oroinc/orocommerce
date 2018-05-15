@@ -5,7 +5,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '../templates/single_page.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
 
         - '@addTree':
             items:

@@ -2,7 +2,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'layout.html.twig'
+                - 'OroPayPalBundle:layouts:default/imports/oro_payment_method_options/layout.html.twig'
         - '@setFormTheme':
             themes:
-                - 'form.html.twig'
+                - 'OroPayPalBundle:layouts:default/imports/oro_payment_method_options/form.html.twig'

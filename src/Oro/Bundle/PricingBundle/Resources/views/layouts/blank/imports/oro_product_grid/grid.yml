@@ -2,4 +2,4 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'grid_row.html.twig'
+                - 'OroPricingBundle:layouts:blank/imports/oro_product_grid/grid_row.html.twig'

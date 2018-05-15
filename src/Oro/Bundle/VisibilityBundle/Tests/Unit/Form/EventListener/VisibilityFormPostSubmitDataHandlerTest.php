@@ -58,6 +58,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
         $form = $this->createMock(FormInterface::class);
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
         $form->method('getData')->willReturn($targetEntity);
+        $form->method('isSubmitted')->willReturn(true);
         $form->method('isValid')->willReturn(false);
 
         $this->em->expects($this->never())->method('persist');
@@ -71,6 +72,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
         $form = $this->createMock(FormInterface::class);
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
         $form->method('getData')->willReturn($targetEntity);
+        $form->method('isSubmitted')->willReturn(true);
         $form->method('isValid')->willReturn(true);
 
         $allForm = $this->createMock(FormInterface::class);

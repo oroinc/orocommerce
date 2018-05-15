@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'shopping_lists_menu.html.twig'
+            themes: 'OroShoppingListBundle:layouts:default/oro_shopping_list_frontend_view/shopping_lists_menu.html.twig'
         - '@addTree':
             items:
                 shopping_lists_menu:

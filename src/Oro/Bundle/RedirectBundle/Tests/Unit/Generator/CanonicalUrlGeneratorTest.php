@@ -129,8 +129,8 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $canonicalPath = '/canonical';
         $expectedWebsiteUrl = 'http://example.com/';
-        $expectedUrl = 'http://example.com/app_dev.php/canonical';
-        $expectedBaseUrl = '/app_dev.php';
+        $expectedUrl = 'http://example.com/index_dev.php/canonical';
+        $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::INSECURE;
         $website = $this->getWebsite();
 
@@ -151,8 +151,8 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $canonicalPath = '/canonical';
         $expectedWebsiteUrl = 'https://example.com/';
-        $expectedUrl = 'https://example.com/app_dev.php/canonical';
-        $expectedBaseUrl = '/app_dev.php';
+        $expectedUrl = 'https://example.com/index_dev.php/canonical';
+        $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::SECURE;
         $website = $this->getWebsite();
 

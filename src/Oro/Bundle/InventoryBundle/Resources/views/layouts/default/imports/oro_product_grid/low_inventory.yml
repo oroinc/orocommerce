@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'low_inventory.html.twig'
+            themes: 'OroInventoryBundle:layouts:default/imports/oro_product_grid/low_inventory.html.twig'
         - '@add':
             id: product_datagrid_row__product_low_inventory_label
             parentId: product_datagrid_row_product_specification

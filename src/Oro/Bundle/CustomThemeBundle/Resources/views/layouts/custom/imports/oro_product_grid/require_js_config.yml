@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'require_js_config.html.twig'
+            themes: 'OroCustomThemeBundle:layouts:custom/imports/oro_product_grid/require_js_config.html.twig'
 
         - '@add':
             id: require_js_filters_config
