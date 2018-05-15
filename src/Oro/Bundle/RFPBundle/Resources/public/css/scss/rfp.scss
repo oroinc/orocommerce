@@ -1,8 +1,8 @@
-@import "oroui/css/less/variables";
+@import "oroui/css/scss/variables";
 
 .rfp-requestproductitem-collection {
 
-  @media (max-width: @mediumScreen) {
+  @media (max-width: $mediumScreen) {
     margin-left: 170px;
     margin-top: 5px;
     clear: both;
