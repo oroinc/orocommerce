@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

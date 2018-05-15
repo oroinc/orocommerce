@@ -1,9 +1,7 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;

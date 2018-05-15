@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\unit\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 
