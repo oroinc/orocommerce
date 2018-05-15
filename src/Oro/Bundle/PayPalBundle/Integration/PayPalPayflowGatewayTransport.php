@@ -28,17 +28,17 @@ class PayPalPayflowGatewayTransport implements TransportInterface
         return PayPalSettingsType::class;
     }
 
-     /**
-      * {@inheritdoc}
-      */
+    /**
+     * {@inheritdoc}
+     */
     public function getSettingsEntityFQCN()
     {
         return PayPalSettings::class;
     }
 
-     /**
-      * {@inheritdoc}
-      */
+    /**
+     * {@inheritdoc}
+     */
     public function getLabel()
     {
         return 'oro.paypal.settings.label';

@@ -7,7 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -80,7 +79,7 @@ class ProductVariantAvailabilityProvider
             $fieldValues = $this->getVariantFieldValues($variantField);
 
             // All fields are not available by default
-            $variantsAvailability[$variantField] = array_fill_keys(array_keys($fieldValues), false);
+            $variantsAvailability[$variantField] = array_fill_keys(array_values($fieldValues), false);
 
             foreach ($availableSimpleProducts as $simpleProduct) {
                 $variantFieldValue = $this->getVariantFieldScalarValue($simpleProduct, $variantField);

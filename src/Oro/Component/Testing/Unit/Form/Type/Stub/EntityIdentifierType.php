@@ -2,9 +2,8 @@
 
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType as BaseEntityIdentifierType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityIdentifierType extends EntityType
 {
@@ -21,9 +20,9 @@ class EntityIdentifierType extends EntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults(
             [
-                'choice_list' => $this->choiceList,
                 'class' => '',
             ]
         );

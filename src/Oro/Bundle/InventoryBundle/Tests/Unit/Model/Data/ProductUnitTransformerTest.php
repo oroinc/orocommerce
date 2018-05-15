@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
 
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class ProductUnitTransformerTest extends \PHPUnit_Framework_TestCase
         $productUnitProvider->expects($this->exactly(1))
             ->method('getAvailableProductUnits')
             ->will($this->returnValue([
-                'kg' => 'kilogram',
+                'kilogram' => 'kg',
                 'item' => 'item',
                 'set' => 'set',
                 'piece' => 'piece',

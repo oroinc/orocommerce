@@ -15,14 +15,16 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
@@ -43,21 +45,21 @@ class PageTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
-        $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
+
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+
+        $this->type = new PageType($this->urlGenerator);
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->addTypeExtension(new FormTypeValidatorExtension($validator))
             ->getFormFactory();
-
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-
-        $this->type = new PageType($this->urlGenerator);
     }
 
     /**
@@ -109,15 +111,18 @@ class PageTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
-                    EntityIdentifierType::NAME => $entityIdentifierType,
+                    $this->type,
+                    EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+                    LocalizedSlugType::class => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 []
@@ -127,13 +132,13 @@ class PageTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(PageType::class);
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('content'));
         $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
@@ -147,11 +152,6 @@ class PageTypeTest extends FormIntegrationTestCase
             );
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PageType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()
@@ -168,7 +168,7 @@ class PageTypeTest extends FormIntegrationTestCase
     {
         $defaultData = new Page();
 
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(PageType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -234,7 +234,7 @@ class PageTypeTest extends FormIntegrationTestCase
 
         $defaultData = $existingPage;
 
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(PageType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($existingPage, $form->getViewData());
@@ -311,7 +311,7 @@ class PageTypeTest extends FormIntegrationTestCase
         ]);
 
         /** @var Form $form */
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(PageType::class, $existingData);
 
         $formView = $form->createView();
 

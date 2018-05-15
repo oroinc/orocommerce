@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Helper;
 
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 

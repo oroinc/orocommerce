@@ -2,21 +2,23 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
+use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteAddressType extends AbstractType
 {
@@ -77,6 +79,8 @@ class QuoteAddressType extends AbstractType
                     'label' => false,
                     'required' => false,
                     'mapped' => false,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $this->getChoices($addresses),
                     'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
                     'attr' => [
@@ -88,16 +92,16 @@ class QuoteAddressType extends AbstractType
                 if ($isManualEditGranted) {
                     $customerAddressOptions['choices'] = array_merge(
                         $customerAddressOptions['choices'],
-                        ['oro.sale.quote.form.address.manual']
+                        ['oro.sale.quote.form.address.manual' => 0]
                     );
                     $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
                 }
 
-                $form->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
+                $form->add('customerAddress', Select2ChoiceType::class, $customerAddressOptions);
             }
         );
 
-        $builder->add('phone', 'text', [StripTagsExtension::OPTION_NAME => true]);
+        $builder->add('phone', TextType::class, [StripTagsExtension::OPTION_NAME => true]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -167,7 +171,7 @@ class QuoteAddressType extends AbstractType
         $resolver
             ->setRequired(['quote', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass])
-            ->setAllowedValues('addressType', [AddressType::TYPE_SHIPPING])
+            ->setAllowedValues('addressType', [AddressTypeEntity::TYPE_SHIPPING])
             ->setAllowedTypes('quote', 'Oro\Bundle\SaleBundle\Entity\Quote');
     }
 
@@ -184,7 +188,7 @@ class QuoteAddressType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_address';
+        return AddressType::class;
     }
 
     /**
@@ -210,16 +214,17 @@ class QuoteAddressType extends AbstractType
      */
     protected function getChoices(array $addresses = [])
     {
-        array_walk_recursive(
-            $addresses,
-            function (&$item) {
-                if ($item instanceof AbstractAddress) {
-                    $item = $this->addressFormatter->format($item, null, ', ');
+        foreach ($addresses as $group => $groupAddresses) {
+            array_walk(
+                $groupAddresses,
+                function (&$item) {
+                    if ($item instanceof AbstractAddress) {
+                        $item = $this->addressFormatter->format($item, null, ', ');
+                    }
                 }
-
-                return $item;
-            }
-        );
+            );
+            $addresses[$group] = array_flip($groupAddresses);
+        }
 
         return $addresses;
     }

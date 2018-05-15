@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Represents the entry point for the localization settings of the store frontend.
+ */
 class UserLocalizationManager
 {
     const SESSION_LOCALIZATIONS = 'localizations_by_website';
@@ -105,7 +107,7 @@ class UserLocalizationManager
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
-        } else {
+        } elseif ($this->session->isStarted()) {
             $sessionStoredLocalizations = $this->getSessionLocalizations();
             if (array_key_exists($website->getId(), $sessionStoredLocalizations)) {
                 $localization = $this->localizationManager->getLocalization(
@@ -114,8 +116,7 @@ class UserLocalizationManager
             }
         }
 
-        $allowedLocalizations = $this->getEnabledLocalizations();
-        if (!$localization || !array_key_exists($localization->getId(), $allowedLocalizations)) {
+        if (!$localization || !array_key_exists($localization->getId(), $this->getEnabledLocalizations())) {
             $localization = $this->getDefaultLocalization();
         }
 
@@ -142,7 +143,7 @@ class UserLocalizationManager
             }
             $userWebsiteSettings->setLocalization($localization);
             $this->userManager->getStorageManager()->flush();
-        } else {
+        } elseif ($this->session->isStarted()) {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
             $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);

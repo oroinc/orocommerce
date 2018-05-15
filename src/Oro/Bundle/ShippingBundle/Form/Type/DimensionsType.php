@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
 
 class DimensionsType extends AbstractType
 {
@@ -31,14 +30,14 @@ class DimensionsType extends AbstractType
         $builder
             ->add(
                 'value',
-                DimensionsValueType::NAME,
+                DimensionsValueType::class,
                 [
                     'required' => false,
                 ]
             )
             ->add(
                 'unit',
-                LengthUnitSelectType::NAME,
+                LengthUnitSelectType::class,
                 [
                     'placeholder' => 'oro.shipping.form.placeholder.length_unit.label',
                     'required' => false,

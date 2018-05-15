@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentTermSelectType extends AbstractType
 {
@@ -14,11 +13,11 @@ class PaymentTermSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'oro_payment_term',
+                'autocomplete_alias' => PaymentTermType::class,
                 'create_form_route' => 'oro_payment_term_create',
                 'configs' => [
                     'placeholder' => 'oro.paymentterm.form.choose',
@@ -49,6 +48,6 @@ class PaymentTermSelectType extends AbstractType
      */
     public function getParent()
     {
-        return OroEntitySelectOrCreateInlineType::NAME;
+        return OroEntitySelectOrCreateInlineType::class;
     }
 }

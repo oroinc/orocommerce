@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeExtension
 {
@@ -30,7 +29,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
 
         $builder->add(
             Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER,
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.fields.category.minimum_quantity_to_order.label',
                 'required' => false,
@@ -39,7 +38,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
 
         $builder->add(
             Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.fields.category.maximum_quantity_to_order.label',
                 'required' => false,

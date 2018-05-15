@@ -77,11 +77,18 @@ define(function(require) {
         },
 
         modelEvents: {
-            'productId': ['change', 'onProductChanged']
+            productId: ['change', 'onProductChanged']
         },
 
         /**
          * @inheritDoc
+         */
+        constructor: function LineItemView() {
+            LineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -173,7 +180,7 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
-                var routeParams = {'id': productId};
+                var routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;

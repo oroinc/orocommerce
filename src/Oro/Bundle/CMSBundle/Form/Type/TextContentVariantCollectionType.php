@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class TextContentVariantCollectionType extends AbstractType
 {
@@ -14,7 +13,7 @@ class TextContentVariantCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -24,7 +23,7 @@ class TextContentVariantCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => TextContentVariantType::class,
+                'entry_type' => TextContentVariantType::class,
                 'prototype_name' => '__variant_idx__',
             ]
         );

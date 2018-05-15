@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
-
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 class ProductVariantFieldValidator extends ConstraintValidator
 {

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
-
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 /**
@@ -27,11 +26,6 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
         parent::setUp();
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->couponGenerationType = new CouponGenerationType($this->tokenAccessor);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CouponGenerationType::NAME, $this->couponGenerationType->getName());
     }
 
     public function testGetBlockPrefix()

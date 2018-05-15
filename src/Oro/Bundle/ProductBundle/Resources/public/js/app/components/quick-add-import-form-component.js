@@ -35,7 +35,14 @@ define(function(require) {
         $form: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddImportFormComponent() {
+            QuickAddImportFormComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -66,13 +73,13 @@ define(function(require) {
             }
 
             this.widget = new QuickAddImportWidget({
-                'dialogOptions': {
-                    'title': __('oro.product.frontend.quick_add.import_validation.title'),
-                    'modal': true,
-                    'resizable': false,
-                    'width': 820,
-                    'autoResize': true,
-                    'dialogClass': 'ui-dialog-no-scroll quick-add-validation',
+                dialogOptions: {
+                    title: __('oro.product.frontend.quick_add.import_validation.title'),
+                    modal: true,
+                    resizable: false,
+                    width: 820,
+                    autoResize: true,
+                    dialogClass: 'ui-dialog-no-scroll quick-add-validation'
                 }
             });
             this.widget.on('contentLoad', _.bind(this._onContentLoad, this));

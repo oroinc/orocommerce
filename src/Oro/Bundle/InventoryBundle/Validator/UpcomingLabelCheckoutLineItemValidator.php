@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidator
 {

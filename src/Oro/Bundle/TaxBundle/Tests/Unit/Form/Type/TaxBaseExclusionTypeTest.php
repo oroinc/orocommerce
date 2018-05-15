@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {
@@ -28,11 +27,6 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         unset($this->formType);
 
         parent::tearDown();
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_base_exclusion', $this->formType->getName());
     }
 
     public function testConfigureOptions()
@@ -123,9 +117,9 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFormType()
+    protected function getFormTypeClass()
     {
-        return $this->formType;
+        return TaxBaseExclusionType::class;
     }
 
     /**
@@ -133,6 +127,9 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions()
     {
-        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
+        return array_merge([
+            new PreloadedExtension([$this->formType], []),
+            $this->getValidatorExtension(true)
+        ], parent::getExtensions());
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ShoppingListLineItemsDataProvider
 {
@@ -38,5 +39,50 @@ class ShoppingListLineItemsDataProvider
         $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
         $this->lineItems[$shoppingListId] = $lineItems;
         return $lineItems;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     * @return Product[]
+     */
+    public function getProductsWithConfigurableVariants(array $lineItems)
+    {
+        $productsWithVariants = [];
+
+        foreach ($lineItems as $lineItem) {
+            $product = $lineItem->getProduct();
+            if (isset($productsWithVariants[$product->getId()])) {
+                continue;
+            }
+
+            if ($parentProduct = $lineItem->getParentProduct()) {
+                foreach ($this->getProductVariants($parentProduct) as $variant) {
+                    if (!isset($productsWithVariants[$variant->getId()])) {
+                        $productsWithVariants[$variant->getId()] = $variant;
+                    }
+                }
+
+                continue;
+            }
+
+            $productsWithVariants[$product->getId()] = $product;
+        }
+
+        return array_values($productsWithVariants);
+    }
+
+    /**
+     * @param Product $product
+     * @return Product[]
+     */
+    protected function getProductVariants(Product $product)
+    {
+        $variants = [];
+        $variantLinks = $product->getVariantLinks();
+        foreach ($variantLinks as $variantLink) {
+            $variants[] = $variantLink->getProduct();
+        }
+
+        return $variants;
     }
 }

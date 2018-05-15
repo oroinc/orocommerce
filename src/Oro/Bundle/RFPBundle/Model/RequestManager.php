@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -13,6 +12,7 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestManager
 {
@@ -25,19 +25,25 @@ class RequestManager
     /** @var GuestCustomerUserManager */
     protected $guestCustomerUserManager;
 
+    /** @var WebsiteManager */
+    protected $websiteManager;
+
     /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param DoctrineHelper $doctrineHelper
+     * @param TokenAccessorInterface   $tokenAccessor
+     * @param DoctrineHelper           $doctrineHelper
      * @param GuestCustomerUserManager $guestCustomerUserManager
+     * @param WebsiteManager           $websiteManager
      */
     public function __construct(
         TokenAccessorInterface $tokenAccessor,
         DoctrineHelper $doctrineHelper,
-        GuestCustomerUserManager $guestCustomerUserManager
+        GuestCustomerUserManager $guestCustomerUserManager,
+        WebsiteManager $websiteManager
     ) {
         $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
         $this->guestCustomerUserManager = $guestCustomerUserManager;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -56,6 +62,8 @@ class RequestManager
                 ->setCompany($user->getCustomer()->getName())
                 ->setEmail($user->getEmail());
         }
+
+        $request->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $request;
     }

@@ -1,0 +1,97 @@
+{% block __oro_product_line_item_form__line_item_form_start_widget %}
+    {{ set_unique_line_item_form_id(form, product) }}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': form.vars.id,
+    }) %}
+    {{ block('form_start_widget') }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_fields_widget %}
+    {% set class_prefix = 'line_item_form_fields' %}
+    {% do block|merge_context({
+        class_prefix: class_prefix
+    }) %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
+    {% if renderCache is not defined %}
+        {% set renderCache %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-item__qty__current-grid',
+                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+                'data-page-component-options': {
+                    'singleUnitMode': singleUnitMode,
+                    'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                    'configDefaultUnit': defaultUnitCode
+                }|json_encode
+            }) %}
+
+            <div {{ block('block_attributes') }}>
+                <div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.quantity, {attr: {
+                            'class': 'product-item__qty-input'
+                        }}) }}
+                    </div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.unit, {attr: {
+                            'data-skip-input-widgets': ''
+                        }}) }}
+                    </div>
+                </div>
+                {{ block_widget(block) }}
+            </div>
+        {% endset %}
+        {% do block|merge_context({
+            renderCache: renderCache
+        }) %}
+    {% endif %}
+    {% if not is_configurable_product_type(product.type) %}
+        {{ renderCache }}
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',
+        'data-role': 'line-item-form-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_buttons_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " add-product-from-view-component"
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_buttons_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~options': {
+            'truncateLength': 25,
+            'appendToBody': true,
+            'decoreClass': 'btn--info'
+        }
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_view_details_widget %}
+    {% if is_configurable_product_type(product.type) and matrixFormType == 'none' %}
+        {% set path = product.view_link|default('') %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " btn btn--info full"
+        }) %}
+        
+        {{ parent_block_widget(block) }}
+    {% endif %}
+{% endblock %}

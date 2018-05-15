@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShoppingListController extends Controller
 {
@@ -101,7 +99,7 @@ class ShoppingListController extends Controller
      */
     protected function create(Request $request, ShoppingList $shoppingList)
     {
-        $form = $this->createForm(ShoppingListType::NAME);
+        $form = $this->createForm(ShoppingListType::class);
 
         $handler = new ShoppingListHandler(
             $form,
@@ -112,7 +110,7 @@ class ShoppingListController extends Controller
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $shoppingList,
-            $this->createForm(ShoppingListType::NAME, $shoppingList),
+            $this->createForm(ShoppingListType::class, $shoppingList),
             function (ShoppingList $shoppingList) {
                 return [
                     'route' => 'oro_shopping_list_frontend_view',

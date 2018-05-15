@@ -1,0 +1,35 @@
+// @theme: blank;
+
+.embedded-products {
+    &__item {
+        width: (100% / $embedded-products-item-count-desktop);
+    }
+
+    .slick-arrow {
+        top: $embedded-products-slider-arrow-top;
+    }
+}
+
+@include breakpoint('strict-tablet-small') {
+    .embedded-products {
+        &__item {
+            width: (100% / $embedded-products-item-width-count-tablet-small);
+        }
+    }
+}
+
+@include breakpoint('strict-mobile-landscape') {
+    .embedded-products {
+        &__item {
+            width: (100% / $embedded-products-item-count-mobile-landscape);
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .embedded-products {
+        &__item {
+            width: 100% / $embedded-products-item-count-mobile;
+        }
+    }
+}

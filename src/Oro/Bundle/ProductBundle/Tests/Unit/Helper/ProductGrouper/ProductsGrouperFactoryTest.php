@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Helper\ProductGrouper;
 
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ArrayProductsGrouper;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductRowsGrouper;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\QuickAddRowGrouper;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\UnknownGrouperException;
 

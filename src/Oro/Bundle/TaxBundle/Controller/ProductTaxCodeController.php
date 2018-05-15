@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProductTaxCodeController extends Controller
 {
@@ -92,7 +90,7 @@ class ProductTaxCodeController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $productTaxCode,
-            $this->createForm(ProductTaxCodeType::NAME, $productTaxCode),
+            $this->createForm(ProductTaxCodeType::class, $productTaxCode),
             function (ProductTaxCode $productTaxCode) {
                 return [
                     'route' => 'oro_tax_product_tax_code_update',

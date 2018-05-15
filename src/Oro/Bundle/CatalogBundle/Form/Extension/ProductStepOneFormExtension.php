@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 
 class ProductStepOneFormExtension extends AbstractTypeExtension
 {
@@ -32,7 +31,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductStepOneType::NAME;
+        return ProductStepOneType::class;
     }
 
     /**
@@ -43,7 +42,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped' => false,

@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantFieldsTransformer;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
-
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class ProductCustomVariantFieldsCollectionType extends AbstractType
 {
@@ -34,7 +33,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => 'oro_product_variant_field',
+            'entry_type' => ProductVariantFieldType::class,
             'multiple' => true,
             'expanded' => true,
             'allow_add' => false,
@@ -120,7 +119,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_collection';
+        return CollectionType::class;
     }
 
     /**

@@ -5,10 +5,17 @@ define(function(require) {
     var _ = require('underscore');
     var PaginationInput = require('orodatagrid/js/datagrid/pagination-input');
 
-    BackendPaginationInput =  PaginationInput.extend({
+    BackendPaginationInput = PaginationInput.extend({
         themeOptions: {
             optionPrefix: 'backendpagination',
             el: '[data-grid-pagination]'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function BackendPaginationInput() {
+            BackendPaginationInput.__super__.constructor.apply(this, arguments);
         },
 
         makeHandles: function(handles) {

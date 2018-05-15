@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -32,6 +30,13 @@ define(function(require) {
         listen: {
             'product:precision:remove mediator': 'onAdditionalPrecisionsChange',
             'product:precision:add mediator': 'onAdditionalPrecisionsChange'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductPrimaryUnitLimitationsComponent() {
+            ProductPrimaryUnitLimitationsComponent.__super__.constructor.apply(this, arguments);
         },
 
         /**

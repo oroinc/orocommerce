@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ProductRepository extends EntityRepository
 {
@@ -333,7 +334,10 @@ class ProductRepository extends EntityRepository
      */
     public function getProductsByIds(array $ids)
     {
-        return $this->getProductsQueryBuilder($ids)->getQuery()->getResult();
+        $queryBuilder = $this->getProductsQueryBuilder($ids)
+            ->orderBy('p.id');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -370,6 +374,8 @@ class ProductRepository extends EntityRepository
             ->setParameter('parentProduct', $configurableProduct);
 
         foreach ($variantParameters as $variantName => $variantValue) {
+            QueryBuilderUtil::checkIdentifier($variantName);
+            QueryBuilderUtil::checkIdentifier($variantValue);
             $qb
                 ->andWhere(sprintf('p.%s = :variantValue%s', $variantName, $variantName))
                 ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
@@ -386,15 +392,25 @@ class ProductRepository extends EntityRepository
     public function findByCaseInsensitive(array $criteria)
     {
         $queryBuilder = $this->createQueryBuilder('product');
+        $metadata = $this->getClassMetadata();
 
         foreach ($criteria as $fieldName => $fieldValue) {
+            QueryBuilderUtil::checkIdentifier($fieldName);
             if (!is_string($fieldValue)) {
                 throw new \LogicException(sprintf('Value of %s must be string', $fieldName));
             }
 
             $parameterName = $fieldName . 'Value';
+
+            $productFieldName = $fieldName . 'Uppercase';
+            if ($metadata->hasField($productFieldName)) {
+                $productFieldName = sprintf('product.%s', $productFieldName);
+            } else {
+                $productFieldName = sprintf('UPPER(product.%s)', $fieldName);
+            }
+
             $queryBuilder
-                ->andWhere("UPPER(product.$fieldName) = :$parameterName")
+                ->andWhere($queryBuilder->expr()->eq($productFieldName, ':' . $parameterName))
                 ->setParameter($parameterName, mb_strtoupper($fieldValue));
         }
 
@@ -426,6 +442,7 @@ class ProductRepository extends EntityRepository
      */
     public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
     {
+        QueryBuilderUtil::checkIdentifier($fieldName);
         if ($isRelationField) {
             return $this->createQueryBuilder('p')
                 ->select('p')
@@ -452,6 +469,17 @@ class ProductRepository extends EntityRepository
      */
     public function getProductIdsByAttribute(FieldConfigModel $attribute)
     {
+        return $this->getProductIdsByAttributeId($attribute->getId());
+    }
+
+    /**
+     * Returns array of product ids that have required attribute in their attribute family
+     *
+     * @param int $attributeId
+     * @return array
+     */
+    public function getProductIdsByAttributeId($attributeId)
+    {
         $qb = $this->createQueryBuilder('p');
 
         $result = $qb
@@ -461,7 +489,7 @@ class ProductRepository extends EntityRepository
             ->innerJoin('f.attributeGroups', 'g')
             ->innerJoin('g.attributeRelations', 'r')
             ->where('r.entityConfigFieldId = :id')
-            ->setParameter('id', $attribute->getId())
+            ->setParameter('id', $attributeId)
             ->orderBy('p.id')
             ->getQuery()
             ->getArrayResult();

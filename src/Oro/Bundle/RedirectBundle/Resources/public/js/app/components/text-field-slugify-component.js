@@ -6,8 +6,16 @@ define(function(require) {
     var $ = require('jquery');
 
     TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
+
         /**
          * @inheritDoc
+         */
+        constructor: function TextFieldSlugifyComponent() {
+            TextFieldSlugifyComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
          */
         syncField: function(event) {
             var $source = $(event.target);

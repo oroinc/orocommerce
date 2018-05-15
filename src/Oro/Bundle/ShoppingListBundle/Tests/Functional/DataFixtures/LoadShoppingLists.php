@@ -21,14 +21,13 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_6 = 'shopping_list_6';
     const SHOPPING_LIST_7 = 'shopping_list_7';
     const SHOPPING_LIST_8 = 'shopping_list_8';
+    const SHOPPING_LIST_9 = 'shopping_list_9';
 
     /**
      * @var array
      */
-    protected $shoppingListsWithDefaultWebsite = [
-        self::SHOPPING_LIST_1,
-        self::SHOPPING_LIST_2,
-        self::SHOPPING_LIST_8,
+    protected $shoppingListWebsites = [
+        self::SHOPPING_LIST_9 => LoadWebsiteData::WEBSITE3,
     ];
 
     /**
@@ -79,10 +78,10 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
-        if (in_array($name, $this->shoppingListsWithDefaultWebsite, true)) {
-            $shoppingList->setWebsite($this->getDefaultWebsite($manager));
+        if (array_key_exists($name, $this->shoppingListWebsites)) {
+            $shoppingList->setWebsite($this->getReference($this->shoppingListWebsites[$name]));
         } else {
-            $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
+            $shoppingList->setWebsite($this->getDefaultWebsite($manager));
         }
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
@@ -137,6 +136,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
             ],
             self::SHOPPING_LIST_8 => [
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_9 => [
                 'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
         ];

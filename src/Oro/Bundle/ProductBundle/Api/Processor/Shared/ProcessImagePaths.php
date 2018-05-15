@@ -2,30 +2,27 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
 
-use Oro\Component\ChainProcessor\ContextInterface;
-use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Adds the file paths to the File entity if it is an image type.
  */
 class ProcessImagePaths implements ProcessorInterface
 {
-    const CONFIG_FILE_PATH = 'filePath';
-    const CONFIG_MIME_TYPE = 'mimeType';
-
     /** @var AttachmentManager */
-    protected $attachmentManager;
+    private $attachmentManager;
 
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var ImageTypeProvider */
-    protected $typeProvider;
+    private $typeProvider;
 
     /**
      * @param AttachmentManager $attachmentManager
@@ -89,9 +86,9 @@ class ProcessImagePaths implements ProcessorInterface
      * @param string $mimeType
      * @param int    $fileId
      *
-     * @return array|null
+     * @return string[]|null [dimension => path, ...]
      */
-    protected function getFilePaths($mimeType, $fileId)
+    private function getFilePaths($mimeType, $fileId)
     {
         if (!$this->attachmentManager->isImageType($mimeType)) {
             return null;

@@ -86,7 +86,7 @@ oro:
                     label: 'Payment validation required'
                 payment_save_for_later:
                     label: 'Save payment data for later use'
-                visitor_email:
+                email:
                     label: 'Email'
             transition:
                 __start__:
@@ -214,18 +214,6 @@ oro:
                     attribute:
                         state_token:
                             label: ''
-                finish_checkout:
-                    label: 'Finish checkout'
-                    warning_message: ''
-                payment_error:
-                    label: 'Payment error'
-                    warning_message: ''
-                verify_payment:
-                    label: 'Verify Payment'
-                    warning_message: ''
-                back_to_shipping_address_on_fail_address:
-                    label: 'Edit Shipping Information'
-                    warning_message: ''
                 finish_checkout:
                     label: 'Finish checkout'
                     warning_message: ''

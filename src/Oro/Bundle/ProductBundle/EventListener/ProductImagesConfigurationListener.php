@@ -10,7 +10,7 @@ class ProductImagesConfigurationListener
 {
     const PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX = 'oro_product.product_image_watermark';
     const NOTICE_TEXT_TRANS_KEY = 'oro.product.system_configuration.notice.product_image_watermark';
-    const COMMAND = 'php app/console product:image:resize-all --force';
+    const COMMAND = 'php bin/console product:image:resize-all --force';
     const MESSAGE_TYPE = 'warning';
 
     /**

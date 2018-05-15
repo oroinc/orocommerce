@@ -2,35 +2,29 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormTypeInterface;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
-
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\FormTypeInterface;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -52,10 +46,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected $quoteProductOfferFormatter;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function configureQuoteProductOfferFormatter()
     {
         $this->quoteProductFormatter = $this->getMockBuilder(
             'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
@@ -84,8 +75,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
                 return $types;
             }))
         ;
-
-        parent::setUp();
     }
 
     /**
@@ -99,7 +88,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null, $options = [])
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(get_class($this->formType), $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 

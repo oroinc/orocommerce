@@ -120,6 +120,6 @@ class PaymentMethodsConfigsRuleDestinationPostalCode extends ExtendPaymentMethod
      */
     public function __toString()
     {
-        return $this->getName();
+        return (string)$this->getName();
     }
 }

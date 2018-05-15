@@ -6,7 +6,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -30,7 +29,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             ->getPage()
             ->findAll(
                 'css',
-                'h1.product-item--category-title'
+                'h1.category-title--divide-content'
             );
         $expectedCategories = $table->getColumn(0);
         self::assertNotEmpty(

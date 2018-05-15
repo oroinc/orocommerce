@@ -1,10 +1,6 @@
-{{ message }}
-<ul class="warning-items">
+<div>{{ message }}</div>
+<ul class="warning-list">
 {% for product in products %}
-    <li>
-        <h3 class="product-item__title product-item__title--in-cart">
-            {{ product.name }} (Item # <span class="red">{{ product.sku }}</span>)
-        </h3>
-    </li>
+    <li class="warning-list__item">{{ product.name }} (Item # <span class="warning-list__id-value">{{ product.sku }}</span>)</li>
 {% endfor %}
 </ul>

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\InventoryBundle\EventListener\ProductQuantityToOrderFormViewListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {

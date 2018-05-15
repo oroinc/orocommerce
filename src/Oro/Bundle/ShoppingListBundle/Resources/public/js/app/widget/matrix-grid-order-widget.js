@@ -4,6 +4,7 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    var headerTemplate = require('tpl!oroproduct/templates/product-popup-header.html');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 
@@ -14,12 +15,28 @@ define(function(require) {
 
         shoppingListId: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function MatrixGridOrderWidget() {
+            MatrixGridOrderWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
+            this.model = this.model || options.productModel;
+
             var urlOptions = {
                 productId: this.model.get('id'),
                 shoppingListId: this.shoppingListId
             };
 
+            if (_.isDesktop()) {
+                options.actionsEl = '.product-totals';
+                options.moveAdoptedActions = false;
+            }
             options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
             options.preventModelRemoval = true;
             options.regionEnabled = false;
@@ -28,27 +45,35 @@ define(function(require) {
                 modal: true,
                 title: null,
                 resizable: false,
-                width: '500',
+                width: 'auto',
                 autoResize: true,
                 dialogClass: 'matrix-order-widget--dialog'
             };
-
-            this.fullscreenViewOptions = {
-                popupLabel: null,
-                headerContent: true,
-                footerContentOptions: {},
-                headerContentOptions: {
-                    imageUrl: this.model.get('imageUrl'),
-                    title: this.model.get('name'),
-                    subtitle: _.__('oro.frontend.shoppinglist.matrix_grid_order.item_number') +
-                        ': ' + this.model.get('sku')
-                }
+            options.initLayoutOptions = {
+                productModel: this.model
             };
-            this.options.fullscreenViewport = {
-                isMobile: true
-            };
+            options.header = headerTemplate({
+                product: this.model.attributes
+            });
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
+        },
+
+        _onAdoptedFormSubmitClick: function($form) {
+            var emptyMatrixAllowed = $form.data('empty-matrix-allowed');
+
+            var isQuantity = $form.find('[data-name="field__quantity"]').filter(function() {
+                return this.value.length > 0;
+            }).length > 0;
+
+            if (!emptyMatrixAllowed && !isQuantity) {
+                var validator = $form.validate();
+                validator.errorsFor($form[0]).remove();
+                validator.showLabel($form[0], _.__('oro.product.validation.configurable.required'));
+                return false;
+            }
+
+            return MatrixGridOrderWidget.__super__._onAdoptedFormSubmitClick.apply(this, arguments);
         },
 
         _onContentLoad: function(content) {

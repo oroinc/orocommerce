@@ -3,18 +3,17 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
@@ -43,7 +42,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**
@@ -51,9 +50,9 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, 'collection', [
+        $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, CollectionType::class, [
             'mapped' => false,
-            'type' => ProductAttributePriceCollectionType::NAME,
+            'entry_type' => ProductAttributePriceCollectionType::class,
             'label' => false,
             'required' => false,
         ]);

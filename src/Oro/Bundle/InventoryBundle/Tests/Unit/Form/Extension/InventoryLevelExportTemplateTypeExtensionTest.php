@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,11 +46,11 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
             ->method('add')
             ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
                 $choices = $options['choices'];
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[0],
                     $choices
                 );
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[1],
                     $choices
                 );

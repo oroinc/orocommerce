@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -50,7 +48,14 @@ define(function(require) {
         unitSelector: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function ProductUnitComponent() {
+            ProductUnitComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -91,7 +96,7 @@ define(function(require) {
                 return;
             }
 
-            var routeParams = $.extend({}, this.options.routingParams, {'id': value});
+            var routeParams = $.extend({}, this.options.routingParams, {id: value});
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),
                 beforeSend: $.proxy(this._beforeSend, this),

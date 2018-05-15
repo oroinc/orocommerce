@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
-use Symfony\Component\Routing\Annotation\Route;
-
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\OrderBundle\Controller\AbstractOrderController;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ProductsController extends AbstractOrderController
 {

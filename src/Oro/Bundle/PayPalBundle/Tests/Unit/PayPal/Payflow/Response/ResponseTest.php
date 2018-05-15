@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Response;
 
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\CommunicationErrorsStatusMap;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\CommunicationErrorsStatusMap;
 
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {

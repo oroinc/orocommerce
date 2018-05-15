@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\FallbackBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WebsiteCollectionType extends AbstractType
 {
@@ -70,15 +68,15 @@ class WebsiteCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
-            'type',
+            'entry_type',
         ]);
 
         $resolver->setDefaults([
-            'options'           => [],
-            'fallback_type'     => FallbackPropertyType::NAME,
+            'entry_options'           => [],
+            'fallback_type'     => FallbackPropertyType::class,
             'enabled_fallbacks' => [],
         ]);
     }
@@ -91,11 +89,11 @@ class WebsiteCollectionType extends AbstractType
         foreach ($this->getWebsites() as $website) {
             $builder->add(
                 $website->getId(),
-                FallbackValueType::NAME,
+                FallbackValueType::class,
                 [
                     'label'             => $website->getName(),
-                    'type'              => $options['type'],
-                    'options'           => $options['options'],
+                    'entry_type'        => $options['entry_type'],
+                    'entry_options'     => $options['entry_options'],
                     'fallback_type'     => $options['fallback_type'],
                     'enabled_fallbacks' => $options['enabled_fallbacks'],
                 ]

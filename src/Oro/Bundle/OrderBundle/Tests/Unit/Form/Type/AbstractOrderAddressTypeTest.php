@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 {
@@ -42,11 +42,14 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->addressFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(function (AbstractAddress $item) {
+                return $item->__toString();
+            });
 
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
@@ -65,6 +68,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->getMock();
 
         $this->initFormType();
+        parent::setUp();
     }
 
     abstract protected function initFormType();
@@ -89,8 +93,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $this->formType->configureOptions($resolver);
     }
-
-    abstract public function testGetName();
 
     abstract public function testGetParent();
 
@@ -407,7 +409,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->willReturn(false);
 
         $form = $this->factory->create(
-            $this->formType,
+            get_class($this->formType),
             new OrderAddress(),
             ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => $this->getEntity(), 'isEditEnabled' => true]
         );

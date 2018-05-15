@@ -3,6 +3,7 @@ oro:
         methods:
             credit_card.label: 'Credit Card'
         settings:
+            label: PayPal Transport Settings
             label.tooltip: 'This label is used on the checkout screens'
             short_label.tooltip: 'This label is used in order history'
             credit_card_payment_action.label: 'Payment Action'
@@ -81,8 +82,6 @@ oro:
         channel_type:
             payflow_gateway.label:  PayPal Payflow Gateway
             payments_pro.label: PayPal Payments Pro
-        settings:
-            label: PayPal Transport Settings
 
     payment:
         admin:

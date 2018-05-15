@@ -1,0 +1,43 @@
+layout:
+    imports:
+        -
+            id: oro_product_list_item
+            root: __products
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_list.html.twig'
+        - '@add':
+            id: __products
+            parentId: __root
+            blockType: embedded_list
+            options:
+                item_key: product
+                use_slider: true
+                slider_options:
+                    slidesToShow: 4
+                    arrows: true
+                    responsive:
+                        - {breakpoint: 1100, settings: {arrows: true}}
+                        - {breakpoint: 993, settings: {slidesToShow: 3, arrows: true}}
+                        - {breakpoint: 641, settings: {slidesToShow: 2, arrows: true}}
+                        - {breakpoint: 415, settings: {slidesToShow: 1, arrows: true}}
+                use_footer_align: true
+                footer_align_component_options:
+                    view: 'orofrontend/default/js/app/views/footer-align-view'
+                    elements:
+                        items: '.embedded-list__item'
+                        footer: '.product-item__qty'
+                visible: '=items'
+                item_extra_class: 'embedded-products__item'
+                attr:
+                    class: 'embedded-products'
+
+        - '@setOption':
+            id: __product
+            optionName: class_prefix
+            optionValue: gallery-view
+        - '@setOption':
+            id: __products
+            optionName: items_data.matrixFormType
+            optionValue:
+                '=data["product_list_form_availability_provider"].getAvailableMatrixFormTypes(items, "gallery-view")'

@@ -4,11 +4,13 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
+        website: '@website1'
     shoppinglist2:
         label: 'List 2'
         customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
+        website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

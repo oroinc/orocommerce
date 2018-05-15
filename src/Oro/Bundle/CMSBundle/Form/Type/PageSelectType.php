@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class PageSelectType extends AbstractType
 {
@@ -18,7 +17,7 @@ class PageSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'oro_cms_page',
+                'autocomplete_alias' => PageType::class,
                 'create_form_route' => 'oro_cms_page_create',
                 'configs' => [
                     'placeholder' => 'oro.cms.page.form.choose',
@@ -51,6 +50,6 @@ class PageSelectType extends AbstractType
      */
     public function getParent()
     {
-        return OroEntitySelectOrCreateInlineType::NAME;
+        return OroEntitySelectOrCreateInlineType::class;
     }
 }

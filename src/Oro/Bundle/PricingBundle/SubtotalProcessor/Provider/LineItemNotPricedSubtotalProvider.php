@@ -2,14 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -22,6 +18,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -56,7 +53,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param ProductPriceProvider $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListTreeHandler $priceListTreeHandler ,
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -64,9 +61,9 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         ProductPriceProvider $productPriceProvider,
         DoctrineHelper $doctrineHelper,
         PriceListTreeHandler $priceListTreeHandler,
-        UserCurrencyManager $currencyManager
+        SubtotalProviderConstructorArguments $arguments
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
 
         $this->translator = $translator;
         $this->rounding = $rounding;

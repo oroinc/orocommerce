@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductHolderTypeStub extends AbstractType
 {
@@ -18,7 +17,7 @@ class ProductHolderTypeStub extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductSelectType::class, [
                 'label' =>  'oro.product.entity_label',
             ])
         ;
@@ -27,7 +26,7 @@ class ProductHolderTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

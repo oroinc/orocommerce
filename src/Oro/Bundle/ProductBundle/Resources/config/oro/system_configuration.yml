@@ -65,18 +65,22 @@ system_configuration:
             icon: 'fa-cog'
         configurable_products_matrix_form:
             title: oro.product.system_configuration.groups.configurable_products_matrix_form.title
+        configurable_products_with_matrix_form:
+            title: oro.product.system_configuration.groups.configurable_products_with_matrix_form.title
+        configurable_products_variations:
+            title: oro.product.system_configuration.groups.configurable_products_variations.title
 
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 100
             options:
                 label: oro.product.system_configuration.fields.enable_related_products.label
 
         oro_product.related_products_bidirectional:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 90
             options:
                 label: oro.product.system_configuration.fields.related_products_bidirectional.label
@@ -84,7 +88,8 @@ system_configuration:
 
         oro_product.max_number_of_related_products:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 80
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
@@ -95,15 +100,16 @@ system_configuration:
                         min: 1
 
         oro_product.upsell_products_enabled:
-                data_type: boolean
-                type: oro_config_checkbox
-                priority: 90
-                options:
-                    label: oro.product.system_configuration.fields.enable_upsell_products.label
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 90
+            options:
+                label: oro.product.system_configuration.fields.enable_upsell_products.label
 
         oro_product.max_number_of_upsell_products:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 80
             options:
                 label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
@@ -115,7 +121,8 @@ system_configuration:
 
         oro_product.related_products_max_items:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 70
             options:
                 label: oro.product.system_configuration.fields.related_products_max_items.label
@@ -127,7 +134,8 @@ system_configuration:
 
         oro_product.related_products_min_items:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 60
             options:
                 label: oro.product.system_configuration.fields.related_products_min_items.label
@@ -139,7 +147,7 @@ system_configuration:
 
         oro_product.related_products_show_add_button:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 50
             options:
                 label: oro.product.system_configuration.fields.related_products_show_add_button.label
@@ -147,7 +155,7 @@ system_configuration:
 
         oro_product.related_products_use_slider_on_mobile:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 40
             options:
                 label: oro.product.system_configuration.fields.related_products_use_slider_on_mobile.label
@@ -155,7 +163,8 @@ system_configuration:
 
         oro_product.upsell_products_max_items:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 70
             options:
                 label: oro.product.system_configuration.fields.upsell_products_max_items.label
@@ -167,7 +176,8 @@ system_configuration:
 
         oro_product.upsell_products_min_items:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 60
             options:
                 label: oro.product.system_configuration.fields.upsell_products_min_items.label
@@ -179,7 +189,7 @@ system_configuration:
 
         oro_product.upsell_products_show_add_button:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 50
             options:
                 label: oro.product.system_configuration.fields.upsell_products_show_add_button.label
@@ -187,7 +197,7 @@ system_configuration:
 
         oro_product.upsell_products_use_slider_on_mobile:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 40
             options:
                 label: oro.product.system_configuration.fields.upsell_products_use_slider_on_mobile.label
@@ -195,7 +205,8 @@ system_configuration:
 
         oro_product.unit_rounding_type:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.unit_rounding_type.label
@@ -204,15 +215,17 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    0: oro.product.rounding.type.ceil.label
-                    1: oro.product.rounding.type.floor.label
-                    5: oro.product.rounding.type.half_down.label
-                    6: oro.product.rounding.type.half_up.label
+                    oro.product.rounding.type.ceil.label: 0
+                    oro.product.rounding.type.floor.label: 1
+                    oro.product.rounding.type.half_down.label: 5
+                    oro.product.rounding.type.half_up.label: 6
 
         oro_product.single_unit_mode:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.single_unit_mode.label
@@ -222,7 +235,7 @@ system_configuration:
 
         oro_product.single_unit_mode_show_code:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.single_unit_mode_show_code.label
@@ -231,20 +244,21 @@ system_configuration:
 
         oro_product.general_frontend_product_visibility:
             data_type: array
-            type: oro_product_inventory_status_select
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
 
         oro_product.default_unit:
             data_type: string
-            type: oro_product_units
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.default_unit.label
 
         oro_product.default_unit_precision:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
@@ -262,6 +276,7 @@ system_configuration:
         oro_product.product_image_watermark_size:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_size.label
@@ -275,46 +290,51 @@ system_configuration:
         oro_product.product_image_watermark_position:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            search_type: choice
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    topleft: oro.product.system_configuration.fields.product_image_watermark_position.topleft.label
-                    top: oro.product.system_configuration.fields.product_image_watermark_position.top.label
-                    topright: oro.product.system_configuration.fields.product_image_watermark_position.topright.label
-                    left: oro.product.system_configuration.fields.product_image_watermark_position.left.label
-                    center: oro.product.system_configuration.fields.product_image_watermark_position.center.label
-                    right: oro.product.system_configuration.fields.product_image_watermark_position.right.label
-                    bottomleft: oro.product.system_configuration.fields.product_image_watermark_position.bottomleft.label
-                    bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
-                    bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
+                    oro.product.system_configuration.fields.product_image_watermark_position.topleft.label: topleft
+                    oro.product.system_configuration.fields.product_image_watermark_position.top.label: top
+                    oro.product.system_configuration.fields.product_image_watermark_position.topright.label: topright
+                    oro.product.system_configuration.fields.product_image_watermark_position.left.label: left
+                    oro.product.system_configuration.fields.product_image_watermark_position.center.label: center
+                    oro.product.system_configuration.fields.product_image_watermark_position.right.label: right
+                    oro.product.system_configuration.fields.product_image_watermark_position.bottomleft.label: bottomleft
+                    oro.product.system_configuration.fields.product_image_watermark_position.bottom.label: bottom
+                    oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label: bottomright
 
         oro_product.featured_products_segment_id:
             data_type: string
             type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
             priority: 10
             options:
+                choices_as_values: true
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
 
         oro_product.enable_quick_order_form:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.product.system_configuration.fields.enable_quick_order_form.title
 
         oro_product.guest_quick_order_form:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.product.system_configuration.fields.guest_quick_order_form.title
                 tooltip: oro.product.system_configuration.fields.guest_quick_order_form.tooltip
 
         oro_product.product_direct_url_prefix:
             data_type: string
-            type: oro_redirect_sluggable_prefix
+            type: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.product_direct_url_prefix.label
                 data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
@@ -324,7 +344,8 @@ system_configuration:
 
         oro_product.brand_direct_url_prefix:
             data_type: string
-            type: oro_redirect_sluggable_prefix
+            type: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.brand_direct_url_prefix.label
                 data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
@@ -334,21 +355,25 @@ system_configuration:
 
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
             options:
                 label: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.label
                 tooltip: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.tooltip
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    0 * * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_hour.label
-                    0 */2 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_two_hours.label
-                    0 */3 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_three_hours.label
-                    0 */6 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_six_hours.label
-                    0 */12 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_twelve_hours.label
-                    0 0 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_day.label
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_hour.label: '0 * * * *'
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_two_hours.label: '0 */2 * * *'
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_three_hours.label: '0 */3 * * *'
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_six_hours.label: '0 */6 * * *'
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_twelve_hours.label: '0 */12 * * *'
+                    oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_day.label: '0 0 * * *'
 
         oro_product.product_collections_mass_action_limitation:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             options:
                 label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
                 tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
@@ -360,7 +385,8 @@ system_configuration:
 
         oro_product.product_promotion_show_on_product_view:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
             options:
                 label: oro.product.system_configuration.fields.show_on_product_view.label
                 tooltip: oro.product.form.tooltip.show_on_product_view
@@ -368,9 +394,11 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    false: oro.product.system_configuration.fields.show_on_product_view.type.no.label
-                    true: oro.product.system_configuration.fields.show_on_product_view.type.yes.label
+                    oro.product.system_configuration.fields.show_on_product_view.type.no.label: 0
+                    oro.product.system_configuration.fields.show_on_product_view.type.yes.label: 1
 
         oro_product.new_arrivals_products_segment_id:
             data_type: string
@@ -384,6 +412,7 @@ system_configuration:
         oro_product.new_arrivals_max_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_max_items.label
@@ -396,6 +425,7 @@ system_configuration:
         oro_product.new_arrivals_min_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            search_type: text
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_min_items.label
@@ -407,7 +437,7 @@ system_configuration:
 
         oro_product.new_arrivals_use_slider_on_mobile:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.label
@@ -415,7 +445,7 @@ system_configuration:
 
         oro_product.image_preview_on_product_listing_enabled:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 100
             options:
                 label: oro.product.system_configuration.fields.image_preview_on_product_listing_enabled.label
@@ -423,7 +453,7 @@ system_configuration:
 
         oro_product.popup_gallery_on_product_view:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
@@ -431,14 +461,67 @@ system_configuration:
 
         oro_product.matrix_form_on_product_view:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
             priority: 10
             options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_product_view.tooltip
                 label: oro.product.system_configuration.fields.matrix_form_on_product_view.label
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    none: oro.product.system_configuration.fields.matrix_form_on_product_view.none.label
-                    inline: oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label
-                    popup: oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label
+                    oro.product.system_configuration.fields.matrix_form_on_product_view.none.label: none
+                    oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label: inline
+                    oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label: popup
+
+        oro_product.matrix_form_on_product_listing:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_product_listing.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_on_product_listing.label
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
+                choices:
+                    oro.product.system_configuration.fields.matrix_form_on_product_listing.none.label: none
+                    oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label: inline
+                    oro.product.system_configuration.fields.matrix_form_on_product_listing.popup.label: popup
+
+        oro_product.matrix_form_on_shopping_list:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
+                choices:
+                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.none.label: none
+                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label: inline
+                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.popup.label: popup
+
+        oro_product.matrix_form_allow_empty:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                tooltip: oro.product.system_configuration.fields.matrix_form_allow_empty.tooltip
+                label: oro.product.system_configuration.fields.matrix_form_allow_empty.label
+
+        oro_product.display_simple_variations:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.display_simple_variations.label
+                tooltip: oro.product.system_configuration.fields.display_simple_variations.tooltip
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
+                choices:
+                    oro.product.system_configuration.fields.display_simple_variations.everywhere.label: everywhere
+                    oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely
 
     tree:
         system_configuration:
@@ -529,6 +612,12 @@ system_configuration:
                                     configurable_products_matrix_form:
                                         children:
                                             - oro_product.matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_listing
+                                            - oro_product.matrix_form_on_shopping_list
+                                            - oro_product.matrix_form_allow_empty
+                                    configurable_products_variations:
+                                        children:
+                                            - oro_product.display_simple_variations
                             product_collections:
                                 priority: 0
                                 children:
@@ -589,3 +678,9 @@ system_configuration:
                                     configurable_products_matrix_form:
                                         children:
                                             - oro_product.matrix_form_on_product_view
+                                            - oro_product.matrix_form_on_product_listing
+                                            - oro_product.matrix_form_on_shopping_list
+                                            - oro_product.matrix_form_allow_empty
+                                    configurable_products_variations:
+                                        children:
+                                            - oro_product.display_simple_variations

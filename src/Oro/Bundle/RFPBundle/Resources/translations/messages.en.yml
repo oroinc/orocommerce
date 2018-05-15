@@ -69,6 +69,11 @@ oro:
                 label:                  'Deleted At'
                 description:            The date and time when the RFQ has been deleted.
 
+            website:
+                label:              'Website'
+                description:        'A website where the Request For Quote is created.'
+
+
             submit.label:               'Submit Request For Quote'
             cancel.label:               'Cancel'
 
@@ -297,6 +302,7 @@ oro:
             data_storage:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'
+                no_qty_products_cant_be_added_to_rfq: 'Products with no quantities have not been added to this request.'
             toolbar-actions:
                 btn:
                     print: 'Print RFQ'

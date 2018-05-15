@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Handler;
 
-use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class VisibilityFormDataHandlerTest extends FormHandlerTestCase
 {
@@ -50,7 +49,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
 
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
@@ -84,7 +83,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
 
         $this->form->expects($this->once())

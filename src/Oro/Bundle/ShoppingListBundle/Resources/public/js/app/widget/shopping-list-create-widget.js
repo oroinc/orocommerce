@@ -10,6 +10,16 @@ define(function(require) {
     ShoppingListCreateWidget = DialogWidget.extend({
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListCreateWidget() {
+            ShoppingListCreateWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             var urlOptions = {};
             if (options.createOnly) {
@@ -23,11 +33,11 @@ define(function(require) {
             this.options.shoppingListCreateEnabled = true;
 
             options.dialogOptions = {
-                'modal': true,
-                'resizable': false,
-                'width': '480',
-                'autoResize': true,
-                'dialogClass': 'shopping-list-dialog'
+                modal: true,
+                resizable: false,
+                width: '480',
+                autoResize: true,
+                dialogClass: 'shopping-list-dialog'
             };
 
             this.on('formSave', _.bind(this.onFormSave, this));

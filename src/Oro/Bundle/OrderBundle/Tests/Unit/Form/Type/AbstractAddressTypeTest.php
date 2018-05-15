@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\ConstraintViolation;
-
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 
 abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
 {
@@ -22,7 +21,7 @@ abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
     protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions)
     {
         $form = $this->factory->create(
-            $this->formType,
+            get_class($this->formType),
             $defaultData,
             $formOptions
         );

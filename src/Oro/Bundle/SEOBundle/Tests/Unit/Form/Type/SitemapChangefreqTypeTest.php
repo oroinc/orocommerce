@@ -25,11 +25,6 @@ class SitemapChangefreqTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SitemapChangefreqType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SitemapChangefreqType::NAME, $this->type->getBlockPrefix());
@@ -48,21 +43,22 @@ class SitemapChangefreqTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
+                    'choices_as_values' => true,
                     'choices' => [
-                        Configuration::CHANGEFREQ_ALWAYS
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.always.label',
-                        Configuration::CHANGEFREQ_HOURLY
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.hourly.label',
-                        Configuration::CHANGEFREQ_DAILY
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.daily.label',
-                        Configuration::CHANGEFREQ_WEEKLY
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.weekly.label',
-                        Configuration::CHANGEFREQ_MONTHLY
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.monthly.label',
-                        Configuration::CHANGEFREQ_YEARLY
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.yearly.label',
-                        Configuration::CHANGEFREQ_NEVER
-                            => 'oro.seo.system_configuration.fields.changefreq.choice.never.label',
+                        'oro.seo.system_configuration.fields.changefreq.choice.always.label'
+                            => Configuration::CHANGEFREQ_ALWAYS,
+                        'oro.seo.system_configuration.fields.changefreq.choice.hourly.label'
+                            => Configuration::CHANGEFREQ_HOURLY,
+                        'oro.seo.system_configuration.fields.changefreq.choice.daily.label'
+                            => Configuration::CHANGEFREQ_DAILY,
+                        'oro.seo.system_configuration.fields.changefreq.choice.weekly.label'
+                            => Configuration::CHANGEFREQ_WEEKLY,
+                        'oro.seo.system_configuration.fields.changefreq.choice.monthly.label'
+                            => Configuration::CHANGEFREQ_MONTHLY,
+                        'oro.seo.system_configuration.fields.changefreq.choice.yearly.label'
+                            => Configuration::CHANGEFREQ_YEARLY,
+                        'oro.seo.system_configuration.fields.changefreq.choice.never.label'
+                            => Configuration::CHANGEFREQ_NEVER,
                     ],
                 ]
             );

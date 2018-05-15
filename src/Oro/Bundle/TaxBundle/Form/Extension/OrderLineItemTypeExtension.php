@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
-use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
@@ -19,8 +18,8 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var TaxationSettingsProvider */
     protected $taxationSettingsProvider;
 
-    /** @var TaxManager */
-    protected $taxManager;
+    /** @var TaxProviderRegistry */
+    protected $taxProviderRegistry;
 
     /** @var TotalProcessorProvider */
     protected $totalProcessorProvider;
@@ -33,20 +32,20 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
 
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      * @param TotalProcessorProvider $totalProcessorProvider
      * @param SectionProvider $sectionProvider
      * @param string $extendedType
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
-        TaxManager $taxManager,
+        TaxProviderRegistry $taxProviderRegistry,
         TotalProcessorProvider $totalProcessorProvider,
         SectionProvider $sectionProvider,
         $extendedType
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
         $this->totalProcessorProvider = $totalProcessorProvider;
         $this->sectionProvider = $sectionProvider;
         $this->extendedType = (string)$extendedType;
@@ -95,6 +94,15 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $view->vars['result'] = $this->taxManager->getTax($entity);
+        $view->vars['result'] = $this->getProvider()->getTax($entity);
+    }
+
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

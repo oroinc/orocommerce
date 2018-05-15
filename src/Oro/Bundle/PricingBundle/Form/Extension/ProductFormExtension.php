@@ -56,7 +56,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $builder->add(
             'prices',
-            ProductPriceCollectionType::NAME,
+            ProductPriceCollectionType::class,
             [
                 'label' => 'oro.pricing.productprice.entity_plural_label',
                 'required' => false,
@@ -64,7 +64,7 @@ class ProductFormExtension extends AbstractTypeExtension
                 'constraints' => [
                     new UniqueProductPrices(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]])
                 ],
-                'options' => [
+                'entry_options' => [
                     'product' => $product,
                 ],
             ]
@@ -163,7 +163,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**

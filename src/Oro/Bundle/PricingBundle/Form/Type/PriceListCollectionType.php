@@ -3,7 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Doctrine\Common\Collections\Criteria;
-
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -11,11 +14,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
-use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListCollectionType extends AbstractType
 {
@@ -39,7 +37,7 @@ class PriceListCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'website' => null,
-                'type' => PriceListSelectWithPriorityType::NAME,
+                'entry_type' => PriceListSelectWithPriorityType::class,
                 'mapped' => false,
                 'label' => false,
                 'handle_primary' => false,
@@ -63,7 +61,7 @@ class PriceListCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**

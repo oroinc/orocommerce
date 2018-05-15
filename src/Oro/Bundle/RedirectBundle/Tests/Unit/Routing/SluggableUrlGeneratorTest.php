@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
-
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
+use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RequestContext;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -112,9 +111,12 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('setContextUrl')
             ->with(null);
 
-        $this->sluggableUrlProvider->expects($this->once())
+        $this->sluggableUrlProvider->expects($this->exactly(2))
             ->method('getUrl')
-            ->with($routeName, $routeParameters)
+            ->withConsecutive(
+                [$routeName, $routeParameters, $localizationId],
+                [$routeName, $routeParameters, null]
+            )
             ->willReturn(null);
 
         $this->baseGenerator->expects($this->once())
@@ -141,13 +143,25 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
 
+        $localizationId = 1;
+        $localization = $this->createMock(Localization::class);
+        $localization->expects($this->any())
+            ->method('getId')
+            ->willReturn($localizationId);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         $this->sluggableUrlProvider->expects($this->once())
             ->method('setContextUrl')
             ->with('context');
 
-        $this->sluggableUrlProvider->expects($this->once())
+        $this->sluggableUrlProvider->expects($this->exactly(2))
             ->method('getUrl')
-            ->with($routeName, $cleanParameters)
+            ->withConsecutive(
+                [$routeName, $cleanParameters, $localizationId],
+                [$routeName, $cleanParameters, null]
+            )
             ->willReturn(null);
 
         $this->baseGenerator->expects($this->once())
@@ -181,6 +195,56 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getUrl')
             ->with($routeName, $cleanParameters)
             ->willReturn($slug);
+
+        $this->baseGenerator->expects($this->never())
+            ->method('generate');
+
+        $this->sluggableUrlProvider->expects($this->once())
+            ->method('setContextUrl')
+            ->with('context');
+
+
+        $this->assertEquals(
+            '/base/context/_item/slug',
+            $this->generator->generate($routeName, $routeParameters, $referenceType)
+        );
+    }
+
+    public function testGenerateWithDataStorageWithContextForDefaultLocalization()
+    {
+        $routeName = 'test';
+        $contextType = 'context';
+        $contextData = 1;
+        $contextUrl = '/context';
+        $routeParameters = ['id' => 1, 'context_type' => $contextType, 'context_data' => $contextData];
+        $cleanParameters = ['id' => 1];
+        $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
+        $slug = 'slug';
+
+        $baseUrl = '/base';
+        $this->assertRequestContextCalled($baseUrl);
+
+        $this->initCommonMocks($contextType, $contextData, $contextUrl);
+
+        $localizationId = 1;
+        $localization = $this->createMock(Localization::class);
+        $localization->expects($this->any())
+            ->method('getId')
+            ->willReturn($localizationId);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        $this->sluggableUrlProvider->expects($this->exactly(2))
+            ->method('getUrl')
+            ->withConsecutive(
+                [$routeName, $cleanParameters, $localizationId],
+                [$routeName, $cleanParameters, null]
+            )
+            ->willReturnOnConsecutiveCalls(
+                null,
+                $slug
+            );
 
         $this->baseGenerator->expects($this->never())
             ->method('generate');

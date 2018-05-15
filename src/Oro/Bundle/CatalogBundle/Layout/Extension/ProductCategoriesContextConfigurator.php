@@ -3,16 +3,13 @@
 namespace Oro\Bundle\CatalogBundle\Layout\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Component\Layout\ContextConfiguratorInterface;
-use Oro\Component\Layout\ContextInterface;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Layout\ContextConfiguratorInterface;
+use Oro\Component\Layout\ContextInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ProductCategoriesContextConfigurator implements ContextConfiguratorInterface
 {

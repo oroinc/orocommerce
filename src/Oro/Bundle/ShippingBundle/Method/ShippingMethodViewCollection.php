@@ -224,10 +224,26 @@ class ShippingMethodViewCollection
     }
 
     /**
+     * If at least one method has types - collection is not empty
+     *
      * @return bool
      */
     public function isEmpty()
     {
-        return count($this->methodViews) <= 0;
+        if (count($this->methodViews) <= 0) {
+            return true;
+        }
+
+        foreach ($this->methodViews as $methodId => $methodView) {
+            if (false === array_key_exists($methodId, $this->methodTypesViews)
+                || [] === $this->methodTypesViews[$methodId]
+            ) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

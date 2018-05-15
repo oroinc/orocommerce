@@ -4,31 +4,29 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteProductTypeTest extends AbstractTest
 {
@@ -108,7 +106,7 @@ class QuoteProductTypeTest extends AbstractTest
             }))
         ;
 
-        parent::setUp();
+        $this->configureQuoteProductOfferFormatter();
 
         $this->formType = new QuoteProductType(
             $this->translator,
@@ -117,6 +115,8 @@ class QuoteProductTypeTest extends AbstractTest
             $this->registry
         );
         $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
+
+        parent::setUp();
     }
 
     public function testConfigureOptions()
@@ -128,7 +128,7 @@ class QuoteProductTypeTest extends AbstractTest
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
                 $this->assertArrayHasKey('page_component', $options);
                 $this->assertArrayHasKey('page_component_options', $options);
                 $this->assertArrayHasKey('allow_add_free_form_items', $options);
@@ -611,18 +611,16 @@ class QuoteProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                        => new CollectionType(),
-                    QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
-                    QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
-                    ProductUnitSelectionType::NAME              => new ProductUnitSelectionTypeStub(),
-                    ProductSelectType::NAME                     => new ProductSelectTypeStub(),
-                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
-                    $priceType->getName()                       => $priceType,
-                    $entityType->getName()                      => $entityType,
-                    $quoteProductOfferType->getName()           => $quoteProductOfferType,
-                    $quoteProductRequestType->getName()         => $quoteProductRequestType,
-                    $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
+                    $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
+                    ProductSelectType::class        => new ProductSelectTypeStub(),
+                    CurrencySelectionType::class    => new CurrencySelectionTypeStub(),
+                    PriceType::class                => $priceType,
+                    EntityType::class               => $entityType,
+                    QuoteProductOfferType::class    => $quoteProductOfferType,
+                    QuoteProductRequestType::class  => $quoteProductRequestType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    QuantityType::class             => $this->getQuantityType(),
                 ],
                 []
             ),

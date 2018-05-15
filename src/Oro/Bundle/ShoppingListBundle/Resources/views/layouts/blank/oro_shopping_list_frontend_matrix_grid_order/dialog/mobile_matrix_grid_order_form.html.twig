@@ -1,4 +1,6 @@
 {% block _matrix_collection_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set defaultColumns = form.rows[0].columns %}
     {% set rowsCount = form.rows|length %}
     {% set columnsCount = defaultColumns|length %}
@@ -8,7 +10,7 @@
 
 {% block _matrix_collection_widget_body %}
     {% set rows = columnsCount > 1 ? form.rows : [form.rows[0]] %}
-    <div class="matrix-order-widget__grid fade-in">
+    <div class="{{ class_prefix }}__grid--mobile fade-in">
         {% for row in rows %}
             {% set rowIndex = loop.index %}
             {{ block('_matrix_collection_widget_body_row') }}
@@ -17,7 +19,7 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row %}
-    <div class="matrix-order-widget__item"
+    <div class="{{ class_prefix }}__item"
          data-page-component-collapse="{{ {
              openClass: 'expanded'
          }|json_encode() }}"
@@ -28,35 +30,35 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_head %}
-    <div class="matrix-order-widget__item-info" data-collapse-trigger>
+    <div class="{{ class_prefix }}__item-info" data-collapse-trigger>
         {% if columnsCount > 1 %}
         <div>
             {% set cell = row %}
             {{ block('_matrix_collection_widget_side_cell_label') }}
         </div>
         {% endif %}
-        <div class="matrix-order-widget__item-info-wrapper">
+        <div class="{{ class_prefix }}__item-info-wrapper">
             <div>
                 <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}: </span>
                 <span data-rows-quantity="{{ rowIndex }}">0</span>
             </div>
-            <span class="matrix-order-widget__item-separator">|</span>
+            <span class="{{ class_prefix }}__item-separator">|</span>
             <div>
                 <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}: </span>
                 <span data-rows-price="{{ rowIndex }}">0</span>
             </div>
         </div>
-        <div class="matrix-order-widget__item-icon-wrapper">
-            <span class="matrix-order-widget__item-icon fa-plus fa--large"></span>
-            <span class="matrix-order-widget__item-icon fa-minus fa--large"></span>
+        <div class="{{ class_prefix }}__item-icon-wrapper">
+            <span class="{{ class_prefix }}__item-icon fa-plus fa--large"></span>
+            <span class="{{ class_prefix }}__item-icon fa-minus fa--large"></span>
         </div>
     </div>
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_cells %}
     {% set cells = columnsCount > 1 ? row.columns : form.rows %}
-    <div class="matrix-order-widget__item-container" data-collapse-container>
-        <div class="matrix-order-widget__item-content-wrapper">
+    <div class="{{ class_prefix }}__item-container" data-collapse-container>
+        <div class="{{ class_prefix }}__item-content-wrapper">
             {% for cell in cells %}
                 {% set cellIndex = loop.index %}
                 {{ block('_matrix_collection_widget_body_row_cell') }}
@@ -68,14 +70,13 @@
 {% block _matrix_collection_widget_body_row_cell %}
     {% set row = columnsCount > 1 ? row : cell %}
     {% set cell = columnsCount > 1 ? cell : row.columns[0] %}
-    <label class="matrix-order-widget__item-content" data-zoom-disable>
+    <label class="{{ class_prefix }}__item-content" data-zoom-disable>
         {{ block('_matrix_collection_widget_body_row_cell_widget') }}
     </label>
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_cell_widget %}
-    {% do set_class_prefix_to_form(cell, 'matrix-order-widget') %}
-    <div class="matrix-order-widget__item-label">
+    <div class="{{ class_prefix }}__item-label">
         {% if columnsCount == 1 %}
             {% set tempCell = cell %}
             {% set cell = row %}
@@ -87,7 +88,7 @@
     </div>
     {{ form_widget(cell, {
         'attr': {
-            'class': 'matrix-order-widget__item-value',
+            'class': class_prefix ~ '__item-value',
             'data-product-id': cell.vars.productId,
             'data-index': {
                 'row': rowIndex,

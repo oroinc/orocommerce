@@ -3,13 +3,11 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\Collection;
-
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
+use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 
 abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 {
@@ -23,7 +21,7 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
             ->method('add')
             ->with(
                 'taxCode',
-                CustomerTaxCodeAutocompleteType::NAME,
+                CustomerTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,

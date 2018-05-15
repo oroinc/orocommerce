@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *  Adds twig functions for formatting unit value and code
+ */
 class ProductUnitValueExtension extends \Twig_Extension
 {
     /** @var ContainerInterface */
@@ -36,18 +38,15 @@ class ProductUnitValueExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_format_product_unit_value',
-                [$this, 'format'],
-                ['is_safe' => ['html']]
+                [$this, 'format']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_short_product_unit_value',
-                [$this, 'formatShort'],
-                ['is_safe' => ['html']]
+                [$this, 'formatShort']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_product_unit_code',
-                [$this, 'formatCode'],
-                ['is_safe' => ['html']]
+                [$this, 'formatCode']
             ),
         ];
     }

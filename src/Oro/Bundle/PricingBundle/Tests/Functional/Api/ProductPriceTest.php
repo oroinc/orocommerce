@@ -50,14 +50,40 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseContains($this->getAliceFolderName().'/get_list.yml', $response);
     }
 
+    public function testGetListWithTotalCount()
+    {
+        $parameters = [
+            'filter' => [
+                'priceList' => ['@price_list_1->id'],
+            ],
+            'page' => ['size' => 1],
+            'sort' => 'product',
+        ];
+        $response = $this->cget(
+            ['entity' => $this->getEntityName()],
+            $parameters,
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => $this->getEntityName(),
+                        'id' => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>',
+                    ]
+                ]
+            ],
+            $response
+        );
+        self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
+    }
+
     public function testGetListWithoutPriceListFilter()
     {
         $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_cget', $routeParameters)
-        );
+        $response = $this->cget($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -94,17 +120,9 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFolderName().'/create.yml'
         );
 
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $this->post($routeParameters, $parameters);
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -120,11 +138,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFolderName().'/create_wrong.yml'
         );
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -164,14 +178,14 @@ class ProductPriceTest extends RestJsonApiTestCase
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-1')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-2')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-2')->getId()],
             ]
         );
     }
@@ -184,10 +198,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_cdelete', $routeParameters)
-        );
+        $response = $this->cdelete($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -207,10 +218,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -230,10 +238,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -253,10 +258,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
 
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_get', $routeParameters)
-        );
+        $response = $this->get($routeParameters, [], [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
         static::assertContains(
@@ -312,14 +314,7 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $parameters = $this->getRequestData($this->getAliceFolderName().'/update_with_price_list.yml');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                $routeParameters
-            ),
-            $parameters
-        );
+        $response = $this->patch($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -343,14 +338,7 @@ class ProductPriceTest extends RestJsonApiTestCase
 
         $parameters = $this->getRequestData($this->getAliceFolderName().'/update_duplicate.yml');
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                $routeParameters
-            ),
-            $parameters
-        );
+        $response = $this->patch($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -407,7 +395,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-1')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
             ]
         );
     }
@@ -492,18 +480,19 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     private function assertMessagesSentForCreateRequest($priceListReference)
     {
+        $productId = $this->getReference('product-5')->getId();
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-5')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$productId],
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => $this->getReference('product-5')->getId(),
+                PriceListTriggerFactory::PRODUCT => [$productId],
             ]
         );
     }

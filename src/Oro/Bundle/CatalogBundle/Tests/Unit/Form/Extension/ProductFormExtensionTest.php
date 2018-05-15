@@ -3,18 +3,16 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -66,7 +64,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(ProductType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(ProductType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildForm()
@@ -77,7 +75,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped'   => false,

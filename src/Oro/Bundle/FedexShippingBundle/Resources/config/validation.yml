@@ -1,0 +1,21 @@
+Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings:
+    constraints:
+        - Oro\Bundle\FedexShippingBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
+    properties:
+        key:
+            - NotBlank: ~
+        password:
+            - NotBlank: ~
+        accountNumber:
+            - NotBlank: ~
+        meterNumber:
+            - NotBlank: ~
+        pickupType:
+            - NotBlank: ~
+        unitOfWeight:
+            - NotBlank: ~
+        shippingServices:
+            - NotBlank: ~
+        labels:
+            - NotBlank: ~
+            - Valid: ~

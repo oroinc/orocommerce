@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 
@@ -13,6 +14,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtota
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository")
  * @ORM\Table(
  *     name="oro_checkout_subtotal",
+ *     indexes={
+ *         @ORM\Index(name="idx_checkout_subtotal_valid", columns={"is_valid"})
+ *     },
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(name="unique_checkout_currency", columns={
  *              "checkout_id",
@@ -53,6 +57,14 @@ class CheckoutSubtotal
      * @ORM\Column(name="value", type="money", nullable=true)
      */
     protected $value;
+
+    /**
+     * @var CombinedPriceList
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
+     * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+     */
+    protected $combinedPriceList;
 
     /**
      * @var bool
@@ -125,6 +137,7 @@ class CheckoutSubtotal
         }
 
         $this->value = $subtotal->getAmount();
+        $this->combinedPriceList = $subtotal->getCombinedPriceList();
 
         return $this;
     }
@@ -138,7 +151,8 @@ class CheckoutSubtotal
         $subtotal->setAmount($this->value)
             ->setCurrency($this->currency)
             ->setType(LineItemNotPricedSubtotalProvider::TYPE)
-            ->setLabel(LineItemNotPricedSubtotalProvider::LABEL);
+            ->setLabel(LineItemNotPricedSubtotalProvider::LABEL)
+            ->setCombinedPriceList($this->combinedPriceList);
 
         return $subtotal;
     }

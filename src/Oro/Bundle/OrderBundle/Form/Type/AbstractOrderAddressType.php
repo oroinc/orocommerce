@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressType extends AbstractType
 {
@@ -67,7 +67,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initCustomerAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
-        $builder->add('phone', 'text', ['required' => false, StripTagsExtension::OPTION_NAME => true,]);
+        $builder->add('phone', TextType::class, ['required' => false, StripTagsExtension::OPTION_NAME => true,]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -149,16 +149,17 @@ abstract class AbstractOrderAddressType extends AbstractType
      */
     protected function getChoices(array $addresses = [])
     {
-        array_walk_recursive(
-            $addresses,
-            function (&$item) {
-                if ($item instanceof AbstractAddress) {
-                    $item = $this->addressFormatter->format($item, null, ', ');
+        foreach ($addresses as $group => $groupAddresses) {
+            array_walk(
+                $groupAddresses,
+                function (&$item) {
+                    if ($item instanceof AbstractAddress) {
+                        $item = $this->addressFormatter->format($item, null, ', ');
+                    }
                 }
-
-                return $item;
-            }
-        );
+            );
+            $addresses[$group] = array_flip($groupAddresses);
+        }
 
         return $addresses;
     }

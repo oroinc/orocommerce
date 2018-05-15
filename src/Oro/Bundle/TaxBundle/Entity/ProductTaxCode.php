@@ -3,11 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
+ * Entity that represents tax code
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
  * @ORM\Table(name="oro_tax_product_tax_code")
  * @ORM\HasLifecycleCallbacks
@@ -21,7 +22,11 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
- *          }
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
  *      }
  * )
  */

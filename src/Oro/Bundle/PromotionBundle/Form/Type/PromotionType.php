@@ -36,27 +36,29 @@ class PromotionType extends AbstractType
                 [
                     'label' => 'oro.promotion.use_coupons.label',
                     'required' => false,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        false => 'oro.promotion.use_coupons.no',
-                        true => 'oro.promotion.use_coupons.yes',
+                        'oro.promotion.use_coupons.no' => 0,
+                        'oro.promotion.use_coupons.yes' => 1,
                     ],
-                    'empty_value' => false,
+                    'placeholder' => false,
                 ]
             )
-            ->add('discountConfiguration', DiscountConfigurationType::NAME)
+            ->add('discountConfiguration', DiscountConfigurationType::class)
             ->add(
                 'schedules',
-                ScheduleIntervalsCollectionType::NAME,
+                ScheduleIntervalsCollectionType::class,
                 [
                     'label' => 'oro.promotion.dates.label',
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => PromotionSchedule::class,
                     ]
                 ]
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'label' => 'oro.promotion.restrictions.label',
                     'required' => true,
@@ -68,14 +70,14 @@ class PromotionType extends AbstractType
             )
             ->add(
                 'productsSegment',
-                ProductCollectionSegmentType::NAME,
+                ProductCollectionSegmentType::class,
                 [
                     'segment_name_template' => 'Promotion Matching Products %s'
                 ]
             )
             ->add(
                 'labels',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.promotion.labels.label',
                     'tooltip' => 'oro.promotion.labels.tooltip',
@@ -84,14 +86,14 @@ class PromotionType extends AbstractType
             )
             ->add(
                 'descriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.promotion.descriptions.label',
                     'tooltip' => 'oro.promotion.descriptions.tooltip',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
+                    'entry_type' => OroRichTextType::class,
+                    'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,

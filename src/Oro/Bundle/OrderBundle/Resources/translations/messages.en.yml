@@ -1,9 +1,7 @@
 "Order History": "Order History"
 "close": "close"
 "Billing Information": "Billing Information"
-"Payment": "Payment"
 "Shipping Information": "Shipping Information"
-"Billing Information": "Billing Information"
 "Shipping Method": "Shipping Method"
 "Order Review": "Order Review"
 "Payment": "Payment"
@@ -190,7 +188,7 @@ oro:
                 description:      The relationship with the order this discount is created for.
             type:
                 label:            Order Discount Type
-                description:      The type of discount applied to the order: amount (oro_order_discount_item_type_amount) or percent (oro_order_discount_item_type_percent).
+                description:      "The type of discount applied to the order: amount (oro_order_discount_item_type_amount) or percent (oro_order_discount_item_type_percent)."
             flash.save_success: Order Discount successfully added
             add_discount.label: Add Special Discount
             value.label: Discount
@@ -275,6 +273,12 @@ oro:
             product_sku:
                 label:          'Product SKU'
                 description:    A unique human-readable product identifier.
+            product_name:
+                label:          'Product Name'
+                description:    'The default name of the ordered product'
+            product_variant_fields:
+                label:          'Product Variant Fields'
+                description:    'Contains data about fields of ordered configurable product'
             order:
                 label:          'Order'
                 description:    A relationship with the order that contains the line item.
@@ -340,7 +344,7 @@ oro:
                 remove: Remove
                 edit: Edit
             types:
-                percent: %
+                percent: "%"
 
         btn:
             add_seller_notes: 'Add Notes'
@@ -456,7 +460,7 @@ oro:
             order:
                 cancel: 'Cancel'
                 close: 'Close'
-                archive : 'Archive'
+                archive: 'Archive'
                 mark_as_shipped: 'Mark as Shipped'
             message:
                 order:

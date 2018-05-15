@@ -1,24 +1,26 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
-    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
-    {% set shoppingListsTemplate %}
-        {% spaceless %}
-            {{ block_widget(block) }}
-        {% endspaceless %}
-    {% endset %}
+    {% if not is_configurable_product_type(product.type) %}
+        {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
+        {% set shoppingListsTemplate %}
+            {% spaceless %}
+                {{ block_widget(block) }}
+            {% endspaceless %}
+        {% endset %}
 
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
-            modelAttr: {
-                shopping_lists: productShoppingLists
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            '~data-page-component-options': {
+                view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
+                modelAttr: {
+                    shopping_lists: productShoppingLists
+                },
+                template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
             },
-            template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
-        },
-        'data-product-shopping-lists': '',
-        'data-layout': 'separate',
-    }) %}
-    <div {{ block('block_attributes') }}></div>
+            'data-product-shopping-lists': '',
+            'data-layout': 'separate',
+        }) %}
+        <div {{ block('block_attributes') }}></div>
+    {% endif %}
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_template_widget %}
@@ -149,32 +151,26 @@
                                         ) %></span>
                                     <% } %>
                                     <div class="shopping-lists-units__actions">
-                                        <ul class="actions-row">
-                                            <li class="actions-row__item actions-row__item--separate-light">
-                                                <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
-                                                    <i class="actions-row__icon fa-pencil"></i>
-                                                </button>
-                                            </li>
-                                            <li class="actions-row__item actions-row__item--separate-light">
-                                                <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
-                                                        {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
-                                                            module: 'orofrontend/js/app/components/delete-item-component',
-                                                            options: {
-                                                                route: 'oro_api_shopping_list_frontend_delete_line_item',
-                                                                routeParams: {
-                                                                    id: '<%= lineItem.id %>'
-                                                                },
-                                                                triggerData: {
-                                                                    lineItemId: '<%= lineItem.id %>'
-                                                                },
-                                                                confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
-                                                            }
-                                                        })) }}>
-                                                        <i class="actions-row__icon fa-trash-o"></i>
-                                                </button>
-                                            </li>
-                                        </ul>
+                                            <button class="button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
+                                                <i class="fa-pencil"></i>
+                                            </button>
+                                            <button class="button" type="button" title="{{ 'Delete'|trans }}"
+                                                {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
+                                                    module: 'orofrontend/js/app/components/delete-item-component',
+                                                    options: {
+                                                        route: 'oro_api_shopping_list_frontend_delete_line_item',
+                                                        routeParams: {
+                                                            id: '<%= lineItem.id %>'
+                                                        },
+                                                        triggerData: {
+                                                            lineItemId: '<%= lineItem.id %>'
+                                                        },
+                                                        confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                                        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+                                                    }
+                                                })) }}>
+                                                <i class="fa-trash-o"></i>
+                                            </button>
                                     </div>
                                 </div>
                                 <ul class="shopping-lists-modify hidden"
@@ -196,8 +192,12 @@
                                                 <%= lineItem.unit %>
                                             <% } %>
                                         <% } else { %>
-                                            <select class="oro-select2 oro-select2--size-s" name="unit"
-                                                    data-role="field__unit" required>
+                                            <select class="select"
+                                                    name="unit"
+                                                    data-role="field__unit"
+                                                    data-skip-input-widgets
+                                                    required
+                                            >
                                                 <% _.each(productUnits, function(label, unit) { %>
                                                     <% if (unit === lineItem.unit) { %>
                                                         <option value="<%= unit %>" selected="selected"><%= label %></option>
@@ -240,7 +240,11 @@
         <div class="shopping-lists-popup__footer">
             <form method="post" class="shopping-lists-popup__item" data-role="add-form">
                 <div class="shopping-lists-popup__list">
-                    <select class="oro-select2 oro-select2--size-s" name="list" data-role="add-form-shopping-list">
+                    <select class="select"
+                            name="list"
+                            data-role="add-form-shopping-list"
+                            data-skip-input-widgets
+                    >
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% shoppingListsCollection.each(function(list) { %>
@@ -256,7 +260,7 @@
                             <li class="shopping-lists-modify__text">
                                 <input class="shopping-lists-modify__input input input--size-x-s"
                                        type="number"
-                                       min="1" 
+                                       min="1"
                                        value="1"
                                        name="oro_product_frontend_line_item[quantity]"
                                        data-role="add-form-qty">
@@ -269,7 +273,11 @@
                                         <%= unit %>
                                     <% } %>
                                 <% } else { %>
-                                    <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="add-form-unit">
+                                    <select class="select"
+                                            name="oro_product_frontend_line_item[unit]"
+                                            data-role="add-form-unit"
+                                            data-skip-input-widgets
+                                    >
                                         <% _.each(productUnits, function(label, unit) { %>
                                         <option value="<%= unit %>"><%= label %></option>
                                         <% }); %>

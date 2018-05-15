@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -22,6 +22,8 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'product_variants_get_available_variants_url';
+
+    use EntityTrait;
 
     /** @var ProductFormProvider */
     protected $provider;
@@ -61,7 +63,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME)
+            ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -79,7 +81,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME)
+            ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -102,7 +104,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddCopyPasteType::NAME)
+            ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -120,7 +122,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddCopyPasteType::NAME)
+            ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -143,7 +145,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::NAME)
+            ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -161,7 +163,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::NAME)
+            ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -184,7 +186,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -207,7 +209,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->exactly(2))
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -234,7 +236,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendLineItemType::NAME)
+            ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         $product = $this->createMock(Product::class);
@@ -255,10 +257,12 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         $formView = $this->createMock(FormView::class);
 
-        $product = new Product();
-        $productVariant = new Product();
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1001]);
+        /** @var Product $productVariant */
+        $productVariant = $this->getEntity(Product::class, ['id' => 2002]);
 
-        $this->productVariantAvailabilityProvider->expects($this->once())
+        $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
             ->method('getSimpleProductByVariantFields')
             ->with($product, [], false)
             ->willReturn($productVariant);
@@ -270,19 +274,29 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendVariantFiledType::NAME, $productVariant, $this->getProductVariantExpectedOptions($product))
+            ->with(
+                FrontendVariantFiledType::class,
+                $productVariant,
+                $this->getProductVariantExpectedOptions($product, 2)
+            )
             ->willReturn($form);
 
         $data = $this->provider->getVariantFieldsFormView($product);
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertSame($formView, $data);
+
+        //check local cache
+        $data = $this->provider->getVariantFieldsFormView($product);
+        $this->assertSame($formView, $data);
     }
 
     public function testGetVariantFieldsForm()
     {
-        $product = new Product();
-        $productVariant = new Product();
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1001]);
+        /** @var Product $productVariant */
+        $productVariant = $this->getEntity(Product::class, ['id' => 2002]);
 
-        $this->productVariantAvailabilityProvider->expects($this->once())
+        $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
             ->method('getSimpleProductByVariantFields')
             ->with($product, [], false)
             ->willReturn($productVariant);
@@ -291,20 +305,29 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendVariantFiledType::NAME, $productVariant, $this->getProductVariantExpectedOptions($product))
+            ->with(
+                FrontendVariantFiledType::class,
+                $productVariant,
+                $this->getProductVariantExpectedOptions($product, 2)
+            )
             ->willReturn($form);
 
         $data = $this->provider->getVariantFieldsForm($product);
-        $this->assertInstanceOf(FormInterface::class, $data);
+        $this->assertSame($form, $data);
+
+        //check local cache
+        $data = $this->provider->getVariantFieldsForm($product);
+        $this->assertSame($form, $data);
     }
 
     /**
      * @param Product $product
+     * @param int $expects
      * @return array
      */
-    private function getProductVariantExpectedOptions(Product $product)
+    private function getProductVariantExpectedOptions(Product $product, $expects = 1)
     {
-        $this->router->expects($this->once())
+        $this->router->expects($this->exactly($expects))
             ->method('generate')
             ->with('oro_product_frontend_ajax_product_variant_get_available', ['id' => $product->getId()])
             ->willReturn('product_variants_get_available_variants_url');

@@ -25,11 +25,11 @@ define(function(require) {
                 hiddenInputsForIndex: 'input[name*="[INDEX]"]',
                 parentForLoadingMask: '.responsive-section',
                 formFields: {
-                    'description': '[data-role=description]',
-                    'type': '[data-role=type]',
-                    'percent': '[data-role=percent]',
-                    'amount': '[data-role=amount]',
-                    'value': '[data-role=value]'
+                    description: '[data-role=description]',
+                    type: '[data-role=type]',
+                    percent: '[data-role=percent]',
+                    amount: '[data-role=amount]',
+                    value: '[data-role=value]'
                 }
             }
         },
@@ -37,7 +37,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function(options) {
+        constructor: function DiscountCollectionView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             DiscountCollectionView.__super__.constructor.call(this, options);
         },

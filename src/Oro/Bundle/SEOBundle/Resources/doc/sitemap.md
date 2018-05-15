@@ -103,7 +103,7 @@ To create a simple provider, create an instance of the `UrlItemsProvider` with a
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'my_provider' }
 ```
-###Hot to add new provider which will be available while the website is locked 
+### Hot to add new provider which will be available while the website is locked 
 
 ```yaml
     acme.sitemap.provider.router_sitemap_urls_provider:

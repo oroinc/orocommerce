@@ -5,37 +5,39 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -63,8 +65,6 @@ class QuoteTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
 
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -83,6 +83,8 @@ class QuoteTypeTest extends AbstractTest
 
         $this->securityFacade = $this->createMock(SecurityFacade::class);
 
+        $this->configureQuoteProductOfferFormatter();
+
         $this->formType = new QuoteType(
             $this->quoteAddressSecurityProvider,
             $this->configManager,
@@ -91,6 +93,7 @@ class QuoteTypeTest extends AbstractTest
         );
 
         $this->formType->setDataClass(Quote::class);
+        parent::setUp();
     }
 
     public function testConfigureOptions()
@@ -110,18 +113,13 @@ class QuoteTypeTest extends AbstractTest
             ->with(
                 [
                     'data_class' => 'Oro\Bundle\SaleBundle\Entity\Quote',
-                    'intention' => 'sale_quote',
+                    'csrf_token_id' => 'sale_quote',
                     'allow_prices_override' => true,
                     'allow_add_free_form_items' => false,
                 ]
             );
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteType::NAME, $this->formType->getName());
     }
 
     /**
@@ -435,7 +433,7 @@ class QuoteTypeTest extends AbstractTest
                 1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
                 2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2),
             ],
-            PriceListSelectType::class
+            PriceListSelectType::NAME
         );
 
         $priceType                  = $this->preparePriceType();
@@ -459,31 +457,22 @@ class QuoteTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    OroDateTimeType::NAME                       => new OroDateTimeType(),
-                    CollectionType::NAME                        => new CollectionType(),
-                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
-                        $this->quoteProductOfferFormatter
-                    ),
-                    QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
-                    QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
-                    QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
-                    ProductUnitSelectionType::NAME              => new ProductUnitSelectionTypeStub(),
-                    OroDateType::NAME                           => new OroDateType(),
-                    $priceType->getName()                       => $priceType,
-                    $entityType->getName()                      => $entityType,
-                    $userSelectType->getName()                  => $userSelectType,
-                    $quoteProductType->getName()                => $quoteProductType,
-                    $productSelectType->getName()               => $productSelectType,
-                    $userMultiSelectType->getName()             => $userMultiSelectType,
-                    $currencySelectionType->getName()           => $currencySelectionType,
-                    $quoteProductOfferType->getName()           => $quoteProductOfferType,
-                    $quoteProductRequestType->getName()         => $quoteProductRequestType,
-                    $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $customerUserMultiSelectType->getName()      => $customerUserMultiSelectType,
-                    $customerSelectType->getName()               => $customerSelectType,
-                    $customerUserSelectType->getName()           => $customerUserSelectType,
-                    $priceListSelectType->getName()             => $priceListSelectType,
-                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
+                    $this->formType,
+                    PriceType::class => $priceType,
+                    EntityType::class => $entityType,
+                    UserSelectType::class => $userSelectType,
+                    QuoteProductType::class => $quoteProductType,
+                    ProductSelectType::class => $productSelectType,
+                    UserMultiSelectType::class => $userMultiSelectType,
+                    CurrencySelectionType::class => $currencySelectionType,
+                    QuoteProductOfferType::class => $quoteProductOfferType,
+                    QuoteProductRequestType::class => $quoteProductRequestType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    CustomerUserMultiSelectType::class => $customerUserMultiSelectType,
+                    CustomerSelectType::class => $customerSelectType,
+                    CustomerUserSelectType::class => $customerUserSelectType,
+                    PriceListSelectType::class => $priceListSelectType,
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             ),

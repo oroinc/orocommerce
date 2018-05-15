@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\PhpUtils\ArrayUtil;
-use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ProductControllerTest extends WebTestCase
 {

@@ -3,16 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductVariantLinksTypeTest extends FormIntegrationTestCase
 {
@@ -44,20 +42,11 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->transformer = $this->createMock(
             'Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'
         );
         $this->formType = new ProductVariantLinksType($this->transformer);
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductVariantLinksType::NAME, $this->formType->getName());
+        parent::setUp();
     }
 
     /**
@@ -71,7 +60,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     {
         $this->addTransformerCalls($transformerCalls);
 
-        $form = $this->factory->create($this->formType, $this->defaultData);
+        $form = $this->factory->create(ProductVariantLinksType::class, $this->defaultData);
 
         $this->assertEquals($this->defaultData, $form->getData());
         $form->submit($submittedData);
@@ -160,7 +149,8 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension([
-                EntityIdentifierType::NAME => new StubEntityIdentifierType($this->products)
+                $this->formType,
+                EntityIdentifierType::class => new StubEntityIdentifierType($this->products)
             ], [])
         ];
     }

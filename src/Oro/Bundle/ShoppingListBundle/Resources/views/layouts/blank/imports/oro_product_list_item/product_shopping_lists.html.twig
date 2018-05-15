@@ -1,0 +1,8 @@
+{% block __oro_product_list_item__shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item-shopping-lists"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

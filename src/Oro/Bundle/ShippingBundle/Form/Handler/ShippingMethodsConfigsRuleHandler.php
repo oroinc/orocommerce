@@ -3,17 +3,20 @@
 namespace Oro\Bundle\ShippingBundle\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ShippingMethodsConfigsRuleHandler
 {
+    use RequestHandlerTrait;
+
     const UPDATE_FLAG = 'update_methods_flag';
 
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var EntityManager */
     protected $em;
@@ -25,12 +28,12 @@ class ShippingMethodsConfigsRuleHandler
     protected $eventDispatcher;
 
     /**
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param EntityManager $em
      */
-    public function __construct(Request $request, EntityManager $em)
+    public function __construct(RequestStack $requestStack, EntityManager $em)
     {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
         $this->em = $em;
     }
 
@@ -43,9 +46,10 @@ class ShippingMethodsConfigsRuleHandler
     {
         $form->setData($entity);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-            $form->submit($this->request);
-            if (!$this->request->get(self::UPDATE_FLAG, false) && $form->isValid()) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $this->submitPostPutRequest($form, $request);
+            if (!$request->get(self::UPDATE_FLAG, false) && $form->isValid()) {
                 $this->em->persist($entity);
                 $this->em->flush();
 

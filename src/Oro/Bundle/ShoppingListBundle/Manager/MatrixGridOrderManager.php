@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -12,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class MatrixGridOrderManager
 {
@@ -26,6 +25,11 @@ class MatrixGridOrderManager
     private $variantAvailability;
 
     /**
+     * @var EmptyMatrixGridInterface
+     */
+    private $emptyMatrixGridManager;
+
+    /**
      * @var array|MatrixCollection[]
      */
     private $collectionCache = [];
@@ -33,13 +37,16 @@ class MatrixGridOrderManager
     /**
      * @param PropertyAccessor $propertyAccessor
      * @param ProductVariantAvailabilityProvider $variantAvailability
+     * @param EmptyMatrixGridInterface $emptyMatrixGridManager
      */
     public function __construct(
         PropertyAccessor $propertyAccessor,
-        ProductVariantAvailabilityProvider $variantAvailability
+        ProductVariantAvailabilityProvider $variantAvailability,
+        EmptyMatrixGridInterface $emptyMatrixGridManager
     ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->variantAvailability = $variantAvailability;
+        $this->emptyMatrixGridManager = $emptyMatrixGridManager;
     }
 
     /**
@@ -61,6 +68,10 @@ class MatrixGridOrderManager
         $collection = new MatrixCollection();
         $collection->unit = $product->getPrimaryUnitPrecision()->getUnit();
 
+        if (!isset($variantFields[0])) {
+            return $collection;
+        }
+
         foreach ($variantFields[0]['values'] as $firstValue) {
             $row = new MatrixCollectionRow();
             $row->label = $firstValue['label'];
@@ -69,7 +80,7 @@ class MatrixGridOrderManager
                 $column = new MatrixCollectionColumn();
                 if (isset($availableVariants[$firstValue['value']]['_product'])) {
                     $column->product = $availableVariants[$firstValue['value']]['_product'];
-                    $column->quantity = $this->getQuantity($column->product, $shoppingList);
+                    $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
                 }
 
                 $row->columns = [$column];
@@ -80,7 +91,7 @@ class MatrixGridOrderManager
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
-                        $column->quantity = $this->getQuantity($column->product, $shoppingList);
+                        $column->quantity = $this->getQuantity($product, $column->product, $shoppingList);
                     }
 
                     $row->columns[] = $column;
@@ -108,7 +119,7 @@ class MatrixGridOrderManager
             $values = $this->variantAvailability->getVariantFieldValues($fieldName);
 
             $formattedValues = [];
-            foreach ($values as $value => $label) {
+            foreach ($values as $label => $value) {
                 $formattedValues[] = [
                     'value' => $value,
                     'label' => $label,
@@ -217,12 +228,13 @@ class MatrixGridOrderManager
     /**
      * Get MatrixCollectionColumn's quantity by shopping list line items
      *
+     * @param Product           $parentProduct
      * @param Product           $cellProduct
      * @param ShoppingList|null $shoppingList
      *
      * @return float|null
      */
-    private function getQuantity(Product $cellProduct, ShoppingList $shoppingList = null)
+    private function getQuantity(Product $parentProduct, Product $cellProduct, ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;
@@ -235,11 +247,24 @@ class MatrixGridOrderManager
         /** @var LineItem $lineItem */
         foreach ($lineItems->getIterator() as $lineItem) {
             if ($cellProduct->getId() === $lineItem->getProduct()->getId()
+                && $lineItem->getProductUnitCode() === $parentProduct->getPrimaryUnitPrecision()->getProductUnitCode()
             ) {
                 return $lineItem->getQuantity();
             }
         }
 
         return null;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param LineItem[] $lineItems
+     */
+    public function addEmptyMatrixIfAllowed(ShoppingList $shoppingList, Product $product, array $lineItems)
+    {
+        if ($this->emptyMatrixGridManager->isAddEmptyMatrixAllowed($lineItems)) {
+            $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product);
+        }
     }
 }

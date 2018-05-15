@@ -7,8 +7,8 @@ use Oro\Bundle\CacheBundle\DataStorage\DataStorageInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache as UPSShippingPriceCache;
-use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
+use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 
 class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterface
 {

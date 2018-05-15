@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor;
 
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class PayPal implements Option\OptionsAwareInterface, ProcessorInterface
 {

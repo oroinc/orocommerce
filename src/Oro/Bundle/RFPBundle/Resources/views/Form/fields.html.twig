@@ -406,7 +406,8 @@
             {{ block('product_price_hint_js_widget') }}
         </script>
         {% set input_price = layout_attr_defaults(form.price.value.vars.attr, {
-            '~class': 'request-form-lineitem-unit__input'
+            '~class': 'request-form-lineitem-unit__input',
+            '~data-precision': oro_locale_number_attribute('max_fraction_digits', 'currency')
         }) %}
 
         <span class="request-form-lineitem-unit__label">{{ 'oro.rfp.requestproductitem.price.label'|trans }}:</span> {{ form_widget(form.price.value, {attr: input_price}) }}

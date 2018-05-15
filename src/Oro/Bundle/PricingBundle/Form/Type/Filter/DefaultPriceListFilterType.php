@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DefaultPriceListFilterType extends EntityFilterType
@@ -49,9 +49,9 @@ class DefaultPriceListFilterType extends EntityFilterType
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $isEntitySharded = $this->shardManager->isShardingEnabled();
 
@@ -59,7 +59,7 @@ class DefaultPriceListFilterType extends EntityFilterType
             [
                 'field_options' => [
                     'class' => $this->priceListClass,
-                    'property' => 'name',
+                    'choice_label' => 'name',
                 ],
                 'required' => $isEntitySharded,
             ]

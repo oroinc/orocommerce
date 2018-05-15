@@ -8,13 +8,13 @@ system_configuration:
     fields:
         oro_sale.backend_product_visibility:
             data_type: array
-            type: oro_product_inventory_status_select
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.sale.system_configuration.fields.backend_product_visibility.title
 
         oro_sale.contact_info_source_display:
             data_type: string
-            type: oro_sale_contact_info_customer_option
+            type: Oro\Bundle\SaleBundle\Form\Type\ContactInfoSourceOptionsType
             priority: 40
             options:
                 label: oro.sale.system_configuration.fields.contact_info_source_display.label
@@ -26,7 +26,8 @@ system_configuration:
 
         oro_sale.contact_details:
             data_type: string
-            type: textarea
+            type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            search_type: text
             priority: 30
             options:
                 required: false
@@ -38,7 +39,7 @@ system_configuration:
 
         oro_sale.allow_user_configuration:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 20
             options:
                 label: oro.sale.system_configuration.fields.allow_user_configuration.label
@@ -48,7 +49,7 @@ system_configuration:
 
         oro_sale.available_user_options:
             data_type: array
-            type: oro_sale_contact_info_user_available_option
+            type: Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserAvailableOptionsType
             priority: 10
             options:
                 label: oro.sale.system_configuration.fields.available_user_options.label
@@ -62,7 +63,7 @@ system_configuration:
 
         oro_sale.contact_info_user_option:
             data_type: string
-            type: oro_sale_contact_info_user_option
+            type: Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserOptionsType
             priority: 50
             options:
                 label: oro.sale.system_configuration.fields.contact_info_user_option.label
@@ -73,7 +74,8 @@ system_configuration:
                     'data-dependee-id': 'oro_sale.contact_info_user_option'
         oro_sale.contact_info_manual_text:
             data_type: string
-            type: oro_sale_contact_info_manual_text
+            type: Oro\Bundle\SaleBundle\Form\Type\ContactInfoManualTextType
+            search_type: text
             priority: 30
             options:
                 required: false
@@ -85,7 +87,8 @@ system_configuration:
                     'data-show-if': 'enter_manually'
         oro_sale.guest_contact_info_text:
             data_type: string
-            type: textarea
+            type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            search_type: text
             priority: 0
             options:
                 required: false

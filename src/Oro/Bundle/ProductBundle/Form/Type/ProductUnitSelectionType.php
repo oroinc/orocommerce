@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -76,8 +77,13 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        $options['choices'] = $this->getProductUnits($form, $product);
+        // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+        $options['choices_as_values'] = true;
+        $options['choices'] = $this->getProductUnitChoices($form, $product);
         $options['choices_updated'] = true;
+
+        //@TODO Remove in scope BAP-15236
+        unset($options['cascade_validation']);
 
         $formParent->add($form->getName(), static::class, $options);
     }
@@ -156,7 +162,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
@@ -255,11 +261,27 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     }
 
     /**
+     * @param FormInterface $form
+     * @param Product|null $product
+     * @return array
+     */
+    private function getProductUnitChoices(FormInterface $form, Product $product = null)
+    {
+        $units = $this->getProductUnits($form, $product);
+        $choices = [];
+        foreach ($units as $value => $unit) {
+            $choices[$unit->getCode()] = $value;
+        }
+
+        return $choices;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 
     /**

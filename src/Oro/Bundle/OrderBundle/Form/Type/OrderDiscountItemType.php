@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
-
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 class OrderDiscountItemType extends AbstractType
 {
@@ -59,7 +58,7 @@ class OrderDiscountItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order_discount_item',
+                'csrf_token_id' => 'order_discount_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
                 'validation_groups' => [self::VALIDATION_GROUP]
@@ -99,9 +98,11 @@ class OrderDiscountItemType extends AbstractType
                 'type',
                 ChoiceType::class,
                 [
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        OrderDiscount::TYPE_AMOUNT => $options['currency'],
-                        OrderDiscount::TYPE_PERCENT => 'oro.order.order_discount.types.percent',
+                        $options['currency'] => OrderDiscount::TYPE_AMOUNT,
+                        'oro.order.order_discount.types.percent' => OrderDiscount::TYPE_PERCENT,
                     ]
                 ]
             )
@@ -113,7 +114,7 @@ class OrderDiscountItemType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add('percent', 'hidden')
+            ->add('percent', HiddenType::class)
             ->add(
                 'amount',
                 HiddenType::class,

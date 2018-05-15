@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class VisibilityChoicesProvider
 {
@@ -84,7 +82,7 @@ class VisibilityChoicesProvider
     {
         $result = [];
         foreach ($choices as $choice) {
-            $result[$choice] = $this->format($translationPattern, $choice);
+            $result[$this->format($translationPattern, $choice)] = $choice;
         }
 
         return $result;
@@ -93,7 +91,7 @@ class VisibilityChoicesProvider
     /**
      * @param string $translationPattern
      * @param string $choice
-     * @return array
+     * @return string
      */
     public function format($translationPattern, $choice)
     {

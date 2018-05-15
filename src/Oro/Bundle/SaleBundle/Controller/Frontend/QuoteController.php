@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class QuoteController extends Controller
 {
@@ -87,18 +84,17 @@ class QuoteController extends Controller
         $quote = $quoteDemand->getQuote();
 
         if (!$quote->isAcceptable()) {
-            $this->get('session')->getFlashBag()->add(
-                'info',
-                $this->get('translator')->trans(
+            $this->get('oro_ui.flash_message_helper')
+                ->addFlashMessage(
+                    'info',
                     'oro.frontend.sale.message.quote.not_available',
                     ['%qid%' => $quote->getQid()]
-                )
-            );
+                );
 
             return $this->redirectToRoute('oro_sale_quote_frontend_index');
         }
 
-        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        $form = $this->createForm(QuoteDemandType::class, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isValid()) {
@@ -149,7 +145,7 @@ class QuoteController extends Controller
      */
     public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
     {
-        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        $form = $this->createForm(QuoteDemandType::class, $quoteDemand);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);

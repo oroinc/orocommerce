@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShoppingListTotalTest extends \PHPUnit_Framework_TestCase
 {

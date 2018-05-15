@@ -6,6 +6,8 @@ oro_behat_extension:
       selector: "select[name='oro_product[primaryUnitPrecision][unit]']"
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
+    ProductAdditionalPrecisionField:
+      selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
@@ -148,7 +150,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Manage Inventory  Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
+          Manage Inventory Default: 'product_options[oro_inventory___manage_inventory][use_parent_scope_value]'
           Inventory Threshold Default: 'product_options[oro_inventory___inventory_threshold][use_parent_scope_value]'
           Backorders Default: 'product_options[oro_inventory___backorders][use_parent_scope_value]'
           Decrement Inventory Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
@@ -174,8 +176,6 @@ oro_behat_extension:
             element: Configurable Attributes
           Color: 'oro_product[Color]'
           Size: 'oro_product[Size]'
-          Color Attribute: 'oro_product[color_attribute]'
-          Size Attribute: 'oro_product[size_attribute]'
         # for testing product attributes
           StringField: 'oro_product[StringField]'
           IntegerField: 'oro_product[IntegerField]'
@@ -192,6 +192,10 @@ oro_behat_extension:
           DateTimeField: 'oro_product[DateTimeField]'
           SelectField: 'oro_product[SelectField]'
           TextField: 'oro_product[TextField]'
+          ManyToOneField:
+            type: 'css'
+            locator: 'input[name="oro_product[ManyToOneField]"]'
+            element: Select2Entity
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -406,6 +410,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
 
+    Inventory Status:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
+
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -422,6 +431,10 @@ oro_behat_extension:
           Product Collection Segment Name:
             type: css
             locator: '.content-variant-item:not([class*="content-variant-item-default"]) [id*="productCollectionSegment_name"]'
+          First System Page Customer Group:
+            type: css
+            locator: 'div.content-variant-item:first-child input[data-name="field__customer-group"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition a.close'
@@ -456,8 +469,6 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
 
     ProductFrontendGridFilterManager:
-      selector: 'div.filter-container div.datagrid-manager div.dropdown-menu:contains(Manage Filters)'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendGridFilterManager
       selector: 'div.oro-datagrid'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
@@ -494,7 +505,7 @@ oro_behat_extension:
       selector: '.product-view__upsell-products .embedded-list-slider'
 
     ProductRelatedItem:
-      selector: '.embedded-product'
+      selector: '.product-item'
 
     ProductFrontendRow:
       selector: '.product-list .product-item.grid-row'
@@ -671,22 +682,22 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="New Arrivals"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="New Arrivals"]/../../div'
 
     Featured Products Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Featured Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
 
     Related Products Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-products ")]/div/h2/span[text()="Related Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
 
     EmbeddedProduct:
-      selector: 'div.embedded-product'
+      selector: 'div.product-item'
 
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
@@ -715,6 +726,16 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+
+    Brand Filter:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/..'
+
+    Brand Filter Toggle Icon:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'        
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'
@@ -760,6 +781,14 @@ oro_behat_extension:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
+    Display Simple Variations Form:
+          selector: 'form[name="configurable_products"]'
+          class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+          options:
+            mapping:
+              Display Simple Variations Default: 'configurable_products[oro_product___display_simple_variations][use_parent_scope_value]'
+              Display Simple Variations: 'configurable_products[oro_product___display_simple_variations][value]'
+
     Uploaded Product Image:
       selector: 'img[src^="/media/cache/attachment"]'
 
@@ -776,12 +805,24 @@ oro_behat_extension:
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
 
+    Add Product Price:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//div[contains (@id,"oro_product_prices-uid")]/../a'
+
+  pages:
+    Product View:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
+      route: 'oro_product_view'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
+        - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext
@@ -827,6 +868,7 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
+        - OroUIBundle::DragAndDropContext
         - OroCheckoutBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext

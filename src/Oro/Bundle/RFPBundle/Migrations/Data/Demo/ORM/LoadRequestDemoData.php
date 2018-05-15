@@ -2,21 +2,20 @@
 
 namespace Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     DependentFixtureInterface,
@@ -57,6 +56,9 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     {
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+
         $customerUsers = $this->getCustomerUsers($manager);
 
         /** @var User $user */
@@ -90,6 +92,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
                 ->setPoNumber($poNumber)
                 ->setCustomerUser($customerUser)
                 ->setCustomer($customerUser ? $customerUser->getCustomer() : null)
+                ->setWebsite($website)
             ;
 
             $request->setOwner($owner);

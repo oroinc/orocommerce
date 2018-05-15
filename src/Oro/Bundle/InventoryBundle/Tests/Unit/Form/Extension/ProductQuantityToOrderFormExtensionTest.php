@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\InventoryBundle\Form\Extension\ProductQuantityToOrderFormExtension;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\ProductStub;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

@@ -17,6 +17,7 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
+            - '@oro_security.acl.group_provider.chain'
             - ['VIEW', 'EDIT']
             - ['oro_related_products_edit']
         tags:
@@ -26,6 +27,7 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
+            - '@oro_security.acl.group_provider.chain'
             - ['EDIT']
             - ['oro_related_products_edit']
         tags:
@@ -36,6 +38,7 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
+            - '@oro_security.acl.group_provider.chain'
             - ['VIEW']
             - ['oro_related_products_edit']
         tags:
@@ -58,19 +61,30 @@ services:
             - { name: oro.api.processor, action: get, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
             - { name: oro.api.processor, action: get_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
 
+    oro_product.api.delete.related_product.build_single_item_query:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+            - '@oro_api.entity_id_helper'
+        tags:
+            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 10 }
+
+    oro_product.api.delete.related_product.load_entity_by_orm_query:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\LoadEntityByOrmQuery
+        arguments:
+            - '@oro_entity.query_hint_resolver'
+        tags:
+            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 0 }
+
     oro_product.related_product.processor.delete_acl_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\Delete\DeleteRelatedItemAclCheck
         arguments: ['@oro_api.entity_serializer.doctrine_helper']
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
         tags:
-            - { name: oro.api.processor, action: delete, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
+            - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 5}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
-
-    oro_product.api.shared.add_image_path_config:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePathsConfig
-        tags:
-            - { name: oro.api.processor, action: get_config,  class: Oro\Bundle\AttachmentBundle\Entity\File }
 
     oro_product.api.shared.add_image_path:
         class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths

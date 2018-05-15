@@ -35,6 +35,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AuthorizedCreditCardComponent() {
+            AuthorizedCreditCardComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options.saveForLaterUse = false;
             AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
@@ -89,7 +96,6 @@ define(function(require) {
         },
 
         updateSaveForLater: function() {
-
             if (this.getGlobalPaymentValidate()) {
                 this.setSaveForLaterBasedOnForm();
             } else {
@@ -116,7 +122,6 @@ define(function(require) {
                 this.paymentValidationRequiredComponentState
             ) {
                 AuthorizedCreditCardComponent.__super__.handleSubmit.call(this, eventData);
-
             }
         },
 

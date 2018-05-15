@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Listens changes of Price Lists assigned to Customers, Customer Groups, Websites
+ * or changes Price List in system configuration and trigger invalidation of totals for all related Shopping Lists.
+ */
 class ShoppingListTotalListener
 {
     const ACCOUNT_BATCH_SIZE = 500;
@@ -25,11 +29,23 @@ class ShoppingListTotalListener
     protected $registry;
 
     /**
-     * @param RegistryInterface $registry
+     * @var ConfigManager
      */
-    public function __construct(RegistryInterface $registry)
+    protected $configManager;
+
+    /**
+     * @var int
+     */
+    private $anonymousCustomerGroupId;
+
+    /**
+     * @param RegistryInterface $registry
+     * @param ConfigManager $configManager
+     */
+    public function __construct(RegistryInterface $registry, ConfigManager $configManager)
     {
         $this->registry = $registry;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -83,7 +99,45 @@ class ShoppingListTotalListener
             if (!empty($ids)) {
                 $shoppingTotalsRepository->invalidateByCustomers($ids, $data['websiteId']);
             }
+
+            $this->handleGuestShoppingLists($shoppingTotalsRepository, $data);
         }
+    }
+
+    /**
+     * @param ShoppingListTotalRepository $repository
+     * @param array $data
+     */
+    private function handleGuestShoppingLists(ShoppingListTotalRepository $repository, array $data)
+    {
+        $anonymousCustomerGroupId = $this->getAnonymousCustomerGroupId();
+        if (!$anonymousCustomerGroupId) {
+            return;
+        }
+
+        foreach ($data['customerGroups'] as $customerGroup) {
+            if ($customerGroup instanceof CustomerGroup) {
+                $customerGroup = $customerGroup->getId();
+            }
+
+            if ((int)$customerGroup === $anonymousCustomerGroupId) {
+                $repository->invalidateGuestShoppingLists($data['websiteId']);
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * @return int
+     */
+    private function getAnonymousCustomerGroupId()
+    {
+        if ($this->anonymousCustomerGroupId === null) {
+            $this->anonymousCustomerGroupId = (int)$this->configManager->get('oro_customer.anonymous_customer_group');
+        }
+
+        return $this->anonymousCustomerGroupId;
     }
 
     /**

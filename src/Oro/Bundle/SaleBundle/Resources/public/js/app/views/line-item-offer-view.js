@@ -11,10 +11,17 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            'allUnits': [],
+            allUnits: [],
             $: {
                 product: ''
             }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemOfferView() {
+            LineItemOfferView.__super__.constructor.apply(this, arguments);
         },
 
         /**

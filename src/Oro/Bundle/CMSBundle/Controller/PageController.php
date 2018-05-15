@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Controller;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 class PageController extends Controller
 {
@@ -109,7 +107,7 @@ class PageController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $page,
-            $this->createForm(PageType::NAME, $page),
+            $this->createForm(PageType::class, $page),
             function (Page $page) {
                 return [
                     'route' => 'oro_cms_page_update',

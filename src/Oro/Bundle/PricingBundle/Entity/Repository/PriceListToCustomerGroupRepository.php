@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Composite primary key fields order:
@@ -45,7 +46,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.sortOrder', $sortOrder)
+            ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
             ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -98,10 +99,30 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
     }
 
     /**
+     * @return int[]
+     */
+    public function getAllWebsiteIds()
+    {
+        return array_column($this->createQueryBuilder('pltcg')
+            ->select('DISTINCT IDENTITY(pltcg.website) AS websiteId')
+            ->getQuery()
+            ->getResult(), 'websiteId');
+    }
+
+    /**
      * @param PriceList $priceList
      * @return BufferedQueryResultIteratorInterface
      */
     public function getIteratorByPriceList(PriceList $priceList)
+    {
+        return $this->getIteratorByPriceLists([$priceList]);
+    }
+
+    /**
+     * @param PriceList[] $priceLists
+     * @return BufferedQueryResultIteratorInterface
+     */
+    public function getIteratorByPriceLists($priceLists)
     {
         $qb = $this->createQueryBuilder('PriceListToCustomerGroup');
 
@@ -109,9 +130,9 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             sprintf('IDENTITY(PriceListToCustomerGroup.customerGroup) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
             sprintf('IDENTITY(PriceListToCustomerGroup.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
-            ->where('PriceListToCustomerGroup.priceList = :priceList')
+            ->where($qb->expr()->in('PriceListToCustomerGroup.priceList', ':priceLists'))
             ->groupBy('PriceListToCustomerGroup.customerGroup', 'PriceListToCustomerGroup.website')
-            ->setParameter('priceList', $priceList)
+            ->setParameter('priceLists', $priceLists)
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
             ->orderBy('PriceListToCustomerGroup.customerGroup, PriceListToCustomerGroup.website')
         ;
@@ -166,6 +187,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         BasePriceList $priceList,
         $parameterName
     ) {
+        QueryBuilderUtil::checkIdentifier($parameterName);
         $parentAlias = $queryBuilder->getRootAliases()[0];
 
         $subQueryBuilder = $this->createQueryBuilder('relation');

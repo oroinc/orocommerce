@@ -21,6 +21,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function CurrencySwitcherComponent() {
+            CurrencySwitcherComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
@@ -37,7 +44,7 @@ define(function(require) {
                 mediator.execute('showLoading');
                 $.post(
                     routing.generate(this.options.currencySwitcherRoute),
-                    {'currency': currency},
+                    {currency: currency},
                     function() {
                         mediator.execute('refreshPage');
                     }

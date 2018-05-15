@@ -41,6 +41,13 @@ define(function(require) {
         gridName: null,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function ProductSidebarView() {
+            ProductSidebarView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {
@@ -73,7 +80,7 @@ define(function(require) {
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
                 config.dnd = {
-                    'is_draggable': false
+                    is_draggable: false
                 };
             }
 

@@ -1,11 +1,3 @@
-{% block __oro_product_line_item_form__line_item_form_start_widget %}
-    {{ set_unique_line_item_form_id(form, product) }}
-    {% set attr = layout_attr_defaults(attr, {
-        'id': form.vars.id,
-    }) %}
-    {{ block('form_start_widget') }}
-{% endblock %}
-
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
     {% do block|merge_context({
@@ -27,7 +19,9 @@
             <div {{ block('block_attributes') }}>
                 <div>
                     <div class="form-row {{ class_prefix }}">
-                        {{ form_widget(form.quantity) }}
+                        {{ form_widget(form.quantity, {attr: {
+                            'class': 'product-item__qty-input'
+                        }}) }}
                     </div>
                     <div class="form-row {{ class_prefix }}">
                         {{ form_widget(form.unit) }}
@@ -40,54 +34,7 @@
             renderCache: renderCache
         }) %}
     {% endif %}
-    {{ renderCache }}
-{% endblock %}
-
-{% block __oro_product_line_item_form__line_item_form_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',
-        'data-role': 'line-item-form-container'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {% if is_configurable_product_type(product.type) %}
-            <div class="add-product-from-view-component">
-                <div class="btn-group full" {{ block('block_attributes') }}>
-                    {{ UI.addButton({
-                        'path': path('oro_product_frontend_product_view', {id: product.id}),
-                        'label': 'oro.product.frontend.index.view_details'|trans,
-                        'title': 'oro.product.frontend.index.view_details'|trans,
-                        'aCss': 'btn--info'
-                    }) }}
-                </div>
-            </div>
-        {% else %}
-            {{ block_widget(block) }}
-        {% endif %}
-    </div>
-{% endblock %}
-
-{% block __oro_product_line_item_form__line_item_form_buttons_widget %}
-    {% if block.children is not empty %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': " add-product-from-view-component"
-        }) %}
-
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
+    {% if not is_configurable_product_type(product.type) %}
+        {{ renderCache }}
     {% endif %}
-{% endblock %}
-
-{% block __oro_product_line_item_form__line_item_buttons_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~options': {
-            'truncateLength': 25,
-            'appendToBody': true,
-            'decoreClass': 'btn--info'
-        }
-    }) %}
-    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

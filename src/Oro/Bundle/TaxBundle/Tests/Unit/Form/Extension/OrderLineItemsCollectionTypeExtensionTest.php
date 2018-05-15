@@ -3,14 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemsCollectionTypeExtension;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -46,13 +44,13 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit_Framework_TestC
         $this->extension = new OrderLineItemsCollectionTypeExtension(
             $this->taxationSettingsProvider,
             $this->taxValueManager,
-            OrderLineItemsCollectionType::NAME
+            OrderLineItemsCollectionType::class
         );
     }
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(OrderLineItemsCollectionType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemsCollectionType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildViewWhenTaxationIsDisabled()

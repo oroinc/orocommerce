@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
-
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PriceListSelectWithPriorityType extends AbstractType
@@ -24,7 +23,7 @@ class PriceListSelectWithPriorityType extends AbstractType
         $builder
             ->add(
                 self::PRICE_LIST_FIELD,
-                PriceListSelectType::NAME,
+                PriceListSelectType::class,
                 [
                     'empty_data' => null,
                     'required' => true,

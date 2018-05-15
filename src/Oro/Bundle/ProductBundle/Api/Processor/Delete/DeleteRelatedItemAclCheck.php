@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Api\Processor\Delete;
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemAclCheck;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-
 use Oro\Component\ChainProcessor\ContextInterface;
 
 class DeleteRelatedItemAclCheck extends RelatedItemAclCheck

@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -41,13 +40,40 @@ class ProductUnitRepository extends EntityRepository
 
         $result = [];
         foreach ($productsUnits as $unit) {
-            if ($unit['primary'] && (isset($result[$unit['productId']]))) {
+            if ($unit['primary'] && isset($result[$unit['productId']])) {
                 $result[$unit['productId']] = array_merge(
                     [$unit['code'] => $unit['precision']],
                     $result[$unit['productId']]
                 );
             } else {
                 $result[$unit['productId']][$unit['code']] = $unit['precision'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getPrimaryProductsUnits(array $products)
+    {
+        if (count($products) === 0) {
+            return [];
+        }
+
+        $productsUnits = $this->getProductsUnitsQueryBuilder($products)
+            ->select(
+                'IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code,
+                 COALESCE(IDENTITY(product.primaryUnitPrecision), 0) as primary'
+            )
+            ->getQuery()->getArrayResult();
+
+        $result = [];
+        foreach ($productsUnits as $unit) {
+            if ($unit['primary']) {
+                $result[$unit['productId']] = $unit['code'];
             }
         }
 

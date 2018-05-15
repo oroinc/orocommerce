@@ -27,7 +27,7 @@ define(function(require) {
         },
 
         events: {
-            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange',
+            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange'
         },
 
         /**
@@ -54,6 +54,13 @@ define(function(require) {
          * @property {LoadingMaskView}
          */
         loadingMaskView: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function AddressView() {
+            AddressView.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

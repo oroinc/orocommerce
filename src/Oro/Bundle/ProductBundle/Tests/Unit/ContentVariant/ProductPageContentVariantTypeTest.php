@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,11 +32,6 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->getPropertyAccessor()
         );
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('product_page', $this->type->getName());
     }
 
     public function testGetTitle()

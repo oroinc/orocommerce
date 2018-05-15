@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\FallbackBundle\DependencyInjection\OroFallbackExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroFallbackExtensionTest extends ExtensionTestCase
 {

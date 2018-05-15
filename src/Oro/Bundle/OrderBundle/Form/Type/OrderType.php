@@ -68,17 +68,17 @@ class OrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
-            ->add('customer', CustomerSelectType::NAME, ['label' => 'oro.order.customer.label', 'required' => true])
+            ->add('customer', CustomerSelectType::class, ['label' => 'oro.order.customer.label', 'required' => true])
             ->add(
                 'customerUser',
-                CustomerUserSelectType::NAME,
+                CustomerUserSelectType::class,
                 [
                     'label' => 'oro.order.customer_user.label',
                     'required' => false,
                 ]
             )
             ->add('poNumber', TextType::class, ['required' => false, 'label' => 'oro.order.po_number.label'])
-            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'oro.order.ship_until.label'])
+            ->add('shipUntil', OroDateType::class, ['required' => false, 'label' => 'oro.order.ship_until.label'])
             ->add(
                 'customerNotes',
                 TextareaType::class,
@@ -87,15 +87,15 @@ class OrderType extends AbstractType
             ->add('currency', HiddenType::class)
             ->add(
                 'lineItems',
-                OrderLineItemsCollectionType::NAME,
+                OrderLineItemsCollectionType::class,
                 [
                     'add_label' => 'oro.order.orderlineitem.add_label',
-                    'options' => ['currency' => $order->getCurrency()]
+                    'entry_options' => ['currency' => $order->getCurrency()]
                 ]
             )
             ->add(
                 self::DISCOUNTS_FIELD_NAME,
-                OrderDiscountCollectionTableType::NAME,
+                OrderDiscountCollectionTableType::class,
                 ['order' => $order]
             )
             ->add(
@@ -145,7 +145,7 @@ class OrderType extends AbstractType
                     'addressType' => $type,
                 ];
 
-                $form->add(sprintf('%sAddress', $type), OrderAddressType::NAME, $options);
+                $form->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
             }
         }
     }
@@ -159,7 +159,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order'
+                'csrf_token_id' => 'order'
             ]
         );
     }
@@ -199,7 +199,7 @@ class OrderType extends AbstractType
             $builder
                 ->add(
                     'billingAddress',
-                    OrderAddressType::NAME,
+                    OrderAddressType::class,
                     [
                         'label' => 'oro.order.billing_address.label',
                         'object' => $options['data'],
@@ -222,7 +222,7 @@ class OrderType extends AbstractType
             $builder
                 ->add(
                     'shippingAddress',
-                    OrderAddressType::NAME,
+                    OrderAddressType::class,
                     [
                         'label' => 'oro.order.shipping_address.label',
                         'object' => $options['data'],

@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-
-use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
@@ -26,10 +25,9 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     public function testConfigureOptions()
@@ -61,7 +59,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
      */
     public function testSubmit($submittedData, $expectedData, $defaultData = null, $options = [])
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(ShippingOriginType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -192,8 +190,16 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     /**
      * {@inheritdoc}
      */
-    public function getExtensions()
+    protected function getExtensions()
     {
-        return array_merge(parent::getExtensions(), [$this->getValidatorExtension(true)]);
+        return array_merge(parent::getExtensions(), [
+            new PreloadedExtension(
+                [
+                    ShippingOriginType::class => $this->formType
+                ],
+                []
+            ),
+            $this->getValidatorExtension(true)
+        ]);
     }
 }

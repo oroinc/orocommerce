@@ -135,10 +135,6 @@ oro:
             label: Status
             description: The enabled or disabled status of the product
 
-        variant_fields:
-            yes.label: Yes
-            no.label: No
-
         visibility:
             visible.label: Yes
             not_visible.label: No
@@ -328,7 +324,8 @@ oro:
                 new_arrivals.title: New Arrivals
                 image_gallery.title: 'Image Gallery Options'
                 configurable_products.title: 'Configurable Products'
-                configurable_products_matrix_form.title: 'Matrix Form In Product Views'
+                configurable_products_matrix_form.title: 'Configurable Product Display Options'
+                configurable_products_variations.title: 'Variations'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -444,10 +441,33 @@ oro:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
-                    label: 'Display Matrix Form (where applicable)'
-                    none.label: 'Do Not Display'
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms at product view pages.'
+                    label: 'Product Views'
+                    none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
+                matrix_form_on_shopping_list:
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes in shopping lists.'
+                    label: 'Shopping Lists'
+                    none.label: 'Group Single Products'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
+                matrix_form_on_product_listing:
+                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms on product listings. Applies only to list views; inline matrix is not supported in gallery view.'
+                    label: 'Product Listings'
+                    none.label: 'No Matrix Form'
+                    inline.label: 'Inline Matrix Form'
+                    popup.label: 'Popup Matrix Form'
+                matrix_form_allow_empty:
+                    label: 'Allow to add empty products'
+                    tooltip: 'If enabled, the customers will be able to add empty configurable products to shopping lists'
+                display_simple_variations:
+                    label: 'Display simple variations'
+                    tooltip: >
+                        This setting manages the availability of simple products that represent individual
+                        variations of a configurable product. It does not affect standalone simple products.
+                    everywhere.label: 'Everywhere'
+                    hide_completely.label: 'Hide completely'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -492,6 +512,7 @@ oro:
                     description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
                     label_directions: 'Get Directions'
                     continue.label: Submit
+                    choose_file.label: Choose File
                 import_validation:
                     back: Back
                     title: Import validation results
@@ -550,8 +571,6 @@ oro:
             top_selling: 'Top Selling'
 
         brand:
-            owner:
-                label: Owner
             label:                Brand
             description:          Brand of the product
             entity_label:         Brand

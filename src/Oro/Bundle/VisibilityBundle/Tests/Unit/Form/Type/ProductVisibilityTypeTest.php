@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\ProductVisibilityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductVisibilityTypeTest extends FormIntegrationTestCase
 {
@@ -30,20 +30,15 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             [
-                ProductVisibility::VISIBLE => 'oro.visibility.product.visibility.visible.label',
-                ProductVisibility::HIDDEN => 'oro.visibility.product.visibility.hidden.label',
+                'oro.visibility.product.visibility.visible.label' => ProductVisibility::VISIBLE,
+                'oro.visibility.product.visibility.hidden.label' => ProductVisibility::HIDDEN,
             ],
             $resolvedOptions['choices']
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductVisibilityType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->type->getParent());
+        $this->assertEquals(ChoiceType::class, $this->type->getParent());
     }
 }

@@ -78,21 +78,21 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->createMock(PriceList::class);
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
-        $product = $this->createMock(Product::class);
+        $productId = 1;
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->shardManager, $priceList, $product);
+            ->with($this->shardManager, $priceList, [$productId]);
 
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggerForPriceList')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId]);
 
-        $this->productPriceBuilder->buildByPriceList($priceList, $product);
+        $this->productPriceBuilder->buildByPriceList($priceList, [$productId]);
     }
 
     public function testBuildByPriceListNoRulesWithoutProduct()
@@ -103,15 +103,14 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->shardManager, $priceList, null);
+            ->with($this->shardManager, $priceList, []);
 
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
 
-        $product = null;
         $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggerForPriceList')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, []);
 
         $this->productPriceBuilder->buildByPriceList($priceList);
     }
@@ -135,9 +134,9 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->shardManager, $priceList, $product);
+            ->with($this->shardManager, $priceList, [$product]);
 
-        $qb = $this->assertInsertCall($fields, [$rule1, $rule2], $product);
+        $qb = $this->assertInsertCall($fields, [$rule1, $rule2], [$product]);
 
         $this->insertFromSelectQueryExecutor->expects($this->exactly(2))
             ->method('execute')
@@ -149,9 +148,39 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggerForPriceList')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$product]);
 
-        $this->productPriceBuilder->buildByPriceList($priceList, $product);
+        $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
+    }
+
+    public function testBuildByPriceListWithoutTriggers()
+    {
+        $rule = new PriceRule();
+        $rule->setPriority(10);
+
+        $priceList = new PriceList();
+        $priceList->setPriceRules(new ArrayCollection([$rule]));
+
+        $repository = $this->getRepositoryMock();
+        $repository->expects($this->once())
+            ->method('deleteGeneratedPrices')
+            ->with($this->shardManager, $priceList, []);
+
+        $fields = ['field1', 'field2'];
+        $queryBuilder = $this->assertInsertCall($fields, [$rule]);
+
+        $this->insertFromSelectQueryExecutor->expects($this->once())
+            ->method('execute')
+            ->with(
+                ProductPrice::class,
+                $fields,
+                $queryBuilder
+            );
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('addTriggerForPriceList');
+
+        $this->productPriceBuilder->buildByPriceListWithoutTriggers($priceList);
     }
 
     /**
@@ -180,10 +209,10 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $fields
      * @param array $rules
-     * @param Product|null $product
+     * @param int[]|Product[]|null $products
      * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function assertInsertCall(array $fields, array $rules, Product $product = null)
+    protected function assertInsertCall(array $fields, array $rules, array $products = [])
     {
         $rulesCount = count($rules);
 
@@ -203,7 +232,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         foreach ($rules as $rule) {
             $this->ruleCompiler->expects($this->at($c))
                 ->method('compile')
-                ->with($rule, $product);
+                ->with($rule, $products);
             $c += 2;
         }
 

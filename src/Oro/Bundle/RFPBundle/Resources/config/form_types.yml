@@ -67,13 +67,14 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
-            - [setExtendedType, ['oro_rfp_frontend_request']]
+            - [setExtendedType, ['Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType']]
             - [setConfigManager, ['@oro_config.manager']]
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]
             - [setContainer, ['@service_container']]
+            - [setProductAvailabilityProvider, ['@oro_rfp.provider.product_availability']]
         tags:
-            - { name: form.type_extension, alias: oro_rfp_frontend_request }
+            - { name: form.type_extension, alias: oro_rfp_frontend_request, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType }
 
     oro_rfp.form.type.extension.order_line_item_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension'
@@ -82,7 +83,7 @@ services:
             - "@oro_rfp.storage.offers_data_storage"
             - "@oro_rfp.storage.offers_form_storage"
         tags:
-            - { name: form.type_extension, alias: oro_order_line_item, priority: 5 }
+            - { name: form.type_extension, alias: oro_order_line_item, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType, priority: 5 }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.extension.order_data_storage:
@@ -92,9 +93,9 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.model.price_list_tree_handler'
         calls:
-            - [setExtendedType, ['oro_order_type']]
+            - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:
-            - { name: form.type_extension, alias: oro_order_type }
+            - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.request_offers:

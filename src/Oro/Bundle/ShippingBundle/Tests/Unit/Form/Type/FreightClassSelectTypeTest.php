@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
 use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\FormView;
 
 class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
@@ -20,13 +20,14 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     
     protected function setUp()
     {
-        parent::setUp();
-
         $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->configureFormatter();
+
         $this->formType = new FreightClassSelectType($this->provider, $this->formatter);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()

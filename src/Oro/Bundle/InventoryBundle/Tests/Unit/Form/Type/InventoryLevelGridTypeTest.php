@@ -2,21 +2,20 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
+use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 {
@@ -39,14 +38,13 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->type = new InventoryLevelGridType($this->formFactory, $this->doctrineHelper);
+        parent::setUp();
     }
 
     /**
@@ -55,34 +53,27 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         return [
-            new PreloadedExtension([DataChangesetType::NAME => new DataChangesetType()], [])
+            new PreloadedExtension([
+                $this->type,
+                DataChangesetType::class => new DataChangesetType()
+            ], [])
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(InventoryLevelGridType::NAME, $this->type->getName());
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(DataChangesetType::NAME, $this->type->getParent());
+        $this->assertEquals(DataChangesetType::class, $this->type->getParent());
     }
 
     /**
      * @param array $options
      * @param mixed $submittedData
      * @param mixed $expectedData
-     * @param DoctrineHelper $doctrineHelper
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $options, $submittedData, $expectedData, DoctrineHelper $doctrineHelper = null)
+    public function testSubmit(array $options, $submittedData, $expectedData)
     {
-        $type = $doctrineHelper
-            ? new InventoryLevelGridType($this->formFactory, $doctrineHelper)
-            : $this->type;
-
-        $form = $this->factory->create($type, null, $options);
+        $form = $this->factory->create(InventoryLevelGridType::class, null, $options);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -90,10 +81,6 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 
     public function submitDataProvider()
     {
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         /** @var ProductUnitPrecision $firstPrecision */
         $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
         /** @var ProductUnitPrecision $secondPrecision */
@@ -128,8 +115,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
                         'data' => ['levelQuantity' => null],
                     ]
 
-                ]),
-                'doctrineHelper' => $doctrineHelper,
+                ])
             ]
         ];
     }
@@ -162,7 +148,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with('number', null, $this->isType('array'))
+            ->with(NumberType::class, null, $this->isType('array'))
             ->willReturn($constraintsForm);
 
         $view = new FormView();

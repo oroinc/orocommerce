@@ -5,16 +5,24 @@ layout:
             root: widget_content
             namespace: matrix_grid_order
     actions:
+        - '@setOption':
+            id: matrix_grid_order_form_start
+            optionName: attr.data-empty-matrix-allowed
+            optionValue: '=data["system_config_provider"].getValue("oro_product.matrix_form_allow_empty") || data["hasLineItems"]'
+        - '@setOption':
+            id: matrix_grid_order_wrapper
+            optionName: visible
+            optionValue: true
         - '@add':
-            id: form_actions_submit
+            id: matrix_grid_order_form_actions_submit
             blockType: button
-            parentId: widget_actions
+            parentId: matrix_grid_order_totals
             options:
                 action: submit
                 text:
                     label: '=data["hasLineItems"] ? "oro.shoppinglist.actions.update_shopping_list" : "oro.shoppinglist.actions.add_to_shopping_list"'
                     parameters:
-                        '{{ shoppingList }}': '=data["shoppingList"].getLabel()'
+                        '{{ shoppingList }}': '=data["shoppingList"] ? data["shoppingList"].getLabel() : data["translator"].getTrans("oro.shoppinglist.entity_label")'
                 style: auto
         - '@move':
             id: widget_actions

@@ -4,10 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
@@ -26,6 +26,7 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param SystemConfigFallbackProvider $systemConfigFallbackProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -63,5 +64,13 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
     public function getFallbackLabel()
     {
         return 'oro.catalog.fallback.category.label';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFallbackEntityClass()
+    {
+        return Category::class;
     }
 }

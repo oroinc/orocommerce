@@ -4,16 +4,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
 {
@@ -58,7 +58,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }
@@ -84,7 +84,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }
@@ -108,7 +108,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-                PriceListTriggerFactory::PRODUCT => $product->getId()
+                PriceListTriggerFactory::PRODUCT => [$product->getId()]
             ]
         );
     }

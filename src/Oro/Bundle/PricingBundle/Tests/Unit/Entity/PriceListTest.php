@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceListTest extends \PHPUnit_Framework_TestCase
 {

@@ -10,7 +10,7 @@ Get details of the price list customer group fallback by its ID.
 
 ### get_list
 
-Get the collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get the collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -85,7 +85,7 @@ Delete a price list customer group fallback identified by ID.
 
 ### delete_list
 
-Delete a collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -101,7 +101,7 @@ Delete a collection of price list customer group fallbacks. A collection may con
 
 ### fallback
 
-Possible values: 1, 0. 0 - fallback to a website configuration. 1 - fallback to the current customer group only
+Possible values: 1, 0. 0 - fallback to a website configuration. 1 - fallback to the current customer group only.
 
 #### create
 
@@ -111,14 +111,13 @@ Possible values: 1, 0. 0 - fallback to a website configuration. 1 - fallback to 
 
 ### customerGroup
 
-The customer group this fallback is tied to
+The customer group this fallback is tied to.
 
 #### create
 
 {@inheritdoc}
 
 **The required field**
-
 
 ## SUBRESOURCES
 
@@ -126,8 +125,8 @@ The customer group this fallback is tied to
 
 #### get_subresource
 
-Get full information about the customer group tied to the current price list customer group fallback
+Get full information about the customer group tied to the current price list customer group fallback.
 
 #### get_relationship
 
-Retrieve the ID of the customer group tied to the current price list customer group fallback
+Retrieve the ID of the customer group tied to the current price list customer group fallback.

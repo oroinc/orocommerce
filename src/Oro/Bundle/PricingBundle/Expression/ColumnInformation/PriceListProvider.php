@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Expression\ColumnInformation;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Component\Expression\ColumnInformationProviderInterface;
 use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
-use Oro\Component\Expression\ColumnInformationProviderInterface;
 
 class PriceListProvider implements ColumnInformationProviderInterface
 {
@@ -33,9 +33,9 @@ class PriceListProvider implements ColumnInformationProviderInterface
     protected function convertNameNode(NameNode $node, array &$addedColumns, array &$definition)
     {
         if ($node->getContainer() === PriceList::class) {
-            $priceListKey = 'pricelist|' . $node->getContainerId();
+            $priceListKey = 'pricelist|' . (int)$node->getContainerId();
             if (empty($addedColumns[$priceListKey])) {
-                $definition['price_lists'][] = $node->getContainerId();
+                $definition['price_lists'][] = (int)$node->getContainerId();
                 $addedColumns[$priceListKey] = true;
             }
 

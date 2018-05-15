@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class PriceListProductPriceType extends AbstractType
 {
@@ -40,7 +39,7 @@ class PriceListProductPriceType extends AbstractType
         $builder
             ->add(
                 'product',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.product.label',
@@ -51,7 +50,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.unit.label',
@@ -60,7 +59,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.quantity.label',
@@ -70,7 +69,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'required' => true,
                     'compact' => false,
@@ -96,7 +95,7 @@ class PriceListProductPriceType extends AbstractType
                 ->remove('unit')
                 ->add(
                     'unit',
-                    ProductUnitSelectionType::NAME,
+                    ProductUnitSelectionType::class,
                     [
                         'required' => true,
                         'label' => 'oro.pricing.productprice.unit.label',

@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -65,6 +63,13 @@ define(function(require) {
          * @property {Boolean}
          */
         quantityEventsEnabled: true,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function QuoteProductToOrderComponent() {
+            QuoteProductToOrderComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -167,7 +172,7 @@ define(function(require) {
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
-                this.onQuantityChange.call(this);
+                this.onQuantityChange();
             }, this));
 
             this.$quantity.on('keyup', _.bind(function() {

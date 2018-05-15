@@ -29,14 +29,21 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AbstractSwitcher() {
+            AbstractSwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.visibleClass = 'visible';
             this.options = _.defaults(options || {}, this.options);
             if (!this.options.selectors.fieldType) {
-                throw 'Option fieldType must be defined';
+                throw new Error('Option fieldType must be defined');
             }
             if (!this.options.selectors.expressionType) {
-                throw 'Option expressionType must be defined';
+                throw new Error('Option expressionType must be defined');
             }
 
             this.field = this.$el.find('div' + this.options.selectors.fieldType);
@@ -117,11 +124,11 @@ define(function(require) {
         },
 
         isValid: function() {
-            throw 'Abstract method isValid not implemented';
+            throw new Error('Abstract method isValid not implemented');
         },
 
         addValidationError: function() {
-            throw 'Abstract method addValidationError not implemented';
+            throw new Error('Abstract method addValidationError not implemented');
         },
 
         /**

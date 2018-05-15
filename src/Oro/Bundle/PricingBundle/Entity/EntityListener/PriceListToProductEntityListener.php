@@ -4,18 +4,23 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class PriceListToProductEntityListener
+class PriceListToProductEntityListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     const FIELD_PRICE_LIST = 'priceList';
     const FIELD_PRODUCT = 'product';
 
@@ -54,7 +59,18 @@ class PriceListToProductEntityListener
      */
     public function postPersist(PriceListToProduct $priceListToProduct)
     {
-        $this->schedulePriceListRecalculations($priceListToProduct->getPriceList(), $priceListToProduct->getProduct());
+        $this->schedulePriceListRecalculations(
+            $priceListToProduct->getPriceList(),
+            [$priceListToProduct->getProduct()]
+        );
+    }
+
+    /**
+     * @param PriceListToProductSaveAfterEvent $event
+     */
+    public function onPriceListToProductSave(PriceListToProductSaveAfterEvent $event)
+    {
+        $this->postPersist($event->getPriceListToProduct());
     }
 
     /**
@@ -64,7 +80,10 @@ class PriceListToProductEntityListener
     public function preUpdate(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
         $this->recalculateForOldValues($priceListToProduct, $event);
-        $this->schedulePriceListRecalculations($priceListToProduct->getPriceList(), $priceListToProduct->getProduct());
+        $this->schedulePriceListRecalculations(
+            $priceListToProduct->getPriceList(),
+            [$priceListToProduct->getProduct()]
+        );
     }
 
     /**
@@ -73,14 +92,17 @@ class PriceListToProductEntityListener
      */
     public function postRemove(PriceListToProduct $priceListToProduct, LifecycleEventArgs $event)
     {
-        $this->schedulePriceListRecalculations($priceListToProduct->getPriceList(), $priceListToProduct->getProduct());
+        $this->schedulePriceListRecalculations(
+            $priceListToProduct->getPriceList(),
+            [$priceListToProduct->getProduct()]
+        );
 
         $event->getEntityManager()
             ->getRepository(ProductPrice::class)
             ->deleteByPriceList(
                 $this->shardManager,
                 $priceListToProduct->getPriceList(),
-                $priceListToProduct->getProduct()
+                [$priceListToProduct->getProduct()]
             );
     }
 
@@ -89,29 +111,37 @@ class PriceListToProductEntityListener
      */
     public function onAssignmentRuleBuilderBuild(AssignmentBuilderBuildEvent $event)
     {
-        $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProduct());
+        $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProducts());
         $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    protected function scheduleDependentPriceListsUpdate(PriceList $priceList, Product $product = null)
+    protected function scheduleDependentPriceListsUpdate(PriceList $priceList, array $products = [])
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $lexemes = $this->priceRuleLexemeTriggerHandler
             ->findEntityLexemes(PriceList::class, ['assignedProducts'], $priceList->getId());
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
+        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $products);
     }
 
     /**
      * @param PriceList $priceList
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    protected function schedulePriceListRecalculations(PriceList $priceList, Product $product = null)
+    protected function schedulePriceListRecalculations(PriceList $priceList, array $products = [])
     {
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
-        $this->scheduleDependentPriceListsUpdate($priceList, $product);
+        if (!$this->enabled) {
+            return;
+        }
+
+        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $products);
+        $this->scheduleDependentPriceListsUpdate($priceList, $products);
     }
 
     /**
@@ -132,7 +162,7 @@ class PriceListToProductEntityListener
         }
 
         if ($event->hasChangedField(self::FIELD_PRICE_LIST) || $event->hasChangedField(self::FIELD_PRODUCT)) {
-            $this->schedulePriceListRecalculations($oldPriceList, $oldProduct);
+            $this->schedulePriceListRecalculations($oldPriceList, [$oldProduct]);
         }
     }
 }

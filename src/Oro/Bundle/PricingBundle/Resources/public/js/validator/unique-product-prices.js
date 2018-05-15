@@ -1,50 +1,37 @@
-/*global define*/
-define(['underscore', 'orotranslation/js/translator', 'jquery', 'oroui/js/messenger'
-], function(_, __, $, messenger) {
+define(function(require) {
     'use strict';
+
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var __ = require('orotranslation/js/translator');
+    var messenger = require('oroui/js/messenger');
 
     var defaultParam = {
         message: 'All product prices should be unique.'
     };
 
     /**
-     * @param {Element} element
+     * @param {HTMLElement} element
+     * @return {string}
      */
-    function getRealElement(element) {
-        return $(element).closest('.oro-item-collection');
-    }
-
-    /**
-     * @param {Element} element
-     */
-    function getPriceValues(element) {
+    function getStringifiedValues(element) {
         var price = $(element);
 
-        var priceList = price.find('input[name$="[priceList]"]');
-        var quantity  = price.find('input[name$="[quantity]"]');
-        var unit      = price.find('select[name$="[unit]"] option:selected');
-        var currency  = price.find('select[name$="[currency]"] option:selected');
+        var priceList = price.find('input[name$="[priceList]"]').val();
+        var quantity = price.find('input[name$="[quantity]"]').val();
+        var unit = price.find('select[name$="[unit]"] option:selected').val();
+        var currency = price.find('select[name$="[currency]"] option:selected').val();
 
-        return {
-            priceList: priceList ? priceList.val() : undefined,
-            quantity: quantity ? quantity.val() : undefined,
-            unit: unit ? unit.val() : undefined,
-            currency: currency ? currency.val() : undefined
-        };
-    }
+        if (
+            !priceList || !priceList.trim() ||
+            !quantity || !quantity.trim() ||
+            !unit || !unit.trim() ||
+            !currency || !currency.trim()
+        ) {
+            return '';
+        }
 
-    /**
-     * @param {Array} prices
-     * @param {Object} search
-     * @returns {Object}
-     */
-    function findDuplication(prices, search) {
-        return _.find(prices, function(obj) {
-            return obj.priceList === search.priceList &&
-                parseFloat(obj.quantity) === parseFloat(search.quantity) &&
-                obj.unit === search.unit &&
-                obj.currency === search.currency;
-        });
+        return [priceList, parseFloat(quantity), unit, currency].join(':');
     }
 
     /**
@@ -53,28 +40,24 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'oroui/js/messen
     return [
         'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
         function(value, element) {
-            var noDuplicationFound = true;
             var processedPrices = [];
+            var $container = $(element).closest('.oro-item-collection');
 
-            _.each(getRealElement(element).find('.oro-multiselect-holder'), function(price) {
-                var data = getPriceValues(price);
+            var duplicate = _.find($container.find('.oro-multiselect-holder'), function(price) {
+                var stringifiedPrice = getStringifiedValues(price);
 
-                if (_.isEmpty(data.priceList.trim()) ||
-                    _.isEmpty(data.quantity.trim()) ||
-                    _.isEmpty(data.unit.trim()) ||
-                    _.isEmpty(data.currency.trim())
-                ) {
+                if (stringifiedPrice === '') {
                     return;
                 }
-
-                if (findDuplication(processedPrices, data) === undefined) {
-                    processedPrices.push(data);
+                if (processedPrices.indexOf(stringifiedPrice) !== -1) {
+                    // duplicates are found
+                    return true;
                 } else {
-                    noDuplicationFound = false;
+                    processedPrices.push(stringifiedPrice);
                 }
             });
 
-            return noDuplicationFound;
+            return duplicate === void 0;
         },
         function(param) {
             param = _.extend({}, defaultParam, param);

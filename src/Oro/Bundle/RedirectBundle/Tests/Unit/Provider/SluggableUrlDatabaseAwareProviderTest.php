@@ -8,6 +8,7 @@ use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -72,8 +73,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(
                 [
                     'url' => '/slug-url',
-                    'slug_prototype' => 'slug-url',
-                    'localization_id' => $localizationId
+                    'slug_prototype' => 'slug-url'
                 ]
             );
         $slugRepository->expects($this->any())
@@ -121,7 +121,13 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetUrlWithCacheUrl()
+    /**
+     * @dataProvider getDefaultCacheValues
+     *
+     * @param int $localizationId
+     * @param array $expected
+     */
+    public function testGetUrlWithCacheUrl($localizationId, $expected)
     {
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
@@ -133,16 +139,22 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
         $name = 'oro_product_view';
         $params = ['id' => 10];
 
-        $localizationId = 1;
-
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
             ->willReturn(json_encode([$name => true]));
-        $this->cacheProvider->expects($this->once())
+        $this->cacheProvider->expects($this->exactly($expected['calls']))
             ->method('getUrl')
-            ->with($name, $params, $localizationId)
-            ->willReturn('/slug-url');
+            ->withConsecutive(
+                [$name, $params, $localizationId],
+                [$name, $params, SluggableUrlGenerator::DEFAULT_LOCALIZATION_ID],
+                [$name, $params, $localizationId]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $expected['url'],
+                $expected['defaultUrl'],
+                $expected['finalUrl']
+            );
 
         $slugRepository = $this->createMock(SlugRepository::class);
         $slugRepository->expects($this->any())
@@ -159,6 +171,42 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($slugRepository);
 
         $this->assertEquals('/slug-url', $provider->getUrl($name, $params, $localizationId));
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultCacheValues()
+    {
+        return [
+            'default locale' => [
+                'localizationId' => 0,
+                'expected' => [
+                    'calls' => 1,
+                    'url' => '/slug-url',
+                    'defaultUrl' => '/slug-url',
+                    'finalUrl' => '/slug-url',
+                ]
+            ],
+            'cached default value' => [
+                'localizationId' => 1,
+                'expected' => [
+                    'calls' => 1,
+                    'url' => '/slug-url',
+                    'defaultUrl' => '/slug-url',
+                    'finalUrl' => '/slug-url',
+                ]
+            ],
+            'cached localized value' => [
+                'localizationId' => 1,
+                'expected' => [
+                    'calls' => 1,
+                    'url' => '/slug-url',
+                    'defaultUrl' => '/default-slug-url',
+                    'finalUrl' => '/slug-url',
+                ]
+            ]
+        ];
     }
 
     public function testGetUrlNoCacheNoDatabase()
@@ -217,7 +265,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
                     $routeParameters,
                     null,
                     null,
-                    null
+                    $localizationId
                 ]
             );
 

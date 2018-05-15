@@ -88,7 +88,8 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCa
             ],
             'with_rules_and_methods' => [
                 'methods' => (new ShippingMethodViewCollection())
-                    ->addMethodView('flat_rate', []),
+                    ->addMethodView('flat_rate', [])
+                    ->addMethodTypeView('flat_rate', 'flat_rate_1', []),
                 'expected' => true,
             ],
         ];

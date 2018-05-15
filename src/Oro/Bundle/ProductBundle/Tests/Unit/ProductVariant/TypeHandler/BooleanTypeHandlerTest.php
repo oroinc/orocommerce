@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\TypeHandler;
 
 use Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\BooleanTypeHandler;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 
@@ -37,7 +38,7 @@ class BooleanTypeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('createNamed')
-            ->with($fieldName, 'choice', null, $this->callback(function (array $options) {
+            ->with($fieldName, ChoiceType::class, null, $this->callback(function (array $options) {
 
                 // will check choice_attr separately
                 $this->assertArraySubset([
@@ -45,6 +46,7 @@ class BooleanTypeHandlerTest extends \PHPUnit_Framework_TestCase
                         'No' => false,
                         'Yes' => true,
                     ],
+                    // TODO: Remove 'choices_as_values' option in scope of BAP-15236
                     'choices_as_values' => true,
                     'auto_initialize' => false,
                 ], $options);

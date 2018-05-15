@@ -1,4 +1,4 @@
 styles:
     inputs:
-        - 'bundles/orocatalog/default/scss/variables/featured-categories-config.scss'
+        - 'bundles/orocatalog/default/scss/variables/promo-slider-config.scss'
         - 'bundles/orocatalog/default/scss/styles.scss'

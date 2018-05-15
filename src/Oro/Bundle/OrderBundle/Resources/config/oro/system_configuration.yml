@@ -15,17 +15,17 @@ system_configuration:
     fields:
         oro_order.backend_product_visibility:
             data_type: array
-            type: oro_product_inventory_status_select
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.order.system_configuration.fields.backend_product_visibility.title
         oro_order.frontend_product_visibility:
             data_type: array
-            type: oro_product_inventory_status_select
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.order.system_configuration.fields.frontend_product_visibility.title
         oro_order.order_automation_enable_cancellation:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 20
             options:
                 label: oro.order.system_configuration.fields.order_automation_enable_cancellation.title
@@ -34,7 +34,7 @@ system_configuration:
                     'data-dependee-id': 'order_automation_enable_cancellation'
         oro_order.order_automation_applicable_statuses:
             data_type: array
-            type: oro_enum_id_choice
+            type: Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType
             options:
                 label: oro.order.system_configuration.fields.order_automation_applicable_statuses.title
                 tooltip: oro.order.system_configuration.fields.order_automation_applicable_statuses.tooltip
@@ -46,34 +46,35 @@ system_configuration:
                     'data-show-if': 'checked'
         oro_order.order_automation_target_status:
             data_type: string
-            type: oro_enum_id_choice
+            type: Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType
             options:
                 label: oro.order.system_configuration.fields.order_automation_target_status.title
                 tooltip: oro.order.system_configuration.fields.order_automation_target_status.tooltip
                 enum_code: order_internal_status
                 multiple: false
-                empty_value: false
+                placeholder: false
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'order_automation_enable_cancellation'
                     'data-show-if': 'checked'
         oro_order.order_creation_new_internal_order_status:
             data_type: string
-            type: oro_enum_id_choice
+            type: Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType
             options:
                 label: oro.order.system_configuration.fields.order_creation_new_internal_order_status.title
                 tooltip: oro.order.system_configuration.fields.order_creation_new_internal_order_status.tooltip
                 enum_code: order_internal_status
                 multiple: false
-                empty_value: false
+                placeholder: false
         oro_order.enable_purchase_history:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.order.system_configuration.fields.enable_purchase_history.title
         oro_order.order_previously_purchased_period:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
             options:
                 label: oro.order.system_configuration.fields.order_previously_purchased_period.title
                 tooltip: oro.order.system_configuration.fields.order_previously_purchased_period.tooltip

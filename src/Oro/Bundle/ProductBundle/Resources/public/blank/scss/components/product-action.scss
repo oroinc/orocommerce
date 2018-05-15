@@ -20,6 +20,10 @@
         }
     }
 
+    .icon-selector {
+        @include fa-icon($product-action-toggle-icon-mobile, after);
+    }
+
     &.in-sticky {
         display: flex;
 

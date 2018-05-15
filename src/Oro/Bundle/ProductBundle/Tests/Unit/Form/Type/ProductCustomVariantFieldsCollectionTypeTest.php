@@ -3,13 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
-
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCase
@@ -125,8 +125,6 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -137,6 +135,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         );
 
         $this->attributeFamily = new AttributeFamily();
+        parent::setUp();
     }
 
     /**
@@ -147,8 +146,9 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         return [
             new PreloadedExtension(
                 [
-                    OroCollectionType::NAME => new OroCollectionType(),
-                    ProductVariantFieldType::NAME => new ProductVariantFieldType(),
+                    $this->formType,
+                    OroCollectionType::class => new OroCollectionType(),
+                    ProductVariantFieldType::class => new ProductVariantFieldType(),
                 ],
                 []
             )
@@ -169,7 +169,11 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
             ->with($this->attributeFamily)
             ->willReturn($variantFields);
 
-        $form = $this->factory->create($this->formType, null, ['attributeFamily' => $this->attributeFamily]);
+        $form = $this->factory->create(
+            ProductCustomVariantFieldsCollectionType::class,
+            null,
+            ['attributeFamily' => $this->attributeFamily]
+        );
 
         $this->assertEquals($this->emptyFieldsValues, $form->getData());
         $form->submit($submittedData);
@@ -218,11 +222,6 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCustomVariantFieldsCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 }

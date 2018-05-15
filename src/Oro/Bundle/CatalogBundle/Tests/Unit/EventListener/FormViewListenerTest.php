@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormView;
-
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Symfony\Component\Form\FormView;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {

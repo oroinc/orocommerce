@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,11 +32,6 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->getPropertyAccessor()
         );
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('category_page', $this->type->getName());
     }
 
     public function testGetTitle()

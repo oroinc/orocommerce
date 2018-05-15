@@ -30,16 +30,16 @@ define(function(require) {
             },
             grids: [
                 {
-                    'name': 'product-collection-grid',
-                    'type': 'filtered'
+                    name: 'product-collection-grid',
+                    type: 'filtered'
                 },
                 {
-                    'name': 'product-collection-included-products-grid',
-                    'type': 'included'
+                    name: 'product-collection-included-products-grid',
+                    type: 'included'
                 },
                 {
-                    'name': 'product-collection-excluded-products-grid',
-                    'type': 'excluded'
+                    name: 'product-collection-excluded-products-grid',
+                    type: 'excluded'
                 }
             ],
             counterRoute: 'oro_product_datagrid_count_get'
@@ -73,6 +73,16 @@ define(function(require) {
             'grid_load:complete mediator': 'onGridLoadComplete'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function SelectedProductGridSubComponent() {
+            SelectedProductGridSubComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
@@ -162,7 +172,7 @@ define(function(require) {
             var tabData = this.tabs[type];
             var originalUrl = collection.url;
             var query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
-            var url = routing.generate(this.options.counterRoute, {'gridName': collection.inputName});
+            var url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
 
             if (tabData.request) {
                 tabData.request.abort();
@@ -174,7 +184,7 @@ define(function(require) {
             tabData.request
                 .done(
                     _.bind(function() {
-                        tabData.tab.effect('highlight', {'color': this.options.highlightColor}, 1000);
+                        tabData.tab.effect('highlight', {color: this.options.highlightColor}, 1000);
                     }, this)
                 )
                 .always(

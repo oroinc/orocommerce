@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -9,10 +12,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-
+/**
+ * Product prices form type
+ * Used to group other related types for Product Price item
+ */
 class ProductPriceType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price';
@@ -29,7 +32,7 @@ class ProductPriceType extends AbstractType
         $builder
             ->add(
                 'priceList',
-                PriceListSelectType::NAME,
+                PriceListSelectType::class,
                 [
                     'label' => 'oro.pricing.pricelist.entity_label',
                     'create_enabled' => false,
@@ -39,32 +42,25 @@ class ProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductPriceUnitSelectorType::NAME,
+                ProductPriceUnitSelectorType::class,
                 [
                     'label' => 'oro.pricing.unit.label',
-                    'empty_value' => 'oro.product.productunitprecision.unit_precision_required',
+                    'placeholder' => 'oro.product.productunitprecision.unit_precision_required',
                     'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
-                'price',
-                PriceType::NAME,
-                [
-                    'label' => 'oro.pricing.price.label',
-                    'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
-                    'full_currency_list' => true,
-                ]
-            )
-            ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'label' => 'oro.pricing.quantity.label',
                     'product' => $options['product'],
                     'product_unit_field' => 'unit',
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
 
         // make value not empty
         $builder->addEventListener(
@@ -98,6 +94,35 @@ class ProductPriceType extends AbstractType
         ) {
             $productPrice->setPriceRule(null);
         }
+    }
+
+    /**
+     * Adds Price lists currencies to select even if there are no such system currencies
+     * Fetches full currency list only for add new collection item form type template
+     * @param FormEvent $event
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        $productPrice = $event->getData();
+        $form = $event->getForm();
+        $isFullCurrencyList = true;
+        $currencies = null;
+
+        if ($productPrice instanceof ProductPrice && $productPrice->getPriceList()) {
+            $currencies = $productPrice->getPriceList()->getCurrencies();
+            $isFullCurrencyList = false;
+        }
+
+        $form ->add(
+            'price',
+            PriceType::class,
+            [
+                'label' => 'oro.pricing.price.label',
+                'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
+                'currencies_list' => $currencies,
+                'full_currency_list' => $isFullCurrencyList
+            ]
+        );
     }
 
     /**

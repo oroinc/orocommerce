@@ -26,6 +26,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductsPricesComponent() {
+            ProductsPricesComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
@@ -64,7 +71,7 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var context =  {
+            var context = {
                 requestAttributes: {}
             };
             mediator.trigger('pricing:refresh:products-tier-prices:before', context);

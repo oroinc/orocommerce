@@ -2,30 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
-use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var CmsPageVariantType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new CmsPageVariantType();
-    }
-
     /**
      * @return array
      */
@@ -34,7 +19,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PageSelectType::NAME => new FormStub(PageSelectType::NAME),
+                    PageSelectType::class => new FormStub(PageSelectType::NAME),
                 ],
                 []
             ),
@@ -44,7 +29,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(CmsPageVariantType::class, null);
         $this->assertTrue($form->has('cmsPage'));
         $this->assertEquals(
             CmsPageContentVariantType::TYPE,
@@ -54,11 +39,13 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(CmsPageVariantType::NAME, $this->type->getName());
+        $type = new CmsPageVariantType();
+        $this->assertEquals(CmsPageVariantType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(CmsPageVariantType::NAME, $this->type->getBlockPrefix());
+        $type = new CmsPageVariantType();
+        $this->assertEquals(CmsPageVariantType::NAME, $type->getBlockPrefix());
     }
 }

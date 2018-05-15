@@ -2,24 +2,23 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
-
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class QuickAddTypeTest extends FormIntegrationTestCase
 {
@@ -41,17 +40,19 @@ class QuickAddTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension([
-                ProductRowCollectionType::NAME => new ProductRowCollectionType(),
-                ProductRowType::NAME => new ProductRowType(),
-                CollectionType::NAME => new CollectionType(),
-                ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
-                ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
+                $this->formType,
+                ProductRowCollectionType::class => new ProductRowCollectionType(),
+                ProductRowType::class => new ProductRowType(),
+                CollectionType::class => new CollectionType(),
+                ProductAutocompleteType::class => new StubProductAutocompleteType(),
+                ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
             ], []),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -70,7 +71,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
             'products' => $products,
         ];
 
-        $form = $this->factory->create($this->formType, null, $options);
+        $form = $this->factory->create(QuickAddType::class, null, $options);
         $form->submit($submittedData);
 
         $collectionProducts = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getConfig()->getOption('products');
@@ -113,7 +114,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
     public function testInvalidSubmit()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(QuickAddType::class);
         $form->submit([]);
         $this->assertFalse($form->isValid());
     }
@@ -135,10 +136,5 @@ class QuickAddTypeTest extends FormIntegrationTestCase
             );
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuickAddType::NAME, $this->formType->getName());
     }
 }

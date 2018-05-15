@@ -68,6 +68,16 @@ define(function(require) {
 
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductShoppingListsWidget() {
+            ProductShoppingListsWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions',
@@ -88,7 +98,7 @@ define(function(require) {
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
 
-            mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
+            mediator.on('frontend:item:delete', this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
 
             ShoppingListCollectionService.shoppingListCollection.done((function(collection) {

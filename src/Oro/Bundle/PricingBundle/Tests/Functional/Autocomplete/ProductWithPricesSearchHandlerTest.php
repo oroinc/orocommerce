@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductWithPricesSearchHandlerTest extends WebTestCase
 {

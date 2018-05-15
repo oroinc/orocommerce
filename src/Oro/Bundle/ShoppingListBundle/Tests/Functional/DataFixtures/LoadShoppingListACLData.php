@@ -5,15 +5,15 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadShoppingListACLData extends AbstractFixture implements
     FixtureInterface,
@@ -98,12 +98,16 @@ class LoadShoppingListACLData extends AbstractFixture implements
         /** @var CustomerUser $customerUser */
         $customerUser = $this->getReference($orderData['customerUser']);
 
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->getDefaultWebsite();
+
         $shoppingList = new ShoppingList();
         $shoppingList
             ->setLabel($name)
             ->setOrganization($customerUser->getOrganization())
             ->setCustomer($customerUser->getCustomer())
-            ->setCustomerUser($customerUser);
+            ->setCustomerUser($customerUser)
+            ->setWebsite($website);
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
     }

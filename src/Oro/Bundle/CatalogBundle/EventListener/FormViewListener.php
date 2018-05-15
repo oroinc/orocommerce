@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Component\Exception\UnexpectedTypeException;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Component\Exception\UnexpectedTypeException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FormViewListener
 {

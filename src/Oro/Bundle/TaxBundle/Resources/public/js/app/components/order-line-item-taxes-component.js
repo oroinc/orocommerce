@@ -55,6 +55,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function OrderLineItemTaxesComponent() {
+            OrderLineItemTaxesComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.options._sourceElement
@@ -106,7 +113,7 @@ define(function(require) {
          */
         setOrderTaxes: function(response) {
             var result = _.defaults(response, {taxItems: {}});
-            var itemId =  this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
+            var itemId = this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
 
             if (!_.has(result.taxItems, itemId)) {
                 return;

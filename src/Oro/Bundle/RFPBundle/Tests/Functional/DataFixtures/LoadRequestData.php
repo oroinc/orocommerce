@@ -5,12 +5,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
-use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -19,6 +13,11 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadRequestData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -251,6 +250,9 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         /** @var Organization $organization */
         $organization = $owner->getOrganization();
 
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+
         foreach (self::$requests as $key => $rawRequest) {
             $request = new Request();
             $request
@@ -262,7 +264,8 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
                 ->setRole($rawRequest['role'])
                 ->setNote($rawRequest['note'])
                 ->setOwner($owner)
-                ->setOrganization($organization);
+                ->setOrganization($organization)
+                ->setWebsite($website);
 
             if (!empty($rawRequest['customer'])) {
                 $request->setCustomer($this->getReference($rawRequest['customer']));

@@ -1,4 +1,3 @@
-/** @lends PaymentTransitionButtonComponent */
 define(function(require) {
     'use strict';
 
@@ -8,6 +7,13 @@ define(function(require) {
 
     var PaymentTransitionButtonComponent;
     PaymentTransitionButtonComponent = TransitionButtonComponent.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function PaymentTransitionButtonComponent() {
+            PaymentTransitionButtonComponent.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @constructor
          * @param {Object} options

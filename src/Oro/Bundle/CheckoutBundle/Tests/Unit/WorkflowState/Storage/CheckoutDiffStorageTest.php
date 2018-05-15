@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Storage;
 
 use Doctrine\ORM\EntityManagerInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
 {

@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -33,7 +32,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         'Payment Terms' => 'paymentMethod',
         'Value'=> 'paymentMethod',
         'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
-        'Save shipping address' => 'oro_workflow_transition[save_shipping_address]'
+        'Save shipping address' => 'oro_workflow_transition[save_shipping_address]',
+        'Save my data and create an account' =>
+            'oro_workflow_transition[late_registration][is_late_registration_enabled]'
     ];
 
     /** @var string */
@@ -82,7 +83,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function checkValueOnCheckoutPage($value)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->findField(self::$valueMapping[$value]);
+        $element = $page->findField(self::$valueMapping[$value] ?? $value);
 
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
 
@@ -94,6 +95,45 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         $this->waitForAjax();
     }
+
+    /**
+     * @When /^I uncheck "(?P<value>.+)" on the checkout page$/
+     *
+     * @param string $value
+     */
+    public function unCheckValueOnCheckoutPage($value)
+    {
+        $page = $this->getSession()->getPage();
+        $element = $page->findField(self::$valueMapping[$value]);
+
+        self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
+
+        if ($element->isChecked()) {
+            $element->getParent()->click();
+        }
+
+        self::assertFalse($element->isChecked(), sprintf('Option "%s" is checked', $value));
+
+        $this->waitForAjax();
+    }
+
+    /**
+     * @When /^I uncheck "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
+     *
+     * @param string $value
+     * @param string $step
+     * @param string $button
+     */
+    public function uncheckValueOnCheckoutStepAndPressButton($value, $step, $button)
+    {
+        $this->assertTitle($step);
+        $this->uncheckValueOnCheckoutPage($value);
+
+        $page = $this->getSession()->getPage();
+        $page->pressButton($button);
+        $this->waitForAjax();
+    }
+
 
     /**
      * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/

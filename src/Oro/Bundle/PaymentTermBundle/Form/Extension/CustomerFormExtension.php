@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentTermBundle\Form\Extension;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -71,7 +70,7 @@ class CustomerFormExtension extends AbstractTypeExtension
                 ]
             );
 
-            $builder->add($field->getName(), $field->getType()->getName(), $options);
+            $builder->add($field->getName(), get_class($field->getType()->getInnerType()), $options);
         }
     }
 
@@ -80,6 +79,6 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return CustomerType::class;
     }
 }

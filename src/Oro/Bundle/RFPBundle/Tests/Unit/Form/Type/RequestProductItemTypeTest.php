@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestProductItemTypeTest extends AbstractTest
 {
@@ -31,15 +32,9 @@ class RequestProductItemTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new RequestProductItemType();
         $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductItemType::NAME, $this->formType->getName());
+        parent::setUp();
     }
 
     public function testConfigureOptions()
@@ -51,7 +46,7 @@ class RequestProductItemTypeTest extends AbstractTest
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
-                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('csrf_token_id', $options);
 
                 return true;
             }))
@@ -68,7 +63,7 @@ class RequestProductItemTypeTest extends AbstractTest
      */
     public function testPostSetData(RequestProductItem $inputData, array $expectedData = [])
     {
-        $form = $this->factory->create($this->formType, $inputData);
+        $form = $this->factory->create(RequestProductItemType::class, $inputData);
 
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $form->get($key)->getData(), $key);
@@ -253,11 +248,12 @@ class RequestProductItemTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    $priceType->getName()                   => $priceType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType(),
+                    RequestProductItemType::class   => $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
+                    PriceType::class                => $priceType,
+                    CurrencySelectionType::class    => $currencySelectionType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    QuantityType::class             => $this->getQuantityType(),
                 ],
                 []
             ),

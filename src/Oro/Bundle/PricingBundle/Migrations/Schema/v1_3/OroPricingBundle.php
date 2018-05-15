@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
-
 use Oro\Bundle\CronBundle\Engine\CommandRunnerInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -70,7 +69,7 @@ class OroPricingBundle implements
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
-        $this->getCommandRunner()->run('oro:price-lists:recalculate', ['--all']);
+        $this->getCommandRunner()->run('oro:price-lists:recalculate', ['--all' => true]);
         $queries->addPostQuery(new FillMinimalPrices());
     }
 

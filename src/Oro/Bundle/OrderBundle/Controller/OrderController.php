@@ -10,11 +10,9 @@ use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -143,7 +141,7 @@ class OrderController extends AbstractOrderController
             $order->setCustomerUser($this->getOrderRequestHandler()->getCustomerUser());
         }
 
-        $form = $this->createForm(OrderType::NAME, $order);
+        $form = $this->createForm(OrderType::class, $order);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -168,6 +166,7 @@ class OrderController extends AbstractOrderController
                 $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
                 $orderData = $event->getData()->getArrayCopy();
 
+                $view = $form->createView();
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,

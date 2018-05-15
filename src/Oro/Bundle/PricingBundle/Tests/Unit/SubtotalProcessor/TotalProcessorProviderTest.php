@@ -3,22 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -41,12 +40,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     protected $translator;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|RateConverterInterface */
-    protected $rateProvider;
-
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|DefaultCurrencyProviderInterface */
-    protected $currencyProvider;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
      */
@@ -59,10 +52,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->createMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-
-        $this->currencyProvider = $this
-            ->createMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
-        $this->rateProvider = $this->createMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
 
         $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
@@ -79,9 +68,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->subtotalProviderRegistry,
             $this->translator,
             $this->roundingService,
-            $this->currencyManager,
-            $this->rateProvider,
-            $this->currencyProvider
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 

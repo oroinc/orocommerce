@@ -64,7 +64,7 @@ operations:
         form_options:
             attribute_fields:
                 request:
-                    form_type: oro_rfp_request
+                    form_type: Oro\Bundle\RFPBundle\Form\Type\RequestType
             attribute_default_values:
                 request:
                     $.data
@@ -84,10 +84,10 @@ operations:
 #            template: OroRFPBundle:Action:rfpEditForm.html.twig
 #            show_dialog: false
 #        actions:
-#            - @flash_message:
+#            - '@flash_message':
 #                message: oro.rfp.action.request.updated.message
 #                type: 'success'
-#            - @redirect:
+#            - '@redirect':
 #                route: 'oro_rfp_request_view'
 #                route_parameters:
 #                    id: $.data.id
@@ -176,6 +176,7 @@ action_groups:
                 attribute: $.requestCopy
                 settings:
                     - [[setNull], [propertyName, [id]]]
+                    - [[keep], [propertyName, [website]]]
                     - [[keep], [propertyName, [customerUser]]]
                     - [[keep], [propertyName, [customer]]]
                     - [[keep], [propertyName, [organization]]]

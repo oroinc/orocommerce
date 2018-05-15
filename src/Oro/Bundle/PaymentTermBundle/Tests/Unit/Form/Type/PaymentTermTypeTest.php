@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PaymentTermTypeTest extends FormIntegrationTestCase
 {
@@ -29,8 +29,6 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->newPaymentTerm = new PaymentTerm();
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
 
@@ -38,6 +36,17 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
             get_class($this->newPaymentTerm),
             new HtmlTagHelper($htmlTagProvider)
         );
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([$this->formType], [])
+        ];
     }
 
     /**
@@ -48,7 +57,7 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(PaymentTermType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -59,11 +68,6 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
         /** @var PaymentTerm $result */
         $result = $form->getData();
         $this->assertEquals($expectedData['label'], $result->getLabel());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PaymentTermType::NAME, $this->formType->getName());
     }
 
     /**

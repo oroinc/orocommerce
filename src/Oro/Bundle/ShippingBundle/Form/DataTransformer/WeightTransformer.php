@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class WeightTransformer implements DataTransformerInterface
 {

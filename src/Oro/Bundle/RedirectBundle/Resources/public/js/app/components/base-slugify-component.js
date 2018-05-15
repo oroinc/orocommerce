@@ -31,6 +31,13 @@ define(function(require) {
         doSync: true,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function SlugifyComponent() {
+            SlugifyComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * Initializes Slugify component
          * @param {Object} options
          */
@@ -57,7 +64,7 @@ define(function(require) {
 
             $.ajax({
                 type: 'GET',
-                url: routing.generate(this.slugifyRoute, {'string': $source.val()}),
+                url: routing.generate(this.slugifyRoute, {string: $source.val()}),
                 success: _.bind(function($target, $source, result) {
                     if (result.slug) {
                         $target.val(result.slug);
@@ -65,7 +72,7 @@ define(function(require) {
                     } else {
                         messenger.notificationFlashMessage(
                             'error',
-                            __('oro.redirect.slugify_error', {'string': $source.val()})
+                            __('oro.redirect.slugify_error', {string: $source.val()})
                         );
                     }
                 }, this, $target, $source)

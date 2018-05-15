@@ -38,19 +38,6 @@ frontend_shipping_use_customer_user_granted:
     isAddressGranted: ~
     isCustomerAddressGranted: ~
     isCustomerUserAddressGranted: ~
-frontend_shipping_use_customer_user_granted:
-    userClass: Oro\Bundle\CustomerBundle\Entity\CustomerUser
-    addressType: shipping
-    isGranted:
-        - ['VIEW;entity:CustomerOrderClass', null, false]
-        - ['VIEW;entity:CustomerUserOrderClass', null, false]
-        - [oro_order_address_shipping_customer_user_use_any, null, true]
-    hasCustomerAddresses: ~
-    hasCustomerUserAddresses: ~
-    hasEntity: ~
-    isAddressGranted: ~
-    isCustomerAddressGranted: ~
-    isCustomerUserAddressGranted: ~
 frontend_shipping_customer_user_address_granted:
     userClass: Oro\Bundle\CustomerBundle\Entity\CustomerUser
     addressType: shipping
@@ -77,19 +64,6 @@ frontend_shipping_customer_user_address_granted_with_entity:
     isAddressGranted: ~
     isCustomerAddressGranted: ~
     isCustomerUserAddressGranted: ~
-frontend_shipping_customer_user_address_granted_with_entity_and_address:
-    userClass: Oro\Bundle\CustomerBundle\Entity\CustomerUser
-    addressType: shipping
-    isGranted:
-        - ['VIEW;entity:CustomerOrderClass', null, false]
-        - ['VIEW;entity:CustomerUserOrderClass', null, true]
-        - [oro_order_address_shipping_customer_user_use_any, null, true]
-    hasCustomerAddresses: ~
-    hasCustomerUserAddresses: true
-    hasEntity: true
-    isAddressGranted: true
-    isCustomerAddressGranted: ~
-    isCustomerUserAddressGranted: true
 frontend_shipping_customer_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\CustomerBundle\Entity\CustomerUser
     addressType: shipping

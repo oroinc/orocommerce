@@ -3,10 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -14,10 +10,14 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -89,7 +89,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->productPriceProvider,
             $this->doctrineHelper,
             $this->priceListTreeHandler,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 
@@ -137,21 +137,29 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $entity->addLineItem($lineItem);
 
-        $entity->setCurrency($currency);
+        $websiteId = 101;
+        $website = new Website();
+        $this->setValue($website, 'id', $websiteId);
+        $entity->setWebsite($website);
+
+        $this->websiteCurrencyProvider->expects($this->once())
+            ->method('getWebsiteDefaultCurrency')
+            ->with($websiteId)
+            ->willReturn($currency);
 
         /** @var BasePriceList $priceList */
         $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
 
         $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
             ->method('getPriceList')
-            ->with($entity->getCustomer(), $entity->getWebsite())
+            ->with($entity->getCustomer(), $website)
             ->willReturn($priceList);
 
         $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
-        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($currency, $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals($expectedValue, (float)$subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());

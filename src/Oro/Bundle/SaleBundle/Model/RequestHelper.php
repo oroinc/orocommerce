@@ -4,7 +4,6 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\RFPBundle\Entity\Request;
 
 class RequestHelper

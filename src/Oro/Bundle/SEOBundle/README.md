@@ -1,21 +1,14 @@
-Oro\Bundle\ProductBundle\OroProductBundle
-=========================================
+# OroProductBundle
 
-Table of Contents
------------------
- - [Description](#description)
+OroSEOBundle provides CLI to generate [sitemap.xml](https://www.sitemaps.org/protocol.html) and [robots.txt](http://www.robotstxt.org/) files for the OroCommerce application and enables management console administrators to configure sitemap generation options in the system configuration UI. The bundle also provides UI for content managers to set localized Search Engine Optimization (SEO) meta tags (title, description, keywords) for every product, category, content node, and CMS page.
+
+## Table of Contents
+
+ - [SEO meta fields](./Resources/doc/seo_meta_fields.md)
+ - [Sitemap](./Resources/doc/sitemap.md)
  - [Expected dependencies](#expected-dependencies)
 
-Description:
-------------
-The OroSEOBundle introduces SEO (Search Engine Optimization) meta tags (title, description, keywords) for different pages. These meta fields can be edited from the admin section and they are added as meta tags on pages in the frontend (customer) application.
-Also OroSEOBundle provide possibility to generate [sitemap.xml](https://www.sitemaps.org/protocol.html) file which displays list the web pages of your site for search engines.
-
-- [SEO meta fields](./Resources/doc/seo_meta_fields.md)
-- [Sitemap](./Resources/doc/sitemap.md)
-
-Expected dependencies:
-----------------------
+## Expected dependencies:
 
 Doctrine\Common\Collections\ArrayCollection
 Doctrine\Common\DataFixtures\AbstractFixture
@@ -42,5 +35,5 @@ Symfony\Component\Form
 Symfony\Component\HttpFoundation
 Symfony\Component\HttpKernel\Bundle\Bundle
 Symfony\Component\HttpKernel\DependencyInjection\Extension
-Symfony\Component\OptionsResolver\OptionsResolverInterface
+Symfony\Component\OptionsResolver\OptionsResolver
 Symfony\Component\Translation\TranslatorInterface

@@ -2,15 +2,16 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestType extends AbstractType
 {
@@ -35,57 +36,57 @@ class RequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName', 'text', [
+            ->add('firstName', TextType::class, [
                 'label' => 'oro.rfp.request.first_name.label',
             ])
-            ->add('lastName', 'text', [
+            ->add('lastName', TextType::class, [
                 'label' => 'oro.rfp.request.last_name.label',
             ])
-            ->add('email', 'text', [
+            ->add('email', TextType::class, [
                 'label' => 'oro.rfp.request.email.label',
             ])
-            ->add('phone', 'text', [
+            ->add('phone', TextType::class, [
                 'label' => 'oro.rfp.request.phone.label',
                 'required' => false,
             ])
-            ->add('company', 'text', [
+            ->add('company', TextType::class, [
                 'label' => 'oro.rfp.request.company.label',
             ])
-            ->add('role', 'text', [
+            ->add('role', TextType::class, [
                 'label' => 'oro.rfp.request.role.label',
                 'required' => false,
             ])
-            ->add('customerUser', CustomerUserSelectType::NAME, [
+            ->add('customerUser', CustomerUserSelectType::class, [
                 'label' => 'oro.rfp.request.customer_user.label',
                 'required' => false,
             ])
-            ->add('customer', CustomerSelectType::NAME, [
+            ->add('customer', CustomerSelectType::class, [
                 'label' => 'oro.rfp.request.customer.label',
                 'required' => false,
             ])
-            ->add('note', 'textarea', [
+            ->add('note', TextareaType::class, [
                 'label' => 'oro.rfp.request.note.label',
                 'required' => false,
             ])
-            ->add('poNumber', 'text', [
+            ->add('poNumber', TextType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.po_number.label'
             ])
-            ->add('shipUntil', OroDateType::NAME, [
+            ->add('shipUntil', OroDateType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.ship_until.label'
             ])
-            ->add('requestProducts', RequestProductCollectionType::NAME, [
+            ->add('requestProducts', RequestProductCollectionType::class, [
                 'label'     => 'oro.rfp.requestproduct.entity_plural_label',
                 'add_label' => 'oro.rfp.requestproduct.add_label',
-                'options' => [
+                'entry_options' => [
                     'compact_units' => true,
                 ],
             ])
-            ->add('assignedUsers', UserMultiSelectType::NAME, [
+            ->add('assignedUsers', UserMultiSelectType::class, [
                 'label' => 'oro.rfp.request.assigned_users.label',
             ])
-            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::class, [
                 'label' => 'oro.rfp.request.assigned_customer_users.label',
             ])
         ;
@@ -98,7 +99,7 @@ class RequestType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class'           => $this->dataClass,
-            'intention'            => 'rfp_request',
+            'csrf_token_id'        => 'rfp_request',
         ]);
     }
 

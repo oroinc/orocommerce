@@ -3,13 +3,11 @@
 namespace Oro\Bundle\CMSBundle\ContentBlock;
 
 use Doctrine\Common\Collections\Collection;
-
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ContentBlockResolver
 {

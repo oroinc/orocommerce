@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -11,6 +9,13 @@ define(function(require) {
     var _ = require('underscore');
 
     ShoppingListOwnerInlineEditableViewComponent = ViewComponent.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListOwnerInlineEditableViewComponent() {
+            ShoppingListOwnerInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @param {Object} options
          */

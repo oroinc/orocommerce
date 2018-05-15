@@ -2,21 +2,17 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
-use FOS\RestBundle\Util\Codes;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
-
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @NamePrefix("oro_api_shopping_list_frontend_")
@@ -70,7 +66,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $entity = $this->getManager()->find($id);
 
         if ($entity) {
-            $form = $this->createForm(FrontendLineItemType::NAME, $entity, ['csrf_protection' => false]);
+            $form = $this->createForm(FrontendLineItemType::class, $entity, ['csrf_protection' => false]);
 
             $handler = new LineItemHandler(
                 $form,

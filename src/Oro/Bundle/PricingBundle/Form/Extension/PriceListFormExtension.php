@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class PriceListFormExtension extends AbstractTypeExtension
 {
@@ -31,7 +31,7 @@ class PriceListFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return PriceListSelectWithPriorityType::NAME;
+        return PriceListSelectWithPriorityType::class;
     }
 
     /**
@@ -42,7 +42,7 @@ class PriceListFormExtension extends AbstractTypeExtension
         if ($this->configManager->get('oro_pricing.price_strategy') === MergePricesCombiningStrategy::NAME) {
             $builder->add(
                 self::MERGE_ALLOWED_FIELD,
-                'checkbox',
+                CheckboxType::class,
                 [
                     'label' => 'oro.pricing.pricelist.merge_allowed.label'
                 ]

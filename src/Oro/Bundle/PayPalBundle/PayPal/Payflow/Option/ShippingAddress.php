@@ -18,9 +18,11 @@ class ShippingAddress extends AbstractOption
     {
         $keys = $this->getAllKeys();
 
-        $resolver
-            ->setDefined($keys)
-            ->setAllowedTypes(array_fill_keys($keys, 'string'));
+        $resolver->setDefined($keys);
+
+        foreach ($keys as $key) {
+            $resolver->setAllowedTypes($key, 'string');
+        }
     }
 
     /**

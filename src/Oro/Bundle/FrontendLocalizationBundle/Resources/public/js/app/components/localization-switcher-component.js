@@ -21,6 +21,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LocalizationSwitcherComponent() {
+            LocalizationSwitcherComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
@@ -40,7 +47,7 @@ define(function(require) {
                 mediator.execute('showLoading');
                 $.post(
                     routing.generate(this.options.localizationSwitcherRoute),
-                    {'localization': localization},
+                    {localization: localization},
                     function() {
                         mediator.execute('refreshPage');
                     }

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Selenium;
 
-use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 use Oro\Bundle\CatalogBundle\Tests\Selenium\Pages\Categories;
+use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 
 class CategoriesTest extends Selenium2TestCase
 {

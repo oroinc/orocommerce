@@ -5,15 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -25,6 +18,11 @@ use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariant
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -360,18 +358,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'size' => [
                         'type' => 'enum',
                         'values' => [
-                            's' => 'S',
-                            'm' => 'M',
-                            'l' => 'L',
-                            'xl' => 'XL',
+                            'S' => 's',
+                            'M' => 'm',
+                            'L' => 'l',
+                            'XL' => 'xl',
                         ]
                     ],
                     'slim_fit' => [
@@ -427,9 +425,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'extended_field' => [
@@ -480,6 +478,14 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($fieldName) use ($variantsData) {
                     return isset($variantsData[$fieldName]['values']) ? $variantsData[$fieldName]['values'] : [];
+                }
+            );
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
                 }
             );
 

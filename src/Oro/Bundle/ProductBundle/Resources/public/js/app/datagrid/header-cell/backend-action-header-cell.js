@@ -3,11 +3,30 @@ define(function(require) {
 
     var BackendSelectHeaderCell;
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
+    var $ = require('jquery');
+    var routing = require('routing');
     var template = require('tpl!oroproduct/templates/datagrid/backend-action-header-cell.html');
     var SelectHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     var ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
+    var config = require('module').config();
+
+    var shoppingListAddAction = config.shoppingListAddAction || {
+        type: 'addproducts',
+        data_identifier: 'product.id',
+        frontend_type: 'add-products-mass',
+        handler: 'oro_shopping_list.mass_action.add_products_handler',
+        is_current: false,
+        label: 'oro.shoppinglist.actions.add_to_shopping_list',
+        name: 'oro_shoppinglist_frontend_addlineitemlist',
+        route: 'oro_shopping_list_add_products_massaction',
+        route_parameters: {},
+        frontend_handle: 'ajax',
+        confirmation: false,
+        launcherOptions: {
+            iconClassName: 'fa-shopping-cart'
+        }
+    };
 
     BackendSelectHeaderCell = SelectHeaderCell.extend({
         /** @property */
@@ -27,6 +46,15 @@ define(function(require) {
          */
         actionsPanel: ActionsPanel,
 
+        shoppingListCollection: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function BackendSelectHeaderCell() {
+            BackendSelectHeaderCell.__super__.constructor.apply(this, arguments);
+        },
+
         /**
          * @inheritDoc
          */
@@ -37,17 +65,44 @@ define(function(require) {
             this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.canUse, 50), this));
 
             ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
-                this.listenTo(collection, 'change', _.bind(_.debounce(this._onShoppingListsRefresh, 100), this));
+                this.shoppingListCollection = collection;
+                this.listenTo(collection, 'change', _.bind(this._onShoppingListsRefresh, this));
+
+                this._onShoppingListsRefresh();
             }, this));
         },
 
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            delete this.shoppingListCollection;
+            return BackendSelectHeaderCell.__super__.dispose.apply(this, arguments);
+        },
+
         canUse: function(selectState) {
-            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable' ]();
+            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable']();
         },
 
         _onShoppingListsRefresh: function() {
-            this.collection.trigger('backgrid:selectNone');
-            mediator.trigger('datagrid:doRefresh:' + this.collection.inputName);
+            var datagrid = this.column.get('datagrid');
+            datagrid.resetSelectionState();
+
+            $.ajax({
+                method: 'GET',
+                url: routing.generate('oro_shopping_list_frontend_get_mass_actions'),
+                success: function(availableMassActions) {
+                    var newMassActions = {};
+
+                    _.each(availableMassActions, function(massAction, title) {
+                        newMassActions[title] = $.extend(true, {}, shoppingListAddAction, massAction, {
+                            name: title
+                        });
+                    });
+
+                    datagrid.setMassActions(newMassActions);
+                }
+            });
 
             this.render();
         },
@@ -69,7 +124,7 @@ define(function(require) {
         renderActionsPanel: function() {
             var panel = this.subview('actionsPanel');
 
-            panel.massActionsInSticky =  this.massActionsInSticky;
+            panel.massActionsInSticky = this.massActionsInSticky;
             if (panel.haveActions()) {
                 this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
                 panel.setElement(this.$('[data-action-panel]'));

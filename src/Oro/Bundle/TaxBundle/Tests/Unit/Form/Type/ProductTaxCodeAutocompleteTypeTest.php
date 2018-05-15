@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
 {
@@ -38,14 +38,9 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         return new ProductTaxCodeAutocompleteType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_tax_code_autocomplete', $this->formType->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals('oro_entity_create_or_select_inline', $this->formType->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()

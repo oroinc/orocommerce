@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
@@ -24,9 +22,9 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     protected $translator;
 
     /**
-     * @var TaxManager
+     * @var TaxProviderRegistry
      */
-    protected $taxManager;
+    protected $taxProviderRegistry;
 
     /**
      * @var TaxFactory
@@ -34,15 +32,26 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     protected $taxFactory;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param TaxManager $taxManager
-     * @param TaxFactory $taxFactory
+     * @var TaxationSettingsProvider
      */
-    public function __construct(TranslatorInterface $translator, TaxManager $taxManager, TaxFactory $taxFactory)
-    {
+    protected $taxationSettingsProvider;
+
+    /**
+     * @param TranslatorInterface $translator
+     * @param TaxProviderRegistry $taxProviderRegistry
+     * @param TaxFactory $taxFactory
+     * @param TaxationSettingsProvider $taxationSettingsProvider
+     */
+    public function __construct(
+        TranslatorInterface $translator,
+        TaxProviderRegistry $taxProviderRegistry,
+        TaxFactory $taxFactory,
+        TaxationSettingsProvider $taxationSettingsProvider
+    ) {
         $this->translator = $translator;
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxFactory = $taxFactory;
+        $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
     /**
@@ -61,7 +70,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal = $this->createSubtotal();
 
         try {
-            $tax = $this->taxManager->getTax($entity);
+            $tax = $this->getProvider()->getTax($entity);
             $this->fillSubtotal($subtotal, $tax);
         } catch (TaxationDisabledException $e) {
         }
@@ -76,7 +85,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     {
         $subtotal = $this->createSubtotal();
         try {
-            $tax = $this->taxManager->loadTax($entity);
+            $tax = $this->getProvider()->loadTax($entity);
             $this->fillSubtotal($subtotal, $tax);
         } catch (TaxationDisabledException $e) {
         }
@@ -110,6 +119,11 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal->setAmount($tax->getTotal()->getTaxAmount());
         $subtotal->setCurrency($tax->getTotal()->getCurrency());
         $subtotal->setVisible((bool)$tax->getTotal()->getTaxAmount());
+
+        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
+            $subtotal->setOperation(Subtotal::OPERATION_IGNORE);
+        }
+
         $subtotal->setData($tax->getArrayCopy());
 
         return $subtotal;
@@ -127,5 +141,13 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     public function supportsCachedSubtotal($entity)
     {
         return $this->taxFactory->supports($entity);
+    }
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

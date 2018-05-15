@@ -6,6 +6,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
@@ -43,12 +44,14 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
                     $this->assertLeftOperand($left);
 
                     $alias = '_ap' . $right->getContainerId();
-                    $limitationDql = str_replace('alias', $alias, sprintf(
-                        'SELECT 1 FROM %s alias WHERE alias.product = %s AND alias.priceList = %s',
+                    QueryBuilderUtil::checkIdentifier($alias);
+                    $limitationDql = sprintf(
+                        'SELECT 1 FROM %1$s %2$s WHERE %2$s.product = %3$s AND %2$s.priceList = %4$s',
                         PriceListToProduct::class,
+                        $alias,
                         $this->getTableAliasByNode($aliasMapping, $left),
                         $this->getTableAliasByNode($aliasMapping, $right)
-                    ));
+                    );
 
                     $expression = $expr->exists($limitationDql);
                     if ($operation === 'not in') {

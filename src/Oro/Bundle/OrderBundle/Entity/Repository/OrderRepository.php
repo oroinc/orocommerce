@@ -4,7 +4,6 @@ namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -25,9 +24,11 @@ class OrderRepository extends EntityRepository
             ->select('COUNT(orders.id)')
             ->where($qb->expr()->in('orders.currency', ':removingCurrencies'))
             ->setParameter('removingCurrencies', $removingCurrencies);
+
         if ($organization instanceof Organization) {
-            $qb->andWhere('orders.organization = :organization');
-            $qb->setParameter(':organization', $organization);
+            $qb
+                ->andWhere(($qb->expr()->in('orders.organization', ':organization')))
+                ->setParameter('organization', $organization);
         }
 
         return (bool) $qb->getQuery()->getSingleScalarResult();
@@ -46,7 +47,7 @@ class OrderRepository extends EntityRepository
             ->leftJoin('orders.billingAddress', 'billingAddress')
             ->leftJoin('orders.discounts', 'discounts')
             ->where($qb->expr()->eq('orders.id', ':orderId'))
-            ->setParameter(':orderId', $id)
+            ->setParameter('orderId', $id)
             ->addOrderBy($qb->expr()->asc('orders.id'))
             ->addOrderBy($qb->expr()->asc('lineItems.id'));
 
@@ -63,7 +64,7 @@ class OrderRepository extends EntityRepository
     public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses)
     {
         $qb = $this->createQueryBuilder('orders');
-        $qb->select('IDENTITY(orders.customerUser) as customer_id')
+        $qb->select('IDENTITY(orders.customerUser) as customer_user_id')
             ->addSelect('IDENTITY(lineItems.product) as product_id')
             ->addSelect(
                 $qb->expr()->max('orders.createdAt') . ' as created_at'
@@ -75,9 +76,9 @@ class OrderRepository extends EntityRepository
             ->groupBy('orders.customerUser, lineItems.product')
             ->orderBy('lineItems.product');
 
-        $qb->setParameter(':productIdList', $productIds)
-            ->setParameter(':orderStatuses', $orderStatuses)
-            ->setParameter(':websiteId', $websiteId);
+        $qb->setParameter('productIdList', $productIds)
+            ->setParameter('orderStatuses', $orderStatuses)
+            ->setParameter('websiteId', $websiteId);
 
         return $qb;
     }

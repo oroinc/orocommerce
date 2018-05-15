@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
@@ -38,7 +37,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function find(Product $product, $bidirectional = null, $limit = null)
+    public function find(Product $product, $bidirectional = false, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
@@ -47,7 +46,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
         return $this->getUpsellProductRepository()
             ->findUpsell(
                 $product->getId(),
-                $limit === null ? $this->configProvider->getLimit() : $limit
+                $limit
             );
     }
 

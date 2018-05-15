@@ -10,7 +10,7 @@ Get details of the product price attribute value by its ID.
 
 ### get_list
 
-Get the collection of product price attribute value details. A collection may contain all values or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get the collection of product price attribute value details. A collection may contain all values or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -111,7 +111,7 @@ Delete a product price attribute value identified by ID.
 
 ### delete_list
 
-Delete a collection of product price attribute values. A collection may contain all values or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of product price attribute values. A collection may contain all values or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 

@@ -51,6 +51,13 @@ define(function(require) {
         },
 
         /**
+         * @inheritDoc
+         */
+        constructor: function ProductQuantityEditableView() {
+            ProductQuantityEditableView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */
@@ -152,7 +159,7 @@ define(function(require) {
 
             if (_.isObject(options)) {
                 var settings = this.validator.settings;
-                settings = $.extend(true, settings, options);
+                $.extend(true, settings, options);
             }
         },
 
@@ -164,7 +171,6 @@ define(function(require) {
             }
             this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
             this.$el.on('change', this.elements.unit, _.bind(changeAction, this));
-
         },
 
         saveModelState: function() {
@@ -237,7 +243,9 @@ define(function(require) {
             savePromise
                 .done(_.bind(this.onSaveSuccess, this))
                 .fail(_.bind(this.onSaveError, this))
-                .always(_.bind(function() {this._isSaving = false;}, this));
+                .always(_.bind(function() {
+                    this._isSaving = false;
+                }, this));
         },
 
         onSaveSuccess: function(response) {

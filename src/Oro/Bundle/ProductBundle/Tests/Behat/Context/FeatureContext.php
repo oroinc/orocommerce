@@ -130,6 +130,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $warehouseConfig = new WarehouseConfig($warehouse, 1);
             $configManager = $this->getContainer()->get('oro_config.global');
             $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
+            $configManager->set('oro_inventory.manage_inventory', true);
             $configManager->flush();
         } else {
             $inventoryLevelEntityManager->persist($inventoryLevel);
@@ -497,8 +498,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->gridContext->clickActionInRow('Default Web Catalog', 'Edit Content Tree');
         $this->waitForAjax();
         $this->oroMainContext->iClickOn('Show Variants Dropdown');
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Add Product Collection');
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Content Variants');
+        $this->waitForAjax();
         $this->oroMainContext->assertPageContainsNumElements(1, 'Product Collection Variant Label');
     }
 
@@ -510,9 +514,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iSetMassActionLimitInProductCollectionsSettings($limit)
     {
         $this->iOnProductCollectionsSettingsPage();
+        $this->waitForAjax();
         $this->formContext->uncheckUseDefaultForField('Mass action limit', 'Use default');
+        $this->waitForAjax();
         $this->oroMainContext->fillField('Mass action limit', $limit);
+        $this->waitForAjax();
         $this->oroMainContext->pressButton('Save settings');
+        $this->waitForAjax();
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
 
@@ -524,7 +532,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
         $this->configContext->followLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
-        $this->waitForAjax();
     }
 
     /**
@@ -765,11 +772,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      */
-    public function shouldSeeForLineItem($elementName, $SKU)
+    public function shouldSeeForLineItem($elementName, $SKU, $element)
     {
-        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        $productItem = $this->findElementContains($element, $SKU);
         self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
 
         if ($this->isElementVisible($elementName, $productItem)) {
@@ -787,11 +794,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item$/
+     * @Then /^(?:|I )should not see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      */
-    public function shouldNotSeeForLineItem($elementName, $SKU)
+    public function shouldNotSeeForLineItem($elementName, $SKU, $element)
     {
-        $productItem = $this->findElementContains('ProductLineItem', $SKU);
+        $productItem = $this->findElementContains($element, $SKU);
         self::assertNotNull($productItem, sprintf('line item with SKU "%s" not found', $SKU));
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
@@ -1028,7 +1035,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Click on button in matrix order window
-     * Example: Given I click "Add to Shopping list" in matrix order window
+     * Example: Given I click "Add to Shopping List" in matrix order window
      * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in matrix order window$/
      */
     public function pressButtonInModalWindow($button)

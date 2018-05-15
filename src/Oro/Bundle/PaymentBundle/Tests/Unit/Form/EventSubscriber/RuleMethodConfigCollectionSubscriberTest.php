@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventSubscriber;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -27,8 +24,9 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\PreloadedExtension;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
@@ -113,7 +111,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['setDefaultOptions', 'buildForm'])
+            ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -124,26 +122,23 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     PaymentMethodsConfigsRuleType::class
-                    => new PaymentMethodsConfigsRuleType($this->paymentMethodProvider, $methodViewProvider),
+                        => new PaymentMethodsConfigsRuleType($this->paymentMethodProvider, $methodViewProvider),
                     PaymentMethodConfigCollectionType::class
-                    => new PaymentMethodConfigCollectionType($this->subscriber),
+                        => new PaymentMethodConfigCollectionType($this->subscriber),
                     PaymentMethodConfigType::class
-                    => new PaymentMethodConfigType($this->paymentMethodProvider, $methodViewProvider),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                        => new PaymentMethodConfigType($this->paymentMethodProvider, $methodViewProvider),
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->createMock(LocaleSettings::class),
                         $this->createMock(CurrencyNameHelper::class)
                     ),
-                    CollectionType::NAME => new CollectionType(),
-                    PaymentMethodsConfigsRuleDestinationType::NAME => new PaymentMethodsConfigsRuleDestinationType(
+                    CollectionType::class => new CollectionType(),
+                    PaymentMethodsConfigsRuleDestinationType::class => new PaymentMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
+                    TranslatableEntityType::class => $translatableEntity,
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                 ]]

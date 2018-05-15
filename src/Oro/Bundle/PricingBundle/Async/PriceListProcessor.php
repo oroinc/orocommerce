@@ -6,21 +6,22 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Updates combined price lists in case of price changes in some products
+ */
 class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -39,14 +40,9 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $registry;
 
     /**
-     * @var StrategyRegister
+     * @var CombinedPriceListsBuilderFacade
      */
-    protected $strategyRegister;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected $combinedPriceListsBuilderFacade;
 
     /**
      * @var LoggerInterface
@@ -66,8 +62,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
-     * @param StrategyRegister $strategyRegister
-     * @param EventDispatcherInterface $dispatcher
+     * @param CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade
      * @param LoggerInterface $logger
      * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param CombinedPriceListTriggerHandler $triggerHandler
@@ -75,16 +70,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        StrategyRegister $strategyRegister,
-        EventDispatcherInterface $dispatcher,
+        CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade,
         LoggerInterface $logger,
         DatabaseExceptionHelper $databaseExceptionHelper,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
-        $this->strategyRegister = $strategyRegister;
-        $this->dispatcher = $dispatcher;
+        $this->combinedPriceListsBuilderFacade = $combinedPriceListsBuilderFacade;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
         $this->triggerHandler = $triggerHandler;
@@ -108,16 +101,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $trigger->getPriceList(),
                 true
             );
-            $builtCPLs = [];
-
-            foreach ($iterator as $combinedPriceList) {
-                $this->strategyRegister->getCurrentStrategy()
-                    ->combinePrices($combinedPriceList, $trigger->getProduct());
-                $builtCPLs[$combinedPriceList->getId()] = true;
-            }
-            if ($builtCPLs) {
-                $this->dispatchEvent($builtCPLs);
-            }
+            $this->combinedPriceListsBuilderFacade->rebuild($iterator, $trigger->getProducts());
+            $this->combinedPriceListsBuilderFacade->dispatchEvents();
             $em->commit();
             $this->triggerHandler->commit();
         } catch (InvalidArgumentException $e) {
@@ -142,15 +127,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         }
 
         return self::ACK;
-    }
-
-    /**
-     * @param array $cplIds
-     */
-    protected function dispatchEvent(array $cplIds)
-    {
-        $event = new CombinedPriceListsUpdateEvent(array_keys($cplIds));
-        $this->dispatcher->dispatch(CombinedPriceListsUpdateEvent::NAME, $event);
     }
 
     /**

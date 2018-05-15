@@ -1,0 +1,17 @@
+{% block _hero_promo_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+        'data-page-component-options': {
+            slidesToShow: 1,
+            autoplay: true,
+            autoplaySpeed: 4000,
+            arrows: false,
+            dots: true
+        },
+        '~class': ' promo-slider'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ contentBlock.content|raw }}
+    </div>
+{% endblock %}

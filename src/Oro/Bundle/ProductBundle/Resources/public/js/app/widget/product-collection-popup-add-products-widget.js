@@ -12,11 +12,17 @@ define(function(require) {
      * selected in grid to this event.
      */
     ProductCollectionPopupAddProductsWidget = DialogWidget.extend({
-
         /**
          * @property {Array}
          */
         requiredOptions: ['gridName', 'hiddenProductsSelector'],
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductCollectionPopupAddProductsWidget() {
+            ProductCollectionPopupAddProductsWidget.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

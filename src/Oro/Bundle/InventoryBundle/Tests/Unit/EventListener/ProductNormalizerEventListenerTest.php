@@ -56,4 +56,12 @@ class ProductNormalizerEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([], $event->getPlainData());
     }
+
+    public function testNormalizeUnsupported()
+    {
+        $event = new ProductNormalizerEvent($this->createMock(Product::class), [], ['fieldName' => 'product']);
+        $this->productUpcomingProvider->expects($this->never())->method('isUpcoming');
+        $this->listener->normalize($event);
+        $this->assertEmpty($event->getPlainData());
+    }
 }

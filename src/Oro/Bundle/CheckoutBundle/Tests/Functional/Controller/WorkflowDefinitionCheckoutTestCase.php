@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class WorkflowDefinitionCheckoutTestCase extends WebTestCase
 {

@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RfpProductPricesProvider;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\TierPricesProvider;
-use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 class RfpProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {

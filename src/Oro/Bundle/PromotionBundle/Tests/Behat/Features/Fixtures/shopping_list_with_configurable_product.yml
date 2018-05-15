@@ -26,6 +26,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'List 2 with configurable product'
         customerUser: '@amanda'
         organization: '@organization'
+        website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
@@ -44,10 +45,3 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist_configurable'
         organization: '@organization'
-
-Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
-    productVariant1:
-        parentProduct: '@product_configurable'
-        product: '@product2'
-        visible: true
-

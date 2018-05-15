@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
+use Oro\Bundle\SaleBundle\Entity;
+use Oro\Bundle\SaleBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-
-use Oro\Bundle\SaleBundle\Validator\Constraints;
-use Oro\Bundle\SaleBundle\Entity;
 
 class QuoteProductValidator extends ConstraintValidator
 {
@@ -48,6 +47,8 @@ class QuoteProductValidator extends ConstraintValidator
      */
     protected function addViolation($fieldPath, Constraints\QuoteProduct $constraint)
     {
-        $this->context->addViolationAt($fieldPath, $constraint->message);
+        $this->context->buildViolation($constraint->message)
+            ->atPath($fieldPath)
+            ->addViolation();
     }
 }

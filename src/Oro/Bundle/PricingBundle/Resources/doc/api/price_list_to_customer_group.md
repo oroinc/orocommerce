@@ -10,7 +10,7 @@ Get details of the price list to customer group relation by its ID.
 
 ### get_list
 
-Get the collection of price list to customer group details. A collection may contain all relations or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get the collection of price list to customer group details. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -93,7 +93,7 @@ Delete a price list to customer group relation identified by ID.
 
 ### delete_list
 
-Delete a collection of price list to customer group relations. A collection may contain all relations or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list to customer group relations. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -109,11 +109,11 @@ Delete a collection of price list to customer group relations. A collection may 
 
 ### mergeAllowed
 
-Whether to allow merging of the current price list to other price lists for the current customer group
+Whether to allow merging of the current price list to other price lists for the current customer group.
 
 ### sortOrder
 
-The priority of the current price list in a scope of the current customer group
+The priority of the current price list in a scope of the current customer group.
 
 #### create
 
@@ -123,7 +123,7 @@ The priority of the current price list in a scope of the current customer group
 
 ### customerGroup
 
-The customer group this relation is tied to
+The customer group this relation is tied to.
 
 #### create
 
@@ -133,14 +133,13 @@ The customer group this relation is tied to
 
 ### priceList
 
-The price list this relation is tied to
+The price list this relation is tied to.
 
 #### create
 
 {@inheritdoc}
 
 **The required field**
-
 
 ## SUBRESOURCES
 
@@ -148,18 +147,18 @@ The price list this relation is tied to
 
 #### get_subresource
 
-Get full information about the customer group tied to the current price list to customer group relation
+Get full information about the customer group tied to the current price list to customer group relation.
 
 #### get_relationship
 
-Retrieve the ID of the customer group tied to the current price list to customer group relation
+Retrieve the ID of the customer group tied to the current price list to customer group relation.
 
 ### priceList
 
 #### get_subresource
 
-Get full information about the price list tied to the current price list to customer group relation
+Get full information about the price list tied to the current price list to customer group relation.
 
 #### get_relationship
 
-Retrieve the ID of the price list tied to the current price list to customer group relation
+Retrieve the ID of the price list tied to the current price list to customer group relation.

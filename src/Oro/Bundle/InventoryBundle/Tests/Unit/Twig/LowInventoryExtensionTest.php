@@ -5,7 +5,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Twig;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\LowInventoryProviderStub;
 use Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 

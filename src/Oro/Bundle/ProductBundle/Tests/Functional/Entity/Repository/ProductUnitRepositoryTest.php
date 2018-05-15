@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductUnitRepositoryTest extends WebTestCase
 {
@@ -63,6 +62,44 @@ class ProductUnitRepositoryTest extends WebTestCase
         }, $products);
         $expectedData = array_combine($productIds, $expectedData);
         $this->assertEquals($expectedData, $this->getRepository()->getProductsUnits($products));
+    }
+
+    /**
+     * @dataProvider getPrimaryProductsUnits
+     * @param array $products
+     * @param array $expected
+     */
+    public function testGetPrimaryProductsUnits(array $products, array $expected)
+    {
+        $products = array_map(function ($productReference) {
+            return $this->getReference($productReference);
+        }, $products);
+        $productIds = array_map(function (Product $product) {
+            return $product->getId();
+        }, $products);
+        $expectedData = array_combine($productIds, $expected);
+        $this->assertEquals($expectedData, $this->getRepository()->getPrimaryProductsUnits($products));
+    }
+
+    /**
+     * @return array
+     */
+    public function getPrimaryProductsUnits()
+    {
+        return [
+            [
+                'products' => [
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                ],
+                'expected' => [
+                    'product-1' => 'milliliter',
+                    'product-2' => 'milliliter',
+                    'product-3' => 'milliliter',
+                ]
+            ]
+        ];
     }
 
     public function testGetProductsUnitsNoQuery()

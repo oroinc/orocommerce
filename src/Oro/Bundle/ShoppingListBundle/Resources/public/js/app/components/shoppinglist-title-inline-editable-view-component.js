@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -13,6 +11,13 @@ define(function(require) {
         eventChannelId: null,
 
         shoppingListCollection: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListTitleInlineEditableViewComponent() {
+            ShoppingListTitleInlineEditableViewComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @param {Object} options

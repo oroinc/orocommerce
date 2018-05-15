@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'settings' => [
                 'resolved' => true,
                 'manage_inventory' => [
-                    'value' => true,
+                    'value' => false,
                     'scope' => 'app'
                 ],
                 'highlight_low_inventory' => [

@@ -8,13 +8,13 @@ interface WebCatalogUsageProviderInterface
 {
     /**
      * @param WebCatalogInterface $webCatalog
+     *
      * @return bool
      */
     public function isInUse(WebCatalogInterface $webCatalog);
 
     /**
-     * @param array $entities
-     * @return array Format: [assignedEntityId => webCatalogId, ...]
+     * @return array [web site id => web catalog id, ...]
      */
-    public function getAssignedWebCatalogs(array $entities = []);
+    public function getAssignedWebCatalogs();
 }

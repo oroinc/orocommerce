@@ -3,14 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
-use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
+use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class CustomerListener
+class CustomerListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var MessageFactoryInterface
      */
@@ -90,6 +93,10 @@ class CustomerListener
      */
     protected function sendMessageToProducer(Customer $customer)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $this->messageProducer->send($this->topic, $this->messageFactory->createMessage($customer));
     }
 }

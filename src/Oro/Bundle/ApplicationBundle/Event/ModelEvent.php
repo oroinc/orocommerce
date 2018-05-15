@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ApplicationBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use Oro\Bundle\ApplicationBundle\Model\ModelInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 class ModelEvent extends Event
 {

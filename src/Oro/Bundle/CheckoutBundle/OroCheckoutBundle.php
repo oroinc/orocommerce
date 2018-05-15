@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle;
 
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler as Compiler;
+use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler as Compiler;
-use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
-
+/**
+ * Loads additional extensions
+ */
 class OroCheckoutBundle extends Bundle
 {
     /**

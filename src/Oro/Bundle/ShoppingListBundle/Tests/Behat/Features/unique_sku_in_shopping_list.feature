@@ -1,5 +1,7 @@
+@regression
 @fixture-OroShoppingListBundle:unique_sku_in_shopping_list.yml
 Feature: Unique SKU in shopping list
+  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create different window session
     Given sessions active:
@@ -57,9 +59,8 @@ Feature: Unique SKU in shopping list
     # Prepare simple products
     And I go to Products / Products
     And I click Edit gtsh_l in grid
-    And I fill "ProductForm" with:
-      | Color Attribute | Green |
-      | Size Attribute  | Yes     |
+    And I fill in product attribute "color_attribute" with "Green"
+    And I fill in product attribute "size_attribute" with "Yes"
     And I save form
     Then I should see "Product has been saved" flash message
 
@@ -68,7 +69,7 @@ Feature: Unique SKU in shopping list
     And I click Edit shirt_101 in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [color_attribute, size_attribute] |
+      | Configurable Attributes | [Color Attribute, Size Attribute] |
     And I check gtsh_l record in grid
     And I save form
     Then I should see "Product has been saved" flash message
@@ -78,7 +79,7 @@ Feature: Unique SKU in shopping list
     And I click Edit shirt_102 in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [color_attribute, size_attribute] |
+      | Configurable Attributes | [Color Attribute, Size Attribute] |
     And I check gtsh_l record in grid
     And I save form
     Then I should see "Product has been saved" flash message
@@ -101,4 +102,4 @@ Feature: Unique SKU in shopping list
     Then I should see an "Matrix Grid Form" element
     And "Shirt_102 Matrix Grid Order Form" must contains values:
       | Green Yes Quantity | 10 |
-    And I should see "Update Shoppin..."
+    And I should see "Add to Shopping list"

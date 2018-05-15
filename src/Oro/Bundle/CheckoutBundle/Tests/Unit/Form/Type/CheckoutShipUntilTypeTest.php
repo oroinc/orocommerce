@@ -9,19 +9,13 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class CheckoutShipUntilTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new CheckoutShipUntilType();
-        $this->assertSame('oro_checkout_ship_until', $formType->getName());
-    }
-
     public function testGetParent()
     {
         $formType = new CheckoutShipUntilType();
         $this->assertSame(OroDateType::class, $formType->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $checkout = new Checkout();
         $form = $this->factory->create(CheckoutShipUntilType::class, new \DateTime(), ['checkout' => $checkout]);

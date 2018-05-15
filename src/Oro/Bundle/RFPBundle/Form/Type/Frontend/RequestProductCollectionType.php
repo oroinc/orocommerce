@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class RequestProductCollectionType extends AbstractType
 {
@@ -16,7 +15,7 @@ class RequestProductCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -25,7 +24,7 @@ class RequestProductCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => RequestProductType::NAME,
+            'entry_type' => RequestProductType::class,
             'show_form_when_empty' => true,
             'error_bubbling' => false,
             'prototype_name' => '__namerequestproduct__',

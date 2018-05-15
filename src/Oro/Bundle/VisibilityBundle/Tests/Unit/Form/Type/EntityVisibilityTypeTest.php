@@ -13,8 +13,8 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -38,8 +38,6 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->visibilityPostSetDataListener = $this->getMockBuilder(
             VisibilityPostSetDataListener::class
         )
@@ -55,6 +53,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             $this->visibilityPostSetDataListener,
             $this->visibilityChoicesProvider
         );
+        parent::setUp();
     }
 
     /**
@@ -72,8 +71,9 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    DataChangesetType::NAME => new DataChangesetTypeStub(),
-                    EntityChangesetType::NAME => new EntityChangesetTypeStub(),
+                    EntityVisibilityType::class => $this->formType,
+                    DataChangesetType::class => new DataChangesetTypeStub(),
+                    EntityChangesetType::class => new EntityChangesetTypeStub(),
                 ],
                 []
             ),
@@ -81,18 +81,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(EntityVisibilityType::NAME, $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $this->visibilityChoicesProvider->expects($this->once())
             ->method('getFormattedChoices')
             ->willReturn([
-                'visible' => 'Visible',
-                'hidden' => 'Hidden'
+                'Visible' => 'visible',
+                'Hidden' => 'hidden',
             ]);
 
         $options = [
@@ -101,7 +96,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             'customerClass' => CustomerProductVisibility::class,
         ];
 
-        $form = $this->factory->create($this->formType, [], $options);
+        $form = $this->factory->create(EntityVisibilityType::class, [], $options);
 
         $customerGroupData = '{"1":{"visibility":"hidden"},"2":{"visibility":"hidden"}}';
         $customerData = '{"1":{"visibility":"customer_group"},"2":{"visibility":"visible"}}';

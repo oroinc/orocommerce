@@ -3,10 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Symfony\Component\Form\DataTransformerInterface;
-
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Symfony\Component\Form\DataTransformerInterface;
 
 class MeasureTransformer implements DataTransformerInterface
 {

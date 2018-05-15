@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\RelatedItem\UpsellProduct;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
-use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrategyTest;
 use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy;
+use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrategyTest;
 
 class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 {
@@ -17,7 +17,6 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $expectedResult = [$productB, $productC];
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindUpsell($productA, $this->anything(), $expectedResult);
-        $this->andShouldHaveLimit(3);
         $this->andShouldNotBeBidirectional();
         $this->assertSame(
             $expectedResult,
@@ -41,11 +40,10 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $expectedResult =[$productB, $productC];
         $this->relatedItemsFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindUpsell($productA, 2, $expectedResult);
-        $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->find($productA, $this->anything(), 2)
         );
     }
 
@@ -66,7 +64,7 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
     /**
      * @param Product $product
      * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
-     * @param array $related
+     * @param array $upsell
      */
     protected function andProductRepositoryShouldFindUpsell(Product $product, $limit, array $upsell)
     {
@@ -77,6 +75,9 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
             ->willReturn($upsell);
     }
 
+    /**
+     * @return FinderDatabaseStrategy
+     */
     public function createFinderStrategy()
     {
         return new FinderDatabaseStrategy(
@@ -85,6 +86,9 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createRepositoryMock()
     {
         return $this->createMock(UpsellProductRepository::class);

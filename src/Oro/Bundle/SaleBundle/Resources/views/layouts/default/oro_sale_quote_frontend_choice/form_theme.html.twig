@@ -123,13 +123,23 @@
                         {% if oro_is_unit_code_visible(offer.productUnit.code) %}
                             {% set formattedUnitCode = offer.productUnit.code|oro_format_product_unit_label(true) %}
                         {% endif %}
-                        {{ form_widget(child, {'attr': {
+
+                        {% set attr = {
                             'data-value': offer.id,
                             'data-unit': offer.productUnitCode,
                             'data-formatted-unit': formattedUnitCode,
                             'data-quantity': offer.quantity,
                             'data-price': offer.price|oro_format_price
-                        }}) }}
+                        } %}
+
+                        {% set label_attr = {
+                            'class': 'absolute'
+                        } %}
+
+                        {{ form_widget(child, {
+                            attr: attr,
+                            label_attr: label_attr
+                        }) }}
                     </td>
                     <td class="grid-cell quote-product-offer-select-offer-price">
                         {{ offer.price|oro_format_price }}

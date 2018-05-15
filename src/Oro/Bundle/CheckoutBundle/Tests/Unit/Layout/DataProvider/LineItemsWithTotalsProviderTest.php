@@ -3,15 +3,14 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Layout\LayoutContext;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Component\Layout\LayoutContext;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class LineItemsWithTotalsProviderTest extends \PHPUnit_Framework_TestCase
 {

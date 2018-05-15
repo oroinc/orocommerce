@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\SaleBundle\DependencyInjection\OroSaleExtension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroSaleBundle extends Bundle
 {

@@ -60,7 +60,7 @@ define(function(require) {
             events: {
                 before: 'entry-point:quote:load:before',
                 after: 'entry-point:quote:load:after',
-                trigger: 'entry-point:quote:trigger',
+                trigger: 'entry-point:quote:trigger'
             }
         },
 
@@ -143,6 +143,13 @@ define(function(require) {
          * @property {LoadingMaskView|null}
          */
         loadingMask: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemView() {
+            LineItemView.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -340,7 +347,7 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
-                var routeParams = {'id': productId};
+                var routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;
@@ -518,7 +525,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.free_form_product.blank'
+                    required: __('oro.sale.quoteproduct.free_form_product.blank')
                 }
             });
 
@@ -530,7 +537,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.free_form_product.blank'
+                    required: __('oro.sale.quoteproduct.free_form_product.blank')
                 }
             });
 
@@ -542,7 +549,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.product.blank'
+                    required: __('oro.sale.quoteproduct.product.blank')
                 }
             });
 
@@ -554,7 +561,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'oro.sale.quoteproduct.product.blank'
+                    required: __('oro.sale.quoteproduct.product.blank')
                 }
             });
         },
@@ -577,7 +584,6 @@ define(function(require) {
                 $(widget).find(self.options.offersPriceValueSelector).prop('readonly', true);
                 $(widget).find(self.options.offersQuantitySelector).prop('readonly', true);
             });
-
         },
 
         dispose: function() {

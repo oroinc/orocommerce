@@ -2,11 +2,16 @@
 
 namespace Oro\Bundle\SEOBundle\Command;
 
+use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GenerateSitemapCommand extends ContainerAwareCommand
+/**
+ * Command that adds message to queue for generating sitemap files
+ */
+class GenerateSitemapCommand extends ContainerAwareCommand implements CronCommandInterface
 {
     const NAME = 'oro:cron:sitemap:generate';
 
@@ -29,5 +34,22 @@ class GenerateSitemapCommand extends ContainerAwareCommand
             ->get('oro_seo.provider.sitemap_generation_scheduler');
         $scheduleGenerationProvider->scheduleSend();
         $output->writeln('<info>Sitemap generation scheduled</info>');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultDefinition()
+    {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        return $configManager->get(UpdateCronDefinitionConfigListener::CONFIG_FIELD);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isActive()
+    {
+        return true;
     }
 }

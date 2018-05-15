@@ -1,9 +1,11 @@
-Oro\Bundle\PromotionBundle\OroPromotionBundle
-=============================================
+# OroPromotionBundle
 
-Table of Contents
------------------
- * [Description](#description)
+OroPromotionBundle adds coupon and promotion features to the OroCommerce application.
+
+With this bundle, the management console administrator can enable or disable these features in the system configuration UI. For sales representatives, the bundle introduces UI in the management console to create and manage coupons and promotions, and apply promotions to the customer orders via special discounts and coupon codes. For the customer users on the storefront, it provides the ability to apply coupons to the orders and review the applied promotions and discounts.
+
+## Table of Contents
+
  * [Discounts](#discounts)
     * [Creation and Types](#discoucnts-creation-and-types)
     * [Add discount](#add-discount)
@@ -19,15 +21,7 @@ Table of Contents
  * [Discount Strategy](#discount-strategy)
  * [Applied Promotions](#applied-promotions)
 
-Description
------------
-
-This bundle introduces promotions functionality.
-An administrator can setup discounts by adding promotions.
-Promotions have basic info: name, sort order, status, schedule, discount options, conditions with scope and expression, matching items, etc. Matched promotions give discounts during the checkout process.
-
-Discounts
----------
+## Discounts
 
 **<a name="discoucnts-creation-and-types">Creation and Types</a>**
 
@@ -35,13 +29,13 @@ Each promotion has `Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration` att
 
 The following discount types are available in the system: 
 - `Oro\Bundle\PromotionBundle\Discount\OrderDiscount` that gives discount on the order level
-- `Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount` that gives discount on line-item level
-- `Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount` that gives Buy X Get Y type of discount
-- `Oro\Bundle\PromotionBundle\Discount\ShippingDiscount` that gives shipping discount
+- `Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount` that gives discount on the line-item level
+- `Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount` that gives the Buy X Get Y type of discount
+- `Oro\Bundle\PromotionBundle\Discount\ShippingDiscount` that gives a shipping discount
 
 **<a name="add-discount">Add discount</a>**
 
-In order to add a new discount that can be selected in promotion configuration you should first create a discount class that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`. You can use `Oro\Bundle\PromotionBundle\Discount\AbstractDiscount` as a base class for it. After that, register your discount as `shared: false` service, and add it to the `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` by invoking `addType` method in the service definition:
+In order to add a new discount that can be selected in promotion configuration, you should first create a discount class that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`. You can use `Oro\Bundle\PromotionBundle\Discount\AbstractDiscount` as a base class for it. After that, register your discount as a `shared: false` service, and add it to the `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` by invoking the `addType` method in the service definition:
 ```
     app.promotion.discount.my_discount:
         class: AppBundle\Promotion\Discount\OrderDiscount
@@ -62,7 +56,7 @@ In order to add a new discount that can be selected in promotion configuration y
 
 **<a name="add-discount-formtype">Add discount formType</a>**
 
-You also need to specify the FormType information for your discount. First, create FormType for it. You can use some of the already available ones for reference, for example `Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType`. Next, add it to the `Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider` in services:
+You also need to specify the FormType information for your discount. First, create a FormType for it. You can use some of the already available ones for the reference, for example `Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType`. Next, add it to the `Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider` in services:
 ```
     oro_promotion.discount_type_to_form_type_provider:
         class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
@@ -84,7 +78,7 @@ In order to connect formType fields with the discount options, they should have 
 
 **<a name="discount-applying-and-calculation">Discount applying and calculation<a>**
 
-When discount are already created by `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` and configured, the discount strategy applies discounts to `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. This context is used as a storage for applicable discounts, calculated discounts values and related information that is necessary for discount calculation process.
+When the discount is already created by `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` and configured, the discount strategy applies discounts to `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. This context is used as a storage for applicable discounts, calculated discounts values and related information that is necessary for discount calculation process.
 
 At first, the strategy iterates over all discounts and calls `\Oro\Bundle\PromotionBundle\Discount\DiscountInterface::apply`, where a discount decides whether it is applicable to the current situation or not. If it is, it adds itself into one of the applicable storages: `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$subtotalDiscounts`, `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$shippingDiscounts` or `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem::$discounts` that are stored in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$lineItems`.
 
@@ -100,10 +94,10 @@ Later, the strategy will iterate over all discounts that have been added to `Oro
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 ```
-Discount converter should return `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. Also, keep in mind that line items in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$lineItems` are stored in a unified format `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem`. `Oro\Bundle\ShoppingListBundle\Entity\LineItem` and `Oro\Bundle\OrderBundle\Entity\OrderLineItem` transform line items to this format with the help of converters.
+The discount converter should return `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. Also, keep in mind that line items in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$lineItems` are stored in a unified format `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem`. `Oro\Bundle\ShoppingListBundle\Entity\LineItem` and `Oro\Bundle\OrderBundle\Entity\OrderLineItem` transform line items to this format with the help of converters.
 
-Promotions Filtration
----------------------
+## Promotions Filtration
+
 
 **<a name="flow-and-filters-types">Flow and Filters Types</a>**
 
@@ -146,35 +140,36 @@ Next, define a service for this class which decorates `oro_promotion.rule_filtra
         arguments:
             - '@app.promotion.rule_filtration.my_filter.inner'
 ```
-Please keep in mind the `decoration_priority` that affects the order in which filters will be executed.
+Please keep in mind the `decoration_priority` affects the order in which filters will be executed.
 
 **<a name="filters-skippability-during-checkout">Filters skippability during checkout</a>**
 
-User can apply coupons during checkout process on frontend before needed information is entered to make decision whether promotion for a coupon is applicable. For example, shipping promotion can be applied by coupon on first checkout step before shipping method is chosen (that's why `ShippingFiltrationService` would filter this promotion out). So some filters need to be skipped during coupon applying process.
-As a result filters should support skippability based on option from context (see `AbstractSkippableFiltrationService::SKIP_FILTERS_KEY`).
-To make you filters skippable you may inherit `AbstractSkippableFiltrationService` or implement skipping logic on your own.
+At checkout, coupons can be applied before the user provides the information based on which the promotion is calculated. For example, a shipping promotion can be applied by coupon at the first checkout step before a shipping method is chosen (that is why `ShippingFiltrationService` would filter this promotion out). Therefore, some filters need to be skipped during the coupon application process.
 
-To skip a filter during coupon applying `disableFilter` method should be called for `oro_promotion.handler.frontend_coupon_handler` service with filter's class name:
+As a result, filters should support skippability based on the option from the context (see `AbstractSkippableFiltrationService::SKIP_FILTERS_KEY`).
+
+To make you filters skippable, you may inherit `AbstractSkippableFiltrationService` or implement skipping logic on your own.
+
+To skip a filter during coupon application, the `disableFilter` method should be called for the `oro_promotion.handler.frontend_coupon_handler` service with the filter's class name:
 ```
     oro_promotion.handler.frontend_coupon_handler:
         calls:
             - [disableFilter, ['Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService']]
 ```
 
-Discount Strategy
------------------
+## Discount Strategy
 
 The way promotions discounts will be aggregated is defined by the Discount Strategy. It is specified in the system config. To get an active strategy, `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider` is used. There are two discount strategies: 
 
-- profitable - the most profitable shipping discount and the most profitable not shipping discount will be applied
-- apply all - all discounts will be applied in the order given by the `sortOrder` property of promotion
+- Profitable - the most profitable discount is applied
+- Apply all - all discounts are applied in the order given by the `sortOrder` property of the promotion
 
-In order to add an additional strategy, create a class that implements `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface` and tag its service with  the`oro_promotion.discount_strategy` tag.
+In order to add an additional strategy, create a class that implements `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface` and tag its service with the`oro_promotion.discount_strategy` tag.
 
-The strategy decides which discounts should be applied. All information needed for discount calculation flow is stored inside `Oro\Bundle\PromotionBundle\Discount\DiscountContext`, as described in [discount applying and calculation](#discount-applying-and-calculation). This information may be used to make a strategy decision or to debug how discount calculations were made. The strategy also decreases appropriate subtotals, please keep in mind that subtotals must not get negative values as implemented here `Oro\Bundle\PromotionBundle\Discount\Strategy\AbstractStrategy::getSubtotalWithDiscount`.
+The strategy decides which discounts should be applied. All information needed for discount calculation flow is stored inside `Oro\Bundle\PromotionBundle\Discount\DiscountContext`, as described in [discount applying and calculation](#discount-applying-and-calculation). This information may be used to make a strategy decision or to debug the way discount calculations were made. The strategy also decreases appropriate subtotals. Please keep in mind that subtotals must not get negative values as implemented here `Oro\Bundle\PromotionBundle\Discount\Strategy\AbstractStrategy::getSubtotalWithDiscount`.
 
-Applied Promotions
-------------------
+## Applied Promotions
 
-When saving the `Oro\Bundle\OrderBundle\Entity\Order` entity, all discounts from `Oro\Bundle\PromotionBundle\Discount\DiscountContext` will be converted to `Oro\Bundle\PromotionBundle\Entity\AppliedDiscount` entities. In addition, based on the provided discount information, `Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager` will create `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion`. `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion` stores promotions and their discounts in the state in which they were at the time of use. So, even if a promotion was changed or deleted, you can use the old promotion configuration for discount calculation.
-In order to disable the saved `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion`, use `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator`, `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountContextDecorator`, `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountLineItemDecorator`  decorators that help ignore the discount that the applied promotion gives.
+
+When saving the `Oro\Bundle\OrderBundle\Entity\Order` entity, all discounts from `Oro\Bundle\PromotionBundle\Discount\DiscountContext` are converted to `Oro\Bundle\PromotionBundle\Entity\AppliedDiscount` entities. In addition, based on the provided discount information, `Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager` creates `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion`. `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion` stores promotions and their discounts in the state in which they were at the time of use. So, even if a promotion was changed or deleted, you can use the old promotion configuration for discount calculation.
+In order to disable the saved `Oro\Bundle\PromotionBundle\Entity\AppliedPromotion`, use `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator`, `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountContextDecorator`, `Oro\Bundle\PromotionBundle\Discount\DisabledDiscountLineItemDecorator` decorators that help ignore the discount that the applied promotion gives.

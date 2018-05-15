@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener;
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
 {

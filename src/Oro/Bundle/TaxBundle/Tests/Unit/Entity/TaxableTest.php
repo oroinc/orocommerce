@@ -3,10 +3,10 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Brick\Math\BigDecimal;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class TaxableTest extends \PHPUnit_Framework_TestCase
 {

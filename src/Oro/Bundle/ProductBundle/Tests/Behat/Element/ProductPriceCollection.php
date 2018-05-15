@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Element;
 
 use Behat\Mink\Element\NodeElement;
-
 use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\CollectionField;
 

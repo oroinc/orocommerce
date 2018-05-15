@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\FormBundle\Utils\FormUtils;
 
 class ShipToBillingAddressType extends AbstractType
 {
@@ -40,7 +40,7 @@ class ShipToBillingAddressType extends AbstractType
      */
     public function getParent()
     {
-        return 'checkbox';
+        return CheckboxType::class;
     }
 
     /**

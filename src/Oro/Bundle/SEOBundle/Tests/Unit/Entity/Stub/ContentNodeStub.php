@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;

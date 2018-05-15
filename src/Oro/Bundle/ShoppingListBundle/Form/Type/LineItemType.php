@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemType extends AbstractType
 {
@@ -35,7 +35,7 @@ class LineItemType extends AbstractType
         $builder
             ->add(
                 'product',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'required' => true,
                     'label' => 'oro.shoppinglist.lineitem.product.label',
@@ -48,7 +48,7 @@ class LineItemType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.shoppinglist.lineitem.unit.label',
@@ -58,7 +58,7 @@ class LineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.shoppinglist.lineitem.quantity.label',
@@ -68,7 +68,7 @@ class LineItemType extends AbstractType
             )
             ->add(
                 'notes',
-                'textarea',
+                TextareaType::class,
                 [
                     'required' => false,
                     'label' => 'oro.shoppinglist.lineitem.notes.label',
@@ -91,7 +91,7 @@ class LineItemType extends AbstractType
         $form = $event->getForm();
         $form->add(
             'unit',
-            ProductUnitSelectionType::NAME,
+            ProductUnitSelectionType::class,
             [
                 'required' => true,
                 'label' => 'oro.shoppinglist.lineitem.unit.label',

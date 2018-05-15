@@ -8,10 +8,10 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
@@ -25,8 +25,8 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->type = new OrderShippingTrackingCollectionType();
+        parent::setUp();
     }
 
     /**
@@ -39,12 +39,12 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
         $options = [
-            'options' => [
+            'entry_options' => [
                 'data_class' => OrderShippingTracking::class
             ]
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(OrderShippingTrackingCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
@@ -94,8 +94,9 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    OrderShippingTrackingType::NAME => new OrderShippingTrackingType(),
+                    $this->type,
+                    CollectionType::class => new CollectionType(),
+                    OrderShippingTrackingType::class => new OrderShippingTrackingType(),
                 ],
                 []
             ),
@@ -103,14 +104,9 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        static::assertSame(CollectionType::NAME, $this->type->getParent());
+        static::assertSame(CollectionType::class, $this->type->getParent());
     }
 
     public function testGetBlockPrefix()

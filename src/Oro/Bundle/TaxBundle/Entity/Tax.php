@@ -3,20 +3,27 @@
 namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Entity that represents tax
+ *
  * @ORM\Entity
  * @ORM\Table(name="oro_tax")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="oro_tax_index",
  *      routeView="oro_tax_view",
- *      routeUpdate="oro_tax_update"
+ *      routeUpdate="oro_tax_update",
+ *      defaultValues={
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
+ *      }
  * )
  */
 class Tax implements DatesAwareInterface

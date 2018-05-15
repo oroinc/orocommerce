@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -20,6 +18,13 @@ define(function(require) {
          * @property {jQuery.Element}
          */
         shoppingListLabelSelector: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function AddProductComponent() {
+            AddProductComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

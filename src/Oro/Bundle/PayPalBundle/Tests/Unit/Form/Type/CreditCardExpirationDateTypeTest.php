@@ -2,29 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 
 class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 {
     const YEAR_PERIOD = 10;
-
-    /**
-     * @var CreditCardExpirationDateType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new CreditCardExpirationDateType();
-    }
 
     /**
      * @dataProvider formConfigurationProvider
@@ -33,7 +17,7 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
      */
     public function testFormConfiguration(array $formFields, array $formOptions)
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(CreditCardExpirationDateType::class);
         $this->assertFormOptions($form->getConfig(), $formOptions);
         foreach ($formFields as $fieldname => $fieldData) {
             $this->assertTrue($form->has($fieldname));
@@ -87,10 +71,5 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
             $this->assertTrue($formConfig->hasOption($formOptionName));
             $this->assertEquals($formOptionData, $options[$formOptionName]);
         }
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_paypal_credit_card_expiration_date', $this->formType->getName());
     }
 }

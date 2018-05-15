@@ -5,13 +5,14 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\EventListener\SlugListener;
 use Oro\Component\MessageQueue\Client\Message;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Bundle\RedirectBundle\EventListener\SlugListener;
 
 class SlugListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -96,5 +97,24 @@ class SlugListenerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->listener->onFlush($event);
+    }
+
+    public function testOnFlushChangedSlugsWithDisabledListener()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())
+            ->method('getUnitOfWork');
+
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+
+        $this->disableListener();
+        $this->listener->onFlush(new OnFlushEventArgs($em));
+    }
+
+    protected function disableListener()
+    {
+        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
+        $this->listener->setEnabled(false);
     }
 }

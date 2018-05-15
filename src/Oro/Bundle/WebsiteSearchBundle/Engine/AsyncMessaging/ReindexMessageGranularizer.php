@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 
 class ReindexMessageGranularizer
 {
@@ -10,8 +11,31 @@ class ReindexMessageGranularizer
 
     /**
      * The maximum number of IDs per one reindex request message
+     *
+     * @var int
      */
-    const ID_CHUNK_SIZE = 100;
+    private $chunkSize = 100;
+
+    /**
+     * @var EntityIdentifierRepository
+     */
+    private $identifierRepository;
+
+    /**
+     * @param EntityIdentifierRepository $identifierRepository
+     */
+    public function __construct(EntityIdentifierRepository $identifierRepository)
+    {
+        $this->identifierRepository = $identifierRepository;
+    }
+
+    /**
+     * @param int $chunkSize
+     */
+    public function setChunkSize($chunkSize)
+    {
+        $this->chunkSize = $chunkSize;
+    }
 
     /**
      * @param array|string $entities
@@ -21,59 +45,70 @@ class ReindexMessageGranularizer
      *     'entityIds' int[] Array of entities ids to reindex
      * ]
      *
-     * @return array
+     * @return \Generator|array
      */
     public function process($entities, array $websites, array $context)
     {
         $entities = (array)$entities;
 
-        $entityIds = $this->getContextEntityIds($context);
-
-        $result = [];
+        $entityIds = (array)$this->getContextEntityIds($context);
 
         if (empty($websites)) {
             foreach ($entities as $entity) {
-                $chunks = $this->getChunksOfIds($entityIds);
+                $chunks = $this->getChunksOfIds($entity, $entityIds);
                 foreach ($chunks as $chunk) {
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
-                    $result[]    = [
+                    yield [
                         'class'   => [$entity],
-                        'context' => $itemContext
+                        'context' => $itemContext,
                     ];
                 }
             }
-
-            return $result;
         }
 
         foreach ($websites as $website) {
             foreach ($entities as $entity) {
-                $chunks = $this->getChunksOfIds($entityIds);
+                $chunks = $this->getChunksOfIds($entity, $entityIds);
                 foreach ($chunks as $chunk) {
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
                     $itemContext = $this->setContextWebsiteIds($itemContext, [$website]);
-                    $result[]    = [
+                    yield [
                         'class'   => [$entity],
-                        'context' => $itemContext
+                        'context' => $itemContext,
                     ];
                 }
             }
         }
 
-        return $result;
+        return [];
     }
 
     /**
+     * @param string $entityClass
      * @param array $ids
-     * @return array
+     * @return iterable|array
      */
-    private function getChunksOfIds($ids)
+    private function getChunksOfIds($entityClass, array $ids)
     {
         if (empty($ids)) {
-            return [[]]; // this will make the iteration go through
+            $ids = $this->identifierRepository->getIds($entityClass);
         }
-        return array_chunk($ids, self::ID_CHUNK_SIZE);
+        //  Split generator into chunks as generator
+        $chunk = [];
+        foreach ($ids as $id) {
+            $chunk[] = $id;
+            if (count($chunk) >= $this->chunkSize) {
+                yield $chunk;
+                $chunk = [];
+            }
+        }
+        if ([] !== $chunk) {
+            // Remaining chunk with fewer items.
+            yield $chunk;
+        }
+
+        return [];
     }
 }

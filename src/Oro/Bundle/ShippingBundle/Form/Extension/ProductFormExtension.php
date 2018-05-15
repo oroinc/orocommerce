@@ -5,18 +5,16 @@ namespace Oro\Bundle\ShippingBundle\Form\Extension;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -43,7 +41,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $builder->add(
             self::FORM_ELEMENT_NAME,
-            ProductShippingOptionsCollectionType::NAME,
+            ProductShippingOptionsCollectionType::class,
             [
                 'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                 'required' => false,
@@ -189,6 +187,6 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 }

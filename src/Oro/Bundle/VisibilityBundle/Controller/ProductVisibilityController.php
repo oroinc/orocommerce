@@ -2,21 +2,18 @@
 
 namespace Oro\Bundle\VisibilityBundle\Controller;
 
-use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 
 class ProductVisibilityController extends Controller
 {
@@ -95,14 +92,14 @@ class ProductVisibilityController extends Controller
     protected function createScopedDataForm(Product $product, array $preloadedScopes = [])
     {
         return $this->createForm(
-            ScopedDataType::NAME,
+            ScopedDataType::class,
             $product,
             [
                 'ownership_disabled' => true,
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
                 ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
-                ScopedDataType::TYPE_OPTION => EntityVisibilityType::NAME,
+                ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     EntityVisibilityType::ALL_CLASS => $this
                         ->getParameter('oro_visibility.entity.product_visibility.class'),

@@ -22,7 +22,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
             - '@oro_website_search.engine.entity_dependencies_resolver'
-            - '@oro_website_search.engine.index_data'
+            - '@oro_website_search.engine.text_filtered_index_data'
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.indexer.input_validator'
 
@@ -144,6 +144,10 @@ services:
             - '@oro_ui.html_tag_helper'
             - '@oro_website_search.helper.placeholder_helper'
 
+    oro_website_search.engine.text_filtered_index_data:
+        parent: oro_website_search.engine.index_data
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\TextFilteredIndexDataProvider'
+
     oro_website_search.helper.placeholder_helper:
         class: 'Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper'
         arguments:
@@ -161,11 +165,13 @@ services:
     oro_website_search.indexer.input_validator:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@oro_website.website.provider'
             - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
+        arguments:
+            - '@oro_website_search.entity_identifier_repository'
         public: false
 
     oro_website_search.async.indexer:
@@ -174,13 +180,15 @@ services:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.indexer.input_validator'
-            - '@oro_website_search.async.indexer.message_granularizer.reindex'
 
     oro_website_search.async_messaging.search_message.processor:
         class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor
         arguments:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_website_search.indexer.input_validator'
+            - '@oro_website_search.async.indexer.message_granularizer.reindex'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
@@ -202,7 +210,9 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'
         arguments:
             - '@oro_website_search.indexer'
-            - "@oro_website_search.async.indexer"
+            - '@oro_website_search.async.indexer'
+        calls:
+            - [setReindexMessageGranularizer, ['@oro_website_search.async.indexer.message_granularizer.reindex']]
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
 
@@ -238,13 +248,30 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onLocalizationSettingsChange }
 
-    oro_website_search.migration.demo_data_fixtures_listener.reindex:
-        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener
+    oro_website_search.event_listener.install_command:
+        class: Oro\Bundle\SearchBundle\EventListener\Command\InstallCommandListener
         arguments:
-            - '@event_dispatcher'
+            - '@request_stack'
+            - 'oro:website-search:reindex'
         tags:
             # do reindexation of website index after reindexation of search index
-            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad, priority: -110 }
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
+
+    oro_website_search.event_listener.platform_update_command:
+        class: Oro\Bundle\SearchBundle\EventListener\Command\PlatformUpdateCommandListener
+        arguments:
+            - 'oro:website-search:reindex'
+        tags:
+            # do reindexation of website index after reindexation of search index
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
+
+    oro_website_search.migration.demo_data_fixtures_listener.reindex:
+        parent: oro_platform.event_listener.data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_website_search.reindex_request.listener']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
 
     oro_website_search.provider.placeholder_provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'
@@ -278,3 +305,9 @@ services:
             - '@oro_entity.manager.dictionary.api'
         tags:
             - { name: oro_search.extension.search_filter.filter, type: multi-enum, datasource: search }
+
+    oro_website_search.entity_identifier_repository:
+        class: Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        public: false

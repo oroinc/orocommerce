@@ -1,26 +1,23 @@
-Content Blocks
------
+## Content Blocks
 
-In order to modify some predefined marketing content on the store frontend
-an Administrator can edit the defined content blocks.
+An administrator can modify a predefined marketing content in the frontend by editing the defined content blocks.
 
-`ContentBlock` entity fields:
-- `alias`, a unique identifier that can be used in the layout to [render block](#render-content-block-in-the-layout).
-- `scopes` a collection of scopes that define in what situations this content block should be displayed 
-([ScopeBundle documentation](https://github.com/orocrm/platform/blob/master/src/Oro/Bundle/ScopeBundle/README.md)).
-- `titles` localized block title that can be rendered with scope
-- `contentVariants` a collection of `TextContentVariant` entities. Each of Content Variant can have scopes that define 
-when it should be rendered. Only one content variant with the most suitable scope will be rendered at the same time. 
-If there is no suitable content variants the default one will be rendered.
+The `ContentBlock` entity fields consist of:
 
+- `alias`, a unique identifier that can be used in the layout to [render block](#render-content-block-in-the-layout);
+- `scopes`, a collection of scopes that defines the conditions for the content block to be displayed. For more information, refer to the
+[ScopeBundle](https://github.com/orocrm/platform/blob/master/src/Oro/Bundle/ScopeBundle/README.md) documentation.;
+- `titles`, a localized block title that can be rendered along with the scope;
+- `contentVariants`, a collection of the `TextContentVariant` entities. Each content variant has a scope that defines when it should be rendered. Only one content variant with the most suitable scope is rendered at a time. 
+If there is no suitable content variant, the default one is rendered instead.
  
-### Manage content blocks
+### Manage Content Blocks
 
-In **Marketing>Content Blocks** Administrator can edit the defined content blocks.
+An administrator can edit the defined content blocks in the **Marketing > Content Blocks** menu.
 
-### Create content block 
+### Create a Content Block 
 
-Developer can create content blocks with collection of predefined content variants using data migrations:
+A developer can create content blocks with a collection of predefined content variants using data migrations:
 
 ```php
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -55,9 +52,9 @@ class LoadHomePageSlider extends AbstractFixture
 }
 ```
 
-### Render content block in the layout
+### Render a Content Block in the Layout
 
-Content blocks can be rendered by unique `alias` using `content_block` block type:
+Content blocks can be rendered by unique `aliases` using the `content_block` block type:
  
 ```yaml
 layout:
@@ -69,9 +66,11 @@ layout:
             options:
                 alias: marketing-block # unique content block id
 ```
-**Notice**
-Administrator can rename or delete defined content blocks, so if there is no content block with defined alias (typo in block name or block doesn't exist) nothing will be rendered, no errors will be displayed, `notice` level message will be written to log.
+**Note**
 
-If you rendered content block to layout but nothing displayed check that:
- - content block is enabled
- - content block have at least one suitable scope or doesn't have scopes at all (that means block should be rendered without any restriction).
+An administrator can rename or delete defined content blocks. So if there is no content block with the defined alias that may be caused by a typo in a block name or non-existence of the block itself, nothing will be rendered, and no errors will be displayed. A `notice` message will be written to log.
+
+If you have rendered a content block to the layout, but nothing is displayed, check the following:
+
+ - the content block should be enabled;
+ - the content block should have at least one suitable scope or should not have any scope at all that means the block is rendered without any restriction.

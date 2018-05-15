@@ -6,13 +6,13 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
@@ -38,16 +38,16 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProvider $productPriceProvider
      * @param PriceListTreeHandler $priceListTreeHandler ,
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProvider $productPriceProvider,
         PriceListTreeHandler $priceListTreeHandler,
-        UserCurrencyManager $currencyManager
+        SubtotalProviderConstructorArguments $arguments
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
 
         $this->translator = $translator;
         $this->rounding = $rounding;
@@ -116,6 +116,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
         if ($productsPriceCriteria) {
             $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
+            $subtotal->setCombinedPriceList($priceList);
+
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
             /** @var Price $price */
             foreach ($prices as $identifier => $price) {

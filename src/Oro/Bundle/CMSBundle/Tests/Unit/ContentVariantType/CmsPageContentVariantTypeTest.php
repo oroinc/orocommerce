@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,11 +32,6 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->getPropertyAccessor()
         );
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('cms_page', $this->type->getName());
     }
 
     public function testGetTitle()

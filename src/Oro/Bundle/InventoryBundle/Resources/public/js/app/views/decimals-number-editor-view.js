@@ -1,13 +1,22 @@
-/** @lends DecimalsNumberEditorView */
 define(function(require) {
     'use strict';
 
-    var DecimalsNumberEditorView ;
+    var DecimalsNumberEditorView;
     var NumberEditorView = require('oroform/js/app/views/editor/number-editor-view');
 
-    DecimalsNumberEditorView  = NumberEditorView.extend(/** @exports DecimalsNumberEditorView .prototype */{
+    DecimalsNumberEditorView = NumberEditorView.extend(/** @lends DecimalsNumberEditorView.prototype */{
         className: 'decimals-number-editor',
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function DecimalsNumberEditorView() {
+            DecimalsNumberEditorView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if (typeof options.decimalsField !== 'undefined') {
                 options.decimals = parseInt(options.model.get(options.decimalsField));
@@ -25,5 +34,5 @@ define(function(require) {
         }
     });
 
-    return DecimalsNumberEditorView ;
+    return DecimalsNumberEditorView;
 });

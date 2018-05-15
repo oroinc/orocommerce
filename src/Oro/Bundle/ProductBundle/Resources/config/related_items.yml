@@ -18,13 +18,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_product.twig.related_item_extension:
-        class: Oro\Bundle\ProductBundle\Twig\RelatedItemExtension
-        public: false
-        arguments: ['@oro_product.related_item.helper.config_helper']
-        tags:
-            - { name: twig.extension }
-
     oro_product.related_item.data_provider.abstract_cache_decorator:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator
         abstract: true

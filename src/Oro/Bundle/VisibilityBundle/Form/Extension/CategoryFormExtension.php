@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Form\Extension;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,7 +17,7 @@ class CategoryFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CategoryType::NAME;
+        return CategoryType::class;
     }
 
     /**
@@ -28,7 +28,7 @@ class CategoryFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 EntityVisibilityType::VISIBILITY,
-                EntityVisibilityType::NAME,
+                EntityVisibilityType::class,
                 [
                     'data' => $options['data'],
                     EntityVisibilityType::ALL_CLASS => CategoryVisibility::class,

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
@@ -55,7 +54,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_14';
     }
 
     /**
@@ -241,6 +240,8 @@ class OroOrderBundleInstaller implements
         $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_sku', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
@@ -391,7 +392,7 @@ class OroOrderBundleInstaller implements
             $schema->getTable('oro_product'),
             ['parent_product_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_order'),

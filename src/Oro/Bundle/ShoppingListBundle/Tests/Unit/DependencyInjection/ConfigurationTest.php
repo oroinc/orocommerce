@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Bundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
-
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase

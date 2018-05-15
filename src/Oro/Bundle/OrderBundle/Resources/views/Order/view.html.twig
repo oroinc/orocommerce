@@ -52,14 +52,14 @@
         {%- if entity.shippingMethod and entity.shippingMethodType -%}
             {% set shippingMethodLabel = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}
 
-            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans, shippingMethodLabel) }}
+            {{ UI.renderProperty('oro.order.shipping_method.label'|trans, shippingMethodLabel) }}
         {%- endif -%}
 
         {% if entity.shippingCost is not null %}
-            {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans,
+            {{ UI.renderProperty('oro.order.shipping_cost.label'|trans,
                     entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
         {% if entity.shippingTrackings is defined %}
             {{ UI.renderHtmlProperty('oro.order.shipping_tracking.entity_label'|trans, dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id }, { cssClass: 'inner-grid order-shipping-trackings-grid' })) }}

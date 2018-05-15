@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 
 /**

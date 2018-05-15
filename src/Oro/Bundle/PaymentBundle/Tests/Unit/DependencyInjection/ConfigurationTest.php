@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Processor;
-
 use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
+use Symfony\Component\Config\Definition\Processor;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)

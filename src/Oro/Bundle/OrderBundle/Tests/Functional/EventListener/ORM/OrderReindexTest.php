@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -13,12 +11,13 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @dbIsolationPerTest
@@ -56,7 +55,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -69,7 +68,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -86,7 +85,7 @@ class OrderReindexTest extends FrontendWebTestCase
             LoadOrders::ORDER_5
         );
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
 
@@ -104,7 +103,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->remove($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -123,7 +122,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->persist($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -139,7 +138,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->flush();
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
 
         $this->assertNotContains($expectedMessage, $messages);
     }
@@ -157,7 +156,8 @@ class OrderReindexTest extends FrontendWebTestCase
             'context'   => [
                 'entityIds'  => [$product->getId()],
                 'websiteIds' => [$this->getDefaultWebsiteId()]
-            ]
+            ],
+            'granulize' => true,
         ];
     }
 
@@ -174,7 +174,8 @@ class OrderReindexTest extends FrontendWebTestCase
                 'context'   => [
                     'entityIds' => $productIds,
                     'websiteIds' => [$this->getDefaultWebsiteId()]
-                ]
+                ],
+                'granulize' => true,
             ];
     }
 

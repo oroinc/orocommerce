@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\ShippingBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxProductShippingOptionsController extends Controller
 {
@@ -68,7 +66,7 @@ class AjaxProductShippingOptionsController extends Controller
     private function buildProduct(array $productData)
     {
         $product = new Product();
-        $form = $this->createForm(ProductType::NAME, $product);
+        $form = $this->createForm(ProductType::class, $product);
         $form->submit($productData);
 
         return $product;
@@ -90,7 +88,7 @@ class AjaxProductShippingOptionsController extends Controller
         $activeShippingOptions = null;
         foreach ($shippingOptionsData as $shippingOptionsRow) {
             $shippingOptions = new ProductShippingOptions();
-            $form = $this->createForm(ProductShippingOptionsType::NAME, $shippingOptions, ['by_reference' => true]);
+            $form = $this->createForm(ProductShippingOptionsType::class, $shippingOptions, ['by_reference' => true]);
             $form->submit($shippingOptionsRow);
             $productUnit = $shippingOptions->getProductUnit();
             if ($productUnit && $unitCode === $productUnit->getCode()) {

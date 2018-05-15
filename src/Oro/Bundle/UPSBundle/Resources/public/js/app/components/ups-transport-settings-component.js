@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -45,6 +43,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function UPSTransportSettingsComponent() {
+            UPSTransportSettingsComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$elem = options._sourceElement;
@@ -71,7 +76,7 @@ define(function(require) {
 
             if (country) {
                 $.ajax({
-                    url: routing.generate(this.shippingServiceByCountryRoute, {'code': country}),
+                    url: routing.generate(this.shippingServiceByCountryRoute, {code: country}),
                     type: 'GET',
                     beforeSend: function() {
                         self.shippingServicesHolder.show();

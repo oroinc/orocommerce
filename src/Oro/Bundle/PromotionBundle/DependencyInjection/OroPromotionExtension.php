@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPromotionExtension extends Extension
 {
@@ -25,6 +25,7 @@ class OroPromotionExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
         $loader->load('block_types.yml');
+        $loader->load('services_api.yml');
 
         $container->prependExtensionConfig($this->getAlias(), $config);
     }

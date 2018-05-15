@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
-
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\EntitySerializer\DoctrineHelper;

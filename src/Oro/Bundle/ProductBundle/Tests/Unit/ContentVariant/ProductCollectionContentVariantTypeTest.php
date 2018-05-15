@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,11 +30,6 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
         $this->type = new ProductCollectionContentVariantType($this->authorizationChecker);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('product_collection', $this->type->getName());
-    }
-
     public function testGetTitle()
     {
         $this->assertEquals('oro.product.content_variant.product_collection.label', $this->type->getTitle());
@@ -43,7 +37,7 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
 
     public function testGetFormType()
     {
-        $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getFormType());
+        $this->assertEquals(ProductCollectionVariantType::class, $this->type->getFormType());
     }
 
     public function testIsAllowed()

@@ -7,7 +7,6 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,16 +44,16 @@ class ContentNodeType extends AbstractType
         $builder
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentnode.titles.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]]
+                    'entry_options' => ['constraints' => [new NotBlank()]]
                 ]
             )
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'entry_options' => [
                         'scope_type' => 'web_content',
@@ -72,7 +71,7 @@ class ContentNodeType extends AbstractType
             )
             ->add(
                 'contentVariants',
-                ContentVariantCollectionType::NAME,
+                ContentVariantCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentvariant.entity_plural_label',
                     'entry_options' => [
@@ -102,7 +101,7 @@ class ContentNodeType extends AbstractType
 
                 $form->add(
                     'slugPrototypesWithRedirect',
-                    LocalizedSlugWithRedirectType::NAME,
+                    LocalizedSlugWithRedirectType::class,
                     [
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,

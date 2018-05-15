@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
-
 class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 {
-    const TYPE = 'form';
-
     /**
      * @var QuoteToOrderResizeFormSubscriber
      */
@@ -21,7 +21,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->subscriber = new QuoteToOrderResizeFormSubscriber(self::TYPE);
+        $this->subscriber = new QuoteToOrderResizeFormSubscriber(FormType::class);
     }
 
     public function testPreSetDataEmpty()
@@ -38,7 +38,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSetData()
     {
-        $form = $this->factory->create('collection', null, ['type' => 'text']);
+        $form = $this->factory->create(CollectionType::class, null, ['type' => TextType::class]);
         $form->setData(['test']);
 
         $data = ['first', 'second'];
@@ -48,7 +48,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
         foreach ($data as $key => $value) {
             $this->assertTrue($form->has($key));
             $config = $form->get($key)->getConfig();
-            $this->assertEquals(self::TYPE, $config->getType()->getName());
+            $this->assertEquals('form', $config->getType()->getName());
             $this->assertEquals(sprintf('[%s]', $key), $config->getOption('property_path'));
             $this->assertEquals($value, $config->getOption('data'));
         }

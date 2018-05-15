@@ -3,15 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -32,7 +31,8 @@ class BrandTest extends \PHPUnit_Framework_TestCase
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Brand::STATUS_ENABLED, Brand::STATUS_DISABLED],
-            ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false]
+            ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['defaultTitle', 'Foo', null],
         ];
 
         $this->assertPropertyAccessors(new Brand(), $properties);
@@ -63,16 +63,21 @@ class BrandTest extends \PHPUnit_Framework_TestCase
     public function testPrePersist()
     {
         $brand = new Brand();
+        $this->assertNull($brand->getDefaultTitle());
+        $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->prePersist();
         $this->assertInstanceOf('\DateTime', $brand->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
     public function testPreUpdate()
     {
         $brand = new Brand();
+        $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->preUpdate();
         $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
     public function testClone()

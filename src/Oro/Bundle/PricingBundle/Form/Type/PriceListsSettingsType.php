@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class PriceListsSettingsType extends AbstractType
 {
@@ -44,20 +44,22 @@ class PriceListsSettingsType extends AbstractType
     {
         $builder->add(
             self::FALLBACK_FIELD,
-            'choice',
+            ChoiceType::class,
             [
                 'label' => 'oro.pricing.fallback.label',
                 'mapped' => true,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => $options[self::FALLBACK_CHOICES],
             ]
         )
             ->add(
                 self::PRICE_LIST_COLLECTION_FIELD,
-                PriceListCollectionType::NAME,
+                PriceListCollectionType::class,
                 [
                     'label' => 'oro.pricing.pricelist.entity_plural_label',
                     'mapped' => true,
-                    'options' => [
+                    'entry_options' => [
                         'data_class' => $options[self::PRICE_LIST_RELATION_CLASS]
                     ]
                 ]

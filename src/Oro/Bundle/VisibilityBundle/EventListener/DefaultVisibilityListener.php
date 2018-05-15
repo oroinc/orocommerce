@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 class DefaultVisibilityListener

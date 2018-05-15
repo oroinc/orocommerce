@@ -2,18 +2,26 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class SluggableEntityListener
+/**
+ * Schedule Slug regeneration for Sluggable entity which has changed Slug prototypes
+ */
+class SluggableEntityListener implements OptionalListenerInterface
 {
+    use OptionalListenerTrait;
+
     /**
      * @var MessageFactoryInterface
      */
@@ -31,8 +39,12 @@ class SluggableEntityListener
 
     /**
      * @var array
+     * [
+     *      '<entityName>' => [<id1>, <id2>, ...],
+     *       ...
+     * ]
      */
-    private $messages = [];
+    private $sluggableEntities = [];
 
     /**
      * @param MessageFactoryInterface $messageFactory
@@ -54,6 +66,10 @@ class SluggableEntityListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $entity = $args->getEntity();
         if ($entity instanceof SluggableInterface) {
             $this->scheduleEntitySlugCalculation($entity);
@@ -65,6 +81,10 @@ class SluggableEntityListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         foreach ($this->getChangedSluggableEntities($unitOfWork) as $changedSluggableEntity) {
             $this->scheduleEntitySlugCalculation($changedSluggableEntity);
@@ -73,11 +93,15 @@ class SluggableEntityListener
 
     public function postFlush()
     {
-        foreach ($this->messages as $message) {
-            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+        foreach ($this->sluggableEntities as $entityClass => $entityInfo) {
+            foreach ($entityInfo as $createRedirect => $ids) {
+                $message = $this->messageFactory->createMassMessage($entityClass, $ids, (bool)$createRedirect);
+
+                $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            }
         }
 
-        $this->messages = [];
+        $this->sluggableEntities = [];
     }
 
     /**
@@ -143,7 +167,13 @@ class SluggableEntityListener
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
-            $this->messages[] = $this->messageFactory->createMessage($entity);
+            $createRedirect = true;
+            if ($entity->getSlugPrototypesWithRedirect()) {
+                $createRedirect = $entity->getSlugPrototypesWithRedirect()->getCreateRedirect();
+            }
+
+            $entityClass = ClassUtils::getClass($entity);
+            $this->sluggableEntities[$entityClass][$createRedirect][] = $entity->getId();
         }
     }
 }

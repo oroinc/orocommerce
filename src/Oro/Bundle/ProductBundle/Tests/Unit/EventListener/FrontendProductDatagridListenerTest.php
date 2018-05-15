@@ -3,20 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,36 +29,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $themeHelper;
 
     /**
-     * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $attachmentManager;
-
-    /**
      * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $imagineCacheManager;
 
     public function setUp()
     {
-        $this->themeHelper = $this->getMockBuilder(DataGridThemeHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
+        $this->imagineCacheManager = $this->createMock(CacheManager::class);
 
-        $this->attachmentManager = $this->getMockBuilder(AttachmentManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->imagineCacheManager = $this->getMockBuilder(CacheManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        /** @deprecated Will be removed in 1.4 */
-        $doctrine = $this->createMock(RegistryInterface::class);
-
-        $this->listener = new FrontendProductDatagridListener(
-            $this->themeHelper,
-            $doctrine,
-            $this->attachmentManager,
-            $this->imagineCacheManager
-        );
+        $this->listener = new FrontendProductDatagridListener($this->themeHelper, $this->imagineCacheManager);
     }
 
     /**
@@ -95,13 +71,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             'list'  => [
                 DataGridThemeHelper::VIEW_LIST,
                 [
-                    'name'       => 'grid-name',
+                    'name' => 'grid-name',
                     'properties' => [
                         'product_units' => [
-                            'type'          => 'field',
+                            'type' => 'field',
                             'frontend_type' => 'row_array',
                         ]
                     ],
+                    'columns' => [
+                        'image'=> ['label' => 'oro.product.image.label'],
+                    ]
                 ],
             ],
             'grid'  => [
@@ -155,10 +134,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         array $data,
         array $expectedData
     ) {
-        $ids     = [];
         $records = [];
         foreach ($data as $record) {
-            $ids[]     = $record['id'];
             $records[] = new ResultRecord($record);
         }
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
@@ -13,32 +12,19 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressFormExtensionTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var PaymentMethodsConfigsRuleDestinationCollectionType
-     */
-    protected $type;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new PaymentMethodsConfigsRuleDestinationCollectionType();
-    }
 
     /**
      * @dataProvider submitDataProvider
@@ -50,12 +36,12 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
         $options = [
-            'options' => [
+            'entry_options' => [
                 'data_class' => PaymentMethodsConfigsRuleDestination::class
             ]
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
@@ -136,16 +122,15 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    PaymentMethodsConfigsRuleDestinationType::NAME => new PaymentMethodsConfigsRuleDestinationType(
+                    CollectionType::class => new CollectionType(),
+                    PaymentMethodsConfigsRuleDestinationType::class => new PaymentMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-                    'oro_country' => new CountryType(),
-                    'oro_region' => new RegionType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
+                    CountryType::class => new CountryType(),
+                    RegionType::class => new RegionType(),
+                    TranslatableEntityType::class => $translatableEntity,
                 ],
-                ['form' => [
+                [FormType::class => [
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                 ]]
             ),
@@ -153,18 +138,15 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        static::assertSame(CollectionType::NAME, $this->type->getParent());
+        $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
+        static::assertSame(CollectionType::class, $type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $this->type->getBlockPrefix());
+        $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
+        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $type->getBlockPrefix());
     }
 }

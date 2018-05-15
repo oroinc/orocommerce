@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
@@ -14,13 +13,11 @@ use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\UIBundle\Route\Router;
-
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -137,18 +134,11 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     {
         $entity = $this->getProductMock(0);
         $queryParameters = ['qwe' => 'rty'];
-        $this->request->query = new ParameterBag($queryParameters);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
-        $this->request->expects($this->at(1))
-            ->method('get')
-            ->with($this->anything())
-            ->will($this->returnValue(false));
-        $this->request->expects($this->at(2))
-            ->method('get')
-            ->with(Router::ACTION_PARAMETER)
-            ->will($this->returnValue(ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE));
+        $this->request->initialize(
+            $queryParameters,
+            [Router::ACTION_PARAMETER => ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE]
+        );
+        $this->request->setMethod('POST');
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
@@ -238,6 +228,8 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->disableOriginalConstructor()
             ->getMock();
         $entity = $this->getProductMock(0);
+
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
 
         $result = $this->handler->handleUpdate(
@@ -275,6 +267,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->with($entity)
             ->will($this->returnValue(1));
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
@@ -311,6 +304,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         );
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
@@ -337,6 +331,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
@@ -394,6 +389,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
         $handler->setTranslator($this->translator);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
 
         $result = $handler->handleUpdate(
@@ -475,15 +471,10 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject|Form $form
      * @param object $entity
-     * @param string $wid
      * @return array
      */
-    protected function assertSaveData($form, $entity, $wid = 'WID')
+    protected function assertSaveData($form, $entity)
     {
-        $this->request->expects($this->atLeastOnce())
-            ->method('get')
-            ->with('_wid', false)
-            ->will($this->returnValue($wid));
         $formView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();

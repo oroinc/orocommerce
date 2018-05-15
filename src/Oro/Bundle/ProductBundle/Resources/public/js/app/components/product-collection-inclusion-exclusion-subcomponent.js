@@ -37,6 +37,16 @@ define(function(require) {
          */
         $excluded: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function InclusionExclusionSubComponent() {
+            InclusionExclusionSubComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
@@ -56,7 +66,7 @@ define(function(require) {
                 _.bind(this.onRemoveFromIncluded, this)
             );
             mediator.on(
-                'product-collection-remove-from-excluded:' +  this.options.scope,
+                'product-collection-remove-from-excluded:' + this.options.scope,
                 _.bind(this.onRemoveFromExcluded, this)
             );
         },
@@ -144,7 +154,9 @@ define(function(require) {
                 return;
             }
 
-            ids = _.map(ids, function(value) { return parseInt(value); });
+            ids = _.map(ids, function(value) {
+                return parseInt(value);
+            });
 
             var currentState = $from.val().split(this.options.delimiter);
             currentState = _.filter(currentState, function(value) {

@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Provider;
 
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
+use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 
 class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,10 +35,10 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS, $this->createCategory());
         $expected = [
-            'parent_category' => '[trans]oro.visibility.categoryvisibility.choice.parent_category[/trans]',
-            'config' => '[trans]oro.visibility.categoryvisibility.choice.config[/trans]',
-            'hidden' => '[trans]oro.visibility.categoryvisibility.choice.hidden[/trans]',
-            'visible' => '[trans]oro.visibility.categoryvisibility.choice.visible[/trans]',
+            '[trans]oro.visibility.categoryvisibility.choice.parent_category[/trans]' => 'parent_category',
+            '[trans]oro.visibility.categoryvisibility.choice.config[/trans]' => 'config',
+            '[trans]oro.visibility.categoryvisibility.choice.hidden[/trans]' => 'hidden',
+            '[trans]oro.visibility.categoryvisibility.choice.visible[/trans]' => 'visible',
         ];
         $this->assertEquals($expected, $actual);
     }
@@ -132,8 +130,8 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->formatChoices('test.%s', ['test_1', 'test_2']);
         $expected = [
-            'test_1' => '[trans]test.test_1[/trans]',
-            'test_2' => '[trans]test.test_2[/trans]'
+            '[trans]test.test_1[/trans]' => 'test_1',
+            '[trans]test.test_2[/trans]' => 'test_2',
         ];
         $this->assertEquals($expected, $actual);
     }

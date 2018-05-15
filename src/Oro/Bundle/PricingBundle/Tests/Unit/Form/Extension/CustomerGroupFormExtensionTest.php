@@ -2,26 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerGroupTypeStub;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 use Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension;
-use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerGroupTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 {
@@ -51,14 +51,14 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    PriceListsSettingsType::NAME => new PriceListsSettingsType(),
-                    WebsiteScopedDataType::NAME => $websiteScopedDataType,
-                    CustomerGroupType::NAME => new CustomerGroupTypeStub()
+                    PriceListsSettingsType::class => new PriceListsSettingsType(),
+                    WebsiteScopedDataType::class => $websiteScopedDataType,
+                    CustomerGroupType::class => new CustomerGroupTypeStub()
                 ],
                 [
-                    CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)],
-                    'form' => [new SortableExtension()],
-                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
+                    CustomerGroupTypeStub::class => [new CustomerGroupFormExtension($listener)],
+                    FormType::class => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::class => [new PriceListFormExtension($configManager)]
                 ]
             )
         ];
@@ -74,7 +74,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submitted, array $expected)
     {
-        $form = $this->factory->create(CustomerGroupType::NAME, [], []);
+        $form = $this->factory->create(CustomerGroupType::class, [], []);
         $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME => $submitted]);
         $data = $form->get(CustomerGroupListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->getData();
         $this->assertTrue($form->isValid());

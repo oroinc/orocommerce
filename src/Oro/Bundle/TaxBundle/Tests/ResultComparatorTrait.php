@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Tests;
 
 use Brick\Math\BigNumber;
-
 use Oro\Bundle\TaxBundle\Model\AbstractResult;
 use Oro\Bundle\TaxBundle\Model\Result;
 

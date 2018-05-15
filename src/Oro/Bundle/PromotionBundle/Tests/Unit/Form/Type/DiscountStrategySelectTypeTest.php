@@ -29,17 +29,12 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new DiscountStrategySelectType($this->strategyRegistry);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(DiscountStrategySelectType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->formType->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $strategy = $this->createMock(StrategyInterface::class);
         $strategy->expects($this->once())
@@ -52,9 +47,12 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
-            ->method('setDefault')
-            ->with('choices', ['test' => 'test_strategy']);
+            ->method('setDefaults')
+            ->with([
+                'choices_as_values' => true,
+                'choices' => ['test_strategy' => 'test'],
+            ]);
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 }

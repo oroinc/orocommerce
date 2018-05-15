@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CompositeCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CacheBuilder extends CompositeCacheBuilder implements ProductCaseCacheBuilderInterface
 {

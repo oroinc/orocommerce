@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionType extends AbstractType
 {
@@ -50,7 +53,7 @@ class TaxBaseExclusionType extends AbstractType
         $builder
             ->add(
                 'country',
-                'oro_country',
+                CountryType::class,
                 [
                     'required' => true,
                     'label' => 'oro.address.country.label',
@@ -60,7 +63,7 @@ class TaxBaseExclusionType extends AbstractType
             )
             ->add(
                 'region',
-                'oro_region',
+                RegionType::class,
                 [
                     'required' => false,
                     'label' => 'oro.address.region.label',
@@ -68,21 +71,23 @@ class TaxBaseExclusionType extends AbstractType
             )
             ->add(
                 'option',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => true,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => [
-                        TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN =>
-                            'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label',
-                        TaxationSettingsProvider::USE_AS_BASE_DESTINATION =>
-                            'oro.tax.system_configuration.fields.use_as_base.destination.label',
+                        'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label' =>
+                            TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        'oro.tax.system_configuration.fields.use_as_base.destination.label' =>
+                            TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
                     ],
                     'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 [
                     'required' => true,
                     'label' => 'oro.address.region_text.label',

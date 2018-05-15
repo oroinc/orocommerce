@@ -3,11 +3,10 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OrderControllerTest extends WebTestCase
 {

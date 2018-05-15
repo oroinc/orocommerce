@@ -1,0 +1,8 @@
+{% block __oro_product_list__product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'product-item',
+        '~class': ' product-item',
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

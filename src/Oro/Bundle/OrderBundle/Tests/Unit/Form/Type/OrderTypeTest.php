@@ -2,16 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\TypeTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -41,15 +35,25 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
-use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrderTypeTest extends TypeTestCase
 {
@@ -140,17 +144,12 @@ class OrderTypeTest extends TypeTestCase
             ->with(
                 [
                     'data_class' => 'Order',
-                    'intention' => 'order'
+                    'csrf_token_id' => 'order'
                 ]
             );
 
         $this->type->setDataClass('Order');
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_order_type', $this->type->getName());
     }
 
     /**
@@ -170,7 +169,7 @@ class OrderTypeTest extends TypeTestCase
 
         $this->orderCurrencyHandler->expects($this->any())->method('setOrderCurrency');
 
-        $form = $this->factory->create($this->type, null, $options);
+        $form = $this->factory->create(OrderType::class, null, $options);
 
         $subtotal = new Subtotal();
         $subtotal->setAmount(99);
@@ -297,7 +296,7 @@ class OrderTypeTest extends TypeTestCase
                 1 => $this->getEntity(User::class, 1),
                 2 => $this->getEntity(User::class, 2),
             ],
-            'oro_user_select'
+            UserSelectType::class
         );
 
         $customerSelectType = new StubEntityType(
@@ -350,22 +349,23 @@ class OrderTypeTest extends TypeTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    OroDateType::NAME => new OroDateType(),
-                    $priceType->getName() => $priceType,
-                    $entityType->getName() => $entityType,
-                    $userSelectType->getName() => $userSelectType,
-                    $productSelectType->getName() => $productSelectType,
-                    $productUnitSelectionType->getName() => $productUnitSelectionType,
-                    $customerSelectType->getName() => $customerSelectType,
-                    $currencySelectionType->getName() => $currencySelectionType,
-                    $customerUserSelectType->getName() => $customerUserSelectType,
-                    $priceListSelectType->getName() => $priceListSelectType,
-                    OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
-                    OrderDiscountCollectionTableType::NAME => new OrderDiscountCollectionTableType(),
-                    OrderLineItemType::NAME => $orderLineItemType,
-                    OrderDiscountCollectionRowType::NAME => new OrderDiscountCollectionRowType(),
-                    QuantityTypeTrait::$name => $this->getQuantityType(),
+                    $this->type,
+                    CollectionType::class => new CollectionType(),
+                    OroDateType::class => new OroDateType(),
+                    PriceType::class => $priceType,
+                    EntityType::class => $entityType,
+                    UserSelectType::class => $userSelectType,
+                    ProductSelectType::class => $productSelectType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    CustomerSelectType::class => $customerSelectType,
+                    CurrencySelectionType::class => $currencySelectionType,
+                    CustomerUserSelectType::class => $customerUserSelectType,
+                    PriceListSelectType::class => $priceListSelectType,
+                    OrderLineItemsCollectionType::class => new OrderLineItemsCollectionType(),
+                    OrderDiscountCollectionTableType::class => new OrderDiscountCollectionTableType(),
+                    OrderLineItemType::class => $orderLineItemType,
+                    OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             ),
@@ -400,11 +400,11 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return StubEntityType
      */
     protected function prepareProductEntityType()
     {
-        $entityType = new EntityType(
+        $entityType = new StubEntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
@@ -415,7 +415,7 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {

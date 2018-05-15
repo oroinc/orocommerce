@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
+use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {

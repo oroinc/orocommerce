@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ZipCodeTest extends \PHPUnit_Framework_TestCase
 {

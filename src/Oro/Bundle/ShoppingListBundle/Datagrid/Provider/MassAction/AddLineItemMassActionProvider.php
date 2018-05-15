@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 
 use Doctrine\Common\Collections\Criteria;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -13,6 +13,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
+    const NAME_PREFIX = 'oro_shoppinglist_frontend_addlineitem';
+
     use FeatureCheckerHolderTrait;
 
     /** @var ShoppingListManager */
@@ -45,9 +47,13 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     public function getActions()
     {
         $actions = [];
-        $shoppingLists = [];
 
-        if (!$this->isGuestCustomerUser()) {
+        if ($this->isGuestCustomerUser()) {
+            $actions['current'] = $this->getConfig([
+                'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
+                'is_current' => true
+            ]);
+        } else {
             $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
 
             /** @var ShoppingList $shoppingList */
@@ -63,19 +69,13 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             }
         }
 
-        if (!empty($shoppingLists) || $this->isGuestCustomerUser()) {
-            $actions['current'] = $this->getConfig([
-                'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
-                'is_current' => true
-            ]);
-        }
-
         if ($this->isFeaturesEnabled()) {
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
                 'icon' => 'plus',
                 'route' => 'oro_shopping_list_add_products_to_new_massaction',
+                'frontend_handle' => 'shopping-list-create',
                 'frontend_options' => [
                     'title' => $this->translator->trans('oro.shoppinglist.product.add_to_shopping_list.label'),
                     'regionEnabled' => false,
@@ -93,6 +93,20 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         }
 
         return $actions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormattedActions()
+    {
+        $massActions = $this->getActions();
+        $formattedMassActions = [];
+        foreach ($massActions as $title => $massAction) {
+            $formattedMassActions[self::NAME_PREFIX . $title] = $massAction;
+        }
+
+        return $formattedMassActions;
     }
 
     /**
@@ -120,7 +134,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         return $this->translator->trans(
             'oro.shoppinglist.actions.add_to_shopping_list',
             [
-                '{{ shoppingList }}' => $shoppingList->getLabel()
+                '{{ shoppingList }}' => \strip_tags($shoppingList->getLabel())
             ]
         );
     }

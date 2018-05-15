@@ -2,36 +2,17 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Validator\Validation;
-
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
+use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
-use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MatrixCollectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var MatrixCollectionType */
-    protected $type;
-
-    protected function setUp()
-    {
-        $this->type = new MatrixCollectionType();
-
-        parent::setUp();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
     /**
      * @dataProvider submitProvider
      *
@@ -41,7 +22,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(MatrixCollection $defaultData, array $submittedData, MatrixCollection $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData);
+        $form = $this->factory->create(MatrixCollectionType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertEquals(true, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -62,7 +43,9 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                                 [
                                     'quantity' => 3,
                                 ],
-                                [],
+                                [
+                                    'quantity' => 7,
+                                ],
                             ]
                         ],
                         [
@@ -85,6 +68,16 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    public function testBuildView()
+    {
+        $expectedQtys = [3, 12];
+        $collection = $this->createCollection(true);
+        $form = $this->factory->create(MatrixCollectionType::class, $collection);
+        $view = $form->createView();
+
+        $this->assertEquals($expectedQtys, $view->vars['columnsQty']);
+    }
+
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
@@ -100,7 +93,8 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->type->configureOptions($resolver);
+        $type = new MatrixCollectionType();
+        $type->configureOptions($resolver);
     }
 
     /**
@@ -110,6 +104,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     private function createCollection($withQuantities = false)
     {
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
+        $simpleProductSmallGreen = (new ProductWithSizeAndColor())->setSize('s')->setColor('green');
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
 
         $columnSmallRed = new MatrixCollectionColumn();
@@ -118,10 +113,12 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         $columnMediumGreen = new MatrixCollectionColumn();
 
         $columnSmallRed->product = $simpleProductSmallRed;
+        $columnSmallGreen->product = $simpleProductSmallGreen;
         $columnMediumGreen->product = $simpleProductMediumGreen;
 
         if ($withQuantities) {
             $columnSmallRed->quantity = 3;
+            $columnSmallGreen->quantity = 7;
             $columnMediumGreen->quantity = 5;
         }
 

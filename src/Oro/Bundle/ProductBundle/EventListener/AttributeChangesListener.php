@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -22,28 +21,22 @@ class AttributeChangesListener
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var EventDispatcherInterface */
-    protected $dispatcher;
-
     /** @var array */
     protected static $activeStates = [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE];
 
+    /** @var MessageProducerInterface */
+    protected $producer;
+
     /**
      * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $dispatcher
+     * @param MessageProducerInterface $producer
      */
     public function __construct(
         RequestStack $requestStack,
-        ManagerRegistry $registry,
-        EventDispatcherInterface $dispatcher
+        MessageProducerInterface $producer
     ) {
         $this->requestStack = $requestStack;
-        $this->registry = $registry;
-        $this->dispatcher = $dispatcher;
+        $this->producer = $producer;
     }
 
     /**
@@ -177,16 +170,6 @@ class AttributeChangesListener
      */
     protected function triggerReindex(FieldConfigModel $attribute)
     {
-        $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
-
-        $productIds = $repository->getProductIdsByAttribute($attribute);
-        if (!$productIds) {
-            return;
-        }
-
-        $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], $productIds)
-        );
+        $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE, ['attributeId' => $attribute->getId()]);
     }
 }

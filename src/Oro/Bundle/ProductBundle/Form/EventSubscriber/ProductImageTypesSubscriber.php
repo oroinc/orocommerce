@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Form\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class ProductImageTypesSubscriber implements EventSubscriberInterface
 {
@@ -50,7 +51,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
 
             $event->getForm()->add(
                 $imageType->getName(),
-                $isRadioButton ? 'radio' : 'checkbox',
+                $isRadioButton ? RadioType::class : CheckboxType::class,
                 [
                     'label' => $imageType->getLabel(),
                     'value' => 1,

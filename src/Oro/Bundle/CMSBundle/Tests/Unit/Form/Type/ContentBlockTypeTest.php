@@ -4,49 +4,25 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
+use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
-use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
-
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
-use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ContentBlockType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new ContentBlockType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
     /**
      * @return array
      */
@@ -64,15 +40,17 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    CollectionType::class => new CollectionType(),
+                    ScopeCollectionType::class => new ScopeCollectionTypeStub(),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 []
             ),
@@ -82,7 +60,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(ContentBlockType::class);
 
         $this->assertTrue($form->has('alias'));
         $this->assertTrue($form->has('titles'));
@@ -101,7 +79,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, $existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create(ContentBlockType::class, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
 

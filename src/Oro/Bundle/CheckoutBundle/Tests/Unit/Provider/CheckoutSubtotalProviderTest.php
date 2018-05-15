@@ -7,10 +7,11 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -58,7 +59,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->roundingService,
             $this->productPriceProvider,
             $this->priceListTreeHandler,
-            $this->currencyManager
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 
@@ -123,8 +124,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entity->addLineItem($lineItem)
             ->setCurrency($currency);
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity(BasePriceList::class, ['id' => 1]);
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
 
         $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
             ->method('getPriceList')
@@ -138,6 +139,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($subtotalCurrency ?: $currency, $subtotal->getCurrency());
+        $this->assertSame(1, $subtotal->getCombinedPriceList()->getId());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals($expectedValue, $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());

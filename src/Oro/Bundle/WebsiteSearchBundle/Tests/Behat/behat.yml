@@ -1,0 +1,5 @@
+oro_behat_extension:
+  optional_listeners:
+    required_for_fixtures:
+      - 'oro_website.indexation_request_listener'
+      - 'oro_website_search.reindex_request.listener'

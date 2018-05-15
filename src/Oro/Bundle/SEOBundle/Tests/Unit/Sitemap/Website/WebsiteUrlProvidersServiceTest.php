@@ -4,8 +4,8 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Website;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
-use Oro\Component\Website\WebsiteInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersService;
+use Oro\Component\Website\WebsiteInterface;
 
 class WebsiteUrlProvidersServiceTest extends \PHPUnit_Framework_TestCase
 {

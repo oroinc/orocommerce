@@ -15,6 +15,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendPageSize() {
+            BackendPageSize.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendPageSize.__super__.initialize.call(this, options);
         },
@@ -39,8 +46,8 @@ define(function(require) {
                 this.items,
                 _.bind(
                     function(item) {
-                        return item.size === undefined ?
-                        this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
+                        return item.size === undefined
+                            ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
                     },
                     this
                 )

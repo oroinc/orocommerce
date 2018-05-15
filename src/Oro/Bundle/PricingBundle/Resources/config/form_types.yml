@@ -124,14 +124,14 @@ services:
         arguments:
             - "@oro_pricing.entity_listener.customer"
         tags:
-            - { name: form.type_extension, alias: oro_customer_type }
+            - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
 
     oro_pricing.form.extension.customer_group_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension'
         arguments:
             - "@oro_pricing.entity_listener.customer_group"
         tags:
-            - { name: form.type_extension, alias: oro_customer_group_type }
+            - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
@@ -140,14 +140,14 @@ services:
             - '@oro_pricing.shard_manager'
             - '@oro_pricing.manager.price_manager'
         tags:
-            - { name: form.type_extension, alias: oro_product }
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_pricing.form.extension.product_type.price_attributes:
         class: Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
         arguments:
             - '@doctrine'
         tags:
-            - { name: form.type_extension, alias: oro_product }
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_pricing.form.type.price_list_select_with_priority:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType'
@@ -178,8 +178,6 @@ services:
     oro_pricing.form.type.product_attribute_price:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType
        public: true
-       arguments:
-           - "@oro_currency.rounding.price_rounding_service"
        tags:
            - { name: form.type, alias: oro_pricing_product_attribute_price }
 
@@ -212,4 +210,12 @@ services:
         arguments:
             - '@oro_config.manager'
         tags:
-            - { name: form.type_extension, alias: oro_pricing_price_list_select_with_priority }
+            - { name: form.type_extension, alias: oro_pricing_price_list_select_with_priority, extended_type: Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType }
+
+    oro_pricing.form.extension.price_type.frontend:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\FrontendPriceFormExtension'
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\CurrencyBundle\Form\Type\PriceType' }

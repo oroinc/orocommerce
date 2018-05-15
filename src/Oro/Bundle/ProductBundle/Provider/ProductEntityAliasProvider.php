@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Inflector\Inflector;
-
 use Oro\Bundle\EntityBundle\Model\EntityAlias;
 use Oro\Bundle\EntityBundle\Provider\EntityAliasProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Config\AttributeConfigHelper;

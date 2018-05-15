@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -62,7 +61,7 @@ class SlugWithRedirectType extends AbstractType
         $builder
             ->add(
                 self::TEXT_SLUG_PROTOTYPE_FIELD_NAME,
-                SlugType::NAME,
+                SlugType::class,
                 [
                     'required' => !empty($options['required']),
                     'constraints' => $constraints,

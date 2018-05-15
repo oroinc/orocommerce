@@ -5,11 +5,15 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
+/**
+ * Builder for combined price lists
+ */
 class CombinedPriceListsBuilder
 {
     const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
@@ -55,12 +59,19 @@ class CombinedPriceListsBuilder
     protected $built = false;
 
     /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
+    /**
      * @param ConfigManager $configManager
      * @param PriceListCollectionProvider $priceListCollectionProvider
      * @param CombinedPriceListProvider $combinedPriceListProvider
      * @param CombinedPriceListGarbageCollector $garbageCollector
      * @param CombinedPriceListScheduleResolver $scheduleResolver
      * @param StrategyRegister $priceStrategyRegister
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @param WebsiteCombinedPriceListsBuilder $builder
      */
     public function __construct(
         ConfigManager $configManager,
@@ -68,7 +79,9 @@ class CombinedPriceListsBuilder
         CombinedPriceListProvider $combinedPriceListProvider,
         CombinedPriceListGarbageCollector $garbageCollector,
         CombinedPriceListScheduleResolver $scheduleResolver,
-        StrategyRegister $priceStrategyRegister
+        StrategyRegister $priceStrategyRegister,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        WebsiteCombinedPriceListsBuilder $builder
     ) {
         $this->configManager = $configManager;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
@@ -76,17 +89,8 @@ class CombinedPriceListsBuilder
         $this->garbageCollector = $garbageCollector;
         $this->scheduleResolver = $scheduleResolver;
         $this->priceStrategyRegister = $priceStrategyRegister;
-    }
-
-    /**
-     * @param WebsiteCombinedPriceListsBuilder $builder
-     * @return $this
-     */
-    public function setWebsiteCombinedPriceListBuilder(WebsiteCombinedPriceListsBuilder $builder)
-    {
+        $this->triggerHandler = $triggerHandler;
         $this->websiteCombinedPriceListBuilder = $builder;
-
-        return $this;
     }
 
     /**
@@ -95,8 +99,10 @@ class CombinedPriceListsBuilder
     public function build($forceTimestamp = null)
     {
         if (!$this->isBuilt()) {
+            $this->triggerHandler->startCollect();
             $this->updatePriceListsOnCurrentLevel($forceTimestamp);
             $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
+            $this->triggerHandler->commit();
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->built = true;
         }
@@ -123,7 +129,7 @@ class CombinedPriceListsBuilder
             $activeCpl = $cpl;
         }
         if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
-            $this->priceStrategyRegister->getCurrentStrategy()->combinePrices($activeCpl, null, $forceTimestamp);
+            $this->priceStrategyRegister->getCurrentStrategy()->combinePrices($activeCpl, [], $forceTimestamp);
         }
         $actualCplConfigKey = Configuration::getConfigKeyToPriceList();
         $fullCplConfigKey = Configuration::getConfigKeyToFullPriceList();

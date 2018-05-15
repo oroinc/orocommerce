@@ -8,7 +8,7 @@
         @include mosaic-grid-break-inside();
 
         &-wrapper {
-            @include mosaic-grid($mosaic-grid-columns: 2);
+            @include mosaic-grid($mosaic-grid-column-count: 2);
         }
 
         &-title {
@@ -24,7 +24,7 @@
     .product-view {
         &__attribute-box {
             &-wrapper {
-                @include mosaic-grid($mosaic-grid-columns: 1);
+                @include mosaic-grid($mosaic-grid-column-count: 1);
             }
         }
     }

@@ -1,0 +1,183 @@
+// @theme: default;
+
+.product {
+    &__view-details-link {
+        &--gallery-view {
+            display: none;
+        }
+
+        &--no-image-view {
+            .product-item--compact & {
+                display: inline-block;
+            }
+        }
+    }
+
+    &__select {
+        width: 47%;
+        display: inline-block;
+    }
+
+    &__select .select2-chosen {
+        min-width: 50px;
+    }
+
+    &__qty-container {
+        min-width: 165px;
+    }
+
+    &__qty-input {
+        width: 48%;
+        min-width: 60px;
+        margin: 0 0 20px;
+
+        &_inline {
+            display: inline-block;
+        }
+
+        &_more-info {
+            position: relative;
+
+            &:hover {
+                .product__qty-input__count-option {
+                    z-index: 6;
+
+                    border: 1px solid $product-qty-active-border-color;
+
+                    .count-minus,
+                    .count-plus {
+                        display: block;
+                    }
+                }
+
+                .product__qty-input_more-info__popup {
+                    display: block;
+                }
+            }
+
+            .product__qty-input__count-option {
+                position: relative;
+
+                border: 1px solid transparent;
+
+                .count-minus,
+                .count-plus {
+                    position: absolute;
+                    top: -1px;
+
+                    display: none;
+                    width: 21px;
+                    height: 39px;
+                    padding: 0;
+                    border: 1px solid $product-qty-active-border-color;
+                    box-shadow: none;
+
+                    background: get-color('additional', 'base');
+                    text-align: center;
+                }
+
+                .count-minus {
+                    left: -21px;
+
+                    border-right: 0;
+                    border-top-left-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                .count-plus {
+                    right: -21px;
+
+                    border-left: 0;
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
+
+                input {
+                    padding: 11px 6px;
+                }
+            }
+        }
+
+        label {
+            display: block;
+            margin: 0 0 8px;
+        }
+    }
+
+    &__specification {
+        &--list-view {
+            margin: 0 0 ($offset-y-m * 2);
+        }
+
+        &--no-image-view {
+            margin: 0 0 $offset-y-m;
+
+            &.product__specification--delivery {
+                display: none;
+            }
+
+            .product-item--compact & {
+                display: inline-block;
+                width: 100%;
+                margin: 0;
+            }
+        }
+    }
+
+    &__description {
+        &-content {
+            margin: 0 0 15px;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product {
+        &__qty-input,
+        &__select {
+            display: inline-block;
+
+            margin-top: 0;
+            width: 47%;
+        }
+
+        &__description {
+            &--list-view {
+                font-size: $base-font-size;
+                line-height: $base-line-height;
+
+                height: $base-font-size * $base-line-height * 2;
+
+                overflow: hidden;
+            }
+        }
+
+        &__view-details-link {
+            &--list-view {
+                display: none;
+            }
+
+            &--no-image-view {
+                display: none;
+
+                .product-item--compact & {
+                    display: none;
+                }
+            }
+        }
+
+        &__specification {
+            &--list-view {
+                margin: 0;
+
+                &.product__specification--delivery {
+                    display: none;
+                }
+            }
+
+            &--no-image-view {
+                margin: 0;
+            }
+        }
+    }
+}

@@ -41,7 +41,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="oro_promotion_select",
+ *              "form_type"="Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType",
  *              "grid_name"="promotion-select-grid"
  *          },
  *      }

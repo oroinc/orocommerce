@@ -4,13 +4,13 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
 use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 {

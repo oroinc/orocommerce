@@ -2,33 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductImageTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductImageType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new ProductImageType();
-
-        parent::setUp();
-    }
-
     /**
      * @return array
      */
@@ -37,19 +21,11 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ImageType::NAME => new ImageTypeStub()
+                    ImageType::class => new ImageTypeStub()
                 ],
                 []
             )
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
     }
 
     /**
@@ -61,7 +37,7 @@ class ProductImageTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedTypes, array $options)
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(ProductImageType::class, $defaultData, $options);
         $form->remove('image');
 
         $this->assertEquals($defaultData, $form->getData());
@@ -102,10 +78,5 @@ class ProductImageTypeTest extends FormIntegrationTestCase
                 'options' => ['image_types' => $imageTypes]
             ]
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductImageType::NAME, $this->formType->getName());
     }
 }

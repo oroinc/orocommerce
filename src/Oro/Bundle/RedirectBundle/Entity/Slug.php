@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
@@ -195,8 +196,9 @@ class Slug
      */
     public function setRouteParameters(array $routeParameters)
     {
+        UrlParameterHelper::normalizeNumericTypes($routeParameters);
         $this->routeParameters = $routeParameters;
-        $this->parametersHash = self::hashParameters($routeParameters);
+        $this->parametersHash = UrlParameterHelper::hashParams($routeParameters);
 
         return $this;
     }
@@ -336,14 +338,5 @@ class Slug
     public function getParametersHash()
     {
         return $this->parametersHash;
-    }
-
-    /**
-     * @param array|null $parameters
-     * @return string
-     */
-    public static function hashParameters(array $parameters = null)
-    {
-        return md5(base64_encode(serialize($parameters)));
     }
 }

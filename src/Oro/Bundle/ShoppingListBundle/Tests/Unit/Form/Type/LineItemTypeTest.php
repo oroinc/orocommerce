@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
@@ -40,10 +41,9 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->type = new LineItemType();
         $this->type->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -51,7 +51,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
                 2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
@@ -64,10 +64,11 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $entityType->getName()         => $entityType,
-                    $productSelectType->getName()  => $productSelectType,
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
-                    QuantityTypeTrait::$name       => $this->getQuantityType(),
+                    LineItemType::class => $this->type,
+                    EntityType::class => $entityType,
+                    ProductSelectType::class => $productSelectType,
+                    ProductUnitSelectionType::class => $productUnitSelection,
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             )
@@ -76,7 +77,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create(LineItemType::class);
 
         $this->assertTrue($form->has('product'));
         $this->assertTrue($form->has('quantity'));
@@ -93,7 +94,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(LineItemType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -194,11 +195,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
         $this->assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));
         $this->assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(LineItemType::NAME, $this->type->getName());
     }
 
     /**

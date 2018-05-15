@@ -6,15 +6,15 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
-
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class EntityTaxListener
 {
-    /** @var TaxManager */
-    protected $taxManager;
+    /** @var TaxProviderRegistry */
+    protected $taxProviderRegistry;
 
     /** @var TaxValue[] */
     protected $taxValues = [];
@@ -23,11 +23,11 @@ class EntityTaxListener
     protected $enabled = true;
 
     /**
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      */
-    public function __construct(TaxManager $taxManager)
+    public function __construct(TaxProviderRegistry $taxProviderRegistry)
     {
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
     }
 
     /**
@@ -64,7 +64,7 @@ class EntityTaxListener
         }
 
         try {
-            $taxValue = $this->taxManager->createTaxValue($entity);
+            $taxValue = $this->getProvider()->createTaxValue($entity);
 
             $this->taxValues[$this->getKey($entity)] = $taxValue;
             $event->getEntityManager()->persist($taxValue);
@@ -114,24 +114,7 @@ class EntityTaxListener
         // Entities with ID can be processed in preFlush
         if ($this->getIdentifier($entity, $event->getEntityManager())) {
             try {
-                // Always calculate taxes for entity which doesn't have it
-                $taxValue = $this->taxManager->getTaxValue($entity);
-                if (!$taxValue->getId()) {
-                    $this->taxManager->saveTax($entity, false);
-
-                    return;
-                }
-
-                // preFlush event called for all entities in UoW identityMap
-                // No need to store taxes every time
-                $storedTaxResult = $this->taxManager->loadTax($entity);
-                $calculatedTaxResult = $this->taxManager->getTax($entity);
-
-                // Compare result objects by serializing results
-                // it allows to compare only significant fields
-                if ($storedTaxResult->jsonSerialize() != $calculatedTaxResult->jsonSerialize()) {
-                    $this->taxManager->saveTax($entity, false);
-                }
+                $this->getProvider()->saveTax($entity);
             } catch (TaxationDisabledException $e) {
                 // Taxation disabled, skip tax saving
             }
@@ -147,7 +130,7 @@ class EntityTaxListener
             return;
         }
 
-        $this->taxManager->removeTax($entity);
+        $this->getProvider()->removeTax($entity);
     }
 
     /**
@@ -173,5 +156,13 @@ class EntityTaxListener
     protected function getKey($object)
     {
         return spl_object_hash($object);
+    }
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

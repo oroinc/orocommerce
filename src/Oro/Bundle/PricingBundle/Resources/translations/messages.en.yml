@@ -96,7 +96,7 @@ oro.pricing:
               disabled: Price List was disabled successfully
         recalculate:
             label: Recalculate
-            message: Price List Rules were Recalculates successfull
+            message: Price List Rules were Recalculates successful
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
@@ -295,6 +295,13 @@ oro.pricing:
         product_prices:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
+        product:
+            quantity:
+                short_label: 'Qty'
+                long_label: 'Quantity'
+            unit_price:
+                short_label: 'per unit'
+                long_label: 'Unit price'
 
     notification:
         price_list:

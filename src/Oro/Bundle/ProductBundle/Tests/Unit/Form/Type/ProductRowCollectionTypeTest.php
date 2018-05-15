@@ -2,67 +2,44 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-
 class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductRowCollectionType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new ProductRowCollectionType();
-
-        parent::setUp();
-    }
-
     /**
      * @return array
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
                 [
-                    'oro_collection' => new CollectionType(),
-                    ProductRowType::NAME => new ProductRowType(),
-                    ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
-                    ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
+                    CollectionType::class => new CollectionType(),
+                    ProductRowType::class => new ProductRowType(),
+                    ProductAutocompleteType::class => new StubProductAutocompleteType(),
+                    ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
                 ],
                 []
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
     }
 
     /**
@@ -74,7 +51,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData, array $options)
     {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(ProductRowCollectionType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -163,12 +140,8 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 )
             );
 
-        $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductRowCollectionType::NAME, $this->formType->getName());
+        $formType = new ProductRowCollectionType();
+        $formType->configureOptions($resolver);
     }
 
     /**

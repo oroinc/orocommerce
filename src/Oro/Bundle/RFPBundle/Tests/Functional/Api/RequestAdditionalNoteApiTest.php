@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestAdditionalNoteData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Symfony\Component\HttpFoundation\Response;
 
 class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
 {
@@ -23,7 +22,8 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
     public function testGetList()
     {
         $response = $this->cget(
-            ['entity' => 'requestadditionalnotes']
+            ['entity' => 'requestadditionalnotes'],
+            ['page' => ['size' => 1000]]
         );
 
         $expectedCount = LoadRequestData::NUM_REQUESTS
@@ -59,7 +59,8 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
             $this->getUrl($routeName, array_merge(['entity' => 'requestadditionalnotes'], $param))
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
+        self::assertEquals('GET', $response->headers->get('Allow'));
     }
 
     /**
@@ -70,16 +71,16 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
         return [
             'create action' => [
                 'method' => 'POST',
-                'routeName' => 'oro_rest_api_post'
+                'routeName' => 'oro_rest_api_list'
             ],
             'update action' => [
                 'method' => 'PATCH',
-                'routeName' => 'oro_rest_api_patch',
+                'routeName' => 'oro_rest_api_item',
                 'param' => ['id' => 1]
             ],
             'delete action' => [
                 'method' => 'DELETE',
-                'routeName' => 'oro_rest_api_delete',
+                'routeName' => 'oro_rest_api_item',
                 'param' => ['id' => 1]
             ],
         ];

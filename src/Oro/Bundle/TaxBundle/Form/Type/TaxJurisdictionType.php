@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 
 class TaxJurisdictionType extends AbstractType
 {
@@ -47,29 +51,29 @@ class TaxJurisdictionType extends AbstractType
         $builder->addEventSubscriber($this->countryAndRegionSubscriber);
 
         $builder
-            ->add('code', 'text', [
+            ->add('code', TextType::class, [
                 'label' => 'oro.tax.taxjurisdiction.code.label',
                 StripTagsExtension::OPTION_NAME => true,
                 'required' => true
             ])
-            ->add('description', 'textarea', [
+            ->add('description', TextareaType::class, [
                 'label' => 'oro.tax.taxjurisdiction.description.label',
                 'required' => false
             ])
-            ->add('country', 'oro_country', [
+            ->add('country', CountryType::class, [
                 'required' => true,
                 'label' => 'oro.tax.taxjurisdiction.country.label'
             ])
-            ->add('region', 'oro_region', [
+            ->add('region', RegionType::class, [
                 'required' => false,
                 'label' => 'oro.tax.taxjurisdiction.region.label'
             ])
-            ->add('region_text', 'hidden', [
+            ->add('region_text', HiddenType::class, [
                 'required' => false,
                 'random_id' => true,
                 'label' => 'oro.tax.taxjurisdiction.region_text.label'
             ])
-            ->add('zipCodes', ZipCodeCollectionType::NAME, [
+            ->add('zipCodes', ZipCodeCollectionType::class, [
                 'required' => false,
                 'label' => 'oro.tax.taxjurisdiction.zip_codes.label',
                 'tooltip'  => 'oro.tax.form.tooltip.zip_codes'

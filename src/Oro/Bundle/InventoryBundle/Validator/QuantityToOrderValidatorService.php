@@ -3,12 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuantityToOrderValidatorService
 {

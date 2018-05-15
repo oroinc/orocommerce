@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Oro\Component\MessageQueue\Client\Message;
 
 /**
  * {@inheritDoc}
@@ -64,16 +65,20 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $now = new \DateTime();
 
         // second call to check avoiding of same recalculation
-        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
-        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, [], $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, [], $now->getTimestamp());
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
 
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        $this->assertCount(4, $messages);
+        $this->assertCount(1, $messages);
 
-        $this->assertEquals([Product::class], $messages[0]['message']['class']);
+        /** @var Message $message */
+        $message = $messages[0]['message'];
+        $this->assertInstanceOf(Message::class, $message);
+
+        $this->assertEquals([Product::class], $message->getBody()['class']);
         $products = [];
 
         $productKeys = array_keys($expectedPrices);
@@ -83,9 +88,10 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         }
 
         $products = array_unique($products);
-        sort($messages[0]['message']['context']['entityIds']);
+        $messageProductIds = $message->getBody()['context']['entityIds'];
+        sort($messageProductIds);
         sort($products);
-        $this->assertEquals($products, $messages[0]['message']['context']['entityIds']);
+        $this->assertEquals($products, $messageProductIds);
     }
 
     /**
@@ -172,7 +178,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->flush();
 
         $combinedPriceList->setPricesCalculated(false);
-        $this->resolver->combinePrices($combinedPriceList, $product);
+        $this->resolver->combinePrices($combinedPriceList, [$product->getId()]);
         $this->assertFalse($combinedPriceList->isPricesCalculated());
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
 
@@ -256,7 +262,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->persist($price);
         $priceManager->flush();
 
-        $this->resolver->combinePrices($combinedPriceList, $price->getProduct());
+        $this->resolver->combinePrices($combinedPriceList, [$price->getProduct()->getId()]);
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
@@ -336,7 +342,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         $priceManager->remove($price);
         $priceManager->flush();
 
-        $this->resolver->combinePrices($combinedPriceList, $product);
+        $this->resolver->combinePrices($combinedPriceList, [$product->getId()]);
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);

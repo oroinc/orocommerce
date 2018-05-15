@@ -28,6 +28,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LineItemProductPricesView() {
+            LineItemProductPricesView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         deferredInitialize: function(options) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
@@ -47,7 +54,7 @@ define(function(require) {
                 var productId = this.model.get('id');
 
                 if (!_.isUndefined(productId) && _.isUndefined(tierPrices[productId])) {
-                    //load prices from server for new line items
+                    // load prices from server for new line items
                     this.updateTierPrices();
                 }
 

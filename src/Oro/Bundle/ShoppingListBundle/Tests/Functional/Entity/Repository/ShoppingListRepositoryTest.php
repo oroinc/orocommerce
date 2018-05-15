@@ -3,15 +3,16 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class ShoppingListRepositoryTest extends WebTestCase
 {
@@ -51,8 +52,16 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
         $this->assertSame($shoppingList, $availableShoppingList);
+
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+        $this->assertNull($this->getRepository()->findAvailableForCustomerUser(
+            $this->aclHelper,
+            null,
+            $website->getId()
+        ));
     }
 
     public function testFindByUser()
@@ -73,6 +82,13 @@ class ShoppingListRepositoryTest extends WebTestCase
 
             $updatedAt = $shoppingList->getUpdatedAt();
         }
+
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE3);
+        $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, [], [], $website->getId());
+        $this->assertCount(1, $shoppingLists);
+        $list = reset($shoppingLists);
+        $this->assertEquals(LoadShoppingLists::SHOPPING_LIST_9 . '_label', $list->getLabel());
     }
 
     public function testFindByUserAndId()
@@ -123,6 +139,6 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $count = $this->getRepository()->countUserShoppingLists($user->getId(), $user->getOrganization()->getId());
 
-        $this->assertEquals(6, $count);
+        $this->assertEquals(7, $count);
     }
 }

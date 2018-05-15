@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var BackendSelectAllHeaderCell;
-    var _  = require('underscore');
+    var _ = require('underscore');
     var $ = require('jquery');
     var template = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     var additionalTpl = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
@@ -20,6 +20,13 @@ define(function(require) {
 
         /** @property */
         template: template,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function BackendSelectAllHeaderCell() {
+            BackendSelectAllHeaderCell.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

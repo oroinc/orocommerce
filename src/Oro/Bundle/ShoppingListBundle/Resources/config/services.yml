@@ -33,6 +33,16 @@ services:
             - '%oro_shopping_list.entity.shopping_list.class%'
             - "@doctrine.orm.entity_manager"
 
+    oro_shopping_list.manager.guest_shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@translator'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
+
     oro_shopping_list.shopping_list.manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
         arguments:
@@ -46,6 +56,8 @@ services:
             - "@oro_security.acl_helper"
             - '@oro_shopping_list.shopping_list_provider.cache'
             - "@oro_product.provider.product_variant_availability_provider"
+        calls:
+            - [setGuestShoppingListManager, ['@oro_shopping_list.manager.guest_shopping_list']]
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
@@ -138,6 +150,7 @@ services:
                 - '@router'
             calls:
                 - [setMatrixOrderManager, ['@oro_shopping_list.provider.matrix_grid_order_manager']]
+                - [setTwigRenderer, ['@twig.form.renderer']]
             tags:
                 - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
 
@@ -174,8 +187,24 @@ services:
               - '@oro_shopping_list.provider.matrix_grid_order_manager'
               - '@oro_pricing.subtotal_processor.total_processor_provider'
               - '@oro_currency.formatter.number'
+              - '@oro_shopping_list.shopping_list.manager'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
+
+    oro_shopping_list.layout.data_provider.shopping_list_form_availability_provider:
+        parent: oro_product.layout.data_provider.product_form_availability_provider
+        calls:
+            - [setMatrixFormConfig, ['matrix_form_on_shopping_list']]
+        tags:
+            - { name: layout.data_provider, alias: shopping_list_form_availability_provider }
+
+    oro_shopping_list.layout.data_provider.matrix_grid_shopping_list:
+          class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixFormShoppingListProvider'
+          arguments:
+              - '@oro_shopping_list.layout.data_provider.matrix_order_form'
+              - '@oro_shopping_list.layout.data_provider.shopping_list_form_availability_provider'
+          tags:
+              - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_shopping_list }
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
@@ -261,6 +290,7 @@ services:
         arguments:
             - '@property_accessor'
             - '@oro_product.provider.product_variant_availability_provider'
+            - '@oro_shopping_list.manager.empty_matrix_grid'
 
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
@@ -340,6 +370,17 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
+    oro_shopping_list.voter.view_shopping_list_voter:
+        class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListViewVoter
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        public: false
+        calls:
+            - [setWebsiteManager, ['@oro_website.manager']]
+            - [setClassName, ['%oro_shopping_list.entity.shopping_list.class%']]
+        tags:
+            - { name: security.voter }
+
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
         arguments:
@@ -366,6 +407,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
+    oro_shopping_list.datagrid.total_currency_helper:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper
+        arguments:
+            - '@oro_currency.config.currency'
+            - '@oro_pricing.provider.website_currency_provider'
+
     oro_shopping_list.manager.guest_shopping_list_migration:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager'
         lazy: true
@@ -373,3 +420,45 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.shopping_list.manager'
+
+    oro_shopping_list.datagrid.extension.frontend_product_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.shopping_list.manager'
+            - '@oro_shopping_list.layout.data_provider.matrix_order_form'
+            - '@oro_product.layout.data_provider.product_list_form_availability_provider'
+            - '@oro_pricing.layout.data_provider.frontend_product_prices'
+            - '@oro_shopping_list.layout.data_provider.matrix_grid_order'
+            - '@oro_product.datagrid_theme_helper'
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_shopping_list.line_item.factory.configurable_product:
+        class: 'Oro\Bundle\ShoppingListBundle\LineItem\Factory\ConfigurableProductLineItemFactory'
+        public: false
+
+    oro_shopping_list.manager.empty_matrix_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.line_item.factory.configurable_product'
+            - '@oro_config.manager'
+
+    oro_shopping_list.entity_listener.line_item.remove_parent_products_from_shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\LineItem\RemoveParentProductsFromShoppingListLineItemListener'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.line_item.class%', event: prePersist }
+
+    oro_shopping_list.event_listener.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener
+        arguments:
+          - '@oro_shopping_list.manager.shopping_list_limit'
+          - '@oro_entity.doctrine_helper'
+        calls:
+          - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }

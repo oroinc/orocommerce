@@ -62,3 +62,10 @@
         }
     }) }}
 {% endblock %}
+
+{% block _quick_add_import_form_submit_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' hidden'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

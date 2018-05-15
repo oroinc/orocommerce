@@ -21,6 +21,7 @@ system_configuration:
         oro_seo.sitemap_priority_product:
             data_type: float
             type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            search_type: text
             priority: 200
             options:
                 label: oro.seo.system_configuration.fields.priority_product.label
@@ -33,6 +34,7 @@ system_configuration:
         oro_seo.sitemap_priority_category:
             data_type: float
             type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            search_type: text
             priority: 200
             options:
                 label: oro.seo.system_configuration.fields.priority_category.label
@@ -45,19 +47,23 @@ system_configuration:
         oro_seo.sitemap_priority_cms_page:
             data_type: float
             type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            search_type: text
             priority: 200
             options:
                 label: oro.seo.system_configuration.fields.priority_page.label
         oro_seo.sitemap_cron_definition:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
             priority: 500
             options:
                 label: oro.seo.system_configuration.fields.sitemap_cron_definition.label
+                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                choices_as_values: true
                 choices:
-                    0 0 * * 0: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label
-                    0 0 * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label
-                    0 * * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label: '0 0 * * 0'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label: '0 0 * * *'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label: '0 * * * *'
 
     tree:
         system_configuration:

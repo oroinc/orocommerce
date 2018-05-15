@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
 class ProductVariantLinksType extends AbstractType
 {
@@ -32,7 +32,7 @@ class ProductVariantLinksType extends AbstractType
         $builder
             ->add(
                 'appendVariants',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class'    => $options['product_class'],
                     'required' => false,
@@ -42,7 +42,7 @@ class ProductVariantLinksType extends AbstractType
             )
             ->add(
                 'removeVariants',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'class'    => $options['product_class'],
                     'required' => false,

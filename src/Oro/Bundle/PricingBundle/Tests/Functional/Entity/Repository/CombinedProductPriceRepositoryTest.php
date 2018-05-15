@@ -17,6 +17,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
     /**
@@ -40,7 +43,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ]
         );
         $this->insertFromSelectQueryExecutor = $this->getContainer()
-            ->get('oro_pricing.orm.insert_from_select_query_executor');
+            ->get('oro_pricing.orm.multi_insert_shard_query_executor');
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
@@ -60,11 +63,11 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
-        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, [$product]);
 
         $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
 
-        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, [$product]);
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,
@@ -78,7 +81,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $combinedPriceList,
                 $combinedPriceListRelation->getPriceList(),
                 $combinedPriceListRelation->isMergeAllowed(),
-                $product
+                [$product]
             );
         }
         $prices = $combinedProductPriceRepository->findBy(
@@ -215,14 +218,14 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
+                'value' => '1.1000',
+                'currency' => 'USD',
                 'unit' => 'bottle',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
             [
                 'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.2000',
                 'currency' => 'USD',
                 'unit' => 'liter',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
@@ -275,13 +278,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
-                'cpl' => $this->getReference('1t_2t_3t')->getId(),
-            ],
-            [
-                'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.1000',
                 'currency' => 'USD',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
@@ -319,11 +316,11 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
-        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, [$product]);
 
         $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
 
-        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, [$product]);
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,
@@ -337,7 +334,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $this->insertFromSelectQueryExecutor,
                 $combinedPriceList,
                 $combinedPriceListRelation->getPriceList(),
-                $product
+                [$product]
             );
         }
         $prices = $combinedProductPriceRepository->createQueryBuilder('prices')
@@ -361,7 +358,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->getRepository(CombinedProductPrice::class);
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
-        $this->assertCount(6, $result);
+        $this->assertCount(4, $result);
 
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         $repo->deleteByProductUnit($shardManager, $product, $productUnit);

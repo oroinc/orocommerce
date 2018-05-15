@@ -3,33 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class PriceListsSettingsTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var PriceListsSettingsType|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $priceListsSettingsType;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
-    {
-        $this->priceListsSettingsType = new PriceListsSettingsType();
-
-        parent::setUp();
-    }
 
     /**
      * @return array
@@ -50,7 +35,7 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
         $pl2 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
 
         $form = $this->factory->create(
-            $this->priceListsSettingsType,
+            PriceListsSettingsType::class,
             [
                 PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
                 PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
@@ -62,10 +47,10 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
                 PriceListsSettingsType::PRICE_LIST_RELATION_CLASS
                     => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
                 PriceListsSettingsType::FALLBACK_CHOICES => [
-                    PriceListWebsiteFallback::CONFIG =>
-                        'oro.pricing.fallback.config.label',
-                    PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
-                        'oro.pricing.fallback.current_website_only.label',
+                    'oro.pricing.fallback.config.label' =>
+                        PriceListWebsiteFallback::CONFIG,
+                    'oro.pricing.fallback.current_website_only.label' =>
+                        PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
                 ]
             ]
         );

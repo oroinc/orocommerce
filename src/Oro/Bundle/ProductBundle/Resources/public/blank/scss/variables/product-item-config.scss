@@ -1,0 +1,18 @@
+// @theme: default;
+
+$product-item-gallery-view-offset-x: $offset-x-m !default;
+$product-item-gallery-view-offset-bottom: 30px !default;
+$product-item-qty-height: 115px !default;
+
+$product-item-title-gallery-view-font-size: 15px !default;
+$product-item-title-gallery-view-line-height: 1.35 !default;
+
+$product-item-image-holder-list-view-max-width: 316px !default;
+
+$product-item-sku-value-color: get-color('primary', 'dark') !default;
+
+// tablet-small
+$product-item-gallery-view-offset-x-tablet-small: 12px !default;
+
+// mobile-landscape
+$product-item-gallery-view-offset-x-mobile-landscape: $offset-x-s !default;

@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -31,9 +28,9 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected $translator;
 
-   /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter
-     */
+    /**
+      * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter
+      */
     protected $productUnitValueFormatter;
 
     /**

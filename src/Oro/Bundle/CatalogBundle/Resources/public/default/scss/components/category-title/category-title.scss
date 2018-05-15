@@ -5,4 +5,11 @@
     line-height: 1.8;
 
     text-align: center;
+
+    &--divide-content {
+        margin: $offset-x 0;
+        padding: $offset-x-m 0;
+
+        border-bottom: 1px solid get-color('additional' , 'middle');
+    }
 }

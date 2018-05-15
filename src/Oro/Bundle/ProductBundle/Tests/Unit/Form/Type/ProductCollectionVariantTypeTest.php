@@ -11,26 +11,12 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductCollectionVariantType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new ProductCollectionVariantType();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -58,8 +44,8 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    SegmentFilterBuilderType::NAME => $segmentFilterBuilderType,
-                    ProductCollectionSegmentType::NAME => $productCollectionSegmentType
+                    SegmentFilterBuilderType::class => $segmentFilterBuilderType,
+                    ProductCollectionSegmentType::class => $productCollectionSegmentType
                 ],
                 []
             ),
@@ -69,7 +55,7 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductCollectionVariantType::class, null);
 
         $this->assertTrue($form->has('productCollectionSegment'));
         $this->assertEquals(
@@ -78,19 +64,15 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getBlockPrefix());
+        $type = new ProductCollectionVariantType();
+        $this->assertEquals(ProductCollectionVariantType::NAME, $type->getBlockPrefix());
     }
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductCollectionVariantType::class, null);
 
         $expectedDefaultOptions = [
             'content_variant_type' => ProductCollectionContentVariantType::TYPE

@@ -1,11 +1,10 @@
 <?php
 
-namespace Oro\Bundle\CmsBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,6 +36,6 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->type->getParent());
+        $this->assertEquals(CollectionType::class, $this->type->getParent());
     }
 }

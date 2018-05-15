@@ -1,4 +1,3 @@
-/** @lends PaymentSaveForLaterComponent */
 define(function(require) {
     'use strict';
 
@@ -8,7 +7,7 @@ define(function(require) {
 
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    PaymentSaveForLaterComponent = BaseComponent.extend(/** @exports PaymentSaveForLaterComponent.prototype */ {
+    PaymentSaveForLaterComponent = BaseComponent.extend(/** @lends PaymentSaveForLaterComponent.prototype */ {
         /**
          * @property {jQuery}
          */
@@ -25,6 +24,13 @@ define(function(require) {
          * @property {Boolean}
          */
         defaultState: true,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function PaymentSaveForLaterComponent() {
+            PaymentSaveForLaterComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

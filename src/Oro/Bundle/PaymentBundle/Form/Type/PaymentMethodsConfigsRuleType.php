@@ -58,13 +58,15 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             ])
             ->add('currency', CurrencySelectionType::class, [
                 'label'       => 'oro.payment.paymentmethodsconfigsrule.currency.label',
-                'empty_value' => 'oro.currency.currency.form.choose',
+                'placeholder' => 'oro.currency.currency.form.choose',
             ])
             ->add('rule', RuleType::class, [
                 'label' => 'oro.payment.paymentmethodsconfigsrule.rule.label',
             ])
             ->add('method', ChoiceType::class, [
                 'mapped'  => false,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => $this->getMethods(),
             ]);
 
@@ -76,7 +78,8 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['methods'] = $this->getMethods();
+        $choices = $form->get('method')->getConfig()->getOption('choices');
+        $view->vars['methods'] = array_flip($choices);
     }
 
     /**
@@ -106,9 +109,10 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         $result = [];
         foreach ($this->paymentMethodProvider->getPaymentMethods() as $method) {
             $identifier = $method->getIdentifier();
-            $result[$identifier] = $this->methodViewProvider
+            $label = $this->methodViewProvider
                 ->getPaymentMethodView($identifier)
                 ->getAdminLabel();
+            $result[$label] = $identifier;
         }
 
         return $result;

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model\Action;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class GetOrderLineItems extends AbstractAction
 {

@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 class InventoryLevelGridType extends AbstractType
 {
@@ -62,7 +62,7 @@ class InventoryLevelGridType extends AbstractType
      */
     public function getParent()
     {
-        return DataChangesetType::NAME;
+        return DataChangesetType::class;
     }
 
     /**
@@ -122,7 +122,7 @@ class InventoryLevelGridType extends AbstractType
     {
         // build fake field to get correct definitions of JS constraints
         $view = $this->formFactory->create(
-            'number',
+            NumberType::class,
             null,
             [
                 'constraints' => [

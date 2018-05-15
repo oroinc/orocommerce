@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\AbstractType;
-
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CatalogVisibilityType extends AbstractType
 {
@@ -18,9 +18,11 @@ class CatalogVisibilityType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices' => [
-                    CategoryVisibility::VISIBLE => 'oro.visibility.catalog.visibility.visible.label',
-                    CategoryVisibility::HIDDEN => 'oro.visibility.catalog.visibility.hidden.label',
+                    'oro.visibility.catalog.visibility.visible.label' => CategoryVisibility::VISIBLE,
+                    'oro.visibility.catalog.visibility.hidden.label' => CategoryVisibility::HIDDEN,
                 ],
             ]
         );
@@ -31,7 +33,7 @@ class CatalogVisibilityType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /**

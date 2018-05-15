@@ -7,10 +7,10 @@ use Oro\Bundle\CacheBundle\Action\DataStorage\InvalidateCacheDataStorage;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache as UPSShippingPriceCache;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class InvalidateCacheActionHandlerTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,13 +3,12 @@
 namespace Oro\Bundle\TaxBundle;
 
 use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\AddressMatcherRegistryPass;
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxProviderPass;
+use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxProviderPass;
-use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
-use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 
 class OroTaxBundle extends Bundle
 {

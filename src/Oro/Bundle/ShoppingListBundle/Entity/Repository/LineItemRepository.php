@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -137,11 +136,11 @@ class LineItemRepository extends EntityRepository
         Localization $localization = null
     ) {
         $dql = <<<DQL
-SELECT IDENTITY(li.shoppingList) as shoppingListId, IDENTITY(li.product) as productId
+SELECT li
 FROM OroShoppingListBundle:LineItem AS li
 WHERE li.shoppingList IN (:shoppingLists) AND (
     SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
-    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id
+    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id AND li2.parentProduct IS NULL
 ) <= :productCount
 ORDER BY li.shoppingList DESC, li.id DESC
 DQL;
@@ -157,18 +156,19 @@ DQL;
             ->createQuery($dql)
             ->setParameter('shoppingLists', $shoppingListIds)
             ->setParameter('productCount', $productCount)
-            ->getArrayResult();
+            ->getResult();
 
         $result = [];
 
         $productsIds = array_map(
-            function ($lineItem) {
-                return $lineItem['productId'];
+            function (LineItem $lineItem) {
+                return $lineItem->getProduct()->getId();
             },
             $lineItems
         );
         if (count($productsIds) > 0) {
             $qb = $this->_em->createQueryBuilder();
+            /** @var Product[] $products */
             $products = $qb->select('product, names')
                 ->from(Product::class, 'product')
                 ->join('product.names', 'names')
@@ -181,16 +181,25 @@ DQL;
                 $organizedProducts[$product->getId()] = $product;
             }
             foreach ($lineItems as $lineItem) {
-                $shoppingListId = $lineItem['shoppingListId'];
-                $product = $organizedProducts[$lineItem['productId']];
+                $shoppingListId = $lineItem->getShoppingList()->getId();
+                $product = $organizedProducts[$lineItem->getProduct()->getId()];
                 if ($product !== null) {
-                    $result[$shoppingListId][] = [
-                        'name' =>  $product->getName($localization)->getString()
-                    ];
+                    if ($lineItem->getParentProduct()) {
+                        $result[$shoppingListId][$lineItem->getParentProduct()->getId()] = [
+                            'name' => $lineItem->getParentProduct()->getName($localization)->getString()
+                        ];
+                    } else {
+                        $result[$shoppingListId][$lineItem->getProduct()->getId()] = [
+                            'name' => $product->getName($localization)->getString()
+                        ];
+                    }
                 }
             }
         }
 
+        $result = array_map(function (array $lineItemsByShoppingList) use ($productCount) {
+            return array_slice($lineItemsByShoppingList, 0, $productCount);
+        }, $result);
 
         return $result;
     }

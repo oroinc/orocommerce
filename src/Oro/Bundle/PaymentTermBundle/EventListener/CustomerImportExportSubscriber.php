@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CustomerImportExportSubscriber implements EventSubscriberInterface
 {

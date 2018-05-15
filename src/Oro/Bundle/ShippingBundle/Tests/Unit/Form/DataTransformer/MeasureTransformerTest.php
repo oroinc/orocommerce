@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
 

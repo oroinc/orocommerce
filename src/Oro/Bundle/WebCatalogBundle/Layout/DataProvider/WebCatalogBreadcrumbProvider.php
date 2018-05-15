@@ -3,14 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
 {

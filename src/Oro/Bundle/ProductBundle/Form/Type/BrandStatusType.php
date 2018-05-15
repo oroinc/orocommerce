@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Entity\Brand;
-use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 
 class BrandStatusType extends AbstractType
 {
@@ -32,6 +31,8 @@ class BrandStatusType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+            'choices_as_values' => true,
             'choices' => $this->brandStatusProvider->getAvailableBrandStatuses(),
             'preferred_choices' => Brand::STATUS_DISABLED
         ]);

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 
 class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +41,7 @@ class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('POST')
             ->will($this->returnValue(true));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
             ->method('isValid')

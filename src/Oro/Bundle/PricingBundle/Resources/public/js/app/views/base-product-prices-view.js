@@ -53,6 +53,16 @@ define(function(require) {
 
         rendered: false,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function BaseProductPricesView() {
+            BaseProductPricesView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
             this.deferredInitializeCheck(options, ['productModel']);
@@ -184,7 +194,7 @@ define(function(require) {
 
             if (!price) {
                 if (changeQuantity) {
-                    price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
+                    price = _.last(this.prices[unit]) || null;// sorted by quantity, get smallest
                 } else {
                     price = PricesHelper.findPrice(this.prices, unit, quantity);
                 }

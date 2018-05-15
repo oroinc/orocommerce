@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_TestCase
 {

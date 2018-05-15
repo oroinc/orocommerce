@@ -1,4 +1,3 @@
-/** @lends TransitionButtonComponent */
 define(function(require) {
     'use strict';
 
@@ -8,12 +7,13 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
+    TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             enabled: true,
             enableOnLoad: true,
             hasForm: false,
+            flashMessageOnSubmit: null,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
@@ -21,6 +21,13 @@ define(function(require) {
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]'
             }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function TransitionButtonComponent() {
+            TransitionButtonComponent.__super__.constructor.apply(this, arguments);
         },
 
         /**
@@ -71,6 +78,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
+            if (this.options.flashMessageOnSubmit) {
+                e.preventDefault();
+                mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
+                return false;
+            }
             this.$form.validate();
 
             if (this.$form.valid()) {
@@ -126,7 +138,9 @@ define(function(require) {
                 var eventData = {stopped: false, responseData: response.responseData};
                 // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
-                if (eventData.stopped) { return; }
+                if (eventData.stopped) {
+                    return;
+                }
             }
 
             if (response.hasOwnProperty('redirectUrl')) {

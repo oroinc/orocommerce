@@ -4,9 +4,9 @@ namespace Oro\Component\Expression\Tests\Unit\QueryExpressionConverter;
 
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\UnaryNode;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter;
-use Oro\Component\Expression\Node\UnaryNode;
 
 class UnaryNodeConverterTest extends \PHPUnit_Framework_TestCase
 {

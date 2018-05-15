@@ -5,7 +5,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\ORM\Query\ResultIterator;
 use Doctrine\ORM\Query\AST\GroupByClause;
 use Doctrine\ORM\Query\AST\PathExpression;
 use Doctrine\ORM\Query\AST\SelectStatement;
-
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\MissingGroupByWalker;
 
 class MissingGroupByWalkerTest extends \PHPUnit_Framework_TestCase

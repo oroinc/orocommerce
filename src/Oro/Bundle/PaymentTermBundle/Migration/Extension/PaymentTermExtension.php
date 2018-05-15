@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Migration\Extension;
 
 use Doctrine\DBAL\Schema\Schema;
-
+use Doctrine\DBAL\Schema\Table;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -37,9 +37,7 @@ class PaymentTermExtension implements ExtendExtensionAwareInterface
         $targetTable = $schema->getTable($targetTableName);
 
         $paymentTermTable = $schema->getTable('oro_payment_term');
-        $associationName = ExtendHelper::buildAssociationName(
-            $this->extendExtension->getEntityClassByTableName($paymentTermTable->getName())
-        );
+        $associationName = $this->getAssociationNameByTable($paymentTermTable);
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -57,13 +55,34 @@ class PaymentTermExtension implements ExtendExtensionAwareInterface
                     ],
                     'form' => [
                         'is_enabled' => true,
-                        'form_type' => PaymentTermSelectType::NAME,
+                        'form_type' => PaymentTermSelectType::class,
                     ],
                     'view' => ['is_displayable' => true],
                     'dataaudit' => ['auditable' => true],
                 ],
                 $options
             )
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @return string
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    public function getAssociationName(Schema $schema)
+    {
+        return $this->getAssociationNameByTable($schema->getTable('oro_payment_term'));
+    }
+
+    /**
+     * @param Table $paymentTermTable
+     * @return string
+     */
+    private function getAssociationNameByTable(Table $paymentTermTable)
+    {
+        return ExtendHelper::buildAssociationName(
+            $this->extendExtension->getEntityClassByTableName($paymentTermTable->getName())
         );
     }
 }

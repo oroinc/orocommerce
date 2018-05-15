@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CMSBundle\Controller;
 
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CMSBundle\Entity\LoginPage;
-use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 
 class LoginPageController extends Controller
 {
@@ -92,7 +90,7 @@ class LoginPageController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $loginPage,
-            $this->createForm(LoginPageType::NAME, $loginPage),
+            $this->createForm(LoginPageType::class, $loginPage),
             function (LoginPage $loginPage) {
                 return [
                     'route' => 'oro_cms_loginpage_update',

@@ -1,7 +1,0 @@
-{% block __oro_product_grid__product_price_container_widget %}
-    {% do block|merge_context({
-        productPrices: product.prices,
-    }) %}
-
-    {{ block_widget(block) }}
-{% endblock %}

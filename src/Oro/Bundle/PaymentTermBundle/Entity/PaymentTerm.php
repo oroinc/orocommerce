@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
@@ -27,7 +26,7 @@ use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="oro_payment_term_select",
+ *              "form_type"="Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType",
  *              "grid_name"="payment-terms-select-grid",
  *          }
  *      }

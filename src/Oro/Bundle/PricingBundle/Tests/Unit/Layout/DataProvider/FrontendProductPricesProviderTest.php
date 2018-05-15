@@ -12,10 +12,10 @@ use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
@@ -88,124 +88,257 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetByProduct()
+    public function testGetByProductSimple()
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => 23]);
+        $simpleProduct1 = $this->createProduct(42, Product::TYPE_SIMPLE);
 
-        $unitPrecisions[] = $this->createUnitPrecision('each', true);
-        $unitPrecisions[] = $this->createUnitPrecision('set', false);
-
-        $product = $this->getEntity(Product::class, ['id' => 24, 'unitPrecisions' => $unitPrecisions]);
-        $price = $this->getEntity(Price::class);
-
-        $productPrice1 = $this->createProductPrice('each', $product, $price);
-        $productPrice2 = $this->createProductPrice('set', $product, $price);
-        $prices = [$productPrice1, $productPrice2];
-
-        $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
-
-        $repo = $this->getMockBuilder(ProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repo->expects($this->once())
-            ->method('findByPriceListIdAndProductIds')
-            ->with($this->shardManager, $priceList->getId(), [$product->getId()], true, 'EUR', null, $priceSorting)
-            ->willReturn($prices);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with('OroPricingBundle:CombinedProductPrice')
-            ->willReturn($repo);
-
-        $this->priceListRequestHandler->expects($this->once())
-            ->method('getPriceListByCustomer')
-            ->willReturn($priceList);
-
-        $productPrices = [ '24' => [
-            'each' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'each'],
-            'set' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'set'],
-            ]
+        $products = [
+            42 => [
+                'product' => $simpleProduct1,
+                'variants' => [],
+            ],
         ];
 
-        $this->productPriceFormatter->expects($this->once())
-            ->method('formatProducts')
-            ->willReturn($productPrices);
+        $prices = [
+            $this->createProductPrice('each', $simpleProduct1),
+            $this->createProductPrice('set', $simpleProduct1),
+        ];
 
-        $this->userCurrencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn('EUR');
+        $this->expectProductsAndPrices($products, $prices);
 
-        $actual = $this->provider->getByProduct($product);
-
-        $this->assertInternalType('array', $actual);
-        $this->assertCount(1, $actual);
-        $this->assertEquals('each', current($actual)['unit']);
+        $this->assertEquals(
+            [
+                'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+            ],
+            $this->provider->getByProduct($simpleProduct1)
+        );
     }
 
-    public function testGetSimpleByConfigurable()
+    public function testGetVariantsPricesByProductSimple()
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => 23]);
-        $unitPrecisions[] = $this->createUnitPrecision('each', true);
-        $unitPrecisions[] = $this->createUnitPrecision('set', false);
+        $simpleProduct1 = $this->createProduct(42, Product::TYPE_SIMPLE);
 
-        $simpleProduct = $this->getEntity(Product::class, ['id' => 24, 'unitPrecisions' => $unitPrecisions]);
-        $price = $this->getEntity(Price::class);
-
-        $productPrice1 = $this->createProductPrice('each', $simpleProduct, $price);
-        $productPrice2 = $this->createProductPrice('set', $simpleProduct, $price);
-        $prices = [$productPrice1, $productPrice2];
-
-        $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
-
-        $repo = $this->getMockBuilder(ProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repo->expects($this->once())
-            ->method('findByPriceListIdAndProductIds')
-            ->with(
-                $this->shardManager,
-                $priceList->getId(),
-                [$simpleProduct->getId()],
-                true,
-                'EUR',
-                null,
-                $priceSorting
-            )
-            ->willReturn($prices);
-
-        $productPrices = [ '24' => [
-            'each' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'each'],
-            'set' => ['qty' => null, 'price' => null, 'currency' => null, 'unit' => 'set'],
-        ]
+        $products = [
+            42 => [
+                'product' => $simpleProduct1,
+                'variants' => [],
+            ],
         ];
 
-        $this->priceListRequestHandler->expects($this->once())
-            ->method('getPriceListByCustomer')
-            ->willReturn($priceList);
+        $prices = [
+            $this->createProductPrice('each', $simpleProduct1),
+            $this->createProductPrice('set', $simpleProduct1),
+        ];
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with('OroPricingBundle:CombinedProductPrice')
-            ->willReturn($repo);
+        $this->expectProductsAndPrices($products, $prices);
 
-        $this->productPriceFormatter->expects($this->once())
-            ->method('formatProducts')
-            ->willReturn($productPrices);
+        $this->assertEquals([], $this->provider->getVariantsPricesByProduct($simpleProduct1));
+    }
 
-        $this->userCurrencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn('EUR');
+    public function testGetByProductConfigurable()
+    {
+        $configurableProduct100 = $this->createProduct(100, Product::TYPE_CONFIGURABLE);
+        $variantProduct101 = $this->createProduct(101, Product::TYPE_SIMPLE);
+        $variantProduct102 = $this->createProduct(102, Product::TYPE_SIMPLE);
 
-        $this->productVariantAvailabilityProvider->expects($this->once())
-            ->method('getSimpleProductsByVariantFields')
-            ->with(new Product())
-            ->willReturn([$simpleProduct]);
+        $products = [
+            100 => [
+                'product' => $configurableProduct100,
+                'variants' => [
+                    101 => $variantProduct101,
+                    102 => $variantProduct102,
+                ],
+            ],
+        ];
 
-        $actual = $this->provider->getSimpleByConfigurable(new Product());
-        $this->assertCount(1, $actual[$simpleProduct->getId()]);
-        $this->assertEquals('each', $actual[$simpleProduct->getId()]['each']['unit']);
+        $prices = [
+            $this->createProductPrice('each', $configurableProduct100),
+            $this->createProductPrice('set', $configurableProduct100),
+            $this->createProductPrice('each', $variantProduct101),
+            $this->createProductPrice('set', $variantProduct101),
+            $this->createProductPrice('each', $variantProduct102),
+            $this->createProductPrice('set', $variantProduct102),
+        ];
+
+        $this->expectProductsAndPrices($products, $prices);
+
+        $this->assertEquals(
+            [
+                'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+            ],
+            $this->provider->getByProduct($configurableProduct100)
+        );
+    }
+
+    public function testGetVariantsPricesByProductConfigurable()
+    {
+        $configurableProduct100 = $this->createProduct(100, Product::TYPE_CONFIGURABLE);
+        $variantProduct101 = $this->createProduct(101, Product::TYPE_SIMPLE);
+        $variantProduct102 = $this->createProduct(102, Product::TYPE_SIMPLE);
+
+        $products = [
+            100 => [
+                'product' => $configurableProduct100,
+                'variants' => [
+                    101 => $variantProduct101,
+                    102 => $variantProduct102,
+                ],
+            ],
+        ];
+
+        $prices = [
+            $this->createProductPrice('each', $configurableProduct100),
+            $this->createProductPrice('set', $configurableProduct100),
+            $this->createProductPrice('each', $variantProduct101),
+            $this->createProductPrice('set', $variantProduct101),
+            $this->createProductPrice('each', $variantProduct102),
+            $this->createProductPrice('set', $variantProduct102),
+        ];
+
+        $this->expectProductsAndPrices($products, $prices);
+
+        $this->assertEquals(
+            [
+                101 => [
+                    'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                ],
+                102 => [
+                    'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                ],
+            ],
+            $this->provider->getVariantsPricesByProduct($configurableProduct100)
+        );
+    }
+
+    public function testGetByProductsEmptyProducts()
+    {
+        $this->assertSame([], $this->provider->getByProducts([]));
+    }
+
+    public function testGetByProducts()
+    {
+        $simpleProduct1 = $this->createProduct(1, Product::TYPE_SIMPLE);
+        $configurableProduct100 = $this->createProduct(100, Product::TYPE_CONFIGURABLE);
+        $variantProduct101 = $this->createProduct(101, Product::TYPE_SIMPLE);
+        $variantProduct102 = $this->createProduct(102, Product::TYPE_SIMPLE);
+
+        $products = [
+            1 => [
+                'product' => $simpleProduct1,
+                'variants' => [],
+            ],
+            100 => [
+                'product' => $configurableProduct100,
+                'variants' => [
+                    101 => $variantProduct101,
+                    102 => $variantProduct102,
+                ],
+            ],
+        ];
+
+        $prices = [
+            $this->createProductPrice('each', $simpleProduct1),
+            $this->createProductPrice('set', $simpleProduct1),
+            $this->createProductPrice('each', $configurableProduct100),
+            $this->createProductPrice('set', $configurableProduct100),
+            $this->createProductPrice('each', $variantProduct101),
+            $this->createProductPrice('set', $variantProduct101),
+            $this->createProductPrice('each', $variantProduct102),
+            $this->createProductPrice('set', $variantProduct102),
+        ];
+
+        $this->expectProductsAndPrices($products, $prices);
+
+        $this->assertEquals(
+            [
+                1 => [
+                    'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                ],
+                100 => [
+                    'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                ],
+                101 => [
+                    'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                ],
+            ],
+            $this->provider->getByProducts([$simpleProduct1, $configurableProduct100, $variantProduct101])
+        );
+    }
+
+    public function testGetVariantsPricesByProductsEmptyProducts()
+    {
+        $this->assertSame([], $this->provider->getVariantsPricesByProducts([]));
+    }
+
+    public function testGetVariantsPricesByProducts()
+    {
+        $simpleProduct1 = $this->createProduct(1, Product::TYPE_SIMPLE);
+        $configurableProduct100 = $this->createProduct(100, Product::TYPE_CONFIGURABLE);
+        $variantProduct101 = $this->createProduct(101, Product::TYPE_SIMPLE);
+        $variantProduct102 = $this->createProduct(102, Product::TYPE_SIMPLE);
+        $configurableProduct200 = $this->createProduct(200, Product::TYPE_CONFIGURABLE);
+        $variantProduct201 = $this->createProduct(201, Product::TYPE_SIMPLE);
+
+        $products = [
+            1 => [
+                'product' => $simpleProduct1,
+                'variants' => [],
+            ],
+            100 => [
+                'product' => $configurableProduct100,
+                'variants' => [
+                    101 => $variantProduct101,
+                    102 => $variantProduct102,
+                ],
+            ],
+            200 => [
+                'product' => $configurableProduct200,
+                'variants' => [
+                    201 => $variantProduct201,
+                ],
+            ],
+        ];
+
+        $prices = [
+            $this->createProductPrice('each', $simpleProduct1),
+            $this->createProductPrice('set', $simpleProduct1),
+            $this->createProductPrice('each', $configurableProduct100),
+            $this->createProductPrice('set', $configurableProduct100),
+            $this->createProductPrice('each', $variantProduct101),
+            $this->createProductPrice('set', $variantProduct101),
+            $this->createProductPrice('each', $variantProduct102),
+            $this->createProductPrice('set', $variantProduct102),
+            $this->createProductPrice('each', $configurableProduct200),
+            $this->createProductPrice('set', $configurableProduct200),
+            $this->createProductPrice('each', $variantProduct201),
+            $this->createProductPrice('set', $variantProduct201),
+        ];
+
+        $this->expectProductsAndPrices($products, $prices);
+
+        $this->assertEquals(
+            [
+                100 => [
+                    101 => [
+                        'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                    ],
+                    102 => [
+                        'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                    ],
+                ],
+                200 => [
+                    201 => [
+                        'each' => ['price' => null, 'currency' => null, 'unit' => 'each', 'quantity' => null],
+                    ],
+                ],
+            ],
+            $this->provider->getVariantsPricesByProducts([
+                $simpleProduct1,
+                $configurableProduct100,
+                $variantProduct101,
+                $configurableProduct200,
+            ])
+        );
     }
 
     /**
@@ -225,17 +358,38 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $unit
      * @param Product $product
-     * @param Price $price
      * @return CombinedProductPrice
      */
-    private function createProductPrice($unit, $product, $price)
+    private function createProductPrice($unit, $product)
     {
+        $price = $this->getEntity(Price::class);
+
         $combinedProductPrice = new CombinedProductPrice();
         $combinedProductPrice->setProduct($product);
         $combinedProductPrice->setUnit($this->getUnit($unit));
         $combinedProductPrice->setPrice($price);
 
         return $combinedProductPrice;
+    }
+
+    /**
+     * @param int $id
+     * @param string $type
+     * @return Product|object
+     */
+    private function createProduct($id, $type)
+    {
+        return $this->getEntity(
+            Product::class,
+            [
+                'id' => $id,
+                'type' => $type,
+                'unitPrecisions' => [
+                    $this->createUnitPrecision('each', true),
+                    $this->createUnitPrecision('set', false)
+                ],
+            ]
+        );
     }
 
     /**
@@ -248,5 +402,168 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $unit->setCode($unitCode);
 
         return $unit;
+    }
+
+    /**
+     * @return array
+     */
+    public function isPriceBlockVisibleByProductDataProvider()
+    {
+        $configurableProduct1 = $this->getEntity(Product::class, [
+            'id' => 1,
+            'type' => Product::TYPE_CONFIGURABLE,
+            'unitPrecisions' => [$this->createUnitPrecision('each', true)],
+        ]);
+        $variant101 = $this->getEntity(Product::class, [
+            'id' => 101,
+            'type' => Product::TYPE_SIMPLE,
+            'unitPrecisions' => [$this->createUnitPrecision('each', true)],
+        ]);
+        $variant102 = $this->getEntity(Product::class, [
+            'id' => 102,
+            'type' => Product::TYPE_SIMPLE,
+            'unitPrecisions' => [$this->createUnitPrecision('each', true)],
+        ]);
+        $simpleProduct2 = $this->getEntity(Product::class, [
+            'id' => 2,
+            'type' => Product::TYPE_SIMPLE,
+            'unitPrecisions' => [$this->createUnitPrecision('each', true)],
+        ]);
+
+        return [
+            'configurable product with prices' => [
+                'products' => [
+                    1 => [
+                        'product' => $configurableProduct1,
+                        'variants' => [
+                            101 => $variant101,
+                            102 => $variant102,
+                        ],
+                    ]
+                ],
+                'prices' =>[
+                    $this->createProductPrice('each', $configurableProduct1),
+                    $this->createProductPrice('each', $variant101),
+                    $this->createProductPrice('each', $variant102),
+                ],
+                'expected' => true,
+            ],
+            'configurable product without prices' => [
+                'products' => [
+                    1 => [
+                        'product' => $configurableProduct1,
+                        'variants' => [
+                            101 => $variant101,
+                            102 => $variant102,
+                        ],
+                    ]
+                ],
+                'prices' =>[
+                    $this->createProductPrice('each', $variant101),
+                    $this->createProductPrice('each', $variant102),
+                ],
+                'expected' => false,
+            ],
+            'simple product with prices' => [
+                'products' => [
+                    1 => [
+                        'product' => $simpleProduct2,
+                        'variants' => [],
+                    ]
+                ],
+                'prices' =>[
+                    $this->createProductPrice('each', $simpleProduct2),
+                ],
+                'expected' => true,
+            ],
+            'simple product without prices' => [
+                'products' => [
+                    1 => [
+                        'product' => $simpleProduct2,
+                        'variants' => [],
+                    ]
+                ],
+                'prices' =>[],
+                'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $products
+     * @param array $prices
+     * @param bool $expected
+     * @dataProvider isPriceBlockVisibleByProductDataProvider
+     */
+    public function testIsShowProductPriceContainer(array $products, array $prices, bool $expected)
+    {
+        $this->expectProductsAndPrices($products, $prices);
+
+        $this->assertEquals($expected, $this->provider->isShowProductPriceContainer($products[1]['product']));
+    }
+
+    private function expectProductsAndPrices(array $products, array $prices)
+    {
+        $productIds = [];
+
+        $parentProducts = [];
+        $variants = [];
+
+        foreach ($products as $product) {
+            if ($product['product']->getType() === Product::TYPE_CONFIGURABLE) {
+                $parentProducts[] = [$product['product']];
+                $variants[] = $product['variants'];
+
+                $productIds[] = $product['product']->getId();
+
+                foreach ($product['variants'] as $variant) {
+                    $productIds[] = $variant->getId();
+                }
+            } else {
+                $productIds[] = $product['product']->getId();
+            }
+        }
+
+        $this->productVariantAvailabilityProvider->expects($this->any())
+            ->method('getSimpleProductsByVariantFields')
+            ->withConsecutive(...$parentProducts)
+            ->willReturnOnConsecutiveCalls(...$variants);
+
+        $priceList = $this->getEntity(PriceList::class, ['id' => 23]);
+        $this->priceListRequestHandler->expects($this->any())
+            ->method('getPriceListByCustomer')
+            ->willReturn($priceList);
+
+        $this->userCurrencyManager->expects($this->any())
+            ->method('getUserCurrency')
+            ->willReturn('EUR');
+
+        $repo = $this->createMock(ProductPriceRepository::class);
+        $repo->expects($this->any())
+            ->method('findByPriceListIdAndProductIds')
+            ->willReturn($prices);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->with('OroPricingBundle:CombinedProductPrice')
+            ->willReturn($repo);
+
+        $this->productPriceFormatter->expects($this->any())
+            ->method('formatProducts')
+            ->willReturnCallback(function ($productsPrices) {
+                $formattedProductsPrices = [];
+                foreach ($productsPrices as $productId => $productsPrice) {
+                    foreach ($productsPrice as $unit => $unitPrices) {
+                        foreach ($unitPrices as $unitPrice) {
+                            $formattedProductsPrices[$productId][sprintf(
+                                '%s%s',
+                                $unit,
+                                $unitPrice['quantity']
+                            )] = $unitPrice;
+                        }
+                    }
+                }
+                return $formattedProductsPrices;
+            });
     }
 }

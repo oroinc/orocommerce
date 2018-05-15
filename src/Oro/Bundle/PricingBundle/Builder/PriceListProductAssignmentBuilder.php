@@ -14,6 +14,9 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Builder for relations between price lists and products
+ */
 class PriceListProductAssignmentBuilder
 {
     /**
@@ -64,35 +67,44 @@ class PriceListProductAssignmentBuilder
 
     /**
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function buildByPriceList(PriceList $priceList, Product $product = null)
+    public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->clearGenerated($priceList, $product);
-        if ($priceList->getProductAssignmentRule()) {
-            $this->insertFromSelectQueryExecutor->execute(
-                PriceListToProduct::class,
-                $this->ruleCompiler->getOrderedFields(),
-                $this->ruleCompiler->compile($priceList, $product)
-            );
-        }
-        $this->registry->getManagerForClass(ProductPrice::class)
-            ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($this->shardManager, $priceList);
+        $this->buildByPriceListWithoutEventDispatch($priceList, $products);
 
-        $event = new AssignmentBuilderBuildEvent($priceList, $product);
+        $event = new AssignmentBuilderBuildEvent($priceList, $products);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
     }
 
     /**
      * @param PriceList $priceList
-     * @param Product $product
+     * @param array|Product[] $products
      */
-    protected function clearGenerated(PriceList $priceList, Product $product = null)
+    protected function clearGenerated(PriceList $priceList, array $products = [])
     {
         /** @var PriceListToProductRepository $repo */
         $repo = $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class);
-        $repo->deleteGeneratedRelations($priceList, $product);
+        $repo->deleteGeneratedRelations($priceList, $products);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    public function buildByPriceListWithoutEventDispatch(PriceList $priceList, array $products = [])
+    {
+        $this->clearGenerated($priceList, $products);
+        if ($priceList->getProductAssignmentRule()) {
+            $this->insertFromSelectQueryExecutor->execute(
+                PriceListToProduct::class,
+                $this->ruleCompiler->getOrderedFields(),
+                $this->ruleCompiler->compile($priceList, $products)
+            );
+        }
+        $this->registry->getManagerForClass(ProductPrice::class)
+            ->getRepository(ProductPrice::class)
+            ->deleteInvalidPrices($this->shardManager, $priceList);
     }
 }

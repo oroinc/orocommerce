@@ -4,9 +4,9 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class TaxJurisdictionTest extends \PHPUnit_Framework_TestCase
 {

@@ -71,7 +71,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_frontend_line_item_widget
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
         form_init:
             - '@get_active_user': $.currentUser
             - '@call_service_method':
@@ -106,7 +106,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_line_item
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                     options:
                         required: true
             attribute_default_values:
@@ -182,6 +182,20 @@ operations:
         order: 220
         button_options:
             icon: fa-briefcase
+        frontend_options:
+            confirmation:
+                title: oro.shoppinglist.create_rfp_confirmation.title
+                message: oro.shoppinglist.create_rfp_confirmation.message
+                okText: oro.shoppinglist.create_rfp_confirmation.accept_button_title
+                cancelText: oro.shoppinglist.create_rfp_confirmation.cancel_button_title
+                hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
+                component: oroshoppinglist/js/shoppinglist-request-quote-confirmation
+        preactions:
+            - '@call_service_method':
+                service: oro_shopping_list.manager.empty_matrix_grid
+                method: hasEmptyMatrix
+                method_parameters: [$.data]
+                attribute: $.result.shoppingListHasEmptyMatrix
         preconditions:
             '@and':
                 - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
@@ -318,6 +332,9 @@ operations:
         button_options:
             class: btn--action
             icon: fa-clone
+        preconditions:
+            '@and':
+                - '@at_least_one_available_product': $.data.lineItems
         actions:
             - '@call_service_method':
                 service: oro_locale.formatter.date_time
@@ -354,6 +371,14 @@ operations:
                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                   - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
                   - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+            - '@remove_restricted_products':
+                attribute: $.removedProducts
+                productHolderPath: $.newShoppingList.lineItems
+            - '@flash_message':
+                conditions:
+                    '@not_empty': $.removedProducts
+                message: oro.shoppinglist.duplicate.restricted_products.message
+                type: 'warning'
             - '@assign_value': [$.newShoppingList.label, $.newName]
             - '@assign_value': [$.newShoppingList.current, false]
             - '@flush_entity': $.newShoppingList

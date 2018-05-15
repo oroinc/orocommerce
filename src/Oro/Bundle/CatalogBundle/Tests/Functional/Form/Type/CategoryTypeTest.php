@@ -2,22 +2,20 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Form\Type;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class CategoryTypeTest extends WebTestCase
 {
@@ -54,9 +52,9 @@ class CategoryTypeTest extends WebTestCase
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
         /** @var Product[] $appendedProducts */
-        $appendedProducts = $productRepository->findBy([], [], 2, 0);
+        $appendedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 0);
         /** @var Product[] $removedProducts */
-        $removedProducts = $productRepository->findBy([], [], 2, 2);
+        $removedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 2);
 
         $defaultTitle = 'Default Title';
         $defaultShortDescription = 'Default Short Description';
@@ -112,7 +110,7 @@ class CategoryTypeTest extends WebTestCase
             ];
         }
         // submit form
-        $form = $this->formFactory->create(CategoryType::NAME, new Category());
+        $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertTrue($form->isValid());
 
@@ -169,10 +167,10 @@ class CategoryTypeTest extends WebTestCase
         }
 
         // submit form
-        $form = $this->formFactory->create(CategoryType::NAME, new Category());
+        $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertFalse($form->isValid());
-        $this->assertStringStartsWith('inventoryThreshold', $form->getErrorsAsString());
+        $this->assertStringStartsWith('inventoryThreshold', (string)$form->getErrors(true, false));
 
         $this->assertEquals(
             "ERROR: This value should not be blank.\n",

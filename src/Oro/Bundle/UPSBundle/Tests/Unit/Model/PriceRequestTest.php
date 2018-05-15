@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceRequestTest extends \PHPUnit_Framework_TestCase
 {

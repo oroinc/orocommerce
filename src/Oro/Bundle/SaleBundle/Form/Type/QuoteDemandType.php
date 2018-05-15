@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 
 class QuoteDemandType extends AbstractType
 {
@@ -46,7 +45,7 @@ class QuoteDemandType extends AbstractType
         $quoteDemand = $options['data'];
         $builder->add(
             'demandProducts',
-            QuoteProductDemandCollectionType::NAME,
+            QuoteProductDemandCollectionType::class,
             [
                 'data' => $quoteDemand->getDemandProducts()
             ]

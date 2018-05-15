@@ -7,17 +7,15 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\ProductBundle\Entity\Brand;
+use Gaufrette\Adapter\Local;
+use Gaufrette\File;
+use Gaufrette\Filesystem;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -25,6 +23,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductDemoData extends AbstractFixture implements
     ContainerAwareInterface,
@@ -46,6 +47,11 @@ class LoadProductDemoData extends AbstractFixture implements
      * @var array
      */
     protected $productUnits = [];
+
+    /**
+     * @var array|Filesystem[]
+     */
+    protected $filesystems = [];
 
     /**
      * {@inheritDoc}
@@ -296,7 +302,6 @@ class LoadProductDemoData extends AbstractFixture implements
         $sku,
         $allImageTypes
     ) {
-        $imageResizer = $this->container->get('oro_attachment.image_resizer');
         $attachmentManager = $this->container->get('oro_attachment.manager');
         $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
 
@@ -306,13 +311,17 @@ class LoadProductDemoData extends AbstractFixture implements
             $product->addImage($productImage);
 
             foreach ($imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
-                $image = $productImage->getImage();
                 $filterName = $dimension->getName();
-                $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
+                $filesystem = $this->getFilesystem($locator, $filterName);
 
-                if ($filteredImage = $imageResizer->resizeImage($image, $filterName)) {
-                    $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+                $filteredImage = $this->getResizedProductImageFile($filesystem, $sku);
+                if (!$filteredImage) {
+                    continue;
                 }
+
+                $imagePath = $attachmentManager->getFilteredImageUrl($productImage->getImage(), $filterName);
+
+                $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
             }
         }
     }
@@ -332,5 +341,45 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         return $this;
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     * @param string $sku
+     * @return null|File
+     */
+    protected function getResizedProductImageFile(Filesystem $filesystem, $sku)
+    {
+        $file = null;
+
+        try {
+            $file = $filesystem->get(sprintf('%s.jpeg', $sku));
+        } catch (\Exception $e) {
+            //image not found
+        }
+
+        return $file;
+    }
+
+    /**
+     * @param FileLocator $locator
+     * @param string $filterName
+     * @return Filesystem
+     */
+    protected function getFilesystem(FileLocator $locator, $filterName)
+    {
+        if (!array_key_exists($filterName, $this->filesystems)) {
+            $rootPath = $locator->locate(
+                sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/resized/%s', $filterName)
+            );
+
+            if (is_array($rootPath)) {
+                $rootPath = current($rootPath);
+            }
+
+            $this->filesystems[$filterName] = new Filesystem(new Local($rootPath, false, 0600));
+        }
+
+        return $this->filesystems[$filterName];
     }
 }

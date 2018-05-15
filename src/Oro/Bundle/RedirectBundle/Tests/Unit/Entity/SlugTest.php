@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -37,5 +38,22 @@ class SlugTest extends \PHPUnit_Framework_TestCase
         $slug = new Slug();
         $slug->setUrl($url);
         $this->assertEquals($url, (string)$slug);
+    }
+
+    public function testRouteParametersConsistency()
+    {
+        $routeParameters = [
+            'id' => '20',
+            'type' => 'normal',
+            'x' => '2.3'
+        ];
+        $slug = new Slug();
+        $slug->setRouteParameters($routeParameters);
+        $expected = [
+            'id' => 20,
+            'type' => 'normal',
+            'x' => 2.3
+        ];
+        $this->assertSame($expected, $slug->getRouteParameters());
     }
 }

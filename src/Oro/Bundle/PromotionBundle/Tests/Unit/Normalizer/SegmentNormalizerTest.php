@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Normalizer;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\PromotionBundle\Normalizer\SegmentNormalizer;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 

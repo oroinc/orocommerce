@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PaymentStatusExtension extends \Twig_Extension
 {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem;
 
 use Doctrine\ORM\EntityManager;
-
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
@@ -54,8 +54,14 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
         $this->strategy = $this->createFinderStrategy();
     }
 
+    /**
+     * @return FinderStrategyInterface
+     */
     abstract public function createFinderStrategy();
 
+    /**
+     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
     abstract public function createRepositoryMock();
 
     /**
@@ -90,22 +96,6 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
             ->willReturn(false);
     }
 
-    protected function andShouldHaveLimit($limit)
-    {
-        $this->configProvider
-            ->expects($this->any())
-            ->method('getLimit')
-            ->willReturn($limit);
-    }
-
-    protected function andShouldBeBidirectional()
-    {
-        $this->configProvider
-            ->expects($this->any())
-            ->method('isBidirectional')
-            ->willReturn(true);
-    }
-
     protected function andShouldNotBeBidirectional()
     {
         $this->configProvider
@@ -120,6 +110,9 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
      */
     protected function getProduct(array $properties = [])
     {
-        return $this->getEntity(Product::class, $properties);
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, $properties);
+
+        return $product;
     }
 }

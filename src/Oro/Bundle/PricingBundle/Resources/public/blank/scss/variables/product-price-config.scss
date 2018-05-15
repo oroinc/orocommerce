@@ -5,5 +5,17 @@ $product-price-overflow: hidden;
 
 $product-price-main-margin-top: 5px !default;
 
+$product-price-hint-display: inline-block !default;
 $product-price-hint-margin-bottom: -10px !default;
 $product-price-hint-padding-bottom: 20px !default;
+
+$product-price-simple-label-display: none !default;
+$product-price-simple-label-display: none !default;
+
+$product-price-unit-short-display: none;
+
+// Tablet
+$product-price-unit-short-display-tablet: inline !default;
+$product-price-unit-full-display-tablet: none !default;
+
+$product-price-simple-display-tablet: block !default;

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -49,17 +49,9 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFilesFolderName() . '/create.yml'
         );
 
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $this->post($routeParameters, $parameters);
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -75,11 +67,7 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFilesFolderName() . '/create_wrong_currency.yml'
         );
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -95,11 +83,7 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFilesFolderName() . '/create_wrong_unit.yml'
         );
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
+        $response = $this->post($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
@@ -196,14 +180,7 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             $this->getAliceFilesFolderName() . '/update_duplicate.yml'
         );
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                $routeParameters
-            ),
-            $parameters
-        );
+        $response = $this->patch($routeParameters, $parameters, [], false);
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(

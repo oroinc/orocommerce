@@ -1,0 +1,28 @@
+// @theme: blank;
+
+.product-item__qty {
+    &__current-grid > div {
+        display: flex;
+
+        justify-content: space-between;
+    }
+
+    .add-product-from-view-component {
+        font-size: $font-size-base;
+
+        @include clearfix();
+    }
+
+    .product-item-shopping-lists {
+        padding: 0 0 $offset-y;
+    }
+
+    .add-to-shopping-list-button {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .line_item_form_fields {
+        width: calc(50% - 5px);
+    }
+}

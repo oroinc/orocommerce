@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType as BaseUserSelectType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSelectType extends AbstractType
 {
@@ -29,7 +28,7 @@ class UserSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'transformer' => new UserIdToEmailTransformer($this->registry)
@@ -41,7 +40,7 @@ class UserSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_user_select';
+        return BaseUserSelectType::class;
     }
 
     /**

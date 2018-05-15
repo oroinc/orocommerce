@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuoteController extends Controller
 {
@@ -84,9 +82,11 @@ class QuoteController extends Controller
             return $this->update($quote, $request);
         }
 
-        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+        $this->createForm(QuoteType::class, $quote);
 
-        $this->createForm(QuoteType::NAME, $quote);
+        if (!$quote->getWebsite()) {
+            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+        }
 
         $quoteClass = $this->container->getParameter('oro_sale.entity.quote.class');
         $em = $this->get('doctrine')->getManagerForClass($quoteClass);
@@ -143,7 +143,7 @@ class QuoteController extends Controller
         $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $quote,
-            QuoteType::NAME,
+            QuoteType::class,
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,

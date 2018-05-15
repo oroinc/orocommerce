@@ -24,6 +24,7 @@ define(function(require) {
                 }, this);
 
                 $el.prop('disabled', false);
+                $el.prop('readonly', options.length <= 1);
             } else {
                 if (!model.has('unit_placeholder')) {
                     model.set('unit_placeholder', $el.find('option[value=""]').text() || '');

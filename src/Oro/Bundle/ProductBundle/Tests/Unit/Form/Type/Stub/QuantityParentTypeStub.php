@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 class QuantityParentTypeStub extends AbstractType
 {
@@ -18,13 +18,13 @@ class QuantityParentTypeStub extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('productField', 'entity', ['class' => 'Oro\Bundle\ProductBundle\Entity\Product'])
-            ->add('productUnitField', 'entity', ['class' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit'])
-            ->add('quantityField', QuantityType::NAME, $this->quantityOptions);
+            ->add('productField', EntityType::class, ['class' => 'Oro\Bundle\ProductBundle\Entity\Product'])
+            ->add('productUnitField', EntityType::class, ['class' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit'])
+            ->add('quantityField', QuantityType::class, $this->quantityOptions);
     }
 
     /** {@inheritdoc} */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

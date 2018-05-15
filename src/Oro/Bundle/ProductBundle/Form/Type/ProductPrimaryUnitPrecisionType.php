@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -40,8 +39,11 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
                 'precision',
                 IntegerType::class,
                 [
-                    'type' => 'text',
-                    'required' => false
+                    'type' => 'number',
+                    'required' => false,
+                    'attr' => [
+                        'data-precision' => 0
+                    ]
                 ]
             )
             ->add(
@@ -66,14 +68,14 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
             if ($unitPrecision instanceof ProductUnitPrecision && $unitPrecision->getUnit()) {
                 $form->add(
                     'unit',
-                    ProductUnitSelectType::NAME,
+                    ProductUnitSelectType::class,
                     [
                         'attr' => ['class' => 'unit'],
                         'product' => $unitPrecision ? $unitPrecision->getProduct() : null
                     ]
                 );
             } else {
-                $form->add('unit', ProductUnitSelectType::NAME, ['compact' => $options['compact']]);
+                $form->add('unit', ProductUnitSelectType::class, ['compact' => $options['compact']]);
             }
         });
     }

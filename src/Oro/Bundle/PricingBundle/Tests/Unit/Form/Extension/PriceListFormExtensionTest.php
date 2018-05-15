@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\PriceListSelectWithPriorityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PriceListFormExtensionTest extends FormIntegrationTestCase
 {
@@ -43,13 +42,13 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
             ->with('oro_pricing.price_strategy')
             ->willReturn(MergePricesCombiningStrategy::NAME);
 
-        $form = $this->factory->create(PriceListSelectWithPriorityType::NAME, [], []);
+        $form = $this->factory->create(PriceListSelectWithPriorityType::class, [], []);
         $this->assertTrue($form->has(PriceListFormExtension::MERGE_ALLOWED_FIELD));
     }
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(PriceListSelectWithPriorityType::NAME, $this->priceListFormExtension->getExtendedType());
+        $this->assertEquals(PriceListSelectWithPriorityType::class, $this->priceListFormExtension->getExtendedType());
     }
 
     /**
@@ -60,11 +59,11 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityTypeStub()
+                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityTypeStub()
                 ],
                 [
-                    PriceListSelectWithPriorityType::NAME => [$this->priceListFormExtension],
-                    ['form' => [new SortableExtension()]]
+                    PriceListSelectWithPriorityTypeStub::class => [$this->priceListFormExtension],
+                    [FormType::class => [new SortableExtension()]]
 
                 ]
             )

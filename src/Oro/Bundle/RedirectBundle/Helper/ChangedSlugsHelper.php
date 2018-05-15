@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Helper;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
-
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -61,7 +60,7 @@ class ChangedSlugsHelper
         $oldSlugs = $this->slugGenerator->prepareSlugUrls($entity);
 
         $form = $this->formFactory->create($formType, $entity);
-        $form->submit($request);
+        $form->handleRequest($request);
 
         $newSlugs = $this->slugGenerator->prepareSlugUrls($form->getData());
 

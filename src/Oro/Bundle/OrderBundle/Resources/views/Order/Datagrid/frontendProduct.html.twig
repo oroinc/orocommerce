@@ -1,27 +1,22 @@
 {% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
+{% set product = record.getValue('product') %}
+
 <h3 class="product-item__title product-item__title--in-cart">
     {% if isFreeFormProduct %}
         {{ record.getValue('freeFormProduct') }}
-    {% else %}
-        {% set productId = record.getValue('product.id') %}
-        {% set product = record.getValue('product') %}
+    {% elseif product %}
         {% if record.getValue('parentProduct') %}
             {% set product = record.getValue('parentProduct') %}
         {% endif %}
-        <a href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.name }}</a>
+        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ record.getValue('productName') }}</a>
+    {% else %}
+        {{ record.getValue('productName') }}
     {% endif %}
 </h3>
+
 {% if not isFreeFormProduct %}
-    <div>{{ 'oro.product.item_number.label'|trans }}: <span class="red">{{ product.sku }}</span></div>
-    {% if record.getValue(productId) is defined %}
-        {% for field in record.getValue(productId) %}
-            <div>{{ field.label|trans }}:
-                {% if field.type == 'boolean' %}
-                    {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
-                {% else %}
-                    {{ field.value }}
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div>{{ 'oro.product.item_number.label'|trans }}: <span class="red">{{ record.getValue('productSku') }}</span></div>
+    {% for field in record.getValue('productVariantFields') %}
+        <div>{{ field.label|trans }}: {{ field.value }}</div>
+    {% endfor %}
 {% endif %}

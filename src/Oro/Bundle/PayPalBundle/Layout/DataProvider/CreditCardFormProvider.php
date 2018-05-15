@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
+use Symfony\Component\Form\FormView;
 
 class CreditCardFormProvider extends AbstractFormProvider
 {
@@ -14,6 +13,6 @@ class CreditCardFormProvider extends AbstractFormProvider
      */
     public function getCreditCardFormView()
     {
-        return $this->getFormView(CreditCardType::NAME, null, []);
+        return $this->getFormView(CreditCardType::class, null, []);
     }
 }

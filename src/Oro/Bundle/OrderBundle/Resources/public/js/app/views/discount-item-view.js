@@ -26,7 +26,7 @@ define(function(require) {
             valueCalculatedSelector: '.discount-item-value-calculated',
             percentTypeValue: null,
             totalType: null,
-            discountType: null,
+            discountType: null
         },
 
         /**
@@ -48,6 +48,13 @@ define(function(require) {
          * @property {jQuery.Element}
          */
         $amountInputElement: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function DiscountItemView() {
+            DiscountItemView.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -106,7 +113,7 @@ define(function(require) {
         _updateValidatorRules: function() {
             var rules = this.$valueInputElement.rules();
 
-            var rangeRules = _.result(rules, 'Range',  []);
+            var rangeRules = _.result(rules, 'Range', []);
             var total = this._getTotal();
             for (var index = 0; index < rangeRules.length; ++index) {
                 var rangeRule = rangeRules[index];

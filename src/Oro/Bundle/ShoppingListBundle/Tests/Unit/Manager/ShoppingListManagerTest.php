@@ -7,11 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -25,10 +20,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @Todo: Must be refactored in scope of - #BB-10192
@@ -95,6 +94,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $productVariantProvider;
 
+    /**
+     * @var GuestShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $guestShoppingListManager;
+
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
@@ -126,6 +130,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->cache,
             $this->productVariantProvider
         );
+
+        $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
+        $this->manager->setGuestShoppingListManager($this->guestShoppingListManager);
     }
 
     public function testCreate()
@@ -368,11 +375,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $manager->expects($this->exactly(count($lineItems)))
             ->method('remove');
 
+        $products = $simpleProducts;
+        $products[] = $product;
+
         /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
-        $repository->expects($this->exactly($simpleProducts ? 1 : 0))
+        $repository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
-            ->with($shoppingList, $simpleProducts)
+            ->with($shoppingList, $products)
             ->willReturn($lineItems);
 
         $result = $this->manager->removeProduct($shoppingList, $product, true);
@@ -474,6 +484,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->cache,
             $this->productVariantProvider
         );
+        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
         $this->assertEquals(
             [$shoppingList3, $shoppingList1, $shoppingList2],

@@ -81,7 +81,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         notes:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 strip_tags: true
                                 required: true

@@ -1,6 +1,6 @@
 datagrids:
     products-select-grid-base-without-default-sorting:
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             entityHint:        products
         source:
@@ -19,7 +19,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -42,8 +42,8 @@ datagrids:
                 label:         oro.product.new_arrival.label
                 frontend_type: select
                 choices:
-                    - oro.product.new_arrival.no
-                    - oro.product.new_arrival.yes
+                    oro.product.new_arrival.no: 0
+                    oro.product.new_arrival.yes: 1
                 renderable:    false
             createdAt:
                 label:         oro.ui.created_at
@@ -90,21 +90,27 @@ datagrids:
                     type: choice
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 type:
                     type: choice
                     data_name: product.type
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
                 newArrival:
                     type: boolean
                     data_name: product.newArrival
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices:
-                                1: oro.product.new_arrival.yes
-                                2: oro.product.new_arrival.no
+                                oro.product.new_arrival.yes: 1
+                                oro.product.new_arrival.no: 2
                     enabled: false
                 createdAt:
                     type:      datetime
@@ -117,7 +123,7 @@ datagrids:
         extends: products-select-grid-base-without-default-sorting
         sorters:
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
 
     products-select-grid:
         extends: products-select-grid-base
@@ -131,6 +137,7 @@ datagrids:
         acl_resource: oro_product_frontend_view
         options:
             entityHint:        products
+            frontend: true
         source:
             type: search
             search_index: website
@@ -162,10 +169,10 @@ datagrids:
                     data_name: sku
                 productName:
                     type:      string
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     type:      enum
-                    data_name: inventoryStatus
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
         properties:
             id: ~
@@ -174,13 +181,12 @@ datagrids:
                 sku:
                     data_name: sku
                 productName:
-                    data_name: productName
+                    data_name: names_LOCALIZATION_ID
                 inventoryStatus:
-                    data_name: inventoryStatus
+                    data_name: inventory_status
 
             toolbar_sorting: true
             disable_default_sorting: true
-
 
     product-collection-base-grid:
         extends: products-select-grid-base
@@ -361,7 +367,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) AS inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
@@ -397,6 +403,8 @@ datagrids:
                     type: choice
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 inventoryStatusId:
                     type:      enum
@@ -405,7 +413,7 @@ datagrids:
 
     product-product-variants-edit:
         extends: product-product-variants-base
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             rowSelection:
                 dataField: id
@@ -425,7 +433,7 @@ datagrids:
                 join:
                     left:
                         -
-                            join: %oro_product.entity.product_variant_link.class%
+                            join: '%oro_product.entity.product_variant_link.class%'
                             alias: currentVariantLink
                             conditionType: WITH
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
@@ -465,11 +473,11 @@ datagrids:
                 isVariant:
                     data_name: isVariant
             default:
-                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
     product-product-variants-view:
         extends: product-product-variants-base
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         source:
             query:
                 select:
@@ -477,7 +485,7 @@ datagrids:
                 join:
                     inner:
                         -
-                            join: %oro_product.entity.product_variant_link.class%
+                            join: '%oro_product.entity.product_variant_link.class%'
                             alias: productVariantLink
                             conditionType: WITH
                             condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
@@ -505,11 +513,11 @@ datagrids:
                 visible:
                     data_name: visible
             default:
-                visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                visible: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
     products-related-items-base:
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             entityHint:        products
         source:
@@ -527,7 +535,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -569,7 +577,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 sku:
@@ -591,12 +599,16 @@ datagrids:
                     type: choice
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 type:
                     type: choice
                     data_name: product.type
                     options:
                         field_options:
+                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                            choices_as_values: true
                             choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
                 createdAt:
                     type:      datetime
@@ -711,7 +723,7 @@ datagrids:
             columns:
                 isRelated:
                     data_name: isRelated
-            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
+            default: { isRelated: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC' }
 
     products-related-products-select:
         extends: products-related-items-select
@@ -741,6 +753,7 @@ datagrids:
             requireJSModules:
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+            frontend: true
         source:
             type: search
             search_index: website
@@ -754,6 +767,7 @@ datagrids:
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
                     - text.product_units as product_units
+                    - text.primary_unit as unit
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -781,6 +795,7 @@ datagrids:
                 route: oro_product_frontend_product_view
                 params: [ id ]
             newArrival: ~
+            unit: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
@@ -793,22 +808,21 @@ datagrids:
                 rowAction:     true
 
     brand-grid:
-        extended_entity_name: %oro_product.entity.brand.class%
+        acl_resource: oro_product_brand_view
+        extended_entity_name: '%oro_product.entity.brand.class%'
         source:
             type: orm
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
-                    - { table: %oro_product.entity.brand.class%, alias: brand }
+                    - { table: '%oro_product.entity.brand.class%', alias: brand }
         columns:
-            brandName:
+            defaultTitle:
                 label: oro.product.brand.names.label
         properties:
             id: ~
-            brandName:
-                type: localized_value
-                data_name: names
             status:
                 label:         oro.product.brand.names.label
                 frontend_type: select
@@ -825,13 +839,14 @@ datagrids:
                     - id
         sorters:
             columns:
-                brandName:
-                    data_name: brandName
+                defaultTitle:
+                    data_name: brand.defaultTitle
         filters:
             columns:
                 brandName:
+                    label:     oro.product.brand.names.label
                     type:      string
-                    data_name: brandName
+                    data_name: brand.defaultTitle
         actions:
             update:
                 acl_resource:  oro_product_brand_update
@@ -849,7 +864,7 @@ datagrids:
                 rowAction:     true
 
     brand-select-grid:
-        extended_entity_name: %oro_product.entity.brand.class%
+        extended_entity_name: '%oro_product.entity.brand.class%'
         acl_resource: oro_product_brand_update
         options:
             entityHint:        brands
@@ -858,24 +873,22 @@ datagrids:
             query:
                 select:
                     - brand.id
+                    - brand.defaultTitle
                 from:
-                    - { table: %oro_product.entity.brand.class%, alias: brand }
+                    - { table: '%oro_product.entity.brand.class%', alias: brand }
         columns:
-            name:
+            defaultTitle:
                 label: oro.product.brand.label
         properties:
             id: ~
-            name:
-                type: localized_value
-                data_name: brand.names
         sorters:
             columns:
-                name:
-                    data_name: name
+                defaultTitle:
+                    data_name: brand.defaultTitle
             default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                defaultTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
-                name:
+                defaultTitle:
                     type:      string
-                    data_name: name
+                    data_name: brand.defaultTitle

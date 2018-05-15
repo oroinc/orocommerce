@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
 use Doctrine\ORM\EntityRepository;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 

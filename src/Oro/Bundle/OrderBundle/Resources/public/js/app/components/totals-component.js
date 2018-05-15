@@ -13,11 +13,17 @@ define(function(require) {
      * @class oroorder.app.components.TotalsComponent
      */
     TotalsComponent = BaseComponent.extend({
-
         /**
          * @property {Object}
          */
         currentTotals: {},
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function TotalsComponent() {
+            TotalsComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

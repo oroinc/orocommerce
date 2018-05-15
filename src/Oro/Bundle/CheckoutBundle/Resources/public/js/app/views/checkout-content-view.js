@@ -13,6 +13,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function CheckoutContentView() {
+            CheckoutContentView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             mediator.on('checkout-content:updated', this._onContentUpdated, this);
             mediator.on('checkout-content:before-update', this._onBeforeContentUpdate, this);

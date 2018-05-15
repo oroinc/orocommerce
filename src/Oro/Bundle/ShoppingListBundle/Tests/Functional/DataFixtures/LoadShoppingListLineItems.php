@@ -2,17 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
-class LoadShoppingListLineItems extends AbstractFixture implements DependentFixtureInterface
+class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
 {
     use UserUtilityTrait;
 
@@ -24,6 +17,8 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     const LINE_ITEM_7 = 'shopping_list_line_item.7';
     const LINE_ITEM_8 = 'shopping_list_line_item.8';
     const LINE_ITEM_9 = 'shopping_list_line_item.9';
+    const LINE_ITEM_10 = 'shopping_list_lin_item.10';
+    const LINE_ITEM_11 = 'shopping_list_lin_item.11';
 
     /** @var array */
     protected static $lineItems = [
@@ -75,6 +70,20 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.bottle',
             'quantity' => 3
         ],
+        self::LINE_ITEM_10 => [
+            'product' => LoadProductData::PRODUCT_3,
+            'parentProduct' => LoadProductData::PRODUCT_8,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.milliliter',
+            'quantity' => 3
+        ],
+        self::LINE_ITEM_11 => [
+            'product' => LoadProductData::PRODUCT_4,
+            'parentProduct' => LoadProductData::PRODUCT_8,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.milliliter',
+            'quantity' => 4
+        ],
     ];
 
     /**
@@ -86,57 +95,5 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
-    {
-        foreach (static::$lineItems as $name => $lineItem) {
-            /** @var ShoppingList $shoppingList */
-            $shoppingList = $this->getReference($lineItem['shoppingList']);
-
-            /** @var ProductUnit $unit */
-            $unit = $this->getReference($lineItem['unit']);
-
-            /** @var Product $product */
-            $product = $this->getReference($lineItem['product']);
-
-            $this->createLineItem($manager, $shoppingList, $unit, $product, $lineItem['quantity'], $name);
-        }
-
-        $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param ShoppingList $shoppingList
-     * @param ProductUnit $unit
-     * @param Product $product
-     * @param float $quantity
-     * @param string $referenceName
-     */
-    protected function createLineItem(
-        ObjectManager $manager,
-        ShoppingList $shoppingList,
-        ProductUnit $unit,
-        Product $product,
-        $quantity,
-        $referenceName
-    ) {
-        $owner = $this->getFirstUser($manager);
-        $item = new LineItem();
-        $item->setNotes('Test Notes')
-            ->setCustomerUser($shoppingList->getCustomerUser())
-            ->setOrganization($shoppingList->getOrganization())
-            ->setOwner($owner)
-            ->setShoppingList($shoppingList)
-            ->setUnit($unit)
-            ->setProduct($product)
-            ->setQuantity($quantity);
-
-        $manager->persist($item);
-        $this->addReference($referenceName, $item);
     }
 }

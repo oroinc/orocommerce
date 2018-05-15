@@ -25,6 +25,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function QuantitySwitcher() {
+            QuantitySwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             QuantitySwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));
@@ -34,7 +41,9 @@ define(function(require) {
         },
 
         addValidationError: function($identifier) {
-            var $field = $('div.error-block' + $identifier);
+            var $field = this.$el.closest('.price_rule')
+                .find('div.error-block' + $identifier);
+
             $field.addClass(this.visibleClass).append($('<span></span>')
                 .addClass('validation-failed').text(this.options.errorMessage).show());
         },

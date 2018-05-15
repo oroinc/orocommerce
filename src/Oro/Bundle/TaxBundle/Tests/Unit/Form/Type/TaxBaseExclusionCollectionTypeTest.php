@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionCollectionType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -33,7 +34,7 @@ class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->formType->getParent());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
@@ -42,8 +43,8 @@ class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
         $options = $resolver->resolve();
 
-        $this->assertArrayHasKey('type', $options);
-        $this->assertEquals('oro_tax_base_exclusion', $options['type']);
+        $this->assertArrayHasKey('entry_type', $options);
+        $this->assertEquals(TaxBaseExclusionType::class, $options['entry_type']);
         $this->assertArrayHasKey('show_form_when_empty', $options);
         $this->assertFalse($options['show_form_when_empty']);
     }

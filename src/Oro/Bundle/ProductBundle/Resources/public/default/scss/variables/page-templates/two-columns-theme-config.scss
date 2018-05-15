@@ -10,5 +10,6 @@ $two-columns-theme-product-price-hint-flex-direction-desktop: column-reverse !de
 $two-columns-theme-product-price-label-font-weight-desktop: bold !default;
 
 // desktop
+$embedded-products-item-offset: 25px !default;
 $two-columns-theme-embedded-related-products-item-count-desktop: 2 !default;
 $two-columns-theme-embedded-related-products-item-gap-desktop: ($embedded-products-item-offset) - ($embedded-products-item-offset / $two-columns-theme-embedded-related-products-item-count-desktop) !default;

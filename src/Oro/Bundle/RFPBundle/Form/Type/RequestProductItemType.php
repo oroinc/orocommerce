@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductItemType extends AbstractType
 {
@@ -38,7 +37,7 @@ class RequestProductItemType extends AbstractType
         $builder
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'currency_empty_value' => null,
                     'required' => true,
@@ -48,7 +47,7 @@ class RequestProductItemType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
@@ -57,7 +56,7 @@ class RequestProductItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => false,
                     'label' => 'oro.rfp.requestproductitem.quantity.label',
@@ -87,7 +86,7 @@ class RequestProductItemType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
-                'intention' => 'rfp_request_product_item',
+                'csrf_token_id' => 'rfp_request_product_item',
             ]
         );
     }

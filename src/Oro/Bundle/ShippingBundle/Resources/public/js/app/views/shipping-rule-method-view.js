@@ -53,6 +53,16 @@ define(function(require) {
 
         $addAll: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShippingRuleMethodsView() {
+            ShippingRuleMethodsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
@@ -260,7 +270,7 @@ define(function(require) {
                 preview.push(label + value);
             }, this);
 
-            //replace whitespaces by &nbsp;, for tooltip overflow calculate
+            // replace whitespaces by &nbsp;, for tooltip overflow calculate
             $preview.html(preview.join(', ').replace(/ /g, '&nbsp;'));
 
             this.updatePreviewTooltip($preview, preview);

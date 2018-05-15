@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListSelectType extends AbstractType
 {
@@ -14,11 +13,11 @@ class PriceListSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'oro_pricing_price_list',
+                'autocomplete_alias' => PriceListType::class,
                 'create_form_route' => 'oro_pricing_price_list_create',
                 'configs' => [
                     'placeholder' => 'oro.pricing.form.choose_price_list'
@@ -32,7 +31,7 @@ class PriceListSelectType extends AbstractType
      */
     public function getParent()
     {
-        return OroEntitySelectOrCreateInlineType::NAME;
+        return OroEntitySelectOrCreateInlineType::class;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
@@ -20,8 +19,9 @@ use Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -50,7 +50,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getParent());
+        $this->assertEquals(DiscountOptionsType::class, $this->formType->getParent());
     }
 
     /**
@@ -62,7 +62,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $existingData, array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType, $existingData);
+        $form = $this->factory->create(BuyXGetYDiscountOptionsType::class, $existingData);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -140,8 +140,8 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 'apply_to_choices',
                 [
-                    'apply_to_each_y' => 'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_each_y',
-                    'apply_to_xy_total' => 'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_xy_total'
+                    'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_each_y' => 'apply_to_each_y',
+                    'oro.discount_options.buy_x_get_y_type.apply_to.choices.apply_to_xy_total' => 'apply_to_xy_total',
                 ]
             );
         $this->formType->configureOptions($resolver);
@@ -157,15 +157,9 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
-                'item' => 'oro.product_unit.item.label.full',
-                'set' => 'oro.product_unit.set.label.full',
+                'oro.product_unit.item.label.full' => 'item',
+                'oro.product_unit.set.label.full' => 'set',
             ]);
-
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
 
         /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
@@ -180,14 +174,14 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
-                    DiscountOptionsType::NAME => new DiscountOptionsType(),
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
-                    OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter),
+                    ProductUnitsType::class => new ProductUnitsType($productUnitsProvider),
+                    DiscountOptionsType::class => new DiscountOptionsType(),
+                    MultiCurrencyType::class => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter),
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

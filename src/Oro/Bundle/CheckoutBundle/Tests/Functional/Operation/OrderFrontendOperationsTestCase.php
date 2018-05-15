@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
@@ -36,6 +37,11 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         $this->emFallback = $doctrine->getManagerForClass(EntityFieldFallbackValue::class);
 
         $this->loadFixtures($this->getFixtures());
+
+        /* @var $configManager ConfigManager */
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set('oro_inventory.manage_inventory', true);
+        $configManager->flush();
     }
 
     /**

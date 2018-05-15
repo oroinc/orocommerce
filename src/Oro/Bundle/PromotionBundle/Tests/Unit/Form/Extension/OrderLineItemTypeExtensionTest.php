@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,9 +25,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected $taxationSettingsProvider;
 
     /**
-     * @var TaxManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $taxManager;
+    protected $taxProvider;
 
     /**
      * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -51,14 +52,19 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
-        $this->taxManager = $this->createMock(TaxManager::class);
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
+
         $this->appliedDiscountsProvider = $this->createMock(AppliedDiscountsProvider::class);
         $this->sectionProvider = $this->createMock(SectionProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
-            $this->taxManager,
+            $taxProviderRegistry,
             $this->appliedDiscountsProvider,
             $this->sectionProvider,
             $this->lineItemSubtotalProvider
@@ -74,7 +80,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->sectionProvider->expects($this->once())->method('addSections')
             ->with(
-                $this->equalTo('oro_order_line_item'),
+                $this->equalTo(OrderLineItemType::class),
                 $this->logicalAnd(
                     $this->isType('array'),
                     $this->arrayHasKey('applied_discounts')
@@ -111,7 +117,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
 
-        $this->taxManager
+        $this->taxProvider
             ->expects($this->once())
             ->method('getTax')
             ->with($orderLineItem)
@@ -120,7 +126,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->lineItemSubtotalProvider->expects($this->once())
             ->method('getRowTotal')
             ->with($orderLineItem)
-            ->willReturnCallback(function (OrderLineItem $orderLineItem, $currency) {
+            ->willReturnCallback(function (OrderLineItem $orderLineItem) {
                 return $orderLineItem->getValue() * $orderLineItem->getQuantity();
             });
 
@@ -142,7 +148,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->taxationSettingsProvider->expects($this->never())->method('isEnabled');
 
-        $this->taxManager
+        $this->taxProvider
             ->expects($this->never())
             ->method('getTax');
 
@@ -174,14 +180,14 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
 
-        $this->taxManager
+        $this->taxProvider
             ->expects($this->never())
             ->method('getTax');
 
         $this->lineItemSubtotalProvider->expects($this->once())
             ->method('getRowTotal')
             ->with($orderLineItem)
-            ->willReturnCallback(function (OrderLineItem $orderLineItem, $currency) {
+            ->willReturnCallback(function (OrderLineItem $orderLineItem) {
                 return $orderLineItem->getValue() * $orderLineItem->getQuantity();
             });
 

@@ -7,8 +7,8 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
 {
@@ -82,8 +82,8 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $resolved = $resolver->resolve();
 
         $expected = [
-            'empty_value' => null,
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
+            'choices_as_values' => true,
             'choices' => self::METHODS,
             'choice_attr' => function () {
             },
@@ -109,11 +109,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertSame(OroChoiceType::class, $this->type->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertSame(ShippingMethodSelectType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()

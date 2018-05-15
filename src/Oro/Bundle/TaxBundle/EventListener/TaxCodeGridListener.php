@@ -3,10 +3,8 @@
 namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class TaxCodeGridListener
 {
@@ -146,7 +144,7 @@ class TaxCodeGridListener
                     'field_options' => [
                         'multiple' => false,
                         'class' => $this->taxCodeClass,
-                        'property' => 'code'
+                        'choice_label' => 'code'
                     ]
                 ]
             ]

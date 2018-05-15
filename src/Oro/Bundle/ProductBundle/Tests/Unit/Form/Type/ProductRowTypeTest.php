@@ -2,31 +2,25 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
-use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductRowType
-     */
-    protected $formType;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ConstraintValidator
      */
@@ -37,8 +31,6 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new ProductRowType();
-
         $this->validator = $this
             ->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator')
             ->disableOriginalConstructor()
@@ -52,7 +44,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->formType, $this->validator);
+        unset($this->validator);
     }
 
     /**
@@ -70,7 +62,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 ->willReturn(true);
         }
 
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(ProductRowType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
@@ -86,15 +78,16 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
                 [
-                    ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
-                    ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
+                    ProductAutocompleteType::class => new StubProductAutocompleteType(),
+                    ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
                 ],
                 []
             ),
@@ -168,11 +161,6 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductRowType::NAME, $this->formType->getName());
-    }
-
     public function testBuildView()
     {
         $product = new Product();
@@ -195,7 +183,8 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 
-        $this->formType->buildView($view, $form, []);
+        $formType = new ProductRowType();
+        $formType->buildView($view, $form, []);
 
         $this->assertEquals($product, $view->vars['product']);
     }
@@ -244,7 +233,8 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             ->with(ProductDataStorage::PRODUCT_SKU_KEY)
             ->willReturn($skuField);
 
-        $this->formType->buildView($view, $form, []);
+        $formType = new ProductRowType();
+        $formType->buildView($view, $form, []);
 
         $this->assertEquals($product, $view->vars['product']);
     }

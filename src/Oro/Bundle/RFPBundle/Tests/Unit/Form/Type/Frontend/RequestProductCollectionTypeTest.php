@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Frontend\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 
 class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -33,7 +32,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
-                'type' => RequestProductType::NAME,
+                'entry_type' => RequestProductType::class,
                 'show_form_when_empty'  => true,
                 'error_bubbling'        => false,
                 'prototype_name'        => '__namerequestproduct__',
@@ -45,7 +44,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertEquals(CollectionType::NAME, $this->formType->getParent());
+        static::assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testGetName()

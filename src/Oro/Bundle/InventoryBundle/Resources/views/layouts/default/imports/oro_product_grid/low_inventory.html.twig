@@ -1,7 +1,5 @@
 {% block _product_datagrid_row__product_low_inventory_label_widget %}
     {% if (product.low_inventory) %}
-        <div class="grid">
-            <div class="grid__row product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</div>
-        </div>
+        <p class="grid__row product-low-inventory">{{ "oro.inventory.low_inventory.label"|trans }}</p>
     {% endif %}
 {% endblock %}

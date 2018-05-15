@@ -8,20 +8,24 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ShoppingListRepository extends EntityRepository
 {
     /**
      * @param AclHelper $aclHelper
      * @param bool $selectRelations
+     * @param null|int $websiteId
      * @return null|ShoppingList
      */
-    public function findAvailableForCustomerUser(AclHelper $aclHelper, $selectRelations = false)
+    public function findAvailableForCustomerUser(AclHelper $aclHelper, $selectRelations = false, $websiteId = null)
     {
         /** @var ShoppingList $shoppingList */
         $qb = $this->getShoppingListQueryBuilder($selectRelations);
         $qb->addOrderBy('list.id', 'DESC')->setMaxResults(1);
-
+        if ($websiteId) {
+            $qb->andWhere($qb->expr()->eq('list.website', ':website'))->setParameter('website', $websiteId);
+        }
         return $aclHelper->apply($qb)->getOneOrNullResult();
     }
 
@@ -29,11 +33,15 @@ class ShoppingListRepository extends EntityRepository
      * @param AclHelper $aclHelper
      * @param array $sortCriteria
      * @param ShoppingList|int|null $excludeShoppingList
-     *
+     * @param null|int $websiteId
      * @return array
      */
-    public function findByUser(AclHelper $aclHelper, array $sortCriteria = [], $excludeShoppingList = null)
-    {
+    public function findByUser(
+        AclHelper $aclHelper,
+        array $sortCriteria = [],
+        $excludeShoppingList = null,
+        $websiteId = null
+    ) {
         $qb = $this->createQueryBuilder('list')
             ->select('list, items')
             ->leftJoin('list.lineItems', 'items');
@@ -43,7 +51,12 @@ class ShoppingListRepository extends EntityRepository
                 ->setParameter('excludeShoppingList', $excludeShoppingList);
         }
 
+        if ($websiteId) {
+            $qb->andWhere($qb->expr()->eq('list.website', ':website'))->setParameter('website', $websiteId);
+        }
+
         foreach ($sortCriteria as $field => $sortOrder) {
+            QueryBuilderUtil::checkField($field);
             if ($sortOrder === Criteria::ASC) {
                 $qb->addOrderBy($qb->expr()->asc($field));
             } elseif ($sortOrder === Criteria::DESC) {
@@ -57,16 +70,20 @@ class ShoppingListRepository extends EntityRepository
     /**
      * @param AclHelper $aclHelper
      * @param int $id
-     *
+     * @param null|int $websiteId
      * @return mixed
      * @throws NonUniqueResultException
      */
-    public function findByUserAndId(AclHelper $aclHelper, $id)
+    public function findByUserAndId(AclHelper $aclHelper, $id, $websiteId = null)
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->andWhere('list.id = :id')
             ->setParameter('id', $id);
+
+        if ($websiteId) {
+            $qb->andWhere($qb->expr()->eq('list.website', ':website'))->setParameter('website', $websiteId);
+        }
 
         return $aclHelper->apply($qb)->getOneOrNullResult();
     }

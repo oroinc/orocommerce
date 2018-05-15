@@ -1,0 +1,121 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    groupWithPriceList:
+        name: 'Group with PriceList'
+        organization: '@organization'
+        owner: '@admin'
+    groupWithPriceList2:
+        name: 'Group with PriceList2'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+    locvalue2:
+        string: 'Product 2'
+    locvalue3:
+        string: 'Product 3'
+    locvalue4:
+        string: 'Product 4'
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+    product2:
+        sku: 'PSKU2'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+    product3:
+        sku: 'PSKU3'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue3']
+        inventoryStatus: '@enumInventoryStatuses'
+    product4:
+        sku: 'PSKU4'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue4']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products:
+        __construct: [['@product1', '@product2', '@product3', '@product4']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        setProducts: ['@products']
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListForExport:
+        name: 'priceListForExport'
+        addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@priceListForExport'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 6
+    price2:
+        product: '@product2'
+        priceList: '@priceListForExport'
+        currency: 'USD'
+        quantity: 2
+        unit: '@item'
+        value: 10
+    price3:
+        product: '@product3'
+        priceList: '@priceListForExport'
+        currency: 'USD'
+        quantity: 5
+        unit: '@item'
+        value: 33
+    price4:
+        product: '@product4'
+        priceList: '@priceListForExport'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 4
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@priceListForExport'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@priceListForExport'
+    priceRelation3:
+        product: '@product3'
+        priceList: '@priceListForExport'
+    priceRelation4:
+        product: '@product4'
+        priceList: '@priceListForExport'

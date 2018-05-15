@@ -40,6 +40,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function PaymentMethodSelectorComponent() {
+            PaymentMethodSelectorComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
 
@@ -85,7 +92,7 @@ define(function(require) {
         },
 
         updateForms: function(e) {
-            var $element =  $(e.target);
+            var $element = $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             this.refreshPaymentMethod();

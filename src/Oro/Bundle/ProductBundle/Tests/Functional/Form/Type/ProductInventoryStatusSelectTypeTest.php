@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 
 class ProductInventoryStatusSelectTypeTest extends WebTestCase
 {
@@ -38,7 +37,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
     public function testSubmit(array $submitData, $isValid)
     {
         // submit form
-        $form = $this->formFactory->create(ProductInventoryStatusSelectType::NAME, []);
+        $form = $this->formFactory->create(ProductInventoryStatusSelectType::class, []);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         if ($isValid) {

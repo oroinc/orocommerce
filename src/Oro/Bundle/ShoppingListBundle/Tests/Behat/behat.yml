@@ -4,6 +4,14 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
       selector: '#shopping_list_view_container_content'
 
+    ShoppingListWidgetContainer:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-widget__container'
+
+    ShoppingListWidgetItemName:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-dropdown__item span.shopping-list-dropdown__name-inner'
+
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
@@ -50,16 +58,16 @@ oro_behat_extension:
 
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: '#shopping_list_view_container_content > div.cart-table > table'
+      selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
-      selector: 'tbody.line_item'
+      selector: '.shopping-list-line-items__item-wrapper'
 
     Shopping List Line Item 1 Form:
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       selector:
-        locator: '(//tbody[@class="line_item"])[1]//form'
+        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
         type: xpath
       options:
         mapping:
@@ -76,7 +84,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//div[text()[contains(.,"SKU #:")]]/span'
+          locator: '//span[@class="product-item__sku-value"]'
 
     Shopping List Dropdown:
       selector:
@@ -104,6 +112,21 @@ oro_behat_extension:
           Unit:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
+
+    ConfigurableProductForm:
+      selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      options:
+        mapping:
+          Attributes_1:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_1]"]'
+          Attributes_2:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_2]"]'
+          Attributes_3:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
 
     LineItemQuantity:
       selector:
@@ -137,8 +160,8 @@ oro_behat_extension:
     In Shopping List:
       selector: 'a.shopping-lists__area-trigger'
 
-    Add To Shopping List:
-      selector: 'a.add-to-shopping-list-button'
+    Add to Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
@@ -164,6 +187,13 @@ oro_behat_extension:
       options:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
+
+    Remove Line Item:
+      selector: 'button.item-remove'
+
+    Shopping list Line items Grid:
+      selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
   suites:
     OroShoppingListBundle:

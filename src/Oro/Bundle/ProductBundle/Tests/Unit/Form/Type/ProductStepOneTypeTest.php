@@ -2,40 +2,30 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
+use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
-use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
 class ProductStepOneTypeTest extends FormIntegrationTestCase
 {
-    /** @var  ProductStepOneType $productStatusType */
-    protected $productStepOneType;
-
-    public function setup()
+    public function testIntention()
     {
-        parent::setUp();
+        $form = $this->factory->create(ProductStepOneType::class);
 
-        $this->productStepOneType = new ProductStepOneType();
+        $this->assertEquals(
+            'product',
+            $form->getConfig()->getOptions()['csrf_token_id']
+        );
     }
 
     public function testGetName()
     {
-        $this->assertEquals(ProductStepOneType::NAME, $this->productStepOneType->getName());
-    }
-
-    public function testIntention()
-    {
-        $form = $this->factory->create($this->productStepOneType);
-
-        $this->assertEquals(
-            'product',
-            $form->getConfig()->getOptions()['intention']
-        );
+        $type = new ProductStepOneType();
+        $this->assertEquals(ProductStepOneType::NAME, $type->getName());
     }
 
     public function testBuildView()
@@ -43,7 +33,8 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
         $view = new FormView();
         /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
-        $this->productStepOneType->buildView($view, $form, []);
+        $type = new ProductStepOneType();
+        $type->buildView($view, $form, []);
 
         $this->assertArrayHasKey('default_input_action', $view->vars);
         $this->assertEquals('oro_product_create', $view->vars['default_input_action']);
@@ -57,12 +48,7 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
         $productTypeProvider = new ProductTypeProvider();
 
         return [
-            new PreloadedExtension(
-                [
-                    ProductTypeType::NAME => new ProductTypeType($productTypeProvider),
-                ],
-                []
-            )
+            new PreloadedExtension([new ProductTypeType($productTypeProvider)], [])
         ];
     }
 }

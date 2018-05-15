@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -11,28 +12,32 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
+/**
+ * Doctrine repository for Oro\Bundle\PricingBundle\Entity\CombinedProductPrice entity
+ */
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
-    const BATCH_SIZE = 100000;
+    const BATCH_SIZE = 10000;
 
     /**
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceList $combinedPriceList
      * @param PriceList $priceList
      * @param boolean $mergeAllowed
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     public function insertPricesByPriceList(
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         $mergeAllowed,
-        Product $product = null
+        array $products = []
     ) {
         $qb = $this->getEntityManager()
             ->getRepository('OroPricingBundle:ProductPrice')
@@ -50,67 +55,30 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
             )
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
-            ->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'))
-            ->groupBy('pp.id')
             ->setParameter('currentPriceList', $priceList);
         $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
-        $minProductId = null;
-        $maxProductId = null;
-        if ($product) {
-            $minProductId = $product->getId();
-            $maxProductId = $product->getId();
+
+        if (!$products) {
+            $this->insertByProductsRange($insertFromSelectQueryExecutor, $priceList, $qb);
         } else {
-            $productPriceQb = $this->getEntityManager()
-                ->createQueryBuilder();
-            $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-                ->from('OroPricingBundle:PriceListToProduct', 'ptp')
-                ->where('ptp.priceList = :priceList')
-                ->setParameter('priceList', $priceList);
-
-            $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
-            $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
-        }
-        while ($minProductId <= $maxProductId) {
-            $currentMax = $minProductId + self::BATCH_SIZE;
-            if ($currentMax > $maxProductId) {
-                $currentMax = $maxProductId;
-            }
-            $qb->setParameter('product_min', $minProductId)
-                ->setParameter('product_max', $currentMax);
-
-            $insertFromSelectQueryExecutor->execute(
-                'OroPricingBundle:CombinedProductPrice',
-                [
-                    'product',
-                    'unit',
-                    'priceList',
-                    'productSku',
-                    'quantity',
-                    'value',
-                    'currency',
-                    'mergeAllowed'
-                ],
-                $qb
-            );
-            // +1 because between operator includes boundary values
-            $minProductId = $currentMax + 1;
+            $this->insertByProducts($insertFromSelectQueryExecutor, $qb, $products);
         }
     }
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
-    public function deleteCombinedPrices(CombinedPriceList $combinedPriceList, Product $product = null)
+    public function deleteCombinedPrices(CombinedPriceList $combinedPriceList, array $products = [])
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'combinedPrice')
             ->where($qb->expr()->eq('combinedPrice.priceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList);
 
-        if ($product) {
-            $qb->andWhere($qb->expr()->eq('combinedPrice.product', ':product'))
-                ->setParameter('product', $product);
+        if ($products) {
+            $qb->andWhere($qb->expr()->in('combinedPrice.product', ':products'))
+                ->setParameter('products', $products);
         }
 
         $qb->getQuery()->execute();
@@ -156,50 +124,36 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         CombinedPriceList $combinedPriceList,
         $mergeAllowed
     ) {
-        $additionalProductCondition = $qb->expr()->between('cpp.product', ':product_min', ':product_max');
-        if ($mergeAllowed) {
-            $qb->leftJoin(
-                'OroPricingBundle:CombinedProductPrice',
-                'cpp',
-                Join::WITH,
+        $subQuery = $this->_em->createQueryBuilder();
+        $subQuery->select('cpp.id')
+            ->from('OroPricingBundle:CombinedProductPrice', 'cpp')
+            ->where(
                 $qb->expr()->andX(
                     $qb->expr()->eq('cpp.priceList', ':combinedPriceList'),
-                    $qb->expr()->eq('pp.product', 'cpp.product'),
-                    $qb->expr()->eq('cpp.mergeAllowed', ':mergeAllowed'),
-                    $additionalProductCondition
-                )
-            )
-            ->setParameter('mergeAllowed', false);
-
-            $additionalProductCondition = $qb->expr()->between('cpp2.product', ':product_min', ':product_max');
-            $qb->leftJoin(
-                'OroPricingBundle:CombinedProductPrice',
-                'cpp2',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
-                    $qb->expr()->eq('pp.product', 'cpp2.product'),
-                    $qb->expr()->eq('pp.unit', 'cpp2.unit'),
-                    $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
-                    $qb->expr()->eq('pp.currency', 'cpp2.currency'),
-                    $additionalProductCondition
-                )
-            )
-            ->andWhere($qb->expr()->isNull('cpp2.id'));
-        } else {
-            $qb->leftJoin(
-                'OroPricingBundle:CombinedProductPrice',
-                'cpp',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('cpp.priceList', ':combinedPriceList'),
-                    $qb->expr()->eq('pp.product', 'cpp.product'),
-                    $additionalProductCondition
+                    $qb->expr()->eq('pp.product', 'cpp.product')
                 )
             );
-        }
+        if ($mergeAllowed) {
+            $subQuery->andWhere(
+                $subQuery->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
+            );
+            $qb->setParameter('mergeAllowed', false);
 
-        $qb->andWhere($qb->expr()->isNull('cpp.id'))
+            $subQuery2 = $this->_em->createQueryBuilder();
+            $subQuery2->select('cpp2.id')
+                ->from('OroPricingBundle:CombinedProductPrice', 'cpp2')
+                ->where(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('cpp2.priceList', ':combinedPriceList'),
+                        $qb->expr()->eq('pp.product', 'cpp2.product'),
+                        $qb->expr()->eq('pp.currency', 'cpp2.currency'),
+                        $qb->expr()->eq('pp.unit', 'cpp2.unit'),
+                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity')
+                    )
+                );
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery2->getQuery()->getDQL())));
+        }
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getQuery()->getDQL())))
             ->setParameter('combinedPriceList', $combinedPriceList->getId());
     }
 
@@ -252,7 +206,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             'IDENTITY(mp.priceList) as cpl',
             'IDENTITY(mp.unit) as unit'
         );
-        $qb->groupBy('mp.product, mp.priceList, mp.currency, mp.unit');
+        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -272,27 +226,27 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             'mp.currency',
             'IDENTITY(mp.priceList) as cpl'
         );
-        $qb->groupBy('mp.product, mp.priceList, mp.currency');
+        $qb->groupBy('mp.priceList, mp.product, mp.currency');
 
         return $qb->getQuery()->getArrayResult();
     }
 
     /**
      * @param ShardManager $shardManager
-     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
      * @param CombinedPriceList $combinedPriceList
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     public function insertMinimalPricesByPriceList(
         ShardManager $shardManager,
-        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
-        Product $product = null
+        array $products = []
     ) {
         //remove prices that are greater of prices from current PriceList
-        $this->deleteInvalidPricesForMinimalStrategy($shardManager, $combinedPriceList, $priceList, $product);
+        $this->deleteInvalidPricesForMinimalStrategy($shardManager, $combinedPriceList, $priceList, $products);
 
         //insert all prices to free slots
         $this->insertPricesByPriceList(
@@ -300,78 +254,99 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             $combinedPriceList,
             $priceList,
             true,
-            $product
+            $products
         );
     }
 
     /**
-     * @param $websiteId
+     * @param int $websiteId
      * @param array $products
-     * @param $configCpl
+     * @param CombinedPriceList $configCpl
      * @return QueryBuilder
      */
     protected function getQbForMinimalPrices($websiteId, array $products, $configCpl)
     {
         $qb = $this->createQueryBuilder('mp');
-        $qb->where('mp.product in (:products)')
-            ->setParameter('products', $products);
-        $expr = $qb->expr()->orX(
-            $qb->expr()->orX(
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToWebsite::class, 'cpl_w')
-                        ->select('cpl_w.id')
-                        ->where('cpl_w.website = :websiteId')
-                        ->andWhere('cpl_w.priceList = mp.priceList')
-                        ->getDQL()
-                ),
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToCustomer::class, 'cpl_a')
-                        ->select('cpl_a.id')
-                        ->where('cpl_a.website = :websiteId')
-                        ->andWhere('cpl_a.priceList = mp.priceList')
-                        ->getDQL()
-                ),
-                $qb->expr()->exists(
-                    $this->getEntityManager()
-                        ->createQueryBuilder()
-                        ->from(CombinedPriceListToCustomerGroup::class, 'cpl_ag')
-                        ->select('cpl_ag.id')
-                        ->where('cpl_ag.website = :websiteId')
-                        ->andWhere('cpl_ag.priceList = mp.priceList')
-                        ->getDQL()
+
+        return $qb
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->in('mp.priceList', ':cplIds'),
+                    $qb->expr()->in('mp.product', ':products')
                 )
             )
-        );
-        if ($configCpl) {
-            $expr->add('mp.priceList = :conf_cpl');
-            $qb->setParameter('conf_cpl', $configCpl);
-        }
-        $qb->andWhere($expr)
-            ->setParameter('websiteId', $websiteId);
+            ->setParameter('cplIds', $this->getCplIdsForWebsite($websiteId, $configCpl))
+            ->setParameter(
+                'products',
+                array_map(
+                    function ($product) {
+                        return (int)($product instanceof Product ? $product->getId() : $product);
+                    },
+                    $products
+                )
+            );
+    }
 
-        return $qb;
+    /**
+     * @param int $websiteId
+     * @param CombinedPriceList|null $configCpl
+     * @return array|int[]
+     */
+    private function getCplIdsForWebsite($websiteId, $configCpl = null)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = new UnionQueryBuilder($em, false);
+        $qb->addSelect('cplId', 'id', Type::INTEGER)
+            ->addOrderBy('id');
+
+        if ($configCpl) {
+            $subQb = $em->getRepository(CombinedPriceList::class)->createQueryBuilder('cpl');
+            $subQb->select('cpl.id AS cplId')
+                ->where(
+                    $subQb->expr()->eq('cpl.id', ':configCpl')
+                )
+                ->setParameter('configCpl', $configCpl)
+                ->setMaxResults(1);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        $cplRelations = [
+            CombinedPriceListToWebsite::class,
+            CombinedPriceListToCustomerGroup::class,
+            CombinedPriceListToCustomer::class
+        ];
+
+        foreach ($cplRelations as $entityClass) {
+            $subQb = $em->getRepository($entityClass)->createQueryBuilder('relation');
+            $subQb->select('IDENTITY(relation.priceList) AS cplId')
+                ->where(
+                    $subQb->expr()->eq('relation.website', ':websiteId')
+                )
+                ->setParameter('websiteId', $websiteId);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
     }
 
     /**
      * @param ShardManager $shardManager
      * @param CombinedPriceList $combinedPriceList
      * @param PriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      */
     protected function deleteInvalidPricesForMinimalStrategy(
         ShardManager $shardManager,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
-        Product $product = null
+        array $products = []
     ) {
         $invalidPricesQb = $this->createQueryBuilder('cpp');
         $invalidPricesQb->select('DISTINCT cpp.id')
             ->where('cpp.priceList = :cpl')
-            ->andWhere($invalidPricesQb->expr()->between('cpp.product', ':product_min', ':product_max'))
             ->setParameter('cpl', $combinedPriceList);
         $invalidPricesQb->join(
             'OroPricingBundle:ProductPrice',
@@ -387,22 +362,70 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             )
         );
         $invalidPricesQb->setParameter('priceList', $priceList);
+
+        if (!$products) {
+            $this->deleteInvalidByRange($shardManager, $invalidPricesQb, $priceList);
+        } else {
+            $this->deleteInvalidByProducts($shardManager, $invalidPricesQb, $priceList, $products);
+        }
+    }
+
+    /**
+     * @param array $prices
+     */
+    protected function deletePricesByIds(array $prices)
+    {
+        if (empty($prices)) {
+            return;
+        }
+        $this->_em->createQueryBuilder()
+            ->delete($this->_entityName, 'prices')
+            ->where('prices.id IN(:prices)')
+            ->setParameter('prices', $prices)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPriceListIdsByProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('productToPriceList');
+
+        $result = $qb->select('DISTINCT IDENTITY(productToPriceList.priceList) as priceListId')
+            ->where('productToPriceList.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map('current', $result);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     * @param PriceList    $priceList
+     * @param QueryBuilder $invalidPricesQb
+     */
+    private function deleteInvalidByRange(
+        ShardManager $shardManager,
+        QueryBuilder $invalidPricesQb,
+        PriceList $priceList
+    ) {
         $minProductId = null;
         $maxProductId = null;
-        if ($product) {
-            $minProductId = $product->getId();
-            $maxProductId = $product->getId();
-        } else {
-            $productPriceQb = $this->getEntityManager()
-                ->createQueryBuilder();
-            $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-                ->from('OroPricingBundle:PriceListToProduct', 'ptp')
-                ->where('ptp.priceList = :priceList')
-                ->setParameter('priceList', $priceList);
+        $invalidPricesQb->andWhere(
+            $invalidPricesQb->expr()->between('cpp.product', ':product_min', ':product_max')
+        );
+        $productPriceQb = $this->getEntityManager()
+            ->createQueryBuilder();
+        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+            ->from('OroPricingBundle:PriceListToProduct', 'ptp')
+            ->where('ptp.priceList = :priceList')
+            ->setParameter('priceList', $priceList);
 
-            $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
-            $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
-        }
+        $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
+        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -422,34 +445,104 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param array $prices
+     * @param ShardManager $shardManager
+     * @param QueryBuilder $invalidPricesQb
+     * @param PriceList $priceList
+     * @param array|Product[] $products
      */
-    protected function deletePricesByIds(array $prices)
-    {
-        if (empty($prices)) {
-            return;
-        }
-        $this->_em->createQueryBuilder()
-           ->delete($this->_entityName, 'prices')
-           ->where('prices.id IN(:prices)')
-           ->setParameter('prices', $prices)
-           ->getQuery()
-           ->execute();
+    private function deleteInvalidByProducts(
+        ShardManager $shardManager,
+        QueryBuilder $invalidPricesQb,
+        PriceList $priceList,
+        array $products
+    ) {
+        $invalidPricesQb->andWhere(
+            $invalidPricesQb->expr()->in('cpp.product', ':products')
+        );
+        $invalidPricesQb->setParameter('products', $products);
+        $query = $invalidPricesQb->getQuery();
+        $query->setHint('priceList', $priceList->getId());
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $ids = $query->getScalarResult();
+        $this->deletePricesByIds($ids);
     }
 
     /**
-     * {@inheritDoc}
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param PriceList $priceList
+     * @param QueryBuilder $qb
      */
-    protected function getPriceListIdsByProduct(Product $product)
-    {
-        $qb = $this->createQueryBuilder('productToPriceList');
+    private function insertByProductsRange(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        PriceList $priceList,
+        QueryBuilder $qb
+    ) {
+        $minProductId = null;
+        $maxProductId = null;
+        $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
+        $productPriceQb = $this->getEntityManager()
+            ->createQueryBuilder();
+        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+            ->from('OroPricingBundle:PriceListToProduct', 'ptp')
+            ->where('ptp.priceList = :priceList')
+            ->setParameter('priceList', $priceList);
 
-        $result = $qb->select('DISTINCT IDENTITY(productToPriceList.priceList) as priceListId')
-            ->where('productToPriceList.product = :product')
-            ->setParameter('product', $product)
-            ->getQuery()
-            ->getScalarResult();
+        $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
+        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
 
-        return array_map('current', $result);
+        while ($minProductId <= $maxProductId) {
+            $currentMax = $minProductId + self::BATCH_SIZE;
+            if ($currentMax > $maxProductId) {
+                $currentMax = $maxProductId;
+            }
+            $qb->setParameter('product_min', $minProductId)
+                ->setParameter('product_max', $currentMax);
+
+            $insertFromSelectQueryExecutor->execute(
+                'OroPricingBundle:CombinedProductPrice',
+                [
+                    'product',
+                    'unit',
+                    'priceList',
+                    'productSku',
+                    'quantity',
+                    'value',
+                    'currency',
+                    'mergeAllowed'
+                ],
+                $qb
+            );
+            // +1 because between operator includes boundary values
+            $minProductId = $currentMax + 1;
+        }
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param QueryBuilder                $qb
+     * @param array                       $products
+     */
+    private function insertByProducts(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        QueryBuilder $qb,
+        array $products
+    ) {
+        $qb->andWhere($qb->expr()->in('pp.product', ':products'))
+            ->setParameter('products', $products);
+        $insertFromSelectQueryExecutor->execute(
+            'OroPricingBundle:CombinedProductPrice',
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed'
+            ],
+            $qb
+        );
     }
 }

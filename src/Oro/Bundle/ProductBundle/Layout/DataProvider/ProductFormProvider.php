@@ -2,21 +2,23 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * Provides form and form view for product view pages and quick order form
+ */
 class ProductFormProvider extends AbstractFormProvider
 {
     const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
@@ -53,7 +55,7 @@ class ProductFormProvider extends AbstractFormProvider
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getFormView(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
+        return $this->getFormView(QuickAddType::class, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -67,7 +69,7 @@ class ProductFormProvider extends AbstractFormProvider
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getForm(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
+        return $this->getForm(QuickAddType::class, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -77,7 +79,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
 
-        return $this->getFormView(QuickAddCopyPasteType::NAME, null, $options);
+        return $this->getFormView(QuickAddCopyPasteType::class, null, $options);
     }
 
     /**
@@ -87,7 +89,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
 
-        return $this->getForm(QuickAddCopyPasteType::NAME, null, $options);
+        return $this->getForm(QuickAddCopyPasteType::class, null, $options);
     }
 
     /**
@@ -97,7 +99,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
 
-        return $this->getFormView(QuickAddImportFromFileType::NAME, null, $options);
+        return $this->getFormView(QuickAddImportFromFileType::class, null, $options);
     }
 
     /**
@@ -107,7 +109,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
 
-        return $this->getForm(QuickAddImportFromFileType::NAME, null, $options);
+        return $this->getForm(QuickAddImportFromFileType::class, null, $options);
     }
 
     /**
@@ -127,7 +129,7 @@ class ProductFormProvider extends AbstractFormProvider
             $cacheKeyOptions['id'] = $product->getId();
         }
 
-        return $this->getFormView(FrontendLineItemType::NAME, $lineItem, [], $cacheKeyOptions);
+        return $this->getFormView(FrontendLineItemType::class, $lineItem, [], $cacheKeyOptions);
     }
 
     /**
@@ -139,7 +141,7 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getForm(FrontendVariantFiledType::class, $data, $options, ['parentProduct' => $product->getId()]);
     }
 
     /**
@@ -151,7 +153,12 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getFormView(FrontendVariantFiledType::NAME, $data, $options);
+        return $this->getFormView(
+            FrontendVariantFiledType::class,
+            $data,
+            $options,
+            ['parentProduct' => $product->getId()]
+        );
     }
 
     /**

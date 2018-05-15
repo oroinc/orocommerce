@@ -63,6 +63,18 @@ class PlaceholderHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->helper->isNameMatch($name, $nameValue));
     }
 
+    public function testIsNameMatchWithoutPlaceholder()
+    {
+        $name = 'no placeholders';
+        $expected = false;
+
+        $this->placeholderRegistry
+            ->expects($this->never())
+            ->method('getPlaceholders');
+
+        $this->assertEquals($expected, $this->helper->isNameMatch($name, ''));
+    }
+
     /**
      * @return array
      */
@@ -73,11 +85,6 @@ class PlaceholderHelperTest extends \PHPUnit_Framework_TestCase
                 'name' => 'oro_test_WEBSITE_ID',
                 'nameValue' => 'oro_test_1a',
                 'expected' => true
-            ],
-            'without placeholder' => [
-                'name' => 'oro_test_',
-                'nameValue' => 'oro_test_1a',
-                'expected' => false
             ]
         ];
     }

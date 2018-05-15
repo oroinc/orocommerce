@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator;
 
 use Doctrine\ORM\Query\AST;
-
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\SelectIdentifierWalker as BaseWalker;
 
 class SelectIdentifierWalker extends BaseWalker

@@ -10,6 +10,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Schedule re-indexation for products by combined price lists
+ */
 class CombinedPriceListTriggerHandler
 {
     /**
@@ -18,9 +21,11 @@ class CombinedPriceListTriggerHandler
     protected $registry;
 
     /**
-     * @var bool
+     * Session is started when value of property > 0. Nested levels of session are supported.
+     *
+     * @var int
      */
-    protected $isSessionStarted;
+    protected $isSessionStarted = 0;
 
     /**
      * @var EventDispatcherInterface
@@ -50,34 +55,29 @@ class CombinedPriceListTriggerHandler
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Website $website
+     * @param Website|null $website
      */
     public function process(CombinedPriceList $combinedPriceList, Website $website = null)
     {
-        $websiteId = $website ? $website->getId() : null;
-        $this->scheduleCpl[$websiteId][$combinedPriceList->getId()] = $combinedPriceList->getId();
+        $this->scheduleCpl[$this->getWebsiteId($website)][$combinedPriceList->getId()] = $combinedPriceList->getId();
 
-        if (!$this->isSessionStarted) {
-            $this->send();
-        }
+        $this->send();
     }
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product|null $product
+     * @param array|int[] $productIds
      * @param Website|null $website
      */
     public function processByProduct(
         CombinedPriceList $combinedPriceList,
-        Product $product = null,
+        array $productIds = [],
         Website $website = null
     ) {
-        if ($product) {
-            $websiteId = $website ? $website->getId() : null;
-            $this->productsSchedule[$websiteId][$product->getId()] = $product->getId();
-            if (!$this->isSessionStarted) {
-                $this->send();
-            }
+        if ($productIds) {
+            $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));
+
+            $this->send();
         } else {
             $this->process($combinedPriceList, $website);
         }
@@ -89,65 +89,127 @@ class CombinedPriceListTriggerHandler
      */
     public function massProcess(array $combinedPriceLists, Website $website = null)
     {
-        $websiteId = $website ? $website->getId() : null;
+        $productIds = $this->getProductIdsByCombinedPriceLists($combinedPriceLists);
+        $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));
 
-        $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
-        $productIds = $repository->getProductIdsByPriceLists($combinedPriceLists);
-        $this->productsSchedule[$websiteId] = $productIds;
-
-        if (!$this->isSessionStarted) {
-            $this->send();
-        }
+        $this->send();
     }
 
     public function startCollect()
     {
-        $this->isSessionStarted = true;
+        $this->isSessionStarted++;
     }
 
     public function rollback()
     {
-        $this->scheduleCpl = [];
-        $this->productsSchedule = [];
-        $this->isSessionStarted = false;
+        if ($this->checkNestedSession()) {
+            $this->clearSchedules();
+        }
     }
 
     public function commit()
     {
-        $this->isSessionStarted = false;
-        $this->send();
+        if ($this->checkNestedSession()) {
+            $this->send();
+        }
     }
 
     protected function send()
     {
+        if (!$this->isSendUnlocked()) {
+            return;
+        }
+
         foreach ($this->scheduleCpl as $websiteId => $cplIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
             $this->dispatchByPriceLists($websiteIds, $cplIds);
         }
+
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
             $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
 
+        $this->clearSchedules();
+    }
+
+    /**
+     * @param array|int[] $websiteIds
+     * @param array|int[] $cplIds
+     */
+    protected function dispatchByPriceLists(array $websiteIds, array $cplIds)
+    {
+        // use minimal product prices because of table size
+        $productIds = $this->getProductIdsByCombinedPriceLists($cplIds);
+
+        if (!$websiteIds) {
+            $this->scheduleProductsByWebsite($productIds, null);
+        } else {
+            foreach ($websiteIds as $websiteId) {
+                $this->scheduleProductsByWebsite($productIds, $websiteId);
+            }
+        }
+    }
+
+    /**
+     * @param array|int[] $productIds
+     * @param int|null $websiteId
+     */
+    private function scheduleProductsByWebsite(array $productIds, $websiteId = null)
+    {
+        foreach ($productIds as $productId) {
+            if (!isset($this->productsSchedule[null][$productId])) {
+                $this->productsSchedule[$websiteId][$productId] = $productId;
+            }
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isSendUnlocked(): bool
+    {
+        return $this->isSessionStarted === 0;
+    }
+
+    /**
+     * @return bool
+     */
+    private function checkNestedSession(): bool
+    {
+        if ($this->isSessionStarted > 0) {
+            --$this->isSessionStarted;
+        }
+
+        return $this->isSendUnlocked();
+    }
+
+    /**
+     * @param Website|null $website
+     * @return int|null
+     */
+    private function getWebsiteId(Website $website = null)
+    {
+        return $website ? $website->getId() : null;
+    }
+
+    private function clearSchedules()
+    {
         $this->scheduleCpl = [];
         $this->productsSchedule = [];
     }
 
     /**
-     * @param array $websiteIds
-     * @param array $cplIds
+     * @param array $combinedPriceLists
+     * @return array
      */
-    protected function dispatchByPriceLists(array $websiteIds, array $cplIds)
+    private function getProductIdsByCombinedPriceLists(array $combinedPriceLists): array
     {
-        // use minimal product prices because of table size
-        $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
+        $repository = $this->registry
+            ->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
-        $productIds = $repository->getProductIdsByPriceLists($cplIds);
-        if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
-        }
+
+        return $repository->getProductIdsByPriceLists($combinedPriceLists);
     }
 }

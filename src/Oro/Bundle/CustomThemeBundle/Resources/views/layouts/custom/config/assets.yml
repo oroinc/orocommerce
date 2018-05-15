@@ -10,7 +10,8 @@ styles:
 
         - 'bundles/orocustomtheme/ShoppingListBundle/scss/styles.scss'
 
-        - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu-column-config.scss'
+        - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-columns-config.scss'
+        - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-column-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/quick-access-container-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/styles.scss'
 
@@ -19,6 +20,7 @@ styles:
 
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/page-main-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/breadcrumbs-config.scss'
+        - 'bundles/orocustomtheme/FrontendBundle/scss/variables/search-container-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/styles.scss'
 
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-config.scss'

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider\RelatedItem;
 
 use Doctrine\Common\Cache\Cache;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderInterface;

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\SystemConfig;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListConfigConverter
 {
@@ -55,9 +54,9 @@ class PriceListConfigConverter
 
     /**
      * @param array $configs
-     * @return array
+     * @return PriceListConfig[]
      */
-    public function convertFromSaved(array $configs)
+    public function convertFromSaved(array $configs): array
     {
         $ids = array_map(
             function ($config) {

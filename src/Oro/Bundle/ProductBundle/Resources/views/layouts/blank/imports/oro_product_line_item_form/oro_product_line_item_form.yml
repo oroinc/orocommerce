@@ -1,0 +1,48 @@
+layout:
+    imports:
+        -
+            id: line_item_buttons
+            root: __line_item_form_buttons
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_line_item_form.html.twig'
+        - '@addTree':
+            items:
+                __line_item_form:
+                    blockType: container
+                __line_item_form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
+                __line_item_form_fields:
+                    blockType: form_fields
+                    options:
+                        vars:
+                            form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
+                            singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                            defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
+                __line_item_form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
+                __line_item_form_buttons:
+                    blockType: container
+                __line_item_view_details:
+                    blockType: link
+                    options:
+                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp") || context["is_logged_in"]'
+                        text:
+                            label: oro.product.frontend.index.view_details
+            tree:
+                __root:
+                    __line_item_form:
+                        __line_item_form_start: ~
+                        __line_item_form_fields: ~
+                        __line_item_form_buttons:
+                            __line_item_view_details: ~
+                        __line_item_form_end: ~
+        - '@move':
+            id: __line_item_form_buttons
+            parentId: __line_item_form
+            siblingId: __line_item_form_fields

@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\TaxBundle\EventListener\ExtractLineItemPaymentOptionsListener;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,8 +19,8 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $translator;
 
-    /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
-    private $taxManager;
+    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $taxProvider;
 
     /** @var ExtractLineItemPaymentOptionsListener */
     private $listener;
@@ -28,8 +28,13 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
     public function setUp()
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->taxManager = $this->getMockBuilder(TaxManager::class)->disableOriginalConstructor()->getMock();
-        $this->listener = new ExtractLineItemPaymentOptionsListener($this->translator, $this->taxManager);
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->once())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
+
+        $this->listener = new ExtractLineItemPaymentOptionsListener($this->translator, $taxProviderRegistry);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -40,7 +45,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
     public function testOnExtractLineItemPaymentOptions()
     {
         $result = new Result([Result::TOTAL => new ResultElement([ResultElement::TAX_AMOUNT => self::TAX_AMOUNT])]);
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willReturn($result);
 
@@ -65,7 +70,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
     public function testOnExtractLineItemPaymentOptionsWithZeroTax()
     {
         $result = new Result([Result::TOTAL => new ResultElement([ResultElement::TAX_AMOUNT => 0])]);
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willReturn($result);
 
@@ -78,7 +83,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
 
     public function testOnExtractLineItemPaymentOptionsWithDisabledTaxation()
     {
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willThrowException(new TaxationDisabledException());
 
@@ -91,7 +96,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
 
     public function testOnExtractLineItemPaymentOptionsTaxesCouldNotBeLoaded()
     {
-        $this->taxManager->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('loadTax')
             ->willThrowException(new \InvalidArgumentException());
 

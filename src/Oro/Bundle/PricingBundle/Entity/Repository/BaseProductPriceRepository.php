@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -10,14 +11,14 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 abstract class BaseProductPriceRepository extends EntityRepository
 {
@@ -62,24 +63,31 @@ abstract class BaseProductPriceRepository extends EntityRepository
     /**
      * @param ShardManager $shardManager
      * @param BasePriceList $priceList
-     * @param Product $product
+     * @param array|Product[] $products
      */
     public function deleteByPriceList(
         ShardManager $shardManager,
         BasePriceList $priceList,
-        Product $product = null
+        array $products = []
     ) {
-        $query = $this->getDeleteQbByPriceList($priceList, $product)
+        $query = $this->getDeleteQbByPriceList($priceList, $products)
             ->getQuery();
         $sql = $query->getSQL();
         $baseTableName = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
         $tableName = ' ' . $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]) . ' ';
         $sql = str_replace($baseTableName, $tableName, $sql);
         $parameters = [$priceList->getId()];
-        if ($product) {
-            $parameters[] = $product->getId();
+        $types = [\PDO::PARAM_INT];
+        if ($products) {
+            $parameters[] = array_map(
+                function ($product) {
+                    return $product instanceof Product ? $product->getId() : $product;
+                },
+                $products
+            );
+            $types[] = Connection::PARAM_INT_ARRAY;
         }
-        $this->_em->getConnection()->executeQuery($sql, $parameters);
+        $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
     /**
@@ -96,10 +104,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
     /**
      * @param BasePriceList $priceList
-     * @param Product|null $product
+     * @param array|Product[] $products
      * @return QueryBuilder
      */
-    protected function getDeleteQbByPriceList(BasePriceList $priceList, Product $product = null)
+    protected function getDeleteQbByPriceList(BasePriceList $priceList, array $products = [])
     {
         $qb = $this->createQueryBuilder('productPrice');
 
@@ -107,9 +115,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
             ->setParameter('priceList', $priceList);
 
-        if ($product) {
-            $qb->andWhere($qb->expr()->eq('productPrice.product', ':product'))
-                ->setParameter('product', $product);
+        if ($products) {
+            $qb->andWhere($qb->expr()->in('productPrice.product', ':products'))
+                ->setParameter('products', $products);
         }
 
         return $qb;
@@ -284,7 +292,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
         }
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('price', $fieldName),
+                QueryBuilderUtil::getSortOrder($orderDirection)
+            );
         }
 
         return $qb;
@@ -442,12 +453,12 @@ abstract class BaseProductPriceRepository extends EntityRepository
     /**
      * @param BasePriceList $sourcePriceList
      * @param BasePriceList $targetPriceList
-     * @param InsertFromSelectShardQueryExecutor $insertQueryExecutor
+     * @param ShardQueryExecutorInterface $insertQueryExecutor
      */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
-        InsertFromSelectShardQueryExecutor $insertQueryExecutor
+        ShardQueryExecutorInterface $insertQueryExecutor
     ) {
         $qb = $this->createQBForCopy($sourcePriceList, $targetPriceList);
 
@@ -529,6 +540,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $qb->andWhere('prices.priceList = :priceList')
             ->setParameter('priceList', $priceList);
         foreach ($criteria as $field => $criterion) {
+            QueryBuilderUtil::checkIdentifier($field);
             if ($criterion === null) {
                 $qb->andWhere($qb->expr()->isNull('prices.'.$field));
             } elseif (is_array($criterion)) {
@@ -539,7 +551,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
             }
         }
         foreach ($orderBy as $field => $order) {
-            $qb->addOrderBy('prices.'.$field, $order);
+            $qb->addOrderBy(
+                QueryBuilderUtil::getField('prices', $field),
+                QueryBuilderUtil::getSortOrder($order)
+            );
         }
         if ($limit !== null) {
             $qb->setMaxResults($limit);

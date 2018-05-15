@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 class QuoteProductDemandCollectionType extends CollectionType
 {
@@ -24,7 +23,7 @@ class QuoteProductDemandCollectionType extends CollectionType
             [
                 'allow_add' => false,
                 'allow_delete' => false,
-                'type' => QuoteProductDemandType::NAME
+                'entry_type' => QuoteProductDemandType::class
             ]
         );
     }
@@ -36,8 +35,8 @@ class QuoteProductDemandCollectionType extends CollectionType
     {
         // custom subscriber to pass data to child form types
         $resizeSubscriber = new QuoteToOrderResizeFormSubscriber(
-            $options['type'],
-            $options['options'],
+            $options['entry_type'],
+            $options['entry_options'],
             $options['allow_add'],
             $options['allow_delete'],
             $options['delete_empty']

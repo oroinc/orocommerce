@@ -3,10 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductDBQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
 {

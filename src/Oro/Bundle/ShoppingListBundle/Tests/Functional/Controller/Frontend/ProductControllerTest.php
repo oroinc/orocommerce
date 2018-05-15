@@ -44,9 +44,15 @@ class ProductControllerTest extends WebTestCase
 
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->getShoppingLists();
+        /** @var ShoppingList $shoppingListFromAnotherSite */
+        $shoppingListFromAnotherSite = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
 
         foreach ($shoppingLists as $shoppingList) {
-            $this->assertContains('Add to ' . $shoppingList->getLabel(), $content);
+            if ($shoppingList !== $shoppingListFromAnotherSite) {
+                $this->assertContains('Add to ' . $shoppingList->getLabel(), $content);
+            } else {
+                $this->assertNotContains('Add to ' . $shoppingList->getLabel(), $content);
+            }
         }
 
         /** @var ShoppingList $shoppingList */

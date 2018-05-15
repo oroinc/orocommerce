@@ -2,20 +2,24 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutShipUntilType extends AbstractType
 {
     const NAME = 'oro_checkout_ship_until';
 
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }
@@ -31,7 +35,7 @@ class CheckoutShipUntilType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'attr' => [
@@ -42,8 +46,8 @@ class CheckoutShipUntilType extends AbstractType
         ]);
 
         $resolver->setRequired(['checkout']);
-        $resolver->setAllowedValues(['checkout' => function ($value) {
+        $resolver->setAllowedValues('checkout', function ($value) {
             return $value instanceof Checkout;
-        }]);
+        });
     }
 }

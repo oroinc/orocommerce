@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
 {
@@ -33,7 +33,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
          */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $product = $this->getReference($product);
-        $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, $product);
+        $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, [$product]);
 
         if ($expectedPriceLists) {
             $actualPriceLists = array_map(

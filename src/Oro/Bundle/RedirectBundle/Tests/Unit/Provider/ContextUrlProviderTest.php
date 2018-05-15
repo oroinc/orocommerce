@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
+use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 
 class ContextUrlProviderTest extends \PHPUnit_Framework_TestCase
 {

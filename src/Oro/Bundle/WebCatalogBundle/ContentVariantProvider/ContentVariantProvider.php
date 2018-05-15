@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebCatalogBundle\ContentVariantProvider;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 

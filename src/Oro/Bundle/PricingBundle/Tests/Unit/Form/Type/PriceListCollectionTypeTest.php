@@ -3,35 +3,20 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class PriceListCollectionTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var PriceListCollectionType
-     */
-    protected $type;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new PriceListCollectionType();
-    }
 
     /**
      * @dataProvider submitDataProvider
@@ -43,12 +28,12 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
         $options = [
-            'options' => [
+            'entry_options' => [
                 'data_class' => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite'
             ]
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(PriceListCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
         $this->assertTrue($form->isValid());
@@ -117,20 +102,17 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return $provider->getExtensions();
     }
 
-    public function testGetName()
-    {
-        $this->assertSame(PriceListCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertSame(CollectionType::NAME, $this->type->getParent());
+        $type = new PriceListCollectionType();
+        $this->assertSame(CollectionType::class, $type->getParent());
     }
 
     public function testFinishView()
     {
         $view = new FormView();
-        $this->type->finishView($view, $this->getFormMock(), ['render_as_widget' => true]);
+        $type = new PriceListCollectionType();
+        $type->finishView($view, $this->getFormMock(), ['render_as_widget' => true]);
 
         $this->assertArrayHasKey('render_as_widget', $view->vars);
         $this->assertTrue($view->vars['render_as_widget']);

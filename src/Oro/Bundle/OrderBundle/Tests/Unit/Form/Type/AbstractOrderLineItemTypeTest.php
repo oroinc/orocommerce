@@ -3,25 +3,23 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -58,16 +56,14 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         $priceType = PriceTypeGenerator::createPriceType($this);
 
         $orderPriceType = new PriceTypeSelectorType();
-        $dateType = new OroDateType();
 
         return [
             new PreloadedExtension(
                 [
-                    $unitSelectType->getName() => $unitSelectType,
-                    $priceType->getName() => $priceType,
-                    $orderPriceType->getName() => $orderPriceType,
-                    $dateType->getName() => $dateType,
-                    QuantityTypeTrait::$name => $this->getQuantityType(),
+                    ProductUnitSelectionType::class => $unitSelectType,
+                    PriceType::class => $priceType,
+                    PriceTypeSelectorType::class => $orderPriceType,
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             ),
@@ -124,7 +120,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         if (!$data) {
             $data = new OrderLineItem();
         }
-        $form = $this->factory->create($this->formType, $data, $options);
+        $form = $this->factory->create(get_class($this->formType), $data, $options);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -167,7 +163,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        $this->sectionProvider->expects($this->once())->method('getSections')->with($this->formType->getName())
+        $this->sectionProvider->expects($this->once())->method('getSections')->with(get_class($this->formType))
             ->willReturn($this->getExpectedSections());
 
         $view = new FormView();

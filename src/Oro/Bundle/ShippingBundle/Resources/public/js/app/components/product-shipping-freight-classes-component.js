@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -49,6 +47,13 @@ define(function(require) {
          * @property {Number}
          */
         timeoutId: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductShippingFreightClassesComponent() {
+            ProductShippingFreightClassesComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc

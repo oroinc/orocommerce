@@ -11,7 +11,7 @@ class ProductFormExtension extends BaseMetaFormExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**

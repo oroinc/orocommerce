@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
-use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
-use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
-use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 {
@@ -45,8 +45,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -62,6 +60,17 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([$this->type], [])
+        ];
     }
 
     /**
@@ -70,11 +79,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getName());
     }
 
     public function testGetBlockPrefix()
@@ -168,7 +172,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->with($attributeFamily)
             ->willReturn($customFields);
 
-        $form = $this->factory->create($this->type, $defaultVariant, $options);
+        $form = $this->factory->create(FrontendVariantFiledType::class, $defaultVariant, $options);
 
         $this->assertTrue($form->has(self::FIELD_COLOR));
         $this->assertTrue($form->has(self::FIELD_NEW));
@@ -221,7 +225,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     public function testBuildFormWithoutProductInOptions()
     {
-        $this->factory->create($this->type);
+        $this->factory->create(FrontendVariantFiledType::class);
     }
 
     // @codingStandardsIgnoreStart
@@ -233,7 +237,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     public function testBuildWhenRequiredFieldProductHasOtherObject()
     {
         $options['parentProduct'] = new \stdClass();
-        $this->factory->create($this->type, [], $options);
+        $this->factory->create(FrontendVariantFiledType::class, [], $options);
     }
 
     /**

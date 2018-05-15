@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ProductUnitPrecisionCollectionType extends AbstractType
 {
@@ -16,7 +15,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -26,7 +25,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductUnitPrecisionType::NAME,
+                'entry_type' => ProductUnitPrecisionType::class,
                 'show_form_when_empty' => false
             ]
         );

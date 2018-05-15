@@ -23,6 +23,7 @@ define(function(require) {
             fieldQuantity: '[data-name="field__quantity"]',
             fieldUnit: '[data-name="field__product-unit"]',
             fieldPrice: '[data-name="field__value"]',
+            fieldCurrency: '[data-name="field__currency"]',
             fieldCommentCheckbox: '[data-role="field__comment-checkbox"]',
             fieldComment: '[data-name="field__comment"]',
             remove: '[data-role="remove"]'
@@ -36,6 +37,16 @@ define(function(require) {
 
         formState: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function FrontendLineItemView() {
+            FrontendLineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
             this.initializeElements(options);
@@ -129,6 +140,7 @@ define(function(require) {
             var $quantities = this.getElement('fieldQuantity');
             var $units = this.getElement('fieldUnit');
             var $prices = this.getElement('fieldPrice');
+            var $currencies = this.getElement('fieldCurrency');
 
             data.product = this.getProduct();
             data.comment = this.getComment() || '';
@@ -139,6 +151,7 @@ define(function(require) {
                     quantity: $quantities[i].value,
                     unit: $units[i].value,
                     price: $prices[i].value,
+                    currency: $currencies[i].value,
                     found_price: $($prices[i]).data('found_price')
                 });
             });

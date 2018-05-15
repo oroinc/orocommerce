@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OrderExtension extends \Twig_Extension
 {

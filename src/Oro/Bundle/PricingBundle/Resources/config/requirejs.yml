@@ -20,7 +20,6 @@ config:
         'oropricing/js/app/views/abstract-switcher': 'bundles/oropricing/js/app/views/abstract-switcher.js'
         'oropricing/js/app/views/quantity-switcher': 'bundles/oropricing/js/app/views/quantity-switcher.js'
         'oropricing/js/app/views/expression-field-switcher': 'bundles/oropricing/js/app/views/expression-field-switcher.js'
-
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'
     map:
         '*':

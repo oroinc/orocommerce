@@ -2,23 +2,21 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
-use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
-use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
-use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
-use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
-use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
-use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
+use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
@@ -91,7 +89,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $categories = [];
         $websiteIds = [];
 
-        foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             $this->collectChangedCategories([$entity], $categories, $unitOfWork);
             $this->collectWebsiteIds([$entity], $websiteIds);
             $this->collectChangedFields($entity, $categories, $websiteIds);

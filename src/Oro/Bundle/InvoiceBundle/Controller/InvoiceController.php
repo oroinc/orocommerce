@@ -2,22 +2,20 @@
 
 namespace Oro\Bundle\InvoiceBundle\Controller;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\InvoiceBundle\Entity\Invoice;
-use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
-use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class InvoiceController extends Controller
 {
@@ -122,7 +120,7 @@ class InvoiceController extends Controller
      */
     protected function update(Invoice $invoice)
     {
-        $form = $this->createForm(InvoiceType::NAME, $invoice);
+        $form = $this->createForm(InvoiceType::class, $invoice);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $invoice,

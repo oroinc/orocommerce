@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
-use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,6 +49,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             'unitCode' => 'kg',
             'assignedUsers' => [1, 3, 7],
             'assignedCustomerUsers' => [2, 5],
+            'website' => 1,
         ];
 
         $rfpRequest = $this->createRFPRequest($rfpRequestData);
@@ -69,6 +71,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
                     'shipUntil' => null,
                     'assignedUsers' => [1, 3, 7],
                     'assignedCustomerUsers' => [2, 5],
+                    'website' => 1,
                 ],
                 ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                     [
@@ -147,12 +150,15 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
         $requestProduct2 = clone $requestProduct;
         $requestProduct2->setProduct(null);
 
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+
         $rfpRequest = new RFPRequest();
         $rfpRequest
             ->setCustomer($customer)
             ->setCustomerUser($customerUser)
             ->addRequestProduct($requestProduct)
-            ->addRequestProduct($requestProduct2);
+            ->addRequestProduct($requestProduct2)
+            ->setWebsite($website);
 
         foreach ($rfpRequestData['assignedUsers'] as $assignedUserId) {
             /** @var \Oro\Bundle\UserBundle\Entity\User $assignedUser */

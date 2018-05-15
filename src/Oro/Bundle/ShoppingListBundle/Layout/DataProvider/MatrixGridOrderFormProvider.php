@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class MatrixGridOrderFormProvider extends AbstractFormProvider
 {
@@ -21,11 +21,24 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     private $matrixOrderManager;
 
     /**
+     * @var TwigRenderer
+     */
+    private $twigRenderer;
+
+    /**
      * @param MatrixGridOrderManager $matrixOrderManager
      */
     public function setMatrixOrderManager($matrixOrderManager)
     {
         $this->matrixOrderManager = $matrixOrderManager;
+    }
+
+    /**
+     * @param TwigRenderer $twigRenderer
+     */
+    public function setTwigRenderer(TwigRenderer $twigRenderer)
+    {
+        $this->twigRenderer = $twigRenderer;
     }
 
     /**
@@ -45,10 +58,30 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
      * @param ShoppingList|null $shoppingList
      * @return FormView
      */
-    public function getMatrixOrderFormView(Product $product, ShoppingList $shoppingList = null)
+    public function getMatrixOrderFormView(Product $product = null, ShoppingList $shoppingList = null)
     {
+        if (!$product) {
+            return $this->getFormView(MatrixCollectionType::class);
+        }
         $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
-        return $this->getFormView(MatrixCollectionType::class, $collection);
+        return $this->getFormView(
+            MatrixCollectionType::class,
+            $collection,
+            [],
+            ['cacheKey' => md5(serialize($collection))]
+        );
+    }
+
+    /**
+     * @param Product $product
+     * @param ShoppingList|null $shoppingList
+     * @return string
+     */
+    public function getMatrixOrderFormHtml(Product $product = null, ShoppingList $shoppingList = null)
+    {
+        $formView = $this->getMatrixOrderFormView($product, $shoppingList);
+
+        return $this->twigRenderer->searchAndRenderBlock($formView, 'widget');
     }
 }

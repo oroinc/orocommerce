@@ -1,0 +1,147 @@
+operations:
+    oro_integration_deactivate:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.fedexType
+                value: Oro\Bundle\FedexShippingBundle\Integration\FedexChannel::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.fedexType]
+
+    oro_integration_delete:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.fedexType
+                value: Oro\Bundle\FedexShippingBundle\Integration\FedexChannel::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.fedexType]
+
+    oro_fedex_integration_deactivate:
+        extends: oro_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.fedexType
+                value: Oro\Bundle\FedexShippingBundle\Integration\FedexChannel::TYPE
+            - '@call_service_method':
+                attribute: $.actionAllowed
+                service: oro_integration.utils.edit_mode
+                method: isSwitchEnableAllowed
+                method_parameters: [$.data.editMode]
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_fedex_shipping.integration.identifier_generator
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
+        preconditions:
+            '@and':
+                - '@shipping_method_has_enabled_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.fedexType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options:
+            confirmation:
+                title: oro.shipping.integration.deactivate.title
+                okText: oro.shipping.integration.deactivate.button.okText
+                message: oro.shipping.integration.deactivate.message
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
+
+    oro_fedex_integration_deactivate_without_rules:
+        extends: oro_fedex_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_enabled_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.fedexType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options: ~
+
+    oro_fedex_integration_delete:
+        extends: oro_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.fedexType
+                value: Oro\Bundle\FedexShippingBundle\Integration\FedexChannel::TYPE
+            - '@call_service_method':
+                service: oro_integration.utils.edit_mode
+                method: isEditAllowed
+                method_parameters: [$.data.editMode]
+                attribute: $.actionAllowed
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_fedex_shipping.integration.identifier_generator
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
+        preconditions:
+            '@and':
+                - '@shipping_method_has_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.fedexType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            confirmation:
+                title: oro.shipping.integration.delete.title
+                okText: oro.shipping.integration.delete.button.okText
+                message: oro.shipping.integration.delete.message
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
+
+    oro_fedex_integration_delete_without_rules:
+        extends: oro_fedex_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.fedexType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            title: oro.action.delete_entity
+            confirmation:
+                title: oro.action.delete_entity
+                message: oro.action.delete_confirm
+                message_parameters:
+                    entityLabel: $name
+                component: oroui/js/delete-confirmation

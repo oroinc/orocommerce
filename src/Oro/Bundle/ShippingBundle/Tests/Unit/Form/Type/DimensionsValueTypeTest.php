@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class DimensionsValueTypeTest extends FormIntegrationTestCase
 {
@@ -15,10 +16,24 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new DimensionsValueType();
         $this->formType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    DimensionsValueType::class => $this->formType
+                ],
+                []
+            ),
+        ];
     }
 
     public function testGetBlockPrefix()
@@ -35,7 +50,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($submittedData, $expectedData, $defaultData = null)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(DimensionsValueType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 

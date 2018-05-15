@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -17,7 +18,6 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -91,8 +91,34 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
             $this->getEntity(CheckoutLineItem::class, [
                 'product' => $thirdProduct,
                 'productUnit' => $thirdProductUnit,
-                'quantity' => 3,
+                'quantity' => 0,
                 'priceFixed' => true
+            ]),
+        ]);
+    }
+
+    /**
+     * @return Collection|CheckoutLineItem[]
+     */
+    private function createCheckoutLineItemsWithoutQuantity()
+    {
+        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
+        $firstProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $secondProduct = $this->getEntity(Product::class, ['id' => 2]);
+        $secondProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+
+        return new ArrayCollection([
+            $this->getEntity(CheckoutLineItem::class, [
+                'product' => $firstProduct,
+                'productUnit' => $firstProductUnit,
+                'quantity' => 0,
+                'priceFixed' => false
+            ]),
+            $this->getEntity(CheckoutLineItem::class, [
+                'product' => $secondProduct,
+                'productUnit' => $secondProductUnit,
+                'quantity' => 0,
+                'priceFixed' => false
             ]),
         ]);
     }
@@ -144,6 +170,36 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
                 $priceList
             )
             ->willReturn($prices);
+
+        return new ExtendableConditionEvent($context);
+    }
+
+    /**
+     * @return ExtendableConditionEvent
+     */
+    private function expectsPrepareLineItemsWithoutQuantity()
+    {
+        $lineItems = $this->createCheckoutLineItemsWithoutQuantity();
+
+        /** @var Checkout $checkout */
+        $checkout = $this->getEntity(Checkout::class, [
+            'lineItems' => $lineItems,
+        ]);
+
+        $context = new ActionData(['checkout' => $checkout]);
+
+        $this->userCurrencyManager
+            ->expects($this->never())
+            ->method('getUserCurrency');
+
+        $priceList = $this->getEntity(PriceList::class);
+        $this->priceListRequestHandler
+            ->expects($this->never())
+            ->method('getPriceListByCustomer');
+
+        $this->productPriceProvider
+            ->expects($this->never())
+            ->method('getMatchedPrices');
 
         return new ExtendableConditionEvent($context);
     }
@@ -221,5 +277,21 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onStartCheckoutConditionCheck($event);
 
         $this->assertEmpty($event->getErrors());
+    }
+
+    public function testOnStartCheckoutConditionCheckWhenCheckoutHasItemsWithoutQuantity()
+    {
+        $event = $this->expectsPrepareLineItemsWithoutQuantity();
+
+        $this->listener->onStartCheckoutConditionCheck($event);
+
+        $expectedErrors = new ArrayCollection([
+            [
+                'message' => 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_quantity',
+                'context' => null
+            ]
+        ]);
+
+        $this->assertEquals($expectedErrors, $event->getErrors());
     }
 }

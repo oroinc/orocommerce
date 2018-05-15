@@ -67,7 +67,7 @@ class HomePageSliderImagesSourceFixerTest extends WebTestCase
 
         $block = $this->getHomePageSliderBlock();
         $contentVariant = $this->getDefaultContentVariant($block);
-        $html = '<img src="/bundles/somebundle/images/image.jpg" />';
+        $html = '<img src="/bundles/somebundle/images/image.jpg" /><a href="/link/uri">Link</a>';
         $contentVariant->setContent($html);
 
         $this->getDoctrineHelper()->getEntityManager(ContentBlock::class)->flush();
@@ -78,7 +78,8 @@ class HomePageSliderImagesSourceFixerTest extends WebTestCase
         $block = $this->getHomePageSliderBlock();
         $contentVariant = $this->getDefaultContentVariant($block);
 
-        $expectedHtml = '<img src="/some/path/bundles/somebundle/images/image.jpg" />';
+        $expectedHtml =
+            '<img src="/some/path/bundles/somebundle/images/image.jpg" /><a href="/some/path/link/uri">Link</a>';
 
         $this->assertEquals($expectedHtml, $contentVariant->getContent());
     }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 {
@@ -20,9 +20,9 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
         $this->priceAttributePriceListType = new PriceAttributePriceListType();
         $this->priceAttributePriceListType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -35,7 +35,8 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $currencySelectType->getName() => $currencySelectType,
+                    $this->priceAttributePriceListType,
+                    CurrencySelectionType::class => $currencySelectType,
                 ],
                 []
             ),
@@ -44,17 +45,11 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->priceAttributePriceListType);
+        $form = $this->factory->create(PriceAttributePriceListType::class);
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('currencies'));
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PriceAttributePriceListType::NAME, $this->priceAttributePriceListType->getName());
-    }
-
 
     public function testSubmitWithoutDefaultData()
     {
@@ -64,7 +59,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         ];
         $expectedData = $submittedData;
 
-        $form = $this->factory->create($this->priceAttributePriceListType, null, []);
+        $form = $this->factory->create(PriceAttributePriceListType::class, null, []);
 
         $this->assertNull($form->getData());
         $this->assertNull($form->getViewData());
@@ -105,7 +100,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         }
 
         $defaultData = $existingPriceAttributePriceList;
-        $form = $this->factory->create($this->priceAttributePriceListType, $defaultData, []);
+        $form = $this->factory->create(PriceAttributePriceListType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($existingPriceAttributePriceList, $form->getViewData());

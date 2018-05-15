@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
@@ -42,20 +42,20 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     private $translator;
 
     /**
-     * @param UserCurrencyManager $currencyManager
+     * @param SubtotalProviderConstructorArguments $arguments
      * @param PromotionExecutor $promotionExecutor
      * @param AppliedDiscountsProvider $appliedDiscountsProvider
      * @param RoundingServiceInterface $roundingService
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        UserCurrencyManager $currencyManager,
+        SubtotalProviderConstructorArguments $arguments,
         PromotionExecutor $promotionExecutor,
         AppliedDiscountsProvider $appliedDiscountsProvider,
         RoundingServiceInterface $roundingService,
         TranslatorInterface $translator
     ) {
-        parent::__construct($currencyManager);
+        parent::__construct($arguments);
         $this->promotionExecutor = $promotionExecutor;
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->rounding = $roundingService;

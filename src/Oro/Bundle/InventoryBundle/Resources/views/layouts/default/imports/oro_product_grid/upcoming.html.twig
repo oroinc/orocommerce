@@ -1,14 +1,12 @@
 {% block _product_datagrid_row__product_upcoming_label_widget %}
     {% if product.is_upcoming %}
         {% set availableDate = product.availability_date %}
-        <div class="grid">
-            <div class="grid__row product-upcoming-label">
-                {% if availableDate is not null %}
-                    {{ 'oro.inventory.is_upcoming.notification_with_date'|trans ~ availableDate|oro_format_date({'timeZone': oro_timezone()}) }}
-                {% else %}
-                    {{ 'oro.inventory.is_upcoming.notification'|trans }}
-                {% endif %}
-            </div>
-        </div>
+        <p class="product-upcoming-label">
+            {% if availableDate is not null %}
+                {{ 'oro.inventory.is_upcoming.notification_with_date'|trans ~ availableDate|oro_format_date({'timeZone': oro_timezone()}) }}
+            {% else %}
+                {{ 'oro.inventory.is_upcoming.notification'|trans }}
+            {% endif %}
+        </p>
     {% endif %}
 {% endblock %}

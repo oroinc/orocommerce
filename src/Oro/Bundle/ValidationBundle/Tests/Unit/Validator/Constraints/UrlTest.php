@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\UrlValidator;
-
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Url;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class UrlTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Url */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var UrlValidator */
@@ -21,7 +22,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Url();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new UrlValidator();
         $this->validator->initialize($this->context);
     }
@@ -49,11 +50,21 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     {
         if ($correct) {
             $this->context->expects($this->never())
-                ->method('addViolation');
+                ->method('buildViolation');
         } else {
+            $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
             $this->context->expects($this->once())
-                ->method('addViolation')
-                ->with($this->constraint->message);
+                ->method('buildViolation')
+                ->with($this->constraint->message)
+                ->willReturn($builder);
+            $builder->expects($this->once())
+                ->method('setParameter')
+                ->willReturnSelf();
+            $builder->expects($this->once())
+                ->method('setCode')
+                ->willReturnSelf();
+            $builder->expects($this->once())
+                ->method('addViolation');
         }
 
         $this->validator->validate($data, $this->constraint);

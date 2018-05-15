@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\RuleFiltration\Basic;
 
 use Oro\Bundle\PaymentBundle\Context\Converter\PaymentContextToRulesValueConverterInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService;
+use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 {

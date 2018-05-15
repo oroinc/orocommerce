@@ -5,13 +5,13 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Converter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
+use Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
-use Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListDiscountContextConverterTest extends \PHPUnit_Framework_TestCase

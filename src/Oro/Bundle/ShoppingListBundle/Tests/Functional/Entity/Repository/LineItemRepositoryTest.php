@@ -3,19 +3,18 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
-use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolationPerTest
@@ -237,12 +236,13 @@ class LineItemRepositoryTest extends WebTestCase
 
         $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
         $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
+        $productName8 = $this->getReference(LoadProductData::PRODUCT_8)->getName()->getString();
 
         $shoppingListId1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
         $shoppingListId5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)->getId();
 
         /** @var LineItem[] $lineItems */
-        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 1);
+        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 2);
 
         $this->assertEquals(
             [
@@ -252,6 +252,9 @@ class LineItemRepositoryTest extends WebTestCase
                     ]
                 ],
                 $shoppingListId5 => [
+                    [
+                        'name' => $productName8
+                    ],
                     [
                         'name' => $productName5
                     ]

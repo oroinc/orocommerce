@@ -3,18 +3,18 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {
@@ -30,16 +30,10 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->totalHelper = $this->createMock(TotalHelper::class);
         $this->formType = new OrderDiscountItemType($this->totalHelper);
         $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderDiscount');
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(OrderDiscountItemType::NAME, $this->formType->getName());
+        parent::setUp();
     }
 
     public function testBuildView()
@@ -73,7 +67,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
             'currency' => 'USD',
             'total' => 99,
             'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderDiscount',
-            'intention' => 'order_discount_item',
+            'csrf_token_id' => 'order_discount_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/discount-item-view',
@@ -102,7 +96,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $order = new Order();
         $order->addDiscount($data);
 
-        $form = $this->factory->create($this->formType, $data, ['currency' => 'USD', 'total' => 99]);
+        $form = $this->factory->create(OrderDiscountItemType::class, $data, ['currency' => 'USD', 'total' => 99]);
 
         $submittedData = [
             'value' => '10',
@@ -134,6 +128,9 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        return [new ValidatorExtension(Validation::createValidator())];
+        return [
+            new PreloadedExtension([$this->formType], []),
+            new ValidatorExtension(Validation::createValidator())
+        ];
     }
 }

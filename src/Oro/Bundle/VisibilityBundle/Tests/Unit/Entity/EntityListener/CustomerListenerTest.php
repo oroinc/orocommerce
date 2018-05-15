@@ -3,10 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
-use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\CustomerListener;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;
@@ -80,6 +80,16 @@ class CustomerListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->postPersist($this->customer);
     }
 
+    public function testPostPersistWithGroupAndDisabledListener()
+    {
+        $this->producer->expects($this->never())
+            ->method('send');
+
+        $this->disableListener();
+        $this->customer->setGroup(new CustomerGroup());
+        $this->listener->postPersist($this->customer);
+    }
+
     public function testPreRemove()
     {
         $this->driver->expects($this->once())
@@ -110,5 +120,27 @@ class CustomerListenerTest extends \PHPUnit_Framework_TestCase
             ->with('', $message);
 
         $this->listener->preUpdate($this->customer, $args);
+    }
+
+    public function testPreUpdateWithDisabledListener()
+    {
+        /* @var $args PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject */
+        $args = $this->createMock(PreUpdateEventArgs::class);
+        $args->expects($this->once())
+            ->method('hasChangedField')
+            ->with('group')
+            ->willReturn(true);
+
+        $this->producer->expects($this->never())
+            ->method('send');
+
+        $this->disableListener();
+        $this->listener->preUpdate($this->customer, $args);
+    }
+
+    protected function disableListener()
+    {
+        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
+        $this->listener->setEnabled(false);
     }
 }

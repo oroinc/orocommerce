@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 
 class LineItemNotPricedStub implements
     ProductUnitHolderInterface,

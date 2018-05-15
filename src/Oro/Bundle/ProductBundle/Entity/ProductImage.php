@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
@@ -227,7 +226,9 @@ class ProductImage extends ExtendProductImage
      */
     public function __toString()
     {
-        return $this->getImage() ? $this->getImage()->getFilename() : sprintf('ProductImage #%d', $this->getId());
+        return $this->getImage()
+            ? (string)$this->getImage()->getFilename()
+            : sprintf('ProductImage #%d', $this->getId());
     }
 
     public function __clone()

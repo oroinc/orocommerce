@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingOriginTest extends \PHPUnit_Framework_TestCase
 {

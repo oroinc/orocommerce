@@ -1,7 +1,7 @@
 datagrids:
     shopping-list-grid:
         acl_resource: oro_shopping_list_view
-        extended_entity_name: %oro_shopping_list.entity.shopping_list.class%
+        extended_entity_name: '%oro_shopping_list.entity.shopping_list.class%'
         options:
             entityHint:        shopping lists
             entity_pagination: true
@@ -19,13 +19,12 @@ datagrids:
                     - shopping_list_customer.name as customer
                     - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as customer_user
                 from:
-                    - { table: %oro_shopping_list.entity.shopping_list.class%, alias: shopping_list }
+                    - { table: '%oro_shopping_list.entity.shopping_list.class%', alias: shopping_list }
                 join:
                     left:
                         - { join: shopping_list.customer, alias: shopping_list_customer }
                         - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
-                        - { join: %oro_customer.entity.customer_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.customerUser and userSettings.website = shopping_list.website" }
-                        - { join: %oro_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = COALESCE(userSettings.currency, '@oro_pricing.user_currency_manager->getDefaultCurrency()')" }
+                        - { join: '%oro_shopping_list.entity.shopping_list_total.class%', alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
 
         columns:
             id:
@@ -77,7 +76,7 @@ datagrids:
                 updatedAt:
                     data_name: shopping_list.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 id:
@@ -112,7 +111,7 @@ datagrids:
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view
-        extended_entity_name: %oro_shopping_list.entity.line_item.class%
+        extended_entity_name: '%oro_shopping_list.entity.line_item.class%'
         options:
             entityHint:        shopping list line items
         source:
@@ -129,7 +128,7 @@ datagrids:
                     - lineItem.notes
                     - IDENTITY(lineItem.unit) as unitCode
                 from:
-                    - { table: %oro_shopping_list.entity.line_item.class%, alias: lineItem }
+                    - { table: '%oro_shopping_list.entity.line_item.class%', alias: lineItem }
                 join:
                     inner:
                         - { join: lineItem.product, alias: product }
@@ -161,9 +160,9 @@ datagrids:
                 quantity:
                     data_name: lineItem.quantity
                 unitCode:
-                    data_name: unit.code
+                    data_name: unitCode
             default:
-                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 productSku:
@@ -183,7 +182,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
             id: ~
             productId: ~

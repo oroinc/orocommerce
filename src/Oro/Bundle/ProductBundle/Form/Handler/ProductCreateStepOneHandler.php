@@ -31,7 +31,7 @@ class ProductCreateStepOneHandler
     public function process()
     {
         if ($this->request->isMethod(Request::METHOD_POST)) {
-            $this->form->submit($this->request);
+            $this->form->handleRequest($this->request);
 
             if ($this->form->isValid()) {
                 return true;

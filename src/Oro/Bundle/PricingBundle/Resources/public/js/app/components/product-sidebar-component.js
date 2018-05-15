@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -45,6 +43,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductSidebarComponent() {
+            ProductSidebarComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
@@ -59,7 +64,7 @@ define(function(require) {
 
         onPriceListChange: function(e) {
             var value = e.target.value;
-            var routeParams = $.extend({}, this.options.routingParams, {'id': value});
+            var routeParams = $.extend({}, this.options.routingParams, {id: value});
 
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),

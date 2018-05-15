@@ -13,6 +13,7 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::FrontendProductGridContext
       paths:
         - '@OroApplicationBundle/Tests/Behat/Features'
   elements:
@@ -197,16 +198,16 @@ oro_behat_extension:
         locator: '//div[@class="shopping-lists"]'
         type: xpath
 
-    Update Shopping list button:
+    Update Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Update Shopping list"]'
+        locator: '//div/a[@title="Update Shopping List"]'
         type: xpath
 
     Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Add to Shopping list"]'
+        locator: '//div/a[@title="Add to Shopping List"]'
         type: xpath
 
     Gallery View:
@@ -229,31 +230,50 @@ oro_behat_extension:
 
     Matrix Grid Popup:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        locator: '//div[@class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front matrix-order-widget--dialog ui-draggable ui-dialog-normal"]'
-        type: xpath
+      selector: 'div.matrix-order-widget--dialog'
+
+    Matrix Grid Popup Close Button:
+      selector: 'button[title="close"]'
 
     Matrix Grid Form:
-      selector: 'form[name="matrix_collection"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Black L: 'matrix_collection[rows][0][columns][0][quantity]'
-          Black M: 'matrix_collection[rows][0][columns][1][quantity]'
-          White L: 'matrix_collection[rows][1][columns][0][quantity]'
-          White M: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 11: 'matrix_collection[rows][0][columns][0][quantity]'
-          Value 12: 'matrix_collection[rows][1][columns][0][quantity]'
-          Value 13: 'matrix_collection[rows][2][columns][0][quantity]'
-          Value 14: 'matrix_collection[rows][3][columns][0][quantity]'
-          Value 21: 'matrix_collection[rows][0][columns][1][quantity]'
-          Value 22: 'matrix_collection[rows][1][columns][1][quantity]'
-          Value 23: 'matrix_collection[rows][2][columns][1][quantity]'
-          Value 24: 'matrix_collection[rows][3][columns][1][quantity]'
-          Value 31: 'matrix_collection[rows][0][columns][2][quantity]'
-          Value 32: 'matrix_collection[rows][1][columns][2][quantity]'
-          Value 33: 'matrix_collection[rows][2][columns][2][quantity]'
-          Value 34: 'matrix_collection[rows][3][columns][2][quantity]'
+      selector:
+        type: xpath
+        locator: '//*[@data-matrix-grid-container and contains(@class, "matrix-order-widget__grid--multi-rows")]/ancestor::form[@name="matrix_collection"]'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrix
+
+    Matrix Grid Form Totals:
+      selector: '.product-totals'
+
+    Clear All Button:
+      selector:
+        type: xpath
+        locator: '//button[contains(text(), "Clear All")]'
+
+    One Dimensional Matrix Grid Form:
+      selector:
+        type: xpath
+        locator: '//*[@data-matrix-grid-container and not(contains(@class, "matrix-order-widget__grid--multi-rows"))]/ancestor::form[@name="matrix_collection"]'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixOneDimensional
+
+    InlineMatrixHeader:
+      selector: '.matrix-order-widget__grid-head-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeader
+
+    InlineMatrixHeaderOneDimensional:
+      selector: '.matrix-order-widget__form__row'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeaderOneDimensional
+
+    InlineMatrixRowHeader:
+      selector: '.matrix-order-widget__grid-side-wrapper'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowHeader
+
+    InlineMatrixRow:
+      selector: '.matrix-order-widget__form__col'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRow
+
+    InlineMatrixRowOneDimensional:
+      selector: '.matrix-order-widget__form__row'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowOneDimensional
 
     Configurable Product Shopping List Form:
       selector: 'form[name="oro_product_product_variant_frontend_variant_field"]'
@@ -262,13 +282,13 @@ oro_behat_extension:
     Add to Shopping List form Matrix Grid:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping list"]'
+        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping List"]'
         type: xpath
 
-    Add to Shopping list button:
+    Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//a[@title="Add to Shopping list"]'
+        locator: '//a[@title="Add to Shopping List"]'
         type: xpath
 
     Create New Shopping List popup:
@@ -398,6 +418,7 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
 
     Save on conf window:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -425,6 +446,16 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+          Allow Registration Default: 'checkout[oro_checkout___registration_allowed][use_parent_scope_value]'
+          Allow Checkout Without Email Confirmation Default: 'checkout[oro_checkout___allow_checkout_without_email_confirmation][use_parent_scope_value]'
+
+    Customer Users Registration Form:
+      selector: 'form[name="customer_users"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Registration Allowed Default: 'customer_users[oro_customer___registration_allowed][use_parent_scope_value]'
+          Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
 
     Reset Any Text filter:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

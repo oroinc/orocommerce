@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
@@ -89,7 +88,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_16';
     }
 
     /**
@@ -705,9 +704,11 @@ class OroProductBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('status', 'string', ['length' => 16]);
+        $table->addColumn('default_title', 'string', ['length' => 255, 'notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_brand_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_brand_updated_at', []);
+        $table->addIndex(['default_title'], 'idx_oro_brand_default_title', []);
     }
 
     /**

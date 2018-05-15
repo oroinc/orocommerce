@@ -6,15 +6,16 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class OrderLineItemAppliedDiscountsListener
 {
     /**
-     * @var TaxManager
+     * @var TaxProviderRegistry
      */
-    protected $taxManager;
+    protected $taxProviderRegistry;
 
     /**
      * @var TaxationSettingsProvider
@@ -32,18 +33,18 @@ class OrderLineItemAppliedDiscountsListener
     protected $appliedDiscountsProvider;
 
     /**
-     * @param TaxManager $taxManager
+     * @param TaxProviderRegistry $taxProviderRegistry
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
      * @param AppliedDiscountsProvider $appliedDiscountsProvider
      */
     public function __construct(
-        TaxManager $taxManager,
+        TaxProviderRegistry $taxProviderRegistry,
         TaxationSettingsProvider $taxationSettingsProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
         AppliedDiscountsProvider $appliedDiscountsProvider
     ) {
-        $this->taxManager = $taxManager;
+        $this->taxProviderRegistry = $taxProviderRegistry;
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
@@ -76,7 +77,7 @@ class OrderLineItemAppliedDiscountsListener
      */
     protected function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem)
     {
-        $taxesRow = $this->taxManager->getTax($lineItem)->getRow();
+        $taxesRow = $this->getProvider()->getTax($lineItem)->getRow();
         $excludingTax = $taxesRow->getExcludingTax() - $discountAmount;
         $includingTax = $taxesRow->getIncludingTax() - $discountAmount;
 
@@ -102,5 +103,13 @@ class OrderLineItemAppliedDiscountsListener
             'rowTotalAfterDiscount' => $rowTotalWithoutDiscount - $discountAmount,
             'currency' => $lineItem->getCurrency(),
         ];
+    }
+
+    /**
+     * @return TaxProviderInterface
+     */
+    private function getProvider()
+    {
+        return $this->taxProviderRegistry->getEnabledProvider();
     }
 }

@@ -146,6 +146,21 @@ class MeasureUnitConversionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->measureUnitConversion->isDimensionsEnabled($this->dimensionsUnit));
     }
 
+    public function testIsDimensionsWithEmptyUnit()
+    {
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects($this->never())
+            ->method($this->anything());
+
+        $measureUnitConversion = new MeasureUnitConversion(
+            $configManager,
+            $this->lengthConfigEntryName,
+            $this->weightConfigEntryName
+        );
+        $this->assertFalse($measureUnitConversion->isDimensionsEnabled(new Dimensions()));
+    }
+
     public function testIsDimensionsDisabled()
     {
         $configManager = $this->getMockBuilder(ConfigManager::class)
@@ -165,6 +180,21 @@ class MeasureUnitConversionTest extends \PHPUnit_Framework_TestCase
     public function testIsWeightEnabled()
     {
         $this->assertTrue($this->measureUnitConversion->isWeightEnabled($this->weightUnit));
+    }
+
+    public function testIsWeightWithEmptyUnit()
+    {
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects($this->never())
+            ->method($this->anything());
+
+        $measureUnitConversion = new MeasureUnitConversion(
+            $configManager,
+            $this->lengthConfigEntryName,
+            $this->weightConfigEntryName
+        );
+        $this->assertFalse($measureUnitConversion->isWeightEnabled(new Weight()));
     }
 
     public function testIsWeightDisabled()

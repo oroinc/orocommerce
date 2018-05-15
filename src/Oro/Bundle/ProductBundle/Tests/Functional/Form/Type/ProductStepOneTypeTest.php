@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
@@ -56,7 +55,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
         $submitData['attributeFamily'] = $this->defaultFamily->getId();
         // submit form
-        $form = $this->formFactory->create(ProductStepOneType::NAME, null);
+        $form = $this->formFactory->create(ProductStepOneType::class, null);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         if ($isValid) {

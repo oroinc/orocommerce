@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PriceAttributePriceListController extends Controller
 {
@@ -92,7 +90,7 @@ class PriceAttributePriceListController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceAttribute,
-            $this->createForm(PriceAttributePriceListType::NAME, $priceAttribute),
+            $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
             function (PriceAttributePriceList $priceAttribute) {
                 return [
                     'route' => 'oro_pricing_price_attribute_price_list_update',

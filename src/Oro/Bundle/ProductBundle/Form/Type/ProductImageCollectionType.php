@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
 class ProductImageCollectionType extends AbstractType
 {
@@ -33,8 +32,8 @@ class ProductImageCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type' => new ProductImageType(),
-            'options' => [
+            'entry_type' => ProductImageType::class,
+            'entry_options' => [
                 'image_types' => $this->imageTypeProvider->getImageTypes()
             ],
             'error_bubbling' => false,
@@ -49,7 +48,7 @@ class ProductImageCollectionType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['imageTypes'] = $options['options']['image_types'];
+        $view->vars['imageTypes'] = $options['entry_options']['image_types'];
     }
 
     /**
@@ -57,7 +56,7 @@ class ProductImageCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**

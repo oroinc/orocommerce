@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
@@ -31,7 +30,18 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false,
                 ],
-                self::DEFAULT_GUEST_CHECKOUT_OWNER => ['type' => 'string', 'value' => null],
+                'registration_allowed' => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                self::DEFAULT_GUEST_CHECKOUT_OWNER => [
+                    'type' => 'string',
+                    'value' => null,
+                ],
+                'allow_checkout_without_email_confirmation' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ]
             ]
         );
 

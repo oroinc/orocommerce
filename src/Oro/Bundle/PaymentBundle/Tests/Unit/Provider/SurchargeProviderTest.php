@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\PaymentBundle\Event\CollectSurchargeEvent;
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SurchargeProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,4 +1,4 @@
-// @theme: blank
+// @theme: blank;
 
 .product-view {
     @include clearfix();
@@ -9,8 +9,6 @@
         width: $product-view-aside-width;
         margin-bottom: $product-view-aside-offset-bottom;
         padding: $product-view-aside-inner-offset;
-
-        box-sizing: border-box;
     }
 
     &__primary {
@@ -46,15 +44,12 @@
     &__specification {
         width: $product-view-specification-width;
         padding: $product-view-specification-inner-offset;
-
-        box-sizing: border-box;
     }
 
     &__description {
         width: $product-view-description-width;
         padding: $product-view-description-inner-offset;
 
-        box-sizing: border-box;
         word-wrap: break-word;
     }
 

@@ -4,16 +4,15 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLoadTaxRules;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLoadTaxRules;
 
 class LoadTaxRules extends BaseLoadTaxRules
 {

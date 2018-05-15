@@ -38,19 +38,6 @@ backend_billing_use_customer_user_granted:
     isAddressGranted: ~
     isCustomerAddressGranted: ~
     isCustomerUserAddressGranted: ~
-backend_billing_use_customer_user_granted:
-    userClass: Oro\Bundle\UserBundle\Entity\User
-    addressType: billing
-    isGranted:
-        - ['VIEW;entity:CustomerOrderClass', null, false]
-        - ['VIEW;entity:CustomerUserOrderClass', null, false]
-        - [oro_order_address_billing_customer_user_use_any_backend, null, true]
-    hasCustomerAddresses: ~
-    hasCustomerUserAddresses: ~
-    hasEntity: ~
-    isAddressGranted: ~
-    isCustomerAddressGranted: ~
-    isCustomerUserAddressGranted: ~
 backend_billing_customer_user_address_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: billing
@@ -77,19 +64,6 @@ backend_billing_customer_user_address_granted_with_entity:
     isAddressGranted: ~
     isCustomerAddressGranted: ~
     isCustomerUserAddressGranted: ~
-backend_billing_customer_user_address_granted_with_entity_and_address:
-    userClass: Oro\Bundle\UserBundle\Entity\User
-    addressType: billing
-    isGranted:
-        - ['VIEW;entity:CustomerOrderClass', null, false]
-        - ['VIEW;entity:CustomerUserOrderClass', null, true]
-        - [oro_order_address_billing_customer_user_use_any_backend, null, true]
-    hasCustomerAddresses: ~
-    hasCustomerUserAddresses: true
-    hasEntity: true
-    isAddressGranted: true
-    isCustomerAddressGranted: ~
-    isCustomerUserAddressGranted: true
 backend_billing_customer_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: billing

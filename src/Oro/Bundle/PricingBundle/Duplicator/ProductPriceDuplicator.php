@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 
 class ProductPriceDuplicator
 {
@@ -26,17 +25,17 @@ class ProductPriceDuplicator
     protected $priceListClass;
 
     /**
-     * @var InsertFromSelectShardQueryExecutor
+     * @var ShardQueryExecutorInterface
      */
     protected $insertQueryExecutor;
 
     /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectShardQueryExecutor $insertQueryExecutor
+     * @param ShardQueryExecutorInterface $insertQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectShardQueryExecutor $insertQueryExecutor
+        ShardQueryExecutorInterface $insertQueryExecutor
     ) {
         $this->registry = $registry;
         $this->insertQueryExecutor = $insertQueryExecutor;

@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class CustomerTaxCodeController extends Controller
 {
@@ -92,7 +90,7 @@ class CustomerTaxCodeController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $customerTaxCode,
-            $this->createForm(CustomerTaxCodeType::NAME, $customerTaxCode),
+            $this->createForm(CustomerTaxCodeType::class, $customerTaxCode),
             function (CustomerTaxCode $customerTaxCode) {
                 return [
                     'route' => 'oro_tax_customer_tax_code_update',

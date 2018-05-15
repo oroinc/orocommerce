@@ -5,8 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\SubtotalAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
@@ -24,10 +22,9 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
      */
     public function openShoppingList($shoppingListLabel)
     {
-        $shoppingList = $this->getShoppingList($shoppingListLabel);
-
-        $this->visitPath($this->getUrl('oro_shopping_list_frontend_view', $shoppingList->getId()));
-        $this->waitForAjax();
+        $element = $this->createElement('ShoppingListWidgetContainer');
+        $shoppingListItem = $element->findElementContains('ShoppingListWidgetItemName', $shoppingListLabel);
+        $shoppingListItem->clickForce();
     }
 
     /**
@@ -88,36 +85,5 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
                 )
             );
         }
-    }
-
-    /**
-     * @param string $path
-     * @param int $id
-     * @return string
-     */
-    protected function getUrl($path, $id)
-    {
-        return $this->getContainer()->get('router')->generate($path, ['id' => $id]);
-    }
-
-    /**
-     * @param string $label
-     * @return ShoppingList
-     */
-    protected function getShoppingList($label)
-    {
-        return $this->getRepository(ShoppingList::class)->findOneBy(['label' => $label]);
-    }
-
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
-    protected function getRepository($className)
-    {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository($className);
     }
 }

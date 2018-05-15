@@ -8,7 +8,7 @@ Get details of the product price by its ID. <br />
 
 ### get_list
 
-Get the collection of ProductPrice details. A collection may contain all prices or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>. <br />
+Get the collection of ProductPrice details. A collection may contain all prices or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>. <br />
 
 **Note:** It is required to provide priceList filter with request.
 
@@ -100,7 +100,7 @@ Delete a product price identified by ID. <br />
 
 ### delete_list
 
-Delete a collection of product prices. A collection may contain all prices or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of product prices. A collection may contain all prices or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 **Note:** It is required to provide priceList filter with request.
 

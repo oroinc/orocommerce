@@ -1,13 +1,13 @@
-# Freight Classes Extension #
+# Freight Classes Extension
 
-To expand "Freight Classes" within application, developer must add to its own Bundle the following:
+A developer can expand "Freight Classes" within the application by following the next steps:
 
- * migration, as described [here](./Resources/doc/provide-units.md)
- * 'Extension' class, [example](#example)
- * register extension at "services.yml"
+ * add migration to the bundle, as described [here](./Resources/doc/provide-units.md);
+ * add the 'Extension' class, [example](#example);
+ * register the extension in the "services.yml" file.
 
 All "Freight Classes Extensions" must implement the 'FreightClassesExtensionInterface'.
-Method "isApplicable" is used to determine if "FreightClass" can be handled by extension for given shipping options.
+The "isApplicable" method is used to determine if "FreightClass" can be handled by the extension for provided shipping options.
 
 #### Example:
 
@@ -33,7 +33,7 @@ class FreightClassesExtension implements FreightClassesExtensionInterface
 ```
 
 
-Extension must be registered at "services.yml" with tag "*oro_shipping.extension.freight_classes*", that allow main service to collect all extensions
+The extension must be registered in the "services.yml" file with the "*oro_shipping.extension.freight_classes*" tag that enables the main service to collect all extensions.
 
 ```yml
 services:

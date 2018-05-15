@@ -5,19 +5,16 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-
-use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
-use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -72,7 +69,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 ProductFormExtension::FORM_ELEMENT_NAME,
-                ProductShippingOptionsCollectionType::NAME,
+                ProductShippingOptionsCollectionType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                     'required' => false,
@@ -102,7 +99,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals($this->extension->getExtendedType(), ProductType::NAME);
+        $this->assertEquals($this->extension->getExtendedType(), ProductType::class);
     }
 
     /**

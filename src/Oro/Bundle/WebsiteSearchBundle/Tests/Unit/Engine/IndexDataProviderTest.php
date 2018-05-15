@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -16,28 +15,27 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var IndexDataProvider */
-    private $indexDataProvider;
+    protected $indexDataProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $eventDispatcher;
+    protected $eventDispatcher;
 
     /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
-    private $aliasResolver;
+    protected $aliasResolver;
 
     /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $placeholder;
+    protected $placeholder;
 
     /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $tagHelper;
+    protected $tagHelper;
 
     /** @var PlaceholderHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $placeholderHelper;
+    protected $placeholderHelper;
 
     protected function setUp()
     {
@@ -135,23 +133,30 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 return trim(strip_tags($value));
             }
         );
+        $this->tagHelper->expects($this->any())
+            ->method('stripLongWords')
+            ->willReturnCallback(
+                function ($value) {
+                    $words = preg_split('/\s+/', $value);
+
+                    $words = array_filter(
+                        $words,
+                        function ($item) {
+                            return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
+                        }
+                    );
+
+                    return implode(' ', $words);
+                }
+            );
         $this->placeholder->expects($this->any())->method('replace')->willReturnCallback(
             function ($string, array $values) {
                 return str_replace(array_keys($values), array_values($values), $string);
             }
         );
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
-            ->withConsecutive(
-                [
-                    IndexEntityEvent::NAME,
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ],
-                [
-                    IndexEntityEvent::NAME.'.std',
-                    $this->isInstanceOf(IndexEntityEvent::class),
-                ]
-            )
+        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
+            ->with(IndexEntityEvent::NAME, $this->isInstanceOf(IndexEntityEvent::class))
             ->willReturnCallback(
                 function ($name, IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
@@ -160,6 +165,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     }
                 }
             );
+
+        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
+            ->with(IndexEntityEvent::NAME.'.std', $this->isInstanceOf(IndexEntityEvent::class));
 
         $this->assertEquals(
             $expected,
@@ -183,12 +191,19 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
             ],
+            'simple field with duplicates' => [
+                'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
+                'indexData' => [
+                    [1, 'description', 'Handheld Flashlight Handheld', false],
+                ],
+                'expected' => [1 => ['text' => ['description' => 'Handheld Flashlight Handheld']]],
+            ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
                     [1, 'title', '<p>SKU-01</p>', true],
                 ],
-                'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>', 'all_text' => 'SKU-01']]],
             ],
             'simple field with integer' => [
                 'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
@@ -215,7 +230,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01',
+                            'title_1' => '<p>SKU-01</p>',
                             'all_text' => 'SKU-01',
                             'all_text_5' => 'SKU-01',
                         ],
@@ -247,12 +262,12 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01 SKU-01-gb',
+                            'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
                             'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                             'all_text_5' => 'SKU-01 en_US',
                             'all_text_6' => 'SKU-01-gb en_GB',
-                            'descr_5' => 'en_US',
-                            'descr_6' => 'en_GB',
+                            'descr_5' => '<p>en_US</p>',
+                            'descr_6' => '<p>en_GB</p>',
                         ],
                     ],
                 ],
@@ -307,13 +322,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     1 => [
                         'text' => [
-                            'title_1' => 'SKU-01 SKU-01-gb',
-                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB '.
+                            'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
+                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB ' .
                                 'title6 descr6 keywords6',
                             'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
                             'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
-                            'descr_5' => 'en_US',
-                            'descr_6' => 'en_GB',
+                            'descr_5' => '<p>en_US</p>',
+                            'descr_6' => '<p>en_GB</p>',
                         ],
                     ],
                 ],
@@ -350,6 +365,78 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                         ],
                         'decimal' => [
                             'decimal_2' => 1.1
+                        ],
+                    ],
+                ],
+            ],
+            'multiple fields with duplicates in all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'description',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', true],
+                    [1, 'description', 'The quick brown fox jumps over the lazy dog', true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'description' => 'The quick brown fox jumps over the lazy dog',
+                            'all_text' => 'The fox quick brown jumps over the lazy dog',
+                        ],
+                    ],
+                ],
+            ],
+            'all_text has long strings' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'description',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The long entry', true],
+                    [
+                        1,
+                        'description',
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        ' ' .
+                        'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                        true
+                    ],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The long entry',
+                            'description' =>
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                ' ' .
+                                'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                         ],
                     ],
                 ],

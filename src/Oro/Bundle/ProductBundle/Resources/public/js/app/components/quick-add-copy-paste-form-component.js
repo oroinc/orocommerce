@@ -38,13 +38,20 @@ define(function(require) {
         validator: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddCopyPasteFormComponent() {
+            QuickAddCopyPasteFormComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             QuickAddCopyPasteFormComponent.__super__.initialize.apply(this, arguments);
 
             this.validator = this.$form.validate();
-            delete this.validator.settings.onkeyup; //validate only on change/blur/submit
+            delete this.validator.settings.onkeyup; // validate only on change/blur/submit
 
             mediator.on('quick-add-form-item:item-valid', this.onAutocompleteSuccess, this);
             mediator.on('quick-add-form-item:unit-invalid', this.onUnitError, this);
@@ -198,7 +205,7 @@ define(function(require) {
         _showErrorMessage: function() {
             var _errorField = $(this.field, this.$form).attr('name');
             var _customError = [];
-            _customError[_errorField]  = __('oro.product.frontend.quick_add.copy_paste.error');
+            _customError[_errorField] = __('oro.product.frontend.quick_add.copy_paste.error');
 
             if ($(this.field, this.$form).val().length > 0) {
                 this.validator.showErrors(_customError);

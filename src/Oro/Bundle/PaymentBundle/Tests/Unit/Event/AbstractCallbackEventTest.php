@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
 {

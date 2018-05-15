@@ -27,6 +27,13 @@ define(function(require) {
          */
         confirmState: true,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function WebCatalogTreeView() {
+            WebCatalogTreeView.__super__.constructor.apply(this, arguments);
+        },
+
         onConfirmModalOk: function() {
             this._doMove(this.confirmState);
         },
@@ -65,8 +72,8 @@ define(function(require) {
 
             this._removeConfirmModal();
             this.confirmModal = new ConfirmSlugChangeModal({
-                'changedSlugs': this._getChangedUrlsList(),
-                'confirmState': this.confirmState
+                changedSlugs: this._getChangedUrlsList(),
+                confirmState: this.confirmState
             })
                 .on('ok', _.bind(this.onConfirmModalOk, this))
                 .on('cancel', _.bind(this.onConfirmModalCancel, this))
@@ -86,13 +93,13 @@ define(function(require) {
             for (var localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
                     list += '\n' + __(
-                            'oro.redirect.confirm_slug_change.changed_slug_item',
-                            {
-                                'old_slug': urls[localization].before,
-                                'new_slug': urls[localization].after,
-                                'purpose': localization
-                            }
-                        );
+                        'oro.redirect.confirm_slug_change.changed_slug_item',
+                        {
+                            old_slug: urls[localization].before,
+                            new_slug: urls[localization].after,
+                            purpose: localization
+                        }
+                    );
                 }
             }
             return list;

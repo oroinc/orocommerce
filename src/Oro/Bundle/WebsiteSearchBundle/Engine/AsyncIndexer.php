@@ -3,7 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
+use Oro\Component\MessageQueue\Client\Message;
+use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexer implements IndexerInterface
@@ -12,6 +13,8 @@ class AsyncIndexer implements IndexerInterface
     const TOPIC_DELETE = 'oro.website.search.indexer.delete';
     const TOPIC_RESET_INDEX = 'oro.website.search.indexer.reset_index';
     const TOPIC_REINDEX = 'oro.website.search.indexer.reindex';
+
+    const DEFAULT_PRIORITY_REINDEX = MessagePriority::LOW;
 
     /**
      * @var IndexerInterface
@@ -24,11 +27,6 @@ class AsyncIndexer implements IndexerInterface
     private $messageProducer;
 
     /**
-     * @var ReindexMessageGranularizer
-     */
-    private $reindexMessageGranularizer;
-
-    /**
      * @var IndexerInputValidator
      */
     private $inputValidator;
@@ -37,18 +35,15 @@ class AsyncIndexer implements IndexerInterface
      * @param IndexerInterface $baseIndexer
      * @param MessageProducerInterface $messageProducer
      * @param IndexerInputValidator $indexerInputValidator
-     * @param ReindexMessageGranularizer $reindexMessageGranularizer
      */
     public function __construct(
         IndexerInterface $baseIndexer,
         MessageProducerInterface $messageProducer,
-        IndexerInputValidator $indexerInputValidator,
-        ReindexMessageGranularizer $reindexMessageGranularizer
+        IndexerInputValidator $indexerInputValidator
     ) {
-        $this->baseIndexer                = $baseIndexer;
-        $this->messageProducer            = $messageProducer;
-        $this->inputValidator             = $indexerInputValidator;
-        $this->reindexMessageGranularizer = $reindexMessageGranularizer;
+        $this->baseIndexer = $baseIndexer;
+        $this->messageProducer = $messageProducer;
+        $this->inputValidator = $indexerInputValidator;
     }
 
     /**
@@ -114,37 +109,31 @@ class AsyncIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        list($entityClassesToIndex, $websiteIdsToIndex) =
-            $this->inputValidator->validateReindexRequest(
-                $class,
-                $context
-            );
-
-        $reindexMsgData = $this->reindexMessageGranularizer->process(
-            $entityClassesToIndex,
-            $websiteIdsToIndex,
+        $this->inputValidator->validateReindexRequest(
+            $class,
             $context
         );
 
-        foreach ($reindexMsgData as $msgData) {
-            $this->sendAsyncIndexerMessage(
-                self::TOPIC_REINDEX,
-                $msgData
-            );
-        }
+        // granulization might take quite a lot of time, so it has to happen asynchronously inside a processor
+        $this->sendAsyncIndexerMessage(
+            self::TOPIC_REINDEX,
+            ['class' => $class, 'context' => $context, 'granulize' => true],
+            self::DEFAULT_PRIORITY_REINDEX
+        );
     }
 
     /**
-     * Send a message to a que using message producer
+     * Send a message to a queue using message producer
      *
      * @param $topic
      * @param array $data
+     * @param string $priority
      */
-    private function sendAsyncIndexerMessage($topic, array $data)
+    private function sendAsyncIndexerMessage($topic, array $data, $priority = MessagePriority::NORMAL)
     {
         $this->messageProducer->send(
             $topic,
-            $data
+            new Message($data, $priority)
         );
     }
 

@@ -1,4 +1,3 @@
-/** @lends PaymentAdditionalDataComponent */
 define(function(require) {
     'use strict';
 
@@ -18,6 +17,13 @@ define(function(require) {
          */
         selectors: {
             additionalData: '[name$="[additional_data]"]'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function PaymentAdditionalDataComponent() {
+            PaymentAdditionalDataComponent.__super__.constructor.apply(this, arguments);
         },
 
         /**

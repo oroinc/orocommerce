@@ -61,6 +61,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function CreditCardComponent() {
+            CreditCardComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 
@@ -91,7 +98,6 @@ define(function(require) {
             mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
             mediator.on('checkout:payment:remove-filled-form', this.removeFilledForm, this);
             mediator.on('checkout-content:initialized', this.refreshPaymentMethod, this);
-
         },
 
         refreshPaymentMethod: function() {
@@ -107,12 +113,12 @@ define(function(require) {
 
                 var resolvedEventData = _.extend(
                     {
-                        'SECURETOKEN': false,
-                        'SECURETOKENID': false,
-                        'returnUrl': '',
-                        'errorUrl': '',
-                        'formAction': '',
-                        'paymentMethodSupportsValidation': false
+                        SECURETOKEN: false,
+                        SECURETOKENID: false,
+                        returnUrl: '',
+                        errorUrl: '',
+                        formAction: '',
+                        paymentMethodSupportsValidation: false
                     },
                     eventData.responseData
                 );
@@ -247,8 +253,8 @@ define(function(require) {
             });
 
             virtualForm.find('select').each(function(index, item) {
-                //set new select to value of old select
-                //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
+                // set new select to value of old select
+                // http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
                 $(item).val(self.$form.find('select').eq(index).val());
             });
 

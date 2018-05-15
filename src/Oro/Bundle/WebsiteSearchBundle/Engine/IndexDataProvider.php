@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -12,9 +11,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class is responsible for triggering all events during indexation
@@ -27,6 +25,9 @@ class IndexDataProvider
     const ALL_TEXT_FIELD = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
+    /** @var array */
+    private $cache;
+
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
@@ -37,7 +38,7 @@ class IndexDataProvider
     private $placeholder;
 
     /** @var HtmlTagHelper */
-    private $htmlTagHelper;
+    protected $htmlTagHelper;
 
     /** @var PlaceholderHelper */
     private $placeholderHelper;
@@ -223,7 +224,7 @@ class IndexDataProvider
             return;
         }
 
-        $value = $this->clearValue($type, $value);
+        $value = $this->clearValue($type, $fieldName, $value);
 
         if ($value === null || $value === '') {
             return;
@@ -231,14 +232,10 @@ class IndexDataProvider
 
         if ($type === Query::TYPE_TEXT) {
             $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
-            if ($existingValues) {
-                if ($this->discoverAndUpdateValue($existingValues, $value)) {
-                    $value = $existingValues;
-                } else {
-                    $value = array_merge($existingValues, [$value]);
-                }
+            if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+                $value = $this->updateAllTextFieldValue($existingValues, $value);
             } else {
-                $value = [$value];
+                $value = $this->updateRegularTextFieldValue($existingValues, $value);
             }
         }
 
@@ -246,29 +243,43 @@ class IndexDataProvider
     }
 
     /**
-     * @param array $existingValues
-     * @param string $testedValue
-     * @return bool
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
      */
-    private function discoverAndUpdateValue(array &$existingValues, $testedValue)
+    private function updateAllTextFieldValue(&$existingValues, string $value)
     {
-        foreach ($existingValues as $key => $value) {
-            if (strpos($value, $testedValue) !== false) {
-                return true;
-            } elseif (strpos($testedValue, $value)) {
-                $existingValues[$key] = $testedValue;
-                return true;
-            }
+        $value = explode(' ', $value);
+        if ($existingValues) {
+            $value = array_merge($existingValues, $value);
         }
 
-        return false;
+        return array_unique($value);
+    }
+
+    /**
+     * @param string|array  $existingValues
+     * @param string        $value
+     *
+     * @return array
+     */
+    private function updateRegularTextFieldValue($existingValues, string $value)
+    {
+        if ($existingValues) {
+            $existingValues[] = $value;
+
+            return $existingValues;
+        }
+
+        return [$value];
     }
 
     /**
      * @param array $preparedIndexData
      * @param int $entityId
      * @param string $fieldName
-     * @return string
+     * @return string|array
      */
     private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName)
     {
@@ -286,6 +297,12 @@ class IndexDataProvider
      */
     private function getFieldConfig(array $entityConfig, $fieldName, $configName, $default = null)
     {
+        $cacheKey = md5(json_encode($entityConfig)) . $fieldName . $configName;
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $fields = array_filter($entityConfig['fields'], function ($fieldConfig) use ($fieldName, $configName) {
             if (!array_key_exists('name', $fieldConfig)) {
                 return false;
@@ -315,19 +332,26 @@ class IndexDataProvider
 
         $field = end($fields);
 
-        return $field[$configName];
+        $result = $field[$configName];
+
+        $this->cache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**
-     * Checks if value is text type and applies stripping tags
+     * Keep HTML in text fields except all_text* fields
+     *
      * @param string $type
-     * @param string $value
-     * @return string
+     * @param string $fieldName
+     * @param mixed $value
+     * @return mixed|string
      */
-    private function clearValue($type, $value)
+    protected function clearValue($type, $fieldName, $value)
     {
-        if ($type === Query::TYPE_TEXT) {
+        if ($type === Query::TYPE_TEXT && strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
+            $value = $this->htmlTagHelper->stripLongWords($value);
         }
 
         return $value;

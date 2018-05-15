@@ -14,7 +14,14 @@ define(function(require) {
         $element: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function BreadcrumbsNavigationBlock() {
+            BreadcrumbsNavigationBlock.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.$element = options._sourceElement;
@@ -45,33 +52,21 @@ define(function(require) {
          */
         updateFiltersInfo: function(datagrid) {
             var currentFilters = [];
-            var filterState;
+            var iterator = function(filterName, filterDefinition) {
+                if (filterDefinition.name === filterName && filterDefinition.visible) {
+                    var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
+
+                    currentFilters.push({
+                        hint: hint,
+                        label: filterDefinition.label
+                    });
+                }
+            };
 
             for (var filterName in datagrid.collection.state.filters) {
-                if (!datagrid.collection.state.filters.hasOwnProperty(filterName)) {
-                    continue;
+                if (datagrid.collection.state.filters.hasOwnProperty(filterName)) {
+                    datagrid.metadata.filters.forEach(iterator.bind(null, filterName));
                 }
-
-                filterState = datagrid.collection.state.filters[filterName];
-                // jshint loopfunc: true
-                datagrid.metadata.filters.forEach(function(filterDefinition) {
-                    if (filterDefinition.name === filterName && filterDefinition.visible) {
-                        var choiceTypeName;
-
-                        filterDefinition.choices.forEach(function(choiceDefinition) {
-                            if (choiceDefinition.value === filterState.type) {
-                                choiceTypeName = choiceDefinition.label;
-                            }
-                        });
-
-                        var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
-
-                        currentFilters.push({
-                            hint: hint,
-                            label: filterDefinition.label
-                        });
-                    }
-                });
             }
 
             if (currentFilters.length === 0) {

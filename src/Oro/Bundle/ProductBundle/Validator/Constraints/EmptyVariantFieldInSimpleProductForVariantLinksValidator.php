@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends ConstraintValidator
 {

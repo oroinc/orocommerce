@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -76,7 +75,7 @@ class PaymentTermExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return PaymentTermSelectType::NAME;
+        return PaymentTermSelectType::class;
     }
 
     /**

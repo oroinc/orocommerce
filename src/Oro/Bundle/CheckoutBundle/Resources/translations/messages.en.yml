@@ -6,6 +6,7 @@ oro:
         owner.label: Owner
         customer.label: Customer
         customer_user.label: Customer User
+        registered_customer_user.label: Registered Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -43,6 +44,8 @@ oro:
         deleted.label: Deleted
         completed.label: Completed
         completed_data.label: Completed Data
+        confirm_email_flash_message: Please confirm your email before continue checkout
+        late_registration.label: Save my data and create an account
 
         checkoutlineitem:
             entity_label: 'Checkout Line Item'
@@ -168,6 +171,8 @@ oro:
                     back_to_shipping_method.label: Edit Shipping Method
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
+                    continue_checkout_as_guest.label: Continue as a Guest
+                    continue_checkout_as_guest.tooltip: You'll have the option to register for an account after your purchase
                     place_order:
                         label: Submit Order
                         condition.extendable.message: There was an error while processing the order
@@ -194,8 +199,7 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
-                        visitor:
-                            email: ""
+                        email: ""
         form:
             address.manual: New address
             address.group_label:
@@ -237,6 +241,12 @@ oro:
                 guest_checkout:
                     title: 'Enable Guest Checkout'
                     tooltip: 'Enable Guest Checkout'
+                registration_allowed:
+                    title: 'Allow registration'
+                    tooltip: 'Allow customer users registration on checkout page'
+                allow_checkout_without_email_confirmation:
+                    title: 'Allow checkout without email confirmation'
+                    tooltip: 'Gives possibility to proceed checkout after enter registration data without email confirmation'
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
@@ -245,6 +255,7 @@ oro:
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
+                customer_users_registration.title: 'Customer Users Registration'
 
         privilege:
             category.checkout.label: 'Checkout'
@@ -259,7 +270,7 @@ oro:
             checkout:
                 cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
                 cannot_create_reorder_no_line_items: 'The re-order cannot be processed as all the products are currently unavailable.'
-                some_changes_in_line_items: 'Please note that the current order differs from the original one due the absence or insufficient quantity in stock of the following products: %skus%.'
+                some_changes_in_line_items: 'Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: %skus%.'
             start_from_order: 'Re-Order'
 
         errors:

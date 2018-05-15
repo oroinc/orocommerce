@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -19,6 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -82,13 +81,36 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertNotContains('Create Order', $crawler->html());
     }
 
+    public function testAccessDeniedForShoppingListsFromAnotherWebsite()
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            )
+        );
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        );
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
+    }
+
     /**
      * @dataProvider viewSelectedShoppingListDataProvider
      * @param string $shoppingList
-     * @param string $expectedLineItemPrice
+     * @param string|array $expectedLineItemPrice
+     * @param bool   $atLeastOneAvailableProduct
      */
-    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
-    {
+    public function testViewSelectedShoppingListWithLineItemPrice(
+        string $shoppingList,
+        $expectedLineItemPrice,
+        bool $atLeastOneAvailableProduct
+    ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
@@ -115,7 +137,10 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertContains($shoppingList1->getLabel(), $crawler->html());
 
         $this->assertContains('Create Order', $crawler->html());
-        $this->assertContains('Request Quote', $crawler->html());
+        if ($atLeastOneAvailableProduct) {
+            $this->assertContains('Duplicate List', $crawler->html());
+            $this->assertContains('Request Quote', $crawler->html());
+        }
 
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
@@ -128,18 +153,23 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10'
+                'expectedLineItemPrice' => '$13.10',
+                'atLeastOneAvailableProduct' => true,
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00'
+                'expectedLineItemPrice' => '$0.00',
+                'atLeastOneAvailableProduct' => false,
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
-                ]
+                    'N/A',
+                    'N/A',
+                ],
+                'atLeastOneAvailableProduct' => true,
             ],
         ];
     }

@@ -27,6 +27,7 @@ oro_behat_extension:
                 mapping:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+                    Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -41,7 +42,7 @@ oro_behat_extension:
         Headlamps category:
             selector:
                 type: xpath
-                locator: '//div[contains(@class, "embedded-list")]/a[contains(., "Headlamps")]'
+                locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"Headlamps")]'
         WebCatalogSystemConfigSelect:
             selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
@@ -49,6 +50,7 @@ oro_behat_extension:
     suites:
         OroWebCatalogBundle:
             contexts:
+                - OroApplicationBundle::CommerceMainContext
                 - OroProductBundle::FeatureContext
                 - OroConfigBundle::FeatureContext
                 - OroDataGridBundle::GridContext

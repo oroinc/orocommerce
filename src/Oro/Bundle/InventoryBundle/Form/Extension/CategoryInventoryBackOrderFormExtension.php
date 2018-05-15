@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class CategoryInventoryBackOrderFormExtension extends AbstractFallbackCategoryTypeExtension
 {
@@ -28,7 +27,7 @@ class CategoryInventoryBackOrderFormExtension extends AbstractFallbackCategoryTy
 
         $builder->add(
             'backOrder',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.backorders.label',
             ]

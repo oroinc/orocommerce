@@ -5,6 +5,16 @@ define(function(require) {
     var BaseProductView = require('oroproduct/js/app/views/base-product-view');
 
     LineItemOfferView = BaseProductView.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function LineItemOfferView() {
+            LineItemOfferView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
             this.$el.trigger('options:set:lineItemModel', options);
             this.deferredInitializeCheck(options, ['lineItemModel']);

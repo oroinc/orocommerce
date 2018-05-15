@@ -3,17 +3,24 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 
+/**
+ * Provides actual Price List for given Customer and Website. This parameters are not mandatory and in case
+ * when they not passed will try to get Price List from runtime (if logged in as Anonymous user)
+ * or from System Configuration.
+ */
 class PriceListTreeHandler
 {
     /**
@@ -37,7 +44,12 @@ class PriceListTreeHandler
     protected $configManager;
 
     /**
-     * @var BasePriceList[]
+     * @var TokenAccessorInterface
+     */
+    protected $tokenAccessor;
+
+    /**
+     * @var CombinedPriceList[]
      */
     protected $priceLists = [];
 
@@ -45,21 +57,24 @@ class PriceListTreeHandler
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
      * @param ConfigManager $configManager
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         ManagerRegistry $registry,
         WebsiteManager $websiteManager,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->registry = $registry;
         $this->websiteManager = $websiteManager;
         $this->configManager = $configManager;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
      * @param Customer|null $customer
      * @param Website|null $website
-     * @return BasePriceList|null
+     * @return CombinedPriceList|null
      */
     public function getPriceList(Customer $customer = null, Website $website = null)
     {
@@ -75,6 +90,9 @@ class PriceListTreeHandler
         $priceList = null;
         if ($customer) {
             $priceList = $this->getPriceListByCustomer($customer, $website);
+        }
+        if (!$priceList) {
+            $priceList = $this->getPriceListByAnonymousCustomerGroup($website);
         }
         if (!$priceList) {
             $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
@@ -121,6 +139,21 @@ class PriceListTreeHandler
     }
 
     /**
+     * @param Website|null $website
+     * @return null|CombinedPriceList
+     */
+    protected function getPriceListByAnonymousCustomerGroup(Website $website)
+    {
+        $priceList = null;
+        $customerGroup = $this->getAnonymousCustomerGroup();
+        if ($customerGroup) {
+            $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
+        }
+
+        return $priceList;
+    }
+
+    /**
      * @param Customer|null $customer
      * @param Website|null $website
      * @return string
@@ -138,7 +171,7 @@ class PriceListTreeHandler
     }
 
     /**
-     * @return null|BasePriceList
+     * @return null|CombinedPriceList
      */
     protected function getPriceListFromConfig()
     {
@@ -164,5 +197,29 @@ class PriceListTreeHandler
         }
 
         return $this->priceListRepository;
+    }
+
+    /**
+     * @return CustomerGroup|null
+     */
+    private function getAnonymousCustomerGroup()
+    {
+        if (!$this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
+            return null;
+        }
+
+        $id = (int)$this->configManager->get('oro_customer.anonymous_customer_group');
+
+        return $id ? $this->getCustomerGroupRepository()->find($id) : null;
+    }
+
+    /**
+     * @return CustomerGroupRepository
+     */
+    private function getCustomerGroupRepository()
+    {
+        return $this->registry
+            ->getManagerForClass(CustomerGroup::class)
+            ->getRepository(CustomerGroup::class);
     }
 }

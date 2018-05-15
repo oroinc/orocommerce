@@ -34,6 +34,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function BackendSelectRowCell() {
+            BackendSelectRowCell.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             var o = {};
             if (options.productModel) {
@@ -98,6 +105,11 @@ define(function(require) {
                 return;
             }
             delete this.hide;
+            delete this.$container;
+
+            if (this.model) {
+                this.model.off(null, null, this);
+            }
             BackendSelectRowCell.__super__.dispose.apply(this, arguments);
         }
     });

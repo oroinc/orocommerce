@@ -52,7 +52,7 @@ class CustomerUserShoppingListsProvider
      */
     public function getCurrent()
     {
-        return $this->shoppingListManager->getForCurrentUser();
+        return $this->shoppingListManager->getCurrent();
     }
 
     /**

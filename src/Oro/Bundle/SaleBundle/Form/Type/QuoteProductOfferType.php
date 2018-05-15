@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
@@ -52,7 +53,7 @@ class QuoteProductOfferType extends AbstractType
         $builder
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'currency_empty_value' => null,
                     'error_bubbling' => false,
@@ -62,7 +63,7 @@ class QuoteProductOfferType extends AbstractType
             )
             ->add(
                 'priceType',
-                'hidden',
+                HiddenType::class,
                 [
                     // TODO: enable once fully supported on the quote views and in orders
                     'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
@@ -70,7 +71,7 @@ class QuoteProductOfferType extends AbstractType
             )
             ->add(
                 'allowIncrements',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductoffer.allow_increments.label',
@@ -81,7 +82,7 @@ class QuoteProductOfferType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
@@ -90,7 +91,7 @@ class QuoteProductOfferType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.sale.quoteproductoffer.quantity.label',
@@ -109,7 +110,7 @@ class QuoteProductOfferType extends AbstractType
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
                 'allow_prices_override' => true,
-                'intention' => 'sale_quote_product_offer',
+                'csrf_token_id' => 'sale_quote_product_offer',
             ]
         );
     }

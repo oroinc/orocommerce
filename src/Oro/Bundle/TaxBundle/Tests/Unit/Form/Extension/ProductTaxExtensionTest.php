@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
@@ -35,7 +34,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(ProductType::NAME, $this->getExtension()->getExtendedType());
+        $this->assertEquals(ProductType::class, $this->getExtension()->getExtendedType());
     }
 
     public function testBuildForm()
@@ -48,7 +47,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
             ->method('add')
             ->with(
                 'taxCode',
-                ProductTaxCodeAutocompleteType::NAME,
+                ProductTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,

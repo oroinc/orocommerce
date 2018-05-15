@@ -3,8 +3,8 @@ define(function(require) {
 
     var TotalsComponent;
     var subtotalTemplate = require('text!oropricing/templates/order/subtotals.html');
-    var template =  require('tpl!oropricing/templates/order/totals.html');
-    var noDataTemplate =  require('tpl!oropricing/templates/order/totals-no-data.html');
+    var template = require('tpl!oropricing/templates/order/totals.html');
+    var noDataTemplate = require('tpl!oropricing/templates/order/totals-no-data.html');
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
@@ -93,6 +93,13 @@ define(function(require) {
          * @property {Array}
          */
         items: [],
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function TotalsComponent() {
+            TotalsComponent.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -234,7 +241,7 @@ define(function(require) {
                 data: data,
                 success: function(response) {
                     if (formData === self.formData && !self.disposed) {
-                        //data doesn't change after ajax call
+                        // data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
                     }

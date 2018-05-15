@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
@@ -102,6 +101,6 @@ class ProductImageType
      */
     public function __toString()
     {
-        return $this->type;
+        return (string)$this->type;
     }
 }

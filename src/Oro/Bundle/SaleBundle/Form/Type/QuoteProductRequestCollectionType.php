@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductRequestCollectionType extends AbstractType
 {
@@ -16,16 +15,16 @@ class QuoteProductRequestCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => QuoteProductRequestType::NAME,
+            'entry_type'            => QuoteProductRequestType::class,
             'show_form_when_empty'  => false,
             'prototype_name'        => '__namequoteproductrequest__',
             'allow_add'             => false,

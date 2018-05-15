@@ -18,6 +18,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class SlugRepositoryTest extends WebTestCase
 {
@@ -87,11 +88,10 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaWhenSlugHasScopesThatNotMatches()
     {
-        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
 
-        $this->assertEmpty($slug);
+        $this->assertNull($slug);
     }
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopes()
@@ -132,13 +132,12 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
-        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
 
         $this->assertNotEmpty($slug);
-        $this->assertSame($expected->getId(), $slug->getId());
+        $this->assertEquals($expected->getId(), $slug->getId());
     }
 
     public function testFindOneDirectUrlBySlug()
@@ -195,7 +194,9 @@ class SlugRepositoryTest extends WebTestCase
                 'expected' => [
                     '/slug/anonymous',
                     '/slug/first',
-                    '/slug/page2'
+                    '/slug/page2',
+                    '/slug/en/page',
+                    '/slug/es/page'
                 ]
             ]
         ];
@@ -267,7 +268,7 @@ class SlugRepositoryTest extends WebTestCase
                 'routeParameters' => $slug1->getRouteParameters(),
                 'url' => $slug1->getUrl(),
                 'slugPrototype' => $slug1->getSlugPrototype(),
-                'localization_id' => $slug1->getLocalization() ? $slug1->getLocalization()->getId(): null
+                'localization_id' => $slug1->getLocalization() ? $slug1->getLocalization()->getId() : null
             ]
         ];
         $this->assertEquals($expected, $actual);
@@ -306,7 +307,8 @@ class SlugRepositoryTest extends WebTestCase
         $expected = [
             'oro_cms_frontend_page_view',
             'oro_customer_frontend_customer_user_index',
-            '__test__'
+            '__test__',
+            'oro_product_frontend_product_view'
         ];
         sort($expected);
         $actual = $this->repository->getUsedRoutes();
@@ -342,10 +344,52 @@ class SlugRepositoryTest extends WebTestCase
         );
 
         $this->assertNotEmpty($slug);
-        $this->assertEquals([
-            'url' => $expected->getUrl(),
-            'slug_prototype' => $expected->getSlugPrototype(),
-            'localization_id' => $expected->getLocalization() ? $expected->getLocalization()->getId() : null
-        ], $slug);
+        $this->assertEquals(
+            [
+                'url' => $expected->getUrl(),
+                'slug_prototype' => $expected->getSlugPrototype()
+            ],
+            $slug
+        );
+    }
+
+    public function testGetRawRedirectSlugLocalized()
+    {
+        /** @var Slug $expected */
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
+
+        $slug = $this->repository->getRawSlug(
+            'oro_product_frontend_product_view',
+            [
+                'id' => $this->getReference(LoadPageData::PAGE_1)->getId()
+            ],
+            $this->getReference('es')->getId()
+        );
+
+        $this->assertNotEmpty($slug);
+        $this->assertEquals(
+            [
+                'url' => $expected->getUrl(),
+                'slug_prototype' => $expected->getSlugPrototype()
+            ],
+            $slug
+        );
+
+        $slug = $this->repository->getRawSlug(
+            'oro_product_frontend_product_view',
+            [
+                'id' => $this->getReference(LoadPageData::PAGE_1)->getId()
+            ],
+            null
+        );
+
+        $this->assertNotEmpty($slug);
+        $this->assertNotEquals(
+            [
+                'url' => $expected->getUrl(),
+                'slug_prototype' => $expected->getSlugPrototype()
+            ],
+            $slug
+        );
     }
 }

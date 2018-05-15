@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Cache\Product\Category;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Cache\Product\AbstractCacheBuilderTest;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {

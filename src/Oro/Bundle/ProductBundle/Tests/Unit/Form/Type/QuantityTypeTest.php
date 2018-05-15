@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
 
 class QuantityTypeTest extends FormIntegrationTestCase
 {
@@ -45,7 +45,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
      */
     public function testSetDefaultData(array $options, $expectedBefore, $submittedData, $expectedAfter)
     {
-        $form = $this->factory->create($this->formType, null, $options);
+        $form = $this->factory->create(QuantityType::class, null, $options);
         $this->assertEquals($expectedBefore, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -71,7 +71,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 1 => $this->getEntity(
                     'Oro\Bundle\ProductBundle\Entity\Product',
@@ -102,7 +102,11 @@ class QuantityTypeTest extends FormIntegrationTestCase
         );
 
         return [
-            new PreloadedExtension(['entity' => $entityType, QuantityType::NAME => $this->getQuantityType()], []),
+            new PreloadedExtension([
+                QuantityParentTypeStub::class => $this->parentType,
+                EntityType::class => $entityType,
+                $this->getQuantityType()
+            ], []),
         ];
     }
 
@@ -127,7 +131,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         }
 
         $this->parentType->setQuantityOptions($options);
-        $form = $this->factory->create($this->parentType);
+        $form = $this->factory->create(QuantityParentTypeStub::class);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());

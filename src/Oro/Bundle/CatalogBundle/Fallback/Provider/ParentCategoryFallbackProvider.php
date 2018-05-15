@@ -41,4 +41,12 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
     {
         return 'oro.catalog.fallback.parent_category.label';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFallbackEntityClass()
+    {
+        return Category::class;
+    }
 }

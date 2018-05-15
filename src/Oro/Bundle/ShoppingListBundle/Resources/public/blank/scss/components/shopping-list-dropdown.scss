@@ -1,0 +1,116 @@
+// @theme: blank;
+
+.shopping-list-dropdown {
+    min-width: 280px;
+
+    &__item {
+        display: flex;
+
+        font-size: $base-font-size - 1px;
+
+        @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
+
+        border-bottom: 1px solid get-color('additional', 'light');
+    }
+
+    &__radio {
+        width: $shopping-list-dropdown-radio-width;
+    }
+
+    &__link {
+        display: block;
+        width: calc(100% - #{$shopping-list-dropdown-radio-width});
+        padding-left: 5px;
+    }
+
+    &__link,
+    &__link:hover {
+        text-decoration: none;
+
+        color: get-color('additional', 'darker');
+    }
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__name,
+    &__details {
+        display: inline-block;
+
+        vertical-align: middle;
+
+        word-break: break-all;
+    }
+
+    &__name {
+        text-transform: uppercase;
+    }
+
+    &__name-inner {
+        display: block;
+        max-width: 140px;
+        padding-right: 15px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__details {
+        text-align: right;
+    }
+
+    &__info {
+        display: block;
+    }
+
+    &__products {
+        display: block;
+        margin-top: 4px;
+
+        color: darken(get-color('additional', 'middle'),20%);
+
+        &__item {
+            display: block;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    &__info {
+        color: get-color('ui', 'normal');
+    }
+
+    &__link:hover &__info {
+        text-decoration: underline;
+    }
+
+    &__ellipsis {
+        display: inline-block;
+        width: 100%;
+
+        font-size: $base-font-size--large + 2px;
+
+        line-height: 0.4;
+        vertical-align: top;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .shopping-list-dropdown__item {
+        .custom-radio {
+            &__text {
+                &::before {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+    }
+}
+

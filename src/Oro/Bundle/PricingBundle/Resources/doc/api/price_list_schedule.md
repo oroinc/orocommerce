@@ -10,7 +10,7 @@ Get a price list schedule details by the schedule ID.
 
 ### get_list
 
-Get a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Get a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
@@ -82,7 +82,7 @@ Delete a price list schedule identified by ID.
 
 ### delete_list
 
-Delete a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 

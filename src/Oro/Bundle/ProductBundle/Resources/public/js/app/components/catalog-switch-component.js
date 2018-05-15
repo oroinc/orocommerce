@@ -12,6 +12,16 @@ define(function(require) {
     CatalogSwitchComponent = BaseComponent.extend(_.extend({}, UrlHelper, {
         parameterName: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CatalogSwitchComponent() {
+            CatalogSwitchComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             CatalogSwitchComponent.__super__.initialize.apply(this, arguments);
 

@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductShippingOptionsType extends AbstractType
 {
@@ -31,7 +30,7 @@ class ProductShippingOptionsType extends AbstractType
         $builder
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.product_unit.label',
                     'required' => false,
@@ -39,7 +38,7 @@ class ProductShippingOptionsType extends AbstractType
             )
             ->add(
                 'weight',
-                WeightType::NAME,
+                WeightType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.weight.label',
                     'required' => false,
@@ -47,7 +46,7 @@ class ProductShippingOptionsType extends AbstractType
             )
             ->add(
                 'dimensions',
-                DimensionsType::NAME,
+                DimensionsType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.dimensions.label',
                     'required' => false,
@@ -55,7 +54,7 @@ class ProductShippingOptionsType extends AbstractType
             )
             ->add(
                 'freightClass',
-                FreightClassSelectType::NAME,
+                FreightClassSelectType::class,
                 [
                     'label' => 'oro.shipping.product_shipping_options.freight_class.label',
                     'placeholder' => 'oro.shipping.form.placeholder.freight_class.label',

@@ -69,7 +69,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => $quantity,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken(),
+                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
                 ],
             ]
         );
@@ -143,7 +143,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => null,
                     'unit' => null,
-                    '_token' => $this->getCsrfToken(),
+                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
                 ],
             ]
         );
@@ -432,18 +432,6 @@ class AjaxLineItemControllerTest extends WebTestCase
     }
 
     /**
-     * @return string
-     */
-    protected function getCsrfToken()
-    {
-        return $this->client
-            ->getContainer()
-            ->get('security.csrf.token_manager')
-            ->getToken('oro_product_frontend_line_item')
-            ->getValue();
-    }
-
-    /**
      * @return ShoppingListRepository
      */
     protected function getShoppingListRepository()
@@ -490,7 +478,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => 10,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken(),
+                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
                 ],
             ]
         );

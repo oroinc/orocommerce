@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -20,41 +19,19 @@ use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var LineItemDiscountOptionsType
-     */
-    protected $formType;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->formType = new LineItemDiscountOptionsType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(LineItemDiscountOptionsType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(LineItemDiscountOptionsType::NAME, $this->formType->getBlockPrefix());
+        $formType = new LineItemDiscountOptionsType();
+        $this->assertEquals(LineItemDiscountOptionsType::NAME, $formType->getBlockPrefix());
     }
 
     /**
@@ -66,7 +43,7 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $existingData, array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType, $existingData);
+        $form = $this->factory->create(LineItemDiscountOptionsType::class, $existingData);
         $form->submit($submittedData);
 
         $this->assertTrue($form->isValid());
@@ -83,11 +60,12 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 'apply_to_choices',
                 [
-                    'each_item' => 'oro.discount_options.line_item_type.apply_to.choices.each_item',
-                    'line_items_total' => 'oro.discount_options.line_item_type.apply_to.choices.line_items_total'
+                    'oro.discount_options.line_item_type.apply_to.choices.each_item' => 'each_item',
+                    'oro.discount_options.line_item_type.apply_to.choices.line_items_total' => 'line_items_total',
                 ]
             );
-        $this->formType->configureOptions($resolver);
+        $formType = new LineItemDiscountOptionsType();
+        $formType->configureOptions($resolver);
     }
 
     /**
@@ -167,16 +145,9 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
-                'item' => 'oro.product_unit.item.label.full',
-                'set' => 'oro.product_unit.set.label.full',
+                'oro.product_unit.item.label.full' => 'item',
+                'oro.product_unit.set.label.full' => 'set',
             ]);
-
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(0);
-
         /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
@@ -187,18 +158,18 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
-                    DiscountOptionsType::NAME => new DiscountOptionsType(),
-                    MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    ProductUnitsType::class => new ProductUnitsType($productUnitsProvider),
+                    DiscountOptionsType::class => new DiscountOptionsType(),
+                    MultiCurrencyType::class => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $localeSettings,
                         $currencyNameHelper
                     ),
-                    OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter)
+                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter)
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

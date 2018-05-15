@@ -13,12 +13,17 @@ use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;
+use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements
+    OroPageObjectAware,
+    KernelAwareContext,
+    FixtureLoaderAwareInterface
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary, KernelDictionary, FixtureLoaderDictionary;
 
     /**
      * @var OroMainContext
@@ -113,6 +118,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 self::assertContains($item, $html);
             }
         }
+    }
+
+    /**
+     * Load "QuotesSentToCustomer" alice fixture from SaleBundle suite
+     *
+     * Disable default workflow for Quote entity before loading fixtures to prevent overriding internal status
+     *
+     * @Given /^sent to customer quotes fixture loaded$/
+     */
+    public function bestSellingFixtureLoaded()
+    {
+        $workflowManager = $this->getContainer()->get('oro_workflow.registry.workflow_manager')->getManager();
+
+        foreach ($workflowManager->getApplicableWorkflows(Quote::class) as $workflow) {
+            $workflowManager->resetWorkflowData($workflow->getName());
+            $workflowManager->deactivateWorkflow($workflow->getName());
+        }
+
+        $this->fixtureLoader->loadFixtureFile('OroSaleBundle:QuotesSentToCustomer.yml');
     }
 
     /**

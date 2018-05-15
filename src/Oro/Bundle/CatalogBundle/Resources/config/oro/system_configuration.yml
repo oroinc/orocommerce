@@ -11,7 +11,8 @@ system_configuration:
     fields:
         oro_catalog.category_direct_url_prefix:
             data_type: string
-            type: oro_redirect_sluggable_prefix
+            type: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
+            search_type: text
             options:
                 label: oro.catalog.system_configuration.fields.category_direct_url_prefix.label
                 data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
@@ -21,7 +22,7 @@ system_configuration:
 
         oro_catalog.all_products_page_enabled:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 10
             options:
                 label: oro.catalog.system_configuration.fields.all_products_page_enabled.label

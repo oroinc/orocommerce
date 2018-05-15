@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ProductShippingOptionsCollectionType extends AbstractType
 {
@@ -29,7 +28,7 @@ class ProductShippingOptionsCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => ProductShippingOptionsType::NAME,
+                'entry_type' => ProductShippingOptionsType::class,
                 'show_form_when_empty' => false,
                 'entry_options' => [
                     'data_class' => $this->dataClass
@@ -59,6 +58,6 @@ class ProductShippingOptionsCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 }

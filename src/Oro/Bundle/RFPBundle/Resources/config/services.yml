@@ -95,6 +95,7 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
             - '@oro_customer.manager.guest_customer_user'
+            - '@oro_website.manager'
 
     oro_rfp.event_listener.customer_view:
         class: 'Oro\Bundle\RFPBundle\EventListener\CustomerViewListener'
@@ -124,12 +125,19 @@ services:
        tags:
            - { name: oro_multi_currency.currency_checker_provider }
 
+    oro_rfp.provider.product_availability:
+       class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
+       public: false
+
     oro_rfp.acl.voter.frontend_request:
         class: 'Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter'
         public: false
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_frontend.provider.current_application'
             - '@oro_workflow.manager'
+        calls:
+            - [setClassName, ['%oro_rfp.entity.request.class%']]
         tags:
             - { name: security.voter }
 

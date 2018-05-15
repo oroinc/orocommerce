@@ -92,7 +92,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
      */
     public function getParent()
     {
-        return SegmentFilterBuilderType::NAME;
+        return SegmentFilterBuilderType::class;
     }
 
     /**

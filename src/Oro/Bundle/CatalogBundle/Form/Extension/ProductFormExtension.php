@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -36,7 +34,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductType::NAME;
+        return ProductType::class;
     }
 
     /**
@@ -47,7 +45,7 @@ class ProductFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'category',
-                CategoryTreeType::NAME,
+                CategoryTreeType::class,
                 [
                     'required' => false,
                     'mapped' => false,

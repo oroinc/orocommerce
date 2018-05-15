@@ -7,10 +7,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'CheckoutWithParentCustomer'
         customerUser: '@amanda'
         organization: '@organization'
+        website: '@website1'
     shoppinglistForCheckoutWithChildCustomer:
         label: 'CheckoutWithChildCustomer'
         customerUser: '@ruth'
         organization: '@organization'
+        website: '@website1'
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutSource:
     checkoutSourceForCheckoutWithParentCustomer:

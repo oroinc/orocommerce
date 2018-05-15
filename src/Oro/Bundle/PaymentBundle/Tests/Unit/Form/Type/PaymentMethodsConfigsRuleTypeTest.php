@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
@@ -29,10 +28,12 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 {
@@ -59,12 +60,12 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         $this->createMocks();
         $this->formType = new PaymentMethodsConfigsRuleType(
             $this->paymentMethodProvider,
             $this->compositePaymentMethodViewProvider
         );
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -74,7 +75,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
     }
@@ -86,7 +87,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class, $data);
 
         $this->assertEquals($data, $form->getData());
 
@@ -145,28 +146,27 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
+                    PaymentMethodsConfigsRuleType::class => $this->formType,
+                    CollectionType::class => new CollectionType(),
                     RuleType::BLOCK_PREFIX => new RuleType(),
-                    PaymentMethodConfigType::NAME =>
-                        new PaymentMethodConfigType(
-                            $this->paymentMethodProvider,
-                            $this->compositePaymentMethodViewProvider
-                        ),
-                    PaymentMethodsConfigsRuleDestinationType::NAME =>
+                    PaymentMethodConfigType::class => new PaymentMethodConfigType(
+                        $this->paymentMethodProvider,
+                        $this->compositePaymentMethodViewProvider
+                    ),
+                    PaymentMethodsConfigsRuleDestinationType::class =>
                         new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
                     PaymentMethodConfigCollectionType::class =>
                         new PaymentMethodConfigCollectionType($subscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->createMock(LocaleSettings::class),
                         $this->createMock(CurrencyNameHelper::class)
                     ),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
+                    CountryType::class => new CountryType(),
+                    TranslatableEntityType::class => $translatableEntity,
+                    RegionType::class => new RegionType(),
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
                 ]]

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
+use Oro\Bundle\CronBundle\Checker\ScheduleIntervalChecker;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
-use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Bundle\CronBundle\Checker\ScheduleIntervalChecker;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService;
+use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest

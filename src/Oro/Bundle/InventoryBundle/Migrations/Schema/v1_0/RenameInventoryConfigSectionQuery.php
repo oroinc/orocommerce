@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0;
 
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class RenameInventoryConfigSectionQuery extends ParametrizedMigrationQuery
 {

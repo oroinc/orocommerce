@@ -3,20 +3,17 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
+/**
+ * Prepare product items based on product grid view option
+ */
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
@@ -32,37 +29,19 @@ class FrontendProductDatagridListener
     protected $themeHelper;
 
     /**
-     * @var RegistryInterface
-     *
-     * @deprecated Will be removed in 1.4
-     */
-    protected $registry;
-
-    /**
-     * @var AttachmentManager
-     */
-    protected $attachmentManager;
-
-    /**
      * @var CacheManager
      */
     protected $imagineCacheManager;
 
     /**
      * @param DataGridThemeHelper $themeHelper
-     * @param RegistryInterface $registry
-     * @param AttachmentManager $attachmentManager
      * @param CacheManager $imagineCacheManager
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
-        RegistryInterface $registry,
-        AttachmentManager $attachmentManager,
         CacheManager $imagineCacheManager
     ) {
         $this->themeHelper = $themeHelper;
-        $this->registry = $registry;
-        $this->attachmentManager = $attachmentManager;
         $this->imagineCacheManager = $imagineCacheManager;
     }
 
@@ -95,6 +74,7 @@ class FrontendProductDatagridListener
         switch ($viewName) {
             case DataGridThemeHelper::VIEW_LIST:
                 // grid view same as default
+                $this->addImageToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_GRID:
                 $this->addImageToConfig($config);
@@ -174,6 +154,9 @@ class FrontendProductDatagridListener
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);
         switch ($theme) {
+            case DataGridThemeHelper::VIEW_LIST:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
+                break;
             case DataGridThemeHelper::VIEW_GRID:
                 $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
                 break;
@@ -184,13 +167,11 @@ class FrontendProductDatagridListener
                 return;
         }
 
-        $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-
         foreach ($records as $record) {
             $productImageUrl = $record->getValue('image_' . $imageFilter);
 
             if (!$productImageUrl) {
-                $productImageUrl = $defaultImageUrl;
+                $productImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
             }
             $record->addData(['image' => $productImageUrl]);
         }
@@ -209,29 +190,5 @@ class FrontendProductDatagridListener
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
-    }
-
-    /**
-     * @return ProductRepository
-     *
-     * @deprecated Will be removed in 1.4
-     */
-    protected function getProductRepository()
-    {
-        return $this->registry
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product');
-    }
-
-    /**
-     * @return ProductUnitRepository
-     *
-     * @deprecated Will be removed in 1.4
-     */
-    protected function getProductUnitRepository()
-    {
-        return $this->registry
-            ->getManagerForClass('OroProductBundle:ProductUnit')
-            ->getRepository('OroProductBundle:ProductUnit');
     }
 }

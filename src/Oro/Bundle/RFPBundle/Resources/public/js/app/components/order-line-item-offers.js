@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -39,6 +37,13 @@ define(function(require) {
 
         /**
          * @inheritDoc
+         */
+        constructor: function OrderLineItemOffers() {
+            OrderLineItemOffers.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

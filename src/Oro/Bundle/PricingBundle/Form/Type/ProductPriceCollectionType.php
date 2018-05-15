@@ -3,14 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
+/**
+ *  Product price collection form type
+ *  Used to handle collection of underlying  Product prices for types
+ */
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_collection';
@@ -50,13 +52,13 @@ class ProductPriceCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
-                'type' => ProductPriceType::NAME,
+                'entry_type' => ProductPriceType::class,
                 'show_form_when_empty' => false,
-                'options' => ['data_class' => $this->dataClass],
+                'entry_options' => ['data_class' => $this->dataClass],
                 'validation_groups' => [self::VALIDATION_GROUP]
             ]
         );
@@ -85,7 +87,7 @@ class ProductPriceCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**

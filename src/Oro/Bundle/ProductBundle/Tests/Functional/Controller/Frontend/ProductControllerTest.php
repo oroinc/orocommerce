@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Routing\RequestContext;
 
@@ -109,7 +108,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayNotHasKey('image', $result['data'][0]);
+        $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
             ProductController::GRID_NAME,

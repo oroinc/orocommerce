@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -39,7 +37,14 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function ProductUnitSelectionLimitationsComponent() {
+            ProductUnitSelectionLimitationsComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
