@@ -69,8 +69,8 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
 
         $importImageDir = sprintf(
             '%s%s',
-            $this->getContainer()->getParameter('kernel.root_dir'),
-            '/import_export/product_images'
+            $this->getContainer()->getParameter('kernel.project_dir'),
+            '/var/import_export/product_images'
         );
 
         try {
