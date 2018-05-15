@@ -126,6 +126,8 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
 
         $this->priceBuilder->expects($this->never())
             ->method('buildByPriceList');
+        $this->priceBuilder->expects($this->never())
+            ->method('flush');
 
         $this->priceListBuilder->expects($this->never())
             ->method('build');

@@ -3,12 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -40,13 +43,13 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @var StrategyRegister
-     * @deprecated Will be removed in 2.0. Use combinedPriceListsBuilderFacade methods instead
+     * @deprecated Will be removed in 3.0. Use combinedPriceListsBuilderFacade methods instead
      */
     protected $strategyRegister;
 
     /**
      * @var EventDispatcherInterface
-     * @deprecated Will be removed in 2.0. Use combinedPriceListsBuilderFacade methods instead
+     * @deprecated Will be removed in 3.0. Use combinedPriceListsBuilderFacade methods instead
      */
     protected $dispatcher;
 
@@ -62,6 +65,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @var CombinedPriceListRepository
+     * @deprecated Will be removed in 3.0.
      */
     protected $combinedPriceListRepository;
 
@@ -114,17 +118,24 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CombinedPriceList::class);
         $em->beginTransaction();
-        
+
         try {
             $this->triggerHandler->startCollect();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
-            $repository = $this->getCombinedPriceListRepository();
-            $iterator = $repository->getCombinedPriceListsByPriceList(
-                $trigger->getPriceList(),
-                true
-            );
-            $this->combinedPriceListsBuilderFacade->rebuild($iterator, $trigger->getProducts());
+
+            /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
+            $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+            $allProducts = $trigger->getProducts();
+
+            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+            foreach ($cpls as $cpl) {
+                $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
+
+                $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
+
+                $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
+            }
             $this->dispatchEvent([]);
             $em->commit();
             $this->triggerHandler->commit();
@@ -168,12 +179,19 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected function getCombinedPriceListRepository()
     {
         if (!$this->combinedPriceListRepository) {
-            $this->combinedPriceListRepository = $this->registry
-                ->getManagerForClass(CombinedPriceList::class)
-                ->getRepository(CombinedPriceList::class);
+            $this->combinedPriceListRepository = $this->getRepository(CombinedPriceList::class);
         }
 
         return $this->combinedPriceListRepository;
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    private function getRepository($className)
+    {
+        return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 
     /**
