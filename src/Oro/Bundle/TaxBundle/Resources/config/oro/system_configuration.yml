@@ -52,8 +52,6 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.tax.system_configuration.fields.start_calculation_with.unit_price.label: unit_price
                     oro.tax.system_configuration.fields.start_calculation_with.row_total.label: row_total
@@ -67,8 +65,6 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.tax.system_configuration.fields.start_calculation_on.total.label: total
                     oro.tax.system_configuration.fields.start_calculation_on.item.label: item
@@ -90,8 +86,6 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.tax.system_configuration.fields.use_as_base.shipping_origin.label: shipping_origin
                     oro.tax.system_configuration.fields.use_as_base.destination.label: destination
@@ -106,8 +100,6 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.tax.system_configuration.fields.address_resolver_granularity.country.label: country
                     oro.tax.system_configuration.fields.address_resolver_granularity.region.label: region
@@ -130,8 +122,6 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.tax.system_configuration.fields.destination.billing_address.label: billing_address
                     oro.tax.system_configuration.fields.destination.shipping_addressl.label: shipping_address

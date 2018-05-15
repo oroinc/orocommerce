@@ -123,13 +123,15 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
         $parent->expects($this->once())->method('getData')->willReturn(new PaymentTermAwareStub());
         $parent->expects($this->any())->method('getName')->willReturn('parent');
 
-        $type = $this->createMock(ResolvedFormTypeInterface::class);
+        $type = $this->createMock(FormInterface::class);
         $type->expects($this->any())->method('getName')->willReturn('entity');
-        $type->expects($this->any())->method('getInnerType')->willReturn(new EntityType([]));
+
+        $resolvedType = $this->createMock(ResolvedFormTypeInterface::class);
+        $resolvedType->expects($this->any())->method('getInnerType')->willReturn(new EntityType([]));
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())->method('getOptions')->willReturn([]);
-        $config->expects($this->once())->method('getType')->willReturn($type);
+        $config->expects($this->once())->method('getType')->willReturn($resolvedType);
 
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn($parent);

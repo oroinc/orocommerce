@@ -50,8 +50,6 @@ class ShippingMethodSelectType extends AbstractType
     {
         $resolver->setDefaults([
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
-            // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-            'choices_as_values' => true,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
                 return $this->getChoiceAttributes($choice);

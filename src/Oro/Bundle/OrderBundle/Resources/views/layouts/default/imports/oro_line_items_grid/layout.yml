@@ -7,7 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroOrderBundle:layouts:default/imports/oro_line_items_grid/layout.html.twig'
         - '@addTree':
             items:
                 __grid_container:

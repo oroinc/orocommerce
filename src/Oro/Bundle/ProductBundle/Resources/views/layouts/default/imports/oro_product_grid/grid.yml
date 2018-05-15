@@ -2,8 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'grid.html.twig'
-                - 'grid_row.html.twig'
+                - 'OroProductBundle:layouts:default/imports/oro_product_grid/grid.html.twig'
+                - 'OroProductBundle:layouts:default/imports/oro_product_grid/grid_row.html.twig'
         - '@add':
             id: sticky_element_toolbar
             parentId: top_sticky_panel_content

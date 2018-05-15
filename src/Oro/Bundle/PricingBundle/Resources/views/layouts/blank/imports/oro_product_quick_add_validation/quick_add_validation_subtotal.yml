@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'quick_add_validation_subtotal.html.twig'
+            themes: 'OroPricingBundle:layouts:blank/imports/oro_product_quick_add_validation/quick_add_validation_subtotal.html.twig'
         - '@add':
             id: quick_add_validation_additional_fields_subtotal
             parentId: quick_add_validation_additional_fields

@@ -63,8 +63,6 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                 BuyXGetYDiscount::DISCOUNT_APPLY_TO,
                 ChoiceType::class,
                 [
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => $options['apply_to_choices'],
                     'required' => false,
                     'label' => 'oro.discount_options.buy_x_get_y_type.apply_to.label',

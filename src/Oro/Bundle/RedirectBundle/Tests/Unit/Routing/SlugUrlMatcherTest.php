@@ -187,7 +187,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher->setBaseMatcher($baseMatcher);
 
-        $baseUrl = '/app_dev.php';
+        $baseUrl = '/index_dev.php';
         /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $requestContext */
         $requestContext = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
@@ -235,7 +235,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher->setBaseMatcher($baseMatcher);
 
-        $baseUrl = '/app_dev.php';
+        $baseUrl = '/index_dev.php';
         /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $requestContext */
         $requestContext = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()

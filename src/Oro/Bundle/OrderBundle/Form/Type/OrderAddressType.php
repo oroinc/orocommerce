@@ -29,8 +29,6 @@ class OrderAddressType extends AbstractOrderAddressType
                 'label' => false,
                 'required' => false,
                 'mapped' => false,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => $this->getChoices($addresses),
                 'configs' => ['placeholder' => 'oro.order.form.address.choose'],
                 'attr' => [

@@ -118,7 +118,7 @@ class QuickAddHandler
                 'error',
                 $this->translator->trans('oro.product.frontend.quick_add.messages.component_not_accessible')
             );
-        } elseif ($form->isValid()) {
+        } elseif ($form->isSubmitted() && $form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
             $products = array_map(
                 function (ProductRow $productRow) {
@@ -161,7 +161,7 @@ class QuickAddHandler
         $form = $this->productFormProvider->getQuickAddImportForm()->handleRequest($request);
         $collection = null;
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
@@ -198,7 +198,7 @@ class QuickAddHandler
         $form = $this->productFormProvider->getQuickAddCopyPasteForm()->handleRequest($request);
         $collection = null;
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
             $this->validateCollection($collection);

@@ -89,7 +89,6 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Then I operate as the Admin
     And I go to Sales/Orders
     And I click View Payment declined in grid
-    And I wait for action
     Then I should see following "Transactions History Grid" grid:
       | Id | Payment Method | Type      | Amount | Successful |
       | 3  | PayPalFlow     | Authorize | $13.00 | No         |

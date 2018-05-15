@@ -201,6 +201,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
@@ -263,6 +266,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $mainForm->expects($this->once())
             ->method('handleRequest')
             ->with($request);
+        $mainForm->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -343,6 +349,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
         $form->expects($this->once())
@@ -401,6 +410,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($form);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
@@ -442,6 +454,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($form);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
         $form->expects($this->never())
@@ -463,6 +478,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -503,6 +521,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);

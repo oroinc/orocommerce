@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'shopping_lists_menu.html.twig'
+            themes: 'OroCustomThemeBundle:layouts:custom/imports/oro_shopping_list_frontend_view/shopping_lists_menu.html.twig'
         - '@add':
             id: shopping_list_view_tabs
             blockType: container

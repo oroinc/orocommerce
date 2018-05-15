@@ -81,8 +81,6 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label' => 'oro.fedex.integration.settings.pickup_type.label',
                     'required' => true,
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => $this->getChoices(),
                 ]
             )
@@ -92,8 +90,6 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label' => 'oro.fedex.integration.settings.unit_of_weight.label',
                     'required' => true,
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => [
                         'oro.fedex.integration.settings.unit_of_weight.lb.label' =>
                             FedexIntegrationSettings::UNIT_OF_WEIGHT_LB,
