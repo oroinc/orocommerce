@@ -1,0 +1,12 @@
+services:
+    Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand:
+        public: false
+        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand:
+        public: false
+        class: Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand
+        tags:
+            - { name: console.command }
