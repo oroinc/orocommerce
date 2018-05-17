@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
@@ -11,6 +12,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -295,6 +297,35 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get');
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
+    }
+
+    public function testGetLoggedUserCurrentWebsiteCurrencyWithoutWebsite()
+    {
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
+        $this->assertNull($this->userCurrencyManager->getLoggedUserCurrentWebsiteCurrency());
+    }
+
+    public function testGetLoggedUserCurrentWebsiteCurrency()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
+
+        $userWebsiteSettings = new CustomerUserSettings($website);
+        $userWebsiteSettings->setCurrency('EUR');
+
+        $user = new CustomerUser();
+        $user->setWebsiteSettings($userWebsiteSettings);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->assertEquals('EUR', $this->userCurrencyManager->getLoggedUserCurrentWebsiteCurrency());
     }
 
     public function testSaveSelectedCurrencyLoggedUser()
