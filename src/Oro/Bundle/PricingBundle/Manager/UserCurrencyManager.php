@@ -74,24 +74,45 @@ class UserCurrencyManager
         $website = $this->getWebsite($website);
 
         if ($website) {
-            $user = $this->getLoggedUser();
-            if ($user instanceof CustomerUser) {
-                $userSettings = $user->getWebsiteSettings($website);
-                if ($userSettings) {
-                    $currency = $userSettings->getCurrency();
-                }
-            } elseif ($this->session->isStarted()) {
-                $sessionStoredCurrencies = $this->getSessionCurrencies();
-                if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
-                    $currency = $sessionStoredCurrencies[$website->getId()];
-                }
-            }
+            $currency = $this->getLoggedUserCurrencyForWebsite($website);
         }
 
         if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
             $currency = $this->getDefaultCurrency();
         }
 
+        return $currency;
+    }
+
+    /**
+     * @return null|string
+     * @deprecated Will be removed in 3.0
+     */
+    public function getLoggedUserCurrentWebsiteCurrency()
+    {
+        $website = $this->websiteManager->getCurrentWebsite();
+        return $website ? $this->getLoggedUserCurrencyForWebsite($website) : null;
+    }
+
+    /**
+     * @param Website $website
+     * @return string|null
+     */
+    protected function getLoggedUserCurrencyForWebsite(Website $website)
+    {
+        $currency = null;
+        $user = $this->getLoggedUser();
+        if ($user instanceof CustomerUser) {
+            $userSettings = $user->getWebsiteSettings($website);
+            if ($userSettings) {
+                $currency = $userSettings->getCurrency();
+            }
+        } elseif ($this->session->isStarted()) {
+            $sessionStoredCurrencies = $this->getSessionCurrencies();
+            if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
+                $currency = $sessionStoredCurrencies[$website->getId()];
+            }
+        }
         return $currency;
     }
 
