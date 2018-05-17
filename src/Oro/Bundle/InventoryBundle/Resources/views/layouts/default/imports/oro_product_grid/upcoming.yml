@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'upcoming.html.twig'
+            themes: 'OroInventoryBundle:layouts:default/imports/oro_product_grid/upcoming.html.twig'
         - '@add':
             id: product_datagrid_row__product_upcoming_label
             parentId: product_datagrid_row_product_specification

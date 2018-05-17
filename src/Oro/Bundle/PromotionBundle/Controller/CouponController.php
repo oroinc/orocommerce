@@ -155,7 +155,7 @@ class CouponController extends Controller
             $form->submit($couponGenerationOptions);
         }
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
         }
 

@@ -5,8 +5,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - '../templates/right_buttons.html.twig'
-                - '../templates/order_review.html.twig'
+                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
+                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/order_review.html.twig'
 
         - '@setOption':
             id: checkout_information_title

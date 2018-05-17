@@ -73,9 +73,9 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
             sprintf("<info>Storage for class %s reorganized for %s strategy</info>", $className, $strategy)
         );
         if ($strategy === 'base') {
-            $output->writeln('Do not forget change app/config/parameters.yml enable_price_sharding: false');
+            $output->writeln('Do not forget change config/parameters.yml enable_price_sharding: false');
         } else {
-            $output->writeln('Do not forget change app/config/parameters.yml enable_price_sharding: true');
+            $output->writeln('Do not forget change config/parameters.yml enable_price_sharding: true');
         }
 
         return 0;

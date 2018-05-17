@@ -233,7 +233,7 @@ class CheckoutController extends Controller
         }
 
         $transitionForm->handleRequest($request);
-        if (!$transitionForm->isValid()) {
+        if ($transitionForm->isSubmitted() && !$transitionForm->isValid()) {
             $this->handleFormErrors($transitionForm->getErrors());
             return;
         }
@@ -373,7 +373,7 @@ class CheckoutController extends Controller
                     $handler
                 );
 
-                return $form->isValid();
+                return $form->isSubmitted() && $form->isValid();
             }
         }
 

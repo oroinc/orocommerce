@@ -6,7 +6,7 @@ layout:
             namespace: product
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_list_item.html.twig'
+            themes: 'OroProductBundle:layouts:blank/imports/oro_product_list_item/oro_product_list_item.html.twig'
         - '@addTree':
             items:
                 __product:

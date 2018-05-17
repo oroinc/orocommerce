@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_price.html.twig'
+            themes: 'OroPricingBundle:layouts:blank/imports/oro_product_price/oro_product_price.html.twig'
         - '@addTree':
             items:
                 __product_price_container:

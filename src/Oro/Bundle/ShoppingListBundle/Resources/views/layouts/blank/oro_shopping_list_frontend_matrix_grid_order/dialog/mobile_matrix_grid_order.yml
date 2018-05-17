@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'mobile_matrix_grid_order.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/oro_shopping_list_frontend_matrix_grid_order/dialog/mobile_matrix_grid_order.html.twig'
         - '@setFormTheme':
-            themes: 'mobile_matrix_grid_order_form.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/oro_shopping_list_frontend_matrix_grid_order/dialog/mobile_matrix_grid_order_form.html.twig'
         - '@move':
             id: matrix_grid_order_form_actions_submit
             parentId: widget_actions

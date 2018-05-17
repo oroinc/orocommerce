@@ -151,7 +151,7 @@ services:
         arguments:
             - '@filesystem'
             - '@oro_seo.sitemap.sitemap_file_writer'
-            - '%kernel.root_dir%/../web/%oro_seo.sitemap_directory%'
+            - '%kernel.project_dir%/public/%oro_seo.sitemap_directory%'
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
@@ -342,7 +342,7 @@ services:
         arguments:
             - '@logger'
             - '@filesystem'
-            - '%kernel.root_dir%/../web'
+            - '%kernel.project_dir%/public'
 
     oro_seo.sitemap.event_listener.dump_robots_txt:
         class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener

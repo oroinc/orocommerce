@@ -1,0 +1,73 @@
+@import "oroui/css/scss/variables";
+
+.controls {
+  .control-label.expression-collapse-label {
+    margin-top: 4px;
+    margin-left: -5px;
+  }
+}
+
+.collapse-view {
+  .collapse-view__trigger_show {
+    display: block;
+  }
+  .collapse-view__trigger_hide {
+    display: none;
+  }
+  &.expanded {
+    .collapse-view__trigger_show {
+      display: none;
+    }
+    .collapse-view__trigger_hide {
+      display: block;
+    }
+  }
+}
+
+.oro-promotions-collection.grid-container {
+  tr.disabled td {
+    color: rgb(203, 203, 203);
+  }
+
+  td:first-child {
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 11px;
+  }
+  th.discount, td.discount {
+    width: 80px;
+    text-align: right;
+  }
+}
+
+.added-coupons-container {
+  table {
+    .fa-remove {
+      cursor: pointer;
+    }
+  }
+}
+
+.select-coupon-container {
+  display: inline-block;
+
+  .coupon-select {
+    display: inherit;
+  }
+  .btn {
+    display: inherit;
+  }
+}
+
+input.dashesSequence-coupon-preview {
+  width: 90px;
+}
+
+label.dashes-sequence-suffix-label {
+  position: absolute;
+  margin: 7px auto auto 117px;
+}
+
+.widget-content .added-coupons-container {
+  margin-bottom: 10px;
+}

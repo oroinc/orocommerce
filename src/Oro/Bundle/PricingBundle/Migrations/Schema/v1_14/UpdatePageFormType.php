@@ -21,7 +21,8 @@ class UpdatePageFormType implements Migration
                 PriceList::class,
                 'form',
                 'form_type',
-                PriceListSelectType::class
+                PriceListSelectType::class,
+                'oro_pricing_price_list_select'
             )
         );
     }

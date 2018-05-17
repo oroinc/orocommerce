@@ -267,8 +267,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [PriceListRequestHandler::ACCOUNT_ID_KEY, null, false, $customerId],
-                    [PriceListRequestHandler::WEBSITE_KEY, null, false, $websiteId]
+                    [PriceListRequestHandler::ACCOUNT_ID_KEY, null, $customerId],
+                    [PriceListRequestHandler::WEBSITE_KEY, null, $websiteId]
                 ]
             );
 
@@ -409,7 +409,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, $paramValue],
+                    [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, $paramValue],
                 ]
             );
 
@@ -473,7 +473,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [PriceListRequestHandler::TIER_PRICES_KEY, null, false, $paramValue],
+                    [PriceListRequestHandler::TIER_PRICES_KEY, null, $paramValue],
                 ]
             );
 

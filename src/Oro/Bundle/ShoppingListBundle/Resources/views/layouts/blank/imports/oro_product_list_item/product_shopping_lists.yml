@@ -6,7 +6,7 @@ layout:
             namespace: product
     actions:
         - '@setBlockTheme':
-            themes: 'product_shopping_lists.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/oro_product_list_item/product_shopping_lists.html.twig'
         - '@move':
             id: __product_shopping_lists
             parentId: __product_line_item_form

@@ -18,8 +18,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'grid.html.twig'
-                - 'grid_row.html.twig'
+                - 'OroProductBundle:layouts:blank/imports/oro_product_grid/grid.html.twig'
+                - 'OroProductBundle:layouts:blank/imports/oro_product_grid/grid_row.html.twig'
 
         - '@add':
             id: product_datagrid_cell_matrixForm

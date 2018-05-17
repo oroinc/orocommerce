@@ -42,7 +42,6 @@ datagrids:
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
-                            choices_as_values: true
                             multiple: true
         options:
             scopeAttr: 'customer'
@@ -99,7 +98,6 @@ datagrids:
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
-                            choices_as_values: true
                             multiple: true
         options:
             scopeAttr: 'customerGroup'
@@ -157,7 +155,6 @@ datagrids:
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
-                            choices_as_values: true
                             multiple: true
         options:
             scopeAttr: 'customer'
@@ -215,7 +212,6 @@ datagrids:
                     targetEntityClass: '%oro_product.entity.product.class%'
                     options:
                         field_options:
-                            choices_as_values: true
                             multiple: true
         options:
             scopeAttr: 'customerGroup'

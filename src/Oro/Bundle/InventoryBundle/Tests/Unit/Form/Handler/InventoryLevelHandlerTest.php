@@ -73,6 +73,9 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
         $this->form->expects($this->never())
@@ -94,6 +97,9 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('handleRequest')
             ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);

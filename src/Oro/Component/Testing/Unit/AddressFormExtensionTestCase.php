@@ -9,14 +9,10 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
 {
@@ -65,6 +61,9 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     protected function getCountryChoices(): array
     {
         $countryAndRegion = $this->getValidCountryAndRegion();
@@ -77,6 +76,9 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     protected function getRegionChoices(): array
     {
         $countryAndRegion = $this->getValidCountryAndRegion();
@@ -86,66 +88,6 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
             self::REGION_WITH_COUNTRY => $region,
             'CA-QC' => (new Region('CA-QC'))->setCountry($this->getCountryWithoutRegions()),
         ];
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getTranslatableEntity()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['configureOptions', 'buildForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        list($country, $region) = $this->getValidCountryAndRegion();
-        $countryCA = new Country('CA');
-
-        $choices = [
-            'OroAddressBundle:Country' => [
-                'CA' => $countryCA,
-                self::COUNTRY_WITH_REGION => $country,
-                self::COUNTRY_WITHOUT_REGION => new Country(self::COUNTRY_WITHOUT_REGION),
-            ],
-            'OroAddressBundle:Region' => [
-                self::REGION_WITH_COUNTRY => $region,
-                'CA-QC' => (new Region('CA-QC'))->setCountry($countryCA),
-            ],
-        ];
-
-        $translatableEntity->expects($this->any())->method('configureOptions')->will(
-            $this->returnCallback(
-                function (OptionsResolver $resolver) use ($choices) {
-                    $choiceList = function (Options $options) use ($choices) {
-                        $className = $options->offsetGet('class');
-                        if (array_key_exists($className, $choices)) {
-                            return new ArrayChoiceList(
-                                $choices[$className],
-                                function ($item) {
-                                    if ($item instanceof Country) {
-                                        return $item->getIso2Code();
-                                    }
-
-                                    if ($item instanceof Region) {
-                                        return $item->getCombinedCode();
-                                    }
-
-                                    return $item . uniqid('form', true);
-                                }
-                            );
-                        }
-
-                        return new ArrayChoiceList([]);
-                    };
-
-                    // TODO: remove 'choice_list' in scope of BAP-16967
-                    $resolver->setDefault('choice_list', $choiceList);
-                }
-            )
-        );
-
-        return $translatableEntity;
     }
 
     /**

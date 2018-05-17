@@ -15,6 +15,9 @@ Feature: Quick order form
   Scenario: Submit forms with empty fields to check validation error
     Given I login as AmandaRCole@example.org buyer
     When I click "Quick Order Form"
+    Then I should see that "Product Line Item Input Field" contains "Enter Product Name or Item Number" placeholder
+    And I should see that "Qty Line Item Input Field" contains "Qty #" placeholder
+    And I should see that "Paste Your Order Input Field" contains "Copy and paste your order." placeholder
     When I click "Get Quote"
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
     And I reload the page
@@ -25,7 +28,7 @@ Feature: Quick order form
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
 
   Scenario: Check if the price depends on quantity
-    Given I click "Quick Order Form"
+    When I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | psku1 |
     And I wait for products to load
@@ -53,6 +56,11 @@ Feature: Quick order form
       | QTY4  | 1   |
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    And I should see that "Phone Number" contains "Phone Number" placeholder
+    And I should see that "Role" contains "Role" placeholder
+    And I should see that "Note" contains "Note" placeholder
+    And I should see that "PO Number" contains "PO Number" placeholder
+    And I should see that "Assigned To Input Field" contains "Assigned To" placeholder
     And Request a Quote contains products
       | Product2 | 2 | item |
       | Product2 | 4 | set  |
