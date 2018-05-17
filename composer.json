@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "oro/platform": "2.x-dev",
-        "oro/platform-serialised-fields": "2.x-dev",
-        "oro/calendar-bundle": "2.x-dev",
-        "oro/marketing": "2.x-dev",
-        "oro/customer-portal": "2.x-dev",
+        "oro/platform": "3.0.*",
+        "oro/platform-serialised-fields": "3.0.*",
+        "oro/calendar-bundle": "3.0.*",
+        "oro/marketing": "3.0.*",
+        "oro/customer-portal": "3.0.*",
         "box/spout": "2.3.*",
         "myclabs/deep-copy": "1.5.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
@@ -53,7 +53,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-3.0-rc": "3.0.x-dev"
         }
     },
     "autoload": {
