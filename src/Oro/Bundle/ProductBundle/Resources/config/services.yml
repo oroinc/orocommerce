@@ -1103,16 +1103,6 @@ services:
             - '@oro_product.provider.content_variant_segment_provider'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
 
-    oro_product.command.product_collections_index_cron_command:
-        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
-        calls:
-            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
-            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
-            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
-            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
-        tags:
-            - { name: console.command }
-
     oro_product.event_listener.product_collection_aware_content_variant_entity_listener:
         public: false
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionAwareContentVariantEntityListener

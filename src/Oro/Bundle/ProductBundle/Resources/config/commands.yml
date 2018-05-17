@@ -2,6 +2,11 @@ services:
     Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand:
         public: false
         class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
+        calls:
+            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
+            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
+            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
+            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
         tags:
             - { name: console.command }
 
