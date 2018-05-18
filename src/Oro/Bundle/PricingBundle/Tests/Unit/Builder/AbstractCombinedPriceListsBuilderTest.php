@@ -95,7 +95,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $cplScheduleResolver;
 
     /**
-     * @var PriceCombiningStrategyInterface
+     * @var PriceCombiningStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $combiningStrategy;
 
