@@ -358,7 +358,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->getRepository(CombinedProductPrice::class);
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
-        $this->assertCount(4, $result);
+        $this->assertCount(6, $result);
 
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         $repo->deleteByProductUnit($shardManager, $product, $productUnit);
@@ -468,6 +468,110 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 'prices' => [],
             ],
         ];
+    }
+
+    public function testInsertPricesByCombinedPriceList()
+    {
+        $combinedPriceList = $this->getReference('1t_2t_3t');
+        $sourceCpl = $this->getReference('2t_3t');
+        $product = $this->getReference('product-1');
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $repo->insertPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $sourceCpl
+        );
+
+        $prices = $repo->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+
+        $expected = [
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '0.1',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '1.1',
+                'currency' => 'USD',
+                'unit' => 'bottle',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 10.0,
+                'value' => '1.2',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+        ];
+
+        $this->assertEquals($expected, $prices);
+    }
+
+    public function testInsertMinimalPricesByCombinedPriceList()
+    {
+        $combinedPriceList = $this->getReference('1t_2t_3t');
+        $sourceCpl = $this->getReference('2t_3t');
+        $product = $this->getReference('product-1');
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $repo->insertMinimalPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $sourceCpl
+        );
+
+        $prices = $repo->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+
+        $expected = [
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '0.1',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '1.1',
+                'currency' => 'USD',
+                'unit' => 'bottle',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 10.0,
+                'value' => '1.01',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+        ];
+
+        $this->assertEquals($expected, $prices);
     }
 
     /**

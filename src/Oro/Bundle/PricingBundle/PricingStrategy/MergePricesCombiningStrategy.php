@@ -28,4 +28,18 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $products
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processCombinedPriceListRelation(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $relatedCombinedPriceList
+    ) {
+        $this->getCombinedProductPriceRepository()->insertPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $relatedCombinedPriceList
+        );
+    }
 }
