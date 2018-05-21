@@ -163,7 +163,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
             new ContextUrlProviderRegistry(),
             $localizationManager
         );
-        $urlGenerator->setBaseGenerator($this->getContainer()->get('router.default'));
+        $urlGenerator->setBaseGenerator($this->getContainer()->get('oro_test.router.default.alias'));
 
         return $urlGenerator;
     }
