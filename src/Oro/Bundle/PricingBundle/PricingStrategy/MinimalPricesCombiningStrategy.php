@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Implements combining price strategy based on PriceList priority and minimal prices
+ */
 class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
     const NAME = 'minimal_prices';
@@ -48,6 +51,20 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $combinedPriceList,
             $priceListRelation->getPriceList(),
             $products
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processCombinedPriceListRelation(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $relatedCombinedPriceList
+    ) {
+        $this->getCombinedProductPriceRepository()->insertMinimalPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $relatedCombinedPriceList
         );
     }
 }

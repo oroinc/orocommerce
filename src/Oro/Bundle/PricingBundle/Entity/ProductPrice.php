@@ -22,11 +22,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          "entity"={
  *              "icon"="fa-usd"
  *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="shopping"
- *          },
  *          "sharding"={
  *              "discrimination_field"="priceList"
  *          }

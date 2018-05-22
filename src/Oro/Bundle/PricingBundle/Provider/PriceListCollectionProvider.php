@@ -151,6 +151,36 @@ class PriceListCollectionProvider
     }
 
     /**
+     * @param array|PriceListSequenceMember[] $collection
+     * @return bool
+     */
+    public function containMergeDisallowed(array $collection)
+    {
+        foreach ($collection as $item) {
+            if (!$item->isMergeAllowed()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array|PriceListSequenceMember[] $collection
+     * @return bool
+     */
+    public function containScheduled(array $collection)
+    {
+        foreach ($collection as $item) {
+            if ($item->getPriceList()->isContainSchedule()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param BasePriceListRelation[]|PriceListConfig[] $priceListsRelations
      * @return PriceListSequenceMember[]
      */
