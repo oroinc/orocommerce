@@ -144,7 +144,7 @@ class DeleteMessageTextGenerator
     protected function generateHtmFilterUrl($paymentTermId, $gridName, $gridRoute, $label)
     {
         $urlParameters = $this->getParameters($gridName, $paymentTermId);
-        $url = $this->router->generate($gridRoute, $urlParameters, true);
+        $url = $this->router->generate($gridRoute, $urlParameters, RouterInterface::ABSOLUTE_URL);
         $htmlFilterUrl = $this->twig->render(
             '@OroPaymentTerm/PaymentTerm/linkWithTarget.html.twig',
             [
