@@ -451,26 +451,6 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertInstanceOf(Product::class, $result[0]);
     }
 
-    public function testFindByAttributeValue()
-    {
-        $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'sku', 'product-1', false);
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-
-        $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'inventory_status', 'in_stock', false);
-        $this->assertCount(5, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-
-        $localizedFallbackRepository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_locale.entity.localized_fallback_value.class')
-        );
-
-        $name = $localizedFallbackRepository->findOneBy(['string' => 'product-1.names.default']);
-        $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'names', $name->getId(), true);
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(Product::class, $result[0]);
-    }
-
     public function testSkuUppercaseField()
     {
         $skus = ['product-1', 'product-2'];

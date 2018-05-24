@@ -437,28 +437,33 @@ class ProductRepository extends EntityRepository
      * @param $type
      * @param $fieldName
      * @param $fieldValue
-     * @param $isRelationField
-     * @return mixed
+     * @return array
      */
-    public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
+    public function findParentSkusByAttributeValue($type, $fieldName, $fieldValue)
     {
         QueryBuilderUtil::checkIdentifier($fieldName);
-        if ($isRelationField) {
-            return $this->createQueryBuilder('p')
-                ->select('p')
-                ->join('p.' . $fieldName, 'attr')
-                ->where('attr = :valueId')
-                ->setParameter('valueId', $fieldValue)
-                ->andWhere('p.type = :type')
-                ->setParameter('type', $type)
-                ->getQuery()
-                ->getResult();
-        } else {
-            return $this->findBy([
-                'type' => $type,
-                $fieldName => $fieldValue
-            ]);
+
+        $result = $this->createQueryBuilder('p')
+            ->select('parent_product.sku')
+            ->distinct()
+            ->join('p.' . $fieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where('attr = :valueId')
+            ->andWhere('p.type = :type')
+            ->orderBy('parent_product.sku')
+            ->setParameter('valueId', $fieldValue)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['sku']] = $item['sku'];
         }
+
+        return $flattenedResult;
     }
 
     /**
