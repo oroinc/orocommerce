@@ -27,7 +27,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_6_1';
     }
 
     /**
@@ -341,7 +341,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'extend' => [
                     'is_extend' => false,
                     'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['persist'],
                     'nullable' => true,
                 ],
                 'datagrid' => [
@@ -368,7 +367,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'extend' => [
                     'is_extend' => false,
                     'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['persist'],
                     'nullable' => true,
                 ],
                 'datagrid' => [
@@ -395,7 +393,6 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'extend' => [
                     'is_extend' => false,
                     'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['persist'],
                     'nullable' => true,
                 ],
                 'datagrid' => [
