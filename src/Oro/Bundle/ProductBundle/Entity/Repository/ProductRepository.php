@@ -442,6 +442,8 @@ class ProductRepository extends EntityRepository
      */
     public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
     {
+        QueryBuilderUtil::checkIdentifier($fieldName);
+
         if ($isRelationField) {
             return $this->createQueryBuilder('p')
                 ->select('p')
