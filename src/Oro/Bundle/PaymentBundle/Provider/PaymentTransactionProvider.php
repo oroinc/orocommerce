@@ -4,8 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
@@ -13,7 +12,6 @@ use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Provides functionality to work with payment transactions such as creating for current runtime, saving and fetching.
@@ -31,25 +29,25 @@ class PaymentTransactionProvider
     /** @var string */
     protected $paymentTransactionClass;
 
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
+    /** @var CustomerUserProvider */
+    protected $customerUserProvider;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param TokenStorageInterface $tokenStorage
+     * @param CustomerUserProvider $customerUserProvider
      * @param EventDispatcherInterface $dispatcher
      * @param string $paymentTransactionClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        TokenStorageInterface $tokenStorage,
+        CustomerUserProvider $customerUserProvider,
         EventDispatcherInterface $dispatcher,
         $paymentTransactionClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->paymentTransactionClass = $paymentTransactionClass;
         $this->dispatcher = $dispatcher;
-        $this->tokenStorage = $tokenStorage;
+        $this->customerUserProvider = $customerUserProvider;
     }
 
     /**
@@ -63,29 +61,6 @@ class PaymentTransactionProvider
         $paymentTransactions = $this->getPaymentTransactions($object, $criteria, $orderBy, 1);
 
         return reset($paymentTransactions);
-    }
-
-    /**
-     * @return CustomerUser|null
-     */
-    protected function getLoggedCustomerUser()
-    {
-        $token = $this->tokenStorage->getToken();
-        if (!$token) {
-            return null;
-        }
-
-        $user = $token->getUser();
-
-        if ($user instanceof CustomerUser) {
-            return $user;
-        }
-
-        if ($token instanceof AnonymousCustomerUserToken && $token->getVisitor()) {
-            return $token->getVisitor()->getCustomerUser();
-        }
-
-        return null;
     }
 
     /**
@@ -165,7 +140,7 @@ class PaymentTransactionProvider
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {
-        $customerUser = $this->getLoggedCustomerUser();
+        $customerUser = $this->customerUserProvider->getLoggedUserIncludingGuest();
         if (!$customerUser) {
             return null;
         }
@@ -198,7 +173,7 @@ class PaymentTransactionProvider
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
-            ->setFrontendOwner($this->getLoggedCustomerUser());
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUserIncludingGuest());
 
         return $paymentTransaction;
     }
@@ -218,7 +193,7 @@ class PaymentTransactionProvider
             ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
             ->setAmount($parentPaymentTransaction->getAmount())
             ->setCurrency($parentPaymentTransaction->getCurrency())
-            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUserIncludingGuest())
             ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;
