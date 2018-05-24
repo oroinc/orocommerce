@@ -98,7 +98,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I uncheck "Save my data and create an account" on the checkout page
     And I press "Submit Order"
     Then I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
-    When I close error message
+    When I click "Flash Message Close Button"
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
