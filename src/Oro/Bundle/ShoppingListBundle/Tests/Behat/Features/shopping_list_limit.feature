@@ -51,3 +51,24 @@ Feature: Shopping list limit
     And I should see "Shopping List"
     And I open shopping list widget
     And I should not see "Create New List"
+
+  Scenario: New Site creation
+    Given I operate as the Admin
+    And go to System/ Websites
+    And click "Create Website"
+    And fill form with:
+      |Name|NewSite|
+    And save and close form
+    And should see "Website has been saved" flash message
+    And go to System/ Websites
+    And click "Set default" on row "NewSite" in grid
+    And click "Configuration" on row "Default" in grid
+    And I fill "Routing General form" with fictional website
+    And submit form
+    And I should see "Configuration saved" flash message
+
+  Scenario: Check new site is not affected by limit
+    Given I operate as the Buyer
+    And I reload the page
+    And I open shopping list widget
+    And I should see "Create New List"

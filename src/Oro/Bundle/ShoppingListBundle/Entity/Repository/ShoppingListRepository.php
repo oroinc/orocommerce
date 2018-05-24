@@ -8,6 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ShoppingListRepository extends EntityRepository
@@ -121,16 +122,19 @@ class ShoppingListRepository extends EntityRepository
     /**
      * @param int $customerId
      * @param int $organizationId
-     * @return integer
+     * @param $website int|Website
+     * @return int
      */
-    public function countUserShoppingLists($customerId, $organizationId)
+    public function countUserShoppingLists($customerId, $organizationId, $website)
     {
         $results = $this->createQueryBuilder('shopping_list')
             ->select('COUNT(shopping_list)')
             ->where('shopping_list.customerUser=:customerUser')
             ->andWhere('shopping_list.organization=:organization')
+            ->andWhere('shopping_list.website=:website')
             ->setParameter('customerUser', $customerId)
             ->setParameter('organization', $organizationId)
+            ->setParameter('website', $website)
             ->getQuery()
             ->getSingleScalarResult();
 

@@ -10,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * Maintains shopping lists limit for user
@@ -25,19 +26,25 @@ class ShoppingListLimitManager
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
     /**
      * @param ConfigManager $configManager
      * @param TokenAccessor $tokenAccessor
      * @param DoctrineHelper $doctrineHelper
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         ConfigManager $configManager,
         TokenAccessor $tokenAccessor,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        WebsiteManager $websiteManager
     ) {
         $this->configManager  = $configManager;
         $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -124,9 +131,12 @@ class ShoppingListLimitManager
         /** @var ShoppingListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(ShoppingList::class);
 
+        $currentWebsite = $this->websiteManager->getCurrentWebsite();
+
         return $repository->countUserShoppingLists(
             $user->getId(),
-            $user->getOrganization()->getId()
+            $user->getOrganization()->getId(),
+            $currentWebsite
         );
     }
 

@@ -212,5 +212,6 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroCustomerBundle::RegistrationInstructionFeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'
