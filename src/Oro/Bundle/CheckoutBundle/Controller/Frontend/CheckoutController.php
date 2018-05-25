@@ -65,7 +65,11 @@ class CheckoutController extends Controller
             $this->restartCheckout($workflowItem, $checkout);
             $workflowItem = $this->getWorkflowItem($checkout);
         } else {
-            $this->handleTransition($workflowItem, $request);
+            if ($this->isRegistrationRequest($request)) {
+                $this->handleRegistration($workflowItem, $request);
+            } else {
+                $this->handleTransition($workflowItem, $request);
+            }
         }
 
         $currentStep = $this->validateStep($workflowItem);
@@ -255,9 +259,7 @@ class CheckoutController extends Controller
      */
     protected function handleTransition(WorkflowItem $workflowItem, Request $request)
     {
-        $isRegistrationValid = $this->handleRegistration($request);
-
-        if ($isRegistrationValid || $request->isMethod(Request::METHOD_GET)) {
+        if ($request->isMethod(Request::METHOD_GET)) {
             $this->handleGetTransition($workflowItem, $request);
         } elseif ($request->isMethod(Request::METHOD_POST)) {
             $this->handlePostTransition($workflowItem, $request);
@@ -349,19 +351,29 @@ class CheckoutController extends Controller
 
     /**
      * @param Request $request
+     *
      * @return bool
      */
-    private function handleRegistration(Request $request)
+    private function isRegistrationRequest(Request $request)
     {
-        if ($request->isMethod(Request::METHOD_POST) && $request->query->get('isRegistration')) {
+        return (bool) $request->query->get('isRegistration');
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param Request $request
+     */
+    private function handleRegistration(WorkflowItem $workflowItem, Request $request)
+    {
+        if ($request->isMethod(Request::METHOD_POST)) {
             $registrationHandler = $this->get('oro_customer.handler.customer_registration_handler');
             $registrationHandler->handleRegistration($request);
             /** @var FormInterface $form */
             $form = $registrationHandler->getForm();
 
-            return $form->isSubmitted() && $form->isValid();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->handleGetTransition($workflowItem, $request);
+            }
         }
-
-        return false;
     }
 }
