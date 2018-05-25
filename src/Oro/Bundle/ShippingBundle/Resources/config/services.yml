@@ -276,7 +276,6 @@ services:
             - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider'
         tags:
-            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
     oro_shipping.condition.shipping_method_has_shipping_rules:
@@ -284,7 +283,6 @@ services:
         arguments:
             - '@oro_shipping.repository.shipping_methods_configs_rule'
         tags:
-            - { name: oro_workflow.condition, alias: 'shipping_method_has_shipping_rules' }
             - { name: oro_action.condition, alias: 'shipping_method_has_shipping_rules' }
 
     oro_shipping.condition.shipping_method_has_enabled_shipping_rules:
@@ -292,7 +290,6 @@ services:
         arguments:
             - '@oro_shipping.repository.shipping_methods_configs_rule'
         tags:
-            - { name: oro_workflow.condition, alias: 'shipping_method_has_enabled_shipping_rules' }
             - { name: oro_action.condition, alias: 'shipping_method_has_enabled_shipping_rules' }
 
     oro_shipping.shipping_context.cache_key_generator:
