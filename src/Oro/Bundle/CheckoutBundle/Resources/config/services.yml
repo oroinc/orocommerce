@@ -625,3 +625,16 @@ services:
             - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
         tags:
             - { name: oro_action.action, alias: get_start_checkout_transition }
+
+    oro_checkout.helper.checkout_workflow_helper:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_group_registry'
+            - '@oro_checkout.layout.data_provider.transition'
+            - '@oro_checkout.layout.data_provider.transition_form'
+            - '@oro_checkout.workflow_state.handler.checkout_error'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_customer.handler.customer_registration_handler'
+            - '@event_dispatcher'
+            - '@translator'
