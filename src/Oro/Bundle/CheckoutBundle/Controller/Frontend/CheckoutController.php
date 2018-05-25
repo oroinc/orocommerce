@@ -353,28 +353,13 @@ class CheckoutController extends Controller
      */
     private function handleRegistration(Request $request)
     {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form = $this->get('oro_customer.provider.frontend_customer_user_registration_form')->getRegisterForm();
-            if ($form) {
-                $userManager = $this->get('oro_customer_user.manager');
+        if ($request->isMethod(Request::METHOD_POST) && $request->query->get('isRegistration')) {
+            $registrationHandler = $this->get('oro_customer.handler.customer_registration_handler');
+            $registrationHandler->handleRegistration($request);
+            /** @var FormInterface $form */
+            $form = $registrationHandler->getForm();
 
-                $registrationMessage = 'oro.customer.controller.customeruser.registered.message';
-                if ($userManager->isConfirmationRequired()) {
-                    $registrationMessage = 'oro.customer.controller.customeruser.registered_with_confirmation.message';
-                }
-
-                $handler = $this->get('oro_customer.handler.frontend_customer_user_handler');
-
-                $this->get('oro_form.update_handler')->update(
-                    $form->getData(),
-                    $form,
-                    $this->get('translator')->trans($registrationMessage),
-                    $request,
-                    $handler
-                );
-
-                return $form->isSubmitted() && $form->isValid();
-            }
+            return $form->isSubmitted() && $form->isValid();
         }
 
         return false;
