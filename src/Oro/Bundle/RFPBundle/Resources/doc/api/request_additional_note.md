@@ -12,8 +12,6 @@ Retrieve a specific request additional note record.
 
 Retrieve a collection of request additional note records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ## FIELDS
