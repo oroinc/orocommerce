@@ -14,12 +14,16 @@
       flex-grow: 1;
 
       .control-group-checkbox {
-        label {
+        label:not(.empty-label) {
           float: left;
         }
 
         input {
           margin: 0 10px !important;
+        }
+
+        .checkbox-view {
+          margin: 0 10px;
         }
       }
     } 
