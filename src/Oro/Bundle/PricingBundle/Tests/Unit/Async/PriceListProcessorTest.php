@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -19,13 +20,11 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -188,6 +187,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->never())
             ->method('createFromArray');
 
+        $driverException = $this->createMock(DriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);

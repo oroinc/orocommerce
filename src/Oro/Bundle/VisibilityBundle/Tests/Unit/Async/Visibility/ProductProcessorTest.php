@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -132,6 +133,11 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
+        $driverException = $this->createMock(DriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);
