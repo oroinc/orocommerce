@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
@@ -12,7 +13,11 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerInterface;
 
+/**
+ * SearchMessageProcessor runs messages performing actual reindexation
+ */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
     /**
@@ -41,24 +46,40 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $reindexMessageGranularizer;
 
     /**
+     * @var DatabaseExceptionHelper
+     */
+    private $databaseExceptionHelper;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param IndexerInterface $indexer
      * @param JobRunner $jobRunner
      * @param MessageProducerInterface $messageProducer
      * @param IndexerInputValidator $indexerInputValidator
      * @param ReindexMessageGranularizer $reindexMessageGranularizer
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         IndexerInterface $indexer,
         JobRunner $jobRunner,
         MessageProducerInterface $messageProducer,
         IndexerInputValidator $indexerInputValidator,
-        ReindexMessageGranularizer $reindexMessageGranularizer
+        ReindexMessageGranularizer $reindexMessageGranularizer,
+        DatabaseExceptionHelper $databaseExceptionHelper,
+        LoggerInterface $logger
     ) {
         $this->indexer                    = $indexer;
         $this->jobRunner                  = $jobRunner;
         $this->messageProducer            = $messageProducer;
         $this->inputValidator             = $indexerInputValidator;
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
+        $this->databaseExceptionHelper    = $databaseExceptionHelper;
+        $this->logger                     = $logger;
     }
 
     /**
@@ -73,31 +94,44 @@ class SearchMessageProcessor implements MessageProcessorInterface
         if (!empty($data['jobId'])) {
             return $result;
         }
+        try {
+            switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
+                case AsyncIndexer::TOPIC_SAVE:
+                    $this->indexer->save($data['entity'], $data['context']);
 
-        switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
-            case AsyncIndexer::TOPIC_SAVE:
-                $this->indexer->save($data['entity'], $data['context']);
+                    $result = static::ACK;
+                    break;
 
-                $result = static::ACK;
-                break;
+                case AsyncIndexer::TOPIC_DELETE:
+                    $this->indexer->delete($data['entity'], $data['context']);
 
-            case AsyncIndexer::TOPIC_DELETE:
-                $this->indexer->delete($data['entity'], $data['context']);
+                    $result = static::ACK;
+                    break;
 
-                $result = static::ACK;
-                break;
+                case AsyncIndexer::TOPIC_REINDEX:
+                    $this->processReindex($data);
 
-            case AsyncIndexer::TOPIC_REINDEX:
-                $this->processReindex($data);
+                    $result = static::ACK;
+                    break;
 
-                $result = static::ACK;
-                break;
+                case AsyncIndexer::TOPIC_RESET_INDEX:
+                    $this->indexer->resetIndex($data['class'], $data['context']);
 
-            case AsyncIndexer::TOPIC_RESET_INDEX:
-                $this->indexer->resetIndex($data['class'], $data['context']);
+                    $result = static::ACK;
+                    break;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'An unexpected exception occurred during indexation',
+                ['exception' => $e]
+            );
 
-                $result = static::ACK;
-                break;
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+                $result = static::REQUEUE;
+            } else {
+                $result = static::REJECT;
+            }
         }
 
         return $result;

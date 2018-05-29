@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
@@ -184,9 +185,15 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $exception]
             );
+
+        $driverException = $this->createMock(DriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
-            ->with($exception)
+            ->with($driverException)
             ->willReturn(true);
 
         $this->assertEquals(DirectUrlProcessor::REQUEUE, $this->processor->process($message, $session));
@@ -210,9 +217,15 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $exception]
             );
+
+        $driverException = $this->createMock(DriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
-            ->with($exception)
+            ->with($driverException)
             ->willReturn(false);
 
         $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
