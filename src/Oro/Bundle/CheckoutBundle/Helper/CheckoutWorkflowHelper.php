@@ -197,7 +197,8 @@ class CheckoutWorkflowHelper
      */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
     {
-        $continueTransition = $this->transitionProvider->getContinueTransition($workflowItem, $request->get('transition'));
+        $continueTransition = $this->transitionProvider
+            ->getContinueTransition($workflowItem, $request->get('transition'));
         if (!$continueTransition) {
             return;
         }
