@@ -463,12 +463,12 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param $type
-     * @param $fieldName
-     * @param $fieldValue
+     * @param string $type
+     * @param string $fieldName
+     * @param mixed $fieldValue
      * @return array
      */
-    public function findParentSkusByAttributeValue($type, $fieldName, $fieldValue)
+    public function findParentSkusByAttributeValue(string $type, string $fieldName, $fieldValue)
     {
         QueryBuilderUtil::checkIdentifier($fieldName);
 
