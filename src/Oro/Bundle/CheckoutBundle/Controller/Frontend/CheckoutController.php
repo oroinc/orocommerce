@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -79,6 +80,7 @@ class CheckoutController extends Controller
      * @param CheckoutInterface $checkout
      *
      * @return mixed|WorkflowItem
+     * @throws WorkflowException
      */
     protected function getWorkflowItem(CheckoutInterface $checkout)
     {

@@ -19,11 +19,15 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Use it to process checkout workflow
+ */
 class CheckoutWorkflowHelper
 {
     /** @var EventDispatcherInterface  */
@@ -53,6 +57,17 @@ class CheckoutWorkflowHelper
     /** @var TranslatorInterface  */
     private $translator;
 
+    /**
+     * @param WorkflowManager $workflowManager
+     * @param ActionGroupRegistry         $actionGroupRegistry
+     * @param TransitionProvider          $transitionProvider
+     * @param TransitionFormProvider      $transitionFormProvider
+     * @param CheckoutErrorHandler        $errorHandler
+     * @param CheckoutLineItemsManager    $lineItemsManager
+     * @param CustomerRegistrationHandler $registrationHandler
+     * @param EventDispatcherInterface    $eventDispatcher
+     * @param TranslatorInterface         $translator
+     */
     public function __construct(
         WorkflowManager $workflowManager,
         ActionGroupRegistry $actionGroupRegistry,
@@ -76,11 +91,11 @@ class CheckoutWorkflowHelper
     }
 
     /**
-     * @param Request $request
-     * @param WorkflowItem $workflowItem
+     * @param Request  $request
      * @param Checkout $checkout
      *
      * @return WorkflowStep
+     * @throws WorkflowException
      */
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout)
     {
@@ -283,6 +298,7 @@ class CheckoutWorkflowHelper
 
     /**
      * @param TransitionData $continueTransition
+     * @param Request        $request
      */
     private function addTransitionErrors(TransitionData $continueTransition, Request $request)
     {
