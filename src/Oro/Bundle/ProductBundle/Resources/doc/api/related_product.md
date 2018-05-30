@@ -4,21 +4,23 @@
 
 ### get
 
-Retrieve a relationship (identified by id) between the main product and one of its related products.
+Retrieve a relationship between the main product and one of its related products.
 
-<b>Definition:</b> In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
+**Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 
 ### get_list
 
-Retrieve collections of related product relationships. An item in the collection is a relationship between the main product and one of its related products. A collection may contain all related product links or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve collections of related product relationships. An item in the collection is a relationship between the main product and one of its related products.
 
-<b>Definition:</b> In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
+**Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 
 ### create
 
-Create a new relationship between a product and one of its related products. A newly created relationship record is returned in the response.
+Create a new relationship between a product and one of its related products.
 
-<b>Definition:</b> In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
+The created record is returned in the response.
+
+**Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 
 #### Validation
 
@@ -33,10 +35,7 @@ During the POST request, the following validation constraints are checked:
 * It is not possible to re-create an already existing relationship. When relationship from ProductA (main product) to ProductB (related item) already exists, and you send the repetitive request to create this relationship, such request will cause an `HTTP 400 Bad Request` response.
 
 {@request:json_api}
-
 Example:
-
-`</admin/api/relatedproducts>`
 
 ```JSON
 {  
@@ -64,17 +63,17 @@ Example:
 
 ### delete
 
-Delete a relationship (identified by id) between the main product and one of its related products.
+Delete a relationship between the main product and one of its related products.
 
-<b>Definition:</b> In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
+**Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of relationships between the products and their related products. A collection may contain all related product links or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of relationships between the products and their related products.
 
-<b>Definition:</b> In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
+**Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 
 ## FIELDS
 
@@ -104,18 +103,18 @@ The product that is related to the main product in the relationship.
 
 #### get_subresource
 
-Get complete product information about the main product in the relationship. The relationship is identified by id. 
+Get complete product information about the main product in the relationship.
 
 #### get_relationship
 
-Get the identifier of the main product in the relationship. The relationship is identified by id.
+Get the identifier of the main product in the relationship.
 
 ### relatedItem
 
 #### get_subresource
 
-Get complete product information about the product that is related to the main product in the relationship. The relationship is identified by id. 
+Get complete product information about the product that is related to the main product in the relationship.
 
 #### get_relationship
 
-Get the identifier of the product that is related to the main product in the relationship. The relationship is identified by id. 
+Get the identifier of the product that is related to the main product in the relationship.

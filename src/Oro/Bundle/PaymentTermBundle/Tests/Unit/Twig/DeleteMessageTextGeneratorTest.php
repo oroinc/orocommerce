@@ -29,7 +29,8 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->router->expects($this->any())
             ->method('generate')
             ->willReturnCallback(
-                function ($route, $params) {
+                function ($route, $params, $referenceType) {
+                    $this->assertEquals(RouterInterface::ABSOLUTE_URL, $referenceType);
                     return serialize($params);
                 }
             );

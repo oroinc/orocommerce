@@ -13,6 +13,16 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
     use MessageQueueTrait;
 
     /**
+     * {@inheritDoc}
+     */
+    protected function setUp()
+    {
+        // remove calling of disableKernelTerminateHandler() in BB-12967
+        $this->disableKernelTerminateHandler();
+        parent::setUp();
+    }
+
+    /**
      * @return string
      */
     abstract protected function getApiEntityName(): string;
