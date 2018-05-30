@@ -43,11 +43,10 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $workflowItem = $this->getWorkflowItem($checkout);
-
         $currentStep = $this->getCheckoutWorkflowHelper()
-            ->processWorkflowAndGetCurrentStep($request, $workflowItem, $checkout);
+            ->processWorkflowAndGetCurrentStep($request, $checkout);
 
+        $workflowItem = $this->getWorkflowItem($checkout);
         $responseData = [];
         if ($workflowItem->getResult()->has('responseData')) {
             $responseData['responseData'] = $workflowItem->getResult()->get('responseData');

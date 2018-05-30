@@ -21,6 +21,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CheckoutWorkflowHelper
@@ -81,8 +82,10 @@ class CheckoutWorkflowHelper
      *
      * @return WorkflowStep
      */
-    public function processWorkflowAndGetCurrentStep(Request $request, WorkflowItem $workflowItem, Checkout $checkout)
+    public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout)
     {
+        $workflowItem = $this->getWorkflowItem($checkout);
+
         if ($request->isMethod(Request::METHOD_POST) &&
             $this->isCheckoutRestartRequired($workflowItem)
         ) {
@@ -115,7 +118,7 @@ class CheckoutWorkflowHelper
         $items = $this->workflowManager->getWorkflowItemsByEntity($checkout);
 
         if (count($items) !== 1) {
-            throw new WorkflowException('Unable to find correct WorkflowItem for current checkout');
+            throw new NotFoundHttpException('Unable to find correct WorkflowItem for current checkout');
         }
 
         return reset($items);
@@ -194,7 +197,8 @@ class CheckoutWorkflowHelper
      */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
     {
-        $continueTransition = $this->transitionProvider->getContinueTransition($workflowItem, $request->get('transition'));
+        $continueTransition = $this->transitionProvider
+            ->getContinueTransition($workflowItem, $request->get('transition'));
         if (!$continueTransition) {
             return;
         }
