@@ -430,7 +430,6 @@ services:
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
         tags:
-            - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
 
     oro_checkout.datagrid.action_permission_provider:
