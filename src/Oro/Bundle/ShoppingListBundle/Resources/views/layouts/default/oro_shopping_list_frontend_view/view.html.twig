@@ -380,7 +380,7 @@
             </div>
         </div>
         <div class="product__select">
-            {% if isProductUnitSelectionVisible %}
+            {% if isProductUnitSelectionVisible and lineItem.product.unitPrecisions.count > 1 %}
                 <select class="select select--full" name="product_unit" data-name="field__unit" required>
                     {% if parent.productsUnits[lineItem.product.id] is defined %}
                         {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
