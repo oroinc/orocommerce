@@ -212,24 +212,37 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
             'with fallback group1' => [
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.3'],
+                'expectedCustomers' => [
+                    'customer.level_1',
+                    'customer.level_1.3',
+                ],
                 'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
             ],
             'without fallback group1' => [
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.3']
+                'expectedCustomers' => [
+                    'customer.level_1',
+                    'customer.level_1.3',
+                ]
             ],
             'with fallback group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => [],
+                'expectedCustomers' => [
+                    'customer.level_1.2.1',
+                    'customer.level_1.2.1.1'
+                ],
                 'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
             ],
             'without fallback group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.2'],
+                'expectedCustomers' => [
+                    'customer.level_1.2',
+                    'customer.level_1.2.1',
+                    'customer.level_1.2.1.1'
+                ],
             ],
         ];
     }
