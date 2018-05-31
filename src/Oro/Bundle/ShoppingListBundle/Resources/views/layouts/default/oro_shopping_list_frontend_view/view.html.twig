@@ -368,6 +368,7 @@
 {% block _shopping_list_line_items_list_quantity_form_widget %}
     {% set isProductUnitSelectionVisible = parent.productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? parent.productsUnitSelectionVisibilities[lineItem.product.id] : null %}
     {% set isLineItemUnitVisible = parent.lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? parent.lineItemsUnitVisibilities[lineItem.id] : null %}
+    {% set hasProductUnits = parent.productsUnits[lineItem.product.id] is defined %}
     <form action="#" class="product__qty-container cart-table__form">
         <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
             <div class="product__qty-input__count-option">
@@ -378,21 +379,19 @@
             </div>
         </div>
         <div class="product__select">
-            {% if isProductUnitSelectionVisible and lineItem.product.unitPrecisions.count > 1 %}
+            {% if isProductUnitSelectionVisible and hasProductUnits and parent.productsUnits[lineItem.product.id]|length > 1 %}
                 <select class="select select--full" name="product_unit" data-name="field__unit" required>
-                    {% if parent.productsUnits[lineItem.product.id] is defined %}
-                        {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
-                            <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
-                        {% endfor %}
-                        {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id]|keys %}
-                            <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
-                        {% endif %}
+                    {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
+                        <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
+                    {% endfor %}
+                    {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id]|keys %}
+                        <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
                     {% endif %}
                 </select>
             {% else %}
                 <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" data-name="field__unit" />
                 {% if isLineItemUnitVisible %}
-                    {{ lineItem.unit.code|oro_format_product_unit_label}}
+                    <div class="product__static-unit">{{ lineItem.unit.code|oro_format_product_unit_label}}</div>
                 {% endif %}
             {% endif %}
         </div>
