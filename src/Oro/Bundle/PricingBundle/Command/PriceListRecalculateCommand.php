@@ -221,20 +221,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         /** @var PriceList[] $priceLists */
         $priceLists = $priceListRepository->findBy(['id' => $priceListIds]);
 
-        if ((bool)$input->getOption(self::INCLUDE_DEPENDENT)) {
-            $priceListsWithDependent = $priceLists;
-
-            foreach ($priceLists as $priceList) {
-                $priceListsWithDependent = array_merge(
-                    $priceListsWithDependent,
-                    $this->getDependentPriceLists($priceList)
-                );
-            }
-
-            return $priceListsWithDependent;
+        if (!$input->getOption(self::INCLUDE_DEPENDENT)) {
+            return $priceLists;
         }
 
-        return $priceLists;
+        $dependentPriceListProvider = $this->getContainer()->get('oro_pricing.provider.dependent_price_lists');
+        return $dependentPriceListProvider->appendDependent($priceLists);
     }
 
     /**
@@ -331,36 +323,6 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         }
 
         return $customers;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @return PriceList[]
-     */
-    protected function getDependentPriceLists(PriceList $priceList)
-    {
-        /** @var PriceRuleLexeme[] $lexemes */
-        $lexemes = $this->getContainer()->get('oro_pricing.price_rule_lexeme_trigger_handler')->findEntityLexemes(
-            PriceList::class,
-            [],
-            $priceList->getId()
-        );
-
-        $priceLists = [];
-        if (count($lexemes) > 0) {
-            $dependentPriceLists = [];
-            foreach ($lexemes as $lexeme) {
-                $dependentPriceList = $lexeme->getPriceList();
-                $dependentPriceLists[$dependentPriceList->getId()] = $dependentPriceList;
-            }
-
-            $priceLists = $dependentPriceLists;
-            foreach ($dependentPriceLists as $dependentPriceList) {
-                $priceLists = array_merge($priceLists, $this->getDependentPriceLists($dependentPriceList));
-            }
-        }
-
-        return $priceLists;
     }
 
     /**

@@ -4,13 +4,13 @@
 
 ### get
 
-Get details of the price list customer group fallback by its ID.
+Retrieve a price list customer group fallback record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get the collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of price list customer group fallback records.
 
 {@inheritdoc}
 
@@ -26,8 +26,6 @@ Fallback `0` maps to Website fallback. Fallback `1`  maps to Current Customer Gr
 
 {@request:json_api}
 Example:
-
-`</api/pricelistcustomergroupfallbacks>`
 
 ```JSON
 {
@@ -51,7 +49,7 @@ Example:
 
 ### update
 
-Update details of the price list customer group fallback identified by ID.
+Edit a specific price list customer group fallback record.
 
 `fallback` value should be one of: `0` or `1`.
 
@@ -62,8 +60,6 @@ Fallback `0` maps to Website fallback. Fallback `1`  maps to Current Customer Gr
 {@request:json_api}
 Example:
 
-`</api/pricelistcustomergroupfallbacks/1>`
- 
 ```JSON
 {
     "data": {
@@ -79,13 +75,13 @@ Example:
 
 ### delete
 
-Delete a price list customer group fallback identified by ID.
+Delete a specific price list customer group fallback record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of price list customer group fallbacks. A collection may contain all fallbacks or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list customer group fallback records.
 
 {@inheritdoc}
 

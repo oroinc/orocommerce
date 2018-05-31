@@ -12,22 +12,18 @@ Retrieve a specific inventory level record.
 
 Retrieve a collection of inventory level records.
 
-The list of records to be returned can be limited by filters.
-
 {@inheritdoc}
 
 ### update
 
 Edit a specific inventory level record.
 
-The updated record is returned in the response body.
+The updated record is returned in the response.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1>`
 
 ```JSON
 {
@@ -93,8 +89,6 @@ Replace the product assigned to a specific inventory level record.
 {@request:json_api}
 Example:
 
-`</admin/api/inventorylevels/1/relationships/product>`
-
 ```JSON
 {
   "data": {
@@ -122,8 +116,6 @@ Replace the product unit precision assigned to a specific inventory level record
 {@request:json_api}
 Example:
 
-`</admin/api/inventorylevels/1/relationships/productUnitPrecision>`
-
 ```JSON
 {
   "data": {
@@ -150,8 +142,6 @@ Replace the warehouse assigned to a specific inventory level record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1/relationships/warehouse>`
 
 ```JSON
 {

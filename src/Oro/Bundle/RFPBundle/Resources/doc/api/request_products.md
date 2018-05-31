@@ -12,8 +12,6 @@ Retrieve a specific request product record.
 
 Retrieve a collection of request product records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requestproducts>`
 
 ```JSON
 {
@@ -75,8 +71,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/requestproducts/94>`
-
 ```JSON
 {
   "data": {
@@ -121,8 +115,6 @@ Delete a specific request product record.
 ### delete_list
 
 Delete a collection of request product records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -171,8 +163,6 @@ Replace product assigned to a specific request product record.
 {@request:json_api}
 Example:
 
-`</admin/api/requestproducts/1/relationships/product>`
-
 ```JSON
 {
   "data": {
@@ -199,8 +189,6 @@ Replace request assigned to a specific request product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requestproducts/1/relationships/request>`
 
 ```JSON
 {
@@ -229,8 +217,6 @@ Replace the list of request product item records assigned to a specific request 
 {@request:json_api}
 Example:
 
-`</admin/api/requestproducts/1/relationships/requestProductItems>`
-
 ```JSON
 {
   "data": [
@@ -254,8 +240,6 @@ Set request product item records for a specific request product record.
 {@request:json_api}
 Example:
 
-`</admin/api/requestproducts/1/relationships/requestProductItems>`
-
 ```JSON
 {
   "data": [
@@ -278,8 +262,6 @@ Remove request product item records from a specific request product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requestproducts/1/relationships/requestProductItems>`
 
 ```JSON
 {
