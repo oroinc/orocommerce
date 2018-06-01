@@ -92,7 +92,17 @@ class AttributeFormViewListenerTest extends \PHPUnit_Framework_TestCase
         $label = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title']);
         $group1 = $this->getEntity(AttributeGroupStub::class, ['code' => 'group1', 'label' => $label]);
 
-        $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'someField']);
+        $attributeVisible = $this->getEntity(
+            FieldConfigModel::class,
+            [
+                'id' => 1,
+                'fieldName' => 'someField',
+                'data' => [
+                    'view' => ['is_displayable' => true],
+                    'form' => ['is_enabled' => true]
+                ]
+            ]
+        );
 
         $inventoryStatus = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'inventory_status']);
         $images = $this->getEntity(FieldConfigModel::class, ['id' => 1, 'fieldName' => 'images']);
@@ -216,7 +226,7 @@ class AttributeFormViewListenerTest extends \PHPUnit_Framework_TestCase
             ],
             'move attribute field to other group' => [
                 'groupsData' => [
-                    ['group' => $group1, 'attributes' => [$attribute1]],
+                    ['group' => $group1, 'attributes' => [$attributeVisible]],
                 ],
                 'scrollData' => [
                     ScrollData::DATA_BLOCKS => [
