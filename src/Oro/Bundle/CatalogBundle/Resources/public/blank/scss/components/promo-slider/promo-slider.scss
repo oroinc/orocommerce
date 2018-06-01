@@ -14,9 +14,11 @@
 
         white-space: $promo-slider-item-white-space;
 
-        &:not(:first-child)&:not(.slick-slide) {
-            //hide until slick not loaded
-            display: none;
+        &:not(:first-child) {
+            &:not(.slick-slide) {
+                // hide until slick not loaded
+                display: none;
+            }
         }
     }
 
