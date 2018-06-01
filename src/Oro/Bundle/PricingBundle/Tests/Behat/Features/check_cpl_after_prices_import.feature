@@ -14,7 +14,7 @@ Feature: Check CPL after Prices Import
     And I submit form
     Then I should see "Customer has been saved" flash message
 
-    And I go to Sales/Price List
+    And I go to Sales/Price Lists
     And click View Default Price List in grid
     And I download "ProductPrice" Data Template file
     And I fill template with data:
