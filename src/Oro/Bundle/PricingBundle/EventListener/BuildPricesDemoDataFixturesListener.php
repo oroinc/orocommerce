@@ -66,8 +66,8 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $priceLists = $manager->getRepository(PriceList::class)->getPriceListsWithRules();
 
         foreach ($priceLists as $priceList) {
-            $this->assignmentBuilder->buildByPriceList($priceList);
-            $this->priceBuilder->buildByPriceList($priceList);
+            $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
 
         $this->combinedPriceListsBuilderFacade->rebuildAll(time());

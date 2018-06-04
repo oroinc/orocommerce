@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -59,33 +58,6 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
 
-    public function testRestrictsVisibilityForJustProducts()
-    {
-        $query = new Query();
-
-        $query->from([Product::class]);
-
-        $this->engine->search($query);
-
-        $where = $query->getCriteria()->getWhereExpression();
-
-        $foundSkuExpression    = false;
-        $foundCustomExpression = false;
-
-        if ($where instanceof CompositeExpression) {
-            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
-        }
-
-        if ($where instanceof Comparison) {
-            if (($where->getField() === 'name') && ($where->getValue()->getValue() === self::$testValue)) {
-                $foundCustomExpression = true;
-            }
-        }
-
-        $this->assertFalse($foundSkuExpression, 'Sku is null expression should not be applied.');
-        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
-    }
-
     public function testRestrictsVisibilityForJustProductsWithProductAlias()
     {
         $query = new Query();
@@ -113,32 +85,11 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
     }
 
-    public function testRestrictsVisibilityForManyEntities()
-    {
-        $query = new Query();
-
-        $query->from([Product::class, 'foo']);
-
-        $this->engine->search($query);
-
-        $where = $query->getCriteria()->getWhereExpression();
-
-        $foundSkuExpression    = false;
-        $foundCustomExpression = false;
-
-        if ($where instanceof CompositeExpression) {
-            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
-        }
-
-        $this->assertTrue($foundSkuExpression, 'Sku is null expression not found.');
-        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
-    }
-
     public function testRestrictsVisibilityForManyEntitiesWithoutProduct()
     {
         $query = new Query();
 
-        $query->from(['foo', 'foo2']);
+        $query->from(['oro_brand_WEBSITE_ID']);
 
         $this->engine->search($query);
 
@@ -159,7 +110,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
     {
         $query = new Query();
 
-        $query->from([Product::class, 'foo']);
+        $query->from(['oro_product_WEBSITE_ID', 'oro_brand_WEBSITE_ID']);
         $query->getCriteria()->andWhere(Criteria::expr()->eq('sku', 'bar'));
 
         $this->engine->search($query);

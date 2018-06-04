@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Security;
 
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Security\Firewall;
-use Oro\Bundle\RedirectBundle\Security\FirewallFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,15 +52,6 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        /** @var FirewallFactory|\PHPUnit_Framework_MockObject_MockObject $firewallFactory */
-        $firewallFactory = $this->getMockBuilder(FirewallFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $firewallFactory->expects($this->once())
-            ->method('create')
-            ->with($map, $dispatcher)
-            ->willReturn($this->baseFirewall);
         $this->context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -69,10 +59,10 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->firewall = new Firewall(
             $map,
             $dispatcher,
-            $firewallFactory,
             $this->matchedUrlDecisionMaker,
             $this->context
         );
+        $this->firewall->setFirewall($this->baseFirewall);
     }
 
     public function testOnKernelRequestBeforeRouting()

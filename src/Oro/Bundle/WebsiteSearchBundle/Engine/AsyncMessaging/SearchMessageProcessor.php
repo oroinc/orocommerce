@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
@@ -16,7 +18,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * SearchMessageProcessor runs messages performing actual reindexation
+ * Performs actual indexation operations requested via Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
  */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
@@ -87,39 +89,8 @@ class SearchMessageProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $data = JSON::decode($message->getBody());
-
-        $result = static::REJECT;
-        // REJECT messages that are a part of job
-        if (!empty($data['jobId'])) {
-            return $result;
-        }
         try {
-            switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
-                case AsyncIndexer::TOPIC_SAVE:
-                    $this->indexer->save($data['entity'], $data['context']);
-
-                    $result = static::ACK;
-                    break;
-
-                case AsyncIndexer::TOPIC_DELETE:
-                    $this->indexer->delete($data['entity'], $data['context']);
-
-                    $result = static::ACK;
-                    break;
-
-                case AsyncIndexer::TOPIC_REINDEX:
-                    $this->processReindex($data);
-
-                    $result = static::ACK;
-                    break;
-
-                case AsyncIndexer::TOPIC_RESET_INDEX:
-                    $this->indexer->resetIndex($data['class'], $data['context']);
-
-                    $result = static::ACK;
-                    break;
-            }
+            $result = $this->processMessage($message);
         } catch (\Exception $e) {
             $this->logger->error(
                 'An unexpected exception occurred during indexation',
@@ -127,11 +98,56 @@ class SearchMessageProcessor implements MessageProcessorInterface
             );
 
             $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if (($driverException && $this->databaseExceptionHelper->isDeadlock($driverException))
+                || $e instanceof UniqueConstraintViolationException
+                || $e instanceof ForeignKeyConstraintViolationException) {
                 $result = static::REQUEUE;
             } else {
                 $result = static::REJECT;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param MessageInterface $message
+     *
+     * @return string
+     */
+    private function processMessage(MessageInterface $message)
+    {
+        $data = JSON::decode($message->getBody());
+
+        $result = static::REJECT;
+        // REJECT messages that are a part of job
+        if (!empty($data['jobId'])) {
+            return $result;
+        }
+        switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
+            case AsyncIndexer::TOPIC_SAVE:
+                $this->indexer->save($data['entity'], $data['context']);
+
+                $result = static::ACK;
+                break;
+
+            case AsyncIndexer::TOPIC_DELETE:
+                $this->indexer->delete($data['entity'], $data['context']);
+
+                $result = static::ACK;
+                break;
+
+            case AsyncIndexer::TOPIC_REINDEX:
+                $this->processReindex($data);
+
+                $result = static::ACK;
+                break;
+
+            case AsyncIndexer::TOPIC_RESET_INDEX:
+                $this->indexer->resetIndex($data['class'], $data['context']);
+
+                $result = static::ACK;
+                break;
         }
 
         return $result;
@@ -145,7 +161,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
     {
         if (!empty($data['granulize'])) {
             list($entityClassesToIndex, $websiteIdsToIndex) =
-                $this->inputValidator->validateReindexRequest($data['class'], $data['context']);
+                $this->inputValidator->validateRequestParameters($data['class'], $data['context']);
 
             $reindexMsgData = $this->reindexMessageGranularizer->process(
                 $entityClassesToIndex,
@@ -158,7 +174,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
             $batchSize = count($entityClassesToIndex) * count($websiteIdsToIndex);
             // As granulizer returns iterable but not countable we can't count messages, buffer used instead
             // in order to process data without triggering new messages when it's smaller than batch size
-            $buffer = [];
+            $buffer       = [];
             $enableBuffer = true;
             foreach ($reindexMsgData as $msgData) {
                 if ($enableBuffer) {
@@ -174,7 +190,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
                             $bufferMsgData
                         );
                     }
-                    $buffer = [];
+                    $buffer       = [];
                     $enableBuffer = false;
                 }
                 $this->messageProducer->send(

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
 use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -144,7 +146,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
@@ -187,7 +189,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
@@ -565,18 +567,16 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param \Exception|\PHPUnit_Framework_MockObject_MockObject $exception
      * @param bool   $isDeadlock
      * @param string $result
      *
      * @dataProvider getProcessExceptionsDataProvider
      */
-    public function testProcessExceptions($isDeadlock, $result)
+    public function testProcessExceptions($exception, $isDeadlock, $result)
     {
         $messageBody = [
-            'entity'  => [
-                'class' => '\StdClass',
-                'id'    => 13
-            ],
+            'class' => '\StdClass',
             'context' => []
         ];
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
@@ -585,11 +585,10 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(json_encode($messageBody)));
         $message->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
-            ->willReturn(AsyncIndexer::TOPIC_DELETE);
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
-        $exception = new \Exception();
         $this->indexer->expects($this->once())
-            ->method('delete')
+            ->method('reindex')
             ->willThrowException($exception);
 
         $this->logger->expects($this->once())
@@ -615,12 +614,24 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'process deadlock' => [
+                'exception' => new \Exception(),
                 'isDeadlock' => true,
                 'result' => MessageProcessorInterface::REQUEUE
             ],
             'process exception' => [
+                'exception' => new \Exception(),
                 'isDeadlock' => false,
                 'result' => MessageProcessorInterface::REJECT
+            ],
+            'process unique constraint exception' => [
+                'exception' => $this->createMock(UniqueConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process foreign key constraint exception' => [
+                'exception' => $this->createMock(ForeignKeyConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
             ]
         ];
     }

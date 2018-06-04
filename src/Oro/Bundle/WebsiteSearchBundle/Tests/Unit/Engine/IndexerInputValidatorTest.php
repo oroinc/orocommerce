@@ -53,7 +53,7 @@ class IndexerInputValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $context = [];
         $context = $this->setContextEntityIds($context, [1,2,3]);
-        $this->testable->validateReindexRequest(['class1','class2'], $context);
+        $this->testable->validateRequestParameters(['class1','class2'], $context);
     }
 
     /**
@@ -61,14 +61,14 @@ class IndexerInputValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyEntitiesInput()
     {
-        $this->testable->validateReindexRequest([], []);
+        $this->testable->validateRequestParameters([], []);
     }
 
     public function testValidation()
     {
         $context = [];
         $context = $this->setContextEntityIds($context, [1,2,3]);
-        $result = $this->testable->validateReindexRequest(['class1'], $context);
+        $result = $this->testable->validateRequestParameters(['class1'], $context);
 
         $this->assertEquals(
             $result,
