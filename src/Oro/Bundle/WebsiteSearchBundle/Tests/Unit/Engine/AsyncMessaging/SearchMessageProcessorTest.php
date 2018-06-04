@@ -144,7 +144,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
@@ -187,7 +187,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 

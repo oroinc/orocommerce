@@ -16,7 +16,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * SearchMessageProcessor runs messages performing actual reindexation
+ * Performs actual indexation operations requested via Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
  */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
@@ -145,7 +145,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
     {
         if (!empty($data['granulize'])) {
             list($entityClassesToIndex, $websiteIdsToIndex) =
-                $this->inputValidator->validateReindexRequest($data['class'], $data['context']);
+                $this->inputValidator->validateRequestParameters($data['class'], $data['context']);
 
             $reindexMsgData = $this->reindexMessageGranularizer->process(
                 $entityClassesToIndex,

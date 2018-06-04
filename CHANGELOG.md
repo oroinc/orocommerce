@@ -4,6 +4,10 @@
 ## 3.0.0-beta (2018-03-30)
 [Show detailed list of changes](incompatibilities-3-0-beta.md)
 
+### Changed
+#### ElasticSearchBundle
+* Method `validateReindexRequest` at `Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator` was renamed to `validateRequestParameters`
+
 ### Added
 #### ProductBundle
 * Added a listener to the `oro_product.display_simple_variations` config field that cleans the product and category layout cache when changes occur.

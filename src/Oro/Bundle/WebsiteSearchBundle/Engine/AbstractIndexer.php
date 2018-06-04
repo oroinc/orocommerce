@@ -13,13 +13,19 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 
+/**
+ * Abstract indexer for website search engine
+ */
 abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
-    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
     const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
     const CONTEXT_WEBSITE_IDS = 'websiteIds';
+
+    // generated automatically based on list of passed websites (see CONTEXT_WEBSITE_IDS)
+    // must not be passed to indexer public methods outside via the context
+    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
 
     /** @var EntityDependenciesResolverInterface */
     protected $entityDependenciesResolver;
@@ -102,7 +108,7 @@ abstract class AbstractIndexer implements IndexerInterface
     public function reindex($classOrClasses = null, array $context = [])
     {
         list($entityClassesToIndex, $websiteIdsToIndex) =
-            $this->inputValidator->validateReindexRequest(
+            $this->inputValidator->validateRequestParameters(
                 $classOrClasses,
                 $context
             );
@@ -267,6 +273,12 @@ abstract class AbstractIndexer implements IndexerInterface
         $entities = [];
         foreach ($entityIds as $id) {
             $entities[$id] = $entityManager->getReference($entityClass, $id);
+        }
+
+        // convert internal website ID format to external representation
+        $websiteId = $this->getContextCurrentWebsiteId($context);
+        if ($websiteId) {
+            $context = $this->setContextWebsiteIds($context, [$websiteId]);
         }
 
         return $this->delete($entities, $context);

@@ -9,6 +9,9 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
 
+/**
+ * ORM website search engine
+ */
 class OrmEngine extends AbstractEngine
 {
     use DriverAwareTrait;
