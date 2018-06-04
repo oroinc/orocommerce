@@ -50,8 +50,8 @@ define(function(require) {
                         )
                     );
                 }
-                this._handleShipToBillingAddressCheckbox();
             }
+            this._handleShipToBillingAddressCheckbox();
 
             if (this.$fieldsContainer.find('.notification_error').length) {
                 this.$fieldsContainer.removeClass('hidden');
@@ -62,7 +62,7 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
-            var disabled = this.$shipToBillingCheckbox.prop('checked');
+            var disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
             var isFormVisible = this._isFormVisible();
             var showNewAddressForm = !disabled && isFormVisible;
             this._handleNewAddressForm(showNewAddressForm);
