@@ -62,3 +62,16 @@ Feature: Product attribute multiselect
     When I check "TestMultiValueOne" in MultiSelectField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
+
+  Scenario: Check if multiselect attribute if available for Reports & Segments
+    Given I login as administrator
+    And I go to Reports & Segments / Manage Segments
+    And I press "Create Segment"
+    And I fill "Segment Form" with:
+      | Name         | Segment with multiselect |
+      | Entity       | Product                  |
+      | Segment Type | Dynamic                  |
+    And I add the following columns:
+      | MultiSelectField |
+    When I save and close form
+    Then I should see "Segment saved" flash message
