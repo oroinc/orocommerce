@@ -184,6 +184,7 @@ operations:
         order: 10
         button_options:
             icon: fa-files-o
+        acl_resource: oro_pricing_price_list_create
         actions:
             - '@format_string':
                 attribute: $.newName
