@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Api;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
-class WebCatalogTreeControllerTest extends WebTestCase
+class WebCatalogTreeTest extends RestJsonApiTestCase
 {
     public function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        parent::setUp();
 
         $this->loadFixtures([
             LoadContentNodesData::class,
@@ -20,18 +20,14 @@ class WebCatalogTreeControllerTest extends WebTestCase
     public function testGet()
     {
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        $this->client->request(
-            'GET',
-            $this->getUrl('oro_api_webcatalog_tree_get', ['webCatalog' => $webCatalog->getId()])
+        $response = $this->get(
+            ['entity' => 'webcatalogs', 'id' => $webCatalog->getId()]
         );
-
-        $response = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
         $jsonContent = json_decode($response->getContent(), true);
         $expectedContent = $this->getExpectedWebCatalogTree();
 
-        $this->assertEquals($expectedContent, $jsonContent);
+        $this->assertEquals($expectedContent, $jsonContent['data']['attributes']['tree']);
     }
 
     /**

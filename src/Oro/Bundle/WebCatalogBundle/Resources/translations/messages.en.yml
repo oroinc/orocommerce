@@ -2,9 +2,13 @@ oro:
     webcatalog:
         entity_label: Web Catalog
         entity_plural_label: Web Catalogs
-        description.label: Description
+        description:
+            label: Description
+            description: Short meaningful description of the web catalog record.
         id.label: Id
-        name.label: Name
+        name:
+            label: Name
+            description: Name of a web catalog record
         organization.label: Organization
         owner.label: Owner
         entity_description: Represents web content information
