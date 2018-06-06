@@ -246,6 +246,15 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     {
         if (is_a($entity, $this->productClass)) {
             $excludedFields[] = 'type';
+
+            // Add primary unit precision to unit precisions list if it was unintentionally removed
+            $primaryUnitPrecision = $existingEntity->getPrimaryUnitPrecision();
+            if ($primaryUnitPrecision
+                && $primaryUnitPrecision->getProductUnitCode()
+                && !$entity->getUnitPrecisions()->contains($primaryUnitPrecision)
+            ) {
+                $entity->addUnitPrecision($primaryUnitPrecision);
+            }
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
