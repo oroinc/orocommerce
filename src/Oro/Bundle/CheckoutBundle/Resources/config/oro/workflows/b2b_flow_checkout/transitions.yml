@@ -7,6 +7,13 @@ workflows:
             start_from_shoppinglist:
                 step_to: enter_billing_address
 
+            continue_checkout_as_registered_user:
+                step_to: enter_billing_address
+                transition_definition: back_to_billing_address_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
+
             #Starts checkout as guest
             start_from_shoppinglist_as_guest:
                 step_to: enter_credentials_step

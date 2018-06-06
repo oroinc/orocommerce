@@ -93,6 +93,8 @@ oro:
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
+                continue_checkout_as_registered_user:
+                    label: Continue
                 start_checkout_as_guest_system:
                     label: Continue
                 start_from_shoppinglist:

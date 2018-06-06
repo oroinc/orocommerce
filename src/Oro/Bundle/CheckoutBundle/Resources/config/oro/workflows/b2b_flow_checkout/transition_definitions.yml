@@ -56,7 +56,9 @@ workflows:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
                     - '@transit_workflow':
-                       [$checkout, 'start_checkout_as_guest_system', 'b2b_flow_checkout']
+                        entity: $checkout
+                        transition: start_checkout_as_guest_system
+                        workflow: $.definition.name
 
             start_checkout_as_guest_system_definition:
                 actions:
@@ -165,7 +167,7 @@ workflows:
                             - '@transit_workflow':
                                 entity: $checkout
                                 transition: continue_to_shipping_method
-                                workflow: 'b2b_flow_checkout'
+                                workflow: $.definition.name
 
             continue_to_shipping_method_definition:
                 preactions:

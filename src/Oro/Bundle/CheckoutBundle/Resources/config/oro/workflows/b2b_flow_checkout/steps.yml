@@ -5,12 +5,14 @@ workflows:
                 order: 5
                 allowed_transitions:
                     - back_to_billing_address
+                    - continue_checkout_as_registered_user
                     - continue_checkout_as_guest
                     - start_checkout_as_guest_system
             enter_billing_address:
                 order: 10
                 allowed_transitions:
                     - continue_to_shipping_address
+                    - continue_checkout_as_registered_user
                     - start_checkout_as_guest_system
                     - continue_checkout_as_guest
             enter_shipping_address:
