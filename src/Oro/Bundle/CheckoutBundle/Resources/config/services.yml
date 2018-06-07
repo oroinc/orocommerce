@@ -356,6 +356,8 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@?oro_payment.context.builder_factory_basic'
+        calls:
+            - [setShippingOriginProvider, ['@oro_shipping.shipping_origin.provider']]
 
     oro_checkout.provider.privilege_category_provider:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'

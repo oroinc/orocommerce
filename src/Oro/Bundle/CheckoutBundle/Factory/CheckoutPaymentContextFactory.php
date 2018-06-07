@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 class CheckoutPaymentContextFactory
 {
@@ -33,6 +34,11 @@ class CheckoutPaymentContextFactory
     private $paymentContextBuilderFactory;
 
     /**
+     * @var ShippingOriginProvider
+     */
+    private $shippingOriginProvider;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
      * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
@@ -48,6 +54,11 @@ class CheckoutPaymentContextFactory
         $this->totalProcessor = $totalProcessor;
         $this->paymentLineItemConverter = $paymentLineItemConverter;
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
+    }
+
+    public function setShippingOriginProvider(ShippingOriginProvider $shippingOriginProvider)
+    {
+        $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
     /**
@@ -88,8 +99,8 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
         }
 
-        if (null !== $checkout->getBillingAddress()) {
-            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
+        if (null !== $checkout->getShippingAddress()) {
+            $paymentContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }
 
         if (null !== $checkout->getShippingMethod()) {
@@ -103,6 +114,11 @@ class CheckoutPaymentContextFactory
         if (null !== $checkout->getCustomer()) {
             $paymentContextBuilder->setCustomer($checkout->getCustomer());
             $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        }
+
+        $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
+        if (null !== $shippingOrigin) {
+            $paymentContextBuilder->setShippingOrigin($shippingOrigin);
         }
 
         return $paymentContextBuilder->getResult();
