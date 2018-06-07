@@ -15,8 +15,8 @@
         "oro/calendar-bundle": "2.x-dev",
         "oro/marketing": "2.x-dev",
         "oro/customer-portal": "2.x-dev",
-        "box/spout": "2.3.*",
-        "myclabs/deep-copy": "1.5.*",
+        "box/spout": "2.7.*",
+        "myclabs/deep-copy": "1.8.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/elevatezoom3": "3.0.8.1",
         "besimple/soap-client": "^0.2.6"
