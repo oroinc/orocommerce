@@ -68,9 +68,9 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             $this->checkoutLineItemsManager,
             $this->totalProcessorProvider,
             $this->paymentLineItemConverter,
+            $this->shippingOriginProvider,
             $this->paymentContextBuilderFactoryMock
         );
-        $this->factory->setShippingOriginProvider($this->shippingOriginProvider);
     }
 
     protected function tearDown()

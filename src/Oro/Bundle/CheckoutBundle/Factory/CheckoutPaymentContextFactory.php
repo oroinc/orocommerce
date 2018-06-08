@@ -46,23 +46,21 @@ class CheckoutPaymentContextFactory
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
      * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
+     * @param ShippingOriginProvider $shippingOriginProvider
      * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         TotalProcessorProvider $totalProcessor,
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
+        ShippingOriginProvider $shippingOriginProvider,
         PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->totalProcessor = $totalProcessor;
         $this->paymentLineItemConverter = $paymentLineItemConverter;
-        $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
-    }
-
-    public function setShippingOriginProvider(ShippingOriginProvider $shippingOriginProvider)
-    {
         $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
     /**
