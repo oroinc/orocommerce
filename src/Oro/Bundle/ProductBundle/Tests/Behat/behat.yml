@@ -841,6 +841,8 @@ oro_behat_extension:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroNavigationBundle::FeatureContext
+        - OroNavigationBundle::PinbarContext
+        - OroQueryDesignerBundle::QueryDesignerContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -856,6 +858,7 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
+        - OroNavigationBundle::PinbarContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:

@@ -4,76 +4,75 @@
 
 ### create
 
-Create a new Product image record.
+Create a new product image record.
+
 The created record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
 
-</api/productimages>
-
 ```JSON
-    {
-      "data": {
-        "type": "productimages",
-        "id": "product-image-1",
-        "relationships": {
-          "product": {
-            "data": {
-              "type": "products",
-              "id": "1"
-            }
-          },
-          "types": {
-            "data": [
-              {
-                "type": "productimagetypes",
-                "id": "product-image-type-1"
-              }
-            ]
-          },
-          "image": {
-            "data": {
-              "type": "files",
-              "id": "file-1"
-            }
-          }
+{
+  "data": {
+    "type": "productimages",
+    "id": "product-image-1",
+    "relationships": {
+      "product": {
+        "data": {
+          "type": "products",
+          "id": "1"
         }
       },
-      "included": [
-        {
-          "type": "files",
-          "id": "file-1",
-          "attributes": {
-            "mimeType": "image/jpeg",
-            "originalFilename": "onedot.jpg",
-            "fileSize": 631,
-            "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+      "types": {
+        "data": [
+          {
+            "type": "productimagetypes",
+            "id": "product-image-type-1"
           }
-        },
-        {
-          "type": "productimagetypes",
-          "id": "product-image-type-1",
-          "attributes": {
-            "productImageTypeType": "main"
-          },
-          "relationships": {
-            "productImage": {
-              "data": {
-                "type": "productimages",
-                "id": "product-image-1"
-              }
-            }
+        ]
+      },
+      "image": {
+        "data": {
+          "type": "files",
+          "id": "file-1"
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "files",
+      "id": "file-1",
+      "attributes": {
+        "mimeType": "image/jpeg",
+        "originalFilename": "onedot.jpg",
+        "fileSize": 631,
+        "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+      }
+    },
+    {
+      "type": "productimagetypes",
+      "id": "product-image-type-1",
+      "attributes": {
+        "productImageTypeType": "main"
+      },
+      "relationships": {
+        "productImage": {
+          "data": {
+            "type": "productimages",
+            "id": "product-image-1"
           }
         }
-      ]
+      }
     }
+  ]
+}
 ```
-{@/request}
 
-The example above also creates product image mandatory subresources : files and types.
-The subresources can be managed also within there specific: files [here](#get--admin-api-files) ,
-and types [here](#get--admin-api-productimagetypes). 
+The example above also creates product image mandatory subresources: files and types.
+{@/request}
 
 ### get
 
@@ -85,109 +84,118 @@ Retrieve a specific product image record.
 
 Retrieve a collection of product image records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### update
 
+Edit a specific product image record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
+
+{@request:json_api}
 To update a existing product image the new field needs to be specified in the **"data"** section.
 
-Example , update image file:
+Example, update image file:
 
+```JSON
+{
+  "data": {
+    "relationships": {
       "image": {
         "data": {
           "type": "files",
           "id": "1"
         }
       }
+    }
+  }
+}
+```
 
-After adding the new existing file record to the **"data"** section , the **"included"** section need to be updated also
+After adding the new existing file record to the **"data"** section, the **"included"** section need to be updated also
 with the new record details using the meta update flag.
 
 Example:
 
-        {
-          "meta":{
-            "update": true
-          },
-          "type": "files",
-          "id": "1",
-          "attributes": {
-            "mimeType": "image/jpeg",
-            "originalFilename": "onedot.jpg",
-            "fileSize": 631,
-            "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
-          }
-        }
+```JSON
+{
+  "data": {
+      "meta":{
+        "update": true
+      },
+      "type": "files",
+      "id": "1",
+      "attributes": {
+        "mimeType": "image/jpeg",
+        "originalFilename": "onedot.jpg",
+        "fileSize": 631,
+        "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+      }
+  }
+}
+```
 
-{@request:json_api}
 Complete request example:
 
-</api/productimages/1>
-
 ```JSON
-    {
-      "data": {
-        "type": "productimages",
-        "id": "1",
-        "attributes": {
-          "updatedAt": "2017-09-07T08:14:35Z"
-        },
-        "relationships": {
-          "product": {
-            "data": {
-              "type": "products",
-              "id": "1"
-            }
-          },
-          "types": {
-            "data": [
-              {
-                "type": "productimagetypes",
-                "id": "1"
-              },
-              {
-                "type": "productimagetypes",
-                "id": "2"
-              },
-              {
-                "type": "productimagetypes",
-                "id": "3"
-              }
-            ]
-          },
-          "image": {
-            "data": {
-              "type": "files",
-              "id": "1"
-            }
-          }
+{
+  "data": {
+    "type": "productimages",
+    "id": "1",
+    "attributes": {
+      "updatedAt": "2017-09-07T08:14:35Z"
+    },
+    "relationships": {
+      "product": {
+        "data": {
+          "type": "products",
+          "id": "1"
         }
       },
-      "included": [
-        {
-          "meta":{
-            "update": true
+      "types": {
+        "data": [
+          {
+            "type": "productimagetypes",
+            "id": "1"
           },
-          "type": "files",
-          "id": "1",
-          "attributes": {
-            "mimeType": "image/jpeg",
-            "originalFilename": "onedot.jpg",
-            "fileSize": 631,
-            "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+          {
+            "type": "productimagetypes",
+            "id": "2"
+          },
+          {
+            "type": "productimagetypes",
+            "id": "3"
           }
+        ]
+      },
+      "image": {
+        "data": {
+          "type": "files",
+          "id": "1"
         }
-      ]
+      }
     }
+  },
+  "included": [
+    {
+      "meta":{
+        "update": true
+      },
+      "type": "files",
+      "id": "1",
+      "attributes": {
+        "mimeType": "image/jpeg",
+        "originalFilename": "onedot.jpg",
+        "fileSize": 631,
+        "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+      }
+    }
+  ]
+}
 ```
 {@/request}
-Edit a specific product image record.
-
-The updated record is returned in the response.
-
-{@inheritdoc}
 
 ### delete
 
@@ -198,8 +206,6 @@ Delete a specific product image record.
 ### delete_list
 
 Delete a collection of order records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -236,15 +242,13 @@ Replace the product for a specific product image.
 {@request:json_api}
 Example:
 
-</api/productimages/2/relationships/product>
-
 ```JSON
-    {
-      "data": {
-        "type": "products",
-        "id": "2"
-      }
-    }
+{
+  "data": {
+    "type": "products",
+    "id": "2"
+  }
+}
 ```
 {@/request}
 
@@ -265,17 +269,15 @@ Replace the types for a specific product image.
 {@request:json_api}
 Example:
 
-</api/productimages/2/relationships/types>
-
 ```JSON
+{
+  "data": [
     {
-      "data": [
-        {
-          "type": "productimagetypes",
-          "id": "4"
-        }
-      ]
+      "type": "productimagetypes",
+      "id": "4"
     }
+  ]
+}
 ```
 {@/request}
 
@@ -287,17 +289,15 @@ Set the types of a specific product image record.
 {@request:json_api}
 Example:
 
-</api/productimages/2/relationships/types>
-
 ```JSON
+{
+  "data": [
     {
-      "data": [
-        {
-          "type": "productimagetypes",
-          "id": "16"
-        }
-      ]
+      "type": "productimagetypes",
+      "id": "16"
     }
+  ]
+}
 ```
 {@/request}
 
@@ -322,14 +322,12 @@ Replace the image file for a specific product image.
 {@request:json_api}
 Example:
 
-</api/productimages/2/relationships/image>
-
 ```JSON
-    {
-      "data": {
-        "type": "files",
-        "id": "1"
-      }
-    }
+{
+  "data": {
+    "type": "files",
+    "id": "1"
+  }
+}
 ```
 {@/request}

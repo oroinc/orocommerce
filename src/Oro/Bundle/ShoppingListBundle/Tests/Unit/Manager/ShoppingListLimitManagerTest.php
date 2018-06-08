@@ -12,6 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -41,6 +42,9 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
     /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $token;
 
+    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $websiteManager;
+
     /**
      * {@inheritdoc}
      */
@@ -62,10 +66,15 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->shoppingListLimitManager = new ShoppingListLimitManager(
             $this->configManager,
             $this->tokenAccessor,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->websiteManager
         );
     }
 
@@ -323,9 +332,15 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $website = new Website();
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
         $repository->expects($this->once())
             ->method('countUserShoppingLists')
-            ->with(self::USER_ID, self::ORGANIZATION_ID)
+            ->with(self::USER_ID, self::ORGANIZATION_ID, $website)
             ->willReturn($count);
 
         $this->doctrineHelper

@@ -387,6 +387,7 @@ services:
             - '@oro_config.manager'
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
+            - '@oro_website.manager'
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'

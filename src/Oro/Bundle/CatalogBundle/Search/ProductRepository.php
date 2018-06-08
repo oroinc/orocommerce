@@ -10,6 +10,10 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
+/**
+ * Website search engine repository for OroProductBundle:Product entity
+ * This repository encapsulates Category related operations
+ */
 class ProductRepository extends WebsiteSearchRepository
 {
     /**
@@ -37,7 +41,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->setFrom('oro_product_'. WebsiteIdPlaceholder::NAME);
 
         $criteria = array_map(
-            function ($category) {
+            function (Category $category) {
                 return Criteria::expr()->exists('integer.category_path_'. $category->getMaterializedPath());
             },
             $categories

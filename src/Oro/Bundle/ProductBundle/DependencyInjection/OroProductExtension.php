@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroProductExtension extends Extension
@@ -31,6 +30,7 @@ class OroProductExtension extends Extension
         $loader->load('services_api.yml');
         $loader->load('system_configuration_services.yml');
         $loader->load('related_items.yml');
+        $loader->load('commands.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $this->configureTestEnvironment($container);

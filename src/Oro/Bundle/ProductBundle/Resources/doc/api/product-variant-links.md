@@ -18,8 +18,6 @@ the same attribute family which holds a custom attribute that is active on the c
 {@request:json_api}
 Example:
   
-</api/productvariantlinks>
- 
 ```JSON
 {
   "data": {
@@ -53,8 +51,6 @@ Update an existing product variable link record.
 {@request:json_api}
 Example:
   
-</api/productvariantlinks/1>
- 
 ```JSON
 {
   "data": {
@@ -126,8 +122,6 @@ Replace the configurable product for a specific variant.
 {@request:json_api}
 Example:
   
-</api/productvariantlinks/1/relationships/parentProduct>
- 
 ```JSON
 {
   "data": {
@@ -155,8 +149,6 @@ Update the product for a specific variant.
 {@request:json_api}
 Example:
   
-</api/productvariantlinks/1/relationships/product>
- 
 ```JSON
 {
   "data": {

@@ -175,7 +175,7 @@ services:
 
     oro_checkout.workflow_state.storage.checkout_state_diff_storage:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
-        pablic: false
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '%oro_checkout.entity.checkout_workflow_state.class%'

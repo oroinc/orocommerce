@@ -168,6 +168,11 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
                 [Redirect::class, $redirectManager]
             ]);
 
+        $driverException = $this->createMock(AbstractDriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);

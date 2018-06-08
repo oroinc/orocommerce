@@ -7,6 +7,9 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
 
+/**
+ * Performs search indexation (save and delete) for ORM engine at website search index
+ */
 class OrmIndexer extends AbstractIndexer
 {
     use DriverAwareTrait;
@@ -14,11 +17,6 @@ class OrmIndexer extends AbstractIndexer
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $context
-     * $context = [
-     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
-     * ]
      */
     public function delete($entities, array $context = [])
     {
@@ -38,10 +36,15 @@ class OrmIndexer extends AbstractIndexer
         }
 
         foreach ($sortedEntitiesData as $entityClass => $entityIds) {
-            $entityAlias = $this->getEntityAlias($entityClass, $context);
-            $batches = array_chunk($entityIds, $this->getBatchSize());
-            foreach ($batches as $batch) {
-                $this->getDriver()->removeEntities($batch, $entityClass, $entityAlias);
+            // $classes can be skipped, because current class was already validated at filterEntityData
+            list($classes, $websiteIds) = $this->inputValidator->validateRequestParameters($entityClass, $context);
+            foreach ($websiteIds as $websiteId) {
+                $websiteContext = $this->setContextCurrentWebsite([], $websiteId);
+                $entityAlias = $this->getEntityAlias($entityClass, $websiteContext);
+                $batches = array_chunk($entityIds, $this->getBatchSize());
+                foreach ($batches as $batch) {
+                    $this->getDriver()->removeEntities($batch, $entityClass, $entityAlias);
+                }
             }
         }
 
@@ -112,24 +115,22 @@ class OrmIndexer extends AbstractIndexer
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $context
-     * $context = [
-     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
-     * ]
      */
     public function resetIndex($class = null, array $context = [])
     {
-        $currentWebsiteId = $this->getContextCurrentWebsiteId($context);
+        $websiteIds = $this->getContextWebsiteIds($context);
 
-        //Resets index for class or CurrentWebsite if passed to context
-        if ($class || $currentWebsiteId) {
-            $entityClasses = $class ? [$class] : $this->mappingProvider->getEntityClasses();
+        //Resets index for class or passed website IDs
+        if ($class || $websiteIds) {
+            $entityClasses = $class ? (array)$class : $this->mappingProvider->getEntityClasses();
 
             foreach ($entityClasses as $entityClass) {
-                if ($currentWebsiteId) {
-                    $entityAlias = $this->getEntityAlias($entityClass, $context);
-                    $this->getDriver()->removeIndexByAlias($entityAlias);
+                if ($websiteIds) {
+                    foreach ($websiteIds as $websiteId) {
+                        $websiteContext = $this->setContextCurrentWebsite([], $websiteId);
+                        $entityAlias = $this->getEntityAlias($entityClass, $websiteContext);
+                        $this->getDriver()->removeIndexByAlias($entityAlias);
+                    }
                 } else {
                     $this->getDriver()->removeIndexByClass($entityClass);
                 }

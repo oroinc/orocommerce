@@ -4,13 +4,13 @@
 
 ### get
 
-Get details of the price list by its ID.
+Retrieve a price list record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get the collection of PriceList details. A collection may contain all price lists or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of price list records.
 
 {@inheritdoc}
 
@@ -18,15 +18,14 @@ Get the collection of PriceList details. A collection may contain all price list
 
 Create a new price list. Use `priceListCurrencies` field to set price list currencies as an array of strings.
 Every string should match the existing currency code.
-**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API 
+
+**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API
 as their values are generated automatically.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
-
-`</api/pricelists>`
 
 ```JSON
 {
@@ -119,7 +118,8 @@ Example:
 
 ### update
 
-Update details of the price list identified by ID.
+Edit a specific price list record.
+
 **Notes:**
 * The values for the fields `updatedAt`, `containSchedule` cannot are set via the API as their values are generated automatically.
 * The fields `createdAt`, `priceRules`, `schedules` are not allowed to be updated.
@@ -130,8 +130,6 @@ To modify the relationship with price rules and/or price list schedules, delete 
 {@request:json_api}
 Example:
 
-`</api/pricelists/1>`
- 
 ```JSON
 {
     "data": {
@@ -149,13 +147,13 @@ Example:
 
 ### delete
 
-Delete a price list identified by ID.
+Delete a specific price list record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of price lists. A collection may contain all price lists or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list records.
 
 {@inheritdoc}
 
@@ -171,7 +169,7 @@ Delete a collection of price lists. A collection may contain all price lists or 
 
 ### name
 
-The name of PriceList entity
+The name of the price list
 
 #### create
 

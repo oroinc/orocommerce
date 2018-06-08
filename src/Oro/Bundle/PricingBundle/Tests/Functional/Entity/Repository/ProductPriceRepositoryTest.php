@@ -277,7 +277,7 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $actualPriceIds = $this->getPriceIds($actualPrices);
 
-        $this->assertEquals($expectedPriceIds, $actualPriceIds);
+        $this->assertEquals(sort($expectedPriceIds), sort($actualPriceIds));
     }
 
     /**

@@ -12,8 +12,6 @@ Retrieve a specific product tax code record.
 
 Retrieve a collection of product tax code records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ## SUBRESOURCES
@@ -23,7 +21,6 @@ The list of records that will be returned, could be limited by filters.
 #### get_subresource
 
 Retrieve a record of tax code assigned to a specific product tax code record.
-
 
 #### get_relationship
 

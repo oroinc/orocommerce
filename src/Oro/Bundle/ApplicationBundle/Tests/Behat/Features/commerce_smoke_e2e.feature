@@ -29,14 +29,14 @@ Feature: Commerce smoke e2e
       |Use As Base By Default Use Default|false      |
       |Use As Base By Default            |Destination|
     And click "Save settings"
-    And go to Taxes/ Product Tax Code
+    And go to Taxes/ Product Tax Codes
     When click "Create Product Tax Code"
     And fill form with:
       |Code       |Phone_Tax_Code                    |
       |Description|Description of Phone Tax Code code|
     And save and close form
     Then should see "Product Tax Code has been saved" flash message
-    And go to Taxes/ Customer Tax Code
+    And go to Taxes/ Customer Tax Codes
     When click "Create Customer Tax Code"
     And fill form with:
       |Code       |New_Customer_Tax_Code                    |
@@ -51,7 +51,7 @@ Feature: Commerce smoke e2e
       |Rate (%)   |9.5|
     And save and close form
     Then should see "Tax has been saved" flash message
-    And go to Taxes/ Tax Jurisdiction
+    And go to Taxes/ Tax Jurisdictions
     When click "Create Tax Jurisdiction"
     And fill form with:
       |Code       |CA_Jurisdiction|
@@ -157,9 +157,8 @@ Feature: Commerce smoke e2e
       | L      |
       | M      |
     When I save and close form
-#    And click update schema
-    And I wait for action
-#    Then should see Schema updated flash message
+    And click update schema
+    Then should see Schema updated flash message
 
     And go to Products/ Product Families
     When I press "Create Product Family"

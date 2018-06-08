@@ -7,6 +7,10 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
+/**
+ * Website search engine repository for OroProductBundle:Product entity
+ * This repository encapsulates Product related operations
+ */
 class ProductRepository extends WebsiteSearchRepository
 {
     /**

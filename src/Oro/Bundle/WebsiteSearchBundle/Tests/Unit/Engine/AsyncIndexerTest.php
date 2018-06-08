@@ -219,7 +219,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
             'granulize' => true
         ];
 
-        $this->inputValidator->method('validateReindexRequest')
+        $this->inputValidator->method('validateRequestParameters')
             ->willReturn([
                             [Item::class],
                             [self::WEBSITE_ID]

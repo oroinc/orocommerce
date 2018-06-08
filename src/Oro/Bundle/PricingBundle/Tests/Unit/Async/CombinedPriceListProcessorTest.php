@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -147,7 +148,15 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    public function testProcessWithException()
+    /**
+     * @param \Exception $exception
+     * @param int $isDeadlockCheck
+     * @param bool $isDeadlock
+     * @param string $result
+     *
+     * @dataProvider getProcessWithExceptionDataProvider
+     */
+    public function testProcessWithException($exception, $isDeadlockCheck, $isDeadlock, $result)
     {
         $em = $this->createMock(EntityManagerInterface::class);
 
@@ -179,9 +188,46 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $this->triggerFactory->method('createFromArray')->willThrowException(new InvalidArgumentException());
+        $this->triggerFactory->method('createFromArray')->willThrowException($exception);
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+        $driverException = $this->createMock(AbstractDriverException::class);
+        $this->databaseExceptionHelper->expects($this->exactly($isDeadlockCheck))
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
+        $this->databaseExceptionHelper->expects($this->exactly($isDeadlockCheck))
+            ->method('isDeadlock')
+            ->with($driverException)
+            ->willReturn($isDeadlock);
+
+        $this->assertEquals($result, $this->processor->process($message, $session));
+    }
+
+    /**
+     * @return array
+     */
+    public function getProcessWithExceptionDataProvider()
+    {
+        return [
+            'process InvalidArgumentException' => [
+                'exception' => new InvalidArgumentException(),
+                'isDeadlockCheck' => 0,
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REJECT
+            ],
+            'process deadlock' => [
+                'exception' => new \Exception(),
+                'isDeadlockCheck' => 1,
+                'isDeadlock' => true,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process exception' => [
+                'exception' => new \Exception(),
+                'isDeadlockCheck' => 1,
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REJECT
+            ]
+        ];
     }
 
     /**
