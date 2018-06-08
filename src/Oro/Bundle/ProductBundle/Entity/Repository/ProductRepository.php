@@ -457,6 +457,37 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param string $type
+     * @param string $fieldName
+     * @param mixed $fieldValue
+     * @return array
+     */
+    public function findParentSkusByAttributeValue(string $type, string $fieldName, $fieldValue)
+    {
+        $result = $this->createQueryBuilder('p')
+            ->select('parent_product.sku')
+            ->distinct()
+            ->join('p.' . $fieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where('attr = :valueId')
+            ->andWhere('p.type = :type')
+            ->orderBy('parent_product.sku')
+            ->setParameter('valueId', $fieldValue)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['sku']] = $item['sku'];
+        }
+
+        return $flattenedResult;
+    }
+
+    /**
      * Returns array of product ids that have required attribute in their attribute family
      *
      * @param FieldConfigModel $attribute

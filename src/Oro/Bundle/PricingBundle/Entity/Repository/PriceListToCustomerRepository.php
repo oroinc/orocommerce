@@ -71,7 +71,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->select('distinct customer')
             ->from('OroCustomerBundle:Customer', 'customer');
 
-        $qb->innerJoin(
+        $qb->leftJoin(
             PriceListToCustomer::class,
             'plToCustomer',
             Join::WITH,

@@ -37,10 +37,13 @@ abstract class AbstractSubtotalProvider
         if ($entity instanceof CurrencyAwareInterface && $entity->getCurrency()) {
             return $entity->getCurrency();
         }
+        if ($currency = $this->currencyManager->getLoggedUserCurrentWebsiteCurrency()) {
+            return $currency;
+        }
         if ($entity instanceof WebsiteBasedCurrencyAwareInterface && $entity->getWebsite()) {
             return $this->websiteCurrencyProvider->getWebsiteDefaultCurrency($entity->getWebsite()->getId());
         }
-        return $this->currencyManager->getUserCurrency();
+        return $this->currencyManager->getDefaultCurrency();
     }
 
     /**

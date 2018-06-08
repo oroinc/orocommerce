@@ -140,7 +140,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEmpty('triggersData', $this->handler);
     }
 
-    public function testSendtriggersData()
+    public function testSendScheduledTriggers()
     {
         /** @var PriceList $priceList */
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -154,23 +154,17 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
         $message1 = [
             PriceListTriggerFactory::PRICE_LIST => $priceList1->getId(),
-            PriceListTriggerFactory::PRODUCT => [$product1->getId()]
-        ];
-        $message2 = [
-            PriceListTriggerFactory::PRICE_LIST => $priceList1->getId(),
             PriceListTriggerFactory::PRODUCT => []
         ];
-        $message3 = [
-            PriceListTriggerFactory::PRICE_LIST => $priceList2->getId(),
-            PriceListTriggerFactory::PRODUCT => [$product2->getId()]
+        $message2 = [
+            PriceListTriggerFactory::PRODUCT => [$product2->getId() => [$product2->getId()]]
         ];
         $this->triggerFactory->expects($this->exactly(2))
             ->method('createFromIds')
             ->willReturnMap(
                 [
-                    [$priceList1->getid(), [$product1->getId()], $message1],
-                    [$priceList1->getId(), [], $message2],
-                    [$priceList2->getid(), [$product2->getId()], $message3],
+                    [$priceList1->getId(), [], $message1],
+                    [null, [$product2->getId() => [$product2->getId()]], $message2],
                 ]
             );
 
@@ -183,8 +177,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::RESOLVE_PRICE_RULES, $message2],
-                [Topics::RESOLVE_PRICE_RULES, $message3]
+                [Topics::RESOLVE_PRICE_RULES, $message1],
+                [Topics::RESOLVE_PRICE_RULES, $message2]
             );
 
         $this->handler->sendScheduledTriggers();

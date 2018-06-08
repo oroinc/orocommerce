@@ -36,10 +36,10 @@ class PriceListTrigger
     }
 
     /**
-     * @return array|Product[]
+     * @return array {"<priceListId>" => ["<productId1>", "<productId2>", ...], ...}
      */
     public function getProducts()
     {
-        return $this->products;
+        return $this->getPriceList() ? [$this->getPriceList()->getId() => $this->products] : $this->products;
     }
 }

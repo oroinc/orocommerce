@@ -2,16 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
@@ -30,9 +33,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         if (!$container->hasParameter('oro_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
-        $this->loadFixtures(
-            ['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
-        );
+        $this->loadFixtures([LoadProductData::class]);
 
         $container->get('oro_importexport.field.database_helper')->onClear();
 
@@ -56,11 +57,16 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      * @param array $entityData
      * @param array $expectedNames
      * @param array $itemData
+     * @param array $expectedSlugPrototypes
      *
      * @dataProvider processDataProvider
      */
-    public function testProcess(array $entityData = [], array $expectedNames = [], array $itemData = [])
-    {
+    public function testProcess(
+        array $entityData = [],
+        array $expectedNames = [],
+        array $itemData = [],
+        array $expectedSlugPrototypes = []
+    ) {
         $entityData = $this->convertArrayToEntities($entityData);
 
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
@@ -75,6 +81,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $inventoryStatus = $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
             ->find('in_stock');
 
+        /** @var Product $existingEntity */
+        $existingEntity = $this->getReference($entityData['sku']);
+        $this->assertNotEmpty($existingEntity->getNames());
+        $this->assertNotEmpty($existingEntity->getSlugPrototypes());
+
         /** @var \Oro\Bundle\ProductBundle\Entity\Product $entity */
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
@@ -85,36 +96,19 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         /** @var \Oro\Bundle\ProductBundle\Entity\Product $result */
         $result = $this->strategy->process($entity);
 
-        foreach ($result->getNames() as $localizedFallbackValue) {
-            $localizationCode = LocalizationCodeFormatter::formatName($localizedFallbackValue->getLocalization());
-            $this->assertArrayHasKey($localizationCode, $expectedNames);
-
-            $expectedName = $expectedNames[$localizationCode];
-            if (!empty($expectedName['reference'])) {
-                /**
-                 * Validate that id matched from existing collection and does not affect other entities
-                 * @var LocalizedFallbackValue $reference
-                 */
-                $reference = $this->getReference($expectedName['reference']);
-                $this->assertEquals($reference->getId(), $localizedFallbackValue->getId());
-            } else {
-                $this->assertNull($localizedFallbackValue->getId());
-            }
-
-            $this->assertEquals($expectedName['text'], $localizedFallbackValue->getText());
-            $this->assertEquals($expectedName['string'], $localizedFallbackValue->getString());
-            $this->assertEquals($expectedName['fallback'], $localizedFallbackValue->getFallback());
-        }
+        $this->assertLocalizedFallbackValues($expectedNames, $result->getNames());
+        $this->assertLocalizedFallbackValues($expectedSlugPrototypes, $result->getSlugPrototypes());
     }
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processDataProvider()
     {
         return [
             [
-                [
+                'entityData' => [
                     'sku' => 'product-1',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
@@ -159,8 +153,28 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                             ]
                         ],
                     ],
+                    'slugPrototypes' => [
+                        [
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product-1-default-slug-prototype-updated'
+                            ]
+                        ],
+                        [
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product-1-en-ca-slug-prototype-added',
+                                'localization' => [
+                                    'testEntity' => Localization::class,
+                                    'testProperties' => [
+                                        'name' => 'English (Canada)',
+                                    ],
+                                ],
+                            ]
+                        ],
+                    ]
                 ],
-                [
+                'expectedNames' => [
                     'default' => [
                         'reference' => 'product-1.names.default',
                         'string' => 'product-1 Default Name',
@@ -180,9 +194,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'fallback' => null,
                     ],
                 ],
-                [
+                'itemData' => [
                     'sku' => 'product-1',
                     'names' => [
+                        null => [
+                            'string' => 'product-1 Default Name'
+                        ],
                         'English (United States)' => [
                             'string' => 'product-1 en_US Name',
                             'fallback' => 'parent_localization',
@@ -190,6 +207,28 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'English (Canada)' => [
                             'string' => 'product-1 en_CA Name',
                         ],
+                    ],
+                    'slugPrototypes' => [
+                        null => [
+                            'string' => 'product-1-default-slug-prototype-updated'
+                        ],
+                        'English (Canada)' => [
+                            'string' => 'product-1-en-ca-slug-prototype-added',
+                        ],
+                    ],
+                ],
+                'expectedSlugPrototypes' => [
+                    'default' => [
+                        'reference' => 'product-1.slugPrototypes.default',
+                        'string' => 'product-1-default-slug-prototype-updated',
+                        'text' => null,
+                        'fallback' => null,
+                    ],
+                    'English (Canada)' => [
+                        'reference' => null,
+                        'string' => 'product-1-en-ca-slug-prototype-added',
+                        'text' => null,
+                        'fallback' => null,
                     ],
                 ],
             ],
@@ -303,5 +342,34 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 },
             ],
         ];
+    }
+
+    /**
+     * @param array $expectedValues
+     * @param array|Collection $actualValues
+     */
+    protected function assertLocalizedFallbackValues(array $expectedValues, $actualValues)
+    {
+        $this->assertCount(count($expectedValues), $actualValues);
+        foreach ($actualValues as $localizedFallbackValue) {
+            $localizationCode = LocalizationCodeFormatter::formatName($localizedFallbackValue->getLocalization());
+            $this->assertArrayHasKey($localizationCode, $expectedValues);
+
+            $expectedValue = $expectedValues[$localizationCode];
+            if (!empty($expectedValue['reference'])) {
+                /**
+                 * Validate that id matched from existing collection and does not affect other entities
+                 * @var LocalizedFallbackValue $reference
+                 */
+                $reference = $this->getReference($expectedValue['reference']);
+                $this->assertEquals($reference->getId(), $localizedFallbackValue->getId());
+            } else {
+                $this->assertNull($localizedFallbackValue->getId());
+            }
+
+            $this->assertEquals($expectedValue['text'], $localizedFallbackValue->getText());
+            $this->assertEquals($expectedValue['string'], $localizedFallbackValue->getString());
+            $this->assertEquals($expectedValue['fallback'], $localizedFallbackValue->getFallback());
+        }
     }
 }

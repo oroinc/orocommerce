@@ -835,6 +835,7 @@ oro_behat_extension:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroNavigationBundle::FeatureContext
+        - OroQueryDesignerBundle::QueryDesignerContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

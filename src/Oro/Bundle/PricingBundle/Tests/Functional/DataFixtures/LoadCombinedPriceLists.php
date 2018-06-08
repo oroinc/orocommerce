@@ -116,6 +116,23 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
                 ],
             ],
         ],
+        [
+            'name' => '2t_3t',
+            'enabled' => true,
+            'priceListsToCustomers' => [],
+            'priceListsToCustomerGroups' => [],
+            'websites' => [],
+            'priceListRelations' => [
+                [
+                    'priceList' => 'price_list_2',
+                    'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => 'price_list_3',
+                    'mergeAllowed' => true,
+                ],
+            ],
+        ],
     ];
 
     /**

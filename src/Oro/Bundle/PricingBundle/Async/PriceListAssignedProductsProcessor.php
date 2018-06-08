@@ -96,14 +96,11 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $this->messenger->remove(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                PriceList::class,
-                $trigger->getPriceList()->getId()
-            );
+            $repository = $em->getRepository(PriceList::class);
+            foreach ($trigger->getProducts() as $plId => $plProducts) {
+                $this->processPriceList($repository->find($plId), $plProducts);
+            }
 
-            $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProducts());
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
@@ -131,5 +128,21 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
         }
 
         return self::ACK;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function processPriceList(PriceList $priceList, array $products)
+    {
+        $this->messenger->remove(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+            PriceList::class,
+            $priceList->getId()
+        );
+
+        $this->assignmentBuilder->buildByPriceList($priceList, $products);
     }
 }
