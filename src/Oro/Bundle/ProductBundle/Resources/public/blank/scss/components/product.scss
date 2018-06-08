@@ -133,6 +133,11 @@
             margin: 0 0 15px;
         }
     }
+
+    &__static-unit {
+        min-width: 82px;
+        padding: 13px 12px;
+    }
 }
 
 @include breakpoint('mobile-landscape') {
