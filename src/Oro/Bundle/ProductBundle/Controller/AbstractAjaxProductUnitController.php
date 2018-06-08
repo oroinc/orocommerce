@@ -36,7 +36,7 @@ abstract class AbstractAjaxProductUnitController extends Controller
     {
         return new JsonResponse(
             [
-                'units' => $product->getAvailableUnitsPrecision(),
+                'units' => $product->getSellUnitsPrecision(),
             ]
         );
     }
