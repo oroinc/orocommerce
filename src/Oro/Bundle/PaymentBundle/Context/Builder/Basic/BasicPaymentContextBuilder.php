@@ -13,6 +13,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Creates PaymentContext with needed parameters
+ */
 class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 {
     /**
