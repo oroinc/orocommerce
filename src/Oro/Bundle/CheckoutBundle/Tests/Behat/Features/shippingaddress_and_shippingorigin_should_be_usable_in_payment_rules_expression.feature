@@ -10,6 +10,9 @@
 @fixture-OroWarehouseBundle:ReOrder/InventoryLevelFixture.yml
 
 Feature: ShippingAddress and shippingOrigin should be usable in payment rules expression
+  In order to use shippingAddress and shippingOrigin fields in shipping rules
+  As a Sales rep
+  I want to create shipping rule that will disable Check/Money Order shipping method
   Scenario: Create two sessions
     Given sessions active:
       | Admin | first_session  |
