@@ -115,6 +115,10 @@ class CheckoutPaymentContextFactory
         return $paymentContextBuilder->getResult();
     }
 
+    /**
+     * @param PaymentContextBuilderInterface $paymentContextBuilder
+     * @param Checkout $checkout
+     */
     private function addAddresses(
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout
