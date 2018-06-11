@@ -355,6 +355,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
+            - '@oro_shipping.shipping_origin.provider'
             - '@?oro_payment.context.builder_factory_basic'
 
     oro_checkout.provider.privilege_category_provider:

@@ -12,6 +12,7 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItem
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
@@ -61,6 +62,11 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private $websiteMock;
 
+    /**
+     * @var ShippingOrigin|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shippingOriginMock;
+
     protected function setUp()
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
@@ -82,6 +88,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             PaymentLineItemCollectionFactoryInterface::class
         );
         $this->websiteMock = $this->createMock(Website::class);
+        $this->shippingOriginMock = $this->createMock(ShippingOrigin::class);
     }
 
     public function testFullContextBuilding()
@@ -120,7 +127,8 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->setCustomer($this->customerMock)
             ->setCustomerUser($this->customerUserMock)
             ->setShippingMethod($shippingMethod)
-            ->setWebsite($this->websiteMock);
+            ->setWebsite($this->websiteMock)
+            ->setShippingOrigin($this->shippingOriginMock);
 
         $expectedContext = $this->getExpectedFullContext(
             $shippingMethod,
@@ -177,6 +185,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
             PaymentContext::FIELD_WEBSITE => $this->websiteMock,
+            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
         ];
 
         return new PaymentContext($params);
