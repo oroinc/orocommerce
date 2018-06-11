@@ -60,6 +60,9 @@ class CheckoutPaymentContextFactory
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
+    /**
+     * @param ShippingOriginProvider $shippingOriginProvider
+     */
     public function setShippingOriginProvider(ShippingOriginProvider $shippingOriginProvider)
     {
         $this->shippingOriginProvider = $shippingOriginProvider;
@@ -117,6 +120,10 @@ class CheckoutPaymentContextFactory
         return $paymentContextBuilder->getResult();
     }
 
+    /**
+     * @param PaymentContextBuilderInterface $paymentContextBuilder
+     * @param Checkout $checkout
+     */
     private function addAddresses(
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout
