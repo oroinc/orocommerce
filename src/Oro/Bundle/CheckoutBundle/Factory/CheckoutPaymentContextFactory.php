@@ -6,10 +6,15 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
+use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
+/**
+ * Gets parameters needed to create PaymentContext from Checkout and other sources
+ */
 class CheckoutPaymentContextFactory
 {
     /**
@@ -33,6 +38,11 @@ class CheckoutPaymentContextFactory
     private $paymentContextBuilderFactory;
 
     /**
+     * @var ShippingOriginProvider
+     */
+    private $shippingOriginProvider;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
      * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
@@ -48,6 +58,14 @@ class CheckoutPaymentContextFactory
         $this->totalProcessor = $totalProcessor;
         $this->paymentLineItemConverter = $paymentLineItemConverter;
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
+    }
+
+    /**
+     * @param ShippingOriginProvider $shippingOriginProvider
+     */
+    public function setShippingOriginProvider(ShippingOriginProvider $shippingOriginProvider)
+    {
+        $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
     /**
@@ -84,13 +102,7 @@ class CheckoutPaymentContextFactory
                 ->setWebsite($checkout->getWebsite());
         }
 
-        if (null !== $checkout->getBillingAddress()) {
-            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
-        }
-
-        if (null !== $checkout->getBillingAddress()) {
-            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
-        }
+        $this->addAddresses($paymentContextBuilder, $checkout);
 
         if (null !== $checkout->getShippingMethod()) {
             $paymentContextBuilder->setShippingMethod($checkout->getShippingMethod());
@@ -106,5 +118,27 @@ class CheckoutPaymentContextFactory
         }
 
         return $paymentContextBuilder->getResult();
+    }
+
+    /**
+     * @param PaymentContextBuilderInterface $paymentContextBuilder
+     * @param Checkout $checkout
+     */
+    private function addAddresses(
+        PaymentContextBuilderInterface $paymentContextBuilder,
+        Checkout $checkout
+    ) {
+        if (null !== $checkout->getBillingAddress()) {
+            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
+        }
+
+        if (null !== $checkout->getShippingAddress()) {
+            $paymentContextBuilder->setShippingAddress($checkout->getShippingAddress());
+        }
+
+        $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
+        if (null !== $shippingOrigin) {
+            $paymentContextBuilder->setShippingOrigin($shippingOrigin);
+        }
     }
 }

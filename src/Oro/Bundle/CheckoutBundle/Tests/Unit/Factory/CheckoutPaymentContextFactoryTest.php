@@ -19,6 +19,8 @@ use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactor
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
@@ -41,6 +43,9 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentContextBuilderFactoryMock;
 
+    /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingOriginProvider;
+
     protected function setUp()
     {
         $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
@@ -57,12 +62,15 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentContextBuilderFactoryMock = $this->createMock(PaymentContextBuilderFactoryInterface::class);
 
+        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+
         $this->factory = new CheckoutPaymentContextFactory(
             $this->checkoutLineItemsManager,
             $this->totalProcessorProvider,
             $this->paymentLineItemConverter,
             $this->paymentContextBuilderFactoryMock
         );
+        $this->factory->setShippingOriginProvider($this->shippingOriginProvider);
     }
 
     protected function tearDown()
@@ -110,6 +118,12 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilderMock
             ->expects($this->never())
             ->method('setLineItems');
+
+        $shippingOrigin = new ShippingOrigin();
+        $this->shippingOriginProvider
+            ->expects($this->once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn($shippingOrigin);
 
         $this->factory->create($checkout);
     }
