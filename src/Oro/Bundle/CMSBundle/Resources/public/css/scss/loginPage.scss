@@ -1,14 +1,17 @@
+/* @theme: admin.oro; */
+
 #container {
-  .logo {
-    img {
-      display: block;
-      margin: 0 auto;
+    .logo {
+        img {
+            display: block;
+            margin: 0 auto;
+        }
     }
-  }
 }
 
 .login-page {
-  height: 100%;
-  position: absolute;
-  width: 100%;
+    position: absolute;
+    overflow: auto;
+    height: 100%;
+    width: 100%;
 }
