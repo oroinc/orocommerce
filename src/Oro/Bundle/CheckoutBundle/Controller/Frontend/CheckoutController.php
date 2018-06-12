@@ -255,11 +255,12 @@ class CheckoutController extends Controller
      */
     protected function handleTransition(WorkflowItem $workflowItem, Request $request)
     {
-        $isRegistrationValid = $this->handleRegistration($request);
+        $isRegistrationValid = $this->get('oro_checkout.handler.registration')->handle($request);
+        $isPasswordRequestValid = $this->get('oro_checkout.handler.forgot_password')->handle($request);
 
         if ($isRegistrationValid || $request->isMethod(Request::METHOD_GET)) {
             $this->handleGetTransition($workflowItem, $request);
-        } elseif ($request->isMethod(Request::METHOD_POST)) {
+        } elseif ($isPasswordRequestValid || $request->isMethod(Request::METHOD_POST)) {
             $this->handlePostTransition($workflowItem, $request);
         }
     }
@@ -345,38 +346,5 @@ class CheckoutController extends Controller
         $this->get('oro_action.action_group_registry')
             ->findByName('start_shoppinglist_checkout')
             ->execute($actionData);
-    }
-
-    /**
-     * @param Request $request
-     * @return bool
-     */
-    private function handleRegistration(Request $request)
-    {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form = $this->get('oro_customer.provider.frontend_customer_user_registration_form')->getRegisterForm();
-            if ($form) {
-                $userManager = $this->get('oro_customer_user.manager');
-
-                $registrationMessage = 'oro.customer.controller.customeruser.registered.message';
-                if ($userManager->isConfirmationRequired()) {
-                    $registrationMessage = 'oro.customer.controller.customeruser.registered_with_confirmation.message';
-                }
-
-                $handler = $this->get('oro_customer.handler.frontend_customer_user_handler');
-
-                $this->get('oro_form.update_handler')->update(
-                    $form->getData(),
-                    $form,
-                    $this->get('translator')->trans($registrationMessage),
-                    $request,
-                    $handler
-                );
-
-                return $form->isSubmitted() && $form->isValid();
-            }
-        }
-
-        return false;
     }
 }

@@ -614,6 +614,14 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_customer_frontend_customer_user_register, method: afterFlush }
             - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
 
+    oro_checkout.event_listener.customer_user_reset_password_listener:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserResetPasswordListener'
+        lazy: true
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
+
     oro_checkout.manager:
         class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
         arguments:
@@ -626,3 +634,30 @@ services:
             - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
         tags:
             - { name: oro_action.action, alias: get_start_checkout_transition }
+
+    oro_checkout.handler.forgot_password:
+        class: 'Oro\Bundle\CheckoutBundle\Handler\ForgotPasswordHandler'
+        lazy: true
+        arguments:
+            - '@oro_customer.customer_user.password_request.handler'
+            - '@oro_customer.provider.frontend_customer_user_form'
+            - '@session'
+
+    oro_checkout.handler.registration:
+        class: 'Oro\Bundle\CheckoutBundle\Handler\RegistrationHandler'
+        lazy: true
+        arguments:
+            - '@oro_customer.provider.frontend_customer_user_registration_form'
+            - '@oro_customer_user.manager'
+            - '@oro_customer.handler.frontend_customer_user_handler'
+            - '@oro_form.update_handler'
+            - '@translator'
+
+    oro_checkout.provider.forgot_password_check_email:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutForgotPasswordCheckEmailProvider'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@session'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
