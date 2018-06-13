@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\MappingException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -293,9 +294,11 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function getPrimaryKey($className, $default = 'id')
     {
-        $ident = $this->doctrineHelper->getEntityMetadata($className)->getSingleIdentifierFieldName();
-
-        return $ident ?: $default;
+        try {
+            return $this->doctrineHelper->getEntityMetadata($className)->getSingleIdentifierFieldName() ?? $default;
+        } catch (MappingException $exception) {
+            return $default;
+        }
     }
 
     public function testExtendedType()

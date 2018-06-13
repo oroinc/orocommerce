@@ -292,6 +292,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($item['images'] as $image) {
             $imageFile = new File();
             $imageFile->setFilename($item['productCode']);
+            $imageFile->setMimeType('image/jpeg');
             $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
 
             $productImage = new ProductImage();

@@ -5,9 +5,8 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Api;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Symfony\Component\HttpFoundation\Response;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 /**
  * @group CommunityEdition
@@ -21,81 +20,68 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     {
         parent::setUp();
 
-        $this->loadFixtures([UpdateInventoryLevelsQuantities::class]);
+        $this->loadFixtures([
+            LoadOrganization::class,
+            LoadBusinessUnit::class,
+            UpdateInventoryLevelsQuantities::class
+        ]);
     }
 
-    /**
-     * @param array $parameters
-     * @param string $expectedDataFileName
-     *
-     * @dataProvider getListDataProvider
-     */
-    public function testGetList(array $parameters, $expectedDataFileName)
+    public function testGetListFilteredByOneProduct()
     {
-        $response = $this->cget(['entity' => 'inventorylevels'], $parameters);
-
-        $this->assertResponseContains($expectedDataFileName, $response);
-    }
-
-    /**
-     * @return array
-     */
-    public function getListDataProvider()
-    {
-        return [
-            'filter by Product' => [
-                'parameters' => [
-                    'include' => 'product,productUnitPrecision',
-                    'filter' => [
-                        'product' => ['@product-1->id'],
-                    ]
-                ],
-                'expectedDataFileName' => 'filter_by_product.yml',
-            ],
-            'filter by Products' => [
-                'parameters' => [
-                    'include' => 'product,productUnitPrecision',
-                    'filter' => [
-                        'product' => ['@product-1->id', '@product-2->id'],
-                    ]
-                ],
-                'expectedDataFileName' => 'filter_by_products.yml',
-            ]
-        ];
-    }
-
-    public function testUpdateEntity()
-    {
-        /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $this->getReference('inventory_level.product_unit_precision.product-1.liter');
-
-        $response = $this->patch(
-            ['entity' => 'inventorylevels', 'id' => (string) $inventoryLevel->getId()],
+        $response = $this->cget(
+            ['entity' => 'inventorylevels'],
             [
-                'data' => [
-                    'type' => 'inventorylevels',
-                    'id' => (string) $inventoryLevel->getId(),
-                    'attributes' => [
-                        'quantity' => 17
-                    ],
+                'include' => 'product,productUnitPrecision',
+                'filter'  => [
+                    'product' => ['@product-1->id']
                 ]
             ]
         );
 
-        $result = $this->jsonToArray($response->getContent());
-        $this->assertUpdatedInventoryLevel($result, $inventoryLevel->getId(), 17);
+        $this->assertResponseContains('filter_by_product.yml', $response);
     }
 
-    /**
-     * @param array $result
-     * @param int $inventoryLevelId
-     * @param int $quantity
-     */
-    protected function assertUpdatedInventoryLevel(array $result, $inventoryLevelId, $quantity)
+    public function testGetListFilteredBySeveralProducts()
     {
-        $inventoryLevel = $this->getEntityManager()->find(InventoryLevel::class, $inventoryLevelId);
+        $response = $this->cget(
+            ['entity' => 'inventorylevels'],
+            [
+                'include' => 'product,productUnitPrecision',
+                'filter'  => [
+                    'product' => ['@product-1->id', '@product-2->id']
+                ]
+            ]
+        );
 
-        $this->assertEquals($quantity, $result['data']['attributes']['quantity']);
-        $this->assertEquals($quantity, $inventoryLevel->getQuantity());
+        $this->assertResponseContains('filter_by_products.yml', $response);
+    }
+
+    public function testUpdate()
+    {
+        $inventoryLevelId = $this->getReference('inventory_level.product_unit_precision.product-1.liter')->getId();
+
+        $data = [
+            'data' => [
+                'type'       => 'inventorylevels',
+                'id'         => (string)$inventoryLevelId,
+                'attributes' => [
+                    'quantity' => 17
+                ]
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'inventorylevels', 'id' => (string)$inventoryLevelId],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['attributes']['quantity'] = '17';
+        $this->assertResponseContains($expectedData, $response);
+
+        $inventoryLevel = $this->getEntityManager()
+            ->find(InventoryLevel::class, $inventoryLevelId);
+        self::assertEquals(17, $inventoryLevel->getQuantity());
     }
 }
