@@ -33,4 +33,31 @@ class PageRepository extends EntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @param array $pageIds
+     *
+     * @return array
+     */
+    public function getNonExistentPageIds(array $pageIds)
+    {
+        if (empty($pageIds)) {
+            return [];
+        }
+
+        $pageIds = array_unique($pageIds);
+
+        $qb = $this->createQueryBuilder('page');
+        $qb
+            ->select('page.id')
+            ->where($qb->expr()->in('page.id', ':pageIds'));
+
+        $qb->setParameter('pageIds', $pageIds);
+
+        $result = $qb->getQuery()->getArrayResult();
+
+        $existedPageIds = array_column($result, 'id');
+
+        return array_diff($pageIds, $existedPageIds);
+    }
 }
