@@ -14,6 +14,7 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Oro\Bundle\CustomerBundle\Handler\CustomerRegistrationHandler;
+use Oro\Bundle\CustomerBundle\Handler\ForgotPasswordHandler;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
@@ -51,6 +52,9 @@ class CheckoutWorkflowHelper
     /** @var ActionGroupRegistry */
     private $actionGroupRegistry;
 
+    /** @var ForgotPasswordHandler  */
+    private $forgotPasswordHandler;
+
     /** @var CheckoutErrorHandler  */
     private $errorHandler;
 
@@ -59,14 +63,15 @@ class CheckoutWorkflowHelper
 
     /**
      * @param WorkflowManager $workflowManager
-     * @param ActionGroupRegistry         $actionGroupRegistry
-     * @param TransitionProvider          $transitionProvider
-     * @param TransitionFormProvider      $transitionFormProvider
-     * @param CheckoutErrorHandler        $errorHandler
-     * @param CheckoutLineItemsManager    $lineItemsManager
+     * @param ActionGroupRegistry $actionGroupRegistry
+     * @param TransitionProvider $transitionProvider
+     * @param TransitionFormProvider $transitionFormProvider
+     * @param CheckoutErrorHandler $errorHandler
+     * @param CheckoutLineItemsManager $lineItemsManager
      * @param CustomerRegistrationHandler $registrationHandler
-     * @param EventDispatcherInterface    $eventDispatcher
-     * @param TranslatorInterface         $translator
+     * @param ForgotPasswordHandler $forgotPasswordHandler
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         WorkflowManager $workflowManager,
@@ -76,6 +81,7 @@ class CheckoutWorkflowHelper
         CheckoutErrorHandler $errorHandler,
         CheckoutLineItemsManager $lineItemsManager,
         CustomerRegistrationHandler $registrationHandler,
+        ForgotPasswordHandler $forgotPasswordHandler,
         EventDispatcherInterface $eventDispatcher,
         TranslatorInterface $translator
     ) {
@@ -86,6 +92,7 @@ class CheckoutWorkflowHelper
         $this->errorHandler = $errorHandler;
         $this->lineItemsManager = $lineItemsManager;
         $this->registrationHandler = $registrationHandler;
+        $this->forgotPasswordHandler = $forgotPasswordHandler;
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
     }
@@ -107,11 +114,7 @@ class CheckoutWorkflowHelper
             $this->restartCheckout($workflowItem, $checkout);
             $workflowItem = $this->getWorkflowItem($checkout);
         } else {
-            if ($this->isRegistrationRequest($request)) {
-                $this->handleRegistration($workflowItem, $request);
-            } else {
-                $this->handleTransition($workflowItem, $request);
-            }
+            $this->processHandlers($workflowItem, $request);
         }
 
         $currentStep = $this->validateStep($workflowItem);
@@ -351,6 +354,21 @@ class CheckoutWorkflowHelper
     /**
      * @param WorkflowItem $workflowItem
      * @param Request $request
+     */
+    private function processHandlers(WorkflowItem $workflowItem, Request $request)
+    {
+        if ($this->registrationHandler->isRegistrationRequest($request)) {
+            $this->handleRegistration($workflowItem, $request);
+        } elseif ($this->forgotPasswordHandler->isForgotPasswordRequest($request)) {
+            $this->forgotPasswordHandler->handle($request);
+        } else {
+            $this->handleTransition($workflowItem, $request);
+        }
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param Request $request
      *
      * @throws ForbiddenActionGroupException
      * @throws \Exception
@@ -363,15 +381,5 @@ class CheckoutWorkflowHelper
         } elseif ($request->isMethod(Request::METHOD_POST)) {
             $this->handlePostTransition($workflowItem, $request);
         }
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return bool
-     */
-    private function isRegistrationRequest(Request $request)
-    {
-        return (bool) $request->query->get('isRegistration');
     }
 }
