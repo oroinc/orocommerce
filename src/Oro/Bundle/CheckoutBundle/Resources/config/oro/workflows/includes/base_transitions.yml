@@ -30,8 +30,10 @@ workflows:
                     icon: fa-clipboard
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
+                        transition_name: start_from_quickorderform
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
                         page-component-options:
+                            transition_name: '[name$="[transition]"]'
                             component_name: '[name$="[component]"]'
                             confirmation: $.result.doShowConfirmation
                             shopping_list_limit: $.result.shoppingListLimit

@@ -147,7 +147,10 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         /** @var Session $session */
         $session = $request->getSession();
         if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
-            $actionData = new ActionData(['shoppingList' => $shoppingList]);
+            $actionData = new ActionData([
+                'shoppingList' => $shoppingList,
+                'transitionName' => $data[ProductDataStorage::TRANSITION_NAME_KEY] ?? null
+            ]);
             $errors = new ArrayCollection([]);
             $actionData = $this->getActionGroup()->execute($actionData, $errors);
 
