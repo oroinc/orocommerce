@@ -4,6 +4,7 @@ workflows:
             enter_billing_address:
                 order: 10
                 allowed_transitions:
+                    - start_from_quickorderform
                     - continue_to_shipping_address
             enter_shipping_address:
                 order: 20

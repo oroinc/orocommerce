@@ -118,7 +118,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setActionGroupName, ['start_shoppinglist_checkout']]
+            - [setActionGroupName, ['start_quickorder_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 

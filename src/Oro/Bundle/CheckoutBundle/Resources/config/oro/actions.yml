@@ -147,6 +147,39 @@ action_groups:
                 method_parameters: [$.checkout]
                 attribute: $.checkout.shippingCost
 
+    start_quickorder_checkout:
+        parameters:
+            shoppingList:
+                type: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            transitionName:
+                type: string
+                default: null
+        actions:
+             - '@run_action_group':
+                 action_group: start_shoppinglist_checkout
+                 parameters_mapping:
+                     shoppingList: $.shoppingList
+                 results:
+                     redirectUrl: $.redirectUrl
+                     checkout: $.checkout
+                     errors: $.errors
+
+             - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_empty': $.checkout
+                        - '@not_empty': $.transitionName
+                actions:
+                    - '@get_available_workflow_by_record_group':
+                       attribute: $.currentWorkflow
+                       entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                       group_name: 'b2b_checkout_flow'
+
+                    - '@transit_workflow':
+                        transition: $.transitionName
+                        workflow: $.currentWorkflow.name
+                        entity: $.checkout
+
     start_shoppinglist_checkout:
         parameters:
             shoppingList:
