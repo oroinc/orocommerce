@@ -48,5 +48,5 @@ workflows:
                 is_hidden: true
 
             payment_error:
-                transition_definition: unblock_and_recalculate_definition
+                transition_definition: payment_error_definition
                 is_hidden: true
