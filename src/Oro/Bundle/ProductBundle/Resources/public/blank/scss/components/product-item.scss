@@ -302,10 +302,6 @@
         &--no-image-view {
             @include clearfix();
 
-            .product-item__qty__current-grid {
-                @include clearfix();
-            }
-
             .validation-failed {
                 position: absolute;
                 z-index: 1;

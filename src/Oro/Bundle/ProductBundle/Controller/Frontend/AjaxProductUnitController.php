@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
+use Oro\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
-use Oro\Bundle\ProductBundle\Entity\Product;
-
+/**
+ * Use this class for getting product units on frontend.
+ */
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
@@ -21,12 +22,11 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
      *
      * @param Request $request
      * @param Product $product
+     *
      * @return JsonResponse
      */
     public function productUnitsAction(Request $request, Product $product)
     {
-        $isShort = (bool)$request->get('short', false);
-
-        return $this->getProductUnits($product, $isShort);
+        return $this->getProductUnits($product);
     }
 }

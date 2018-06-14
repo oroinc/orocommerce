@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
+/**
+ * Abstract class used for getting product units on frontend
+ */
 abstract class AbstractAjaxProductUnitController extends Controller
 {
     /**
@@ -33,7 +36,7 @@ abstract class AbstractAjaxProductUnitController extends Controller
     {
         return new JsonResponse(
             [
-                'units' => $product->getAvailableUnitsPrecision(),
+                'units' => $product->getSellUnitsPrecision(),
             ]
         );
     }

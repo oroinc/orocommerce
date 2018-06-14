@@ -8,6 +8,10 @@ oro_behat_extension:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
     ProductAdditionalPrecisionField:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
+    ProductUnitLabel:
+      selector: "[data-role='unit-label']"
+    ProductUnitSelect:
+      selector: 'select[name="oro_product_frontend_line_item[unit]"]'
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
