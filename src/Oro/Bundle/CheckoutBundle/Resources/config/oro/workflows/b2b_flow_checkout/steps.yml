@@ -15,6 +15,7 @@ workflows:
                     - continue_checkout_as_registered_user
                     - start_checkout_as_guest_system
                     - continue_checkout_as_guest
+                    - start_from_quickorderform
             enter_shipping_address:
                 order: 20
                 allowed_transitions:

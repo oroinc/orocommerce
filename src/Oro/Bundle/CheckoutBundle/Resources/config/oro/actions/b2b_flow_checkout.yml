@@ -246,16 +246,6 @@ action_groups:
                 paymentMethod: $.checkout.paymentMethod
                 transactionOptions: $.paymentTransactionOptions
 
-            - '@flash_message':
-                conditions:
-                    '@and':
-                        - '@equal':
-                            - false
-                            - $.responseData[purchaseSuccessful]
-                        - '@not_empty': $.responseData[message]
-                message: $.responseData[message]
-                type: 'warning'
-
     b2b_flow_checkout_finish_checkout:
         parameters:
             checkout:

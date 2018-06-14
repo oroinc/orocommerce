@@ -135,8 +135,7 @@ class OrmIndexer extends AbstractIndexer
                     $this->getDriver()->removeIndexByClass($entityClass);
                 }
             }
-        } //Resets whole index
-        else {
+        } else { //Resets whole index
             $this->getDriver()->removeIndexByClass();
         }
     }
