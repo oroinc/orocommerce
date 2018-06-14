@@ -5,13 +5,17 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\VirtualRelationProviderInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
+class ProductVirtualRelationProvider implements VirtualRelationProviderInterface, FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var DoctrineHelper
      */
@@ -40,7 +44,9 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     public function isVirtualRelation($className, $fieldName)
     {
-        return ($className == Product::class) && $this->isProductAttributeField($fieldName);
+        return $this->isFeaturesEnabled()
+            && $className === Product::class
+            && $this->isProductAttributeField($fieldName);
     }
 
     /**
@@ -63,6 +69,10 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     public function getVirtualRelations($className)
     {
         $relations = [];
+
+        if (!$this->isFeaturesEnabled()) {
+            return $relations;
+        }
 
         if ($className == Product::class) {
             $productAttributeFieldNames = $this->getProductAttributes();

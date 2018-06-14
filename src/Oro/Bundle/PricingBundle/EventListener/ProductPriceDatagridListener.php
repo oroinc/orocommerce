@@ -8,6 +8,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -18,8 +20,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductPriceDatagridListener
+class ProductPriceDatagridListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var ShardManager
      */
@@ -68,6 +72,10 @@ class ProductPriceDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $currencies = $this->getCurrencies();
         if (!$currencies) {
             return;
@@ -94,6 +102,10 @@ class ProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $currencies = $this->getCurrencies();
         if (!$currencies) {
             return;

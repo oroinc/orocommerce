@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 /**
+ * TODO: actualize listener description
  * Remove product prices by unit on ProductUnitPrecision delete.
  */
 class ProductSelectPriceListAwareListener

@@ -8,6 +8,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -16,8 +18,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceReposit
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
-class PriceAttributeProductPriceDatagridListener
+class PriceAttributeProductPriceDatagridListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var PriceListRequestHandler
      */
@@ -55,6 +59,10 @@ class PriceAttributeProductPriceDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $currencies = $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
         if (!$currencies) {
             return;
@@ -79,6 +87,10 @@ class PriceAttributeProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $currencies = $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
         if (!$currencies) {
             return;

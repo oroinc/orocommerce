@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -10,8 +12,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 /**
  * Remove product price attributes by unit on ProductUnitPrecision delete.
  */
-class ProductUnitPrecisionPostRemoveListener
+class ProductUnitPrecisionPostRemoveListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var ShardManager
      */
@@ -35,6 +39,10 @@ class ProductUnitPrecisionPostRemoveListener
      */
     public function postRemove(LifecycleEventArgs $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $entity = $event->getEntity();
 
         if ($entity instanceof ProductUnitPrecision) {

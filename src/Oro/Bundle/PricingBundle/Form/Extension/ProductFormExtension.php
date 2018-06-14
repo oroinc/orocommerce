@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
@@ -17,8 +19,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class ProductFormExtension extends AbstractTypeExtension
+class ProductFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var PriceManager
      */
@@ -51,6 +55,10 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var Product $product */
         $product = $builder->getData();
 

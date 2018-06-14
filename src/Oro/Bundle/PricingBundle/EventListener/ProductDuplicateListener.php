@@ -3,13 +3,17 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
-class ProductDuplicateListener
+class ProductDuplicateListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var DoctrineHelper
      */
@@ -61,6 +65,10 @@ class ProductDuplicateListener
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 

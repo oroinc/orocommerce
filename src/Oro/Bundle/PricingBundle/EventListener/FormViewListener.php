@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
@@ -12,8 +14,10 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListener
+class FormViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
     const PRICING_BLOCK_NAME = 'prices';
 
@@ -55,6 +59,11 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
+        // TODO: Uncomment after fix issue with product attributes in groups.
+//        if (!$this->isFeaturesEnabled()) {
+//            return;
+//        }
+
         $product = $event->getEntity();
         if (!$product instanceof Product) {
             throw new UnexpectedTypeException($product, Product::class);
@@ -69,6 +78,10 @@ class FormViewListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             'OroPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
@@ -12,8 +14,10 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class WebsiteSearchProductPriceIndexerListener
+class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const MP_ALIAS = 'minimal_price_CPL_ID_CURRENCY_UNIT';
 
     /**
@@ -51,6 +55,10 @@ class WebsiteSearchProductPriceIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();

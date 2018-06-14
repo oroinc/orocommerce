@@ -9,5 +9,6 @@ placeholders:
     items:
         product_sidebar_price_list_selector:
             action: OroPricingBundle:Product:sidebar
+            applicable: "@oro_featuretoggle.checker.feature_checker->isFeatureEnabled('oro_price_lists')"
         quick_add_subtotal:
             template: OroPricingBundle:Product:subtotal.html.twig

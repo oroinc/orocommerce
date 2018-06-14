@@ -7,12 +7,16 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-abstract class AbstractPriceListRelationDataGridListener
+abstract class AbstractPriceListRelationDataGridListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const PRICE_LIST_KEY = 'price_list';
 
     /**

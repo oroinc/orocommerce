@@ -25,6 +25,10 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
      */
     public function onCustomerGroupView(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;

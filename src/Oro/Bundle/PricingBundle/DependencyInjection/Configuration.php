@@ -51,7 +51,8 @@ class Configuration implements ConfigurationInterface
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
-                self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME]
+                self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME],
+                'feature_enabled' => ['value' => true],
             ]
         );
 

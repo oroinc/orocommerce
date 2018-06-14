@@ -242,12 +242,14 @@ oro.pricing:
 
     system_configuration:
         groups:
+            pricing_general.title: General
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
             price_lists_update.title: 'Price List Calculations'
             price_strategies.title: Price Selection Strategy
         fields:
+            feature_enabled.label: Enable Oro Pricing
             price_lists.title: Price Lists
             precision.label: Pricing Precision
             pricing_strategy.label: Pricing Strategy

@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
@@ -18,8 +20,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\FormEvent;
 
-abstract class AbstractPriceListCollectionAwareListener
+abstract class AbstractPriceListCollectionAwareListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const PRICE_LISTS_COLLECTION_FORM_FIELD_NAME = 'priceListsByWebsites';
 
     /**
@@ -67,6 +71,10 @@ abstract class AbstractPriceListCollectionAwareListener
      */
     public function onPostSetData(FormEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var CustomerGroup|Customer $targetEntity */
         $targetEntity = $event->getForm()->getData();
         if (!$targetEntity || !$targetEntity->getId()) {
@@ -89,6 +97,10 @@ abstract class AbstractPriceListCollectionAwareListener
      */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $targetEntity = $event->getForm()->getData();
         foreach ($event->getForm()->get(self::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->all() as $form) {
             $data = $form->getData();
