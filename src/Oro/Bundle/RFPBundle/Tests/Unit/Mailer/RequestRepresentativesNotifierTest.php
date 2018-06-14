@@ -13,6 +13,9 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
