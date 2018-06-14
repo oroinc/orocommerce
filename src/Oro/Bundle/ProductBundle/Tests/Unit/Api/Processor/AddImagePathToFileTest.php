@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
@@ -10,11 +10,11 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
+use Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
-class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
+class AddImagePathToFileTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $attachmentManager;
@@ -31,7 +31,7 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
     /** @var CustomizeLoadedDataContext */
     protected $context;
 
-    /** @var ProcessImagePaths */
+    /** @var AddImagePathToFile */
     protected $processor;
 
     protected function setUp()
@@ -46,7 +46,7 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->repo);
 
         $this->context = new CustomizeLoadedDataContext();
-        $this->processor = new ProcessImagePaths(
+        $this->processor = new AddImagePathToFile(
             $this->attachmentManager,
             $this->doctrineHelper,
             $this->typeProvider

@@ -1,24 +1,24 @@
-// theme: custom;
+/* @theme: custom; */
 
 $custom-color-palette: (
     'primary': (
-        'main': #2D333B,
-        'base': #FD302B,
-        'light': #FF7A76,
-        'dark': #CE0500
+        'main': #2d333b,
+        'base': #fd302b,
+        'light': #ff7a76,
+        'dark': #ce0500
     ),
     'secondary': (
-        'main': #FF9B9B,
-        'base': #31AFD3,
-        'light': #7EA6A4,
-        'lighten': #197B30,
-        'dark': #CE0500
+        'main': #ff9b9b,
+        'base': #31afd3,
+        'light': #7ea6a4,
+        'lighten': #197b30,
+        'dark': #ce0500
     ),
     'additional': (
         'ultra': #fff,
-        'base': #F1F5F7,
-        'light': #CAEAF4,
-        'middle': #99CCDB,
+        'base': #f1f5f7,
+        'light': #caeaf4,
+        'middle': #99ccdb,
         'dark': #262626,
         'darker': #000
     ),

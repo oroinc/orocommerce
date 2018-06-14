@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -190,7 +190,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->triggerFactory->method('createFromArray')->willThrowException($exception);
 
-        $driverException = $this->createMock(DriverException::class);
+        $driverException = $this->createMock(AbstractDriverException::class);
         $this->databaseExceptionHelper->expects($this->exactly($isDeadlockCheck))
             ->method('getDriverException')
             ->with($exception)

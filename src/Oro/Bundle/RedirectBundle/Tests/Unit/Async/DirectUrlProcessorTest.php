@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\AbstractDriverException;
-use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
@@ -186,7 +185,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 ['exception' => $exception]
             );
 
-        $driverException = $this->createMock(DriverException::class);
+        $driverException = $this->createMock(AbstractDriverException::class);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('getDriverException')
             ->with($exception)
@@ -218,7 +217,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 ['exception' => $exception]
             );
 
-        $driverException = $this->createMock(DriverException::class);
+        $driverException = $this->createMock(AbstractDriverException::class);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('getDriverException')
             ->with($exception)

@@ -1,12 +1,16 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
+namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\EntitySerializer\DoctrineHelper;
 
+/**
+ * Modifies the related product query to return only relations for which
+ * both products in relation are accessible by an user.
+ */
 class RelatedItemAclCheck implements ProcessorInterface
 {
     /**
@@ -33,14 +37,13 @@ class RelatedItemAclCheck implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         /** @var Context $context */
+
         if (!$context->hasQuery()) {
             return;
         }
 
         $qb = $context->getQuery();
-
         $rootAlias = $this->doctrineHelper->getRootAlias($qb);
-
         $qb->leftJoin(sprintf('%s.product', $rootAlias), 'p')
             ->leftJoin(sprintf('%s.relatedItem', $rootAlias), 'ri')
             ->andWhere('p.id IS NOT NULL')

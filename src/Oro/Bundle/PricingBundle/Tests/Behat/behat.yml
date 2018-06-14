@@ -16,6 +16,7 @@ oro_behat_extension:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroEmailBundle::EmailContext
+        - OroCustomerBundle::ACLContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
