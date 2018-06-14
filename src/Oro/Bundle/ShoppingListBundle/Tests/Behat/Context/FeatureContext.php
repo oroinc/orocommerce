@@ -150,7 +150,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getLineItemUnit(TableRow $tableRowElement)
     {
-        return $tableRowElement->find('css', '.select2-chosen')->getText();
+        $select = $tableRowElement->find('css', '.select2-chosen');
+        if ($select) {
+            return $select->getText();
+        } else {
+            return $tableRowElement->find('css', '.product__static-unit')->getText();
+        }
     }
 
     /**

@@ -1,4 +1,7 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/imports/oro_product_line_item_form/oro_product_line_item_form.html.twig'
+        - '@appendOption':
+            id: __line_item_form_fields
+            optionName: vars
+            optionValue:
+                skipInputWidgets: '=false'

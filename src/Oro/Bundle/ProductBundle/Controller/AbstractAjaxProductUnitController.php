@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Abstract class used for getting product units on frontend
+ */
 abstract class AbstractAjaxProductUnitController extends Controller
 {
     /**
@@ -25,14 +28,14 @@ abstract class AbstractAjaxProductUnitController extends Controller
 
     /**
      * @param Product $product
-     * @param bool $isShort
+     *
      * @return JsonResponse
      */
-    protected function getProductUnits(Product $product, $isShort = false)
+    protected function getProductUnits(Product $product)
     {
         return new JsonResponse(
             [
-                'units' => $product->getAvailableUnitsPrecision(),
+                'units' => $product->getSellUnitsPrecision(),
             ]
         );
     }
