@@ -46,7 +46,6 @@ workflows:
                         parameters: [$.result.doShowConfirmation, true]
                 preconditions:
                     '@and':
-                        - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
                         - '@equal': [true, $.result.isCheckoutAllowed]
 
