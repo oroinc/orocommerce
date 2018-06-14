@@ -12,8 +12,6 @@ Retrieve a specific product record.
 
 Retrieve a collection of product records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -96,8 +94,6 @@ a Product entity, in the **"data"** section. Example:
           "id": "4"
         }
       }
-
-You can see the existing categories using its API [here](#get--admin-api-categories)
 
 #### 5. Creating configurable products
 
@@ -302,17 +298,11 @@ In the **"included"** section. Example:
     }
 
 The example above also creates product image mandatory subresources : files and types.
-The subresources can be managed also within there specific: files [here](#get--admin-api-files) ,
-and types [here](#get--admin-api-productimagetypes). Collection of product images can be accessed
-using the dedicated API [here](#get--admin-api-productimages).
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
  of image defined in themes  and it is not directly handled by the API.
 
 {@request:json_api}
-
 Example:
-
-`</admin/api/products>`
 
 ```JSON
 {
@@ -667,11 +657,6 @@ The updated record is returned in the response.
 
 {@inheritdoc}
  
-[See product create](#post--admin-api-products) documentation for examples
-and explanations.
-
-Other details:
-
 #### 1. Using ProductPrecisionUnits:
 
 Besides what it is mentioned in the create Product section above, for the ProductPrecisionUnits
@@ -807,8 +792,6 @@ have only those 2 saved and all the other (6 entities) will be removed. Example 
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/12>`
 
 ```JSON
 {
@@ -995,8 +978,6 @@ Delete a specific product record.
 ### delete_list
 
 Delete a collection of product records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -1187,8 +1168,6 @@ Replace the attributeFamily for a specific product record.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/attributeFamily>`
-
 ```JSON
 {
   "data": {
@@ -1216,8 +1195,6 @@ Replace the backOrder entity fallback value for a specific product record.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/backOrder>`
-
 ```JSON
 {
   "data": {
@@ -1244,8 +1221,6 @@ Replace the brand for a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/brand>`
 
 ```JSON
 {
@@ -1275,8 +1250,6 @@ Replace the decrementQuantity entity fallback value for a specific product recor
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/decrementQuantity>`
-
 ```JSON
 {
   "data": {
@@ -1303,8 +1276,6 @@ Replace the inventoryThreshold entity fallback value for a specific product reco
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/inventoryThreshold>`
 
 ```JSON
 {
@@ -1362,8 +1333,6 @@ Replace the inventory_status for a specific product record.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/inventory_status>`
-
 ```JSON
 {
   "data": {
@@ -1390,8 +1359,6 @@ Replace the manageInventory entity fallback value for a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/manageInventory>`
 
 ```JSON
 {
@@ -1434,8 +1401,6 @@ Replace the maximumQuantityToOrder entity fallback value for a specific product 
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/maximumQuantityToOrder>`
-
 ```JSON
 {
   "data": {
@@ -1462,8 +1427,6 @@ Replace the minimumQuantityToOrder entity fallback value for a specific product 
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/minimumQuantityToOrder>`
 
 ```JSON
 {
@@ -1492,8 +1455,6 @@ Replace the pageTemplate entity fallback value for a specific product record.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/pageTemplate>`
-
 ```JSON
 {
   "data": {
@@ -1520,8 +1481,6 @@ Replace the owner of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/owner>`
 
 ```JSON
 {
@@ -1550,8 +1509,6 @@ Replace the organization that a specific product belongs to.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/organization>`
-
 ```JSON
 {
   "data": {
@@ -1579,8 +1536,6 @@ Set the names of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/names>`
-
 ```JSON
 {
   "data": [
@@ -1604,8 +1559,6 @@ Replace the names for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/names>`
-
 ```JSON
 {
   "data": [
@@ -1628,8 +1581,6 @@ Remove the names of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/names>`
 
 ```JSON
 {
@@ -1664,8 +1615,6 @@ Set the descriptions of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/descriptions>`
-
 ```JSON
 {
   "data": [
@@ -1689,8 +1638,6 @@ Replace the descriptions for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/descriptions>`
-
 ```JSON
 {
   "data": [
@@ -1713,8 +1660,6 @@ Remove the descriptions of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/descriptions>`
 
 ```JSON
 {
@@ -1749,8 +1694,6 @@ Set the metaDescriptions of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -1774,8 +1717,6 @@ Replace the metaDescriptions for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -1798,8 +1739,6 @@ Remove the metaDescriptions of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/metaDescriptions>`
 
 ```JSON
 {
@@ -1834,8 +1773,6 @@ Set the metaKeywords of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaKeywords>`
-
 ```JSON
 {
   "data": [
@@ -1859,8 +1796,6 @@ Replace the metaKeywords for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaKeywords>`
-
 ```JSON
 {
   "data": [
@@ -1883,8 +1818,6 @@ Remove the metaKeywords of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/metaKeywords>`
 
 ```JSON
 {
@@ -1919,8 +1852,6 @@ Set the metaTitles of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaTitles>`
-
 ```JSON
 {
   "data": [
@@ -1944,8 +1875,6 @@ Replace the metaTitles for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/metaTitles>`
-
 ```JSON
 {
   "data": [
@@ -1968,8 +1897,6 @@ Remove the metaTitles of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/metaTitles>`
 
 ```JSON
 {
@@ -2004,8 +1931,6 @@ Set short descriptions records for a specific product record.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/shortDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -2031,8 +1956,6 @@ Replace the shortDescriptions for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/shortDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -2055,8 +1978,6 @@ Remove the shortDescriptions of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/shortDescriptions>`
 
 ```JSON
 {
@@ -2091,8 +2012,6 @@ Set the slugPrototypes of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/slugPrototypes>`
-
 ```JSON
 {
   "data": [
@@ -2116,8 +2035,6 @@ Replace the slugPrototypes for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/slugPrototypes>`
-
 ```JSON
 {
   "data": [
@@ -2140,8 +2057,6 @@ Remove the slugPrototypes of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/slugPrototypes>`
 
 ```JSON
 {
@@ -2176,8 +2091,6 @@ Replace the primaryUnitPrecision for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/primaryUnitPrecision>`
-
 ```JSON
 {
   "data": {
@@ -2204,8 +2117,6 @@ Replace the taxCode for a specific product.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/taxCode>`
 
 ```JSON
 {
@@ -2234,8 +2145,6 @@ Set the unitPrecisions of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/unitPrecisions>`
-
 ```JSON
 {
   "data": [
@@ -2259,8 +2168,6 @@ Replace the unitPrecisions for a specific product.
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/unitPrecisions>`
-
 ```JSON
 {
   "data": [
@@ -2283,8 +2190,6 @@ Remove the unit precisions of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/unitPrecisions>`
 
 ```JSON
 {
@@ -2319,8 +2224,6 @@ Set the productImages of a specific product record
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/images>`
-
 ```JSON
 {
   "data": [
@@ -2344,8 +2247,6 @@ Replace the productImages for a specific product
 {@request:json_api}
 Example:
 
-`</admin/api/products/1/relationships/images>`
-
 ```JSON
 {
   "data": [
@@ -2368,8 +2269,6 @@ Remove the productImages of a specific product record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/products/1/relationships/images>`
 
 ```JSON
 {
@@ -2436,28 +2335,6 @@ Replace the variant products for a specific product.
 #### delete_relationship
 
 Remove the variant products of a specific product record.
-
-### images
-
-#### get_subresource
-
-Get the related productImages entity for a specific product
-
-#### get_relationship
-
-Retrieve the ID of productImages for a specific product
-
-#### add_relationship
-
-Set the productImages of a specific product record
-
-#### update_relationship
-
-Replace the productImages for a specific product
-
-#### delete_relationship
-
-Remove the productImages of a specific product record.
 
 # Extend\Entity\EV_Prod_Inventory_Status
 

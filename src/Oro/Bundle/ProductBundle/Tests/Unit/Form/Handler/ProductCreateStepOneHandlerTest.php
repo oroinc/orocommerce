@@ -41,8 +41,11 @@ class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('POST')
             ->will($this->returnValue(true));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isSubmitted')
+            ->will($this->returnValue(true));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue($isValid));

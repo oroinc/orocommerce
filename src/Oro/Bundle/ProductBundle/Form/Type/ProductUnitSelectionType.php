@@ -77,11 +77,8 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        $options['choices'] = $this->getProductUnits($form, $product);
+        $options['choices'] = $this->getProductUnitChoices($form, $product);
         $options['choices_updated'] = true;
-
-        //@TODO Remove in scope BAP-15236
-        unset($options['cascade_validation']);
 
         $formParent->add($form->getName(), static::class, $options);
     }
@@ -256,6 +253,22 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         foreach ($choices as $key => $value) {
             $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product|null $product
+     * @return array
+     */
+    private function getProductUnitChoices(FormInterface $form, Product $product = null)
+    {
+        $units = $this->getProductUnits($form, $product);
+        $choices = [];
+        foreach ($units as $value => $unit) {
+            $choices[$unit->getCode()] = $value;
+        }
+
+        return $choices;
     }
 
     /**

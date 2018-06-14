@@ -72,18 +72,17 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $possibleValue = $this->getPossibleValues($fieldName);
         $fieldIdentifier = $this->getScalarValue($value);
 
-        $value = 'N/A';
-        if (!array_key_exists($fieldIdentifier, $possibleValue)) {
+        $value = array_search($fieldIdentifier, $possibleValue, false);
+        if (!$value) {
+            $value = 'N/A';
             $this->logger->error(
                 'Can not find configurable attribute "{attributeValue}" in list of available attributes.' .
                 'Available: "{availableAttributes}"',
                 [
                     'attribute' => (string)$fieldIdentifier,
-                    'availableAttributes' => implode(', ', array_keys($possibleValue)),
+                    'availableAttributes' => implode(', ', array_values($possibleValue)),
                 ]
             );
-        } else {
-            $value = $possibleValue[$fieldIdentifier];
         }
 
         return $value;

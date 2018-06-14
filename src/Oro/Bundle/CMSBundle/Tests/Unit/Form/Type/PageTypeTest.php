@@ -154,11 +154,6 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PageType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(PageType::NAME, $this->type->getBlockPrefix());

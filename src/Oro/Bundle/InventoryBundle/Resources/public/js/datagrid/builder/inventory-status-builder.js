@@ -69,7 +69,9 @@ define(['jquery', 'underscore'], function($, _) {
             if (typeof value === 'string') {
                 value = value.trim();
             }
-            var columnValue = self.statusMetadata.choices[value];
+            var columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+                return choiceValue === value;
+            });
             if (typeof columnValue !== 'undefined') {
                 model.set(statusColumn, columnValue);
             }
@@ -82,7 +84,9 @@ define(['jquery', 'underscore'], function($, _) {
          */
         _updateInventoryStatus: function(model, value) {
             var self = this;
-            var columnValue = self.statusMetadata.choices[value];
+            var columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+                return choiceValue === value;
+            });
 
             if (typeof columnValue !== 'undefined') {
                 _.each(this.datagrid.body.rows, function(row) {

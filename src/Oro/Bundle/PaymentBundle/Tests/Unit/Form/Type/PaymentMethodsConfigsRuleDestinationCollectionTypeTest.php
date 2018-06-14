@@ -4,21 +4,15 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
 
@@ -117,31 +111,20 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
      */
     protected function getExtensions()
     {
-        $translatableEntity = $this->getTranslatableEntity();
-
-        return [
-            new PreloadedExtension(
-                [
-                    CollectionType::class => new CollectionType(),
-                    PaymentMethodsConfigsRuleDestinationType::class => new PaymentMethodsConfigsRuleDestinationType(
-                        new AddressCountryAndRegionSubscriberStub()
-                    ),
-                    CountryType::class => new CountryType(),
-                    RegionType::class => new RegionType(),
-                    TranslatableEntityType::class => $translatableEntity,
-                ],
-                [FormType::class => [
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
-                ]]
-            ),
-            new ValidatorExtension(Validation::createValidator())
-        ];
-    }
-
-    public function testGetName()
-    {
-        $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
-        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $type->getName());
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension(
+                    [
+                        PaymentMethodsConfigsRuleDestinationType::class => new PaymentMethodsConfigsRuleDestinationType(
+                            new AddressCountryAndRegionSubscriberStub()
+                        )
+                    ],
+                    []
+                ),
+                new ValidatorExtension(Validation::createValidator())
+            ]
+        );
     }
 
     public function testGetParent()

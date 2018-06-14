@@ -27,12 +27,6 @@ use Symfony\Component\Validator\Validation;
  */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new DiscountOptionsType();
-        $this->assertEquals(DiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new DiscountOptionsType();
@@ -185,8 +179,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('page_component_options', $options);
                     $this->assertEquals(
                         [
-                            'amount' => 'oro.discount_options.general.type.choices.amount',
-                            'percent' => 'oro.discount_options.general.type.choices.percent'
+                            'oro.discount_options.general.type.choices.amount' => 'amount',
+                            'oro.discount_options.general.type.choices.percent' => 'percent',
                         ],
                         $options['type_choices']
                     );

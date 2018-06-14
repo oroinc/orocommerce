@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand:
+        public: false
+        class: Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand
+        tags:
+            - { name: console.command }

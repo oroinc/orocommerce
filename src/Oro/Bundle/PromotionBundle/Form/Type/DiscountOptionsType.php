@@ -165,7 +165,7 @@ class DiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::TYPE_FIELD_CHOICES as $type) {
-            $choices[$type] = 'oro.discount_options.general.type.choices.' . $type;
+            $choices['oro.discount_options.general.type.choices.' . $type] = $type;
         }
 
         return $choices;

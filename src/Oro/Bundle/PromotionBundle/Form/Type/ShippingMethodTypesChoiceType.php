@@ -136,7 +136,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
                     ShippingDiscount::SHIPPING_METHOD => $shippingMethod->getIdentifier(),
                     ShippingDiscount::SHIPPING_METHOD_TYPE => $shippingType->getIdentifier()
                 ]);
-                $shippingTypeChoices[$info] = $shippingType->getLabel();
+                $shippingTypeChoices[$shippingType->getLabel()] = $info;
             }
         }
 

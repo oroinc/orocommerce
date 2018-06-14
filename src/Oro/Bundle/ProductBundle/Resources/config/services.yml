@@ -96,7 +96,7 @@ services:
             - '%oro_product.entity.product.class%'
             - ["sku", "defaultName.string"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_product, acl_resource: oro_product_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\ProductType, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
 
     oro_product.form.autocomplete.brand.search_handler:
@@ -106,7 +106,7 @@ services:
             - '%oro_product.entity.brand.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_product_brand }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
@@ -143,7 +143,7 @@ services:
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     oro_product.storage.product_data_bag:
-        class: '%session.attribute_bag.class%'
+        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         public: false
         arguments:
             - '_product_data_bag'
@@ -1102,16 +1102,6 @@ services:
         arguments:
             - '@oro_product.provider.content_variant_segment_provider'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
-
-    oro_product.command.product_collections_index_cron_command:
-        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
-        calls:
-            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
-            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
-            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
-            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
-        tags:
-            - { name: console.command }
 
     oro_product.event_listener.product_collection_aware_content_variant_entity_listener:
         public: false

@@ -57,7 +57,7 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
             ]
         ];
 
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(LateRegistrationType::class);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());

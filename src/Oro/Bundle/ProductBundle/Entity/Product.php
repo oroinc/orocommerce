@@ -119,7 +119,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              "category"="catalog"
  *          },
  *          "form"={
- *              "form_type"="oro_product_select",
+ *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\ProductSelectType",
  *              "grid_name"="products-select-grid"
  *          },
  *          "attribute"={

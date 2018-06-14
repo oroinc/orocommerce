@@ -14,6 +14,7 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
@@ -185,3 +186,33 @@ oro_behat_extension:
     Submit Order:
         selector: '.order-checkout-widget button:contains("Submit Order")'
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Customer Users List button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        type: xpath
+
+    Product Line Item Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
+        type: xpath
+
+    Qty Line Item Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
+        type: xpath
+
+    Paste Your Order Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste-uid")]'
+        type: xpath
+
+    Assigned To Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
+        type: xpath

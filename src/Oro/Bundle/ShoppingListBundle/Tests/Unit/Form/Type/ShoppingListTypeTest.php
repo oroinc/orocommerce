@@ -114,11 +114,6 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShoppingListType::NAME, $this->type->getName());
-    }
-
     /**
      * @param string $className
      * @param int    $id

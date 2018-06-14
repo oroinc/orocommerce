@@ -47,7 +47,7 @@ services:
             - '%oro_pricing.entity.price_list.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_pricing_price_list, acl_resource: oro_pricing_price_list_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
@@ -105,6 +105,11 @@ services:
         calls:
             - [setClassName, ['%oro_pricing.entity.combined_price_list.class%']]
             - [setActivationPlanBuilder, ['@oro_pricing.builder.combined_price_list_activation_plan_builder']]
+
+    oro_pricing.provider.dependent_price_lists:
+        class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
+        arguments:
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
 
     oro_pricing.provider.price_list_collection:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider'
@@ -315,8 +320,6 @@ services:
 
     oro_pricing.price_list_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
-        arguments:
-            - '@doctrine'
 
     oro_pricing.price_list_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler'
@@ -881,6 +884,17 @@ services:
             - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
+
+    oro_pricing.action.price_list_background_recalculate:
+        class: Oro\Bundle\PricingBundle\Action\PriceListBackgroundRecalculateAction
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.builder.product_price_builder'
+            - '@oro_pricing.provider.dependent_price_lists'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_action.action, alias: price_list_recalculate }
 
     oro_pricing.hander.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'

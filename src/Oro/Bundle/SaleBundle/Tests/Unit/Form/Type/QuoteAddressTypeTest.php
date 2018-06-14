@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
@@ -44,6 +45,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->addressFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(function (AbstractAddress $item) {
+                return $item->__toString();
+            });
 
         $this->quoteAddressSecurityProvider = $this
             ->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
@@ -99,11 +105,6 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             ->with($this->isType('string'), $this->isType('string'))->will($this->returnSelf());
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteAddressType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()

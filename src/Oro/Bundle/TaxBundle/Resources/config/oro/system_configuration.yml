@@ -32,20 +32,20 @@ system_configuration:
     fields:
         oro_tax.tax_enable:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.tax.system_configuration.fields.tax_enable.label
                 required: false
 
         oro_tax.tax_provider:
             data_type: string
-            type: oro_tax_provider_type
+            type: Oro\Bundle\TaxBundle\Form\Type\TaxProviderType
             options:
                 label: oro.tax.system_configuration.fields.tax_provider.label
 
         oro_tax.start_calculation_with:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.start_calculation_with.label
@@ -53,12 +53,12 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choices:
-                    unit_price: oro.tax.system_configuration.fields.start_calculation_with.unit_price.label
-                    row_total: oro.tax.system_configuration.fields.start_calculation_with.row_total.label
+                    oro.tax.system_configuration.fields.start_calculation_with.unit_price.label: unit_price
+                    oro.tax.system_configuration.fields.start_calculation_with.row_total.label: row_total
 
         oro_tax.start_calculation_on:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.start_calculation_on.label
@@ -66,19 +66,19 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 choices:
-                    total: oro.tax.system_configuration.fields.start_calculation_on.total.label
-                    item: oro.tax.system_configuration.fields.start_calculation_on.item.label
+                    oro.tax.system_configuration.fields.start_calculation_on.total.label: total
+                    oro.tax.system_configuration.fields.start_calculation_on.item.label: item
 
         oro_tax.product_prices_include_tax:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.tax.system_configuration.fields.product_prices_include_tax.label
                 required: false
 
         oro_tax.use_as_base_by_default:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.use_as_base.default.label
@@ -87,12 +87,12 @@ system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    shipping_origin: oro.tax.system_configuration.fields.use_as_base.shipping_origin.label
-                    destination: oro.tax.system_configuration.fields.use_as_base.destination.label
+                    oro.tax.system_configuration.fields.use_as_base.shipping_origin.label: shipping_origin
+                    oro.tax.system_configuration.fields.use_as_base.destination.label: destination
 
         oro_tax.address_resolver_granularity:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.address_resolver_granularity.label
@@ -101,20 +101,20 @@ system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    country: oro.tax.system_configuration.fields.address_resolver_granularity.country.label
-                    region: oro.tax.system_configuration.fields.address_resolver_granularity.region.label
-                    zip_code: oro.tax.system_configuration.fields.address_resolver_granularity.zip.label
+                    oro.tax.system_configuration.fields.address_resolver_granularity.country.label: country
+                    oro.tax.system_configuration.fields.address_resolver_granularity.region.label: region
+                    oro.tax.system_configuration.fields.address_resolver_granularity.zip.label: zip_code
 
         oro_tax.use_as_base_exclusions:
             data_type: array
-            type: oro_tax_base_exclusion_collection
+            type: Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionCollectionType
             options:
                 label: oro.tax.system_configuration.fields.use_as_base.exclusions.label
                 data_transformer: oro_tax.form.data_transformer.tax_base_exclusion_transformer
 
         oro_tax.destination:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.tax.system_configuration.fields.destination.label
@@ -123,37 +123,37 @@ system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    billing_address: oro.tax.system_configuration.fields.destination.billing_address.label
-                    shipping_address: oro.tax.system_configuration.fields.destination.shipping_addressl.label
+                    oro.tax.system_configuration.fields.destination.billing_address.label: billing_address
+                    oro.tax.system_configuration.fields.destination.shipping_addressl.label: shipping_address
 
         oro_tax.digital_products_us:
             data_type: array
-            type: oro_tax_product_tax_code_multiselect
+            type: Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType
             options:
                 label: oro.tax.system_configuration.fields.digital_products_us.label
 
         oro_tax.digital_products_eu:
             data_type: array
-            type: oro_tax_product_tax_code_multiselect
+            type: Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType
             options:
                 label: oro.tax.system_configuration.fields.digital_products_eu.label
 
         oro_tax.origin_address:
             data_type: array
-            type: oro_tax_origin_address
+            type: Oro\Bundle\TaxBundle\Form\Type\OriginAddressType
             options:
                 label: oro.tax.system_configuration.fields.origin_address.label
 
         oro_tax.shipping_tax_code:
             data_type: array
-            type: oro_tax_product_tax_code_multiselect
+            type: Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType
             options:
                 label: oro.tax.system_configuration.fields.shipping_tax_code.label
                 tooltip: oro.tax.system_configuration.fields.shipping_tax_code.tooltip
 
         oro_tax.shipping_rates_include_tax:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.tax.system_configuration.fields.shipping_rates_include_tax.label
                 tooltip: oro.tax.system_configuration.fields.shipping_rates_include_tax.tooltip

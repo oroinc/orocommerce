@@ -12,7 +12,7 @@ class ProductTypeStub extends AbstractType
     /**
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return ProductType::NAME;
     }

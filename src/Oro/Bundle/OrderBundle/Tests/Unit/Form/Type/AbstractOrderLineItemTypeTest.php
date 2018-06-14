@@ -163,7 +163,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        $this->sectionProvider->expects($this->once())->method('getSections')->with($this->formType->getName())
+        $this->sectionProvider->expects($this->once())->method('getSections')->with(get_class($this->formType))
             ->willReturn($this->getExpectedSections());
 
         $view = new FormView();

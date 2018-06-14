@@ -142,7 +142,7 @@ class DiscountConfigurationType extends AbstractType
         $formTypes = $this->discountFormTypeProvider->getFormTypes();
         $choices = [];
         foreach ($formTypes as $type => $formType) {
-            $choices[$type] = 'oro.discount.type.choices.' . $type;
+            $choices['oro.discount.type.choices.' . $type] = $type;
         }
 
         return $choices;

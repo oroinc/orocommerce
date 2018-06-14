@@ -66,7 +66,7 @@ class ProductPageTemplateValidator extends ConstraintValidator
      * Retrieve the valid values for this field and route
      *
      * @param $route
-     * @return array|void
+     * @return array
      */
     private function getValidValues($route)
     {
@@ -74,14 +74,14 @@ class ProductPageTemplateValidator extends ConstraintValidator
 
         $validValues = $pageTemplates[$route] ?? [];
 
-        /* values are saved in "choices" array as keys in the form. ex:
+        /* values are saved in "choices" array as values in the form. ex:
          choices = [
-          "short" => 1,
-          "two-columns" => 2,
-          "list" => 3
+          "Short label" => "short",
+          "Two-columns label" => "two-columns",
+          "List label" => "list",
         ]
         */
-        $validValues = array_keys($validValues["choices"]);
+        $validValues = array_values($validValues['choices']);
 
         return array_merge($validValues, [null]);
     }

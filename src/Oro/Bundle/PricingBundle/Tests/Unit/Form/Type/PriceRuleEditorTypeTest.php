@@ -29,11 +29,6 @@ class PriceRuleEditorTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new PriceRuleEditorType($this->optionsConfigurator);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PriceRuleEditorType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(PriceRuleEditorType::NAME, $this->type->getBlockPrefix());

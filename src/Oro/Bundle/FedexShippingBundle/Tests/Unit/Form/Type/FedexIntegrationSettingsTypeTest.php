@@ -62,10 +62,9 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
-                    LocalizedFallbackValueCollectionType::class =>
-                        new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
+                    new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     EntityType::class => $entityType,
-                    OroEncodedPlaceholderPasswordType::class => new OroEncodedPlaceholderPasswordType($crypter),
+                    new OroEncodedPlaceholderPasswordType($crypter),
                 ],
                 []
             ),

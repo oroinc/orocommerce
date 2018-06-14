@@ -430,8 +430,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                customer_note:  oro.rfp.requestadditionalnote.type.customer_note.label
-                                seller_note:  oro.rfp.requestadditionalnote.type.seller_note.label
+                                oro.rfp.requestadditionalnote.type.customer_note.label: customer_note
+                                oro.rfp.requestadditionalnote.type.seller_note.label: seller_note
                 author:
                     type:      string
                     data_name: additionalNote.author

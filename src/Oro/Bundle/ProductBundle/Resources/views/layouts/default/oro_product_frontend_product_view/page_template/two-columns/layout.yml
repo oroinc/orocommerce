@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/page_template/two-columns/layout.html.twig'
         - '@add':
             id: product_view_related_items_container
             parentId: product_view_additional_container

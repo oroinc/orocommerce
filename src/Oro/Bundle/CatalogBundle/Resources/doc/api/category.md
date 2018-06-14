@@ -12,8 +12,6 @@ Retrieve a specific category record.
 
 Retrieve a collection of category records.
 
-A list of the records to be returned can be limited by filters.
-
 {@inheritdoc}
 
 ## SUBRESOURCES

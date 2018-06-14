@@ -77,7 +77,7 @@ class ProductAttributePriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductAttributePriceType::class,
+                'entry_type' => ProductAttributePriceType::class,
             ]
         );
     }

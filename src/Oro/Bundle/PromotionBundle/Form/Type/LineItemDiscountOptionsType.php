@@ -96,7 +96,7 @@ class LineItemDiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::APPLY_TO_FIELD_CHOICES as $item) {
-            $choices[$item] = 'oro.discount_options.line_item_type.apply_to.choices.' . $item;
+            $choices['oro.discount_options.line_item_type.apply_to.choices.' . $item] = $item;
         }
 
         return $choices;

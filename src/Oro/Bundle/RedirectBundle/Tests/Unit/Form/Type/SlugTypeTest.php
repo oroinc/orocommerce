@@ -29,11 +29,6 @@ class SlugTypeTest extends FormIntegrationTestCase
         $this->formType = new SlugType($this->slugifyFormHelper);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SlugType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SlugType::NAME, $this->formType->getBlockPrefix());

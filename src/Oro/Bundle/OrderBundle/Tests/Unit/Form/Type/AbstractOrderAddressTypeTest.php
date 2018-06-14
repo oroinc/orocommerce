@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
@@ -44,6 +45,11 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->addressFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(function (AbstractAddress $item) {
+                return $item->__toString();
+            });
 
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
@@ -87,8 +93,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $this->formType->configureOptions($resolver);
     }
-
-    abstract public function testGetName();
 
     abstract public function testGetParent();
 

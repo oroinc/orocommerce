@@ -26,11 +26,6 @@ class SitemapPriorityTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SitemapPriorityType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SitemapPriorityType::NAME, $this->type->getBlockPrefix());

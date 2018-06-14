@@ -62,12 +62,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 
         $options = $resolver->resolve([]);
         $this->assertArrayHasKey('choices', $options);
-        $this->assertEquals(['name1' => 'label1', 'name2' => 'label2'], $options['choices']);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(TaxProviderType::NAME, $this->formType->getName());
+        $this->assertEquals(['label1' => 'name1', 'label2' => 'name2'], $options['choices']);
     }
 
     public function testGetParent()

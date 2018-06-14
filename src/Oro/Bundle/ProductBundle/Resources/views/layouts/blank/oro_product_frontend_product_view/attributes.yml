@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'attributes.html.twig'
+            themes: 'OroProductBundle:layouts:blank/oro_product_frontend_product_view/attributes.html.twig'
         - '@addTree':
             items:
                 product_view_attributes_rest:

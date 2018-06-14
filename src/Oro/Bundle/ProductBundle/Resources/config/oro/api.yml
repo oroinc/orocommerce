@@ -81,5 +81,6 @@ api:
             fields:
                 filePath:
                     data_type: array
+                    depends_on: [filename,mimeType]
                     form_options:
                         mapped: false

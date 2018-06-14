@@ -11,7 +11,7 @@ system_configuration:
     fields:
         oro_payment.merchant_country:
             data_type: string
-            type: oro_locale_country
+            type: Oro\Bundle\LocaleBundle\Form\Type\CountryType
             options:
                 label: oro.payment.system_configuration.fields.merchant_country.label
                 placeholder: oro.payment.system_configuration.fields.merchant_country.placeholder

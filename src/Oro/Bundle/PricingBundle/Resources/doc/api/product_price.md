@@ -4,11 +4,11 @@
 
 ### get
 
-Get details of the product price by its ID. <br />
+Retrieve a product price record.
 
 ### get_list
 
-Get the collection of ProductPrice details. A collection may contain all prices or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>. <br />
+Retrieve a collection of product price records.
 
 **Note:** It is required to provide priceList filter with request.
 
@@ -18,8 +18,6 @@ Create a new product price.
 
 {@request:json_api}
 Example:
-
-`</api/productprices>`
 
 ```JSON
 {
@@ -58,12 +56,10 @@ Example:
 
 ### update
 
-Update product price identified by ID. <br />
+Update product price record.
 
 {@request:json_api}
 Example:
-
-`</api/productprices/6390cd7b-7c1b-11e7-bda0-080027fb53ad-1>`
 
 ```JSON
 {
@@ -96,11 +92,11 @@ Example:
 
 ### delete
 
-Delete a product price identified by ID. <br />
+Delete a specific product price record.
 
 ### delete_list
 
-Delete a collection of product prices. A collection may contain all prices or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of product price records.
 
 **Note:** It is required to provide priceList filter with request.
 

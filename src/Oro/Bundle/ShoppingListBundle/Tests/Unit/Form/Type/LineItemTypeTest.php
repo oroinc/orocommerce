@@ -197,11 +197,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         $this->assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(LineItemType::NAME, $this->type->getName());
-    }
-
     /**
      * @param LineItem $lineItem
      *

@@ -55,7 +55,7 @@ class ProductFormProvider extends AbstractFormProvider
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getFormView(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
+        return $this->getFormView(QuickAddType::class, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -69,7 +69,7 @@ class ProductFormProvider extends AbstractFormProvider
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getForm(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
+        return $this->getForm(QuickAddType::class, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -79,7 +79,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
 
-        return $this->getFormView(QuickAddCopyPasteType::NAME, null, $options);
+        return $this->getFormView(QuickAddCopyPasteType::class, null, $options);
     }
 
     /**
@@ -89,7 +89,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
 
-        return $this->getForm(QuickAddCopyPasteType::NAME, null, $options);
+        return $this->getForm(QuickAddCopyPasteType::class, null, $options);
     }
 
     /**
@@ -99,7 +99,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
 
-        return $this->getFormView(QuickAddImportFromFileType::NAME, null, $options);
+        return $this->getFormView(QuickAddImportFromFileType::class, null, $options);
     }
 
     /**
@@ -109,7 +109,7 @@ class ProductFormProvider extends AbstractFormProvider
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
 
-        return $this->getForm(QuickAddImportFromFileType::NAME, null, $options);
+        return $this->getForm(QuickAddImportFromFileType::class, null, $options);
     }
 
     /**
@@ -129,7 +129,7 @@ class ProductFormProvider extends AbstractFormProvider
             $cacheKeyOptions['id'] = $product->getId();
         }
 
-        return $this->getFormView(FrontendLineItemType::NAME, $lineItem, [], $cacheKeyOptions);
+        return $this->getFormView(FrontendLineItemType::class, $lineItem, [], $cacheKeyOptions);
     }
 
     /**
@@ -141,7 +141,7 @@ class ProductFormProvider extends AbstractFormProvider
         $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options, ['parentProduct' => $product->getId()]);
+        return $this->getForm(FrontendVariantFiledType::class, $data, $options, ['parentProduct' => $product->getId()]);
     }
 
     /**
@@ -154,7 +154,7 @@ class ProductFormProvider extends AbstractFormProvider
         $options = $this->getVariantFieldsFormOptions($product);
 
         return $this->getFormView(
-            FrontendVariantFiledType::NAME,
+            FrontendVariantFiledType::class,
             $data,
             $options,
             ['parentProduct' => $product->getId()]

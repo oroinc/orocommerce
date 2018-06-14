@@ -60,11 +60,6 @@ class BrandTypeTest extends WebTestCase
         unset($this->type);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(BrandType::NAME, $this->type->getName());
-    }
-
     public function testBuildForm()
     {
         /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */

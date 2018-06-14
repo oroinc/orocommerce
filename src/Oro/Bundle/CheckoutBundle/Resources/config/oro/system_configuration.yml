@@ -23,23 +23,23 @@ system_configuration:
     fields:
         oro_checkout.frontend_open_orders_separate_page:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             priority: 10
             options:
                 label: oro.checkout.system_configuration.fields.frontend_open_orders_separate_page.title
                 choices:
-                     - No
-                     - Yes
+                     No: 0
+                     Yes: 1
         oro_checkout.guest_checkout:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 10
             options:
                 label: oro.checkout.system_configuration.fields.guest_checkout.title
                 tooltip: oro.checkout.system_configuration.fields.guest_checkout.tooltip
         oro_checkout.registration_allowed:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 20
             options:
                 label: oro.checkout.system_configuration.fields.registration_allowed.title
@@ -47,7 +47,7 @@ system_configuration:
         oro_checkout.default_guest_checkout_owner:
             ui_only: true
             data_type: string
-            type: oro_user_select
+            type: Oro\Bundle\UserBundle\Form\Type\UserSelectType
             priority: 30
             options:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
@@ -56,7 +56,7 @@ system_configuration:
 
         oro_checkout.allow_checkout_without_email_confirmation:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 15
             options:
                 label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.title

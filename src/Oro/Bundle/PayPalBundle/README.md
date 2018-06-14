@@ -27,4 +27,4 @@ framework:
 
 You may also need to change the IP address of the trusted proxy if it's different from `127.0.0.1`. You have to clear the cache to apply the settings in this file.
 
-You can also make this setting in the standard Symfony way - in the `app/config/config_{dev|test}.yml`.
+You can also make this setting in the standard Symfony way - in the `config/config_{dev|test}.yml`.

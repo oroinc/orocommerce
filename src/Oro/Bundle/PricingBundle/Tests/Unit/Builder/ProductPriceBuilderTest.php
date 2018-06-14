@@ -183,6 +183,14 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->productPriceBuilder->buildByPriceListWithoutTriggers($priceList);
     }
 
+    public function testFlush()
+    {
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('sendScheduledTriggers');
+
+        $this->productPriceBuilder->flush();
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
      */

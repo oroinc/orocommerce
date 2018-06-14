@@ -34,10 +34,12 @@ class TaxProviderType extends AbstractType
         $choices = [];
 
         foreach ($choicesRaw as $choiceRaw) {
-            $choices[$choiceRaw->getName()] = $choiceRaw->getLabel();
+            $choices[$choiceRaw->getLabel()] = $choiceRaw->getName();
         }
 
-        $resolver->setDefaults(['choices' => $choices]);
+        $resolver->setDefaults([
+            'choices' => $choices,
+        ]);
     }
 
     /**

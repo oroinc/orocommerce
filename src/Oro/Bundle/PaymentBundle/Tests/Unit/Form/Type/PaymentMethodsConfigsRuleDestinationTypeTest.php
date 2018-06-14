@@ -5,19 +5,12 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
@@ -157,22 +150,12 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
      */
     public function getExtensions()
     {
-        $translatableEntity = $this->getTranslatableEntity();
-
-        return [
-            new PreloadedExtension(
-                [
-                    $this->formType,
-                    CountryType::class => new CountryType(),
-                    TranslatableEntityType::class => $translatableEntity,
-                    RegionType::class => new RegionType(),
-                ],
-                [FormType::class => [
-                    new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
-                ]]
-            ),
-            $this->getValidatorExtension(true)
-        ];
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension([$this->formType], []),
+                $this->getValidatorExtension(true)
+            ]
+        );
     }
 }

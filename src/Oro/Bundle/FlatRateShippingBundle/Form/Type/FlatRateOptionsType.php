@@ -53,10 +53,10 @@ class FlatRateOptionsType extends AbstractType
             ], $priceOptions))
             ->add(FlatRateMethodType::TYPE_OPTION, ChoiceType::class, [
                 'choices' => [
-                    FlatRateMethodType::PER_ITEM_TYPE
-                    => 'oro.flat_rate.method.processing_type.per_item.label',
-                    FlatRateMethodType::PER_ORDER_TYPE
-                    => 'oro.flat_rate.method.processing_type.per_order.label',
+                    'oro.flat_rate.method.processing_type.per_item.label'
+                        => FlatRateMethodType::PER_ITEM_TYPE,
+                    'oro.flat_rate.method.processing_type.per_order.label'
+                        => FlatRateMethodType::PER_ORDER_TYPE,
                 ],
                 'label' => 'oro.flat_rate.method.processing_type.label',
             ]);

@@ -19,11 +19,6 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new PaymentTermSelectType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PaymentTermSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
@@ -40,7 +35,7 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
-                        $this->assertEquals('oro_payment_term', $options['autocomplete_alias']);
+                        $this->assertEquals(PaymentTermType::class, $options['autocomplete_alias']);
                         $this->assertEquals('oro_payment_term_create', $options['create_form_route']);
                         $this->assertEquals(
                             ['placeholder' => 'oro.paymentterm.form.choose', 'allowClear' => true],

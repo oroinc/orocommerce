@@ -32,16 +32,15 @@ class ContactInfoUserAvailableOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $choices = $this->optionsProvider->getOptions();
         $resolver->setDefaults([
-            'choices' => array_flip($this->optionsProvider->getOptions()),
+            'choices' => array_combine($choices, $choices),
             'multiple' => true,
         ]);
 
         $resolver->setNormalizer('choice_label', function () {
             return function ($optionValue) {
-                $label = sprintf('oro.sale.available_user_options.type.%s.label', $optionValue);
-
-                return $label;
+                return sprintf('oro.sale.available_user_options.type.%s.label', $optionValue);
             };
         });
     }

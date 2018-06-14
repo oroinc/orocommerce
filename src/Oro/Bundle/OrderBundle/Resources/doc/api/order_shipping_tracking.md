@@ -12,8 +12,6 @@ Retrieve a specific order shipping tracking record.
 
 Retrieve a collection of order shipping tracking records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/ordershippingtrackings>`
 
 ```JSON
 {
@@ -61,8 +57,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/ordershippingtrackings/1>`
-
 ```JSON
 {
   "data": {
@@ -94,8 +88,6 @@ Delete a specific order shipping tracking record.
 ### delete_list
 
 Delete a collection of order shipping tracking records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -160,8 +152,6 @@ Replace shipping tracking assigned to a specific order record
 
 {@request:json_api}
 Example:
-
-`</admin/api/ordershippingtrackings/1/relationships/order>`
 
 ```JSON
 {

@@ -18,8 +18,8 @@ class ProductStatusProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAvailableProductStatus()
     {
         $expected = [
-            Product::STATUS_DISABLED => 'oro.product.status.disabled',
-            Product::STATUS_ENABLED => 'oro.product.status.enabled'
+            'oro.product.status.disabled' => Product::STATUS_DISABLED,
+            'oro.product.status.enabled' => Product::STATUS_ENABLED,
         ];
 
         $this->assertEquals($expected, $this->productStatusProvider->getAvailableProductStatuses());

@@ -43,7 +43,9 @@ class PriceListStrategySelectType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('choices', $this->getChoices());
+        $resolver->setDefaults([
+            'choices' => $this->getChoices(),
+        ]);
     }
 
     /**
@@ -78,7 +80,7 @@ class PriceListStrategySelectType extends AbstractType
         $choices = [];
 
         foreach ($this->getStrategies() as $strategy => $value) {
-            $choices[$strategy] = $this->translator->trans(self::ALIAS.$strategy);
+            $choices[$this->translator->trans(self::ALIAS.$strategy)] = $strategy;
         }
 
         return $choices;

@@ -46,6 +46,6 @@ class PriceListFilter extends SingleChoiceFilter
      */
     protected function getFormType()
     {
-        return DefaultPriceListFilterType::NAME;
+        return DefaultPriceListFilterType::class;
     }
 }

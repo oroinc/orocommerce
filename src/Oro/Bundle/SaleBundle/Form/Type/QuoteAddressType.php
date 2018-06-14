@@ -90,7 +90,7 @@ class QuoteAddressType extends AbstractType
                 if ($isManualEditGranted) {
                     $customerAddressOptions['choices'] = array_merge(
                         $customerAddressOptions['choices'],
-                        ['oro.sale.quote.form.address.manual']
+                        ['oro.sale.quote.form.address.manual' => 0]
                     );
                     $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
                 }
@@ -212,16 +212,17 @@ class QuoteAddressType extends AbstractType
      */
     protected function getChoices(array $addresses = [])
     {
-        array_walk_recursive(
-            $addresses,
-            function (&$item) {
-                if ($item instanceof AbstractAddress) {
-                    $item = $this->addressFormatter->format($item, null, ', ');
+        foreach ($addresses as $group => $groupAddresses) {
+            array_walk(
+                $groupAddresses,
+                function (&$item) {
+                    if ($item instanceof AbstractAddress) {
+                        $item = $this->addressFormatter->format($item, null, ', ');
+                    }
                 }
-
-                return $item;
-            }
-        );
+            );
+            $addresses[$group] = array_flip($groupAddresses);
+        }
 
         return $addresses;
     }

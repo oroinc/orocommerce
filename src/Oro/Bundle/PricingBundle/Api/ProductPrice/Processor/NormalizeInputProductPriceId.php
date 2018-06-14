@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Transforms id from request in 'guid-priceListId' format back to 'guid'
- * and save 'priceListId' to the Context.
+ * and save 'priceListId' to the context.
  */
 class NormalizeInputProductPriceId implements ProcessorInterface
 {

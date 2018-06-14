@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroRFPBundle:layouts:default/imports/oro_rfp_request_grid/layout.html.twig'
 
         - '@setOption':
             id: __datagrid

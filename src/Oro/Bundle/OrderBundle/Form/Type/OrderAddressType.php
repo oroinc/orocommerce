@@ -40,7 +40,7 @@ class OrderAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $customerAddressOptions['choices'] = array_merge(
                     $customerAddressOptions['choices'],
-                    ['oro.order.form.address.manual']
+                    ['oro.order.form.address.manual' => 0]
                 );
                 $customerAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }

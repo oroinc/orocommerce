@@ -291,11 +291,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitSelectionType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(EntityType::class, $this->formType->getParent());
@@ -599,7 +594,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                             $this->assertTrue($options['choices_updated']);
 
                             $this->assertArrayHasKey('choices', $options);
-                            $this->assertEquals([$productUnit], $options['choices']);
+                            $this->assertEquals([$productUnit->getCode() => 0], $options['choices']);
 
                             return true;
                         }

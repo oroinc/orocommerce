@@ -9,12 +9,14 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroProductBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroCheckoutBundle::FeatureContext
         - OroApplicationBundle::CommerceMainContext
         - OroUIBundle::TypeaheadContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroEmailBundle::EmailContext
+        - OroCustomerBundle::ACLContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -100,6 +102,10 @@ oro_behat_extension:
           Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
           Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
+          Pricing Precision System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
+          Pricing Precision: 'pricing[oro_pricing___precision][value]'
+          Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
+          Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'
@@ -112,6 +118,13 @@ oro_behat_extension:
           Quantity: 'oro_action_operation[price][quantity]'
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
+
+    Order Review Form:
+      selector: '[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          PO Number: 'oro_workflow_transition[po_number]'
 
     Price list Product prices Grid:
       selector: 'div[data-page-component-name="price-list-product-prices-grid"]'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\DateTimeExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
@@ -14,6 +15,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -38,7 +40,7 @@ class CouponTypeTest extends FormIntegrationTestCase
             ],
             PromotionSelectType::NAME,
             [
-                'autocomplete_alias' => 'oro_promotion',
+                'autocomplete_alias' => PromotionType::class,
                 'grid_name' => 'promotion-for-coupons-select-grid',
             ]
         );
@@ -53,6 +55,9 @@ class CouponTypeTest extends FormIntegrationTestCase
                     FormType::class => [
                         new TooltipFormExtension($configProvider, $translator),
                     ],
+                    DateTimeType::class => [
+                        new DateTimeExtension()
+                    ]
                 ]
             ),
         ];

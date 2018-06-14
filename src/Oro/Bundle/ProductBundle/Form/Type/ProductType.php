@@ -185,13 +185,13 @@ class ProductType extends AbstractType
             )
             ->add('featured', ChoiceType::class, [
                 'label' => 'oro.product.featured.label',
-                'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
+                'choices' => ['oro.product.featured.no' => 0, 'oro.product.featured.yes' => 1],
                 'placeholder' => false,
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',
-                'choices' => ['oro.product.new_arrival.no', 'oro.product.new_arrival.yes'],
+                'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
                 'placeholder' => false,
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])

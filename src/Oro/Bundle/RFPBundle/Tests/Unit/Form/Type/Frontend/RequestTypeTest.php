@@ -64,14 +64,6 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        static::assertEquals(RequestType::NAME, $this->formType->getName());
-    }
-
-    /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */

@@ -2,51 +2,31 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListTriggerFactory
 {
-    const PRICE_LIST = 'priceList';
     const PRODUCT = 'product';
 
     /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array|int[] $productIds
+     * @param array $products
      * @return PriceListTrigger
      */
-    public function create(PriceList $priceList, array $productIds = [])
+    public function create(array $products)
     {
-        return new PriceListTrigger($priceList, $productIds);
+        return new PriceListTrigger($products);
     }
 
     /**
-     * @param int $priceListId
-     * @param array|int[] $productIds
+     * @param array $products
      * @return array
      */
-    public function createFromIds($priceListId, array $productIds)
+    public function createFromIds(array $products)
     {
-        return [
-            self::PRICE_LIST => $priceListId,
-            self::PRODUCT => $this->getProductIds($productIds)
-        ];
+        return [self::PRODUCT => array_map([$this, 'getProductIds'], $products)];
     }
 
     /**
@@ -55,10 +35,7 @@ class PriceListTriggerFactory
      */
     public function triggerToArray(PriceListTrigger $trigger)
     {
-        return [
-            self::PRICE_LIST => $trigger->getPriceList()->getId(),
-            self::PRODUCT => $this->getProductIds($trigger->getProducts())
-        ];
+        return $this->createFromIds($trigger->getProducts());
     }
 
     /**
@@ -71,34 +48,29 @@ class PriceListTriggerFactory
             throw new InvalidArgumentException('Message should not be empty.');
         }
 
-        $priceList = $this->getPriceList($data);
-        if (!$priceList) {
-            throw new InvalidArgumentException('Price List is required.');
-        }
+        $resolver = $this->getOptionResolver();
+        $data = $resolver->resolve($data);
 
-        return $this->create($priceList, $this->getProducts($data));
+        return $this->create(array_map([$this, 'getProductIds'], $this->getProducts($data)));
     }
 
     /**
-     * @param array $data
-     * @return null|PriceList
+     * @return OptionsResolver
      */
-    protected function getPriceList(array $data)
+    private function getOptionResolver()
     {
-        if (empty($data[self::PRICE_LIST])) {
-            return null;
-        }
+        $resolver = new OptionsResolver();
+        $resolver->setRequired([self::PRODUCT]);
+        $resolver->setAllowedTypes(self::PRODUCT, ['array']);
 
-        return $this->registry
-            ->getManagerForClass(PriceList::class)
-            ->find(PriceList::class, $data[self::PRICE_LIST]);
+        return $resolver;
     }
 
     /**
      * @param array $data
      * @return array|int[]
      */
-    protected function getProducts(array $data)
+    private function getProducts(array $data)
     {
         return $this->getProductIds($data[self::PRODUCT] ?? []);
     }

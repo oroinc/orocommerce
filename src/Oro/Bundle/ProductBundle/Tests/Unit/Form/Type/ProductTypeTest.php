@@ -12,7 +12,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -25,15 +24,11 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
@@ -223,10 +218,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EnumSelectType::class => $stubEnumSelectType,
                     ImageType::class => new ImageTypeStub(),
-                    OroCollectionType::class => new OroCollectionType(),
                     ProductPrimaryUnitPrecisionType::class => $productPrimaryUnitPrecision,
                     ProductUnitPrecisionType::class => $productUnitPrecision,
-                    ProductUnitPrecisionCollectionType::class => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => $entityType,
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
@@ -234,12 +227,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                         $variantFieldProvider
                     ),
                     EntityIdentifierType::class => new StubEntityIdentifierType([]),
-                    ProductVariantLinksType::class => new ProductVariantLinksType(),
                     ProductStatusType::class => new ProductStatusType(new ProductStatusProvider()),
                     ProductImageCollectionType::class => new ProductImageCollectionType($imageTypeProvider),
-                    ProductImageType::class => new ProductImageType(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    ProductVariantFieldType::class => new ProductVariantFieldType(),
                     EntityFieldFallbackValueType::class => new EntityFieldFallbackValueType($entityFallbackResolver),
                     PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
                     LocalizedSlugWithRedirectType::class
@@ -484,11 +474,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('primaryUnitPrecision'));
         $this->assertTrue($form->has('additionalUnitPrecisions'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product', $this->type->getName());
     }
 
     /**

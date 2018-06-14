@@ -5,7 +5,7 @@ layout:
             root: product_view_variant_field_container
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroProductBundle:layouts:blank/oro_product_frontend_product_view/layout.html.twig'
         - '@setOption':
             id: title
             optionName: params

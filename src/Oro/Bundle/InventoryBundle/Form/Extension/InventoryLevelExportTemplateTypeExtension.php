@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Form\Extension;
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
@@ -43,10 +44,10 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
         $builder->remove('processorAlias');
         $builder->add(
             'processorAlias',
-            'choice',
+            ChoiceType::class,
             [
                 'label' => 'oro.inventory.export.popup.options.label',
-                'choices' => $processorAliases,
+                'choices' => array_flip($processorAliases),
                 'required' => true,
                 'placeholder' => false,
                 'expanded' => true,

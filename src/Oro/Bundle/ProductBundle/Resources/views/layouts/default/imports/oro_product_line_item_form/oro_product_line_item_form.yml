@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_line_item_form.html.twig'
+            themes: 'OroProductBundle:layouts:default/imports/oro_product_line_item_form/oro_product_line_item_form.html.twig'
