@@ -33,7 +33,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -108,7 +108,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
-        $table->addColumn('completed_data', 'json_array');
+        $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');

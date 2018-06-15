@@ -201,6 +201,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
@@ -235,7 +238,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithoutResponse()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $productRows = [
             $this->createProductRow('111', 123, 'kg'),
@@ -263,6 +269,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $mainForm->expects($this->once())
             ->method('handleRequest')
             ->with($request);
+        $mainForm->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -295,7 +304,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform',
                 ],
                 $request
             );
@@ -311,7 +321,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithResponse()
     {
         $request = Request::create('/post/valid-with-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $response = new RedirectResponse('/processor-redirect');
 
@@ -342,6 +355,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())
             ->method('handleRequest')
             ->with($request);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -374,7 +390,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform'
                 ],
                 $request
             )
@@ -400,6 +417,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -442,6 +462,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($form);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
         $form->expects($this->never())
@@ -463,6 +486,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -503,6 +529,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);

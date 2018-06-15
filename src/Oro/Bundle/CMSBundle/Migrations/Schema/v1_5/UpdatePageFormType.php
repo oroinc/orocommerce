@@ -21,7 +21,8 @@ class UpdatePageFormType implements Migration
                 Page::class,
                 'form',
                 'form_type',
-                PageSelectType::class
+                PageSelectType::class,
+                'oro_cms_page_select'
             )
         );
     }

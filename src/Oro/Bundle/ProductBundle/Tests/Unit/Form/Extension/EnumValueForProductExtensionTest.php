@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -169,7 +168,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->prepareForm();
 
-        $configId = new FieldConfigId('testScope', Product::class, 'enumFieldName');
+        $configId = new FieldConfigId('testScope', Product::class, 'enumFieldName', 'enum');
 
         $this->configInterface->expects($this->once())
             ->method('getOption')
@@ -182,12 +181,11 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findByAttributeValue')
+            ->method('findParentSkusByAttributeValue')
             ->with(
                 Product::TYPE_SIMPLE,
                 'enumFieldName',
-                1,
-                false
+                1
             )
             ->willReturn([]);
 
@@ -209,18 +207,55 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
     }
 
-    /**
-     * @dataProvider buildViewProvider
-     * @param array $products
-     * @param $expectedSkuList
-     */
-    public function testBuildView(array $products, $expectedSkuList)
+    public function testBuildViewWhenFieldTypeNotEnum()
     {
         $view = new FormView();
 
         $this->prepareForm();
 
-        $configId = new FieldConfigId('testScope', Product::class, self::ENUM_FIELD_NAME);
+        $configId = new FieldConfigId('testScope', Product::class, 'enumFieldName', 'boolean');
+
+        $this->configInterface->expects($this->once())
+            ->method('getOption')
+            ->with('config_id')
+            ->willReturn($configId);
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepositoryForClass');
+
+        $this->productRepository->expects($this->never())
+            ->method('findParentSkusByAttributeValue');
+
+        $attributeConfigProvider = $this->getAttributeProvider();
+        $attributeConfig = $this->createMock(ConfigInterface::class);
+
+        $attributeConfig->expects($this->once())
+            ->method('is')
+            ->with('is_attribute')
+            ->willReturn(true);
+
+        $attributeConfigProvider->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($attributeConfig);
+
+        $this->extension->buildView($view, $this->form, []);
+
+        $this->assertArrayNotHasKey('tooltip', $view->vars);
+        $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
+    }
+
+    /**
+     * @dataProvider buildViewProvider
+     * @param array $skus
+     * @param $expectedTooltip
+     */
+    public function testBuildView(array $skus, $expectedTooltip)
+    {
+        $view = new FormView();
+
+        $this->prepareForm();
+
+        $configId = new FieldConfigId('testScope', Product::class, self::ENUM_FIELD_NAME, 'enum');
         $this->configInterface->expects($this->once())
             ->method('getOption')
             ->with('config_id')
@@ -232,14 +267,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findByAttributeValue')
+            ->method('findParentSkusByAttributeValue')
             ->with(
                 Product::TYPE_SIMPLE,
                 self::ENUM_FIELD_NAME,
-                1,
-                false
+                1
             )
-            ->willReturn($products);
+            ->willReturn($skus);
 
         $attributeConfigProvider = $this->getAttributeProvider();
         $attributeConfig = $this->createMock(ConfigInterface::class);
@@ -259,7 +293,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('tooltip_parameters', $view->vars);
         $this->assertEquals(
             [
-                '%skuList%' => $expectedSkuList
+                '%skuList%' => $expectedTooltip
             ],
             $view->vars['tooltip_parameters']
         );
@@ -289,62 +323,32 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function buildViewProvider()
     {
-        $product = $this->prepareProduct('sku1', [self::ENUM_FIELD_NAME, 'test']);
-        $product2 = $this->prepareProduct('sku2', [self::ENUM_FIELD_NAME]);
-        $product3 = $this->prepareProduct('sku3', [self::ENUM_FIELD_NAME, 'field']);
-        $product4 = $this->prepareProduct('sku4', [self::ENUM_FIELD_NAME, 'fieldName']);
-        $product5 = $this->prepareProduct('sku5', [self::ENUM_FIELD_NAME, 'otherField']);
-        $product6 = $this->prepareProduct('sku6', [self::ENUM_FIELD_NAME]);
-        $product7 = $this->prepareProduct('sku7', [self::ENUM_FIELD_NAME]);
-        $product8 = $this->prepareProduct('sku8', [self::ENUM_FIELD_NAME, 'field']);
-        $product9 = $this->prepareProduct('sku9', [self::ENUM_FIELD_NAME]);
-        $product10 = $this->prepareProduct('sku10', [self::ENUM_FIELD_NAME, 'fieldName']);
-        $product11 = $this->prepareProduct('sku11', ['field']);
-        $product12 = $this->prepareProduct('sku12', [self::ENUM_FIELD_NAME]);
-
         return [
-            'with 3 config product sku' => [
-                'products' => [$product, $product2, $product3],
-                'expectedSkuList' => 'sku1, sku2, sku3'
-            ],
-            'with 3 config product sku, repository return 4' => [
-                'products' => [$product, $product2, $product3, $product11],
-                'expectedSkuList' => 'sku1, sku2, sku3'
-            ],
-            'with 11 config product sku' => [
+            '3 config products sku' => [
                 'products' => [
-                    $product, $product2, $product3, $product4, $product5,
-                    $product6, $product7, $product8, $product9, $product10, $product12
+                    'sku1' => 'sku1',
+                    'sku2' => 'sku2',
+                    'sku3' => 'sku3',
                 ],
-                'expectedSkuList' => 'sku1, sku2, sku3, sku4, sku5, sku6, sku7, sku8, sku9, sku10 ...',
+                'expectedTooltip' => 'sku1, sku2, sku3'
             ],
-            'with 1 config product sku' => [
-                'products' => [$product11, $product],
-                'expectedSkuList' => 'sku1',
-            ]
+            '11 config products sku' => [
+                'products' => [
+                    'sku1' => 'sku1',
+                    'sku2' => 'sku2',
+                    'sku3' => 'sku3',
+                    'sku4' => 'sku4',
+                    'sku5' => 'sku5',
+                    'sku6' => 'sku6',
+                    'sku7' => 'sku7',
+                    'sku8' => 'sku8',
+                    'sku9' => 'sku9',
+                    'sku10' => 'sku10',
+                    'sku12' => 'sku12',
+                ],
+                'expectedTooltip' => 'sku1, sku2, sku3, sku4, sku5, sku6, sku7, sku8, sku9, sku10 ...',
+            ],
         ];
-    }
-
-    /**
-     * @param string $sku
-     * @param array $variantFields
-     * @return Product
-     */
-    private function prepareProduct($sku, array $variantFields)
-    {
-        $product = new Product();
-
-        $parentProduct = $this->getEntity(
-            Product::class,
-            [
-                'sku' => $sku,
-                'variantFields' => $variantFields
-            ]
-        );
-
-        $product->addParentVariantLink(new ProductVariantLink($parentProduct, $product));
-
-        return $product;
     }
 
     private function prepareForm()

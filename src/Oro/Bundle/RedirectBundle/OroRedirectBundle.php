@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle;
 
 use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\ContextUrlProviderCompilerPass;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\RoutingInformationProviderCompilerPass;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\SecurityFirewallCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -16,5 +17,6 @@ class OroRedirectBundle extends Bundle
     {
         $container->addCompilerPass(new RoutingInformationProviderCompilerPass());
         $container->addCompilerPass(new ContextUrlProviderCompilerPass());
+        $container->addCompilerPass(new SecurityFirewallCompilerPass());
     }
 }

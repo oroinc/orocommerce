@@ -27,8 +27,6 @@ system_configuration:
             priority: 10
             options:
                 label: oro.checkout.system_configuration.fields.frontend_open_orders_separate_page.title
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                      No: 0
                      Yes: 1
@@ -41,7 +39,7 @@ system_configuration:
                 tooltip: oro.checkout.system_configuration.fields.guest_checkout.tooltip
         oro_checkout.registration_allowed:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 20
             options:
                 label: oro.checkout.system_configuration.fields.registration_allowed.title
@@ -58,7 +56,7 @@ system_configuration:
 
         oro_checkout.allow_checkout_without_email_confirmation:
             data_type: boolean
-            type: oro_config_checkbox
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             priority: 15
             options:
                 label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.title

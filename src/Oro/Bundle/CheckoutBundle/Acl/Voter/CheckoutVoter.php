@@ -26,9 +26,8 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
 
     /**
      * {@inheritdoc}
-     * TODO: change public to protected in scope of BAP-15236
      */
-    public function supportsClass($class)
+    protected function supportsClass($class)
     {
         return is_a($class, CheckoutSourceEntityInterface::class, true);
     }

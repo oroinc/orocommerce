@@ -23,7 +23,8 @@ class UpdateEntitiesFormTypes implements Migration
                 Brand::class,
                 'form',
                 'form_type',
-                BrandSelectType::class
+                BrandSelectType::class,
+                'oro_product_brand_select'
             )
         );
 
@@ -32,7 +33,8 @@ class UpdateEntitiesFormTypes implements Migration
                 Product::class,
                 'form',
                 'form_type',
-                ProductSelectType::class
+                ProductSelectType::class,
+                'oro_product_select'
             )
         );
     }

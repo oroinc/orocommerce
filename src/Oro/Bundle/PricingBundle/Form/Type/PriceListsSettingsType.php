@@ -48,8 +48,6 @@ class PriceListsSettingsType extends AbstractType
             [
                 'label' => 'oro.pricing.fallback.label',
                 'mapped' => true,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => $options[self::FALLBACK_CHOICES],
             ]
         )

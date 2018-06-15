@@ -4,13 +4,13 @@
 
 ### get
 
-Get a price rule by ID.
+Retrieve a specific price rule record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of price rule records.
 
 {@inheritdoc}
 
@@ -29,8 +29,6 @@ The plain and regular expression fields are mutually exclusive. Do not leave bot
 
 {@request:json_api}
 Example:
-
-`</api/pricerules>`
 
 ```JSON
 {
@@ -61,7 +59,7 @@ Example:
 
 ### update
 
-Update a price rule identified by ID. 
+Edit a specific price rule record.
 
 Information about the currency, quantity, and product unit is required for price rule creation. 
 Currency, quantity, and product unit may be defined either by the value or via regular expression the value matches.
@@ -78,8 +76,6 @@ To modify the relationship with the price list, delete the incorrect price rule 
 
 {@request:json_api}
 Example:
-
-`</api/pricerules/1>`
 
 ```JSON
 {
@@ -105,13 +101,13 @@ Example:
 
 ### delete
 
-Delete a price rule identified by ID.
+Delete a specific price rule record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price rule records.
 
 {@inheritdoc}
 

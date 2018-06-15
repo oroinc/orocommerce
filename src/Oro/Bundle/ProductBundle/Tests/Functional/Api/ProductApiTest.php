@@ -257,11 +257,18 @@ class ProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
-                'source' => ['pointer' => '/included/1/relationships/unit/data']
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/primaryUnitPrecision/data']
+                ],
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'This value is not valid.',
+                    'source' => ['pointer' => '/included/1/relationships/unit/data']
+                ]
             ],
             $response
         );
@@ -364,11 +371,18 @@ class ProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'Unit precision "liter" already exists for this product.',
-                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'Unit precision "liter" already exists for this product.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ],
+                [
+                    'title' => 'unique entity constraint',
+                    'detail' => 'This value is already used.',
+                    'source' => ['pointer' => '/included/0/relationships/product/data']
+                ]
             ],
             $response
         );

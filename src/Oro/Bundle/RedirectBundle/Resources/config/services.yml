@@ -43,15 +43,11 @@ services:
             - '%oro_catalog.entity.category.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_redirect.security.firewall_factory:
-        class: Oro\Bundle\RedirectBundle\Security\FirewallFactory
-
-    security.firewall:
+    oro_redirect.security.firewall:
         class: Oro\Bundle\RedirectBundle\Security\Firewall
         arguments:
             - "@security.firewall.map"
             - "@event_dispatcher"
-            - "@oro_redirect.security.firewall_factory"
             - "@oro_redirect.routing.matched_url_decision_maker"
             - "@router.request_context"
         tags:

@@ -3,12 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -50,11 +51,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $logger;
 
     /**
-     * @var CombinedPriceListRepository
-     */
-    protected $combinedPriceListRepository;
-
-    /**
      * @var DatabaseExceptionHelper
      */
     protected $databaseExceptionHelper;
@@ -91,17 +87,25 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CombinedPriceList::class);
         $em->beginTransaction();
-        
+
         try {
             $this->triggerHandler->startCollect();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
-            $repository = $this->getCombinedPriceListRepository();
-            $iterator = $repository->getCombinedPriceListsByPriceList(
-                $trigger->getPriceList(),
-                true
-            );
-            $this->combinedPriceListsBuilderFacade->rebuild($iterator, $trigger->getProducts());
+
+            /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
+            $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+            $allProducts = $trigger->getProducts();
+
+            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+            foreach ($cpls as $cpl) {
+                $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
+
+                $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
+
+                $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
+            }
+
             $this->combinedPriceListsBuilderFacade->dispatchEvents();
             $em->commit();
             $this->triggerHandler->commit();
@@ -119,7 +123,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;
@@ -130,17 +135,12 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
-     * @return CombinedPriceListRepository
+     * @param string $className
+     * @return ObjectRepository
      */
-    protected function getCombinedPriceListRepository()
+    private function getRepository($className)
     {
-        if (!$this->combinedPriceListRepository) {
-            $this->combinedPriceListRepository = $this->registry
-                ->getManagerForClass(CombinedPriceList::class)
-                ->getRepository(CombinedPriceList::class);
-        }
-
-        return $this->combinedPriceListRepository;
+        return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 
     /**

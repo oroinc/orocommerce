@@ -29,6 +29,8 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 LoadWebCatalogCategoryVariantsData::class
             ]
         );
+
+        $this->getContainer()->get('oro_website_search.indexer')->reindex();
     }
 
     /**

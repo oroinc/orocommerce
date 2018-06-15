@@ -33,7 +33,7 @@ workflows:
                 transition_definition: start_checkout_as_guest_system_definition
 
             start_from_quickorderform:
-                step_to: enter_credentials_step
+                step_to: enter_billing_address
 
             finish_checkout:
                 step_to: order_created

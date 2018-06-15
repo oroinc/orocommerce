@@ -185,16 +185,12 @@ class ProductType extends AbstractType
             )
             ->add('featured', ChoiceType::class, [
                 'label' => 'oro.product.featured.label',
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => ['oro.product.featured.no' => 0, 'oro.product.featured.yes' => 1],
                 'placeholder' => false,
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
                 'placeholder' => false,
             ])

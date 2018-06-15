@@ -189,6 +189,8 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.indexer.input_validator'
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
+            - '@oro_entity.database_exception_helper'
+            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }

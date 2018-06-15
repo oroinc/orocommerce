@@ -56,11 +56,11 @@ included:
             owner:
                 data:
                     type: businessunits
-                    id: '1'
+                    id: '<toString(@business_unit->id)>'
             organization:
                 data:
                     type: organizations
-                    id: '1'
+                    id: '<toString(@organization->id)>'
             unitPrecisions:
                 data:
                     -
@@ -95,7 +95,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: liter
+                    id: '<toString(@product_unit.liter->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-1.bottle->id)>'
@@ -111,7 +111,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: bottle
+                    id: '<toString(@product_unit.bottle->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
@@ -127,4 +127,4 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: milliliter
+                    id: '<toString(@product_unit.milliliter->code)>'

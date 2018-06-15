@@ -47,13 +47,21 @@ class Firewall
     public function __construct(
         FirewallMapInterface $map,
         EventDispatcherInterface $dispatcher,
-        FirewallFactory $firewallFactory,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         RequestContext $context = null
     ) {
-        $this->baseFirewall = $firewallFactory->create($map, $dispatcher);
         $this->context = $context;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
+    }
+
+    /**
+     * Sets alternative base firewall.
+     *
+     * @param FrameworkFirewall $firewall
+     */
+    public function setFirewall(FrameworkFirewall $firewall)
+    {
+        $this->baseFirewall = $firewall;
     }
 
     /**

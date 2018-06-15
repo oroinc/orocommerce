@@ -7,16 +7,12 @@
 Retrieve a specific product unit precision record.
 
 {@inheritdoc}
-Represents product units information.
 
 ### get_list
 
 Retrieve a collection of product unit precision records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
-Represents product units information.
 
 ### create
 
@@ -25,12 +21,9 @@ Create a new product unit precision record.
 The created record is returned in the response.
 
 {@inheritdoc}
-Represents product units information.
 
 {@request:json_api}
 Example:
-
-`</admin/api/productunitprecisions>`
 
 ```JSON
 {
@@ -63,15 +56,13 @@ Example:
 ### update
 
 Edit a specific product unit precision record.
+
 The updated record is returned in the response.
 
 {@inheritdoc}
-Represents product units information.
 
 {@request:json_api}
 Example:
-
-`</admin/api/productunitprecisions/130>`
 
 ```JSON
 {
@@ -107,16 +98,12 @@ Example:
 Delete a specific product unit precision record.
 
 {@inheritdoc}
-Represents product units information.
 
 ### delete_list
 
 Delete a collection of product unit precision records.
 
-The list of records that will be deleted, could be limited by filters.
-
 {@inheritdoc}
-Represents product units information.
 
 ## FIELDS
 
@@ -179,8 +166,6 @@ Replace product record a specific product unit precision record is assigned to.
 {@request:json_api}
 Example:
 
-`</admin/api/productunitprecisions/1/relationships/product>`
-
 ```JSON
 {
   "data": {
@@ -207,8 +192,6 @@ Replace product unit assigned to a specific product unit precision record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/productunitprecisions/1/relationships/unit>`
 
 ```JSON
 {

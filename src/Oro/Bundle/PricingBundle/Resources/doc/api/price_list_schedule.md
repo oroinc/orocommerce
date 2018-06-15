@@ -4,13 +4,13 @@
 
 ### get
 
-Get a price list schedule details by the schedule ID.
+Retrieve a specific price list schedule record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of price list schedule records.
 
 {@inheritdoc}
 
@@ -23,8 +23,6 @@ periods defined by other schedules for the same price list.
 
 {@request:json_api}
 Example:
-
-`</api/pricelistschedules>`
 
 ```JSON
 {
@@ -49,7 +47,8 @@ Example:
 
 ### update
 
-Update a price list schedule identified by ID.
+Update a price list schedule record.
+
 **Notes:**
 * The period defined by the `activeAt` and `deactivateAt` values should not overlap with periods defined by other schedules for the same price list. 
 * The `priceList` value is not allowed to be updated. To modify the relationship with the price list, delete the incorrect price list schedule and create a new one including the correct price list.
@@ -59,8 +58,6 @@ Update a price list schedule identified by ID.
 {@request:json_api}
 Example:
 
-`</api/pricelistschedules/1>`
- 
 ```JSON
 {
     "data": {
@@ -76,13 +73,13 @@ Example:
 
 ### delete
 
-Delete a price list schedule identified by ID.
+Delete a specific price list schedule record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of price list schedules. A collection may contain all price list schedules or may be filtered using the standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list schedule records.
 
 {@inheritdoc}
 

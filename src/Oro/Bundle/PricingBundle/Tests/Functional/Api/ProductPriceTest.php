@@ -174,18 +174,26 @@ class ProductPriceTest extends RestJsonApiTestCase
             )
         );
 
+        $priceListId = $this->getReference('price_list_1')->getId();
+
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
+                PriceListTriggerFactory::PRODUCT => [
+                    $priceListId => [
+                        $this->getReference('product-1')->getId(),
+                    ]
+                ],
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-2')->getId()],
+                PriceListTriggerFactory::PRODUCT => [
+                    $priceListId => [
+                        $this->getReference('product-2')->getId(),
+                    ]
+                ],
             ]
         );
     }
@@ -394,13 +402,17 @@ class ProductPriceTest extends RestJsonApiTestCase
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference('price_list_1')->getId(),
-                PriceListTriggerFactory::PRODUCT => [$this->getReference('product-1')->getId()],
+                PriceListTriggerFactory::PRODUCT => [
+                    $this->getReference('price_list_1')->getId() => [
+                        $this->getReference('product-1')->getId()
+                    ]
+                ],
             ]
         );
     }
 
     /**
+     * @param string $priceListReferece
      * @return ProductPrice
      */
     private function getProductPrice($priceListReferece)
@@ -478,21 +490,28 @@ class ProductPriceTest extends RestJsonApiTestCase
         return $query->getOneOrNullResult();
     }
 
+    /**
+     * @param string $priceListReference
+     */
     private function assertMessagesSentForCreateRequest($priceListReference)
     {
         $productId = $this->getReference('product-5')->getId();
+        $priceListId = $this->getReference($priceListReference)->getId();
+
         static::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$productId],
+                PriceListTriggerFactory::PRODUCT => [
+                    $priceListId => [$productId],
+                ]
             ]
         );
         static::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $this->getReference($priceListReference)->getId(),
-                PriceListTriggerFactory::PRODUCT => [$productId],
+                PriceListTriggerFactory::PRODUCT => [
+                    $priceListId => [$productId],
+                ]
             ]
         );
     }

@@ -7,25 +7,23 @@
 {@request:json_api}
 Example:
 
-</api/productimagetypes>
-
 ```JSON
-    {
-      "data": {
-        "type": "productimagetypes",
-        "attributes": {
-          "productImageTypeType": "main"
-        },
-        "relationships": {
-          "productImage": {
-            "data": {
-              "type": "productimages",
-              "id": "1"
-            }
-          }
+{
+  "data": {
+    "type": "productimagetypes",
+    "attributes": {
+      "productImageTypeType": "main"
+    },
+    "relationships": {
+      "productImage": {
+        "data": {
+          "type": "productimages",
+          "id": "1"
         }
       }
     }
+  }
+}
 ```
 {@/request}
 
@@ -49,38 +47,36 @@ Edit a specific ProductImageType record.
 {@request:json_api}
 Example:
 
-</api/productimagetypes/1>
-
 ```JSON
-    {
-      "data": {
-        "type": "productimagetypes",
-        "id": "1",
-        "attributes": {
-          "productImageTypeType": "additional"
-        },
-        "relationships": {
-          "productImage": {
-            "data": {
-              "type": "productimages",
-              "id": "3"
-            }
-          }
-        }
-      },
-      "included": [
-        {
-          "meta": {
-            "update": true
-          },
+{
+  "data": {
+    "type": "productimagetypes",
+    "id": "1",
+    "attributes": {
+      "productImageTypeType": "additional"
+    },
+    "relationships": {
+      "productImage": {
+        "data": {
           "type": "productimages",
-          "id": "3",
-          "attributes": {
-            "updatedAt": "2017-09-07T08:14:36Z"
-          }
+          "id": "3"
         }
-      ]
+      }
     }
+  },
+  "included": [
+    {
+      "meta": {
+        "update": true
+      },
+      "type": "productimages",
+      "id": "3",
+      "attributes": {
+        "updatedAt": "2017-09-07T08:14:36Z"
+      }
+    }
+  ]
+}
 ```
 {@/request}
 
@@ -119,17 +115,14 @@ Retrieve the ID of the productImage for a specific productImageType.
 Replace the productImage for a specific productImageType.
 
 {@request:json_api}
-
 Example:
 
-</api/productimagetypes/3/relationships/productImage>
-
 ```JSON
-    {
-      "data": {
-        "type": "productimages",
-        "id": "3"
-      }
-    }
+{
+  "data": {
+    "type": "productimages",
+    "id": "3"
+  }
+}
 ```
 {@/request}

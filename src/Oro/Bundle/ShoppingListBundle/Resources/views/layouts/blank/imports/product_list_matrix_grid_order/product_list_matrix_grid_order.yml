@@ -10,7 +10,7 @@ layout:
             namespace: matrix
     actions:
         - '@setBlockTheme':
-            themes: 'product_list_matrix_grid_order.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/product_list_matrix_grid_order/product_list_matrix_grid_order.html.twig'
         - '@move':
             id: __matrix_line_item_buttons
             parentId: __matrix_totals

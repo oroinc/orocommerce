@@ -81,18 +81,11 @@ class MethodConfigSubscriber implements EventSubscriberInterface
     {
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
-        //@TODO remove in scope BAP-15236
-        unset($oldOptions['cascade_validation']);
-        //@TODO remove in scope BAP-15236
-        unset($oldOptions['options']);
         $form->add('typeConfigs', ShippingMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
             'is_grouped' => $shippingMethod->isGrouped(),
         ]));
 
         $oldOptions = $form->get('options')->getConfig()->getOptions();
-
-        //@TODO remove in scope BAP-15236
-        unset($oldOptions['cascade_validation']);
         $child = $this->factory->createNamed('options', $shippingMethod->getOptionsConfigurationFormType());
         $form->add('options', $shippingMethod->getOptionsConfigurationFormType(), array_merge($oldOptions, [
             'compound' => $child->getConfig()->getOptions()['compound']

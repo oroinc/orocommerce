@@ -21,10 +21,15 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
 
         $kernel = $this->createMock('Symfony\Component\HttpKernel\KernelInterface');
 
+        $passesBeforeBuild = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
         $bundle = new OroProductBundle($kernel);
         $bundle->build($container);
 
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
+        // Remove default passes from array
+        $passes = array_values(array_filter($passes, function ($pass) use ($passesBeforeBuild) {
+            return !in_array($pass, $passesBeforeBuild, true);
+        }));
 
         $this->assertInternalType('array', $passes);
         $this->assertCount(6, $passes);

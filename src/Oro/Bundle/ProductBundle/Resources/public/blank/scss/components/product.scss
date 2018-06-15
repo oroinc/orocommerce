@@ -1,4 +1,4 @@
-// @theme: default;
+/* @theme: default; */
 
 .product {
     &__view-details-link {
@@ -16,6 +16,10 @@
     &__select {
         width: 47%;
         display: inline-block;
+    }
+
+    &__select-label {
+        width: 82px;
     }
 
     &__select .select2-chosen {
@@ -128,6 +132,11 @@
         &-content {
             margin: 0 0 15px;
         }
+    }
+
+    &__static-unit {
+        min-width: 82px;
+        padding: 13px 12px;
     }
 }
 

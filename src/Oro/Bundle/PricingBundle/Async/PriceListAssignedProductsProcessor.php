@@ -96,14 +96,11 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $this->messenger->remove(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                PriceList::class,
-                $trigger->getPriceList()->getId()
-            );
+            $repository = $em->getRepository(PriceList::class);
+            foreach ($trigger->getProducts() as $plId => $plProducts) {
+                $this->processPriceList($repository->find($plId), $plProducts);
+            }
 
-            $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProducts());
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
@@ -116,20 +113,44 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                 'Unexpected exception occurred during Price List Assigned Products build',
                 ['exception' => $e]
             );
-            if ($trigger && $trigger->getPriceList()) {
-                $this->messenger->send(
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    Message::STATUS_ERROR,
-                    $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
-                    PriceList::class,
-                    $trigger->getPriceList()->getId()
-                );
+            if ($trigger && !empty($plId)) {
+                $this->onFailedPriceListId($plId);
             }
 
             return self::REJECT;
         }
 
         return self::ACK;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function processPriceList(PriceList $priceList, array $products)
+    {
+        $this->messenger->remove(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+            PriceList::class,
+            $priceList->getId()
+        );
+
+        $this->assignmentBuilder->buildByPriceList($priceList, $products);
+    }
+
+    /**
+     * @param int $priceListId
+     */
+    private function onFailedPriceListId($priceListId)
+    {
+        $this->messenger->send(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+            Message::STATUS_ERROR,
+            $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
+            PriceList::class,
+            $priceListId
+        );
     }
 }

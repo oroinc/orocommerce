@@ -22,7 +22,8 @@ class UpdateOrderFieldsFormTypes implements Migration
                 'totalValue',
                 'form',
                 'form_type',
-                OroMoneyType::class
+                OroMoneyType::class,
+                'oro_money'
             )
         );
 
@@ -32,7 +33,8 @@ class UpdateOrderFieldsFormTypes implements Migration
                 'subtotalValue',
                 'form',
                 'form_type',
-                OroMoneyType::class
+                OroMoneyType::class,
+                'oro_money'
             )
         );
     }

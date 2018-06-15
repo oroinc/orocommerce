@@ -19,8 +19,6 @@ system_configuration:
             options:
                 label: oro.inventory.system_configuration.fields.manage_inventory.label
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.inventory.manage_inventory.choice.false: 0
                     oro.inventory.manage_inventory.choice.true: 1
@@ -32,8 +30,6 @@ system_configuration:
                 tooltip: oro.inventory.system_configuration.fields.highlight_low_inventory.tooltip
                 label: oro.inventory.system_configuration.fields.highlight_low_inventory.label
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.inventory.highlight_low_inventory.choice.false: 0
                     oro.inventory.highlight_low_inventory.choice.true: 1
@@ -44,8 +40,6 @@ system_configuration:
             options:
                 label: oro.inventory.system_configuration.fields.backorders.label
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.inventory.backorders.choice.false: 0
                     oro.inventory.backorders.choice.true: 1
@@ -57,8 +51,6 @@ system_configuration:
                 tooltip: oro.inventory.system_configuration.fields.decrement_inventory.tooltip
                 label: oro.inventory.system_configuration.fields.decrement_inventory.label
                 choice_translation_domain: messages
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.inventory.decrement_inventory.choice.false: 0
                     oro.inventory.decrement_inventory.choice.true: 1

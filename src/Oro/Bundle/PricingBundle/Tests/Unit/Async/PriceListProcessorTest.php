@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -10,22 +11,20 @@ use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -188,6 +187,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->never())
             ->method('createFromArray');
 
+        $driverException = $this->createMock(AbstractDriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
         $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);
@@ -239,28 +243,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('commit');
-
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($this->repository);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(CombinedPriceList::class)
-            ->willReturn($em);
-
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
         $productIds = [2];
-        $trigger = new PriceListTrigger($priceList, $productIds);
+        $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -277,6 +264,15 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($trigger);
 
         $cpl = new CombinedPriceList();
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->method('getCombinedPriceListsByActualPriceLists')
+            ->with([$priceList->getId()])
+            ->willReturn([$cpl]);
+        $repository->method('getPriceListIdsByCpls')
+            ->with([$cpl])
+            ->willReturn([$priceList->getId()]);
+
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)
             ->willReturn([$cpl]);
@@ -288,6 +284,77 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('dispatchEvents');
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    public function testProcessWithoutPriceList()
+    {
+        $priceListId = 1001;
+        $productId = 2002;
+
+        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => [$productId]]];
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode($data));
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->triggerFactory->expects($this->once())
+            ->method('createFromArray')
+            ->with($data)
+            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
+
+        /** @var CombinedPriceList $priceList */
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 3003]);
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->method('getCombinedPriceListsByActualPriceLists')
+            ->with([$priceListId])
+            ->willReturn([$cpl]);
+        $repository->method('getPriceListIdsByCpls')
+            ->with([$cpl])
+            ->willReturn([$priceListId]);
+
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('rebuild')
+            ->with([$cpl], [$productId]);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('dispatchEvents');
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    /**
+     * @return CombinedPriceListToPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function assertEntityManagerCalled()
+    {
+        $repository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap(
+                [
+                    [CombinedPriceList::class, $this->repository],
+                    [CombinedPriceListToPriceList::class, $repository],
+                ]
+            );
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        return $repository;
     }
 
     public function testGetSubscribedTopics()

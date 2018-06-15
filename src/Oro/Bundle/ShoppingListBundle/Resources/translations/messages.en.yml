@@ -122,7 +122,7 @@ oro:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
                 default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
-                shopping_list_limit.tooltip: 'Restricts number of shopping lists per customer. Default (0) means no limit is applied - unlimitted shopping lists are available'
+                shopping_list_limit.tooltip: 'Set the number of shopping lists allowed per customer. The default value is zero, which means that no limit of shopping lists is applied.'
                 availability_for_guests:
                     label: 'Enable guest shopping list'
                     tooltip: 'Allows guests to create a shopping list'

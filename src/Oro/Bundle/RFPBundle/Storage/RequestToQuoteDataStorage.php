@@ -3,20 +3,45 @@
 namespace Oro\Bundle\RFPBundle\Storage;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
+/**
+ * Extracts data from RFPRequest and puts it into storage. Saved data is used later during Quote creation.
+ */
 class RequestToQuoteDataStorage
 {
     /** @var ProductDataStorage */
     protected $storage;
 
     /**
-     * @param ProductDataStorage $storage
+     * @var MatchingPriceProvider
      */
-    public function __construct(ProductDataStorage $storage)
-    {
+    private $matchingPriceProvider;
+
+    /**
+     * @var PriceListTreeHandler
+     */
+    private $priceListTreeHandler;
+
+    /**
+     * @param ProductDataStorage    $storage
+     * @param MatchingPriceProvider $matchingPriceProvider
+     * @param PriceListTreeHandler  $priceListTreeHandler
+     */
+    public function __construct(
+        ProductDataStorage $storage,
+        MatchingPriceProvider $matchingPriceProvider,
+        PriceListTreeHandler $priceListTreeHandler
+    ) {
         $this->storage = $storage;
+        $this->matchingPriceProvider = $matchingPriceProvider;
+        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -45,7 +70,7 @@ class RequestToQuoteDataStorage
                     : null;
 
                 $items[] = [
-                    'price' => $requestProductItem->getPrice(),
+                    'price' => $requestProductItem->getPrice() ?: $this->getListedPrice($requestProductItem),
                     'quantity' => $requestProductItem->getQuantity(),
                     'productUnit' => $productUnitCode,
                     'productUnitCode' => $productUnitCode,
@@ -79,5 +104,53 @@ class RequestToQuoteDataStorage
         }
 
         return $ids;
+    }
+
+    /**
+     * @param RequestProductItem $requestProductItem
+     *
+     * @return Price
+     */
+    private function getListedPrice(RequestProductItem $requestProductItem)
+    {
+        $request = $requestProductItem->getRequestProduct()->getRequest();
+
+        $value = null;
+        $currency = null;
+
+        $priceList = $this->priceListTreeHandler->getPriceList($request->getCustomer(), $request->getWebsite());
+        if ($priceList) {
+            $matchingPrices = $this->getMatchingPrices($requestProductItem, $priceList);
+            if ($matchingPrices) {
+                list($value, $currency) = array_values(current($matchingPrices));
+            }
+        }
+
+        return Price::create($value, $currency);
+    }
+
+    /**
+     * @param RequestProductItem $requestProductItem
+     * @param CombinedPriceList  $priceList
+     *
+     * @return array
+     */
+    private function getMatchingPrices(RequestProductItem $requestProductItem, CombinedPriceList $priceList)
+    {
+        if (!$requestProductItem->getProduct()) {
+            return [];
+        }
+
+        $lineItems = [];
+        foreach ($priceList->getCurrencies() as $enabledCurrency) {
+            $lineItems[] = [
+                'product' => $requestProductItem->getProduct()->getId(),
+                'unit' => $requestProductItem->getProductUnitCode(),
+                'qty' => $requestProductItem->getQuantity(),
+                'currency' => $enabledCurrency,
+            ];
+        }
+
+        return $this->matchingPriceProvider->getMatchingPrices($lineItems, $priceList);
     }
 }

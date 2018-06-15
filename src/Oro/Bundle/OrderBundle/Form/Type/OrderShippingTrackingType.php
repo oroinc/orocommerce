@@ -79,8 +79,6 @@ class OrderShippingTrackingType extends AbstractType
                     SelectSwitchInputType::class,
                     [
                         'required' => false,
-                        // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                        'choices_as_values' => true,
                         'choices' => $this->getTrackingMethodsChoices(),
                         'mode' => SelectSwitchInputType::MODE_SELECT
                     ]
@@ -157,7 +155,7 @@ class OrderShippingTrackingType extends AbstractType
 
         if ($this->getTrackingMethodsChoices()) {
             if (null === $options['choices'] || !in_array($data['method'], $options['choices'], true)) {
-                unset($options['choices'], $options['choice_list']);
+                unset($options['choices']);
                 $newChoices = $this->getTrackingMethodsChoices();
                 $newChoices[$data['method']] = $data['method'];
                 $form->add(
