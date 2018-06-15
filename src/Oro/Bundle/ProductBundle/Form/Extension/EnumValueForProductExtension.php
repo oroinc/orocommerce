@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
 use Oro\Bundle\EntityExtendBundle\Form\Util\EnumTypeHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 /**
  * Restored this class in - #BB-9332
@@ -108,26 +108,18 @@ class EnumValueForProductExtension extends AbstractTypeExtension
      */
     private function getProductSkuUsingEnum(FieldConfigId $configId, $enumValueId)
     {
+        if ($configId->getFieldType() !== EnumTypeHelper::TYPE_ENUM) {
+            return [];
+        }
+
+        /** @var ProductRepository $productRepository */
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
 
-        $productsUsedEnumValue = $productRepository->findByAttributeValue(
+        $configProductsSkuUsingEnum = $productRepository->findParentSkusByAttributeValue(
             Product::TYPE_SIMPLE,
             $configId->getFieldName(),
-            $enumValueId,
-            $configId->getFieldType() === EnumTypeHelper::MULTI_ENUM
+            $enumValueId
         );
-
-        $configProductsSkuUsingEnum = [];
-
-        foreach ($productsUsedEnumValue as $simpleProduct) {
-            foreach ($simpleProduct->getParentVariantLinks() as $parentVariantLink) {
-                $parentProduct = $parentVariantLink->getParentProduct();
-
-                if (in_array($configId->getFieldName(), $parentProduct->getVariantFields())) {
-                    $configProductsSkuUsingEnum[$parentProduct->getSku()] = $parentProduct->getSku();
-                }
-            }
-        }
 
         return $configProductsSkuUsingEnum;
     }

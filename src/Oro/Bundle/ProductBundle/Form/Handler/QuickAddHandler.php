@@ -139,10 +139,17 @@ class QuickAddHandler
                 true
             );
 
+            $transitionName = $request->get(
+                QuickAddType::NAME . '[' . QuickAddType::TRANSITION_FIELD_NAME . ']',
+                null,
+                true
+            );
+
             $response = $processor->process(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
                     ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData,
+                    ProductDataStorage::TRANSITION_NAME_KEY => $transitionName
                 ],
                 $request
             );

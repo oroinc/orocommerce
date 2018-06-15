@@ -8,44 +8,86 @@
 
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
+    
+    {% set unitAttr = {} %}
+    {% if skipInputWidgets is not defined %}
+        {% set skipInputWidgets = true %}
+    {% endif %}
+
+    {% if skipInputWidgets %}
+        {% set unitAttr = layout_attr_defaults(unitAttr, {
+            'data-skip-input-widgets': ''
+        }) %}
+    {% endif %}
+
     {% do block|merge_context({
         class_prefix: class_prefix
     }) %}
     {% do set_class_prefix_to_form(form, class_prefix) %}
-    {% if renderCache is not defined %}
-        {% set renderCache %}
-            {% set attr = layout_attr_defaults(attr, {
-                '~class': ' product-item__qty__current-grid',
-                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
-                'data-page-component-options': {
-                    'singleUnitMode': singleUnitMode,
-                    'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
-                    'configDefaultUnit': defaultUnitCode
-                }|json_encode
-            }) %}
-
-            <div {{ block('block_attributes') }}>
-                <div>
-                    <div class="form-row {{ class_prefix }}">
-                        {{ form_widget(form.quantity, {attr: {
-                            'class': 'product-item__qty-input'
-                        }}) }}
-                    </div>
-                    <div class="form-row {{ class_prefix }}">
-                        {{ form_widget(form.unit, {attr: {
-                            'data-skip-input-widgets': ''
-                        }}) }}
-                    </div>
-                </div>
-                {{ block_widget(block) }}
-            </div>
+    {% if renderCacheQuantity is not defined %}
+        {% set renderCacheQuantity %}
+            {{ form_widget(form.quantity, {attr: {
+                'class': 'product-item__qty-input'
+            }}) }}
         {% endset %}
         {% do block|merge_context({
-            renderCache: renderCache
+            renderCacheQuantity: renderCacheQuantity
+        }) %}
+    {% endif %}
+    {% if renderCacheUnit is not defined %}
+        {% set renderCacheUnit %}
+            {{ form_widget(form.unit, {attr: unitAttr}) }}
+        {% endset %}
+        {% do block|merge_context({
+            renderCacheUnit: renderCacheUnit
+        }) %}
+    {% endif %}
+    {% if renderCacheToken is not defined %}
+        {% set renderCacheToken %}
+            {{ form_widget(form._token) }}
+        {% endset %}
+        {% do block|merge_context({
+            renderCacheToken: renderCacheToken
         }) %}
     {% endif %}
     {% if not is_configurable_product_type(product.type) %}
-        {{ renderCache }}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__qty__current-grid',
+            'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+            'data-page-component-options': {
+                'singleUnitMode': singleUnitMode,
+                'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                'configDefaultUnit': defaultUnitCode
+            }|json_encode
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            <div class="form-row {{ class_prefix }}">
+                {{ renderCacheQuantity }}
+            </div>
+            <div class="form-row {{ class_prefix }}">
+                {% if product is iterable %}
+                    {% set currentProduct = product %}
+                {% else %}
+                    {% set currentProduct = product.jsonSerialize() %}
+                {% endif %}
+
+                {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}
+                    {{ renderCacheUnit }}
+                {% else %}
+                    <div class="product-item__placeholder-label" data-role="unit-label">
+                        {{- currentProduct.unit|oro_format_product_unit_label -}}
+                    </div>
+                    <div class="hidden">
+                        {{ renderCacheUnit }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="hidden">
+                {{ renderCacheToken }}
+                {{ block_widget(block) }}
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
 
@@ -55,6 +97,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',
         'data-role': 'line-item-form-container'
+    }) %}
+
+    {% do block|merge_context({
+        product: product
     }) %}
 
     <div {{ block('block_attributes') }}>

@@ -36,18 +36,15 @@ class ProductUnitValueExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_format_product_unit_value',
-                [$this, 'format'],
-                ['is_safe' => ['html']]
+                [$this, 'format']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_short_product_unit_value',
-                [$this, 'formatShort'],
-                ['is_safe' => ['html']]
+                [$this, 'formatShort']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_product_unit_code',
-                [$this, 'formatCode'],
-                ['is_safe' => ['html']]
+                [$this, 'formatCode']
             ),
         ];
     }

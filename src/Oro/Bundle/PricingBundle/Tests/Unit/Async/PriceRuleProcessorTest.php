@@ -10,7 +10,9 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListProductsTrigger;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -106,6 +108,11 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
+        $this->priceListRepository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
+
         $productIds = [2];
         $trigger = new PriceListTrigger($priceList, $productIds);
 
@@ -118,11 +125,11 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             ->willReturn($trigger);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, $productIds);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, $productIds)
             ->willThrowException($exception);
 
@@ -179,35 +186,18 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             ->willReturn($trigger);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggerSend')
             ->with($priceList, [$productId]);
+        $this->priceBuilder->expects($this->once())
+            ->method('flush');
 
-        $manager = $this->createMock(EntityManagerInterface::class);
-
-        $manager->expects($this->once())
-            ->method('refresh');
-
-        $repository = $this->getMockBuilder(PriceListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $repository = $this->assertEntityManagerCalled();
         $repository->expects($this->once())
             ->method('updatePriceListsActuality');
-
-        $manager->expects($this->once())
-            ->method('beginTransaction');
-
-        $manager->expects(($this->once()))
-            ->method('commit');
-
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($manager);
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
 
         $this->messenger->expects($this->once())
             ->method('remove')
@@ -219,6 +209,86 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
             );
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    public function testProcessWithoutPriceList()
+    {
+        $priceListId = 1001;
+        $productId = 2002;
+        $updateDate = new \DateTime();
+
+        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => [$productId]]];
+
+        $this->triggerFactory->expects($this->once())
+            ->method('createFromArray')
+            ->with($data)
+            ->willReturn(new PriceListProductsTrigger($data[PriceListTriggerFactory::PRODUCT]));
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => $updateDate]);
+
+        $this->priceBuilder->expects($this->once())
+            ->method('buildByPriceListWithoutTriggerSend')
+            ->with($priceList, [$productId]);
+        $this->priceBuilder->expects($this->once())
+            ->method('flush');
+
+        $repository = $this->assertEntityManagerCalled();
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality');
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceList->getId())
+            ->willReturn($priceList);
+
+        $this->messenger->expects($this->once())
+            ->method('remove')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $priceList->getId()
+            );
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode($data));
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    /**
+     * @return PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function assertEntityManagerCalled()
+    {
+        $repository = $this->createMock(PriceListRepository::class);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $manager->expects($this->once())
+            ->method('refresh');
+
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+
+        $manager->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($manager);
+
+        return $repository;
     }
 
     public function testGetSubscribedTopics()

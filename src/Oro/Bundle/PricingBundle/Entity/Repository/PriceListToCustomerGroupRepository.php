@@ -62,7 +62,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->select('distinct customerGroup')
             ->from('OroCustomerBundle:CustomerGroup', 'customerGroup');
 
-        $qb->innerJoin(
+        $qb->leftJoin(
             'OroPricingBundle:PriceListToCustomerGroup',
             'plToCustomerGroup',
             Join::WITH,

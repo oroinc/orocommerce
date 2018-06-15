@@ -82,13 +82,18 @@ class PriceListTriggerHandler
                     );
                 }
             }
-            if (array_key_exists(self::PRODUCTS_KEY, $triggers)) {
-                foreach ($triggers[self::PRODUCTS_KEY] as $priceListId => $products) {
-                    $this->messageProducer->send(
-                        $topic,
-                        $this->triggerFactory->createFromIds($priceListId, array_values($products))
-                    );
-                }
+            if (array_key_exists(self::PRODUCTS_KEY, $triggers) && $triggers[self::PRODUCTS_KEY]) {
+                $products = array_map(
+                    function (array $products) {
+                        return array_values($products);
+                    },
+                    $triggers[self::PRODUCTS_KEY]
+                );
+
+                $this->messageProducer->send(
+                    $topic,
+                    $this->triggerFactory->createFromIds(null, $products)
+                );
             }
         }
         $this->triggersData = [];

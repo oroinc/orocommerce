@@ -370,7 +370,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
         $entity = new EntityWithoutCurrencyStub();
         $this->currencyManager->expects($this->once())
-            ->method('getUserCurrency')
+            ->method('getLoggedUserCurrentWebsiteCurrency')
             ->willReturn('USD');
 
         $entity = $this->prepareSubtotals($entity);

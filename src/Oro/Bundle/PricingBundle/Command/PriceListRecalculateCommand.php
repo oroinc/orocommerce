@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -94,6 +95,10 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var CombinedPriceListTriggerHandler $triggerHandler */
+        $triggerHandler = $this->getContainer()->get('oro_pricing.model.combined_price_list_trigger_handler');
+        $triggerHandler->startCollect();
+
         $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
             ->getCurrentStrategy()
             ->setOutput($output);
@@ -122,6 +127,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         if (true === $disableTriggers) {
             $this->enableAllTriggers($output);
         }
+
+        $triggerHandler->commit();
     }
 
     /**
@@ -211,20 +218,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         /** @var PriceList[] $priceLists */
         $priceLists = $priceListRepository->findBy(['id' => $priceListIds]);
 
-        if ((bool)$input->getOption(self::INCLUDE_DEPENDENT)) {
-            $priceListsWithDependent = $priceLists;
-
-            foreach ($priceLists as $priceList) {
-                $priceListsWithDependent = array_merge(
-                    $priceListsWithDependent,
-                    $this->getDependentPriceLists($priceList)
-                );
-            }
-
-            return $priceListsWithDependent;
+        if (!$input->getOption(self::INCLUDE_DEPENDENT)) {
+            return $priceLists;
         }
 
-        return $priceLists;
+        $dependentPriceListProvider = $this->getContainer()->get('oro_pricing.provider.dependent_price_lists');
+        return $dependentPriceListProvider->appendDependent($priceLists);
     }
 
     /**
@@ -326,31 +325,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     /**
      * @param PriceList $priceList
      * @return PriceList[]
+     * @deprecated Will be removed in 3.0
      */
     protected function getDependentPriceLists(PriceList $priceList)
     {
-        /** @var PriceRuleLexeme[] $lexemes */
-        $lexemes = $this->getContainer()->get('oro_pricing.price_rule_lexeme_trigger_handler')->findEntityLexemes(
-            PriceList::class,
-            [],
-            $priceList->getId()
-        );
-
-        $priceLists = [];
-        if (count($lexemes) > 0) {
-            $dependentPriceLists = [];
-            foreach ($lexemes as $lexeme) {
-                $dependentPriceList = $lexeme->getPriceList();
-                $dependentPriceLists[$dependentPriceList->getId()] = $dependentPriceList;
-            }
-
-            $priceLists = $dependentPriceLists;
-            foreach ($dependentPriceLists as $dependentPriceList) {
-                $priceLists = array_merge($priceLists, $this->getDependentPriceLists($dependentPriceList));
-            }
-        }
-
-        return $priceLists;
+        $dependentPriceListProvider = $this->getContainer()->get('oro_pricing.provider.dependent_price_lists');
+        return $dependentPriceListProvider->getDependentPriceLists($priceList);
     }
 
     /**

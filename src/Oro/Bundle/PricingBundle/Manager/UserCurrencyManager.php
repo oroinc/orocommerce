@@ -11,6 +11,9 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Represents the entry point for the currency settings of the store frontend.
+ */
 class UserCurrencyManager
 {
     const SESSION_CURRENCIES = 'currency_by_website';
@@ -71,25 +74,45 @@ class UserCurrencyManager
         $website = $this->getWebsite($website);
 
         if ($website) {
-            $user = $this->getLoggedUser();
-            if ($user instanceof CustomerUser) {
-                $userSettings = $user->getWebsiteSettings($website);
-                if ($userSettings) {
-                    $currency = $userSettings->getCurrency();
-                }
-            } else {
-                $sessionStoredCurrencies = $this->getSessionCurrencies();
-                if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
-                    $currency = $sessionStoredCurrencies[$website->getId()];
-                }
-            }
+            $currency = $this->getLoggedUserCurrencyForWebsite($website);
         }
 
-        $allowedCurrencies = $this->getAvailableCurrencies();
-        if (!$currency || !in_array($currency, $allowedCurrencies, true)) {
+        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
             $currency = $this->getDefaultCurrency();
         }
 
+        return $currency;
+    }
+
+    /**
+     * @return null|string
+     * @deprecated Will be removed in 3.0
+     */
+    public function getLoggedUserCurrentWebsiteCurrency()
+    {
+        $website = $this->websiteManager->getCurrentWebsite();
+        return $website ? $this->getLoggedUserCurrencyForWebsite($website) : null;
+    }
+
+    /**
+     * @param Website $website
+     * @return string|null
+     */
+    protected function getLoggedUserCurrencyForWebsite(Website $website)
+    {
+        $currency = null;
+        $user = $this->getLoggedUser();
+        if ($user instanceof CustomerUser) {
+            $userSettings = $user->getWebsiteSettings($website);
+            if ($userSettings) {
+                $currency = $userSettings->getCurrency();
+            }
+        } elseif ($this->session->isStarted()) {
+            $sessionStoredCurrencies = $this->getSessionCurrencies();
+            if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
+                $currency = $sessionStoredCurrencies[$website->getId()];
+            }
+        }
         return $currency;
     }
 
@@ -113,7 +136,7 @@ class UserCurrencyManager
             }
             $userWebsiteSettings->setCurrency($currency);
             $this->userManager->getStorageManager()->flush();
-        } else {
+        } elseif ($this->session->isStarted()) {
             $sessionCurrencies = $this->getSessionCurrencies();
             $sessionCurrencies[$website->getId()] = $currency;
             $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);

@@ -236,7 +236,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithoutResponse()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $productRows = [
             $this->createProductRow('111', 123, 'kg'),
@@ -296,7 +299,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform',
                 ],
                 $request
             );
@@ -312,7 +316,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithResponse()
     {
         $request = Request::create('/post/valid-with-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $response = new RedirectResponse('/processor-redirect');
 
@@ -375,7 +382,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform'
                 ],
                 $request
             )

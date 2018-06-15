@@ -191,14 +191,20 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
             'with fallback' => [
                 'website' => 'US',
                 'fallback' => PriceListCustomerGroupFallback::WEBSITE,
-                'expectedCustomerGroups' => ['customer_group.group1']
+                'expectedCustomerGroups' => [
+                    'Non-Authenticated Visitors',
+                    'customer_group.group1',
+                    'customer_group.group3',
+                ]
             ],
             'without fallback' => [
                 'website' => 'US',
                 'fallback' => null,
                 'expectedCustomerGroups' => [
+                    'Non-Authenticated Visitors',
                     'customer_group.group1',
-                    'customer_group.group2'
+                    'customer_group.group2',
+                    'customer_group.group3',
                 ]
             ],
         ];

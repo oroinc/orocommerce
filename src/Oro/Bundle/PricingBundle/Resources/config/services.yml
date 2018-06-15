@@ -106,6 +106,11 @@ services:
             - [setClassName, ['%oro_pricing.entity.combined_price_list.class%']]
             - [setActivationPlanBuilder, ['@oro_pricing.builder.combined_price_list_activation_plan_builder']]
 
+    oro_pricing.provider.dependent_price_lists:
+        class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
+        arguments:
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+
     oro_pricing.provider.price_list_collection:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider'
         public: false
@@ -432,6 +437,8 @@ services:
             - '@doctrine'
             - '@oro_website.manager'
             - '@oro_config.global'
+        calls:
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
@@ -482,6 +489,7 @@ services:
             - '@oro_filter.filter_utility'
         calls:
             - [setFormatter, ['@oro_product.formatter.product_unit_label']]
+            - [setConfigManager, ['@oro_config.global']]
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 
@@ -882,6 +890,17 @@ services:
             - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
+
+    oro_pricing.action.price_list_background_recalculate:
+        class: Oro\Bundle\PricingBundle\Action\PriceListBackgroundRecalculateAction
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.builder.product_price_builder'
+            - '@oro_pricing.provider.dependent_price_lists'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_action.action, alias: price_list_recalculate }
 
     oro_pricing.hander.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'

@@ -15,6 +15,9 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
+/**
+ * Class helps to prepare products search result for quick order form
+ */
 class ProductWithPricesSearchHandler implements SearchHandlerInterface
 {
     /**
@@ -131,7 +134,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $result['sku'] = $product->getSku();
             $result['defaultName.string'] = $product->getName()->getString();
             $result['prices'] = [];
-            $result['units'] = $product->getAvailableUnitsPrecision();
+            $result['units'] = $product->getSellUnitsPrecision();
 
             /** @var ProductPrice $price */
             foreach ($item['prices'] as $price) {

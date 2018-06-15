@@ -4,12 +4,14 @@ namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Modify contentVariant query and add information about related products for Category page variants.
+ */
 class ProductsContentVariantProvider implements ContentVariantProviderInterface
 {
     /**
@@ -54,7 +56,7 @@ class ProductsContentVariantProvider implements ContentVariantProviderInterface
             'categoryProduct',
             Join::WITH,
             $expr->andX(
-                $expr->isMemberOf('categoryProduct', 'category.products'),
+                $expr->eq('categoryProduct.category', 'category.id'),
                 $expr->in('categoryProduct', ':categoryProducts')
             )
         )

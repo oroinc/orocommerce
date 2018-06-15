@@ -93,11 +93,11 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->willReturn([$priceList]);
 
         $this->assignmentBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutEventDispatch')
             ->with($priceList);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList);
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
@@ -122,10 +122,12 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->method('getPriceListsWithRules');
 
         $this->assignmentBuilder->expects($this->never())
-            ->method('buildByPriceList');
+            ->method('buildByPriceListWithoutEventDispatch');
 
         $this->priceBuilder->expects($this->never())
-            ->method('buildByPriceList');
+            ->method('buildByPriceListWithoutTriggers');
+        $this->priceBuilder->expects($this->never())
+            ->method('flush');
 
         $this->priceListBuilder->expects($this->never())
             ->method('build');

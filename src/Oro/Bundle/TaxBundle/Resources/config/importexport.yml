@@ -70,3 +70,8 @@ services:
         class: 'Oro\Bundle\TaxBundle\ImportExport\Configuration\TaxImportExportConfigurationProvider'
         tags:
             - { name: oro_importexport.configuration, alias: oro_tax }
+
+    oro_tax.importexport.normalizer.tax_code:
+        class: 'Oro\Bundle\TaxBundle\ImportExport\Serializer\TaxCodeNormalizer'
+        tags:
+            - { name: oro_importexport.normalizer, priority: 20 }

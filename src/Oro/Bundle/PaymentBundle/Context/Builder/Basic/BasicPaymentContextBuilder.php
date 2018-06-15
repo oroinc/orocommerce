@@ -13,6 +13,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Creates PaymentContext with needed parameters
+ */
 class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 {
     /**
@@ -245,6 +248,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
             PaymentContext::FIELD_CUSTOMER => $this->customer,
             PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
             PaymentContext::FIELD_WEBSITE => $this->website,
+            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
         ];
 
         // Exclude NULL elements.

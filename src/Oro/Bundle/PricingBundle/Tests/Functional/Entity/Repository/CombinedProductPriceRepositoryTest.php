@@ -17,6 +17,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
     /**
@@ -215,14 +218,14 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
+                'value' => '1.1000',
+                'currency' => 'USD',
                 'unit' => 'bottle',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
             [
                 'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.2000',
                 'currency' => 'USD',
                 'unit' => 'liter',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
@@ -275,13 +278,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $expected = [
             [
                 'product' => (string)$product1->getId(),
-                'value' => '12.2000',
-                'currency' => 'EUR',
-                'cpl' => $this->getReference('1t_2t_3t')->getId(),
-            ],
-            [
-                'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '1.1000',
                 'currency' => 'USD',
                 'cpl' => $this->getReference('1t_2t_3t')->getId(),
             ],
@@ -471,6 +468,110 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 'prices' => [],
             ],
         ];
+    }
+
+    public function testInsertPricesByCombinedPriceList()
+    {
+        $combinedPriceList = $this->getReference('1t_2t_3t');
+        $sourceCpl = $this->getReference('2t_3t');
+        $product = $this->getReference('product-1');
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $repo->insertPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $sourceCpl
+        );
+
+        $prices = $repo->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+
+        $expected = [
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '0.1',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '1.1',
+                'currency' => 'USD',
+                'unit' => 'bottle',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 10.0,
+                'value' => '1.2',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+        ];
+
+        $this->assertEquals($expected, $prices);
+    }
+
+    public function testInsertMinimalPricesByCombinedPriceList()
+    {
+        $combinedPriceList = $this->getReference('1t_2t_3t');
+        $sourceCpl = $this->getReference('2t_3t');
+        $product = $this->getReference('product-1');
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $repo->insertMinimalPricesByCombinedPriceList(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $sourceCpl
+        );
+
+        $prices = $repo->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+
+        $expected = [
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '0.1',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 1.0,
+                'value' => '1.1',
+                'currency' => 'USD',
+                'unit' => 'bottle',
+            ],
+            [
+                'productSku' => 'product-1',
+                'quantity' => 10.0,
+                'value' => '1.01',
+                'currency' => 'USD',
+                'unit' => 'liter',
+            ],
+        ];
+
+        $this->assertEquals($expected, $prices);
     }
 
     /**
