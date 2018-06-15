@@ -13,6 +13,9 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -36,7 +39,10 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     protected $customer;
 
     /** @var  User $owner */
-    protected $owner;
+    protected $customerUserOwner;
+
+    /** @var  User $owner */
+    protected $customerOwner;
 
     /** @var ArrayCollection */
     protected $salesReps;
@@ -68,9 +74,9 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     {
         $this->configureRequestMock();
         $salesReps = new ArrayCollection();
-        $salesReps->add(new User());
-        $salesReps->add(new User());
-        $salesReps->add(new User());
+        $salesReps->add($this->getEntity(User::class, ['id' => 1]));
+        $salesReps->add($this->getEntity(User::class, ['id' => 2]));
+        $salesReps->add($this->getEntity(User::class, ['id' => 3]));
         $this->customerUser->expects($this->once())
             ->method('getSalesRepresentatives')
             ->willReturn($salesReps);
@@ -157,7 +163,10 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 
         $this->processor->expects($this->exactly(2))
             ->method('sendRFPNotification')
-            ->with($this->request, $this->owner);
+            ->withConsecutive(
+                [$this->request, $this->customerUserOwner],
+                [$this->request, $this->customerOwner]
+            );
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
@@ -237,17 +246,55 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testNotifyOnlyUniqueUsers()
+    {
+        $user = $this->getEntity(User::class, ['id' => 1]);
+
+        $this->customerUser = $this->getEntity(CustomerUser::class, [
+            'owner' => $user,
+            'salesRepresentatives' => new ArrayCollection([$user])
+        ]);
+
+        $this->customer = $this->getEntity(Customer::class, [
+            'owner' => $user,
+            'salesRepresentatives' => new ArrayCollection([$user])
+        ]);
+
+        $this->configManager->expects($this->exactly(3))
+            ->method('get')
+            ->willReturn('always');
+
+        $this->request->expects($this->any())
+            ->method('getCustomer')
+            ->willReturn($this->customer);
+
+        $this->request->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->request->expects($this->any())
+            ->method('getCustomerUser')
+            ->willReturn($this->customerUser);
+
+        $this->processor->expects($this->exactly(1))
+            ->method('sendRFPNotification');
+
+        $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
+    }
+
     protected function configureRequestMock()
     {
-        $this->owner = new User();
+        $this->customerUserOwner = $this->getEntity(User::class, ['id' => 42, 'username' => 'customerUserOwner']);
+        $this->customerOwner = $this->getEntity(User::class, ['id' => 77, 'username' => 'customerOwner']);
+
         $this->customerUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->customerUser->expects($this->any())
             ->method('getOwner')
-            ->willReturn($this->owner);
+            ->willReturn($this->customerUserOwner);
         $this->customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->customer->expects($this->any())
             ->method('getOwner')
-            ->willReturn($this->owner);
+            ->willReturn($this->customerOwner);
         $this->request->expects($this->once())
             ->method('getId')
             ->willReturn(1);
