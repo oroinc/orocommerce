@@ -6,9 +6,9 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -32,7 +32,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var DoctrineHelper */
@@ -44,23 +44,18 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var string */
     protected $productUnitClass;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
-
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListTreeHandler $priceListTreeHandler ,
      * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         DoctrineHelper $doctrineHelper,
-        PriceListTreeHandler $priceListTreeHandler,
         SubtotalProviderConstructorArguments $arguments
     ) {
         parent::__construct($arguments);
@@ -69,7 +64,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -115,8 +109,10 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 
         $productsPriceCriterias = $this->prepareProductsPriceCriterias($entity, $currency);
         if ($productsPriceCriterias) {
-            $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
-            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
+            $searchScope = new ProductPriceScopeCriteria();
+            $searchScope->setCustomer($entity->getCustomer());
+            $searchScope->setWebsite($entity->getWebsite());
+            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $searchScope);
             foreach ($prices as $identifier => $price) {
                 if ($price) {
                     $priceValue = $price->getValue();

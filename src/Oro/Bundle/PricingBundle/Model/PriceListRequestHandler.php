@@ -172,7 +172,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     /**
      * @return null|Customer
      */
-    protected function getCustomer()
+    public function getCustomer()
     {
         $user = $this->tokenAccessor->getUser();
 
@@ -248,7 +248,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     /**
      * @return null|Website
      */
-    protected function getWebsite()
+    public function getWebsite()
     {
         $website = null;
 

@@ -4,11 +4,15 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class FrontendProductListModifier
+class FrontendProductListModifier implements FeatureCheckerAwareInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TokenStorageInterface
      */
@@ -39,6 +43,10 @@ class FrontendProductListModifier
         $currency = null,
         BasePriceList $priceList = null
     ) {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         /** @var CustomerUser $user */
         if ($token && ($user = $token->getUser()) instanceof CustomerUser) {

@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -31,7 +31,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
     const CURRENCY = 'USD';
 
     /**
-     * @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $productPriceProvider;
 
@@ -52,7 +52,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
 
     public function setUp()
     {
-        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
 
@@ -167,7 +167,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
 
                     return true;
                 }),
-                $priceList
+                $priceList->getId()
             )
             ->willReturn($prices);
 

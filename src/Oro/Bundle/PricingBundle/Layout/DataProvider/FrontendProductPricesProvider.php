@@ -3,8 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -199,8 +200,9 @@ class FrontendProductPricesProvider
             $products
         );
 
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
+        // TODO: BB-14587 replace with price provider
+        /** @var CombinedProductPriceRepository $priceRepository */
+        $priceRepository = $this->doctrineHelper->getEntityRepository(CombinedProductPrice::class);
         $prices = $priceRepository->findByPriceListIdAndProductIds(
             $this->shardManager,
             $priceList->getId(),

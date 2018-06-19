@@ -81,23 +81,13 @@ services:
             - '@oro_website.manager'
             - '@oro_customer_user.manager'
 
-    oro_pricing.provider.abstract_product_price:
+    oro_pricing.provider.combined_product_price:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
         public: false
-        abstract: true
         arguments:
             - '@doctrine'
             - '@oro_pricing.shard_manager'
-
-    oro_pricing.provider.product_price:
-        parent: oro_pricing.provider.abstract_product_price
-        calls:
-            - [setClassName, ['%oro_pricing.entity.product_price.class%']]
-
-    oro_pricing.provider.combined_product_price:
-        parent: oro_pricing.provider.abstract_product_price
-        calls:
-            - [setClassName, ['%oro_pricing.entity.combined_product_price.class%']]
+            - '@oro_pricing.model.price_list_tree_handler'
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
@@ -516,6 +506,8 @@ services:
         arguments:
             - '@security.token_storage'
             - '@oro_pricing.model.price_list_tree_handler'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.datagrid.extension.product_selection_grid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension'
@@ -755,7 +747,6 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.model.price_list_tree_handler'
             - '@oro_pricing.subtotal_processor.provider.arguments'
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]

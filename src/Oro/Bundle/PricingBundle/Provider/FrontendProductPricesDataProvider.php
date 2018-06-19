@@ -6,13 +6,14 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 class FrontendProductPricesDataProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
@@ -27,12 +28,12 @@ class FrontendProductPricesDataProvider
     protected $priceListRequestHandler;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
@@ -49,10 +50,10 @@ class FrontendProductPricesDataProvider
     {
         $productsPriceCriteria = $this->getProductsPricesCriteria($lineItems);
 
-        $prices = $this->productPriceProvider->getMatchedPrices(
-            $productsPriceCriteria,
-            $this->priceListRequestHandler->getPriceListByCustomer()
-        );
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($this->priceListRequestHandler->getCustomer());
+        $searchScope->setWebsite($this->priceListRequestHandler->getWebsite());
+        $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
 
         $result = [];
         foreach ($prices as $key => $price) {
@@ -70,8 +71,11 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($this->priceListRequestHandler->getCustomer());
+        $searchScope->setWebsite($this->priceListRequestHandler->getWebsite());
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-            $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
+            $searchScope,
             array_map(function (ProductHolderInterface $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),

@@ -6,10 +6,10 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,14 +32,9 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     protected $requestStack;
 
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
-
-    /**
-     * @var PriceListTreeHandler
-     */
-    protected $priceListTreeHandler;
 
     /**
      * @var array
@@ -48,17 +43,14 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
 
     /**
      * @param RequestStack $requestStack
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
     public function __construct(
         RequestStack $requestStack,
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $priceListTreeHandler
+        ProductPriceProviderInterface $productPriceProvider
     ) {
         $this->requestStack = $requestStack;
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -121,7 +113,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
         $matchedPrices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
-            $this->getPriceList($order)
+            $this->getPriceScopeCriteria($order)
         );
         foreach ($matchedPrices as $identifier => $price) {
             foreach ($lineItems[$identifier] as $lineItem) {
@@ -141,10 +133,14 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
 
     /**
      * @param Order $order
-     * @return BasePriceList
+     * @return ProductPriceScopeCriteriaInterface
      */
-    protected function getPriceList(Order $order)
+    protected function getPriceScopeCriteria(Order $order): ProductPriceScopeCriteriaInterface
     {
-        return $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
+        $scopeCriteria = new ProductPriceScopeCriteria();
+        $scopeCriteria->setCustomer($order->getCustomer());
+        $scopeCriteria->setWebsite($order->getWebsite());
+
+        return $scopeCriteria;
     }
 }

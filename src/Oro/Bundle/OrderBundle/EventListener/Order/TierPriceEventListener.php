@@ -4,27 +4,22 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
 class TierPriceEventListener
 {
     const TIER_PRICES_KEY = 'tierPrices';
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
-
     /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
-    public function __construct(ProductPriceProvider $productPriceProvider, PriceListTreeHandler $priceListTreeHandler)
+    public function __construct(ProductPriceProviderInterface $productPriceProvider)
     {
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -46,15 +41,14 @@ class TierPriceEventListener
             }
         );
 
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
-        $prices = [];
-        if ($priceList) {
-            $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
-                array_filter($productIds->toArray()),
-                $order->getCurrency()
-            );
-        }
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($order->getCustomer());
+        $searchScope->setWebsite($order->getWebsite());
+        $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
+            $searchScope,
+            array_filter($productIds->toArray()),
+            $order->getCurrency()
+        );
 
         $event->getData()->offsetSet(self::TIER_PRICES_KEY, $prices);
     }

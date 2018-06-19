@@ -8,7 +8,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
@@ -39,7 +39,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $roundingService;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
@@ -69,10 +69,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
                 )
             );
 
-        $this->productPriceProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()

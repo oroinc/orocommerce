@@ -15,7 +15,6 @@ services:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         arguments:
             - "@oro_pricing.provider.combined_product_price"
-            - "@oro_pricing.model.price_list_tree_handler"
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'

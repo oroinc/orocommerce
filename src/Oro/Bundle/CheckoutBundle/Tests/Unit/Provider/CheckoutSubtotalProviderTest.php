@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
@@ -28,7 +28,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $roundingService;
 
-    /** @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $productPriceProvider;
 
     /** @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
@@ -51,7 +51,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
                 }
             );
 
-        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
 
         $this->provider = new CheckoutSubtotalProvider(

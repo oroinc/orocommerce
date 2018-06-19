@@ -4,12 +4,14 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
-class ProductPriceProvider
+class ProductPriceProvider implements ProductPriceProviderInterface
 {
     /**
      * @var ShardManager
@@ -22,32 +24,42 @@ class ProductPriceProvider
     protected $registry;
 
     /**
-     * @var string
+     * @var PriceListTreeHandler
      */
-    protected $className;
+    protected $priceListTreeHandler;
 
     /**
      * @param ManagerRegistry $registry
      * @param ShardManager $shardManager
+     * @param PriceListTreeHandler $priceListTreeHandler
      */
-    public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ShardManager $shardManager,
+        PriceListTreeHandler $priceListTreeHandler
+    ) {
         $this->registry = $registry;
         $this->shardManager = $shardManager;
+        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
-     * @param int $priceListId
-     * @param array $productIds
-     * @param string|null $currency
-     * @return array
+     * {@inheritdoc}
      */
-    public function getPriceByPriceListIdAndProductIds($priceListId, array $productIds, $currency = null)
-    {
+    public function getPriceByPriceListIdAndProductIds(
+        ProductPriceScopeCriteriaInterface $scopeCriteria,
+        array $productIds,
+        $currency = null
+    ) {
         $result = [];
+        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
+        if (!$priceList) {
+            return $result;
+        }
+
         $prices = $this->getRepository()->findByPriceListIdAndProductIds(
             $this->shardManager,
-            $priceListId,
+            $priceList->getId(),
             $productIds,
             true,
             $currency
@@ -68,12 +80,15 @@ class ProductPriceProvider
     }
 
     /**
-     * @param ProductPriceCriteria[] $productsPriceCriteria
-     * @param BasePriceList $priceList
-     * @return array|Price[]
+     * {@inheritdoc}
      */
-    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList)
+    public function getMatchedPrices(array $productsPriceCriteria, ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
+        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
+        if (!$priceList) {
+            return [];
+        }
+
         $productIds = [];
         $productUnitCodes = [];
 
@@ -155,18 +170,21 @@ class ProductPriceProvider
     }
 
     /**
-     * @return ProductPriceRepository
+     * @return CombinedProductPriceRepository
      */
     protected function getRepository()
     {
-        return $this->registry->getManagerForClass($this->className)->getRepository($this->className);
+        return $this->registry
+            ->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class);
     }
 
     /**
-     * @param string $className
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     * @return null|CombinedPriceList
      */
-    public function setClassName($className)
+    protected function getPriceListByScopeCriteria(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
-        $this->className = $className;
+        return $this->priceListTreeHandler->getPriceList($scopeCriteria->getCustomer(), $scopeCriteria->getWebsite());
     }
 }

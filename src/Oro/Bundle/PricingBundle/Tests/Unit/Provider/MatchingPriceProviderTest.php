@@ -7,7 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -19,7 +19,7 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
     const PRODUCT_CLASS = 'ProductClass';
     const PRODUCT_UNIT_CLASS = 'ProductUnitClass';
 
-    /** @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $productPriceProvider;
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
@@ -30,10 +30,7 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productPriceProvider = $this
-            ->getMockBuilder('\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
         $this->doctrineHelper = $this
             ->getMockBuilder('\Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -95,7 +92,7 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ];
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)], $priceList)
+            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)], $priceList->getId())
             ->willReturn($expectedMatchedPrices);
 
         $this->assertEquals(

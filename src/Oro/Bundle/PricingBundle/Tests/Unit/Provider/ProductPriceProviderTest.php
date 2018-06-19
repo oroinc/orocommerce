@@ -199,7 +199,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with(self::CLASS_NAME)
             ->willReturn($em);
 
-        $prices = $this->provider->getMatchedPrices($productPriceCriteria, $priceList);
+        $prices = $this->provider->getMatchedPrices($productPriceCriteria, $priceList->getId());
 
         $this->assertInternalType('array', $prices);
         $this->assertEquals(count($productPriceCriteria), count($prices));

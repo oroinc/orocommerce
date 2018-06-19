@@ -6,8 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -31,7 +32,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected $requestStack;
 
     /**
-     * @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productPriceProvider;
 
@@ -51,8 +52,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()->getMock();
 
@@ -104,7 +104,8 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\BasePriceList');
+        /** @var BasePriceList $priceList */
+        $priceList = $this->createMock(BasePriceList::class);
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
@@ -113,7 +114,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with($this->isType('array'), $priceList)
+            ->with($this->isType('array'), $priceList->getId())
             ->willReturn($matchedPrices);
 
         $builder = $this->getBuilderMock();

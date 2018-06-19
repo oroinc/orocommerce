@@ -9,7 +9,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -19,7 +20,7 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 class HasPriceInShoppingLineItemsListener
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     private $productPriceProvider;
 
@@ -34,12 +35,12 @@ class HasPriceInShoppingLineItemsListener
     private $priceListRequestHandler;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
@@ -121,10 +122,10 @@ class HasPriceInShoppingLineItemsListener
             );
         }
 
-        $prices = $this->productPriceProvider->getMatchedPrices(
-            $productsPricesCriteria,
-            $this->priceListRequestHandler->getPriceListByCustomer()
-        );
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($this->priceListRequestHandler->getCustomer());
+        $searchScope->setWebsite($this->priceListRequestHandler->getWebsite());
+        $prices = $this->productPriceProvider->getMatchedPrices($productsPricesCriteria, $searchScope);
 
         return !empty(array_filter($prices));
     }

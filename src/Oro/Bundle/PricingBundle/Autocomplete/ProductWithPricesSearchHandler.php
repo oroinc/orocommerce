@@ -156,6 +156,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function findPrices(array $productIds)
     {
         if (count($productIds) > 0) {
+            // TODO: BB-14587 replace with price provider
             $prices = $this->getProductPriceRepository()
                 ->getFindByPriceListIdAndProductIdsQueryBuilder(
                     $this->priceListRequestHandler->getPriceListByCustomer()->getId(),

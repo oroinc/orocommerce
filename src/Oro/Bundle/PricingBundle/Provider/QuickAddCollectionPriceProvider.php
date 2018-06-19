@@ -15,9 +15,9 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 class QuickAddCollectionPriceProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
-    private $combinedProductPriceProvider;
+    private $productPriceProvider;
 
     /**
      * @var UserCurrencyManager
@@ -35,18 +35,18 @@ class QuickAddCollectionPriceProvider
     private $rounding;
 
     /**
-     * @param ProductPriceProvider $combinedProductPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param UserCurrencyManager $currencyManager
      * @param DoctrineHelper $doctrineHelper
      * @param RoundingServiceInterface $rounding
      */
     public function __construct(
-        ProductPriceProvider $combinedProductPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $currencyManager,
         DoctrineHelper $doctrineHelper,
         RoundingServiceInterface $rounding
     ) {
-        $this->combinedProductPriceProvider = $combinedProductPriceProvider;
+        $this->productPriceProvider = $productPriceProvider;
         $this->currencyManager = $currencyManager;
         $this->doctrineHelper = $doctrineHelper;
         $this->rounding = $rounding;
@@ -94,7 +94,7 @@ class QuickAddCollectionPriceProvider
      */
     private function getPricesForCriteria(array $productPriceCriteria, CombinedPriceList $priceList)
     {
-        $prices = $this->combinedProductPriceProvider->getMatchedPrices($productPriceCriteria, $priceList);
+        $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $priceList->getId());
         $result = [];
         foreach ($prices as $key => $price) {
             $identifier = explode('-', $key);

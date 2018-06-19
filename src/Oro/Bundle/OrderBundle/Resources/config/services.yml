@@ -199,7 +199,6 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
         arguments:
             - '@oro_pricing.provider.combined_product_price'
-            - '@oro_pricing.model.price_list_tree_handler'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 

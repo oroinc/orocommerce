@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class MatchingPriceProvider
 {
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var DoctrineHelper */
@@ -24,13 +24,13 @@ class MatchingPriceProvider
     protected $productUnitClass;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productClass
      * @param string $productUnitClass
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         DoctrineHelper $doctrineHelper,
         $productClass,
         $productUnitClass
@@ -50,7 +50,7 @@ class MatchingPriceProvider
     {
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
-        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
+        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList->getId());
 
         return $this->formatMatchedPrices($matchedPrice);
     }

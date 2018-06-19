@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -30,7 +30,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $quoteProductPriceProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
@@ -41,7 +41,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
         $this->treeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
             ->setMethods(['getPriceList', 'getPriceListByCustomer'])
@@ -264,7 +264,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             'quote price list' => [
                 'quotePriceList' => $quotePriceList,
                 'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
-                'productPriceProviderArgs' => [$productsPriceCriteria, $quotePriceList],
+                'productPriceProviderArgs' => [$productsPriceCriteria, $quotePriceList->getId()],
                 'matchedPrice' => 3,
             ],
             'empty quote products list' => [

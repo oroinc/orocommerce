@@ -9,7 +9,7 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -22,7 +22,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var TierPriceEventListener */
     protected $listener;
 
-    /** @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $provider;
 
     /** @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
@@ -35,7 +35,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        $this->provider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
+        $this->provider = $this->getMockBuilder(ProductPriceProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
@@ -26,7 +26,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
@@ -42,9 +42,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
         $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
@@ -86,7 +84,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with([$criteria], $priceList)
+            ->with([$criteria], $priceList->getId())
             ->willReturn([
                 $criteria->getIdentifier() => $price
             ]);

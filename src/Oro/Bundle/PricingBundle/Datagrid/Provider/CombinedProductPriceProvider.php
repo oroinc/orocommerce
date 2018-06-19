@@ -65,9 +65,11 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
             $productRecords
         );
 
+        // TODO: BB-14587 replace with price provider
         $combinedPrices = $this->combinedProductPriceRepository
             ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
 
+        // TODO: BB-14587 replace CombinedProductPrice with ProductPriceModel
         $resultProductPrices = [];
         usort($combinedPrices, function (CombinedProductPrice $a, CombinedProductPrice $b) {
             if ($a->getProductUnitCode() !==  $b->getProductUnitCode()) {

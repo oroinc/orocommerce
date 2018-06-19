@@ -3,10 +3,10 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -14,25 +14,16 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 class QuoteProductPriceProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
     /**
-     * @var PriceListTreeHandler
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
-    protected $treeHandler;
-
-    /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $treeHandler
-     */
-    public function __construct(
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $treeHandler
-    ) {
+    public function __construct(ProductPriceProviderInterface $productPriceProvider)
+    {
         $this->productPriceProvider = $productPriceProvider;
-        $this->treeHandler = $treeHandler;
     }
 
     /**
@@ -77,12 +68,8 @@ class QuoteProductPriceProvider
         $tierPrices = [];
 
         if ($productIds) {
-            $priceList = $this->getPriceList($quote);
-            if (!$priceList) {
-                return [];
-            }
             $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
+                $this->getPriceScopeCriteria($quote),
                 $productIds
             );
             if (!$tierPrices) {
@@ -100,17 +87,11 @@ class QuoteProductPriceProvider
     public function getMatchedPrices(Quote $quote)
     {
         $matchedPrices = [];
-        $priceList = $this->getPriceList($quote);
-        if (!$priceList) {
-            return [];
-        }
         $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->productPriceProvider->getMatchedPrices(
-                $productsPriceCriteria,
-                $priceList
-            );
+            $scopeCriteria = $this->getPriceScopeCriteria($quote);
+            $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
         /** @var Price $price */
@@ -165,10 +146,14 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @return BasePriceList
+     * @return ProductPriceScopeCriteriaInterface
      */
-    protected function getPriceList(Quote $quote)
+    protected function getPriceScopeCriteria(Quote $quote): ProductPriceScopeCriteriaInterface
     {
-        return $this->treeHandler->getPriceList($quote->getCustomer(), $quote->getWebsite());
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($quote->getCustomer());
+        $searchScope->setWebsite($quote->getWebsite());
+
+        return $searchScope;
     }
 }

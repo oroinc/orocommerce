@@ -8,7 +8,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
@@ -27,7 +28,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var PriceListTreeHandler */
@@ -36,14 +37,14 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param PriceListTreeHandler $priceListTreeHandler ,
      * @param SubtotalProviderConstructorArguments $arguments
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         PriceListTreeHandler $priceListTreeHandler,
         SubtotalProviderConstructorArguments $arguments
     ) {
@@ -115,10 +116,14 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
 
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
         if ($productsPriceCriteria) {
+            // TODO: BB-14587 combined price list may be unavailable when external pricing is used
             $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
             $subtotal->setCombinedPriceList($priceList);
 
-            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
+            $searchScope = new ProductPriceScopeCriteria();
+            $searchScope->setCustomer($entity->getCustomer());
+            $searchScope->setWebsite($entity->getWebsite());
+            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
             /** @var Price $price */
             foreach ($prices as $identifier => $price) {
                 if ($price && array_key_exists($identifier, $productsPriceCriteria)) {
