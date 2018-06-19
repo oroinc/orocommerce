@@ -35,7 +35,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.order.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'priority': -200,
             'subblocks': generalSectionBlocks
         }
@@ -68,12 +68,14 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.order_line_items'|trans,
+        'class': 'nav-item',
         'priority': -150,
         'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })], spanClass: 'order-line-items'}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
+        'class': 'nav-item',
         'priority': -100,
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
@@ -81,6 +83,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'discounts': {
             'title': 'oro.order.sections.discounts'|trans,
+            'class': 'nav-item',
             'priority': -75,
             'subblocks': [{'data' : [
                 oro_order_get_template_content('OroOrderBundle:Discount:order_discount_view_collection.html.twig', {entity: entity})
@@ -90,6 +93,7 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.order_totals'|trans,
+        'class': 'nav-item',
         'priority': -50,
         'subblocks': [{'data' : [orderTotals]}]
     }]) %}
@@ -97,6 +101,7 @@
     {% if is_granted('VIEW_PAYMENT_HISTORY', entity) %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.payment_history'|trans,
+            'class': 'nav-item',
             'priority': -20,
             'subblocks': [{'data' : [dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id })]}]
         }]) %}

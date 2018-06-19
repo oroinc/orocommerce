@@ -95,7 +95,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.order.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'data': [
                     ownerSelectors,
@@ -106,6 +106,7 @@
         },
         {
             'title': 'oro.order.sections.order_line_items'|trans,
+            'class': 'nav-item',
             'content_attr': {'class': 'order-line-items-content'},
             'subblocks': [{
                 'title': '',
@@ -139,6 +140,7 @@
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.billing_address.label'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'data': [billingAddress]
             }]
@@ -175,6 +177,7 @@
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.shipping_address.label'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'data': [shippingAddress]
             }]
@@ -202,6 +205,7 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
+        'class': 'nav-item',
         'subblocks': [{
             'data': [shippingInformation]
         }]
@@ -219,6 +223,7 @@
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.additional'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
@@ -239,7 +244,7 @@
         {% set dataBlocks = dataBlocks|merge({
             'discounts': {
                 'title': 'oro.order.sections.discounts'|trans,
-                'class': 'active',
+                'class': 'nav-item active',
                 'subblocks': [{
                     'data': [discounts],
                 }]
@@ -249,7 +254,7 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
-        'class': 'active',
+        'class': 'nav-item active',
         'priority': 900,
         'subblocks': [{
             'data': [subtotals]
